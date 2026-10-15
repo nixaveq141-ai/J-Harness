@@ -71,7 +71,7 @@ class M7SdkTest {
             var result = sdk.run("read input", CancellationToken.NONE);
             assertEquals(TaskStatus.COMPLETED, result.status());
             events = result.events();
-            assertEquals("1.7", result.protocolVersion());
+            assertEquals(ApiVersion.CURRENT, result.protocolVersion());
             assertThrows(
                     HarnessException.class,
                     () ->

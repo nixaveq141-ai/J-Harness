@@ -181,33 +181,61 @@ public final class DefaultAgentLoop implements AgentLoop {
                                     .toList());
                 append("assistant.message", EventLevel.STEP, turnId, stepId, null, assistant);
                 unresolved.addAll(response.toolCalls());
-                for (ToolInvocation call : response.toolCalls()) {
-                    cancellation.throwIfCancelled();
-                    ToolPipelineContext context =
-                            new ToolPipelineContext(
-                                    runtime.scope(),
-                                    turnId,
-                                    stepId,
-                                    core.tools(),
-                                    core.session(),
-                                    core.events(),
-                                    core.policy(),
-                                    runtime.approvals(),
-                                    runtime.checkpoints(),
-                                    cancellation);
-                    ToolResult result = runtime.pipeline().execute(call, context);
-                    unresolved.remove(call);
-                    if (result.status() == ToolStatus.UNKNOWN)
+                ToolPipelineContext context =
+                        new ToolPipelineContext(
+                                runtime.scope(),
+                                turnId,
+                                stepId,
+                                core.tools(),
+                                core.session(),
+                                core.events(),
+                                core.policy(),
+                                runtime.approvals(),
+                                runtime.checkpoints(),
+                                cancellation);
+                if (!response.toolCalls().isEmpty()) {
+                    var batch =
+                            core.events()
+                                    .invoke(
+                                            StandardExtensionPoints.TOOL_BATCH,
+                                            ToolBatchExecution.serial(),
+                                            value -> value);
+                    var results =
+                            Objects.requireNonNull(
+                                    batch.execute(
+                                            response.toolCalls(), context, runtime.pipeline()));
+                    if (results.size() > response.toolCalls().size())
                         throw new HarnessException(
-                                "UNKNOWN_SIDE_EFFECT",
-                                "Manual verification required; no automatic retry");
-                    if (result.status() == ToolStatus.CANCELLED)
-                        throw new HarnessException("CANCELLED", "Tool cancelled");
-                    if (Boolean.TRUE.equals(result.value().get("sideEffectUncertain")))
+                                "INVALID_SCHEDULER_RESULT", "Too many tool results");
+                    for (int index = 0; index < results.size(); index++) {
+                        var result = results.get(index);
+                        var call = response.toolCalls().get(index);
+                        if (!call.callId().equals(result.callId()))
+                            throw new HarnessException(
+                                    "INVALID_SCHEDULER_RESULT",
+                                    "Results must retain original call order");
+                        unresolved.remove(call);
+                        if (result.status() == ToolStatus.UNKNOWN)
+                            throw new HarnessException(
+                                    "UNKNOWN_SIDE_EFFECT",
+                                    "Manual verification required; no automatic retry");
+                        if (result.status() == ToolStatus.CANCELLED)
+                            throw new HarnessException("CANCELLED", "Tool cancelled");
+                        if (Boolean.TRUE.equals(result.value().get("sideEffectUncertain")))
+                            throw new HarnessException(
+                                    "UNKNOWN_SIDE_EFFECT", "Partial effects require verification");
+                        if (result.status() == ToolStatus.TIMEOUT)
+                            throw new HarnessException("TIMEOUT", "Tool batch timed out");
+                        if (ToolBatchExecution.stops(result))
+                            throw new HarnessException(
+                                    "CHECKPOINT_FAILED", "Batch stopped before later calls");
+                    }
+                    if (results.size() != response.toolCalls().size())
                         throw new HarnessException(
-                                "UNKNOWN_SIDE_EFFECT",
-                                "Stopped command may have partial effects; inspect before retry");
+                                "INVALID_SCHEDULER_RESULT",
+                                "Incomplete batch without stop outcome");
                 }
+                cancellation.throwIfCancelled();
                 append("step.ended", EventLevel.STEP, turnId, stepId, null, Map.of());
                 stepOpen = false;
                 checkpoint(

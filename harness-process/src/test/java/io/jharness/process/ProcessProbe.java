@@ -18,7 +18,15 @@ public final class ProcessProbe {
                 System.out.println(System.getenv("JHARNESS_APPROVED_VALUE"));
             }
             case "stdin" -> System.out.println(System.in.read());
-            case "block" -> Thread.sleep(30000);
+            case "block" -> {
+                if (args.length > 1) {
+                    var self = ProcessHandle.current();
+                    Files.writeString(
+                            Path.of(args[1]),
+                            self.pid() + "\n" + self.info().startInstant().orElseThrow());
+                }
+                Thread.sleep(30000);
+            }
             case "flood" -> {
                 while (true) {
                     System.out.println("x".repeat(128));
@@ -32,7 +40,8 @@ public final class ProcessProbe {
                                         "-cp",
                                         System.getProperty("java.class.path"),
                                         ProcessProbe.class.getName(),
-                                        "block")
+                                        "block",
+                                        args[1] + ".child")
                                 .start();
                 Files.writeString(Path.of(args[1]), String.valueOf(child.pid()));
                 Thread.sleep(30000);

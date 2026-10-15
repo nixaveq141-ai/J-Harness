@@ -22,7 +22,8 @@ public final class CliConfig {
                     "llm-provider",
                     "agent-default",
                     "context-compaction",
-                    "terminal-local");
+                    "terminal-local",
+                    "tool-scheduling");
     static final Set<String> KEYS =
             Set.of(
                     "baseUrl",
@@ -54,7 +55,8 @@ public final class CliConfig {
                     "bundles",
                     "defaultProfile",
                     "ecosystem",
-                    "searchFilter");
+                    "searchFilter",
+                    "toolScheduling");
     final Map<String, Object> values;
     final Map<String, Object> selection;
 
@@ -70,6 +72,7 @@ public final class CliConfig {
                     "Unknown config key; API keys must be environment references");
         this.values = Values.snapshot(values);
         searchFilter();
+        scheduling();
         if (values.containsKey("ecosystem"))
             EcosystemConfig.validate(Values.object(values.get("ecosystem")));
         for (String name : List.of("baseUrl", "model", "apiKeyEnv", "currency", "defaultProfile"))
@@ -81,6 +84,9 @@ public final class CliConfig {
         maxOutputTokens();
         currency();
         enabled();
+        if (scheduling().maxConcurrency() > 1 && !enabled().contains("tool-scheduling"))
+            throw new HarnessException(
+                    "INVALID_TOOL_SCHEDULING", "Parallel scheduling plugin is disabled");
         if (values.containsKey("baseUrl"))
             new OpenAiCompatibleConfig(
                     URI.create(string("baseUrl", "")),
@@ -133,6 +139,10 @@ public final class CliConfig {
 
     WorkspaceSearchFilter searchFilter() {
         return WorkspaceSearchFilter.from(values.getOrDefault("searchFilter", Map.of()));
+    }
+
+    ToolSchedulingOptions scheduling() {
+        return ToolSchedulingOptions.from(values.getOrDefault("toolScheduling", Map.of()));
     }
 
     String string(String key, String fallback) {

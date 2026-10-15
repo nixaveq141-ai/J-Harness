@@ -1,0 +1,11 @@
+{
+  "baseUrl": "https://api.example.test/v1",
+  "model": "configured-model",
+  "apiKeyEnv": "JHARNESS_API_KEY",
+  "toolScheduling": {
+    "mode": "readonly-parallel",
+    "maxConcurrency": 4,
+    "tools": ["list_directory", "read_file", "search_files", "grep"],
+    "timeoutSeconds": 30
+  }
+}

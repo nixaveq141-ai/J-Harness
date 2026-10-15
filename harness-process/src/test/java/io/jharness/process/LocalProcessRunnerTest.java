@@ -245,9 +245,10 @@ class LocalProcessRunnerTest {
 
     @Test
     void explicitNativeShellExecutesBatchAndTreeLimitStopsSpawn() throws Exception {
+        Path pidFile = root.resolve("tree-limit.pid");
+        ToolResult limited = null;
         try (var runner = runner(1, 8192)) {
-            Path pidFile = root.resolve("tree-limit.pid");
-            ToolResult limited =
+            limited =
                     runner.execute(
                             request(
                                     ProcessProbe.command("tree", pidFile.toString()),
@@ -271,7 +272,43 @@ class LocalProcessRunnerTest {
                 assertEquals(9, result.value().get("exitCode"));
                 assertTrue(result.value().get("stdout").toString().contains("wrapper-like"));
             }
+        } finally {
+            cleanupLateFixtureChild(Path.of(pidFile + ".child"), limited);
         }
+    }
+
+    // A fixture child can start after the runner's final ProcessHandle snapshot.
+    // Clean only its exact registered identity; retain all product assertions above.
+    static void cleanupLateFixtureChild(Path manifest, ToolResult result) throws Exception {
+        long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(3);
+        List<String> identity = List.of();
+        while (System.nanoTime() < deadline) {
+            if (Files.exists(manifest)) {
+                identity = Files.readAllLines(manifest);
+                if (identity.size() == 2 && !identity.get(1).isBlank()) break;
+            }
+            Thread.sleep(10);
+        }
+        if (identity.size() != 2) return; // Killed before registration in main.
+        long pid = Long.parseLong(identity.get(0));
+        var started = java.time.Instant.parse(identity.get(1));
+        var handle = ProcessHandle.of(pid);
+        if (handle.isEmpty()
+                || !handle.get().isAlive()
+                || handle.get().info().startInstant().filter(started::equals).isEmpty()) return;
+        try {
+            if (result != null) {
+                assertFalse(
+                        ((List<?>) result.value().get("trackedPids")).contains(pid),
+                        "runner left a tracked fixture process alive");
+                assertEquals("partial", result.value().get("cleanupStatus"));
+                assertTrue(result.value().get("limitations").toString().contains("unobserved"));
+            }
+        } finally {
+            handle.get().destroyForcibly();
+            handle.get().onExit().get(5, TimeUnit.SECONDS);
+        }
+        assertFalse(handle.get().isAlive());
     }
 
     static void awaitFile(Path file) throws Exception {

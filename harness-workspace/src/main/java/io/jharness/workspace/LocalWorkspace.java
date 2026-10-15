@@ -37,7 +37,7 @@ public final class LocalWorkspace implements WorkspaceFiles {
     private final Duration timeout;
     private final CommitHook hook;
     private final WorkspaceSearchFilter searchFilter;
-    private final Map<String, String> observed = new HashMap<>();
+    private final Map<String, String> observed = new ConcurrentHashMap<>();
 
     /** Fault/race injection seam, outside model-visible interfaces. */
     @FunctionalInterface

@@ -5,8 +5,8 @@
 ## 当前接续状态
 
 - M0～M7 已按各阶段明确范围完成本地开发、验收与收口。M7 Windows / Linux 各 260 项测试通过，均 0 失败/错误/跳过；236 个 Java/POM SHA 一致。
-- 最新切片为M8.1已完成：Windows269项测试通过，0失败/错误/跳过，实际本地/Docker过滤对照及默认环境回归通过；M8整阶段进行中，M8.2/M8.3未开始。历史M7的Linux260项不代表当前源码重新跑过Linux全量。
-- API / SDK 协议 1.7；JSONL 格式及事件 schemaVersion 为 1。
+- 最新切片为M8.2已完成：Windows280项测试通过，0失败/错误/跳过，最终JAR本地/真实Docker的CLI→Web→SDK只读调度与过滤回归通过；M8整阶段进行中，下一步M8.3，随后M8.4收口。历史M7的Linux260项不代表当前源码重新跑过Linux全量。
+- API / SDK 协议 1.8；JSONL 格式及事件 schemaVersion 为 1。
 - M7 已有本地/Docker ExecutionEnvironment、SDK、MCP stdio/HTTP JSON+SSE、受控 Skills、只读 Subagent、本机 Web API、CLI 生态配置/serve、Todo/Plan、固定来源网页抓取、单会话全文子串索引/比较/归档、环境/子任务/Web 离线核实。
 - 详细范围与延期项见 docs/requirements/upstream-capabilities.md；收口/发布门禁见 docs/testing/M7-closure.md。不将部分支持、延期项目写成已实现。当前没有前端页面。
 - 本轮使用本机 HTTP 替身/FakeLlm，没有付费模型请求；M4 DeepSeek 是独立历史证据。
@@ -22,7 +22,7 @@
 5. docs/testing/M7-docker-results.json、M7-skills-docker-results.json、M7-subagent-docker-results.json、M7-web-docker-results.json：四类最终打包实机结果；必须核对最终 JAR SHA 一致。
 6. docs/requirements/upstream-capabilities.md、docs/testing/M7-upstream-review.json：固定提交的范围取舍及 19 个源码入口 SHA。
 7. docs/examples/m7-cli.md、m7-config.json、m7-extensions.md、m7-web.md：可信配置与公共入口。
-8. docs/development/M8-contracts.md、docs/testing/M8-validation.md、M8-results.json、M8-filter-docker-results.json、M8-environment-regression.json、docs/examples/m8-search-filter.md：最新过滤实现与证据。
+8. docs/development/M8-contracts.md、docs/testing/M8-validation.md、M8-results.json、M8-filter-docker-results.json、M8-environment-regression.json、docs/examples/m8-search-filter.md：过滤实现与历史证据；最新M8.2证据为M8-results.json、M8.2-scheduling-docker-results.json、M8.2-filter-regression.json，配置见m8-tool-scheduling.md。
 9. docs/requirements/JHarness-next-plan-v1.0.md：M7之后的任务顺序、验收条件与下一次执行入口；新编号M8～M12属于新增实施计划。
 
 修改存储/恢复再读 M5；文件/进程/审批/CLI 对照 M2～M4，流式/压缩/配置读 M6 契约及测试。旧阶段记录是历史快照。
@@ -41,7 +41,7 @@
 
 ## 必须保持的约束
 
-- Loop 只依赖公共 API，横切能力通过服务、插件与标准扩展点接入。当前默认串行；显式有界只读子任务并发不等于自动工具并行。
+- Loop 只依赖公共 API，横切能力通过服务、插件与标准扩展点接入。当前默认串行；M8.2仅宿主显式启用的白名单/注册只读/有效ALLOW工具可有界并行，准备/结算由调用线程保持单写者，写/ASK是屏障。
 - 工具顺序：解析/Schema/作用域 → tool.requested → 策略/审批 → 有副作用时 intent 落盘 → 执行 → 标准结果/事件 → 上下文。检查点失败或拒绝时主体不得进入，不能改名/换入口绕过。
 - 所有 CLI/SDK/Web/MCP/Skills/子任务都沿用同一策略/审批/脱敏/durable intent；Markdown、外部网页和只读提示不能授予权限。
 - model.requested 的最终 prepared envelope 必须落盘，仅用其日志前缀即可重建。压缩保留完整协议组；SSE 完整结束与校验前不执行工具。
@@ -61,8 +61,8 @@
 
 ```powershell
 .\mvnw.cmd -B spotless:apply
-.\mvnw.cmd -B clean verify *> .build-cache/M8-verify.log
-.\scripts\collect-test-evidence.ps1 -Milestone M8 -Slice M8.1
+.\mvnw.cmd -B clean verify *> .build-cache/M8.2-verify.log
+.\scripts\collect-test-evidence.ps1 -Milestone M8 -Slice M8.2 -VerificationLog .build-cache/M8.2-verify.log
 & "$env:JAVA_HOME\bin\java.exe" -jar harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar --version
 ```
 
@@ -80,7 +80,7 @@ Docker CLI 为 C:/Users/Lenovo/AppData/Local/Programs/DockerDesktop/resources/bi
 
 本轮补齐 CLI/Web 装配、Todo/Plan、搜索/比较/归档、网页抓取及离线 Web 核实；修复子关闭父审批服务、重复消费审批输入、POSIX 锁竞争释放原锁、缺少 UTF-8 locale。管道取消夹具先填满管道，保留 UNKNOWN/期限断言；Linux 离线 Wrapper 夹具显式准备 HOME 缓存，失败尝试不算通过，原记录保留在 .build-cache。没有付费请求。
 
-M7 范围收口完成；延期或部分支持项目不算已实现。后续默认顺序已更新为M8核心缺口→M9发布验证→M10 Web前端→M11 Desktop，M12为按需扩展候选；M9本地准备可提前。下一次用户要求继续时，从M8.2的只读工具调度契约开始，随后实现调度和标准横切插件；M8.1已经完成。详细范围以 docs/requirements/JHarness-next-plan-v1.0.md 为准。没有Git remote时不自行建仓/推送，不因计划存在就开始付费模型调用或发布。
+M7 范围收口完成；延期或部分支持项目不算已实现。后续默认顺序已更新为M8核心缺口→M9发布验证→M10 Web前端→M11 Desktop，M12为按需扩展候选；M9本地准备可提前。下一次用户要求继续时，从M8.3标准限流/重试插件契约开始；M8.1/M8.2已经完成。详细范围以 docs/requirements/JHarness-next-plan-v1.0.md 为准。没有Git remote时不自行建仓/推送，不因计划存在就开始付费模型调用或发布。
 
 ## 2026-10-15 PRD / 实施顺序审计
 
@@ -97,3 +97,13 @@ M8.1完成契约/验收矩阵、WorkspaceSearchFilter不可变宿主配置、默
 新增9个测试（workspace4、CLI2、testkit3），最终Windows .\mvnw.cmd -B clean verify通过269项，0失败/错误/跳过。M8FilterDockerProbe两种过滤配置实际本地/容器对照通过；M7DockerProbe对新JAR的默认环境/命令/SDK回归保存于独立M8-environment-regression.json，未覆盖M7历史证据。首次全量遇既有Windows进程夹具临时目录占用，失败日志保留，原断言未改，复验通过。无付费模型请求，无新增Linux全量/macOS/远端CI结果。
 
 新证据采集支持 -Milestone M8 -Slice M8.1。完整Git wildmatch/嵌套.gitignore仍不支持，过滤不是秘密隔离；显式read/Shell保持原权限。下一步仅M8.2：先制定可替换调度、有界只读并发、稳定结果聚合、写/审批屏障、取消失败与持久单写者契约，沿用现有默认串行和UNKNOWN不重放。M8.3限流/重试另行推进，不把M8.1计作M8全部完成。
+
+## 2026-10-15 M8.2完成与接续
+
+API/SDK1.8批处理扩展、可替换ToolScheduler、默认串行/显式有界只读run、串行prepare/finish、写/ASK屏障、原序聚合、两秒共享退出期限与UNKNOWN、防止重复/虚假SUCCESS结算已交付。经典CLI/SDK/生态CLI/serve统一装配，dry-run保持串行预览；LocalWorkspace观察缓存支持并发。子SDK独立配置默认串行，宿主工具/执行与结果拦截器须线程安全并守只读契约。
+
+新增11项测试，最终Windows `.\mvnw.cmd -B clean verify` 通过280项，0失败/错误/跳过。最终JAR本地/实际Docker的CLI→Web→SDK并行模式读取、原序结果、审批写入、每侧三次实际HTTP请求重建及清理通过；过滤回归对同一JAR通过。证据见M8-validation.md、M8-results.json（slice=M8.2）、M8.2-scheduling-docker-results.json、M8.2-filter-regression.json；JAR SHA 220301b240af2e33a18f8109947db8236456981960bb9b2ddc598bd579637406。M8.1原269项JSON独立归档，历史M7证据保留。
+
+修复取消状态优先级并保留部分副作用标记；全量定位旧Windows进程夹具晚启动未观察孩子占用临时目录，测试finally按PID+startInstant清理且保留原断言。生产进程仍为采样partial，无Job Object保证。失败尝试/诊断保留.build-cache，最终通过才计完成。无付费请求，无最新Linux全量/macOS/远端CI结果，容器链路不冒充Linux280项全量。
+
+下一步仅M8.3：先盘点已有压缩/超时/费用与非流式429退避，定义标准限流/重试的所有权、可重试分类、次数/退避/总时限/预算、取消事件和UNKNOWN禁重放，再实现；随后M8.4整阶段收口。前端仍在M10、Desktop在M11，本次未提前推进。按用户长期授权完成本地Git提交，不推送。

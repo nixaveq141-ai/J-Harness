@@ -148,7 +148,7 @@ final class EcosystemCli {
                                                     "resolved",
                                                     sanitizer.sanitize(config.values),
                                                     "scheduler",
-                                                    "serial; explicit bounded child delegation")));
+                                                    config.scheduling().configuration())));
                             writer.flush();
                             if (Boolean.TRUE.equals(config.values.get("compactContext")))
                                 new ContextCompactionPlugin(
@@ -199,7 +199,8 @@ final class EcosystemCli {
                                                     config.values.getOrDefault(
                                                             "prompts", List.of()))),
                             tools,
-                            config.parameters()));
+                            config.parameters(),
+                            config.scheduling()));
         } catch (Exception ex) {
             try {
                 if (model != null) model.close();

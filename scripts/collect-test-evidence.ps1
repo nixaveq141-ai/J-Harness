@@ -53,7 +53,7 @@ foreach ($buildFile in @('pom.xml', 'mvnw', 'mvnw.cmd', '.mvn/wrapper/maven-wrap
 
 $totals = [ordered]@{}
 if ($Milestone -eq 'M8') {
-    foreach ($entry in @('docs/development/M8-contracts.md', 'docs/examples/m8-filter-config.json')) {
+    foreach ($entry in @('docs/development/M8-contracts.md', 'docs/examples/m8-filter-config.json', 'docs/examples/m8-scheduling-config.json', 'docs/examples/m8-tool-scheduling.md')) {
         $sources[$entry] = (Get-FileHash -LiteralPath (Join-Path $workspacePath $entry) -Algorithm SHA256).Hash.ToLowerInvariant()
     }
 }

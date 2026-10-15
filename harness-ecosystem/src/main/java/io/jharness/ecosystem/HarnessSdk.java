@@ -5,13 +5,14 @@ import io.jharness.api.*;
 import io.jharness.plugin.*;
 import io.jharness.policy.PolicyPlugin;
 import io.jharness.session.*;
+import io.jharness.tools.ToolSchedulingPlugin;
 import io.jharness.tools.ToolsPlugin;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /** Embedded, single-session owner. Hosts supply trusted configuration and evidence evaluator. */
 public final class HarnessSdk implements AutoCloseable {
-    public static final String PROTOCOL_VERSION = "1.7";
+    public static final String PROTOCOL_VERSION = "1.8";
     private final PluginScope scope;
     private final SessionWriter writer;
     private final SessionReader reader;
@@ -25,6 +26,7 @@ public final class HarnessSdk implements AutoCloseable {
     private final SharedFeeBudget fees;
     private final boolean rootBudget;
     private final Map<String, Object> parameters;
+    private final ToolSchedulingOptions scheduling;
     private final AtomicBoolean cancelled = new AtomicBoolean(), closed = new AtomicBoolean();
 
     /**
@@ -97,7 +99,8 @@ public final class HarnessSdk implements AutoCloseable {
                         configuration.tools(),
                         Map.of(),
                         null,
-                        configuration.parameters()));
+                        configuration.parameters(),
+                        configuration.scheduling()));
     }
 
     HarnessSdk(
@@ -117,6 +120,7 @@ public final class HarnessSdk implements AutoCloseable {
             SdkOptions options) {
         scope = new PluginScope(sessionId, options.agentId());
         parameters = options.parameters();
+        scheduling = options.scheduling();
         tools =
                 options.tools() == null
                         ? new ScopedToolRegistry()
@@ -185,9 +189,21 @@ public final class HarnessSdk implements AutoCloseable {
                             EventSessionProjection::new,
                             new DefaultCheckpointPolicy(),
                             approvals,
-                            (call, context) ->
-                                    registry.requireUnique(ToolPipeline.class, scope)
-                                            .execute(call, context),
+                            new ToolPipeline() {
+                                public ToolResult execute(
+                                        ToolInvocation call, ToolPipelineContext context) {
+                                    return registry.requireUnique(ToolPipeline.class, scope)
+                                            .execute(call, context);
+                                }
+
+                                public Optional<PreparedToolCall> prepare(
+                                        ToolInvocation call,
+                                        ToolPipelineContext context,
+                                        Runnable barrier) {
+                                    return registry.requireUnique(ToolPipeline.class, scope)
+                                            .prepare(call, context, barrier);
+                                }
+                            },
                             new EventRequestJournal(),
                             sanitizer,
                             completion,
@@ -244,6 +260,7 @@ public final class HarnessSdk implements AutoCloseable {
                                     new EnvironmentPlugin(environment, artifacts),
                                     new PolicyPlugin(policy, approvals),
                                     new ToolsPlugin(sanitizer),
+                                    new ToolSchedulingPlugin(options.scheduling()),
                                     new AgentPlugin(services)));
             plugins.addAll(extensions);
             assembly =
@@ -301,7 +318,9 @@ public final class HarnessSdk implements AutoCloseable {
                                         "currency",
                                         budget.currency()),
                                 "feeScope",
-                                rootBudget ? "parent-turn" : "inherited-parent-turn")));
+                                rootBudget ? "parent-turn" : "inherited-parent-turn",
+                                "toolScheduling",
+                                scheduling.configuration())));
         writer.append(
                 SessionEvent.session(
                         scope.sessionId(),

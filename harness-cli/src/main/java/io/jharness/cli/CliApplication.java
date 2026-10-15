@@ -902,7 +902,9 @@ public final class CliApplication {
                                             "streaming",
                                             Boolean.TRUE.equals(config.values.get("streaming")),
                                             "searchFilter",
-                                            config.searchFilter().configuration()))));
+                                            config.searchFilter().configuration(),
+                                            "toolScheduling",
+                                            config.scheduling().configuration()))));
             try (var runtime =
                     new Assembly(
                             config,
@@ -1405,13 +1407,28 @@ public final class CliApplication {
                         public void stop() {}
                     };
             ToolPipeline pipeline =
-                    (call, context) -> {
-                        ToolPipeline base = registry.requireUnique(ToolPipeline.class, scope);
-                        return (args.has("dry-run")
-                                        ? new DryRunPipeline(
-                                                base, new LocalPlanPreviewer(files, clean), clean)
-                                        : base)
-                                .execute(call, context);
+                    new ToolPipeline() {
+                        public ToolResult execute(
+                                ToolInvocation call, ToolPipelineContext context) {
+                            ToolPipeline base = registry.requireUnique(ToolPipeline.class, scope);
+                            return (args.has("dry-run")
+                                            ? new DryRunPipeline(
+                                                    base,
+                                                    new LocalPlanPreviewer(files, clean),
+                                                    clean)
+                                            : base)
+                                    .execute(call, context);
+                        }
+
+                        public Optional<PreparedToolCall> prepare(
+                                ToolInvocation call,
+                                ToolPipelineContext context,
+                                Runnable barrier) {
+                            return args.has("dry-run")
+                                    ? Optional.empty()
+                                    : registry.requireUnique(ToolPipeline.class, scope)
+                                            .prepare(call, context, barrier);
+                        }
                     };
             var services =
                     new AgentRuntimeServices(
@@ -1453,6 +1470,7 @@ public final class CliApplication {
                                                             .evaluate(call, context),
                                     approvals),
                             new ToolsPlugin(clean),
+                            new ToolSchedulingPlugin(config.scheduling()),
                             new LlmPlugin(model),
                             agentPlugin.apply(services));
             container =

@@ -54,6 +54,12 @@ public final class M7WebDockerProbe {
 
     private static Map<String, Object> run(
             String docker, String image, Path root, Path jar, boolean container) throws Exception {
+        return run(docker, image, root, jar, container, false);
+    }
+
+    static Map<String, Object> run(
+            String docker, String image, Path root, Path jar, boolean container, boolean parallel)
+            throws Exception {
         Files.createDirectories(root);
         Files.writeString(root.resolve("input.txt"), "before");
         var count = new AtomicInteger();
@@ -90,6 +96,25 @@ public final class M7WebDockerProbe {
                                                         tool,
                                                         "arguments",
                                                         JSON.writeValueAsString(arguments)))));
+                    }
+                    if (step == 0 && parallel) {
+                        var calls = new ArrayList<Object>((List<?>) message.get("tool_calls"));
+                        calls.add(
+                                Map.of(
+                                        "id",
+                                        "parallel-list",
+                                        "type",
+                                        "function",
+                                        "function",
+                                        Map.of(
+                                                "name",
+                                                "list_directory",
+                                                "arguments",
+                                                JSON.writeValueAsString(
+                                                        Map.of(
+                                                                "path", ".", "depth", 1, "limit",
+                                                                10)))));
+                        message.put("tool_calls", calls);
                     }
                     byte[] reply =
                             JSON.writeValueAsBytes(
@@ -142,6 +167,10 @@ public final class M7WebDockerProbe {
                             "fixture",
                             "apiKeyEnv",
                             "FIXTURE_API_KEY",
+                            "toolScheduling",
+                            parallel
+                                    ? Map.of("mode", "readonly-parallel", "maxConcurrency", 2)
+                                    : Map.of("mode", "serial"),
                             "maxSteps",
                             4,
                             "durationSeconds",
@@ -295,6 +324,45 @@ public final class M7WebDockerProbe {
                     "Events and redaction");
             var repository = new JsonlSessionRepository(root.resolve(".jharness/sessions"));
             var events = repository.openReader(task).events();
+            if (parallel) {
+                require(
+                        events.stream()
+                                        .filter(
+                                                e ->
+                                                        e.type().equals("tool.scheduled")
+                                                                && "readonly-parallel"
+                                                                        .equals(
+                                                                                e.payload()
+                                                                                        .get(
+                                                                                                "mode")))
+                                        .count()
+                                == 2,
+                        "Two trusted read calls scheduled in parallel mode");
+                var completed =
+                        events.stream()
+                                .filter(e -> e.type().equals("tool.completed"))
+                                .map(SessionEvent::callId)
+                                .toList();
+                require(
+                        completed.equals(List.of("call-0", "parallel-list", "call-1")),
+                        "Read results and write barrier retain call order");
+                var prepared =
+                        new EventRequestJournal()
+                                .reconstruct(
+                                        events,
+                                        events.stream()
+                                                .filter(e -> e.type().equals("model.requested"))
+                                                .toList()
+                                                .get(1)
+                                                .eventId());
+                require(
+                        prepared.messages().stream()
+                                .filter(m -> "tool".equals(m.get("role")))
+                                .map(m -> m.get("tool_call_id"))
+                                .toList()
+                                .equals(List.of("call-0", "parallel-list")),
+                        "Model tool result order");
+            }
             int reconstructed = 0;
             for (int i = 0; i < events.size(); i++)
                 if (events.get(i).type().equals("model.requested")) {
@@ -376,6 +444,8 @@ public final class M7WebDockerProbe {
                     process.waitFor(10, TimeUnit.SECONDS) && process.exitValue() == 0,
                     "Web host clean exit");
             return Map.of(
+                    "parallelReadOnlyScheduling",
+                    parallel,
                     "status",
                     "COMPLETED",
                     "actualHttp",

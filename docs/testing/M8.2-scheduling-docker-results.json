@@ -1,0 +1,33 @@
+{
+  "milestone" : "M8.2",
+  "slice" : "packaged-cli-web-sdk-readonly-scheduling",
+  "actualDocker" : true,
+  "cases" : {
+    "local" : {
+      "requestsReconstructedAgainstWire" : 3,
+      "actualHttp" : true,
+      "hostExitCode" : 0,
+      "status" : "COMPLETED",
+      "environmentClosed" : true,
+      "approvalBeforeWrite" : true,
+      "parallelReadOnlyScheduling" : true,
+      "submissionDeduplicated" : true
+    },
+    "docker" : {
+      "requestsReconstructedAgainstWire" : 3,
+      "actualHttp" : true,
+      "hostExitCode" : 0,
+      "status" : "COMPLETED",
+      "environmentClosed" : true,
+      "approvalBeforeWrite" : true,
+      "parallelReadOnlyScheduling" : true,
+      "submissionDeduplicated" : true
+    }
+  },
+  "image" : "eclipse-temurin@sha256:ccbad9e7cb84c27092b12c40a4143e5733e050db9c3784d84f632dcf423fb2ef",
+  "result" : "SUCCESS",
+  "cleanupVerified" : true,
+  "capturedAt" : "2026-10-15T14:31:31.458940700Z",
+  "evidenceDirectory" : "D:\\Documents\\my projects\\J-Harness\\.build-cache\\m8-scheduling-probe\\scheduling-7602240a-e711-4d1c-98c7-63150eb96a5a",
+  "jarSha256" : "220301b240af2e33a18f8109947db8236456981960bb9b2ddc598bd579637406"
+}

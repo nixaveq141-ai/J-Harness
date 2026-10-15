@@ -27,7 +27,7 @@
 | spill、投影与缓存 / FR-08.4、13.4 | spill/spill-policy 为大输出产物与有界预览；core/session 投影 | 支持 Java 有界产物回读/持久投影；M2/M5 产物与投影测试，索引不成为事实来源 |
 | 配置组合 / FR-17 | preset/agent-presets 是共享装配；Java 为命名模型/Profile/Bundle/Preset 与 SDK 配置 | 支持 Java 组合与选择事件，不是复制上游配置文件；M6ConfigurationTest、M7CliEcosystemTest |
 | 交付/展示 / FR-12 | fs/tool-present 的声明交付事实 | 支持事实报告/文件SHA/来源事件；M4CliIntegrationTest、M7CliEcosystemTest。Web Diff 为已记录 git_diff，不是实时自动执行 Git |
-| 调度与横切扩展 / FR-25 | core/tools 有并发调用与顺序屏障；Java 默认串行、可替换 AgentLoopFactory/拦截链 | 部分支持：显式有界只读子任务并发、顺序日志和配置中可见串行原因，压缩/超时/费用保护已有实现；M7SubagentTest、M6ConfigurationTest。自动只读工具并行与通用重试/限流插件延期，需要顺序/写屏障/未知结果语义独立验收；绝不自动重试未知副作用或模型请求 |
+| 调度与横切扩展 / FR-25 | core/tools 有并发调用与顺序屏障；Java 默认串行、可替换 AgentLoopFactory/拦截链 | 部分支持：M8.2已交付宿主显式启用的有界只读工具并行、可替换调度、原序聚合及写/ASK屏障；M8SchedulingTest和M8.2-scheduling-docker-results.json。默认串行、子任务并发、压缩/超时/费用保护保持；通用重试/限流插件待M8.3，绝不自动重试未知副作用或模型请求 |
 | 沙箱、SDK、多入口 / FR-27 | sdk/server 是 stdio JSON-RPC 宿主；Java 提供嵌入式版本化 API 与本机 HTTP Web 后端 | 支持本地/Docker/SDK/CLI/Web；M7EnvironmentTest、M7SdkTest、M7WebTest、M7CliEcosystemTest、四组 Docker JSON。协议不是上游 JSON-RPC 兼容层，容器 PTY 不支持；Desktop UI 延期，本地宿主关闭/取消生命周期已有实现 |
 | 语音、浏览器与桌面操作 / PRD1.4 | 非产品复刻范围，不在本轮 19 个入口核验范围 | 排除；无此工具，不以本机 Web API 代称桌面操作 |
 
@@ -39,3 +39,6 @@ M7 本地验收及发布门禁见 [收口记录](../testing/M7-closure.md)。远
 
 FR-07.3新增宿主searchFilter，默认排除→根.gitignore→用户有序规则，统一list/search/grep；metadata/链接/越权保护不可被否定，直接读取仍遵守原授权。支持语法、上限、CLI/SDK/子视图与worker确认见 [M8契约](../development/M8-contracts.md)，Windows269项及实际Docker结果见 [M8验收](../testing/M8-validation.md)。完整Git wildmatch和嵌套.gitignore仍不支持。本条是Java实现进展，不新增上游源码审查声明；FR-25仍待M8.2/M8.3。
 
+## M8.2实施更新（2026-10-15）
+
+FR-25.1/25.3按宿主显式配置交付只读调度，公共API/SDK1.8；准备和结算由调用线程保持单写者，工具主体有界并行，结果原序，写/审批屏障及取消/超时/UNKNOWN均有正反例。Windows280项及最终制品本地/真实Docker的CLI/Web/SDK链路通过，见 [M8验收](../testing/M8-validation.md)。框架不隔离任意Java插件，不强杀不合作线程；通用限流/重试仍待M8.3，FR-25整体仍是部分支持。本条只更新Java实现进展，不新增上游源码审查声明。
