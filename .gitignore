@@ -1,0 +1,13 @@
+**/target/
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+.acl-recovery/
+.build-cache/
+.dsh-tmp/
+.upstream/
+*.log
+.env
+.jharness/

@@ -1,0 +1,31 @@
+{
+  "baseUrl": "https://api.example.test/v1",
+  "model": "configured-model",
+  "apiKeyEnv": "JHARNESS_API_KEY",
+  "maxSteps": 16,
+  "durationSeconds": 180,
+  "contextTokens": 32768,
+  "ecosystem": {
+    "environment": {"kind": "local"},
+    "planning": true,
+    "mcp": [],
+    "skills": [],
+    "subagents": {
+      "inspect": {
+        "prompt": "Read the required file and cite its recorded facts.",
+        "tools": ["read_file"],
+        "requireRead": ["pom.xml"],
+        "maxSteps": 4,
+        "durationSeconds": 30
+      }
+    },
+    "webSources": {},
+    "web": {
+      "port": 0,
+      "tokenEnv": "JHARNESS_WEB_TOKEN",
+      "catalogId": "web-catalog",
+      "approvalSeconds": 30,
+      "maxTasks": 32
+    }
+  }
+}

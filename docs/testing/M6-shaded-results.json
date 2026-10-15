@@ -1,0 +1,15 @@
+{
+  "status": "PASS",
+  "platform": "Windows",
+  "transport": "local SSE fixture only",
+  "modelRequests": 23,
+  "pty": true,
+  "taskState": "EXITED",
+  "residualPids": [],
+  "artifactSha256": "cda59f2ebb3200342cd92b3f72e54f066920e0fdf6a2ca62c11e782987584636",
+  "fixture": "D:\\Documents\\my projects\\J-Harness\\.build-cache\\M6-shaded-smoke-65b8a3ffe2c3495f9c04343295e8a6f2",
+  "jarSha256": "f5af4204aabee126abbd62836aea06c3c35a2dd03e39425aa34675f8c513ae0d",
+  "paidModelRequests": 0,
+  "scriptSha256": "4b0c892eef435c428baa09ebf2f93004cd5ecfce08e3a58f27c245b52ee8137c",
+  "script": ".build-cache/M6-shaded-smoke.py"
+}

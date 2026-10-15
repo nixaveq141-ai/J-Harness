@@ -1,0 +1,73 @@
+package io.jharness.llm;
+
+import io.jharness.api.*;
+import java.net.URI;
+import java.time.Duration;
+import java.util.*;
+
+/** Secrets are kept outside ChatRequest, Session events and toString. */
+public final class OpenAiCompatibleConfig {
+    final URI endpoint;
+    final String model;
+    final String apiKey;
+    final Duration timeout;
+    final int maxResponseBytes;
+    final int rateLimitRetries;
+    final ModelCapabilities capabilities;
+
+    public OpenAiCompatibleConfig(
+            URI baseUrl,
+            String model,
+            String apiKey,
+            Duration timeout,
+            int maxResponseBytes,
+            int rateLimitRetries,
+            ModelCapabilities capabilities) {
+        Objects.requireNonNull(baseUrl);
+        String host = baseUrl.getHost();
+        boolean loopback =
+                "localhost".equals(host) || "127.0.0.1".equals(host) || "[::1]".equals(host);
+        if (host == null
+                || baseUrl.getUserInfo() != null
+                || baseUrl.getQuery() != null
+                || baseUrl.getFragment() != null
+                || !("https".equals(baseUrl.getScheme())
+                        || "http".equals(baseUrl.getScheme()) && loopback))
+            throw new IllegalArgumentException(
+                    "Use HTTPS or loopback HTTP without URL credentials/query/fragment");
+        this.model = Values.required(model, "model");
+        this.apiKey = Values.required(apiKey, "apiKey");
+        if (apiKey.contains("\r") || apiKey.contains("\n"))
+            throw new IllegalArgumentException("Invalid API key");
+        if (timeout == null
+                || timeout.isZero()
+                || timeout.isNegative()
+                || maxResponseBytes < 128
+                || maxResponseBytes > 16 * 1024 * 1024
+                || rateLimitRetries < 0
+                || rateLimitRetries > 3) throw new IllegalArgumentException("Invalid HTTP limits");
+        this.endpoint = URI.create(baseUrl.toString().replaceAll("/+$", "") + "/chat/completions");
+        this.timeout = timeout;
+        this.maxResponseBytes = maxResponseBytes;
+        this.rateLimitRetries = rateLimitRetries;
+        Objects.requireNonNull(capabilities);
+        this.capabilities =
+                new ModelCapabilities(
+                        capabilities.tools(),
+                        capabilities.streaming(),
+                        false,
+                        false,
+                        capabilities.maxContextTokens());
+    }
+
+    public ModelCapabilities capabilities() {
+        return capabilities;
+    }
+
+    @Override
+    public String toString() {
+        return "OpenAiCompatibleConfig[model="
+                + new SecretRedactor(List.of(apiKey)).text(model)
+                + ", apiKey=[REDACTED]]";
+    }
+}

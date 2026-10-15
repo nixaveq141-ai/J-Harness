@@ -1,0 +1,35 @@
+{
+  "baseUrl": "https://api.example.test/v1",
+  "model": "configured-model",
+  "apiKeyEnv": "JHARNESS_API_KEY",
+  "defaultProfile": "inspect",
+  "models": {
+    "primary": {
+      "baseUrl": "https://api.example.test/v1",
+      "model": "configured-model",
+      "apiKeyEnv": "JHARNESS_API_KEY",
+      "toolsSupported": true,
+      "streamSupported": true
+    },
+    "text-only": {
+      "baseUrl": "https://api.example.test/v1",
+      "model": "configured-text-model",
+      "apiKeyEnv": "TEXT_MODEL_API_KEY",
+      "toolsSupported": false,
+      "streamSupported": false
+    }
+  },
+  "presets": {
+    "read-only": {"settings": {"policy": "read-only", "streaming": true}},
+    "long-task": {"settings": {"streaming": true, "compactContext": true, "contextTokens": 65536, "compactionCharacters": 48000, "maxSteps": 40}}
+  },
+  "bundles": {
+    "files": {"enabledTools": ["list_directory", "read_file", "search_files", "grep", "git_diff", "read_artifact"], "prompts": ["Cite recorded file facts and keep artifact references."]},
+    "editing": {"enabledTools": ["write_file", "edit_file", "apply_patch", "execute_command"], "prompts": ["Use current file versions and request approval for mutations."]},
+    "terminal": {"enabledTools": ["terminal_start", "terminal_status", "terminal_log", "terminal_write", "terminal_resize", "terminal_stop"], "prompts": ["Stop long-lived tasks explicitly and inspect the cleanup result."]}
+  },
+  "profiles": {
+    "inspect": {"modelRoute": "primary", "preset": "read-only", "bundles": ["files"]},
+    "coding": {"modelRoute": "primary", "preset": "long-task", "bundles": ["files", "editing", "terminal"]}
+  }
+}

@@ -1,0 +1,105 @@
+{
+  "commit": "c291e7961a515f6d7af9304e7fd1d257929aef26",
+  "acquisition": "official GitHub codeload commit archive; git transport reset; no git checkout or rev-parse claimed",
+  "archiveUrl": "https://codeload.github.com/deepseek-ai/deepseek-harness/zip/c291e7961a515f6d7af9304e7fd1d257929aef26",
+  "archiveSha256": "e268fe8bd0049cd77da25fd051cb06d71896d2b28ec1270bd5890e54fa70d42a",
+  "capturedAt": "2026-10-15T09:28:25.7230805+00:00",
+  "review": "Package capability entry points and declarations compared; not upstream test execution, compatibility certification or whole-file security audit",
+  "files": [
+    {
+      "path": "packages/core/session/src/index.ts",
+      "sha256": "688aafe3897fdf6f8dc5da1f7ec57d6af0c8484e6afda06d05ff7ecfb932cc1c",
+      "lines": 1284
+    },
+    {
+      "path": "packages/core/tools/src/index.ts",
+      "sha256": "cc8d54b6a0d6005a26871e84ce3390ba0bbd7fa61a8c65d4b9cc2fbd86126ac2",
+      "lines": 1936
+    },
+    {
+      "path": "packages/todo/tool-todo/src/index.ts",
+      "sha256": "c4decd0e2b7a4032ee53b17cbf9a2218572646e568bf5638b983f53b0c92c0e6",
+      "lines": 223
+    },
+    {
+      "path": "packages/plan/plan-mode/src/index.ts",
+      "sha256": "9571c489e85362dee190a617723374193e848a154a22da498daba5b31152dc18",
+      "lines": 466
+    },
+    {
+      "path": "packages/goal/tool-goal/src/index.ts",
+      "sha256": "378df43535a4ac40d94e6e8b79df12b5dad2c42d572105652faf1efd0b648959",
+      "lines": 345
+    },
+    {
+      "path": "packages/schedule/schedule/src/index.ts",
+      "sha256": "42b3422e129909f6b844eda1a53108a75cd5e38b44fc79051199665625727213",
+      "lines": 85
+    },
+    {
+      "path": "packages/subagent/tool-subagent/src/index.ts",
+      "sha256": "7ed184d6f1e59675410cd292ebffee95fbb83c37ce43e4d005a421a969501af3",
+      "lines": 708
+    },
+    {
+      "path": "packages/workflow/workflow/src/index.ts",
+      "sha256": "a7cf7dc7b367f18a9945883fe259f96ef031aa45a7a4e2c216cfcaa9a64b0685",
+      "lines": 203
+    },
+    {
+      "path": "packages/code-runtime/code-runtime-worker-thread/src/index.ts",
+      "sha256": "b7a0e560385835eddfb7e5fca74e2faf7ff0515da1bec758117abc9c0fbcd24d",
+      "lines": 561
+    },
+    {
+      "path": "packages/mcp/mcp-client/src/index.ts",
+      "sha256": "03b5cd247d801034feca7e7e60097e42805c3198e5eec4ba45ba1c56665496a8",
+      "lines": 188
+    },
+    {
+      "path": "packages/skill/skill-filesystem/src/index.ts",
+      "sha256": "0eaa88f6055fa4809afc3325110fa0ddfca714e5fd96553ecd2cd89a2b99f382",
+      "lines": 1049
+    },
+    {
+      "path": "packages/web/tool-web/src/index.ts",
+      "sha256": "6e13c20e5b5b9155a2212a5875a5cd924257908e88168f761eafcf1606854022",
+      "lines": 95
+    },
+    {
+      "path": "packages/session/session-persistence-jsonl/src/index.ts",
+      "sha256": "69931beb012cde8453d46589bb83703552cb7c8e19438e67b3548042882ab861",
+      "lines": 1647
+    },
+    {
+      "path": "packages/session-query/session-query-sqlite/src/index.ts",
+      "sha256": "3ff584729d6ed1d996dae80596c8e2e27b4137c85d624a16df9358634c952c77",
+      "lines": 1133
+    },
+    {
+      "path": "packages/attachment/attachment-local/src/index.ts",
+      "sha256": "46eb2b15b934ff493c825ae46fe20bfc51b110071c9ee531e6f44ff40c36a3c5",
+      "lines": 291
+    },
+    {
+      "path": "packages/preset/agent-presets/src/index.ts",
+      "sha256": "5880c7b87ba8cb2f4649c55cf2fadde966602e2c9b3c2f96ec377ac32d263fbc",
+      "lines": 855
+    },
+    {
+      "path": "packages/fs/tool-present/src/index.ts",
+      "sha256": "f92aa75d24e3b268ae4a0f3ed1bde14771436aeed621d09dfb41b5dd9eedc10f",
+      "lines": 108
+    },
+    {
+      "path": "packages/spill/spill-policy/src/index.ts",
+      "sha256": "7306f935ef5a3c57382022daf21714687d69784f141f41e6ace1f2ef7e3287bb",
+      "lines": 227
+    },
+    {
+      "path": "packages/sdk/server/src/index.ts",
+      "sha256": "8ce9469392abfb957e1c01f9e0d213852c28a2efd09ea6077e62d04e4722f028",
+      "lines": 102
+    }
+  ]
+}

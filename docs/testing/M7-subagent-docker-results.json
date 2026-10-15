@@ -1,0 +1,26 @@
+{
+  "milestone" : "M7",
+  "slice" : "read-only-subagent",
+  "actualDocker" : true,
+  "image" : "eclipse-temurin@sha256:ccbad9e7cb84c27092b12c40a4143e5733e050db9c3784d84f632dcf423fb2ef",
+  "subagent-local" : {
+    "parentRequestsReconstructed" : 4,
+    "independentVersionGuards" : true,
+    "originAndArtifactVerified" : true,
+    "status" : "COMPLETED",
+    "childRequestsReconstructed" : 2,
+    "parentEditVerified" : true
+  },
+  "subagent-docker" : {
+    "parentRequestsReconstructed" : 4,
+    "independentVersionGuards" : true,
+    "originAndArtifactVerified" : true,
+    "status" : "COMPLETED",
+    "childRequestsReconstructed" : 2,
+    "parentEditVerified" : true
+  },
+  "cleanupVerified" : true,
+  "result" : "SUCCESS",
+  "capturedAt" : "2026-10-15T12:38:36.786539500Z",
+  "jarSha256" : "4f784f489e8d107c8822495169acbfb22372f611bfa83d4887bf5809f7bb8475"
+}

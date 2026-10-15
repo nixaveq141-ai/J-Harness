@@ -1,0 +1,30 @@
+{
+  "milestone" : "M7",
+  "slice" : "packaged-cli-web-sdk-docker",
+  "actualDocker" : true,
+  "image" : "eclipse-temurin@sha256:ccbad9e7cb84c27092b12c40a4143e5733e050db9c3784d84f632dcf423fb2ef",
+  "cases" : {
+    "local" : {
+      "hostExitCode" : 0,
+      "requestsReconstructedAgainstWire" : 3,
+      "actualHttp" : true,
+      "approvalBeforeWrite" : true,
+      "environmentClosed" : true,
+      "submissionDeduplicated" : true,
+      "status" : "COMPLETED"
+    },
+    "docker" : {
+      "hostExitCode" : 0,
+      "requestsReconstructedAgainstWire" : 3,
+      "actualHttp" : true,
+      "approvalBeforeWrite" : true,
+      "environmentClosed" : true,
+      "submissionDeduplicated" : true,
+      "status" : "COMPLETED"
+    }
+  },
+  "result" : "SUCCESS",
+  "cleanupVerified" : true,
+  "capturedAt" : "2026-10-15T12:38:43.521701800Z",
+  "jarSha256" : "4f784f489e8d107c8822495169acbfb22372f611bfa83d4887bf5809f7bb8475"
+}

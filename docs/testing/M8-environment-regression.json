@@ -1,0 +1,44 @@
+{
+  "milestone" : "M7",
+  "slice" : "execution-environment",
+  "image" : "eclipse-temurin@sha256:ccbad9e7cb84c27092b12c40a4143e5733e050db9c3784d84f632dcf423fb2ef",
+  "actualDocker" : true,
+  "localTask" : {
+    "read" : true,
+    "guardedEdit" : true,
+    "shellCwd" : true
+  },
+  "dockerTask" : {
+    "read" : true,
+    "guardedEdit" : true,
+    "shellCwd" : true
+  },
+  "descriptor" : {
+    "isolation" : "container",
+    "id" : "jharness-7bcadb6a-3372-4b9a-af67-a87dd1ef1114",
+    "user" : "65534:65534",
+    "image" : "eclipse-temurin@sha256:ccbad9e7cb84c27092b12c40a4143e5733e050db9c3784d84f632dcf423fb2ef",
+    "readOnlyRoot" : true,
+    "kind" : "docker",
+    "network" : "none",
+    "terminal" : "unsupported",
+    "capabilitiesDropped" : "ALL"
+  },
+  "actualIsolationChecks" : true,
+  "local-sdk" : {
+    "status" : "COMPLETED",
+    "durableIntents" : 3,
+    "requestsReconstructed" : 4,
+    "quotedShell" : true
+  },
+  "docker-sdk" : {
+    "status" : "COMPLETED",
+    "durableIntents" : 3,
+    "requestsReconstructed" : 4,
+    "quotedShell" : true
+  },
+  "cleanupVerified" : true,
+  "result" : "SUCCESS",
+  "capturedAt" : "2026-10-15T13:35:22.842682500Z",
+  "jarSha256" : "d7c6542a2b8ae7f19398c55097c9e0463f027c96dbcbb79a6fe4c407a2e0a922"
+}

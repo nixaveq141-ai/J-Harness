@@ -1,0 +1,20 @@
+{
+  "milestone" : "M7",
+  "slice" : "skills-sdk",
+  "actualDocker" : true,
+  "image" : "eclipse-temurin@sha256:ccbad9e7cb84c27092b12c40a4143e5733e050db9c3784d84f632dcf423fb2ef",
+  "skills-local" : {
+    "actualScriptFileEvidence" : true,
+    "status" : "COMPLETED",
+    "requestsReconstructed" : 4
+  },
+  "skills-docker" : {
+    "actualScriptFileEvidence" : true,
+    "status" : "COMPLETED",
+    "requestsReconstructed" : 4
+  },
+  "cleanupVerified" : true,
+  "result" : "SUCCESS",
+  "capturedAt" : "2026-10-15T12:38:30.434626700Z",
+  "jarSha256" : "4f784f489e8d107c8822495169acbfb22372f611bfa83d4887bf5809f7bb8475"
+}

@@ -1,0 +1,20 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"><modelVersion>4.0.0</modelVersion>
+<parent><groupId>io.jharness</groupId><artifactId>j-harness</artifactId><version>0.1.0-SNAPSHOT</version></parent>
+<artifactId>harness-cli</artifactId><dependencies>
+<dependency><groupId>io.jharness</groupId><artifactId>harness-web</artifactId><version>${project.version}</version></dependency>
+<dependency><groupId>io.jharness</groupId><artifactId>harness-api</artifactId><version>${project.version}</version></dependency>
+<dependency><groupId>io.jharness</groupId><artifactId>harness-agent</artifactId><version>${project.version}</version></dependency>
+<dependency><groupId>io.jharness</groupId><artifactId>harness-events</artifactId><version>${project.version}</version></dependency>
+<dependency><groupId>io.jharness</groupId><artifactId>harness-plugin</artifactId><version>${project.version}</version></dependency>
+<dependency><groupId>io.jharness</groupId><artifactId>harness-session</artifactId><version>${project.version}</version></dependency>
+<dependency><groupId>io.jharness</groupId><artifactId>harness-workspace</artifactId><version>${project.version}</version></dependency>
+<dependency><groupId>io.jharness</groupId><artifactId>harness-tools</artifactId><version>${project.version}</version></dependency>
+<dependency><groupId>io.jharness</groupId><artifactId>harness-policy</artifactId><version>${project.version}</version></dependency>
+<dependency><groupId>io.jharness</groupId><artifactId>harness-process</artifactId><version>${project.version}</version></dependency>
+<dependency><groupId>io.jharness</groupId><artifactId>harness-llm</artifactId><version>${project.version}</version></dependency>
+<dependency><groupId>io.jharness</groupId><artifactId>harness-ecosystem</artifactId><version>${project.version}</version></dependency>
+</dependencies><build><plugins><plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-shade-plugin</artifactId><version>3.6.0</version>
+<executions><execution><phase>package</phase><goals><goal>shade</goal></goals><configuration><createDependencyReducedPom>false</createDependencyReducedPom>
+<filters><filter><artifact>*:*</artifact><excludes><exclude>META-INF/*.SF</exclude><exclude>META-INF/*.RSA</exclude><exclude>META-INF/*.DSA</exclude><exclude>module-info.class</exclude><exclude>META-INF/versions/*/module-info.class</exclude></excludes></filter></filters>
+<transformers><transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer"><mainClass>io.jharness.cli.Main</mainClass></transformer></transformers>
+</configuration></execution></executions></plugin></plugins></build></project>

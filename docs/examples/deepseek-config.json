@@ -1,0 +1,16 @@
+{
+  "baseUrl": "https://api.deepseek.com",
+  "model": "deepseek-flash",
+  "apiKeyEnv": "DEEPSEEK_API_KEY",
+  "disableThinking": true,
+  "contextTokens": 65536,
+  "maxOutputTokens": 4096,
+  "inputTokenCeiling": 1000000,
+  "currency": "CNY",
+  "maxCost": "2.50",
+  "inputPerMillion": "2",
+  "outputPerMillion": "8",
+  "maxSteps": 20,
+  "durationSeconds": 600,
+  "requestTimeoutSeconds": 90
+}

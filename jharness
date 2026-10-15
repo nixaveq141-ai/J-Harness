@@ -1,0 +1,7 @@
+#!/bin/sh
+set -eu
+script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+jar="$script_dir/harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar"
+if [ ! -f "$jar" ]; then echo "Build first with sh ./mvnw -B package." >&2; exit 5; fi
+if [ -n "${JAVA_HOME:-}" ]; then exec "$JAVA_HOME/bin/java" -jar "$jar" "$@"; fi
+exec java -jar "$jar" "$@"

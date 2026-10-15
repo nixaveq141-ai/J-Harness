@@ -1,0 +1,1040 @@
+{
+  "provider": "DeepSeek",
+  "model": "deepseek-flash",
+  "baseUrl": "https://api.deepseek.com",
+  "thinking": "disabled",
+  "authorizedLimitCny": "18.00",
+  "inputPerMillionCny": "2",
+  "outputPerMillionCny": "8",
+  "pricingSource": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/",
+  "totalUpperBoundCny": "0.494588",
+  "runs": [
+    {
+      "fixture": "calculator",
+      "repetition": 1,
+      "directory": ".build-cache\\M4-live\\calculator-1-df7253f9",
+      "exitCode": 0,
+      "taskSha256": "75f1db3a79e5f208b064d319eae337c5f25ecf89d7f4d2a6c4aec745f4084f9d",
+      "cliJarSha256": "a1b1cbd7bf8b60375a5ab5fd9bb16620f7ee3dc12135d2bc2181cf8fc6290887",
+      "parameters": {
+        "baseUrl": "https://api.deepseek.com",
+        "model": "deepseek-flash",
+        "apiKeyEnv": "DEEPSEEK_API_KEY",
+        "disableThinking": true,
+        "contextTokens": 65536,
+        "maxOutputTokens": 4096,
+        "inputTokenCeiling": 1000000,
+        "currency": "CNY",
+        "maxCost": "18.00",
+        "inputPerMillion": "2",
+        "outputPerMillion": "8",
+        "maxSteps": 20,
+        "durationSeconds": 600,
+        "requestTimeoutSeconds": 90
+      },
+      "status": "COMPLETED",
+      "reason": "EXPLICIT_EVIDENCE_CRITERIA_PASSED",
+      "requests": 6,
+      "costUpperBoundCny": "0.051084",
+      "usageReceipts": [
+        {
+          "prompt_tokens": 1547,
+          "completion_tokens": 124,
+          "total_tokens": 1671,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 1547
+        },
+        {
+          "prompt_tokens": 2229,
+          "completion_tokens": 231,
+          "total_tokens": 2460,
+          "prompt_tokens_details": {
+            "cached_tokens": 1664
+          },
+          "prompt_cache_hit_tokens": 1664,
+          "prompt_cache_miss_tokens": 565
+        },
+        {
+          "prompt_tokens": 2828,
+          "completion_tokens": 290,
+          "total_tokens": 3118,
+          "prompt_tokens_details": {
+            "cached_tokens": 2432
+          },
+          "prompt_cache_hit_tokens": 2432,
+          "prompt_cache_miss_tokens": 396
+        },
+        {
+          "prompt_tokens": 3454,
+          "completion_tokens": 112,
+          "total_tokens": 3566,
+          "prompt_tokens_details": {
+            "cached_tokens": 3072
+          },
+          "prompt_cache_hit_tokens": 3072,
+          "prompt_cache_miss_tokens": 382
+        },
+        {
+          "prompt_tokens": 4070,
+          "completion_tokens": 121,
+          "total_tokens": 4191,
+          "prompt_tokens_details": {
+            "cached_tokens": 3456
+          },
+          "prompt_cache_hit_tokens": 3456,
+          "prompt_cache_miss_tokens": 614
+        },
+        {
+          "prompt_tokens": 4814,
+          "completion_tokens": 772,
+          "total_tokens": 5586,
+          "prompt_tokens_details": {
+            "cached_tokens": 4096
+          },
+          "prompt_cache_hit_tokens": 4096,
+          "prompt_cache_miss_tokens": 718
+        }
+      ],
+      "commandExitCodes": [
+        0
+      ],
+      "sourceSha256": {
+        "src/main/java/example/Calculator.java": "8aee0ec3b10de998c9af2524ae27fdea53aa44f732fa79afa1b83430ed8c1da9",
+        "src/test/java/example/CalculatorTest.java": "00f193b48aa478e14a9b1916899c32de93732c847bc64d106fedd10bf61f0ebc"
+      },
+      "logSha256": "7e27bfd8eac89d2119802c6c1b016bc24e312bef7c5f648dc56447388ccd30f6",
+      "report": ".build-cache\\M4-live\\calculator-1-df7253f9\\.jharness\\reports\\evaluation-767e9788-0324-46e3-adc9-b4ab16f91709.json",
+      "independentOracle": {
+        "argv": [
+          "C:\\Program Files\\Java\\jdk-21.0.12.1\\bin\\java.exe",
+          "-cp",
+          "D:\\Documents\\my projects\\J-Harness\\.build-cache\\M4-live\\calculator-1-df7253f9\\target\\classes;D:\\Documents\\my projects\\J-Harness\\.build-cache\\M4-live\\oracle",
+          "EvaluationOracle",
+          "calculator"
+        ],
+        "exitCode": 0,
+        "stdout": "INDEPENDENT ORACLE PASS",
+        "sourceSha256": "d6c47b169fc4bd63c8a6df2ab75c4097dea30c86128edcfd1a6fc86a16e67dad",
+        "evidenceKind": "independent trusted driver, separate from model/tool report"
+      }
+    },
+    {
+      "fixture": "broken-project",
+      "repetition": 1,
+      "directory": ".build-cache\\M4-live\\broken-project-1-74d512de",
+      "exitCode": 0,
+      "taskSha256": "345774e925b76a6a8ba1d875db77432ce74270bd882afab7d9f9e2716ebce345",
+      "cliJarSha256": "a1b1cbd7bf8b60375a5ab5fd9bb16620f7ee3dc12135d2bc2181cf8fc6290887",
+      "parameters": {
+        "baseUrl": "https://api.deepseek.com",
+        "model": "deepseek-flash",
+        "apiKeyEnv": "DEEPSEEK_API_KEY",
+        "disableThinking": true,
+        "contextTokens": 65536,
+        "maxOutputTokens": 4096,
+        "inputTokenCeiling": 1000000,
+        "currency": "CNY",
+        "maxCost": "17.948916",
+        "inputPerMillion": "2",
+        "outputPerMillion": "8",
+        "maxSteps": 20,
+        "durationSeconds": 600,
+        "requestTimeoutSeconds": 90
+      },
+      "status": "COMPLETED",
+      "reason": "EXPLICIT_EVIDENCE_CRITERIA_PASSED",
+      "requests": 8,
+      "costUpperBoundCny": "0.064142",
+      "usageReceipts": [
+        {
+          "prompt_tokens": 1509,
+          "completion_tokens": 94,
+          "total_tokens": 1603,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 1509
+        },
+        {
+          "prompt_tokens": 2112,
+          "completion_tokens": 80,
+          "total_tokens": 2192,
+          "prompt_tokens_details": {
+            "cached_tokens": 1536
+          },
+          "prompt_cache_hit_tokens": 1536,
+          "prompt_cache_miss_tokens": 576
+        },
+        {
+          "prompt_tokens": 2441,
+          "completion_tokens": 113,
+          "total_tokens": 2554,
+          "prompt_tokens_details": {
+            "cached_tokens": 2176
+          },
+          "prompt_cache_hit_tokens": 2176,
+          "prompt_cache_miss_tokens": 265
+        },
+        {
+          "prompt_tokens": 3023,
+          "completion_tokens": 169,
+          "total_tokens": 3192,
+          "prompt_tokens_details": {
+            "cached_tokens": 2432
+          },
+          "prompt_cache_hit_tokens": 2432,
+          "prompt_cache_miss_tokens": 591
+        },
+        {
+          "prompt_tokens": 3479,
+          "completion_tokens": 214,
+          "total_tokens": 3693,
+          "prompt_tokens_details": {
+            "cached_tokens": 3072
+          },
+          "prompt_cache_hit_tokens": 3072,
+          "prompt_cache_miss_tokens": 407
+        },
+        {
+          "prompt_tokens": 3894,
+          "completion_tokens": 108,
+          "total_tokens": 4002,
+          "prompt_tokens_details": {
+            "cached_tokens": 3584
+          },
+          "prompt_cache_hit_tokens": 3584,
+          "prompt_cache_miss_tokens": 310
+        },
+        {
+          "prompt_tokens": 4495,
+          "completion_tokens": 151,
+          "total_tokens": 4646,
+          "prompt_tokens_details": {
+            "cached_tokens": 3968
+          },
+          "prompt_cache_hit_tokens": 3968,
+          "prompt_cache_miss_tokens": 527
+        },
+        {
+          "prompt_tokens": 4894,
+          "completion_tokens": 627,
+          "total_tokens": 5521,
+          "prompt_tokens_details": {
+            "cached_tokens": 4608
+          },
+          "prompt_cache_hit_tokens": 4608,
+          "prompt_cache_miss_tokens": 286
+        }
+      ],
+      "commandExitCodes": [
+        1,
+        0
+      ],
+      "sourceSha256": {
+        "src/main/java/example/Calculator.java": "a6cc79f2ff3c8973cf0606ab5f2ffaa515e0ae25259bc0b7d92be7f9b9918cde"
+      },
+      "logSha256": "55134562a1f6e2a078ad4051bf0ae72e98c50a696e90bd003a170721a8b0f7c8",
+      "report": ".build-cache\\M4-live\\broken-project-1-74d512de\\.jharness\\reports\\evaluation-2bf358cd-3590-4518-8500-df39d031987d.json",
+      "independentOracle": {
+        "argv": [
+          "C:\\Program Files\\Java\\jdk-21.0.12.1\\bin\\java.exe",
+          "-cp",
+          "D:\\Documents\\my projects\\J-Harness\\.build-cache\\M4-live\\broken-project-1-74d512de\\target\\classes;D:\\Documents\\my projects\\J-Harness\\.build-cache\\M4-live\\oracle",
+          "EvaluationOracle",
+          "broken-project"
+        ],
+        "exitCode": 0,
+        "stdout": "INDEPENDENT ORACLE PASS",
+        "sourceSha256": "d6c47b169fc4bd63c8a6df2ab75c4097dea30c86128edcfd1a6fc86a16e67dad",
+        "evidenceKind": "independent trusted driver, separate from model/tool report"
+      }
+    },
+    {
+      "fixture": "calculator",
+      "repetition": 2,
+      "directory": ".build-cache\\M4-live\\calculator-2-858bd3c9",
+      "exitCode": 0,
+      "taskSha256": "75f1db3a79e5f208b064d319eae337c5f25ecf89d7f4d2a6c4aec745f4084f9d",
+      "cliJarSha256": "a1b1cbd7bf8b60375a5ab5fd9bb16620f7ee3dc12135d2bc2181cf8fc6290887",
+      "parameters": {
+        "baseUrl": "https://api.deepseek.com",
+        "model": "deepseek-flash",
+        "apiKeyEnv": "DEEPSEEK_API_KEY",
+        "disableThinking": true,
+        "contextTokens": 65536,
+        "maxOutputTokens": 4096,
+        "inputTokenCeiling": 1000000,
+        "currency": "CNY",
+        "maxCost": "17.884774",
+        "inputPerMillion": "2",
+        "outputPerMillion": "8",
+        "maxSteps": 20,
+        "durationSeconds": 600,
+        "requestTimeoutSeconds": 90
+      },
+      "status": "COMPLETED",
+      "reason": "EXPLICIT_EVIDENCE_CRITERIA_PASSED",
+      "requests": 7,
+      "costUpperBoundCny": "0.059508",
+      "usageReceipts": [
+        {
+          "prompt_tokens": 1543,
+          "completion_tokens": 130,
+          "total_tokens": 1673,
+          "prompt_tokens_details": {
+            "cached_tokens": 256
+          },
+          "prompt_cache_hit_tokens": 256,
+          "prompt_cache_miss_tokens": 1287
+        },
+        {
+          "prompt_tokens": 2299,
+          "completion_tokens": 75,
+          "total_tokens": 2374,
+          "prompt_tokens_details": {
+            "cached_tokens": 1664
+          },
+          "prompt_cache_hit_tokens": 1664,
+          "prompt_cache_miss_tokens": 635
+        },
+        {
+          "prompt_tokens": 2712,
+          "completion_tokens": 211,
+          "total_tokens": 2923,
+          "prompt_tokens_details": {
+            "cached_tokens": 2304
+          },
+          "prompt_cache_hit_tokens": 2304,
+          "prompt_cache_miss_tokens": 408
+        },
+        {
+          "prompt_tokens": 3145,
+          "completion_tokens": 271,
+          "total_tokens": 3416,
+          "prompt_tokens_details": {
+            "cached_tokens": 2816
+          },
+          "prompt_cache_hit_tokens": 2816,
+          "prompt_cache_miss_tokens": 329
+        },
+        {
+          "prompt_tokens": 3755,
+          "completion_tokens": 106,
+          "total_tokens": 3861,
+          "prompt_tokens_details": {
+            "cached_tokens": 3328
+          },
+          "prompt_cache_hit_tokens": 3328,
+          "prompt_cache_miss_tokens": 427
+        },
+        {
+          "prompt_tokens": 4350,
+          "completion_tokens": 97,
+          "total_tokens": 4447,
+          "prompt_tokens_details": {
+            "cached_tokens": 3840
+          },
+          "prompt_cache_hit_tokens": 3840,
+          "prompt_cache_miss_tokens": 510
+        },
+        {
+          "prompt_tokens": 5070,
+          "completion_tokens": 830,
+          "total_tokens": 5900,
+          "prompt_tokens_details": {
+            "cached_tokens": 4352
+          },
+          "prompt_cache_hit_tokens": 4352,
+          "prompt_cache_miss_tokens": 718
+        }
+      ],
+      "commandExitCodes": [
+        0
+      ],
+      "sourceSha256": {
+        "src/main/java/example/Calculator.java": "8aee0ec3b10de998c9af2524ae27fdea53aa44f732fa79afa1b83430ed8c1da9",
+        "src/test/java/example/CalculatorTest.java": "005277a08b3aad54320aa00a661f398f1d3f5a01b0f60ea2a45bb94575b8b373"
+      },
+      "logSha256": "d7a5d556ce7e64060648987380b3954b06cae01cca1be491a0f64c194d5a558b",
+      "report": ".build-cache\\M4-live\\calculator-2-858bd3c9\\.jharness\\reports\\evaluation-3df1b986-dab3-429e-b220-e78d6d35b071.json",
+      "independentOracle": {
+        "argv": [
+          "C:\\Program Files\\Java\\jdk-21.0.12.1\\bin\\java.exe",
+          "-cp",
+          "D:\\Documents\\my projects\\J-Harness\\.build-cache\\M4-live\\calculator-2-858bd3c9\\target\\classes;D:\\Documents\\my projects\\J-Harness\\.build-cache\\M4-live\\oracle",
+          "EvaluationOracle",
+          "calculator"
+        ],
+        "exitCode": 0,
+        "stdout": "INDEPENDENT ORACLE PASS",
+        "sourceSha256": "d6c47b169fc4bd63c8a6df2ab75c4097dea30c86128edcfd1a6fc86a16e67dad",
+        "evidenceKind": "independent trusted driver, separate from model/tool report"
+      }
+    },
+    {
+      "fixture": "broken-project",
+      "repetition": 2,
+      "directory": ".build-cache\\M4-live\\broken-project-2-1a2ee95a",
+      "exitCode": 0,
+      "taskSha256": "345774e925b76a6a8ba1d875db77432ce74270bd882afab7d9f9e2716ebce345",
+      "cliJarSha256": "a1b1cbd7bf8b60375a5ab5fd9bb16620f7ee3dc12135d2bc2181cf8fc6290887",
+      "parameters": {
+        "baseUrl": "https://api.deepseek.com",
+        "model": "deepseek-flash",
+        "apiKeyEnv": "DEEPSEEK_API_KEY",
+        "disableThinking": true,
+        "contextTokens": 65536,
+        "maxOutputTokens": 4096,
+        "inputTokenCeiling": 1000000,
+        "currency": "CNY",
+        "maxCost": "17.825266",
+        "inputPerMillion": "2",
+        "outputPerMillion": "8",
+        "maxSteps": 20,
+        "durationSeconds": 600,
+        "requestTimeoutSeconds": 90
+      },
+      "status": "COMPLETED",
+      "reason": "EXPLICIT_EVIDENCE_CRITERIA_PASSED",
+      "requests": 9,
+      "costUpperBoundCny": "0.070066",
+      "usageReceipts": [
+        {
+          "prompt_tokens": 1514,
+          "completion_tokens": 95,
+          "total_tokens": 1609,
+          "prompt_tokens_details": {
+            "cached_tokens": 256
+          },
+          "prompt_cache_hit_tokens": 256,
+          "prompt_cache_miss_tokens": 1258
+        },
+        {
+          "prompt_tokens": 2061,
+          "completion_tokens": 88,
+          "total_tokens": 2149,
+          "prompt_tokens_details": {
+            "cached_tokens": 1536
+          },
+          "prompt_cache_hit_tokens": 1536,
+          "prompt_cache_miss_tokens": 525
+        },
+        {
+          "prompt_tokens": 2377,
+          "completion_tokens": 45,
+          "total_tokens": 2422,
+          "prompt_tokens_details": {
+            "cached_tokens": 2048
+          },
+          "prompt_cache_hit_tokens": 2048,
+          "prompt_cache_miss_tokens": 329
+        },
+        {
+          "prompt_tokens": 2563,
+          "completion_tokens": 118,
+          "total_tokens": 2681,
+          "prompt_tokens_details": {
+            "cached_tokens": 2304
+          },
+          "prompt_cache_hit_tokens": 2304,
+          "prompt_cache_miss_tokens": 259
+        },
+        {
+          "prompt_tokens": 3151,
+          "completion_tokens": 128,
+          "total_tokens": 3279,
+          "prompt_tokens_details": {
+            "cached_tokens": 2560
+          },
+          "prompt_cache_hit_tokens": 2560,
+          "prompt_cache_miss_tokens": 591
+        },
+        {
+          "prompt_tokens": 3600,
+          "completion_tokens": 205,
+          "total_tokens": 3805,
+          "prompt_tokens_details": {
+            "cached_tokens": 3200
+          },
+          "prompt_cache_hit_tokens": 3200,
+          "prompt_cache_miss_tokens": 400
+        },
+        {
+          "prompt_tokens": 4006,
+          "completion_tokens": 110,
+          "total_tokens": 4116,
+          "prompt_tokens_details": {
+            "cached_tokens": 3712
+          },
+          "prompt_cache_hit_tokens": 3712,
+          "prompt_cache_miss_tokens": 294
+        },
+        {
+          "prompt_tokens": 4620,
+          "completion_tokens": 134,
+          "total_tokens": 4754,
+          "prompt_tokens_details": {
+            "cached_tokens": 4096
+          },
+          "prompt_cache_hit_tokens": 4096,
+          "prompt_cache_miss_tokens": 524
+        },
+        {
+          "prompt_tokens": 5181,
+          "completion_tokens": 567,
+          "total_tokens": 5748,
+          "prompt_tokens_details": {
+            "cached_tokens": 4736
+          },
+          "prompt_cache_hit_tokens": 4736,
+          "prompt_cache_miss_tokens": 445
+        }
+      ],
+      "commandExitCodes": [
+        1,
+        0
+      ],
+      "sourceSha256": {
+        "src/main/java/example/Calculator.java": "a6cc79f2ff3c8973cf0606ab5f2ffaa515e0ae25259bc0b7d92be7f9b9918cde"
+      },
+      "logSha256": "7e912de1daaa3e2e6394fe05644c8424cfbfad780e25e5f6afa7a12656c053c7",
+      "report": ".build-cache\\M4-live\\broken-project-2-1a2ee95a\\.jharness\\reports\\evaluation-bb40e41d-c937-49db-9344-6ecbbfbcfcd0.json",
+      "independentOracle": {
+        "argv": [
+          "C:\\Program Files\\Java\\jdk-21.0.12.1\\bin\\java.exe",
+          "-cp",
+          "D:\\Documents\\my projects\\J-Harness\\.build-cache\\M4-live\\broken-project-2-1a2ee95a\\target\\classes;D:\\Documents\\my projects\\J-Harness\\.build-cache\\M4-live\\oracle",
+          "EvaluationOracle",
+          "broken-project"
+        ],
+        "exitCode": 0,
+        "stdout": "INDEPENDENT ORACLE PASS",
+        "sourceSha256": "d6c47b169fc4bd63c8a6df2ab75c4097dea30c86128edcfd1a6fc86a16e67dad",
+        "evidenceKind": "independent trusted driver, separate from model/tool report"
+      }
+    },
+    {
+      "fixture": "calculator",
+      "repetition": 1,
+      "directory": ".build-cache\\M4-live\\calculator-1-7e1ef448",
+      "exitCode": 0,
+      "taskSha256": "75f1db3a79e5f208b064d319eae337c5f25ecf89d7f4d2a6c4aec745f4084f9d",
+      "cliJarSha256": "ce17851b6183df7b6c422dbe939a0ed433a1e685d25281d52f5eae30f3e9ad07",
+      "parameters": {
+        "baseUrl": "https://api.deepseek.com",
+        "model": "deepseek-flash",
+        "apiKeyEnv": "DEEPSEEK_API_KEY",
+        "disableThinking": true,
+        "contextTokens": 65536,
+        "maxOutputTokens": 4096,
+        "inputTokenCeiling": 1000000,
+        "currency": "CNY",
+        "maxCost": "17.755200",
+        "inputPerMillion": "2",
+        "outputPerMillion": "8",
+        "maxSteps": 20,
+        "durationSeconds": 600,
+        "requestTimeoutSeconds": 90
+      },
+      "status": "COMPLETED",
+      "reason": "EXPLICIT_EVIDENCE_CRITERIA_PASSED",
+      "requests": 6,
+      "costUpperBoundCny": "0.050076",
+      "usageReceipts": [
+        {
+          "prompt_tokens": 1548,
+          "completion_tokens": 131,
+          "total_tokens": 1679,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 1548
+        },
+        {
+          "prompt_tokens": 2305,
+          "completion_tokens": 53,
+          "total_tokens": 2358,
+          "prompt_tokens_details": {
+            "cached_tokens": 1664
+          },
+          "prompt_cache_hit_tokens": 1664,
+          "prompt_cache_miss_tokens": 641
+        },
+        {
+          "prompt_tokens": 2499,
+          "completion_tokens": 438,
+          "total_tokens": 2937,
+          "prompt_tokens_details": {
+            "cached_tokens": 2304
+          },
+          "prompt_cache_hit_tokens": 2304,
+          "prompt_cache_miss_tokens": 195
+        },
+        {
+          "prompt_tokens": 3496,
+          "completion_tokens": 119,
+          "total_tokens": 3615,
+          "prompt_tokens_details": {
+            "cached_tokens": 2816
+          },
+          "prompt_cache_hit_tokens": 2816,
+          "prompt_cache_miss_tokens": 680
+        },
+        {
+          "prompt_tokens": 4110,
+          "completion_tokens": 132,
+          "total_tokens": 4242,
+          "prompt_tokens_details": {
+            "cached_tokens": 3584
+          },
+          "prompt_cache_hit_tokens": 3584,
+          "prompt_cache_miss_tokens": 526
+        },
+        {
+          "prompt_tokens": 4628,
+          "completion_tokens": 740,
+          "total_tokens": 5368,
+          "prompt_tokens_details": {
+            "cached_tokens": 4224
+          },
+          "prompt_cache_hit_tokens": 4224,
+          "prompt_cache_miss_tokens": 404
+        }
+      ],
+      "commandExitCodes": [
+        0
+      ],
+      "sourceSha256": {
+        "src/main/java/example/Calculator.java": "8aee0ec3b10de998c9af2524ae27fdea53aa44f732fa79afa1b83430ed8c1da9",
+        "src/test/java/example/CalculatorTest.java": "f8398d5505968989c5fffb6f0a8c2757cb29f03d1b1a84bcc729a192d33ac2e5"
+      },
+      "logSha256": "036405d71bc62b486d2265b466dee27826b6f53c796c8480f957829c0bfff973",
+      "report": ".build-cache\\M4-live\\calculator-1-7e1ef448\\.jharness\\reports\\evaluation-6b8859ae-59be-4683-b2ec-a78329ce73bd.json",
+      "independentOracle": {
+        "argv": [
+          "C:\\Program Files\\Java\\jdk-21.0.12.1\\bin\\java.exe",
+          "-cp",
+          "D:\\Documents\\my projects\\J-Harness\\.build-cache\\M4-live\\calculator-1-7e1ef448\\target\\classes;D:\\Documents\\my projects\\J-Harness\\.build-cache\\M4-live\\oracle",
+          "EvaluationOracle",
+          "calculator"
+        ],
+        "exitCode": 0,
+        "stdout": "INDEPENDENT ORACLE PASS",
+        "sourceSha256": "d6c47b169fc4bd63c8a6df2ab75c4097dea30c86128edcfd1a6fc86a16e67dad",
+        "evidenceKind": "independent trusted driver, separate from model/tool report"
+      }
+    },
+    {
+      "fixture": "broken-project",
+      "repetition": 1,
+      "directory": ".build-cache\\M4-live\\broken-project-1-90342410",
+      "exitCode": 0,
+      "taskSha256": "345774e925b76a6a8ba1d875db77432ce74270bd882afab7d9f9e2716ebce345",
+      "cliJarSha256": "ce17851b6183df7b6c422dbe939a0ed433a1e685d25281d52f5eae30f3e9ad07",
+      "parameters": {
+        "baseUrl": "https://api.deepseek.com",
+        "model": "deepseek-flash",
+        "apiKeyEnv": "DEEPSEEK_API_KEY",
+        "disableThinking": true,
+        "contextTokens": 65536,
+        "maxOutputTokens": 4096,
+        "inputTokenCeiling": 1000000,
+        "currency": "CNY",
+        "maxCost": "17.705124",
+        "inputPerMillion": "2",
+        "outputPerMillion": "8",
+        "maxSteps": 20,
+        "durationSeconds": 600,
+        "requestTimeoutSeconds": 90
+      },
+      "status": "COMPLETED",
+      "reason": "EXPLICIT_EVIDENCE_CRITERIA_PASSED",
+      "requests": 9,
+      "costUpperBoundCny": "0.070938",
+      "usageReceipts": [
+        {
+          "prompt_tokens": 1515,
+          "completion_tokens": 95,
+          "total_tokens": 1610,
+          "prompt_tokens_details": {
+            "cached_tokens": 0
+          },
+          "prompt_cache_hit_tokens": 0,
+          "prompt_cache_miss_tokens": 1515
+        },
+        {
+          "prompt_tokens": 2088,
+          "completion_tokens": 88,
+          "total_tokens": 2176,
+          "prompt_tokens_details": {
+            "cached_tokens": 1536
+          },
+          "prompt_cache_hit_tokens": 1536,
+          "prompt_cache_miss_tokens": 552
+        },
+        {
+          "prompt_tokens": 2404,
+          "completion_tokens": 45,
+          "total_tokens": 2449,
+          "prompt_tokens_details": {
+            "cached_tokens": 2176
+          },
+          "prompt_cache_hit_tokens": 2176,
+          "prompt_cache_miss_tokens": 228
+        },
+        {
+          "prompt_tokens": 2590,
+          "completion_tokens": 112,
+          "total_tokens": 2702,
+          "prompt_tokens_details": {
+            "cached_tokens": 2432
+          },
+          "prompt_cache_hit_tokens": 2432,
+          "prompt_cache_miss_tokens": 158
+        },
+        {
+          "prompt_tokens": 3162,
+          "completion_tokens": 94,
+          "total_tokens": 3256,
+          "prompt_tokens_details": {
+            "cached_tokens": 2688
+          },
+          "prompt_cache_hit_tokens": 2688,
+          "prompt_cache_miss_tokens": 474
+        },
+        {
+          "prompt_tokens": 3846,
+          "completion_tokens": 206,
+          "total_tokens": 4052,
+          "prompt_tokens_details": {
+            "cached_tokens": 3200
+          },
+          "prompt_cache_hit_tokens": 3200,
+          "prompt_cache_miss_tokens": 646
+        },
+        {
+          "prompt_tokens": 4253,
+          "completion_tokens": 107,
+          "total_tokens": 4360,
+          "prompt_tokens_details": {
+            "cached_tokens": 3968
+          },
+          "prompt_cache_hit_tokens": 3968,
+          "prompt_cache_miss_tokens": 285
+        },
+        {
+          "prompt_tokens": 4846,
+          "completion_tokens": 95,
+          "total_tokens": 4941,
+          "prompt_tokens_details": {
+            "cached_tokens": 4352
+          },
+          "prompt_cache_hit_tokens": 4352,
+          "prompt_cache_miss_tokens": 494
+        },
+        {
+          "prompt_tokens": 5569,
+          "completion_tokens": 457,
+          "total_tokens": 6026,
+          "prompt_tokens_details": {
+            "cached_tokens": 4864
+          },
+          "prompt_cache_hit_tokens": 4864,
+          "prompt_cache_miss_tokens": 705
+        }
+      ],
+      "commandExitCodes": [
+        1,
+        0
+      ],
+      "sourceSha256": {
+        "src/main/java/example/Calculator.java": "a6cc79f2ff3c8973cf0606ab5f2ffaa515e0ae25259bc0b7d92be7f9b9918cde"
+      },
+      "logSha256": "8b07e72c0969a7a1574dfe8eab4ade1dae8759511d7cf6c23e0e855accfb2aba",
+      "report": ".build-cache\\M4-live\\broken-project-1-90342410\\.jharness\\reports\\evaluation-d441775f-63bc-4924-a966-92e238961a72.json",
+      "independentOracle": {
+        "argv": [
+          "C:\\Program Files\\Java\\jdk-21.0.12.1\\bin\\java.exe",
+          "-cp",
+          "D:\\Documents\\my projects\\J-Harness\\.build-cache\\M4-live\\broken-project-1-90342410\\target\\classes;D:\\Documents\\my projects\\J-Harness\\.build-cache\\M4-live\\oracle",
+          "EvaluationOracle",
+          "broken-project"
+        ],
+        "exitCode": 0,
+        "stdout": "INDEPENDENT ORACLE PASS",
+        "sourceSha256": "d6c47b169fc4bd63c8a6df2ab75c4097dea30c86128edcfd1a6fc86a16e67dad",
+        "evidenceKind": "independent trusted driver, separate from model/tool report"
+      }
+    },
+    {
+      "fixture": "calculator",
+      "repetition": 2,
+      "directory": ".build-cache\\M4-live\\calculator-2-4bf6fea5",
+      "exitCode": 0,
+      "taskSha256": "75f1db3a79e5f208b064d319eae337c5f25ecf89d7f4d2a6c4aec745f4084f9d",
+      "cliJarSha256": "ce17851b6183df7b6c422dbe939a0ed433a1e685d25281d52f5eae30f3e9ad07",
+      "parameters": {
+        "baseUrl": "https://api.deepseek.com",
+        "model": "deepseek-flash",
+        "apiKeyEnv": "DEEPSEEK_API_KEY",
+        "disableThinking": true,
+        "contextTokens": 65536,
+        "maxOutputTokens": 4096,
+        "inputTokenCeiling": 1000000,
+        "currency": "CNY",
+        "maxCost": "17.634186",
+        "inputPerMillion": "2",
+        "outputPerMillion": "8",
+        "maxSteps": 20,
+        "durationSeconds": 600,
+        "requestTimeoutSeconds": 90
+      },
+      "status": "COMPLETED",
+      "reason": "EXPLICIT_EVIDENCE_CRITERIA_PASSED",
+      "requests": 7,
+      "costUpperBoundCny": "0.059862",
+      "usageReceipts": [
+        {
+          "prompt_tokens": 1552,
+          "completion_tokens": 94,
+          "total_tokens": 1646,
+          "prompt_tokens_details": {
+            "cached_tokens": 256
+          },
+          "prompt_cache_hit_tokens": 256,
+          "prompt_cache_miss_tokens": 1296
+        },
+        {
+          "prompt_tokens": 2126,
+          "completion_tokens": 76,
+          "total_tokens": 2202,
+          "prompt_tokens_details": {
+            "cached_tokens": 1536
+          },
+          "prompt_cache_hit_tokens": 1536,
+          "prompt_cache_miss_tokens": 590
+        },
+        {
+          "prompt_tokens": 2350,
+          "completion_tokens": 45,
+          "total_tokens": 2395,
+          "prompt_tokens_details": {
+            "cached_tokens": 2176
+          },
+          "prompt_cache_hit_tokens": 2176,
+          "prompt_cache_miss_tokens": 174
+        },
+        {
+          "prompt_tokens": 2536,
+          "completion_tokens": 653,
+          "total_tokens": 3189,
+          "prompt_tokens_details": {
+            "cached_tokens": 2304
+          },
+          "prompt_cache_hit_tokens": 2304,
+          "prompt_cache_miss_tokens": 232
+        },
+        {
+          "prompt_tokens": 3769,
+          "completion_tokens": 106,
+          "total_tokens": 3875,
+          "prompt_tokens_details": {
+            "cached_tokens": 3072
+          },
+          "prompt_cache_hit_tokens": 3072,
+          "prompt_cache_miss_tokens": 697
+        },
+        {
+          "prompt_tokens": 4371,
+          "completion_tokens": 131,
+          "total_tokens": 4502,
+          "prompt_tokens_details": {
+            "cached_tokens": 3840
+          },
+          "prompt_cache_hit_tokens": 3840,
+          "prompt_cache_miss_tokens": 531
+        },
+        {
+          "prompt_tokens": 5127,
+          "completion_tokens": 920,
+          "total_tokens": 6047,
+          "prompt_tokens_details": {
+            "cached_tokens": 4480
+          },
+          "prompt_cache_hit_tokens": 4480,
+          "prompt_cache_miss_tokens": 647
+        }
+      ],
+      "commandExitCodes": [
+        0
+      ],
+      "sourceSha256": {
+        "src/main/java/example/Calculator.java": "8aee0ec3b10de998c9af2524ae27fdea53aa44f732fa79afa1b83430ed8c1da9",
+        "src/test/java/example/CalculatorTest.java": "408eda83321bbf3c11d0840bc4cf0e97f8c2308555646b6663665da7c40e962b"
+      },
+      "logSha256": "bf3665d2e428c15a6b96754165786f857e425da9e6d8af1629d159d6143d87c5",
+      "report": ".build-cache\\M4-live\\calculator-2-4bf6fea5\\.jharness\\reports\\evaluation-a29e9619-58a3-4c0b-9fd1-0e8a238cbc5f.json",
+      "independentOracle": {
+        "argv": [
+          "C:\\Program Files\\Java\\jdk-21.0.12.1\\bin\\java.exe",
+          "-cp",
+          "D:\\Documents\\my projects\\J-Harness\\.build-cache\\M4-live\\calculator-2-4bf6fea5\\target\\classes;D:\\Documents\\my projects\\J-Harness\\.build-cache\\M4-live\\oracle",
+          "EvaluationOracle",
+          "calculator"
+        ],
+        "exitCode": 0,
+        "stdout": "INDEPENDENT ORACLE PASS",
+        "sourceSha256": "d6c47b169fc4bd63c8a6df2ab75c4097dea30c86128edcfd1a6fc86a16e67dad",
+        "evidenceKind": "independent trusted driver, separate from model/tool report"
+      }
+    },
+    {
+      "fixture": "broken-project",
+      "repetition": 2,
+      "directory": ".build-cache\\M4-live\\broken-project-2-67cddcf0",
+      "exitCode": 0,
+      "taskSha256": "345774e925b76a6a8ba1d875db77432ce74270bd882afab7d9f9e2716ebce345",
+      "cliJarSha256": "ce17851b6183df7b6c422dbe939a0ed433a1e685d25281d52f5eae30f3e9ad07",
+      "parameters": {
+        "baseUrl": "https://api.deepseek.com",
+        "model": "deepseek-flash",
+        "apiKeyEnv": "DEEPSEEK_API_KEY",
+        "disableThinking": true,
+        "contextTokens": 65536,
+        "maxOutputTokens": 4096,
+        "inputTokenCeiling": 1000000,
+        "currency": "CNY",
+        "maxCost": "17.574324",
+        "inputPerMillion": "2",
+        "outputPerMillion": "8",
+        "maxSteps": 20,
+        "durationSeconds": 600,
+        "requestTimeoutSeconds": 90
+      },
+      "status": "COMPLETED",
+      "reason": "EXPLICIT_EVIDENCE_CRITERIA_PASSED",
+      "requests": 9,
+      "costUpperBoundCny": "0.068912",
+      "usageReceipts": [
+        {
+          "prompt_tokens": 1504,
+          "completion_tokens": 95,
+          "total_tokens": 1599,
+          "prompt_tokens_details": {
+            "cached_tokens": 256
+          },
+          "prompt_cache_hit_tokens": 256,
+          "prompt_cache_miss_tokens": 1248
+        },
+        {
+          "prompt_tokens": 2049,
+          "completion_tokens": 88,
+          "total_tokens": 2137,
+          "prompt_tokens_details": {
+            "cached_tokens": 1536
+          },
+          "prompt_cache_hit_tokens": 1536,
+          "prompt_cache_miss_tokens": 513
+        },
+        {
+          "prompt_tokens": 2363,
+          "completion_tokens": 45,
+          "total_tokens": 2408,
+          "prompt_tokens_details": {
+            "cached_tokens": 2048
+          },
+          "prompt_cache_hit_tokens": 2048,
+          "prompt_cache_miss_tokens": 315
+        },
+        {
+          "prompt_tokens": 2549,
+          "completion_tokens": 130,
+          "total_tokens": 2679,
+          "prompt_tokens_details": {
+            "cached_tokens": 2304
+          },
+          "prompt_cache_hit_tokens": 2304,
+          "prompt_cache_miss_tokens": 245
+        },
+        {
+          "prompt_tokens": 3153,
+          "completion_tokens": 132,
+          "total_tokens": 3285,
+          "prompt_tokens_details": {
+            "cached_tokens": 2560
+          },
+          "prompt_cache_hit_tokens": 2560,
+          "prompt_cache_miss_tokens": 593
+        },
+        {
+          "prompt_tokens": 3474,
+          "completion_tokens": 204,
+          "total_tokens": 3678,
+          "prompt_tokens_details": {
+            "cached_tokens": 3200
+          },
+          "prompt_cache_hit_tokens": 3200,
+          "prompt_cache_miss_tokens": 274
+        },
+        {
+          "prompt_tokens": 3879,
+          "completion_tokens": 113,
+          "total_tokens": 3992,
+          "prompt_tokens_details": {
+            "cached_tokens": 3584
+          },
+          "prompt_cache_hit_tokens": 3584,
+          "prompt_cache_miss_tokens": 295
+        },
+        {
+          "prompt_tokens": 4496,
+          "completion_tokens": 135,
+          "total_tokens": 4631,
+          "prompt_tokens_details": {
+            "cached_tokens": 3968
+          },
+          "prompt_cache_hit_tokens": 3968,
+          "prompt_cache_miss_tokens": 528
+        },
+        {
+          "prompt_tokens": 4901,
+          "completion_tokens": 580,
+          "total_tokens": 5481,
+          "prompt_tokens_details": {
+            "cached_tokens": 4608
+          },
+          "prompt_cache_hit_tokens": 4608,
+          "prompt_cache_miss_tokens": 293
+        }
+      ],
+      "commandExitCodes": [
+        1,
+        0
+      ],
+      "sourceSha256": {
+        "src/main/java/example/Calculator.java": "a6cc79f2ff3c8973cf0606ab5f2ffaa515e0ae25259bc0b7d92be7f9b9918cde"
+      },
+      "logSha256": "0214702cd8961f4b7ccf88d4b8de3731a49ee64be638158dad53d0d227debf4d",
+      "report": ".build-cache\\M4-live\\broken-project-2-67cddcf0\\.jharness\\reports\\evaluation-73ecc953-812a-46f9-8ae0-abb91c9bdb7d.json",
+      "independentOracle": {
+        "argv": [
+          "C:\\Program Files\\Java\\jdk-21.0.12.1\\bin\\java.exe",
+          "-cp",
+          "D:\\Documents\\my projects\\J-Harness\\.build-cache\\M4-live\\broken-project-2-67cddcf0\\target\\classes;D:\\Documents\\my projects\\J-Harness\\.build-cache\\M4-live\\oracle",
+          "EvaluationOracle",
+          "broken-project"
+        ],
+        "exitCode": 0,
+        "stdout": "INDEPENDENT ORACLE PASS",
+        "sourceSha256": "d6c47b169fc4bd63c8a6df2ab75c4097dea30c86128edcfd1a6fc86a16e67dad",
+        "evidenceKind": "independent trusted driver, separate from model/tool report"
+      }
+    }
+  ],
+  "billingNote": "Server usage at peak/cache-miss prices; unacknowledged calls retain full bounds. This is not a provider invoice."
+}

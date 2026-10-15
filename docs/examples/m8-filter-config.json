@@ -1,0 +1,10 @@
+{
+  "baseUrl": "https://api.example.test/v1",
+  "model": "configured-model",
+  "apiKeyEnv": "JHARNESS_API_KEY",
+  "searchFilter": {
+    "useDefaultExcludes": true,
+    "useGitignore": true,
+    "rules": ["cache/", "generated/**", "!target/", "target/*", "!target/report.txt"]
+  }
+}
