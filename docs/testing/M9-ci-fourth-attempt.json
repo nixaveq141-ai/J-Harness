@@ -1,0 +1,44 @@
+{
+  "run": {
+    "id": 38857700403,
+    "head_sha": "80c2104cd41fd4876da4f1260f51dbf7e0315ffa",
+    "html_url": "https://github.com/nixaveq141-ai/J-Harness/actions/runs/38857700403",
+    "status": "completed",
+    "conclusion": "failure",
+    "created_at": "2026-10-16T05:48:25Z",
+    "updated_at": "2026-10-16T05:52:37Z"
+  },
+  "jobs": [
+    {
+      "id": 116832759171,
+      "name": "verify (macos-latest)",
+      "html_url": "https://github.com/nixaveq141-ai/J-Harness/actions/runs/38857700403/job/116832759171",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 116832759499,
+      "name": "verify (ubuntu-latest)",
+      "html_url": "https://github.com/nixaveq141-ai/J-Harness/actions/runs/38857700403/job/116832759499",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 116832759648,
+      "name": "verify (windows-latest)",
+      "html_url": "https://github.com/nixaveq141-ai/J-Harness/actions/runs/38857700403/job/116832759648",
+      "status": "completed",
+      "conclusion": "failure"
+    }
+  ],
+  "failure": "Windows preparation confirmed cached Maven3.9.9 and took about 27 seconds; the following native Wrapper command still exceeded the short-process fixture 20-second limit",
+  "fix": "Only real Maven repair workload uses existing production-default two-minute command limit and bounded five-minute agent budget; short-process, timeout and cancellation tests retain original limits; all compiler failure/guarded repair/rebuild assertions remain",
+  "logSha256": "392473ca518e2f6f002d04e938e436ddb1463cf8495b771652ebb136ce2f55bf",
+  "localRelatedTests": {
+    "tests": 9,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "logSha256": "4fdbc4a9be7bc338e93d72b498ba31dd8c84d27cb42b8226ce81e0e391b04c1c"
+  }
+}

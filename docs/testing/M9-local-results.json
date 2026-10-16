@@ -1,6 +1,6 @@
 {
   "milestone": "M9",
-  "capturedAt": "2026-10-16T05:11:13.531382+00:00",
+  "capturedAt": "2026-10-16T05:51:37.210932+00:00",
   "buildResult": "SUCCESS",
   "platform": "Windows-11-10.0.26200-SP0",
   "architecture": "AMD64",
@@ -9,13 +9,13 @@
     "21.0.12.1"
   ],
   "javaRuntime": "java version \"21.0.12.1\" 2026-08-18 LTS\nJava(TM) SE Runtime Environment (build 21.0.12.1+1-LTS-4)\nJava HotSpot(TM) 64-Bit Server VM (build 21.0.12.1+1-LTS-4, mixed mode, sharing)\n",
-  "commit": "ebcf7dd284f89b28709096b282a55104a9e8a5ea",
-  "workingTreeDirty": false,
-  "verificationLog": ".build-cache/M9-verify-final.log",
+  "commit": "80c2104cd41fd4876da4f1260f51dbf7e0315ffa",
+  "workingTreeDirty": true,
+  "verificationLog": ".build-cache/M9-final-verify.log",
   "ciRunUrl": null,
-  "logSha256": "4ed000eaf1fcb57ebe28408a112f0cac8ebb3c5fc356d8368909539850b026b6",
+  "logSha256": "12b2e1669ec90165b4d2afd651d52d1bf56d51c6faa4d62ecdf7a05c0069aaa4",
   "totals": {
-    "tests": 296,
+    "tests": 305,
     "failures": 0,
     "errors": 0,
     "skipped": 0
@@ -33,7 +33,7 @@
         "cyclicPayloadIsRejectedByTheNestingBound",
         "payloadIsDeepImmutableAndDetached"
       ],
-      "sha256": "89de0987507d3cdb4d810f5e3cacfec0e65cc20a262a4b0285119c33b3ec2254"
+      "sha256": "03ef12f00edf0d70a8d3e51e50c225f0a5406649ac3a4b6179c8bfd3280eaa97"
     },
     {
       "tests": 7,
@@ -51,7 +51,7 @@
         "serialFailureShortCircuitsAndTimeoutIsExplicit",
         "serialWaitsAndOrdersByPriorityThenRegistration"
       ],
-      "sha256": "597645f50cd71d085d692675e1632044c81271eabd9c204f497ca5143fb0d054"
+      "sha256": "b688d51070270be8c68a3270b2b0a7bf3e3232b102139ae70d1f9db45ebb6243"
     },
     {
       "tests": 4,
@@ -66,7 +66,7 @@
         "missingFutureOrWrongStepContextCannotBeUsed",
         "toolResultsAndFinalEnvelopeReplayIntoMessagesWithoutAuthorityDuplication"
       ],
-      "sha256": "76f16b37fc20ae0faf62315621348b92e0cd549186f98ebba2c97caf28421d36"
+      "sha256": "53882db45565f52522ecc3fc1760d49979d4d1443754100296f7c49883425292"
     },
     {
       "tests": 6,
@@ -83,7 +83,7 @@
         "replayProjectionIsStableAndHasNoSeparateAuthoritativeHistory",
         "writerIsExclusiveReadersSeeSnapshotsAndClosedWriterCannotReenter"
       ],
-      "sha256": "9fabbdfa35a00292e9059c47b336b23a4c454516e4067d749637f07b42add348"
+      "sha256": "0d9cb55b51bd10ee547a5c445cfc4394d4a21098abd5b792b5b3acc0f0b8da8b"
     },
     {
       "tests": 10,
@@ -104,7 +104,7 @@
         "structurallyDenseRecordIsRejectedBeforeObjectMaterializationAndNeverTailRepaired",
         "tailDamageIsReportedAndRepairRequiresExclusiveWriterAndExplicitPolicy"
       ],
-      "sha256": "ca90c365e3982019838d53ce03341585abe4a307c98a2e50e255e66beaccad43"
+      "sha256": "257ec2d58eb55c6e50fb9c70666b0432639dd55b95ed50dc1d5b6dbd27e98e07"
     },
     {
       "tests": 11,
@@ -126,7 +126,7 @@
         "recoveryCarriesUnknownAndUnresolvedRequestsAcrossForkAndReopen",
         "tailRepairBacksUpTruncatedAndInvalidCompleteFinalRecords"
       ],
-      "sha256": "1c0a87f222c044055fa0a2d4bba349db3cadc4498bf705b0c24ac38ecff2ad13"
+      "sha256": "09bb07596f6483564864a8b9af663825127f2a40928d45adda392368d243b963"
     },
     {
       "tests": 10,
@@ -147,7 +147,7 @@
         "startupFailureNamesTheFailedPluginAndKeepsCleanupFailures",
         "stopFailureStillReleasesEveryContributionAndResource"
       ],
-      "sha256": "d034e0e2f10f805e0749ef527579a2db2a5be9453f2c06a4ef37bc9df65323c1"
+      "sha256": "422c9ea2126f0d675169f3b271a9cb4c7c92fa0d99e91fe3ebb096bbf3b27110"
     },
     {
       "tests": 4,
@@ -162,7 +162,7 @@
         "nestedRequiredPropertiesAndNumericAndArrayBoundsAreEnforced",
         "unsupportedConstraintsAreRejectedInsteadOfIgnored"
       ],
-      "sha256": "cab43b9f86a4e536d30759e0eb46a5ec0dfc1b0b212276c022e800254a92a1d8"
+      "sha256": "84caab2d2bf9ab252469b9c0edf744a53c195dc8c4f56cbd3376ced0981b02a4"
     },
     {
       "tests": 13,
@@ -186,7 +186,7 @@
         "traversalAbsoluteAdsDevicesAndProtectedMetadataAreDenied",
         "unifiedDiffHandlesEmptyFilesAndMissingFinalNewlineAndNonGitWorkspace"
       ],
-      "sha256": "37c82b578d1a79d36cd636210cbf40011ced252319082e6ae3bbcce8df6d42fe"
+      "sha256": "c6320a88ce44aa8f10a0fbd1d54f34e3faa1023d213604ba8508ef2bde8a98e3"
     },
     {
       "tests": 4,
@@ -201,7 +201,7 @@
         "precedenceAppliesToListSearchGrepAndIndependentChildViews",
         "ruleLimitsAndUnsupportedConfigurationFailWithoutTruncation"
       ],
-      "sha256": "8d3567525949fdedaf78171ce0f13396566663aedd4f0b54ef1291299fa2fe90"
+      "sha256": "a7548d44d8e73ca93b8d3c1bd2663ce45243e3670a92844c8551bf729484f294"
     },
     {
       "tests": 4,
@@ -216,7 +216,7 @@
         "secondCommitFailureReportsConfirmedChangesAndPendingPaths",
         "staleVersionAndOutsidePathFailAllPreflightBeforeFirstWrite"
       ],
-      "sha256": "f6565c22550ab801e93e8d214710e453f18e1631056595f852488f4b911263a8"
+      "sha256": "3df9f77f0d192e5bc627fb783b342bb6aed8c047b711a56a8a20800b4f7482ac"
     },
     {
       "tests": 2,
@@ -229,7 +229,7 @@
         "fileWriteAndEditPreviewDiffWithoutMutationAndShellIsExplicitlyUnpreviewable",
         "previewRejectsOutsideAndStaleVersions"
       ],
-      "sha256": "6a475a4d943212ea524be30ff9507ed3ce488bf2000ce4fc988956833d00c743"
+      "sha256": "c68fb61fa0d80b65c395bd5e9f250d65e8e0b8e75c93584647f3be90247051a0"
     },
     {
       "tests": 9,
@@ -249,7 +249,7 @@
         "noInheritedSecretEnvironmentAndApprovedValuesScrubbed",
         "stdinIsClosedAndSuccessHasNoDetachedReader"
       ],
-      "sha256": "e7481ec883ac90dee0fe79e417f765c95fcc4da1450d25a27bd8f0d27698706c"
+      "sha256": "05dc2d8eefac0013156edd7eb2174777e18c32986a2667e690d6396ac405ddb4"
     },
     {
       "tests": 2,
@@ -262,7 +262,7 @@
         "invalidCredentialDoesNotCancelAndUnreachableIsDifferentFromExited",
         "separateJvmCancelAuthenticatesAndExitStateIsDiscoverable"
       ],
-      "sha256": "ec6996f3315c000915f4c998325984f74b23fbe24263dfa0886d48d2252ce388"
+      "sha256": "38f64c46e571e0f6e4551b2a9be444bc3bb17a09fce80046262b311707e0cfb8"
     },
     {
       "tests": 5,
@@ -278,7 +278,7 @@
         "realPtyAcceptsInputResizesAndPreservesItsWorkingDirectory",
         "rollingLogsAndConcurrentTaskQuotaStayBounded"
       ],
-      "sha256": "386fd32a93e5c5dc92f03b160e4518e6b63a0d4cedadc921b87c98b8f3abbc55"
+      "sha256": "1915df93437d08bff86287c2f4a42e83b99b2e3c1ac782dddeea76f0aaea58d8"
     },
     {
       "tests": 1,
@@ -290,7 +290,7 @@
       "cases": [
         "credentialsAreOwnerOnlyAndOrdinaryFoldersAreNotRepurposed"
       ],
-      "sha256": "3cdf605ede32d71b33d39ea41f6309095d374eed078c6f88a94b4baebcb7c1c2"
+      "sha256": "4c9d80a375867fe0a896c2d334f0be084c5da12514786fc17e76a6791c1fefd6"
     },
     {
       "tests": 3,
@@ -304,7 +304,7 @@
         "cancellationRevokesPromptAndTimeoutAndCloseDeny",
         "trustedCommandIsExactAndShellOrSuffixNeedsApproval"
       ],
-      "sha256": "59e21e4cc6e06669a451670fb2ef878845d046bfe9e6043b98cfdfc7d24ea943"
+      "sha256": "7daa4bc190a7f6c711620b98ec3d99bc32ac0104752debe0f390efaf0d7dcdae"
     },
     {
       "tests": 5,
@@ -320,7 +320,7 @@
         "routerLazilySelectsCapabilitiesAndClosesOnlyInstantiatedAdapters",
         "streamLimitsAndSecretsSplitAcrossDeltasAreSafe"
       ],
-      "sha256": "f6ab1418fcaceea9aaeec432630fca9b63164de1efcd562552e50a092351ca6a"
+      "sha256": "fe76d067f272cba63f6cae5dd4a81d7a154d179131cf3834743430e292303cf2"
     },
     {
       "tests": 9,
@@ -340,7 +340,7 @@
         "textRequestHasConfiguredModelHeaderAndPreparedEnvelopeWithoutSecret",
         "toolArgumentsParseAndRoundTripAsJsonStringsWithLinkedResults"
       ],
-      "sha256": "453f83a978efa0304b2b49c18738aae2954c28801ff83f4f8651d6b2e79ab7bc"
+      "sha256": "12f65da085db803115b3c0cecb1539bf8caa3636cb1ce0e70fd91448c8917ea3"
     },
     {
       "tests": 9,
@@ -360,7 +360,7 @@
         "offlineDryRunDoesNotNeedApiKeyAndDoesNotCreatePlannedFiles",
         "parserRejectsUnknownAndDuplicateFlagsButPreservesChineseAndSpaces"
       ],
-      "sha256": "e036cb2291e6266e9aeb9ee4bc432f8c9af7a7188f82ca70e6da0cb2bc8c4194"
+      "sha256": "ea0a785dc140d1e1e79866f11e595f2d1eaf04df33641356cf037a4d95a3495c"
     },
     {
       "tests": 3,
@@ -374,7 +374,7 @@
         "expectedFileMustStillHaveRecordedVersionAndVerificationAfterLastWrite",
         "failedBuildThenLatestSuccessfulVerificationPassesAndSubsequentSystemCommandInvalidatesIt"
       ],
-      "sha256": "ea1c9d4f78b093bfd40f4e0159d32f51e019db0190b89e5d2e5b69bfe22f5c70"
+      "sha256": "4c2d67523d0d5d70e3343123379b9c442f983f48788c23e034e1bfe64d56dc5f"
     },
     {
       "tests": 8,
@@ -393,7 +393,7 @@
         "unresolvedColdTerminalRequiresManualVerificationAndIsNeverRestarted",
         "unresolvedModelRequestRequiresExplicitAbandonmentWithoutReplay"
       ],
-      "sha256": "6eff166cabdb4576929992539b2bcee6bd7bf68b09953da14929603df9ea97c4"
+      "sha256": "4a76b1fa1f5af996fd0a753d9cb66382017eb6a30fdcead3c2f510cea5213111"
     },
     {
       "tests": 3,
@@ -407,7 +407,7 @@
         "conflictingRoutesPoliciesUnknownSelectionsAndInlineKeysAreRejected",
         "profilesPresetsModelsAndBundlesResolveWithRecordedSelection"
       ],
-      "sha256": "783b9f2fe71d1048589598a5f54bedb34b99d5864acaa690825edd65cc22c478"
+      "sha256": "bce389c5e0281ffbf9d6daadd1d0c36229efb1c49085964f90c11e03b4a06272"
     },
     {
       "tests": 2,
@@ -420,7 +420,7 @@
         "badFilterIsRejectedBeforeModelOrEnvironmentAssembly",
         "namedSettingsReplaceFilterAsOneValidatedObject"
       ],
-      "sha256": "870de34db23bfa0ba0b61ba20f8534e86d72da9144b4a417d489f7cd6e7d1efe"
+      "sha256": "dab00bfd8d1c4413c9c83bb31fe179462b58bfe18ec3f09bc48a0f53dc231698"
     },
     {
       "tests": 2,
@@ -433,7 +433,7 @@
         "profileReplacesWholeObjectAndDefaultIsDisabled",
         "rejectsUnknownFieldsTypesAndBoundsBeforeAssembly"
       ],
-      "sha256": "e2a28cd05b431b12274953315c7276d9530cc37fd6d1bdfcf25b763bc7544577"
+      "sha256": "6fb16ac7bfeb8b27e1f38088596a6097cb953b3879013d055f73ad270babb6b0"
     },
     {
       "tests": 2,
@@ -446,7 +446,7 @@
         "invalidModesBoundsAndDisabledPluginAreRejectedBeforeAssembly",
         "namedProfileCanEnableBoundedSchedulingAndDefaultRemainsSerial"
       ],
-      "sha256": "e726ec832e8179e4eed43a5ad182730f963b29c2073d3d2a4d2d6d5601b03055"
+      "sha256": "d166d95adce4be6a4ace65209c9cf7a73c4209e62ceea53412789ba16d3ee1fb"
     },
     {
       "tests": 1,
@@ -458,7 +458,7 @@
       "cases": [
         "packagedRuntimeDoesNotRequireMavenInTargetWorkspace"
       ],
-      "sha256": "81df6c7227217cb630b9de2a57c80320bf3319e03bda5d5dc9a5cdd7ea8d878d"
+      "sha256": "e125544245cb1539825ad24533fe69053d8ac77e4fec47350182b33ee79ade39"
     },
     {
       "tests": 1,
@@ -470,7 +470,7 @@
       "cases": [
         "closingBorrowedViewRevokesReadsWithoutClosingParent"
       ],
-      "sha256": "08f7178ba263851daff9bf714bd30f15f63b89d4d79d4d22114025e0fd1bb8bd"
+      "sha256": "6cdaa398dcc7de037d097ab80e34e28b28af38eb40ac2b78e8e3b54cf8d17313"
     },
     {
       "tests": 2,
@@ -483,7 +483,7 @@
         "baselinePluginPassesHarnessContract",
         "replacementLoopAndToolRegistryPassTheSameHarnessContract"
       ],
-      "sha256": "a4262eff73500f182d7af702950ea022c5d6ff393800209b0147defee96aa564"
+      "sha256": "ab5590be63092965750501b58f93cc87a1d0ef8f9bb9d20d0aded0c26b99838d"
     },
     {
       "tests": 15,
@@ -509,7 +509,7 @@
         "stepAndTimeBudgetsTerminateWithoutClaimingCompletion",
         "unknownSideEffectsStopTheTurnSettleOtherCallsAndPreventAutomaticNextTurn"
       ],
-      "sha256": "7c6fe8f0ab958d4a6fee8609ad4ec3bf24a091f44a6c4129cee9e90b9d37c56b"
+      "sha256": "9d4636013c41907a335b8817d8118ef8afbd6b070d018f30b67182c527174a5f"
     },
     {
       "tests": 11,
@@ -531,7 +531,7 @@
         "successRecordsApprovedIntentAndBodyOrderAndIgnoresModelSideEffectClaim",
         "wrongCallIdInvalidOutputAndPostprocessorStatusChangesCannotReturnSuccess"
       ],
-      "sha256": "37cff3d17bbc753ab5b956a0dceac0261ff26fec49f28141c012a21f76acd831"
+      "sha256": "e9756d71913ca3f2069d6fbf59f8d9c19169f7ca937252393f2fc5d134d9074c"
     },
     {
       "tests": 6,
@@ -548,7 +548,7 @@
         "oversizedDiffSpillsToPersistedReferenceAndCanBeReadBackAfterReopen",
         "rejectedOutsideReadIsAnEventAndUserConcurrentChangesAreNotOverwritten"
       ],
-      "sha256": "5cd6915698c6ad47c1b0c4e71aaa7b4a4a2361f371fc9e73f941e99259a7033b"
+      "sha256": "90dbe0a643a78f89464efbd90db96bac77ece682a6353e478117c0da77692539"
     },
     {
       "tests": 9,
@@ -568,7 +568,7 @@
         "refusedDeletionAndResetNeverEnterBodyAndFullApprovalDecisionPersists",
         "timedOutCommandRequiresVerificationBeforeAnotherModelRequestOrTurn"
       ],
-      "sha256": "4dc808fd266ec85fc589835079c4ae769a456b4ec124c776a620d38457e9e6ce"
+      "sha256": "d3b0d44e7cad22bd320d01b78a964b4b7dc0b7e7a171b01659b6f481bb8510f6"
     },
     {
       "tests": 10,
@@ -589,7 +589,7 @@
         "terminalCancelAndSecretCallIdsAreHandledWithoutBlockingOrDisclosure",
         "unknownCrashCallInspectionAndOperatorVerificationNeverReplayTheTool"
       ],
-      "sha256": "a7e1c474da610ae3cdb15477ec52e16a2c890c9db7bdfd4efe7a0bc9807f4193"
+      "sha256": "930617cf0052cd6fed36c3e6553a8b5d8b17fc06f6faa2e188c56fae20a07cd4"
     },
     {
       "tests": 1,
@@ -601,7 +601,7 @@
       "cases": [
         "coldForkResumeKeepsRequestHistoryAndRejectsStaleFileVersion"
       ],
-      "sha256": "71652f39f01b9638bafbc0b0c9d3f3f02db9589d4e3bfaf9f7aa125fef094159"
+      "sha256": "4deccd3f38153d35dd257779f3e932e87d9cdc6862c1dc2594e53997fdd15159"
     },
     {
       "tests": 3,
@@ -615,7 +615,7 @@
         "pluginRecordsCompactionAndFinalRequestReplaysFromColdEventsAndRevokesOnStop",
         "unresolvedCallsAndOversizedProtectedContextRefuseCompaction"
       ],
-      "sha256": "46174047a41211eb5efd71a02016af133de345d97c7f54b347c660e9b29b4222"
+      "sha256": "5d0e5bf7afdd266d5c225f3bfad0097710a359103b59ef705fa6cd3e64fb5c04"
     },
     {
       "tests": 6,
@@ -632,7 +632,7 @@
         "readOnlyConfigurationDeniesTerminalBeforeProcessCreation",
         "truncatedToolArgumentsNeverReachApprovalIntentOrFileBody"
       ],
-      "sha256": "e159cbf775931a2d8e7d6cf9126974e6d8e0a0e140186febf970f39c65dbaec8"
+      "sha256": "08513d124ca73844692a4547c5cdc52542e61266599161021234d3eaa96ddbf6"
     },
     {
       "tests": 2,
@@ -645,7 +645,7 @@
         "cliAssemblesMcpSkillsReadonlyChildrenAndPlanningThroughSdkPipeline",
         "ecosystemDryRunCannotStartModelsOrProcessesAndServeRequiresStrongEnvironmentToken"
       ],
-      "sha256": "f315c75aef3162d4513aec29330ede3f153862f5769e2b2e9be0595768056104"
+      "sha256": "d9a97c55a797f33f5280e2dd32932eaf07da6d332f56bf1444a65531f15cef81"
     },
     {
       "tests": 6,
@@ -662,7 +662,7 @@
         "todosAndPlansPersistSeparatelyWithExplicitApprovalAndRealEvidence",
         "trustedConfigurationRejectsSecretsAndUnknownOrUnpinnedCapabilities"
       ],
-      "sha256": "46787ed3e6feb257c99207215ef49b6b49e57cebfc4a6893e0a389796892a1b6"
+      "sha256": "2f6aeecd37e1ca32d5e68efdf8920125436a6b374cd5be050d79b15f6736508e"
     },
     {
       "tests": 5,
@@ -678,7 +678,7 @@
         "transportLaunchesNativeProcessWithoutUncertainty",
         "uncertainReadCannotRemoveParentsContainerThroughIsolatedView"
       ],
-      "sha256": "539a63d9cd45378c214c8e84ad60af7cc438e4b97f55bcd8206d8c9a5bc1860b"
+      "sha256": "b404845b3a7b0c154b68322bc66d5b0b69e6744a6ae1ceb4cc97f1813398f0cc"
     },
     {
       "tests": 11,
@@ -700,7 +700,7 @@
         "streamableHttpSupportsJsonAndSseHeadersCredentialsAndSessionDelete",
         "unsupportedSchemaRollsBackWholeScopeAndClosesPeer"
       ],
-      "sha256": "4cf3cadd8e9ea58055cb0c0212ecd549a33ac2b7d92cdb0bff60cf24fe490983"
+      "sha256": "818a6d6e6850707aefcebe3b7a2fa6e5ab86a390665d789beb27e23553e6a453"
     },
     {
       "tests": 4,
@@ -715,7 +715,7 @@
         "sdkCannotBypassApprovalOrExecuteAfterCancellation",
         "unknownEnvironmentCleanupRequiresExplicitOperatorFact"
       ],
-      "sha256": "0a48b3fb786a7e8699a699b3a0a96c5edc72a79fd8e49821dcda4ec39c7b9fc3"
+      "sha256": "02b73dabfe48bb31a2b82db463006d36dcee5c2fdc9ea726d065e5aceaa5228b"
     },
     {
       "tests": 5,
@@ -731,10 +731,10 @@
         "scriptNeedsApprovalAndExactRevisionAndCannotExecuteChangedContent",
         "sdkSkillLoopUsesRealScriptEvidenceAndEveryRequestReconstructs"
       ],
-      "sha256": "8e5d176ea1c3649deb8d336af51af5f5ee98cfaa87afdeca1d94d85175379e38"
+      "sha256": "8550f204982cbee4d9503bff5446fdc79cbc115c7b4bbb6bdcc727e954c6825e"
     },
     {
-      "tests": 14,
+      "tests": 23,
       "failures": 0,
       "errors": 0,
       "skipped": 0,
@@ -742,7 +742,16 @@
       "name": "io.jharness.testkit.M7SubagentTest",
       "cases": [
         "concurrencyQuotaAndTaskQuotaDoNotLaunchExtraModels",
-        "explicitParentCancellationReachesChildAndDoesNotClaimSuccess",
+        "explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[10]",
+        "explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[1]",
+        "explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[2]",
+        "explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[3]",
+        "explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[4]",
+        "explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[5]",
+        "explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[6]",
+        "explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[7]",
+        "explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[8]",
+        "explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[9]",
         "failedAssignmentPersistenceNeverConstructsChildModel",
         "feeLimitedParentRequiresBoundedChildFees",
         "independentChildCannotWriteAndParentCanEditAfterEvidenceWithFullOwnershipAndReplay",
@@ -756,7 +765,7 @@
         "sharedFeeCapIncludesParentAndChildRequests",
         "twoReadOnlyChildrenRunConcurrentlyWithDistinctContextsAndLogs"
       ],
-      "sha256": "80dcec3cada41e058ae73fe161af63c9d2947e5a1dfcf140960b85354b406d04"
+      "sha256": "59b12094695ed485eaaa500e0e20fbf869c42e8a96c6fd57434017fff333123e"
     },
     {
       "tests": 13,
@@ -780,7 +789,7 @@
         "shutdownDuringUncooperativeFactoryRestoresUnknownWithoutReplaying",
         "unknownModelRequestBlocksWorkspaceAndErrorDetailsAreNotExposed"
       ],
-      "sha256": "d12cabe67cf8fbff8ef2e706078a7b3ff6e08b86887a89f3e8ff8ef15adde4fc"
+      "sha256": "a337dd33ca0c0f5b8502bf466a17f65e77f2209fb56e53e68c7c5cefe5155afc"
     },
     {
       "tests": 4,
@@ -795,7 +804,7 @@
         "sdkBindingFreezesNondefaultFilterWhileDefaultDescriptorsStayCompatible",
         "workerProcessAcknowledgesAndAppliesHostFilterAndOldWorkerIsRejected"
       ],
-      "sha256": "7d51803264b6c94f32818dbde7f2a9fef560766a2b8a4f3428335264055b75ff"
+      "sha256": "5fd67bb73850af0d712ddbba4350f15da07d1963b807fd8ea7beef75f7445868"
     },
     {
       "tests": 13,
@@ -819,7 +828,7 @@
         "unknownTimeoutStreamAndSpoofedRateCodeNeverReplay",
         "unloadRevokesRetainedExtensionAndReplacementService"
       ],
-      "sha256": "59bd8400fac664d568b3e0944b3c447198daff1938581eb3ac1033b2fed17d8a"
+      "sha256": "32327f211483a869afe0f6ea14a158385a232e7cba326f2053a925fc3178712b"
     },
     {
       "tests": 8,
@@ -838,7 +847,7 @@
         "serialIsDefaultAndTrustedSchedulerServiceCanBeReplacedAndRevoked",
         "writesUnlistedReadsAndAskAreBarriersDespiteModelReadonlyClaims"
       ],
-      "sha256": "80d9934a8509c523a7ad2c08eb10f4a8138967e8f422acc83c8d34c8ac3ef328"
+      "sha256": "7a8961840cdc9ee73750b914e68643765a12dc363adfab9c625b4f83e4f07f18"
     },
     {
       "tests": 5,
@@ -854,7 +863,7 @@
         "temporaryProjectHasMavenFilesAndCleansOnlyItsOwnedDirectory",
         "toolRegistryIsolationDuplicatesAndOldHandleCannotRemoveNewRegistration"
       ],
-      "sha256": "4ef8d4aa8dcb9c41194d96c88f58c713ed8a4290a04f830efa6e845b4d353aff"
+      "sha256": "536054ad35687da078094f22355e06179a79533c3669c3780df9b5ef95847dbe"
     }
   ],
   "sourceSha256": {
@@ -998,11 +1007,11 @@
     "harness-process/src/main/java/io/jharness/process/ProcessToolsPlugin.java": "1517fc3db79d95de62b966b32ec7e1a007e2836263b7b3f2ae25eb0202e6a968",
     "harness-process/src/main/java/io/jharness/process/TerminalToolsPlugin.java": "282a328474a35b462978b993f3266b42aa125b2d6d6cc91c2c7d34c074e71280",
     "harness-process/src/test/java/io/jharness/process/LocalPlanPreviewerTest.java": "1798577ac6ff8220654d64d7956a11f4a11ceeeb5fe9471f13aa4e55c65df3f5",
-    "harness-process/src/test/java/io/jharness/process/LocalProcessRunnerTest.java": "22e6ee0d899ed7915b13b4ad1a04ab03c24626984d5baeb34a5db1dba49e2da3",
-    "harness-process/src/test/java/io/jharness/process/LocalRunControlTest.java": "9d621f5401602012f7734a3d1cf10d72ea1762dcbb2764fc1f3516626052199f",
+    "harness-process/src/test/java/io/jharness/process/LocalProcessRunnerTest.java": "eba300f1fb638d49dd1ed4d7ffe4cef7f6bc2ee8e2e3d05d6b4530294fe052ab",
+    "harness-process/src/test/java/io/jharness/process/LocalRunControlTest.java": "4298fe6713187d5cc0ac77520e0b226193b6c49830f60a1b080397edbdff17d2",
     "harness-process/src/test/java/io/jharness/process/M6TerminalTest.java": "a10149cbedf8cdd7543df34eb3d0e75c91d3e3a1fd99b1a7e9dd3aad047797d3",
-    "harness-process/src/test/java/io/jharness/process/ProcessProbe.java": "fba3c07fbef954cf1fbd487f4015a6668f79059a8ce2ad812689b2eb50b78c00",
-    "harness-process/src/test/java/io/jharness/process/RunStatePermissionsTest.java": "7b7cd546cf51a581adeedbd3a862aac558b4c8c1430d6a7c7c9f0917c094b6fa",
+    "harness-process/src/test/java/io/jharness/process/ProcessProbe.java": "23d33e08b2bd72d6338911a024dd2c4495f4658fdec2cf3c2d9b34bee7d3bb2f",
+    "harness-process/src/test/java/io/jharness/process/RunStatePermissionsTest.java": "e3cd88978b1f141e2607b6184ec93d78b3db62b222dc0e8e52d02f754f8dc205",
     "harness-policy/pom.xml": "2518ef98fc74d6d5945ac3ba68cd2318e135cf80f85587a0aa18cd838026ca70",
     "harness-policy/src/main/java/io/jharness/policy/DefaultPolicyEngine.java": "b7b5924a3803b845f6adf6e13a7cccaeb3dd5ef9668534d2d2d539effddc155e",
     "harness-policy/src/main/java/io/jharness/policy/InteractiveApprovalService.java": "7c636ac72b1f9b151dc5601b67879c0cc6a434d5ba8a54e0e664cc89ed373a78",
@@ -1050,7 +1059,7 @@
     "harness-ecosystem/src/main/java/io/jharness/ecosystem/SharedFeeBudget.java": "28f8eea8939203196ba3508b225e7c23edaf3283a73eac1fb507b705921fe760",
     "harness-ecosystem/src/main/java/io/jharness/ecosystem/SkillsPlugin.java": "8139e4b7cc27f8a1c4b4cf033b94c6c5198e3dfb531c245dddde48ab038a788a",
     "harness-ecosystem/src/main/java/io/jharness/ecosystem/StdioMcpTransport.java": "aa25052407c5e4ea80535eb70253e0f2bdaaae6e7ddbdda7fe8ad96c01132885",
-    "harness-ecosystem/src/main/java/io/jharness/ecosystem/SubagentPlugin.java": "becafbcd856bb537f5d95fb512fb28aa56224839bd4b16d8080cd7b0e9c82b97",
+    "harness-ecosystem/src/main/java/io/jharness/ecosystem/SubagentPlugin.java": "cd96219943b3db45ec9c671f4d2564a146c54ef652e0712e6247059e06e1b91a",
     "harness-ecosystem/src/main/java/io/jharness/ecosystem/SubagentService.java": "f449593200a6427934b57fe80bb9d5c0d7c133b069ad27ec8b9dab0050a7ed9c",
     "harness-ecosystem/src/main/java/io/jharness/ecosystem/WebFetchPlugin.java": "9677773655629e49d12c88c110355faf44d0ff10ef538196ebc018bc79ee835c",
     "harness-web/pom.xml": "4c52bdd8cc4b47b3bd3429e32811c7cfa0933ba1726aa16c61185247e7c4f2a5",
@@ -1091,14 +1100,14 @@
     "harness-testkit/src/test/java/io/jharness/testkit/M1ToolPipelineTest.java": "2fb443b558e6b99214c1448ac2f4de46846310a47cf3da898058a43968f81297",
     "harness-testkit/src/test/java/io/jharness/testkit/M2WorkspaceIntegrationTest.java": "3e94d6c192014b98d9d52d719e0bada68be341f1a2fc3db04650ea10edb16726",
     "harness-testkit/src/test/java/io/jharness/testkit/M3CommandFixture.java": "9d38b94883c920d748e122952f9ea2db19682b6542fcd8030a2ef6aa9be2077d",
-    "harness-testkit/src/test/java/io/jharness/testkit/M3RuntimeIntegrationTest.java": "0c7bec9fa9d42b9d87212fe6ebc8c79eb0f903724f7da980edf4dee0f4fcb6a0",
+    "harness-testkit/src/test/java/io/jharness/testkit/M3RuntimeIntegrationTest.java": "502e99601c5bdf64b06da1fc3ce970afa91637a8fd285c109f6c856beac9d984",
     "harness-testkit/src/test/java/io/jharness/testkit/M4CliCrashProbe.java": "4707ac5ba069ccc65fd9c9b10964e531c468a6a748ae6763f3d319c18b6b9fcf",
     "harness-testkit/src/test/java/io/jharness/testkit/M4CliIntegrationTest.java": "2a3824d50a526bbef90730b05c6cff16992ffe3ccc68a7af4d5fa67776ee1096",
     "harness-testkit/src/test/java/io/jharness/testkit/M5RecoveryIntegrationTest.java": "c94b72e2ec51bf94f1b145b3208a5ffbea7a18a2bd6b675bf7a2a3731d14cc25",
     "harness-testkit/src/test/java/io/jharness/testkit/M6CompactionTest.java": "439b98ddc4d46ed4f08b8322544338133daccccda2c3fbdd6cbc8e8418cfff41",
     "harness-testkit/src/test/java/io/jharness/testkit/M6RuntimeIntegrationTest.java": "57debae01411dde9f3d1efea0f5a9646a69a96908b6bac20f6eb5d2b5657849b",
     "harness-testkit/src/test/java/io/jharness/testkit/M7CliEcosystemTest.java": "f691d6a3b0410baf4ab299867c3e04baf596fc21105f70f8e4350dabc8bf688a",
-    "harness-testkit/src/test/java/io/jharness/testkit/M7ClosureTest.java": "4162cc0396c85711b2b114a18d660d88d131890ae5a94332d032b51a940b4b85",
+    "harness-testkit/src/test/java/io/jharness/testkit/M7ClosureTest.java": "a98985785df1ba2781395e2144125efa3220760d4e1fa9b3cec496fd4479ddce",
     "harness-testkit/src/test/java/io/jharness/testkit/M7DockerProbe.java": "a8487606579ca722a49c17d885184ba4211d33e90326d5e3bbf60771e6216852",
     "harness-testkit/src/test/java/io/jharness/testkit/M7EcosystemFixture.java": "fbd73b289765a6c885c8dac76e6ab124be8a7a6b7a028075ac892589000c4f5f",
     "harness-testkit/src/test/java/io/jharness/testkit/M7EnvironmentTest.java": "193d15c64f02d13b00a0025b8cf4771ad16c1bb0256555a7836830a9214f55dd",
@@ -1108,7 +1117,7 @@
     "harness-testkit/src/test/java/io/jharness/testkit/M7SkillsDockerProbe.java": "01a8d2c79a24379852fdb693ecf3313e00c7189f81e0b95fa1d2620867fe3455",
     "harness-testkit/src/test/java/io/jharness/testkit/M7SkillsTest.java": "d4dc567c0fd260e86d68f9e8d316b61212ebd8e7b23b7efca7825758eb9b599f",
     "harness-testkit/src/test/java/io/jharness/testkit/M7SubagentDockerProbe.java": "5ee92def5bbbbcf7be5adc8cfd7b537f06c9d42ba57251510dff30e4d51b9847",
-    "harness-testkit/src/test/java/io/jharness/testkit/M7SubagentTest.java": "aef7628a502d7f7eb344cf38dbd947c500f5f93ee4a6a9b895d4a23c10243a2f",
+    "harness-testkit/src/test/java/io/jharness/testkit/M7SubagentTest.java": "cb4289faa0c5a3d9f17f5d89d3c97d15856e4116068407c6f3c5c149d65f53ae",
     "harness-testkit/src/test/java/io/jharness/testkit/M7WebDockerProbe.java": "d03d7d4d6f978da57a3a4042790770a38984a5ff5ae3f32a8037210c6ed31756",
     "harness-testkit/src/test/java/io/jharness/testkit/M7WebTest.java": "603b36ca8d0a7e967261c6b95675da9f9ba644b31d6a3816faf6c6b850794e75",
     "harness-testkit/src/test/java/io/jharness/testkit/M8FilterDockerProbe.java": "c3829672349b70fc6b8c9419f90bbdbff9a1b4de1134bc1700e1c71b80bdd721",
@@ -1119,5 +1128,5 @@
     "harness-testkit/src/test/java/io/jharness/testkit/M8SchedulingTest.java": "78bd9051dc96d38c01731e4c4b936c6fa5aa16c71ee4178bba41ddbcfbcf5126",
     "harness-testkit/src/test/java/io/jharness/testkit/TestkitTest.java": "ca9ae56435d7ec7e4458820ac1a951e1d81fcb403b99e0b158e2927e57c6baab"
   },
-  "jarSha256": "24334b12a36597722f73a299b02f1a6acfadbd76e8b9e761a3e97805ce47b76c"
+  "jarSha256": "c13627e20fa27a1717396de06e504d86f33688340b68cf73788cd189fafcf52a"
 }

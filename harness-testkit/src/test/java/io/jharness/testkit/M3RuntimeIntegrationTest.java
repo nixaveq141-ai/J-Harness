@@ -322,7 +322,9 @@ class M3RuntimeIntegrationTest {
 
     @Test
     void actualMavenWrapperFailureReachesAgentThenFileRepairAndRebuildSucceed() throws Exception {
-        try (var f = new Fixture()) {
+        Duration mavenCommandLimit = ProcessLimits.defaults().timeout();
+        int mavenTimeoutMs = Math.toIntExact(mavenCommandLimit.toMillis());
+        try (var f = new Fixture(mavenCommandLimit)) {
             Files.writeString(
                     f.root.resolve("pom.xml"),
                     """
@@ -338,9 +340,9 @@ class M3RuntimeIntegrationTest {
             Path repo = Path.of("..").toRealPath();
             boolean windows = System.getProperty("os.name").startsWith("Windows");
             if (windows) {
-                // The offline scenario starts with a prepared Wrapper cache. Warm the native
-                // PowerShell/.NET launcher separately instead of spending the agent's unchanged
-                // 20-second command deadline on hosted Windows first-start initialization.
+                // Verify the offline prerequisite using the real existing Wrapper distribution.
+                // Hosted Windows native startup can exceed the short-process fixture budget;
+                // this Maven workload uses the existing production command default instead.
                 Path preparationLog = temporary.resolve("wrapper-ready.log");
                 var preparation =
                         new ProcessBuilder(
@@ -386,7 +388,7 @@ class M3RuntimeIntegrationTest {
             FakeLlm llm =
                     new FakeLlm(
                             List.of(
-                                    reply(command("build-fail", command, mode)),
+                                    reply(command("build-fail", command, mode, mavenTimeoutMs)),
                                     reply(
                                             new ToolInvocation(
                                                     "repair",
@@ -401,9 +403,9 @@ class M3RuntimeIntegrationTest {
                                                             "expectedVersion",
                                                             version),
                                                     SideEffectLevel.WORKSPACE_WRITE)),
-                                    reply(command("build-pass", command, mode)),
+                                    reply(command("build-pass", command, mode, mavenTimeoutMs)),
                                     reply()));
-            f.loop(llm, new Budget(5, Duration.ofSeconds(45)), ApiCostGuard.unavailable(), APPROVE)
+            f.loop(llm, new Budget(5, Duration.ofMinutes(5)), ApiCostGuard.unavailable(), APPROVE)
                     .run(CancellationToken.NONE);
             assertEquals(TaskStatus.COMPLETED, f.project().taskStatus(), f.events().toString());
             var results =
@@ -430,10 +432,14 @@ class M3RuntimeIntegrationTest {
     }
 
     static ToolInvocation command(String id, List<String> argv, String mode) {
+        return command(id, argv, mode, 20000);
+    }
+
+    static ToolInvocation command(String id, List<String> argv, String mode, int timeoutMs) {
         return new ToolInvocation(
                 id,
                 "execute_command",
-                Map.of("argv", argv, "mode", mode, "cwd", ".", "timeoutMs", 20000),
+                Map.of("argv", argv, "mode", mode, "cwd", ".", "timeoutMs", timeoutMs),
                 SideEffectLevel.SYSTEM_IMPACT);
     }
 
@@ -478,12 +484,16 @@ class M3RuntimeIntegrationTest {
         final PluginContainer container;
 
         Fixture() throws Exception {
+            this(Duration.ofSeconds(20));
+        }
+
+        Fixture(Duration commandLimit) throws Exception {
             root = Files.createDirectory(temporary.resolve(UUID.randomUUID().toString()));
             files = new LocalWorkspace(root);
             process =
                     new LocalProcessRunner(
                             files,
-                            new ProcessLimits(Duration.ofSeconds(20), 2, 64, 16384),
+                            new ProcessLimits(commandLimit, 2, 64, 16384),
                             LocalProcessRunner.buildEnvironment(),
                             List.of());
             repo = new JsonlSessionRepository(temporary.resolve("logs-" + UUID.randomUUID()));

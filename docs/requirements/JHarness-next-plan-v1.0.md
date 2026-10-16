@@ -133,3 +133,5 @@ M9本地验证更新（2026-10-16）：最终Windows296项零失败/错误/跳�
 2026-10-16 M9真实CI进展：用户已授权，验证分支已推送。提交cbdbdcd6be0cf3feb1ce6864b40d26908cd601ad对应实际运行https://github.com/nixaveq141-ai/J-Harness/actions/runs/38854955517，当前进行中，尚未记为通过。Git直连两次超时后，仅本次推送使用现有系统代理成功；未修改全局网络配置。
 
 2026-10-16 M9首轮归档与复验：run38854955517的Ubuntu296项及扫描/候选安装通过；Windows/macOS夹具路径和编码失败详情已保留M9-ci-first-attempt.json。修复仅影响测试，新增链接拒绝断言，产品检查和中文断言未减弱；修复后Windows本地全量296项零失败/错误/跳过。当前提交修复后重新执行同一提交三平台，不将首轮Linux结果拼接成最终三平台通过。
+
+M9当前执行入口：最终修复提交80c2104cd41fd4876da4f1260f51dbf7e0315ffa，第四轮真实CI https://github.com/nixaveq141-ai/J-Harness/actions/runs/38857700403 正在执行；本地完整复验日志.build-cache/M9-final-verify.log。等待三侧全部成功及原始归档一致性核对后再标记完成。
