@@ -31,3 +31,9 @@ doctor行为修正：Maven/Wrapper仍作为构建能力诊断字段显示，但�
 M9真实CI首次失败与修复中：run38854955517的macOS ARM64在LocalRunControlTest/RunStatePermissionsTest遭遇系统临时目录路径别名，产品拒绝链接保护正常。仅将三处测试夹具临时根toRealPath规范化，保留产品保护；在现有权限测试中补充POSIX symlink/Windows junction拒绝断言，不新增跳过、不减弱原断言。原始日志保留.build-cache/M9-job-116824235442.log，待本地验证后重跑三平台。
 
 首轮Windows runner另发现同类临时路径别名，以及中文参数回显依赖本机native.encoding而在英文Windows代码页丢失字符。进程测试子程序明确UTF-8输出，读取测试显式配置ProcessLimits UTF-8（公共能力已有）；中文和特殊字符原断言完整保留，产品默认native编码未修改。Ubuntu首轮已全流程通过，但不冒充最终同提交三平台通过。
+
+M9第二轮macOS已通过进程/取消控制测试，进一步发现M7ClosureTest直接创建搜索索引时也使用系统临时目录别名。已系统搜索严格路径API调用，补齐该夹具根规范化；SessionSearchIndex拒绝链接及原有搜索/增量/事实不变断言保持。run38855644393失败日志保留.build-cache/M9-job-116826373036.log，继续相关专项和同提交三平台复验。
+
+M9第二轮进一步定位：Windows JUnit原始XML确认子Java启动器已把中文argv转成??（Cp1252），不是输出解码；按OpenJDK21 CP_ACP实现，Windows参数边界测试改用支持Unicode的PowerShell -File原生接收器，中文/空格/&/;及退出码/双流断言不变。Linux暴露真实Subagent取消事件竞争：子任务先观察共享token结束，父线程直接取完成结果时漏记cancel_requested。现于父线程等待前/结果取得后记录一次已观察的取消请求，保留单次CAS、UNKNOWN和不重放语义；原失败回归重复10次，预计全量305项，尚待验证。
+
+M9复验修复就绪：进程/搜索/子任务相关38项通过（取消事实原回归重复10次），原断言全部保留。Windows Unicode argv接收器最终采用临时编译的.NET原生exe；直接Shell接收器按产品ARGV防护被拒绝的本地失败日志保留。Java21 CP_ACP限制不冒称被产品修复，产品Shell保护未改。父线程取消事实竞争已修复；准备第三轮同提交全量，预计305项。第二轮失败与原始日志SHA见M9-ci-second-attempt.json。

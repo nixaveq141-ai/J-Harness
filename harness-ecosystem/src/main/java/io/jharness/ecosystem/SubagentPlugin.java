@@ -210,6 +210,7 @@ public final class SubagentPlugin implements HarnessPlugin {
         task.worker.start();
         while (true) {
             try {
+                observeParentCancellation(task, context.cancellation());
                 if (!active
                         || context.cancellation().isCancelled()
                         || task.cancelled.get()
@@ -223,7 +224,9 @@ public final class SubagentPlugin implements HarnessPlugin {
                                 call.callId(), finish(task, "UNKNOWN", "CHILD_DID_NOT_STOP", null));
                     }
                 }
-                return result(call.callId(), task.outcome.get(20, TimeUnit.MILLISECONDS));
+                var outcome = task.outcome.get(20, TimeUnit.MILLISECONDS);
+                observeParentCancellation(task, context.cancellation());
+                return result(call.callId(), outcome);
             } catch (TimeoutException ignored) {
                 /* parent cancellation includes its monotonic deadline */
             } catch (InterruptedException ex) {
@@ -416,6 +419,13 @@ public final class SubagentPlugin implements HarnessPlugin {
                         + BoundedJson.text(summary),
                 summary,
                 Optional.empty());
+    }
+
+    private void observeParentCancellation(Task task, CancellationToken parent) {
+        // The child may observe the shared token and finish before the parent's timed get returns.
+        // Record the request on the parent path even when that completion wins the race.
+        if (parent.isCancelled() && task.cancelled.compareAndSet(false, true))
+            event("subagent.cancel_requested", task.metadata());
     }
 
     private void cancel(Task task) {

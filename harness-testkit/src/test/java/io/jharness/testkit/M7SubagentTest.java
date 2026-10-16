@@ -15,6 +15,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
 import java.util.function.Supplier;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -708,7 +709,7 @@ class M7SubagentTest {
         }
     }
 
-    @Test
+    @RepeatedTest(10)
     void explicitParentCancellationReachesChildAndDoesNotClaimSuccess() throws Exception {
         prepare();
         var child = new BlockingModel(false);

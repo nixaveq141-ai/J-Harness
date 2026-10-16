@@ -32,12 +32,9 @@ class LocalProcessRunnerTest {
     void exitCodesSeparateFailureAndConsumeBothStreamsWithExactArgumentBoundaries()
             throws Exception {
         try (var runner = runner(8, 8192)) {
+            List<String> argv = ProcessProbe.unicodeEcho(root, "中文 space & ; literal", 7);
             ToolResult result =
-                    runner.execute(
-                            request(
-                                    ProcessProbe.command("echo", "中文 space & ; literal", "7"),
-                                    Duration.ofSeconds(5)),
-                            CancellationToken.NONE);
+                    runner.execute(request(argv, Duration.ofSeconds(5)), CancellationToken.NONE);
             assertEquals(ToolStatus.FAILED, result.status());
             assertEquals(7, result.value().get("exitCode"));
             assertEquals("中文 space & ; literal", result.value().get("stdout"));

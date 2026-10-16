@@ -1,0 +1,44 @@
+{
+  "run": {
+    "id": 38855644393,
+    "head_sha": "6a7c18b31f59f0e95779cf0ce8a96650c8111214",
+    "html_url": "https://github.com/nixaveq141-ai/J-Harness/actions/runs/38855644393",
+    "status": "completed",
+    "conclusion": "failure",
+    "created_at": "2026-10-16T05:24:51Z",
+    "updated_at": "2026-10-16T05:26:54Z"
+  },
+  "jobs": [
+    {
+      "id": 116826373036,
+      "name": "verify (macos-latest)",
+      "html_url": "https://github.com/nixaveq141-ai/J-Harness/actions/runs/38855644393/job/116826373036",
+      "status": "completed",
+      "conclusion": "failure"
+    },
+    {
+      "id": 116826373187,
+      "name": "verify (ubuntu-latest)",
+      "html_url": "https://github.com/nixaveq141-ai/J-Harness/actions/runs/38855644393/job/116826373187",
+      "status": "completed",
+      "conclusion": "failure"
+    },
+    {
+      "id": 116826373308,
+      "name": "verify (windows-latest)",
+      "html_url": "https://github.com/nixaveq141-ai/J-Harness/actions/runs/38855644393/job/116826373308",
+      "status": "completed",
+      "conclusion": "failure"
+    }
+  ],
+  "failures": [
+    "macOS remaining direct search-index fixture used system temporary alias",
+    "Windows Java21 launcher CP_ACP loses Chinese argv before main, confirmed in original JUnit XML",
+    "Linux fast child cancellation completion could omit parent cancel_requested event"
+  ],
+  "preservedLogsSha256": {
+    "116826373036": "73705b731892480a30319cf4194512785ab501588dc542bd1f0fffa4f996753d",
+    "116826373187": "4fa1ada52a4f01faa70a9e43e6135ff9aeccb474c263b6eebcb8832fbbb8c5ff",
+    "116826373308": "5b5798df3e580fccf1bf3f6e8e8c8898e5bff0760d47469739a0ea50b4d78531"
+  }
+}

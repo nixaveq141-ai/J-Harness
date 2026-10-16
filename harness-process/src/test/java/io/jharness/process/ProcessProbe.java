@@ -1,5 +1,6 @@
 package io.jharness.process;
 
+import java.io.IOException;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
@@ -60,6 +61,52 @@ public final class ProcessProbe {
                         "bin",
                         System.getProperty("os.name").startsWith("Windows") ? "java.exe" : "java")
                 .toString();
+    }
+
+    public static List<String> unicodeEcho(Path root, String text, int exit) throws Exception {
+        if (!System.getProperty("os.name").startsWith("Windows"))
+            return command("echo", text, Integer.toString(exit));
+        // Java 21's Windows launcher uses CP_ACP for argv. A managed native executable receives
+        // Unicode argv independently of the OS code page, without bypassing the ARGV shell guard.
+        Path source = root.resolve("unicode-argv.cs"), receiver = root.resolve("unicode-argv.exe");
+        Files.writeString(
+                source,
+                """
+                using System;
+                using System.Text;
+                public static class UnicodeArgv {
+                    public static int Main(string[] args) {
+                        Console.OutputEncoding = new UTF8Encoding(false);
+                        Console.Out.Write(args[0]);
+                        Console.Error.Write("diagnostic");
+                        return int.Parse(args[1]);
+                    }
+                }
+                """);
+        Path compiler =
+                Path.of(
+                        System.getenv("SystemRoot"),
+                        "Microsoft.NET",
+                        "Framework64",
+                        "v4.0.30319",
+                        "csc.exe");
+        Process compile =
+                new ProcessBuilder(
+                                compiler.toString(),
+                                "/nologo",
+                                "/target:exe",
+                                "/out:" + receiver,
+                                source.toString())
+                        .redirectErrorStream(true)
+                        .start();
+        try {
+            if (!compile.waitFor(20, java.util.concurrent.TimeUnit.SECONDS)
+                    || compile.exitValue() != 0)
+                throw new IOException("Unicode receiver compilation failed");
+        } finally {
+            compile.destroyForcibly();
+        }
+        return List.of(receiver.toString(), text, Integer.toString(exit));
     }
 
     public static List<String> command(String... args) {

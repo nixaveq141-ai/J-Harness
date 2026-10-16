@@ -15,11 +15,18 @@ import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 class M7ClosureTest {
     @TempDir Path root;
+
+    @BeforeEach
+    void canonicalTemporaryRoot() throws IOException {
+        root = root.toRealPath();
+    }
+
     private final SecretRedactor sanitizer = new SecretRedactor();
 
     private JsonlSessionRepository repository() throws IOException {
