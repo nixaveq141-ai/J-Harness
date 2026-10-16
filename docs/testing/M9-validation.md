@@ -45,4 +45,6 @@ POSIX以`sh ./mvnw`替换Wrapper调用。最终SBOM在全部模块打包后再�
 
 没有付费模型请求、Release发布或新增Linux/macOS通过声明；M8原Windows/Linux各295项是历史证据，Java/POM已变更，不再作为M9当前源码证明。OSV范围为Maven项目依赖含tests，不涵盖所有构建插件传递依赖、JDK/OS、未独立建模的原生程序；无发现不是不存在漏洞的保证。仍需真实三平台CI和结果归档后才能决定M9收口。
 
-重复ZIP生成及JAR重打包的实际哈希见M9-packaging-results.json；候选文件清单/源码哈希与工作树状态见M9-candidate-manifest.json。待提交快照明确标记workingTreeDirty，不把它冒称已有提交的精确制品。
+重复ZIP生成及JAR重打包的实际哈希见M9-packaging-results.json；候选文件清单/源码哈希与工作树状态见M9-candidate-manifest.json。最终候选绑定已提交源码ebcf7dd，workingTreeDirty=false；5890cb3为实现提交，ebcf7dd仅合并远端许可证历史，无源码内容变化。
+
+最终候选ZIP SHA256：11e55a44fbe9b5934579acfdfdd30d515c6972a5db56c8dd9307b5132bbec495。对应manifest/安装冒烟均已归档；本轮未推送、未运行远端CI。后续文档证据提交不改变已验证候选的源码提交标识。

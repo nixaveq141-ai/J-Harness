@@ -1,6 +1,6 @@
 {
-  "capturedAt": "2026-10-16T05:07:28.676637+00:00",
-  "zipSha256": "61c2d8bc207c9156012f7c23260292e86260799ac395e982bb0f8dea63fc8774",
+  "capturedAt": "2026-10-16T05:11:14.639604+00:00",
+  "zipSha256": "11e55a44fbe9b5934579acfdfdd30d515c6972a5db56c8dd9307b5132bbec495",
   "status": "PASS",
   "checks": {
     "installedManifest": true,

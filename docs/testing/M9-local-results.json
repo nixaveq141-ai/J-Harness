@@ -1,6 +1,6 @@
 {
   "milestone": "M9",
-  "capturedAt": "2026-10-16T05:07:08.090500+00:00",
+  "capturedAt": "2026-10-16T05:11:13.531382+00:00",
   "buildResult": "SUCCESS",
   "platform": "Windows-11-10.0.26200-SP0",
   "architecture": "AMD64",
@@ -9,8 +9,8 @@
     "21.0.12.1"
   ],
   "javaRuntime": "java version \"21.0.12.1\" 2026-08-18 LTS\nJava(TM) SE Runtime Environment (build 21.0.12.1+1-LTS-4)\nJava HotSpot(TM) 64-Bit Server VM (build 21.0.12.1+1-LTS-4, mixed mode, sharing)\n",
-  "commit": "b6ae1b8628803a43ce33c2ff044c87d3590b9fd3",
-  "workingTreeDirty": true,
+  "commit": "ebcf7dd284f89b28709096b282a55104a9e8a5ea",
+  "workingTreeDirty": false,
   "verificationLog": ".build-cache/M9-verify-final.log",
   "ciRunUrl": null,
   "logSha256": "4ed000eaf1fcb57ebe28408a112f0cac8ebb3c5fc356d8368909539850b026b6",

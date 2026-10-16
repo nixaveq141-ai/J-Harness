@@ -1,8 +1,8 @@
 {
   "version": "0.1.0-SNAPSHOT",
   "candidateOnly": true,
-  "gitCommit": "b6ae1b8628803a43ce33c2ff044c87d3590b9fd3",
-  "workingTreeDirty": true,
+  "gitCommit": "ebcf7dd284f89b28709096b282a55104a9e8a5ea",
+  "workingTreeDirty": false,
   "sourceSha256": {
     ".github/workflows/ci.yml": "d5c386e093e0f5e453453d7bf2a141a3027cc6276492a78b4f6976249f55a629",
     "examples/broken-project/pom.xml": "eb311bdf8d0203408f57b9bd4a462fea9b8c629dd921fea6e607a8784e1beb35",

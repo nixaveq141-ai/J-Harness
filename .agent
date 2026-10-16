@@ -152,3 +152,5 @@ M9本地进展：Jackson已升至2.21.7，18个外部依赖复扫PASS（0条未�
 最终Windows296项全量，0失败/错误/跳过；Jackson2.21.7、18依赖OSV复扫PASS，首次11条公告原文保留M9-security-before.json。项目采用远端Apache-2.0原文，坐标独立法律材料/来源/POM与JAR SHA已进入最终JAR；Wrapper固定官方分发SHA256。doctor不再强制目标工作区具备Maven，保留构建能力诊断并增加回归。最终JAR SHA24334b12a36597722f73a299b02f1a6acfadbd76e8b9e761a3e97805ce47b76c，强制重复打包相同。Windows候选安装、doctor零网络、审批写入/报告、EOF拒绝、外部取消、UNKNOWN拒绝续跑及显式核实恢复通过；扫描器5项离线门禁通过。
 
 本地分支codex/m9-release-validation；CI已实现最终SBOM/扫描/候选冒烟与证据归档，但没有远端执行，M9尚未收口。下一步在用户授权推送该分支后跑真实三平台CI并收集同一提交结果，不发布Release。pty4j内嵌Microsoft原生构建精确来源仍有限制，扫描不覆盖构建插件完整依赖/JDK/OS/独立原生程序。M8旧295项不作为当前改动后的M9验收。文档M9-validation.md为当前详细状态；失败夹具记录保留.build-cache，未改弱产品断言。
+
+2026-10-16 M9提交与接续：实现提交5890cb3；本地合并提交ebcf7dd保留origin/main的Apache-2.0原有历史，无产品源码变化。最终候选绑定干净提交ebcf7dd（workingTreeDirty=false），Windows安装冒烟和重复ZIP哈希一致再次通过。最终JSON证据已归档docs/testing/M9-*.json。下一步需要用户明确授权推送codex/m9-release-validation并运行真实三平台CI；M9未收口，未合并远端主分支、未发布。上次自动审批服务额度失败未执行的整理步骤本轮已完成。
