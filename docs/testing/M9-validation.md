@@ -48,3 +48,5 @@ POSIX以`sh ./mvnw`替换Wrapper调用。最终SBOM在全部模块打包后再�
 重复ZIP生成及JAR重打包的实际哈希见M9-packaging-results.json；候选文件清单/源码哈希与工作树状态见M9-candidate-manifest.json。最终候选绑定已提交源码ebcf7dd，workingTreeDirty=false；5890cb3为实现提交，ebcf7dd仅合并远端许可证历史，无源码内容变化。
 
 最终候选ZIP SHA256：11e55a44fbe9b5934579acfdfdd30d515c6972a5db56c8dd9307b5132bbec495。对应manifest/安装冒烟均已归档；本轮未推送、未运行远端CI。后续文档证据提交不改变已验证候选的源码提交标识。
+
+2026-10-16 M9远端执行授权：用户明确要求进入下一步并把M9全部运行完成，已授权推送codex/m9-release-validation及执行真实三平台CI、修复实际失败、归档结果；不含合并远端main或发布Release。当前开始远端执行，尚无CI通过结论。
