@@ -4,6 +4,7 @@
 
 ## 当前接续状态
 
+- 2026-10-16新增M10前端复用静态评估：用户提供的deepseek-harness目录严格只读；建议按文件提取基础组件/主题/布局逻辑，任务/事件/审批/认证适配J-Harness；完整前端不可仅改API地址。见docs/development/M10-frontend-reuse-review.md及来源SHA清单。尚未移植代码或开始M10实现，未宣称浏览器验证通过。
 - M0～M7 已按各阶段明确范围完成本地开发、验收与收口。M7 Windows / Linux 各 260 项测试通过，均 0 失败/错误/跳过；236 个 Java/POM SHA 一致。
 - 当前M8.1～M8.4已按契约范围收口：最终Windows/Linux容器各295项，0失败/错误/跳过；完整测试名和259个Java/POM SHA一致。七组最终JAR本地/真实Docker回归及清理通过。M8证据保留历史，不作为已修改源码的M9证明。
 - M9约定范围已完成：源码ed02da0的真实CI 38858529628三侧各305项（0失败/错误/跳过），260个Java/POM与完整测试名一致；本机同源码305项及重复打包通过。当前证据见docs/testing/M9-validation.md、M9-platform-matrix.md、M9-ci-results.json、M9-closure.md。
