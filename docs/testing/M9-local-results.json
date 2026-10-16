@@ -1,6 +1,6 @@
 {
   "milestone": "M9",
-  "capturedAt": "2026-10-16T05:51:37.210932+00:00",
+  "capturedAt": "2026-10-16T06:00:38.783882+00:00",
   "buildResult": "SUCCESS",
   "platform": "Windows-11-10.0.26200-SP0",
   "architecture": "AMD64",
@@ -9,11 +9,11 @@
     "21.0.12.1"
   ],
   "javaRuntime": "java version \"21.0.12.1\" 2026-08-18 LTS\nJava(TM) SE Runtime Environment (build 21.0.12.1+1-LTS-4)\nJava HotSpot(TM) 64-Bit Server VM (build 21.0.12.1+1-LTS-4, mixed mode, sharing)\n",
-  "commit": "80c2104cd41fd4876da4f1260f51dbf7e0315ffa",
-  "workingTreeDirty": true,
-  "verificationLog": ".build-cache/M9-final-verify.log",
+  "commit": "ed02da0e01125d94a3c07f8862afe6c63b8f62d2",
+  "workingTreeDirty": false,
+  "verificationLog": ".build-cache/M9-accepted-source-verify.log",
   "ciRunUrl": null,
-  "logSha256": "12b2e1669ec90165b4d2afd651d52d1bf56d51c6faa4d62ecdf7a05c0069aaa4",
+  "logSha256": "2210ba1db63031f29f36e1e8424170342d17a061057db7ae1afb903574c4ef4b",
   "totals": {
     "tests": 305,
     "failures": 0,
@@ -33,7 +33,7 @@
         "cyclicPayloadIsRejectedByTheNestingBound",
         "payloadIsDeepImmutableAndDetached"
       ],
-      "sha256": "03ef12f00edf0d70a8d3e51e50c225f0a5406649ac3a4b6179c8bfd3280eaa97"
+      "sha256": "90827d60aac3253e9a5d55269e0a24d49cc58d78bdd227af54da1be0b21042ef"
     },
     {
       "tests": 7,
@@ -51,7 +51,7 @@
         "serialFailureShortCircuitsAndTimeoutIsExplicit",
         "serialWaitsAndOrdersByPriorityThenRegistration"
       ],
-      "sha256": "b688d51070270be8c68a3270b2b0a7bf3e3232b102139ae70d1f9db45ebb6243"
+      "sha256": "3dd55aa928063fd71ce68844de3df2a1c8abcdbd5ed8c134de7f17e066cefd56"
     },
     {
       "tests": 4,
@@ -66,7 +66,7 @@
         "missingFutureOrWrongStepContextCannotBeUsed",
         "toolResultsAndFinalEnvelopeReplayIntoMessagesWithoutAuthorityDuplication"
       ],
-      "sha256": "53882db45565f52522ecc3fc1760d49979d4d1443754100296f7c49883425292"
+      "sha256": "ad3643b0c659791ec84d689d1720c954f5b63ab18d6b4769d9cc0e164a611fc3"
     },
     {
       "tests": 6,
@@ -83,7 +83,7 @@
         "replayProjectionIsStableAndHasNoSeparateAuthoritativeHistory",
         "writerIsExclusiveReadersSeeSnapshotsAndClosedWriterCannotReenter"
       ],
-      "sha256": "0d9cb55b51bd10ee547a5c445cfc4394d4a21098abd5b792b5b3acc0f0b8da8b"
+      "sha256": "7724a6f2dd995960fe7058e0c1df970988ba955980eaf298899c7b6b74a7b5f9"
     },
     {
       "tests": 10,
@@ -104,7 +104,7 @@
         "structurallyDenseRecordIsRejectedBeforeObjectMaterializationAndNeverTailRepaired",
         "tailDamageIsReportedAndRepairRequiresExclusiveWriterAndExplicitPolicy"
       ],
-      "sha256": "257ec2d58eb55c6e50fb9c70666b0432639dd55b95ed50dc1d5b6dbd27e98e07"
+      "sha256": "7a81cb37e90700807fc359f2db69e4c8ad1b6124c4288ff0e67d7edcbc59ced2"
     },
     {
       "tests": 11,
@@ -126,7 +126,7 @@
         "recoveryCarriesUnknownAndUnresolvedRequestsAcrossForkAndReopen",
         "tailRepairBacksUpTruncatedAndInvalidCompleteFinalRecords"
       ],
-      "sha256": "09bb07596f6483564864a8b9af663825127f2a40928d45adda392368d243b963"
+      "sha256": "18c64af4ad78084ff1671f165bb99055843696d3af647a5bcbecb2c591ee2bd5"
     },
     {
       "tests": 10,
@@ -147,7 +147,7 @@
         "startupFailureNamesTheFailedPluginAndKeepsCleanupFailures",
         "stopFailureStillReleasesEveryContributionAndResource"
       ],
-      "sha256": "422c9ea2126f0d675169f3b271a9cb4c7c92fa0d99e91fe3ebb096bbf3b27110"
+      "sha256": "8b9277012c53e0874831c3507a18a29b8fee7c07a36b0b659aff9ddf4fe3cebd"
     },
     {
       "tests": 4,
@@ -162,7 +162,7 @@
         "nestedRequiredPropertiesAndNumericAndArrayBoundsAreEnforced",
         "unsupportedConstraintsAreRejectedInsteadOfIgnored"
       ],
-      "sha256": "84caab2d2bf9ab252469b9c0edf744a53c195dc8c4f56cbd3376ced0981b02a4"
+      "sha256": "ad3b8ea2c0e687a81ff2e19d0939983f36dfaa58540e8dbde39f6d30c6a75c4e"
     },
     {
       "tests": 13,
@@ -186,7 +186,7 @@
         "traversalAbsoluteAdsDevicesAndProtectedMetadataAreDenied",
         "unifiedDiffHandlesEmptyFilesAndMissingFinalNewlineAndNonGitWorkspace"
       ],
-      "sha256": "c6320a88ce44aa8f10a0fbd1d54f34e3faa1023d213604ba8508ef2bde8a98e3"
+      "sha256": "c7593e2b1604c391ef2597f26ab8a50f325f0e2933d65aa668b4bce8ced955d3"
     },
     {
       "tests": 4,
@@ -201,7 +201,7 @@
         "precedenceAppliesToListSearchGrepAndIndependentChildViews",
         "ruleLimitsAndUnsupportedConfigurationFailWithoutTruncation"
       ],
-      "sha256": "a7548d44d8e73ca93b8d3c1bd2663ce45243e3670a92844c8551bf729484f294"
+      "sha256": "e3287476073faf7228cb3553c5a5dd886a543eb132530c3c66273b4654b7a64c"
     },
     {
       "tests": 4,
@@ -216,7 +216,7 @@
         "secondCommitFailureReportsConfirmedChangesAndPendingPaths",
         "staleVersionAndOutsidePathFailAllPreflightBeforeFirstWrite"
       ],
-      "sha256": "3df9f77f0d192e5bc627fb783b342bb6aed8c047b711a56a8a20800b4f7482ac"
+      "sha256": "ff0c1178d3eef81194b04ffe0b96e5349a3c3b76ee37bff1632e93aa87e0d0b0"
     },
     {
       "tests": 2,
@@ -229,7 +229,7 @@
         "fileWriteAndEditPreviewDiffWithoutMutationAndShellIsExplicitlyUnpreviewable",
         "previewRejectsOutsideAndStaleVersions"
       ],
-      "sha256": "c68fb61fa0d80b65c395bd5e9f250d65e8e0b8e75c93584647f3be90247051a0"
+      "sha256": "81145637073f2fdc1fe8f6fdbed275159596ca2bd2901f3c0e7affb798b542ec"
     },
     {
       "tests": 9,
@@ -249,7 +249,7 @@
         "noInheritedSecretEnvironmentAndApprovedValuesScrubbed",
         "stdinIsClosedAndSuccessHasNoDetachedReader"
       ],
-      "sha256": "05dc2d8eefac0013156edd7eb2174777e18c32986a2667e690d6396ac405ddb4"
+      "sha256": "4e80ab6dd7ad43b0f997f59d3f30c6618a3c9ded5e49a0a73a9d443920d89e65"
     },
     {
       "tests": 2,
@@ -262,7 +262,7 @@
         "invalidCredentialDoesNotCancelAndUnreachableIsDifferentFromExited",
         "separateJvmCancelAuthenticatesAndExitStateIsDiscoverable"
       ],
-      "sha256": "38f64c46e571e0f6e4551b2a9be444bc3bb17a09fce80046262b311707e0cfb8"
+      "sha256": "103c9ea21145815375986f3cfc5779e586809717ec3e70324b82d54278373e60"
     },
     {
       "tests": 5,
@@ -278,7 +278,7 @@
         "realPtyAcceptsInputResizesAndPreservesItsWorkingDirectory",
         "rollingLogsAndConcurrentTaskQuotaStayBounded"
       ],
-      "sha256": "1915df93437d08bff86287c2f4a42e83b99b2e3c1ac782dddeea76f0aaea58d8"
+      "sha256": "061db7ad4bbbfaccf500bbbf89599e98c45b67698a48d0c756eb81557883afb1"
     },
     {
       "tests": 1,
@@ -290,7 +290,7 @@
       "cases": [
         "credentialsAreOwnerOnlyAndOrdinaryFoldersAreNotRepurposed"
       ],
-      "sha256": "4c9d80a375867fe0a896c2d334f0be084c5da12514786fc17e76a6791c1fefd6"
+      "sha256": "71743238a5b1efd1951a9c282a5c7ee5692d011acb78c839473a8edb0bd812bb"
     },
     {
       "tests": 3,
@@ -304,7 +304,7 @@
         "cancellationRevokesPromptAndTimeoutAndCloseDeny",
         "trustedCommandIsExactAndShellOrSuffixNeedsApproval"
       ],
-      "sha256": "7daa4bc190a7f6c711620b98ec3d99bc32ac0104752debe0f390efaf0d7dcdae"
+      "sha256": "e641fed758b079747c5eb663ab34515fee684d587e6a766aa58a8fbcb231c04b"
     },
     {
       "tests": 5,
@@ -320,7 +320,7 @@
         "routerLazilySelectsCapabilitiesAndClosesOnlyInstantiatedAdapters",
         "streamLimitsAndSecretsSplitAcrossDeltasAreSafe"
       ],
-      "sha256": "fe76d067f272cba63f6cae5dd4a81d7a154d179131cf3834743430e292303cf2"
+      "sha256": "e80c1fd859b9b7dbfb4d6c3e130e249ce740526e0e7a09ab7b00a8ef112581e9"
     },
     {
       "tests": 9,
@@ -340,7 +340,7 @@
         "textRequestHasConfiguredModelHeaderAndPreparedEnvelopeWithoutSecret",
         "toolArgumentsParseAndRoundTripAsJsonStringsWithLinkedResults"
       ],
-      "sha256": "12f65da085db803115b3c0cecb1539bf8caa3636cb1ce0e70fd91448c8917ea3"
+      "sha256": "8475521da753359d598ffe20728f903831e242105b4802b8db0d6c71054809eb"
     },
     {
       "tests": 9,
@@ -360,7 +360,7 @@
         "offlineDryRunDoesNotNeedApiKeyAndDoesNotCreatePlannedFiles",
         "parserRejectsUnknownAndDuplicateFlagsButPreservesChineseAndSpaces"
       ],
-      "sha256": "ea0a785dc140d1e1e79866f11e595f2d1eaf04df33641356cf037a4d95a3495c"
+      "sha256": "b06d235c96fcd28a232dd5a75b022cc256a325c7f2ab980ad22f5931e11e8ef4"
     },
     {
       "tests": 3,
@@ -374,7 +374,7 @@
         "expectedFileMustStillHaveRecordedVersionAndVerificationAfterLastWrite",
         "failedBuildThenLatestSuccessfulVerificationPassesAndSubsequentSystemCommandInvalidatesIt"
       ],
-      "sha256": "4c2d67523d0d5d70e3343123379b9c442f983f48788c23e034e1bfe64d56dc5f"
+      "sha256": "2a5b1c4f2a8e0dedd5b84b78060308e4452c879ac48d69b06440de80084efaa5"
     },
     {
       "tests": 8,
@@ -393,7 +393,7 @@
         "unresolvedColdTerminalRequiresManualVerificationAndIsNeverRestarted",
         "unresolvedModelRequestRequiresExplicitAbandonmentWithoutReplay"
       ],
-      "sha256": "4a76b1fa1f5af996fd0a753d9cb66382017eb6a30fdcead3c2f510cea5213111"
+      "sha256": "21c1a28acfff873661dd1bfcd247b931880b66a1519c7b4fead7ebbf5e6000eb"
     },
     {
       "tests": 3,
@@ -407,7 +407,7 @@
         "conflictingRoutesPoliciesUnknownSelectionsAndInlineKeysAreRejected",
         "profilesPresetsModelsAndBundlesResolveWithRecordedSelection"
       ],
-      "sha256": "bce389c5e0281ffbf9d6daadd1d0c36229efb1c49085964f90c11e03b4a06272"
+      "sha256": "6d3c14a2b650b9970624ad0590ddd162711a6800ce5dc417e9f743c698e21d79"
     },
     {
       "tests": 2,
@@ -420,7 +420,7 @@
         "badFilterIsRejectedBeforeModelOrEnvironmentAssembly",
         "namedSettingsReplaceFilterAsOneValidatedObject"
       ],
-      "sha256": "dab00bfd8d1c4413c9c83bb31fe179462b58bfe18ec3f09bc48a0f53dc231698"
+      "sha256": "acdb49b4aeb424f7f0e7a006419164d461c7357f38b045a216b5c33212f89e21"
     },
     {
       "tests": 2,
@@ -433,7 +433,7 @@
         "profileReplacesWholeObjectAndDefaultIsDisabled",
         "rejectsUnknownFieldsTypesAndBoundsBeforeAssembly"
       ],
-      "sha256": "6fb16ac7bfeb8b27e1f38088596a6097cb953b3879013d055f73ad270babb6b0"
+      "sha256": "12adfd2d7a9e12693304de5e17fe0bd19c490798dd4c5a9ded6f9a53e25fdf49"
     },
     {
       "tests": 2,
@@ -446,7 +446,7 @@
         "invalidModesBoundsAndDisabledPluginAreRejectedBeforeAssembly",
         "namedProfileCanEnableBoundedSchedulingAndDefaultRemainsSerial"
       ],
-      "sha256": "d166d95adce4be6a4ace65209c9cf7a73c4209e62ceea53412789ba16d3ee1fb"
+      "sha256": "7dcc5fb8301e9137fb755b3494dcc18f699f4d56da9219aa3897764eb2410dcc"
     },
     {
       "tests": 1,
@@ -458,7 +458,7 @@
       "cases": [
         "packagedRuntimeDoesNotRequireMavenInTargetWorkspace"
       ],
-      "sha256": "e125544245cb1539825ad24533fe69053d8ac77e4fec47350182b33ee79ade39"
+      "sha256": "1339d13c15a275e068681c8e65cfc161a4ccbfdc677e9e5927c55f463dd6c149"
     },
     {
       "tests": 1,
@@ -470,7 +470,7 @@
       "cases": [
         "closingBorrowedViewRevokesReadsWithoutClosingParent"
       ],
-      "sha256": "6cdaa398dcc7de037d097ab80e34e28b28af38eb40ac2b78e8e3b54cf8d17313"
+      "sha256": "33e0cd884f804db5507cf784ee3a213f42142e2f3753c7a255454426f3e3c872"
     },
     {
       "tests": 2,
@@ -483,7 +483,7 @@
         "baselinePluginPassesHarnessContract",
         "replacementLoopAndToolRegistryPassTheSameHarnessContract"
       ],
-      "sha256": "ab5590be63092965750501b58f93cc87a1d0ef8f9bb9d20d0aded0c26b99838d"
+      "sha256": "6d70fc0ce448980f639ba270fac8d009f23c1ec0e09a7dcc6185cbdbdc544450"
     },
     {
       "tests": 15,
@@ -509,7 +509,7 @@
         "stepAndTimeBudgetsTerminateWithoutClaimingCompletion",
         "unknownSideEffectsStopTheTurnSettleOtherCallsAndPreventAutomaticNextTurn"
       ],
-      "sha256": "9d4636013c41907a335b8817d8118ef8afbd6b070d018f30b67182c527174a5f"
+      "sha256": "dd642d087fd96749620cdb1bde00138f9073b560672147ffe6e28f07d7ef6c65"
     },
     {
       "tests": 11,
@@ -531,7 +531,7 @@
         "successRecordsApprovedIntentAndBodyOrderAndIgnoresModelSideEffectClaim",
         "wrongCallIdInvalidOutputAndPostprocessorStatusChangesCannotReturnSuccess"
       ],
-      "sha256": "e9756d71913ca3f2069d6fbf59f8d9c19169f7ca937252393f2fc5d134d9074c"
+      "sha256": "f217f6fb1889f81e5a22cd181d22414d7f4286b8f0be5c6e0d6ec79938712a2c"
     },
     {
       "tests": 6,
@@ -548,7 +548,7 @@
         "oversizedDiffSpillsToPersistedReferenceAndCanBeReadBackAfterReopen",
         "rejectedOutsideReadIsAnEventAndUserConcurrentChangesAreNotOverwritten"
       ],
-      "sha256": "90dbe0a643a78f89464efbd90db96bac77ece682a6353e478117c0da77692539"
+      "sha256": "4899ef008faa61569e7882e294f42b59414af176158388e0ee565bdd1d7e5196"
     },
     {
       "tests": 9,
@@ -568,7 +568,7 @@
         "refusedDeletionAndResetNeverEnterBodyAndFullApprovalDecisionPersists",
         "timedOutCommandRequiresVerificationBeforeAnotherModelRequestOrTurn"
       ],
-      "sha256": "d3b0d44e7cad22bd320d01b78a964b4b7dc0b7e7a171b01659b6f481bb8510f6"
+      "sha256": "e2a34ac203b3d629ba893632889d75ee65b5aebdbc723bb849628a5dae5a4045"
     },
     {
       "tests": 10,
@@ -589,7 +589,7 @@
         "terminalCancelAndSecretCallIdsAreHandledWithoutBlockingOrDisclosure",
         "unknownCrashCallInspectionAndOperatorVerificationNeverReplayTheTool"
       ],
-      "sha256": "930617cf0052cd6fed36c3e6553a8b5d8b17fc06f6faa2e188c56fae20a07cd4"
+      "sha256": "10d3c4ed1c481accc06db84164f02acfb1c685066eaeb73c8a92efe6052b2fcf"
     },
     {
       "tests": 1,
@@ -601,7 +601,7 @@
       "cases": [
         "coldForkResumeKeepsRequestHistoryAndRejectsStaleFileVersion"
       ],
-      "sha256": "4deccd3f38153d35dd257779f3e932e87d9cdc6862c1dc2594e53997fdd15159"
+      "sha256": "54c8a9d07c9b3f4107d418f6f66dcbfc7176f6909a94f2fa048a7d0e7063c749"
     },
     {
       "tests": 3,
@@ -615,7 +615,7 @@
         "pluginRecordsCompactionAndFinalRequestReplaysFromColdEventsAndRevokesOnStop",
         "unresolvedCallsAndOversizedProtectedContextRefuseCompaction"
       ],
-      "sha256": "5d0e5bf7afdd266d5c225f3bfad0097710a359103b59ef705fa6cd3e64fb5c04"
+      "sha256": "a9aae50a143680697496d5adab6d544e3321980da26c235746a537f3e0789f1e"
     },
     {
       "tests": 6,
@@ -632,7 +632,7 @@
         "readOnlyConfigurationDeniesTerminalBeforeProcessCreation",
         "truncatedToolArgumentsNeverReachApprovalIntentOrFileBody"
       ],
-      "sha256": "08513d124ca73844692a4547c5cdc52542e61266599161021234d3eaa96ddbf6"
+      "sha256": "82aea024a1aa74f834fdf9f7ea66f999524768ef96efa5194340d54d243f00a7"
     },
     {
       "tests": 2,
@@ -645,7 +645,7 @@
         "cliAssemblesMcpSkillsReadonlyChildrenAndPlanningThroughSdkPipeline",
         "ecosystemDryRunCannotStartModelsOrProcessesAndServeRequiresStrongEnvironmentToken"
       ],
-      "sha256": "d9a97c55a797f33f5280e2dd32932eaf07da6d332f56bf1444a65531f15cef81"
+      "sha256": "8216860ee944ee9d83a4e9c9db052d892bf9a11b6cd9fa503f539e3bda55c492"
     },
     {
       "tests": 6,
@@ -662,7 +662,7 @@
         "todosAndPlansPersistSeparatelyWithExplicitApprovalAndRealEvidence",
         "trustedConfigurationRejectsSecretsAndUnknownOrUnpinnedCapabilities"
       ],
-      "sha256": "2f6aeecd37e1ca32d5e68efdf8920125436a6b374cd5be050d79b15f6736508e"
+      "sha256": "9997ec3e9813be7b49588799b7ad8a28ccc226e310ef4c5533fffb34333f2729"
     },
     {
       "tests": 5,
@@ -678,7 +678,7 @@
         "transportLaunchesNativeProcessWithoutUncertainty",
         "uncertainReadCannotRemoveParentsContainerThroughIsolatedView"
       ],
-      "sha256": "b404845b3a7b0c154b68322bc66d5b0b69e6744a6ae1ceb4cc97f1813398f0cc"
+      "sha256": "c9a15eb71a9238fc593679f08d12447438d535edb6bdc53cdf65e65135729652"
     },
     {
       "tests": 11,
@@ -700,7 +700,7 @@
         "streamableHttpSupportsJsonAndSseHeadersCredentialsAndSessionDelete",
         "unsupportedSchemaRollsBackWholeScopeAndClosesPeer"
       ],
-      "sha256": "818a6d6e6850707aefcebe3b7a2fa6e5ab86a390665d789beb27e23553e6a453"
+      "sha256": "f37c5d6141fe3316771f5148d4edcac7996398287d99fb5718a01e2a61242f37"
     },
     {
       "tests": 4,
@@ -715,7 +715,7 @@
         "sdkCannotBypassApprovalOrExecuteAfterCancellation",
         "unknownEnvironmentCleanupRequiresExplicitOperatorFact"
       ],
-      "sha256": "02b73dabfe48bb31a2b82db463006d36dcee5c2fdc9ea726d065e5aceaa5228b"
+      "sha256": "0a07fe087c8747e3af7d8c17049499a7bb6634f9f47ecef06cfee0bc97ea85d5"
     },
     {
       "tests": 5,
@@ -731,7 +731,7 @@
         "scriptNeedsApprovalAndExactRevisionAndCannotExecuteChangedContent",
         "sdkSkillLoopUsesRealScriptEvidenceAndEveryRequestReconstructs"
       ],
-      "sha256": "8550f204982cbee4d9503bff5446fdc79cbc115c7b4bbb6bdcc727e954c6825e"
+      "sha256": "e1a26acf24102ec9cf29d794d7873d63bf4ed93ab3a379c17aaf54a363dbac26"
     },
     {
       "tests": 23,
@@ -765,7 +765,7 @@
         "sharedFeeCapIncludesParentAndChildRequests",
         "twoReadOnlyChildrenRunConcurrentlyWithDistinctContextsAndLogs"
       ],
-      "sha256": "59b12094695ed485eaaa500e0e20fbf869c42e8a96c6fd57434017fff333123e"
+      "sha256": "946223a94d4ff67a4a11d9b426f7adff11ab60e88c0e76f5d1aa7e92231db47e"
     },
     {
       "tests": 13,
@@ -789,7 +789,7 @@
         "shutdownDuringUncooperativeFactoryRestoresUnknownWithoutReplaying",
         "unknownModelRequestBlocksWorkspaceAndErrorDetailsAreNotExposed"
       ],
-      "sha256": "a337dd33ca0c0f5b8502bf466a17f65e77f2209fb56e53e68c7c5cefe5155afc"
+      "sha256": "9391b14b47ca756e0180deed637602e6ebf7b71624e3359fde2bf3a7637c0951"
     },
     {
       "tests": 4,
@@ -804,7 +804,7 @@
         "sdkBindingFreezesNondefaultFilterWhileDefaultDescriptorsStayCompatible",
         "workerProcessAcknowledgesAndAppliesHostFilterAndOldWorkerIsRejected"
       ],
-      "sha256": "5fd67bb73850af0d712ddbba4350f15da07d1963b807fd8ea7beef75f7445868"
+      "sha256": "28f4a74eb7bd978f5c9e035996a819f00b859df02580cb34d622d1175b7ee1aa"
     },
     {
       "tests": 13,
@@ -828,7 +828,7 @@
         "unknownTimeoutStreamAndSpoofedRateCodeNeverReplay",
         "unloadRevokesRetainedExtensionAndReplacementService"
       ],
-      "sha256": "32327f211483a869afe0f6ea14a158385a232e7cba326f2053a925fc3178712b"
+      "sha256": "9f763f6902c1d580d4e2a3568ec210562149ffcd3ad886fd5b38136783da6ed8"
     },
     {
       "tests": 8,
@@ -847,7 +847,7 @@
         "serialIsDefaultAndTrustedSchedulerServiceCanBeReplacedAndRevoked",
         "writesUnlistedReadsAndAskAreBarriersDespiteModelReadonlyClaims"
       ],
-      "sha256": "7a8961840cdc9ee73750b914e68643765a12dc363adfab9c625b4f83e4f07f18"
+      "sha256": "322c3c0b0d2d2f2fc1843159e135afbb42cdd587af8cc4c7db42a5aa3ea109b5"
     },
     {
       "tests": 5,
@@ -863,7 +863,7 @@
         "temporaryProjectHasMavenFilesAndCleansOnlyItsOwnedDirectory",
         "toolRegistryIsolationDuplicatesAndOldHandleCannotRemoveNewRegistration"
       ],
-      "sha256": "536054ad35687da078094f22355e06179a79533c3669c3780df9b5ef95847dbe"
+      "sha256": "d9d3603771dca9a251c25eb637b55e92ce2c10c9b4155b4f1186e12bdf177518"
     }
   ],
   "sourceSha256": {
@@ -1100,7 +1100,7 @@
     "harness-testkit/src/test/java/io/jharness/testkit/M1ToolPipelineTest.java": "2fb443b558e6b99214c1448ac2f4de46846310a47cf3da898058a43968f81297",
     "harness-testkit/src/test/java/io/jharness/testkit/M2WorkspaceIntegrationTest.java": "3e94d6c192014b98d9d52d719e0bada68be341f1a2fc3db04650ea10edb16726",
     "harness-testkit/src/test/java/io/jharness/testkit/M3CommandFixture.java": "9d38b94883c920d748e122952f9ea2db19682b6542fcd8030a2ef6aa9be2077d",
-    "harness-testkit/src/test/java/io/jharness/testkit/M3RuntimeIntegrationTest.java": "502e99601c5bdf64b06da1fc3ce970afa91637a8fd285c109f6c856beac9d984",
+    "harness-testkit/src/test/java/io/jharness/testkit/M3RuntimeIntegrationTest.java": "e2c62d5b86ea82512be475c9b3804257a879fc0d7f460319c920680deaf97890",
     "harness-testkit/src/test/java/io/jharness/testkit/M4CliCrashProbe.java": "4707ac5ba069ccc65fd9c9b10964e531c468a6a748ae6763f3d319c18b6b9fcf",
     "harness-testkit/src/test/java/io/jharness/testkit/M4CliIntegrationTest.java": "2a3824d50a526bbef90730b05c6cff16992ffe3ccc68a7af4d5fa67776ee1096",
     "harness-testkit/src/test/java/io/jharness/testkit/M5RecoveryIntegrationTest.java": "c94b72e2ec51bf94f1b145b3208a5ffbea7a18a2bd6b675bf7a2a3731d14cc25",

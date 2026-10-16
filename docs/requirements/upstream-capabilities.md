@@ -50,3 +50,7 @@ FR-25.2/25.3通过MODEL_EXECUTION拦截链与可替换ModelExecution服务交付
 ## M8.4收口更新（2026-10-16）
 
 FR-07.3、FR-25已按M8.1～M8.3定义的Java支持子集完成阶段收口。Windows/Linux容器各295项，259个Java/POM哈希一致；七组最终JAR本地/实际Docker回归通过，详见[M8收口](../testing/M8-closure.md)。原表的部分支持/延期边界保持，工具重试、完整gitignore、任意Java隔离/强杀、前端/Desktop及发布CI不因此变为已实现。固定上游19个入口SHA与M7历史文件已复核保留，没有新的上游测试或全仓审查声明。下一步M9，本地阶段收口不等于PRD全部功能或发布完成。
+
+## 2026-10-16 M9发布验证补充
+
+M9约定范围已收口，同一提交真实Windows/Linux/macOS各305项、零失败/错误/跳过，260源码/POM及完整测试集合一致。当前发布验证、精确平台/架构和保留限制见[M9收口](../testing/M9-closure.md)及[平台矩阵](../testing/M9-platform-matrix.md)。此前带日期的CI未执行/M8下一步M9属于历史状态；本表原有功能部分支持/延期决定不因此变为已实现，没有新增上游全仓审查、前端/Desktop或付费生产模型声明。

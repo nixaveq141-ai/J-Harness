@@ -8,3 +8,5 @@ mvnw.cmd text eol=crlf
 *.yml text eol=lf
 # Preserve original legal-resource bytes and their recorded hashes on every OS.
 third-party/** -text
+# CI evidence hashes refer to the original platform bytes, including JSON line endings.
+docs/testing/M9-*.json -text

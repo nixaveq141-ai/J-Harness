@@ -1,0 +1,65 @@
+{
+  "total_count": 3,
+  "artifacts": [
+    {
+      "id": 12028640958,
+      "node_id": "MDg6QXJ0aWZhY3QxMjAyODY0MDk1OA==",
+      "name": "test-results-macos-latest",
+      "size_in_bytes": 10791889,
+      "url": "https://api.github.com/repos/nixaveq141-ai/J-Harness/actions/artifacts/12028640958",
+      "archive_download_url": "https://api.github.com/repos/nixaveq141-ai/J-Harness/actions/artifacts/12028640958/zip",
+      "expired": false,
+      "digest": "sha256:41db16ee27148102008371511929fed749c9bd39ec2e9e2aaa1cbfc0aa05987d",
+      "created_at": "2026-10-16T05:59:43Z",
+      "updated_at": "2026-10-16T05:59:43Z",
+      "expires_at": "2027-01-14T05:57:42Z",
+      "workflow_run": {
+        "id": 38858529628,
+        "repository_id": 1421543877,
+        "head_repository_id": 1421543877,
+        "head_branch": "codex/m9-release-validation",
+        "head_sha": "ed02da0e01125d94a3c07f8862afe6c63b8f62d2"
+      }
+    },
+    {
+      "id": 12028241155,
+      "node_id": "MDg6QXJ0aWZhY3QxMjAyODI0MTE1NQ==",
+      "name": "test-results-ubuntu-latest",
+      "size_in_bytes": 10785133,
+      "url": "https://api.github.com/repos/nixaveq141-ai/J-Harness/actions/artifacts/12028241155",
+      "archive_download_url": "https://api.github.com/repos/nixaveq141-ai/J-Harness/actions/artifacts/12028241155/zip",
+      "expired": false,
+      "digest": "sha256:4e26d925120f976baa1874e596b5088a6d0f718b116630197cf6fe99906c8d68",
+      "created_at": "2026-10-16T05:59:16Z",
+      "updated_at": "2026-10-16T05:59:16Z",
+      "expires_at": "2027-01-14T05:57:42Z",
+      "workflow_run": {
+        "id": 38858529628,
+        "repository_id": 1421543877,
+        "head_repository_id": 1421543877,
+        "head_branch": "codex/m9-release-validation",
+        "head_sha": "ed02da0e01125d94a3c07f8862afe6c63b8f62d2"
+      }
+    },
+    {
+      "id": 12028196762,
+      "node_id": "MDg6QXJ0aWZhY3QxMjAyODE5Njc2Mg==",
+      "name": "test-results-windows-latest",
+      "size_in_bytes": 10840590,
+      "url": "https://api.github.com/repos/nixaveq141-ai/J-Harness/actions/artifacts/12028196762",
+      "archive_download_url": "https://api.github.com/repos/nixaveq141-ai/J-Harness/actions/artifacts/12028196762/zip",
+      "expired": false,
+      "digest": "sha256:0c956bedb271f89cb2f910b531c342c3c344ca000886c88033e7790670e9a58d",
+      "created_at": "2026-10-16T06:02:54Z",
+      "updated_at": "2026-10-16T06:02:54Z",
+      "expires_at": "2027-01-14T05:57:42Z",
+      "workflow_run": {
+        "id": 38858529628,
+        "repository_id": 1421543877,
+        "head_repository_id": 1421543877,
+        "head_branch": "codex/m9-release-validation",
+        "head_sha": "ed02da0e01125d94a3c07f8862afe6c63b8f62d2"
+      }
+    }
+  ]
+}

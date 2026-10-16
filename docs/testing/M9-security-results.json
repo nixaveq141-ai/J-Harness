@@ -1,7 +1,7 @@
 {
-  "capturedAt": "2026-10-16T02:57:54.392831+00:00",
+  "capturedAt": "2026-10-16T06:02:37.559251+00:00",
   "endpoint": "https://api.osv.dev/v1/querybatch",
-  "bomSha256": "960c89900f1831891fcbd26fc5e1415609c450501431c62f3d8df15191777a9e",
+  "bomSha256": "afa6ef7872c9371221283df0b04f8a85717b9dacb9bbb597f12e71a0b94b3ef4",
   "status": "PASS",
   "packages": [
     {

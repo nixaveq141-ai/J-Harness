@@ -6,12 +6,12 @@
 
 - M0～M7 已按各阶段明确范围完成本地开发、验收与收口。M7 Windows / Linux 各 260 项测试通过，均 0 失败/错误/跳过；236 个 Java/POM SHA 一致。
 - 当前M8.1～M8.4已按契约范围收口：最终Windows/Linux容器各295项，0失败/错误/跳过；完整测试名和259个Java/POM SHA一致。七组最终JAR本地/真实Docker回归及清理通过。M8证据保留历史，不作为已修改源码的M9证明。
-- M9真实三平台CI第四轮38857700403进行中，提交80c2104；前轮失败和修复已归档，最终本地/远端全量预计305项，尚未记为完成。当前证据见docs/testing/M9-validation.md。
+- M9约定范围已完成：源码ed02da0的真实CI 38858529628三侧各305项（0失败/错误/跳过），260个Java/POM与完整测试名一致；本机同源码305项及重复打包通过。当前证据见docs/testing/M9-validation.md、M9-platform-matrix.md、M9-ci-results.json、M9-closure.md。
 - API / SDK 协议 1.9；JSONL 格式及事件 schemaVersion 为 1。
 - M7 已有本地/Docker ExecutionEnvironment、SDK、MCP stdio/HTTP JSON+SSE、受控 Skills、只读 Subagent、本机 Web API、CLI 生态配置/serve、Todo/Plan、固定来源网页抓取、单会话全文子串索引/比较/归档、环境/子任务/Web 离线核实。
-- 详细范围与延期项见 docs/requirements/upstream-capabilities.md；最新收口/发布门禁见 docs/testing/M8-closure.md，M7-closure.md保留历史。不将部分支持、延期项目写成已实现。当前没有前端页面。
+- 详细功能范围及延期见docs/requirements/upstream-capabilities.md；M8-closure.md保留历史，当前发布验证见M9-closure.md/M9-ci-results.json。部分支持与延期不计已实现；当前没有前端页面。
 - 本轮使用本机 HTTP 替身/FakeLlm，没有付费模型请求；M4 DeepSeek 是独立历史证据。
-- origin已连接https://github.com/nixaveq141-ai/J-Harness.git（私有仓库，默认main），已认证读取并fetch；Windows/Linux/macOS远端CI尚未运行，macOS没有实机验收。Linux 容器构建与 Windows 本机结果分开记载。
+- origin为私有仓库nixaveq141-ai/J-Harness；codex/m9-release-validation已授权推送，实际CI https://github.com/nixaveq141-ai/J-Harness/actions/runs/38858529628 全绿。远端main未合并，正式Release未创建；M10待用户指示。
 - 用户长期要求：后续任务有实质进展时实时同步相关文档，不积压到任务结束。实现、范围/接口、验证结果、失败/限制或下一步变化时，及时更新受影响的README、契约、开发/验收记录、推进计划及本文件；证据尚未产生时明确标记进行中/未验证，不提前写成通过。提交前核对文档与源码、Git及实际证据一致。
 - 用户已授权建立首次本地提交，并要求以后每次完成有实质改动的工作后创建本地提交，无需逐次确认；提交前完成适用验证并检查差异和敏感文件。用户已有 .dsh-tmp/ 保留且忽略，不纳入提交；推送/创建远端/发布仍需相应授权。
 
@@ -77,7 +77,7 @@ Docker CLI 为 C:/Users/Lenovo/AppData/Local/Programs/DockerDesktop/resources/bi
 
 四组 Probe classpath 包含最终 CLI JAR、harness-testkit/target/test-classes 和 target/classes，参数都是 DOCKER IMAGE BASE_DIR WORKER_JAR OUTPUT_JSON；每次新建唯一目录。运行方法见 M7-validation.md。Linux 构建位置见 .build-cache/M7-linux-location.txt，失败尝试保留原目录，精确快照核对 Java/POM SHA。
 
-## 本轮最终验收与下一步
+## 历史验收与接续快照（M7/M8；当前入口见顶部和最新M9接续）
 
 最终 Windows 命令 .\mvnw.cmd -B clean verify，Linux 命令见 M7-linux-results.json；两侧各 260 项通过，236 个 Java/POM 哈希一致。四组 Docker Probe 均 SUCCESS 且 JAR SHA 相同：4f784f489e8d107c8822495169acbfb22372f611bfa83d4887bf5809f7bb8475。相关生产验收与 Linux 构建容器最终均无残留。固定上游归档和 19 个入口 SHA 已逐项复核。
 
@@ -85,7 +85,7 @@ Docker CLI 为 C:/Users/Lenovo/AppData/Local/Programs/DockerDesktop/resources/bi
 
 M7 范围收口完成；延期或部分支持项目不算已实现。后续默认顺序已更新为M8核心缺口→M9发布验证→M10 Web前端→M11 Desktop，M12为按需扩展候选；M9本地准备可提前。下一次用户要求继续时，从M9本地发布准备开始；M8.1～M8.4已完成所选范围收口。详细范围以 docs/requirements/JHarness-next-plan-v1.0.md 为准。没有Git remote时不自行建仓/推送，不因计划存在就开始付费模型调用或发布。
 
-以下带日期的小节保留各次工作的历史快照；其中“下一步”表示当时接续，当前入口以上方当前状态和最新M8.4接续为准。
+以下带日期的小节保留各次工作的历史快照；其中“下一步”表示当时接续，当前入口以上方当前状态和最新M9接续为准。
 
 ## 2026-10-15 PRD / 实施顺序审计
 
@@ -176,3 +176,13 @@ M9第四轮准备：Windows真实Wrapper前置缓存/版本/原生启动核验�
 M9第四轮Windows仍在真实Maven构建前20秒期限超时；前置检查本身约27秒且已确认已有缓存/Maven3.9.9，说明预热不足以保证每次宿主启动低于20秒。仅真实Maven修复场景改用已有ProcessLimits.defaults()的2分钟单命令上限及5分钟总预算，保留所有真实失败/修复/重建断言；其他进程fixture仍20秒，专门750ms超时、1秒预算和取消用例均不改。产品默认配置未变。第四轮原始失败日志保留.build-cache/M9-job-116832759648.log；修复待专项和同提交全量验证。
 
 M9 Maven场景预算修复的9项专项通过，真实失败→版本保护修复→离线编译成功均核验；仅构建场景使用已有产品默认预算，短时超时/取消断言原样。第四轮失败已归档M9-ci-fourth-attempt.json，准备第五轮同提交三平台全部执行。
+
+## 2026-10-16 M9完成与接续
+
+M9约定范围已验收：真实CI https://github.com/nixaveq141-ai/J-Harness/actions/runs/38858529628，最终源码ed02da0e01125d94a3c07f8862afe6c63b8f62d2，Windows Server2025 AMD64/Ubuntu24.04.5 x86_64/macOS26.6.2 arm64各305项，失败/错误/跳过均0，完整测试集合和260源码/POM哈希一致；每侧18依赖OSV PASS、5项扫描器离线用例、7次loopback候选安装/审批/取消/显式恢复/报告通过，付费请求0。原始归档/测试XML/日志、SBOM、候选ZIP/JAR、法律资源哈希均已核对；验收工具正例与9组篡改/禁用断言负例通过。Windows本机同源码305项及JAR强制重复归档哈希一致。
+
+首四轮失败与修复独立保留。修复临时目录别名和Windows Java21代码页测试假设；修复父取消事实被快速子任务完成抢先导致的真实竞态，原回归重复10次；真实Maven场景采用已有产品默认2分钟命令预算/5分钟有界总预算，其他短时超时/取消用例保留原限额。API/SDK1.9、JSONL/schema1。最终通用候选JSON指向Windows CI，另有Linux/macOS独立完整JSON；二进制和原始日志保留Actions artifact及.build-cache/M9-hosted-final，不入Git。M9 JSON原始字节禁止行尾转换，避免跨平台证据哈希失真。
+
+当前分支codex/m9-release-validation已按本次授权推送；最终验收文档提交只归档证据，完整CI绑定上述源码提交，不重标制品。M9完成不等于正式Release、Windows10/独立WSL/其他CPU或完整第三方原生构建认证。原生Microsoft精确构建来源及扫描范围限制见M9-validation/M9-platform-matrix。M10前端、M11 Desktop保持未开始，下一步等待用户指令。无付费模型评测、远端main合并或Release发布。
+
+最终Windows CI原始候选ZIP在本机Windows11也完成实际安装/doctor/审批/取消/显式恢复/报告，7次loopback请求、0付费请求；ZIP SHA与同一CI Windows制品完全相同，见M9-local-candidate-smoke.json。

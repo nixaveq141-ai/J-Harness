@@ -1,0 +1,54 @@
+{
+  "status": "PASS",
+  "positiveVerified": true,
+  "negativeCases": [
+    {
+      "case": "failed run rejected",
+      "rejected": true,
+      "exitCode": 1
+    },
+    {
+      "case": "missing platform rejected",
+      "rejected": true,
+      "exitCode": 1
+    },
+    {
+      "case": "job from different run rejected",
+      "rejected": true,
+      "exitCode": 1
+    },
+    {
+      "case": "artifact digest mismatch rejected",
+      "rejected": true,
+      "exitCode": 1
+    },
+    {
+      "case": "skipped release gate rejected",
+      "rejected": true,
+      "exitCode": 1
+    },
+    {
+      "case": "different tested source rejected",
+      "rejected": true,
+      "exitCode": 1
+    },
+    {
+      "case": "security finding rejected after outer digest recomputed",
+      "rejected": true,
+      "exitCode": 1
+    },
+    {
+      "case": "wrong candidate checksum rejected after outer digest recomputed",
+      "rejected": true,
+      "exitCode": 1
+    },
+    {
+      "case": "Python optimized assertions rejected",
+      "rejected": true,
+      "exitCode": 1
+    }
+  ],
+  "toolSha256": "71bdbe6eab0e4c93172dfa1b57be44a03949e0bc464b5830a13f2cd35b7afa73",
+  "metadataRestored": true,
+  "archiveRestored": true
+}

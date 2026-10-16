@@ -1,6 +1,6 @@
 # J-Harness
 
-基于 Java 21 的可扩展 Agent Harness，需求基线为 [PRD v1.1](docs/requirements/JHarness-PRD-v1.1.md)。M0～M7 的本地实现范围和验收见各阶段记录，M7 最新计数与源码版本见 [收口记录](docs/testing/M7-closure.md)；CLI、持久化与恢复、SSE、上下文压缩、PTY/后台任务、多模型路线与命名配置组合已贯通。真实 DeepSeek 验收及费用证据见 [M4 验收记录](docs/testing/M4-validation.md)。Windows/Linux/macOS 远端 CI 已配置，尚未运行。
+基于 Java 21 的可扩展 Agent Harness，需求基线为 [PRD v1.1](docs/requirements/JHarness-PRD-v1.1.md)。M0～M7 的本地实现范围和验收见各阶段记录，M7 最新计数与源码版本见 [收口记录](docs/testing/M7-closure.md)；CLI、持久化与恢复、SSE、上下文压缩、PTY/后台任务、多模型路线与命名配置组合已贯通。真实 DeepSeek 验收及费用证据见 [M4 验收记录](docs/testing/M4-validation.md)。Windows/Linux/macOS 远端 CI 已实际通过，当前证据见[M9验收](docs/testing/M9-validation.md)。
 
 ## 构建与启动
 
@@ -89,7 +89,7 @@ Docker 采用固定镜像摘要、非 root、只读根、禁外网、资源配�
 
 新增 sessions search/compare/archive 及环境/子任务/Web 离线核实。搜索是单会话 payload 全文子串索引，支持增量与损坏重建；归档保留日志/产物并禁止续跑。核实只追加外部事实，不重放或伪造成功。Todo 与 Plan 分别持久化，修改须审批，Plan 批准不能代替实际工具授权。
 
-四组最终打包 JAR 的本地/真实 Docker 证据、全量测试和固定上游源码核验见 [M7 验收](docs/testing/M7-validation.md) / [收口与发布门禁](docs/testing/M7-closure.md)。Workflow、PTC、Goal/Schedule、搜索提供方/LSP、自动工具并行、Desktop UI 等已明确延期或部分支持，逐项决定见 [上游能力对照](docs/requirements/upstream-capabilities.md)。阶段收口不表示上游全产品复刻。远端 CI/macOS 实机仍待发布前补齐。
+四组最终打包 JAR 的本地/真实 Docker 证据、全量测试和固定上游源码核验见 [M7 验收](docs/testing/M7-validation.md) / [收口与发布门禁](docs/testing/M7-closure.md)。Workflow、PTC、Goal/Schedule、搜索提供方/LSP、自动工具并行、Desktop UI 等已明确延期或部分支持，逐项决定见 [上游能力对照](docs/requirements/upstream-capabilities.md)。阶段收口不表示上游全产品复刻。M9已补齐选定runner的真实三平台CI；平台边界见[M9矩阵](docs/testing/M9-platform-matrix.md)。
 ## 模块
 
 | 模块 | 职责 |
@@ -154,8 +154,10 @@ M8.1～M8.4所选范围已完成：Windows与Linux容器各295项通过，零失
 - [M6 契约](docs/development/M6-contracts.md) / [验收](docs/testing/M6-validation.md)
 - [上游能力对照](docs/requirements/upstream-capabilities.md)
 
-## M9 发布准备（进行中）
+## M9 发布验证（已完成约定范围）
 
-项目采用Apache-2.0，第三方条款见[依赖法律材料](third-party/README.md)。Jackson已升级至2.21.7，Windows全量296项通过；18个依赖在所存OSV查询时未发现未撤回公告。候选ZIP支持独立安装，Windows审批/取消/显式恢复冒烟和重复打包核对已通过；用法见[分发说明](docs/examples/m9-distribution.md)。doctor运行就绪不再要求目标工作区有Maven，构建能力诊断仍显示。
+[同一提交的三平台CI](https://github.com/nixaveq141-ai/J-Harness/actions/runs/38858529628)已通过：Windows Server2025 AMD64、Ubuntu24.04.5 x86_64、macOS26.6.2 arm64各305项，0失败/错误/跳过；完整测试名及260个Java/POM SHA一致。Windows本机同源码305项及重复JAR归档也通过。
 
-三平台CI已加入SBOM、扫描、候选安装和证据归档，真实远端复验进行中。M9整体未验收、正式发布未完成，平台、扫描覆盖范围及原生组件来源限制见[M9验证](docs/testing/M9-validation.md)。
+项目采用Apache-2.0，第三方条款见[法律材料](third-party/README.md)。每侧18依赖OSV查询、5项离线门禁和实际ZIP安装/审批/取消/显式恢复/报告通过；原始归档、候选及法律文件哈希已交叉核对。候选版本仍为0.1.0-SNAPSHOT，正式Release未创建。
+
+用法见[分发说明](docs/examples/m9-distribution.md)；详细结果、前轮失败修复及扫描/原生来源边界见[M9验收](docs/testing/M9-validation.md)、[平台矩阵](docs/testing/M9-platform-matrix.md)和[收口记录](docs/testing/M9-closure.md)。Windows10、独立WSL及其他CPU未新增认证。M10前端/M11 Desktop尚未实施。

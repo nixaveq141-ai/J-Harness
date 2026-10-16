@@ -1,76 +1,55 @@
 # M9 发布验证记录
 
-日期：2026-10-16。状态：本地发布准备和Windows候选验证已通过；真实Windows/Linux/macOS CI已执行首轮，修复夹具差异后复验中，M9整体尚未验收，未正式发布。契约见[M9契约](../development/M9-contracts.md)。
+日期：2026-10-16。状态：**M9约定范围验收完成**。同一源码提交`ed02da0e01125d94a3c07f8862afe6c63b8f62d2`在真实Windows/Linux/macOS CI中全部通过。正式Release未创建；本阶段完成的是可追溯候选与发布兼容验证。契约见[M9-contracts.md](../development/M9-contracts.md)，平台及AC/NFR适用范围见[M9-platform-matrix.md](M9-platform-matrix.md)。
 
-| 项目 | 当前状态 | 证据与边界 |
+[最终CI运行](https://github.com/nixaveq141-ai/J-Harness/actions/runs/38858529628)，完整结构化收口结果[M9-ci-results.json](M9-ci-results.json)。最终文档提交只归档证据，源码及候选提交标识保持上述值。
+
+| M9要求 | 最终结果 | 实际证据 |
 |---|---|---|
-| 远端连接 | 已通过 | origin为私有仓库nixaveq141-ai/J-Harness，默认main，远端初始提交f90bb77，仅LICENSE；已认证fetch |
-| 项目许可 | 已整合 | 根LICENSE采用origin/main原文，Apache-2.0；自有代码与第三方条款独立 |
-| 第三方许可/NOTICE | 本地核对通过，原生来源限制保留 | third-party/inventory.json列出18个外部依赖（10 runtime、8 test）与原始JAR/POM SHA；原始法律文件按坐标保留并逐字进入最终JAR |
-| Java21全量 | Windows通过296项，0失败/错误/跳过 | .build-cache/M9-verify-final.log；新增doctor无Maven工作区回归，完整测试名/源码/制品SHA见M9-local-results.json |
-| SBOM/安全扫描 | 18个精确依赖复扫PASS，未撤回发现0 | M9-sbom.json、M9-security-results.json；仅代表所存查询时间和声明的依赖覆盖范围 |
-| 重复打包 | JAR字节一致 | 强制maven.jar.forceCreation重新生成归档后，SHA256均为24334b12a36597722f73a299b02f1a6acfadbd76e8b9e761a3e97805ce47b76c；不是跨OS/完整工具链可复现证明 |
-| 扫描器离线门禁 | 5项通过 | 分页仅重查未完成项、重复token拒绝、截断结果拒绝、超时拒绝、无发现通过；M9-release-tools-results.json |
-| 候选安装/流程 | Windows通过 | 实际ZIP解压带空格路径，调用分发.cmd；doctor不联网、审批写入与报告、EOF拒绝、独立CLI取消、UNKNOWN禁止续跑、显式verify-request后恢复读取；M9-candidate-smoke.json |
-| Wrapper | 下载完整性已核对并固定 | 官方ZIP SHA512核对后固定SHA256=4ec3f26fb1a692473aea0235c300bd20f0f9fe741947c82c1234cefd76ac3a3c；Maven缓存命中不冒充重新下载验证 |
-| 三平台workflow | 门禁与归档已实现，尚未远端运行 | 同一提交clean verify→最终SBOM→法律资源漂移核对→OSV→候选打包/安装冒烟；保存runner/Java、完整测试/源码/JAR/ZIP SHA及run URL |
-| 真实三平台CI | 待执行 | 本地分支codex/m9-release-validation；按AGENTS授权边界，需用户授权推送该分支。无远端通过声明 |
+| 三平台workflow、启动器、Java21、原生PTY与Wrapper | 已核对并实际运行 | 三侧各305项，失败/错误/跳过均0；完整测试名与260个Java/POM SHA逐项一致；实际OS/CPU见平台矩阵 |
+| 项目/第三方许可、NOTICE与依赖清单 | 已整理并核对最终JAR保留原文 | 根Apache-2.0采用远端原文；18个外部依赖（10 runtime/8 test）及JAR/POM SHA见third-party/inventory.json；原生构建来源限制如下 |
+| SBOM与依赖扫描 | 三侧均通过 | 最终模块打包后生成CycloneDX 1.6；每侧18个精确Maven依赖OSV查询PASS、未撤回发现0；完整扫描与SBOM分别归档 |
+| 远端/候选追溯 | 已完成 | 私有origin、保留初始LICENSE历史、不强推；codex/m9-release-validation推送并实际触发CI；每侧run/job/artifact链接及JAR/ZIP SHA已核对 |
+| 候选安装/doctor/run/审批/取消/恢复/报告 | 三侧实际ZIP均通过 | 带空格路径安装、真实分发启动器、doctor零网络、审批写入与报告、EOF拒绝、独立CLI取消、UNKNOWN拒绝重放、显式verify-request后恢复读取；每侧7次loopback请求、付费请求0 |
+| 本地完整复验与重复打包 | 已通过 | 同一最终源码Windows本机305项零失败/错误/跳过，见M9-local-results.json；强制重建JAR SHA前后相同，见M9-packaging-results.json |
+| 发布门禁/证据核验 | 已通过 | 每侧5项扫描器离线正反例；原始归档/日志/XML/候选逐文件哈希核对；9组失败运行、缺平台、错提交/摘要、跳过门禁、漏洞/候选篡改、禁用断言负例均拒绝 |
+| 文档与退出记录 | 已同步 | .agent、README、契约、验收、平台矩阵、推进计划、NFR顺序、上游范围接续及本收口记录 |
 
-## 实际发现与修复
+305项包含原取消事件回归的10次重复执行（原296项增加9次），不把重复次数说成新增9个功能。三平台的Java/POM与测试集合相同，JAR/ZIP按实际平台分别记录，不宣称所有OS产物字节相同。
 
-首次OSV查询在Jackson core/databind 2.21.4中报告11条未撤回公告，原始结果完整保存为[M9-security-before.json](M9-security-before.json)。核对官方修复区间及Maven Central后，将三个直接声明升级至2.21.7；全量及18个坐标复扫通过。没有用忽略规则或未评估豁免绕过扫描。
+## 最终证据
 
-二进制安装不应依赖目标工作区的Maven：doctor仍显示Maven/Wrapper诊断，但运行就绪改由Java/JAVA_HOME、key、模型配置、Git与插件装配决定。新增回归明确没有Wrapper且PATH内无Maven时仍可就绪；doctor不发送模型请求。
+- M9-ci-run.json、M9-ci-jobs.json、M9-ci-artifacts.json：官方API运行/任务/归档元数据。
+- M9-hosted-windows/linux/macos-results.json：每侧完整测试名、源码/报告/日志/JAR SHA及Java/OS信息。
+- M9-hosted-各平台-sbom/security/smoke/manifest.json：每侧原始SBOM、扫描、实际安装流程和候选文件哈希。
+- M9-ci-results.json：外层归档摘要、内层候选/文件/JAR、法律文件、源码与测试集合的交叉核对结果。
+- M9-evidence-audit-results.json：离线核验工具的正例与9组篡改/运行模式拒绝证据。
+- M9-local-results.json、M9-packaging-results.json：最终源码本机305项及强制重复JAR归档；pre-hosted文件/Git历史保留旧本地快照。
 
-第三方法律文件保留原始字节，.gitattributes禁止其自动行尾转换；Jackson内嵌数字解析器、JNA双许可、SLF4J、Kotlin、annotations、pty4j与原生组件补充通知分别保留。JNA选择Apache-2.0分支。pty4j 0.13.12源码及源JAR链接已提供，内嵌Microsoft程序的精确源码修订仍无法从其上游证明；补充terminal通知的固定来源不冒称对应二进制的精确构建版本。这是发布限制，不能据此宣称完整供应链认证。
+通用M9-sbom/security-results/candidate-smoke/candidate-manifest.json指向最终Windows CI候选。其他平台以独立hosted文件为准。二进制不入Git，原始归档在对应Actions artifact中；本机另保存在.build-cache/M9-hosted-final，清理缓存后可凭run/artifact链接重新下载。
 
-## 复现
+## 实际失败、修复与复验
+
+前四轮完整保留M9-ci-first/second/third/fourth-attempt.json及原始日志SHA，未拼接不同提交的通过项。最终仅使用本次同提交全绿运行。
+
+1. macOS及hosted Windows临时目录含路径别名；直接调用严格路径API的测试夹具先toRealPath，LocalRunControl/SessionSearchIndex链接保护不变，并增加POSIX symlink/Windows junction拒绝断言。
+2. 英文Windows的Java21启动器通过CP_ACP处理argv，中文在main之前变为??。参数边界测试使用临时.NET Unicode原生接收器，明确UTF-8输出配置；中文/空格/&/;、双流及退出码断言保留，产品ARGV拒绝Shell的检查不变。Java启动器来源见[OpenJDK21代码](https://github.com/openjdk/jdk21u/blob/master/src/java.base/windows/native/libjli/cmdtoargs.c)。
+3. Linux暴露真实Subagent竞态：子任务先响应共享取消token并结束，父线程取得完成结果时漏记取消事实。父线程在等待前/得到结果后用一次CAS记录已观察请求；重复原回归10次。保留UNKNOWN、关闭一次和不重放语义，API/SDK1.9、JSONL/schema1不变。
+4. hosted Windows真实Maven启动实测约27秒，前置缓存核验不能保证每次启动低于20秒。仅真实Maven修复场景采用已有产品默认2分钟命令上限及5分钟有界总预算；短进程20秒、750ms超时、1秒预算、取消及所有编译失败/修复/真实重建断言保留。产品默认限额未修改。
+5. 首次OSV发现Jackson2.21.4的11条未撤回公告，原始M9-security-before.json保留；升级2.21.7后最终三侧18依赖复扫通过，无忽略规则或未评估豁免。
+
+## 复现与边界
+
+完整CI命令和顺序见.github/workflows/ci.yml：clean verify→最终SBOM→5项离线门禁→完整测试证据→法律资源漂移核对→OSV→候选打包→真实安装冒烟→归档。POSIX使用sh ./mvnw。构建源码需要JDK21；二进制运行不要求目标工作区具有Maven，doctor仍显示构建能力诊断。
+
+离线重新核对：下载三侧原始artifact到.build-cache/M9-hosted-final/windows.zip、linux.zip、macos.zip，在当前无Java/POM变化的checkout执行：
 
 ```powershell
-.\mvnw.cmd -B -Prelease-audit clean verify org.cyclonedx:cyclonedx-maven-plugin:2.9.3:makeAggregateBom *> verify.log
-python scripts/test-release-tools.py
-python scripts/collect-release-evidence.py verify.log
-python scripts/prepare-legal.py
-git diff --exit-code -- third-party
-python scripts/scan-osv.py target/bom.json target/osv-results.json
-python scripts/build-candidate.py
-python scripts/smoke-candidate.py
+python docs/testing/tools/verify-m9-evidence.py 38858529628
 ```
 
-POSIX以`sh ./mvnw`替换Wrapper调用。最终SBOM在全部模块打包后再次生成，避免引用上次构建的内部JAR；profile在root的早期聚合仅作准备。候选目录为target/jharness-0.1.0-SNAPSHOT-candidate.zip，附candidate-sha256.txt；manifest区分提交、工作树状态与实际输入SHA，不把脏快照当成提交精确产物。清理缓存会删除这些本地产物，正式远端结果以同一CI run归档为准。
+工具禁止Python -O；可选原始job日志存在时也核对5项离线门禁与OS元数据。源码改变、缺失/失败任务、跳过候选门禁、摘要不符、不完整/失败扫描、错候选提交或法律文件遗漏均拒绝。
 
-## 失败记录与剩余边界
+Windows10、独立WSL、macOS Intel/Linux其他架构未新增认证；完整范围见平台矩阵。pty4j内嵌Microsoft程序的精确构建来源仍无法从上游证明，补充许可来源不冒称对应二进制的精确修订。扫描覆盖Maven项目依赖含tests，不覆盖所有构建插件传递依赖、JDK/OS或未独立建模的原生程序。以上限制已评估并记录；本次不宣称完整供应链认证或PRD全部实现，没有新付费模型评测、main合并或正式Release发布。
 
-首次扫描发现如上；旧中间构建不冒称最终快照。Python离线夹具首次遇沙箱临时目录权限拒绝，改在仓库target中创建自有临时目录，标准环境重验通过。候选夹具两次失败分别为未跳过JSONL格式头、把已EXITED历史控制文件算作活跃控制；均按现有持久协议修正，原产品断言未削弱，失败JSON保留.build-cache。第二次夹具异常清理曾短暂留下自有Java子进程，已核实退出；夹具改为先释放等待并等待退出，超时才终止自有进程树。
-
-没有付费模型请求、Release发布或新增Linux/macOS通过声明；M8原Windows/Linux各295项是历史证据，Java/POM已变更，不再作为M9当前源码证明。OSV范围为Maven项目依赖含tests，不涵盖所有构建插件传递依赖、JDK/OS、未独立建模的原生程序；无发现不是不存在漏洞的保证。仍需真实三平台CI和结果归档后才能决定M9收口。
-
-重复ZIP生成及JAR重打包的实际哈希见M9-packaging-results.json；候选文件清单/源码哈希与工作树状态见M9-candidate-manifest.json。最终候选绑定已提交源码ebcf7dd，workingTreeDirty=false；5890cb3为实现提交，ebcf7dd仅合并远端许可证历史，无源码内容变化。
-
-最终候选ZIP SHA256：11e55a44fbe9b5934579acfdfdd30d515c6972a5db56c8dd9307b5132bbec495。对应manifest/安装冒烟均已归档；本轮未推送、未运行远端CI。后续文档证据提交不改变已验证候选的源码提交标识。
-
-2026-10-16 M9远端执行授权：用户明确要求进入下一步并把M9全部运行完成，已授权推送codex/m9-release-validation及执行真实三平台CI、修复实际失败、归档结果；不含合并远端main或发布Release。当前开始远端执行，尚无CI通过结论。
-
-2026-10-16 M9真实CI进展：用户已授权，验证分支已推送。提交cbdbdcd6be0cf3feb1ce6864b40d26908cd601ad对应实际运行https://github.com/nixaveq141-ai/J-Harness/actions/runs/38854955517，当前进行中，尚未记为通过。Git直连两次超时后，仅本次推送使用现有系统代理成功；未修改全局网络配置。
-
-M9真实CI首次失败与修复中：run38854955517的macOS ARM64在LocalRunControlTest/RunStatePermissionsTest遭遇系统临时目录路径别名，产品拒绝链接保护正常。仅将三处测试夹具临时根toRealPath规范化，保留产品保护；在现有权限测试中补充POSIX symlink/Windows junction拒绝断言，不新增跳过、不减弱原断言。原始日志保留.build-cache/M9-job-116824235442.log，待本地验证后重跑三平台。
-
-首轮Windows runner另发现同类临时路径别名，以及中文参数回显依赖本机native.encoding而在英文Windows代码页丢失字符。进程测试子程序明确UTF-8输出，读取测试显式配置ProcessLimits UTF-8（公共能力已有）；中文和特殊字符原断言完整保留，产品默认native编码未修改。Ubuntu首轮已全流程通过，但不冒充最终同提交三平台通过。
-
-2026-10-16 M9首轮归档与复验：run38854955517的Ubuntu296项及扫描/候选安装通过；Windows/macOS夹具路径和编码失败详情已保留M9-ci-first-attempt.json。修复仅影响测试，新增链接拒绝断言，产品检查和中文断言未减弱；修复后Windows本地全量296项零失败/错误/跳过。当前提交修复后重新执行同一提交三平台，不将首轮Linux结果拼接成最终三平台通过。
-
-M9第二轮macOS已通过进程/取消控制测试，进一步发现M7ClosureTest直接创建搜索索引时也使用系统临时目录别名。已系统搜索严格路径API调用，补齐该夹具根规范化；SessionSearchIndex拒绝链接及原有搜索/增量/事实不变断言保持。run38855644393失败日志保留.build-cache/M9-job-116826373036.log，继续相关专项和同提交三平台复验。
-
-M9第二轮进一步定位：Windows JUnit原始XML确认子Java启动器已把中文argv转成??（Cp1252），不是输出解码；按OpenJDK21 CP_ACP实现，Windows参数边界测试改用支持Unicode的PowerShell -File原生接收器，中文/空格/&/;及退出码/双流断言不变。Linux暴露真实Subagent取消事件竞争：子任务先观察共享token结束，父线程直接取完成结果时漏记cancel_requested。现于父线程等待前/结果取得后记录一次已观察的取消请求，保留单次CAS、UNKNOWN和不重放语义；原失败回归重复10次，预计全量305项，尚待验证。
-
-M9复验修复就绪：进程/搜索/子任务相关38项通过（取消事实原回归重复10次），原断言全部保留。Windows Unicode argv接收器最终采用临时编译的.NET原生exe；直接Shell接收器按产品ARGV防护被拒绝的本地失败日志保留。Java21 CP_ACP限制不冒称被产品修复，产品Shell保护未改。父线程取消事实竞争已修复；准备第三轮同提交全量，预计305项。第二轮失败与原始日志SHA见M9-ci-second-attempt.json。
-
-M9第三轮：Linux/macOS305项及扫描、安装、恢复全流程通过，Windows已通过中文及取消回归，剩余实际Wrapper失败→修复→重建夹具在首个20秒命令期限内零输出超时。新增Windows离线前置准备：相同最小环境运行真实Wrapper --version，确认已有缓存及固定Maven3.9.9，单独完成PowerShell/.NET冷启动；代理内20秒命令/45秒总预算和失败→修复→真实重建断言均保持。第三轮失败日志保留.build-cache/M9-job-116829194364.log，继续同提交三平台复验，不拼接通过结果。
-
-M9第四轮准备：Windows真实Wrapper前置缓存/版本/原生启动核验及原编译失败→修复→重建流程的9项专项通过，20秒/45秒原限额未改。前置日志按Windows实际UTF-16/本机编码识别，开发中的两次日志解码失败保留.build-cache/M9-wrapper-prep*-targeted.log。第三轮运行与失败SHA已归档M9-ci-third-attempt.json；继续同一新提交三平台完整复验。
-
-M9当前执行入口：最终修复提交80c2104cd41fd4876da4f1260f51dbf7e0315ffa，第四轮真实CI https://github.com/nixaveq141-ai/J-Harness/actions/runs/38857700403 正在执行；本地完整复验日志.build-cache/M9-final-verify.log。等待三侧全部成功及原始归档一致性核对后再标记完成。
-
-M9第四轮Windows仍在真实Maven构建前20秒期限超时；前置检查本身约27秒且已确认已有缓存/Maven3.9.9，说明预热不足以保证每次宿主启动低于20秒。仅真实Maven修复场景改用已有ProcessLimits.defaults()的2分钟单命令上限及5分钟总预算，保留所有真实失败/修复/重建断言；其他进程fixture仍20秒，专门750ms超时、1秒预算和取消用例均不改。产品默认配置未变。第四轮原始失败日志保留.build-cache/M9-job-116832759648.log；修复待专项和同提交全量验证。
-
-M9 Maven场景预算修复的9项专项通过，真实失败→版本保护修复→离线编译成功均核验；仅构建场景使用已有产品默认预算，短时超时/取消断言原样。第四轮失败已归档M9-ci-fourth-attempt.json，准备第五轮同提交三平台全部执行。
+最终Windows CI原始候选ZIP在本机Windows11也完成实际安装/doctor/审批/取消/显式恢复/报告，7次loopback请求、0付费请求；ZIP SHA与同一CI Windows制品完全相同，见M9-local-candidate-smoke.json。

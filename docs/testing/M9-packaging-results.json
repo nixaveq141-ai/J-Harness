@@ -1,11 +1,15 @@
 {
   "status": "PASS",
-  "jarBeforeSha256": "24334b12a36597722f73a299b02f1a6acfadbd76e8b9e761a3e97805ce47b76c",
-  "jarAfterSha256": "24334b12a36597722f73a299b02f1a6acfadbd76e8b9e761a3e97805ce47b76c",
-  "zipFirstSha256": "11e55a44fbe9b5934579acfdfdd30d515c6972a5db56c8dd9307b5132bbec495",
-  "zipRepeatedSha256": "11e55a44fbe9b5934579acfdfdd30d515c6972a5db56c8dd9307b5132bbec495",
-  "repackLogSha256": "00f00bc82563bb34f49a97e7d13031ccf968c23245cb77f6e6ca9637a8633675",
-  "scope": "forced JAR archive regeneration and repeated ZIP packaging; not cross-platform hermetic build proof",
-  "candidateCommit": "ebcf7dd284f89b28709096b282a55104a9e8a5ea",
-  "workingTreeDirty": false
+  "sourceCommit": "ed02da0e01125d94a3c07f8862afe6c63b8f62d2",
+  "localPlatform": "Windows-11-10.0.26200-SP0",
+  "jarBeforeSha256": "c13627e20fa27a1717396de06e504d86f33688340b68cf73788cd189fafcf52a",
+  "jarAfterSha256": "c13627e20fa27a1717396de06e504d86f33688340b68cf73788cd189fafcf52a",
+  "repackLogSha256": "6beb2c49213ecdfd3307d8457f9610866f3d9ba7119d6e873c922f3dff974051",
+  "scope": "Forced archive regeneration on the final local Java21 build; all 305 tests separately passed in the recorded clean verify; not a cross-OS hermetic reproducibility claim",
+  "hostedCandidateIntegrity": {
+    "windows-latest": "82eac1fe58507605cfaae4360b929086d0355716c2f4fbfe49d912143ef8794e",
+    "ubuntu-latest": "5b2377d6e611697b39cbe25e7ec042b53437cd7b349eab2d0fbc3bc8d6cad70d",
+    "macos-latest": "3b44d1e76f25cf4d53e228772f3d3060789a140648c121e679dc41d2bc302ad6"
+  },
+  "priorIndependentZipRepeatEvidence": "M9-pre-hosted-packaging-results.json"
 }

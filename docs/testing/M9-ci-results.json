@@ -1,0 +1,157 @@
+{
+  "milestone": "M9",
+  "status": "SUCCESS",
+  "verifiedAt": "2026-10-16T06:08:49.246049+00:00",
+  "run": {
+    "id": 38858529628,
+    "head_sha": "ed02da0e01125d94a3c07f8862afe6c63b8f62d2",
+    "html_url": "https://github.com/nixaveq141-ai/J-Harness/actions/runs/38858529628",
+    "status": "completed",
+    "conclusion": "success",
+    "created_at": "2026-10-16T05:57:42Z",
+    "updated_at": "2026-10-16T06:03:01Z"
+  },
+  "platforms": [
+    {
+      "runnerLabel": "windows-latest",
+      "jobId": 116835329886,
+      "jobUrl": "https://github.com/nixaveq141-ai/J-Harness/actions/runs/38858529628/job/116835329886",
+      "platform": "Windows-2025Server-10.0.26100-SP0",
+      "architecture": "AMD64",
+      "javaVersions": [
+        "21.0.12.1"
+      ],
+      "totals": {
+        "tests": 305,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "artifactId": 12028196762,
+      "artifactUrl": "https://github.com/nixaveq141-ai/J-Harness/actions/runs/38858529628/artifacts/12028196762",
+      "artifactZipSha256": "0c956bedb271f89cb2f910b531c342c3c344ca000886c88033e7790670e9a58d",
+      "jarSha256": "78b8e3dad11fe8decbb1a0eca17c53f3645df90e5c62cc7bba62740f7197b69e",
+      "candidateZipSha256": "82eac1fe58507605cfaae4360b929086d0355716c2f4fbfe49d912143ef8794e",
+      "bomSha256": "afa6ef7872c9371221283df0b04f8a85717b9dacb9bbb597f12e71a0b94b3ef4",
+      "testNamesSha256": "8589e47294e3cc467b71a830260fbbd32448a5b83a2619ea023a99cbc71b55a7",
+      "sourceFileCount": 260,
+      "checks": {
+        "artifactDigest": true,
+        "rawReportsAndLog": true,
+        "allCases": true,
+        "sourcesMatchCurrent": true,
+        "securityAndBom": true,
+        "installedCandidateAndManifest": true,
+        "legalResourcesInJar": true
+      },
+      "jobLogSha256": "16e0de816d82b78ddc652ec76c40eb8d5cf729526e3038a4f5fb53d65a99f973",
+      "offlineGateTests": 5,
+      "operatingSystemDetails": [
+        "Microsoft Windows Server 2025",
+        "10.0.26100",
+        "Datacenter"
+      ]
+    },
+    {
+      "runnerLabel": "ubuntu-latest",
+      "jobId": 116835329546,
+      "jobUrl": "https://github.com/nixaveq141-ai/J-Harness/actions/runs/38858529628/job/116835329546",
+      "platform": "Linux-6.17.0-1022-azure-x86_64-with-glibc2.39",
+      "architecture": "x86_64",
+      "javaVersions": [
+        "21.0.12.1"
+      ],
+      "totals": {
+        "tests": 305,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "artifactId": 12028241155,
+      "artifactUrl": "https://github.com/nixaveq141-ai/J-Harness/actions/runs/38858529628/artifacts/12028241155",
+      "artifactZipSha256": "4e26d925120f976baa1874e596b5088a6d0f718b116630197cf6fe99906c8d68",
+      "jarSha256": "c52a7ec3f9c3fa8dd6c6d7b8e7e83637bbd05622a0697e5e1abe23d04068c16f",
+      "candidateZipSha256": "5b2377d6e611697b39cbe25e7ec042b53437cd7b349eab2d0fbc3bc8d6cad70d",
+      "bomSha256": "56db8215e86defcbe54b8d031f8db27c782d383a5f9f3834991fdd4c88dd107f",
+      "testNamesSha256": "8589e47294e3cc467b71a830260fbbd32448a5b83a2619ea023a99cbc71b55a7",
+      "sourceFileCount": 260,
+      "checks": {
+        "artifactDigest": true,
+        "rawReportsAndLog": true,
+        "allCases": true,
+        "sourcesMatchCurrent": true,
+        "securityAndBom": true,
+        "installedCandidateAndManifest": true,
+        "legalResourcesInJar": true
+      },
+      "jobLogSha256": "728366e48e44b165ed17916116088b9083bdcccb01abb7bde53702a3c528b150",
+      "offlineGateTests": 5,
+      "operatingSystemDetails": [
+        "Ubuntu",
+        "24.04.5",
+        "LTS"
+      ]
+    },
+    {
+      "runnerLabel": "macos-latest",
+      "jobId": 116835329963,
+      "jobUrl": "https://github.com/nixaveq141-ai/J-Harness/actions/runs/38858529628/job/116835329963",
+      "platform": "macOS-26.6.2-arm64-arm-64bit",
+      "architecture": "arm64",
+      "javaVersions": [
+        "21.0.12.1"
+      ],
+      "totals": {
+        "tests": 305,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "artifactId": 12028640958,
+      "artifactUrl": "https://github.com/nixaveq141-ai/J-Harness/actions/runs/38858529628/artifacts/12028640958",
+      "artifactZipSha256": "41db16ee27148102008371511929fed749c9bd39ec2e9e2aaa1cbfc0aa05987d",
+      "jarSha256": "c52a7ec3f9c3fa8dd6c6d7b8e7e83637bbd05622a0697e5e1abe23d04068c16f",
+      "candidateZipSha256": "3b44d1e76f25cf4d53e228772f3d3060789a140648c121e679dc41d2bc302ad6",
+      "bomSha256": "56db8215e86defcbe54b8d031f8db27c782d383a5f9f3834991fdd4c88dd107f",
+      "testNamesSha256": "8589e47294e3cc467b71a830260fbbd32448a5b83a2619ea023a99cbc71b55a7",
+      "sourceFileCount": 260,
+      "checks": {
+        "artifactDigest": true,
+        "rawReportsAndLog": true,
+        "allCases": true,
+        "sourcesMatchCurrent": true,
+        "securityAndBom": true,
+        "installedCandidateAndManifest": true,
+        "legalResourcesInJar": true
+      },
+      "jobLogSha256": "608bc2ea7c9c404418d1cf05f70e84285deefb7da75fb27975ddc826bf36fcbf",
+      "offlineGateTests": 5,
+      "operatingSystemDetails": [
+        "macOS",
+        "26.6.2",
+        "25G83"
+      ]
+    }
+  ],
+  "allSourceAndTestNamesMatch": true,
+  "paidModelRequests": 0,
+  "sourceFileCount": 260,
+  "evidenceSha256": {
+    "M9-hosted-linux-manifest.json": "a21546b1283cd378ee62c12b2bd5d8bcff726260374b805caabd787fe3170b46",
+    "M9-hosted-linux-results.json": "8798370fd99d9b8be4c5d6b5407549381c985631a49f7db406d94b3608153c95",
+    "M9-hosted-linux-sbom.json": "56db8215e86defcbe54b8d031f8db27c782d383a5f9f3834991fdd4c88dd107f",
+    "M9-hosted-linux-security.json": "8658045459da132cf861d01d6d1c80fd97bba8fe520aa8b8f343eb68ccfcf88a",
+    "M9-hosted-linux-smoke.json": "dd0008f59a2395ac4e45e8568617a3ead12f58581c6bd06df5603a1043db3ff2",
+    "M9-hosted-macos-manifest.json": "17737a0a87e6cced6574091f059dc392648bf3fd701872860541129f612bca43",
+    "M9-hosted-macos-results.json": "e3cfbaae098f846cd750ac8bcfeef0dea6b33ceeec12a83be639eac16e63b973",
+    "M9-hosted-macos-sbom.json": "56db8215e86defcbe54b8d031f8db27c782d383a5f9f3834991fdd4c88dd107f",
+    "M9-hosted-macos-security.json": "7c83684d3991b53d464faa19d972d47c5c1e3ef5ce0f045228470873cea6b0dc",
+    "M9-hosted-macos-smoke.json": "c35d6122e98e23155b465ae9815d35f9b45ad3fffa6b83bcbbe66c758733df72",
+    "M9-hosted-windows-manifest.json": "9c25f0951843d64cf2cde68209c877aac89db947875fa53799a2908938287fbc",
+    "M9-hosted-windows-results.json": "880eded57f2ad52fe8109be90b525ab91f946fc84830430e6f4b263312a1ad2c",
+    "M9-hosted-windows-sbom.json": "afa6ef7872c9371221283df0b04f8a85717b9dacb9bbb597f12e71a0b94b3ef4",
+    "M9-hosted-windows-security.json": "4d37e1ccccda8bd9a007372eff3efd17ce7937efcb0829d6a9aeedfee66eb029",
+    "M9-hosted-windows-smoke.json": "afe99fb89a9ef5d9665f65fbabe2e1ea8e302c201db095edd6114cde2db022f8"
+  },
+  "scope": "Hosted Windows/Linux/macOS on exact recorded OS/architecture; Windows10 and independent WSL remain untested; no formal Release publication"
+}

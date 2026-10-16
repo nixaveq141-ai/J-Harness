@@ -1,0 +1,18 @@
+{
+  "capturedAt": "2026-10-16T06:20:12.485796+00:00",
+  "zipSha256": "82eac1fe58507605cfaae4360b929086d0355716c2f4fbfe49d912143ef8794e",
+  "status": "PASS",
+  "checks": {
+    "installedManifest": true,
+    "launcherDoctorNoNetwork": true,
+    "approvedWriteAndReport": true,
+    "approvalEofDenies": true,
+    "cancelUnknownRefusesReplayAndExplicitRecovery": true
+  },
+  "modelRequests": 7,
+  "paidRequests": 0,
+  "platform": "Windows-11-10.0.26200-SP0",
+  "architecture": "AMD64",
+  "candidateSourceCommit": "ed02da0e01125d94a3c07f8862afe6c63b8f62d2",
+  "candidateOrigin": "https://github.com/nixaveq141-ai/J-Harness/actions/runs/38858529628/artifacts/12028196762"
+}
