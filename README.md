@@ -16,6 +16,8 @@ Linux 构建为 `sh ./mvnw -B verify`，启动为 `sh ./jharness --help`；Windo
 
 ## 浏览器任务工作台（M10）
 
+Windows快捷入口：在项目目录双击 [`web-ui.cmd`](web-ui.cmd)。脚本自动启动本机服务、打开默认浏览器并复制连接凭据；在页面粘贴并连接即可。保持启动窗口打开，输入`:quit`停止。优先使用工作区已有`.jharness/config.json`，否则使用DeepSeek示例配置；模型Key沿用所选配置的环境变量，不写入启动脚本。详见[入口说明](docs/examples/web-ui-launcher.md)。
+
 视觉和基础交互沿用DeepSeek Harness，名称与业务接入属于J-Harness；参考目录只读。支持连接、任务创建/列表/详情、事件时间线与有限SSE、审批/拒绝/取消、记录型Diff、事实报告和脱敏会话查询。完整说明见[前端说明](frontend/README.md)和[M10契约](docs/development/M10-contracts.md)。
 
 源码构建需先安装Node24/npm并构建前端，再执行Java打包；运行打包后的JAR不需要Node：

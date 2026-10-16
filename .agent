@@ -4,6 +4,7 @@
 
 ## 当前接续状态
 
+- 2026-10-16 M10便捷入口增量：用户要求入口名不使用中文，新增Windows根目录web-ui.cmd（英文），自动就绪检查/打开浏览器/复制token；只修改启动脚本与说明，Java及UI业务代码保持已验收版本。新增真实启动器验收见M10-launcher-results.json，基础M10结果保留历史；本轮仍只本地提交。
 - 2026-10-16 M10本地约定范围已完成：React/TS/Vite同源工作台沿用只读DeepSeek Harness视觉/控件，Java307项零失败/错误/跳过、客户端8项、实际Chrome28项通过；263个Java/POM及前端来源/最终JAR哈希见M10-results.json/M10-browser-results.json。M10远端CI尚未执行，未推送或发布。下一步M11等待用户指令。
 - M10实施前历史评估（2026-10-16）：用户提供的deepseek-harness目录严格只读；建议按文件提取基础组件/主题/布局逻辑，任务/事件/审批/认证适配J-Harness；完整前端不可仅改API地址。见docs/development/M10-frontend-reuse-review.md及来源SHA清单。尚未移植代码或开始M10实现，未宣称浏览器验证通过。
 - M0～M7 已按各阶段明确范围完成本地开发、验收与收口。M7 Windows / Linux 各 260 项测试通过，均 0 失败/错误/跳过；236 个 Java/POM SHA 一致。

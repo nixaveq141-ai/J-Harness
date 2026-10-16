@@ -32,6 +32,8 @@ Java clean verify **307项，0失败/错误/跳过**，263个Java/POM；客户�
 
 ## 复现与限制
 
+2026-10-16新增英文Windows入口`web-ui.cmd`，使用与上述浏览器验收相同的已打包JAR。自动化测试实际启动UI/API、带空格/ampersand路径、重复启动隔离、退出端口清理、配置选择和token生成/变量保护；浏览器打开与剪贴板操作在自动化中关闭，不冒称完成这两项桌面副作用的实测。独立结果见M10-launcher-results.json。此增量只修改启动脚本/说明，原307/8/28证据保留为M10基础源码快照。
+
 frontend中npm ci、npm test、npm run build；根目录Maven clean verify；安装Playwright Chromium后npm --prefix frontend run test:browser。Windows可设JHARNESS_BROWSER_CHANNEL=chrome。测试自建并关闭独立FakeLlm宿主/浏览器，不使用生产模型。
 
 执行scripts/frontend-sbom.py .build-cache/M10-frontend-sbom.json，归档npm audit JSON后运行scripts/collect-m10-evidence.py。工具交叉核对JUnit/前端输入/原始字节/最终JAR/包内UI/许可/审计/BOM/截图。M10-results的baseCommit+dirty说明采集尚未提交，逐文件SHA绑定实际源码，不冒称旧提交运行过新代码。

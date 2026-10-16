@@ -1,5 +1,7 @@
 # M10 本地收口
 
+后续便捷入口：用户指定英文文件名web-ui.cmd，Windows启动脚本通过8项真实启动/退出/鉴权/配置检查，单独归档M10-launcher-results.json；浏览器和剪贴板桌面副作用在自动化中禁用。基础Java/UI业务代码和JAR不变，原验收保留历史。
+
 2026-10-16，约定四切片本地验收完成。Java307项零失败/错误/跳过、客户端8项、实际Chrome28项；263份Java/POM及前端输入、最终JAR与包内UI哈希绑定。入口为Java serve同源托管的React/TypeScript工作台。
 
 保留用户指定DeepSeek Harness的原始主题、控件与相关交互，21份移植文件原字节/MIT保留；25份前置源文件、21份移植来源和上游tracked工作区核对未变。没有修改原参考目录。

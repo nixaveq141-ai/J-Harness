@@ -58,6 +58,9 @@ jobs:
       - name: Verify browser against packaged Java runtime
         working-directory: frontend
         run: npm run test:browser
+      - name: Verify Windows workbench launcher
+        if: runner.os == 'Windows'
+        run: python scripts/test-open-workbench.py
       - name: Validate release gates and install candidate
         shell: bash
         run: |
@@ -88,5 +91,6 @@ jobs:
             target/*candidate.zip
             target/candidate-sha256.txt
             .build-cache/M10-browser-results.json
+            .build-cache/M10-launcher-results.json
             .build-cache/M10-browser-*.json
             .build-cache/M10-*.png

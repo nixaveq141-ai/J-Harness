@@ -76,6 +76,8 @@
 
 ## M10：Web前端
 
+2026-10-16便捷入口增量：英文Windows入口web-ui.cmd支持双击启动/打开浏览器/复制凭据，仍使用同源Bearer工作台，不提前实现M11；启动器证据单独见M10-launcher-results.json。
+
 2026-10-16前置调研（实施前历史）：已只读评估用户提供的DeepSeek Harness本地前端，见[复用评估](../development/M10-frontend-reuse-review.md)。推荐按需移植基础组件/主题及布局逻辑，业务模型与认证/实时协议由J-Harness适配；未开始实现或浏览器验收，四个切片范围不变。
 
 先做任务工作台，复用现有API，页面不得直接访问工作区文件或运行命令。
