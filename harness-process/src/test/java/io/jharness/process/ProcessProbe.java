@@ -1,5 +1,7 @@
 package io.jharness.process;
 
+import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.*;
 
@@ -7,6 +9,8 @@ public final class ProcessProbe {
     private ProcessProbe() {}
 
     public static void main(String[] args) throws Exception {
+        System.setOut(new PrintStream(System.out, true, StandardCharsets.UTF_8));
+        System.setErr(new PrintStream(System.err, true, StandardCharsets.UTF_8));
         switch (args[0]) {
             case "echo" -> {
                 System.out.print(args[1]);

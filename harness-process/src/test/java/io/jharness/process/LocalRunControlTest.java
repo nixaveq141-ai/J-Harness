@@ -7,11 +7,17 @@ import java.net.*;
 import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 class LocalRunControlTest {
     @TempDir Path root;
+
+    @BeforeEach
+    void canonicalTemporaryRoot() throws IOException {
+        root = root.toRealPath();
+    }
 
     @Test
     void separateJvmCancelAuthenticatesAndExitStateIsDiscoverable() throws Exception {

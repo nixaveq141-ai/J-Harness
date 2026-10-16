@@ -158,4 +158,4 @@ M8.1～M8.4所选范围已完成：Windows与Linux容器各295项通过，零失
 
 项目采用Apache-2.0，第三方条款见[依赖法律材料](third-party/README.md)。Jackson已升级至2.21.7，Windows全量296项通过；18个依赖在所存OSV查询时未发现未撤回公告。候选ZIP支持独立安装，Windows审批/取消/显式恢复冒烟和重复打包核对已通过；用法见[分发说明](docs/examples/m9-distribution.md)。doctor运行就绪不再要求目标工作区有Maven，构建能力诊断仍显示。
 
-三平台CI已加入SBOM、扫描、候选安装和证据归档，尚未远端执行。M9整体未验收、正式发布未完成，平台、扫描覆盖范围及原生组件来源限制见[M9验证](docs/testing/M9-validation.md)。
+三平台CI已加入SBOM、扫描、候选安装和证据归档，真实远端复验进行中。M9整体未验收、正式发布未完成，平台、扫描覆盖范围及原生组件来源限制见[M9验证](docs/testing/M9-validation.md)。

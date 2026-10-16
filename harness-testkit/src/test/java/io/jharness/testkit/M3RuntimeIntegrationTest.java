@@ -18,11 +18,18 @@ import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 class M3RuntimeIntegrationTest {
     @TempDir Path temporary;
+
+    @BeforeEach
+    void canonicalTemporaryRoot() throws IOException {
+        temporary = temporary.toRealPath();
+    }
+
     private static final PluginScope SCOPE = new PluginScope("s", "agent");
     private static final ApprovalService APPROVE =
             (call, context) ->

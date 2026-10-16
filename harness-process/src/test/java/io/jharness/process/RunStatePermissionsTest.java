@@ -5,17 +5,54 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 class RunStatePermissionsTest {
     @TempDir Path root;
 
+    @BeforeEach
+    void canonicalTemporaryRoot() throws IOException {
+        root = root.toRealPath();
+    }
+
     @Test
     void credentialsAreOwnerOnlyAndOrdinaryFoldersAreNotRepurposed() throws Exception {
         Files.writeString(root.resolve("user.txt"), "keep");
         assertThrows(IOException.class, () -> new LocalRunControl(root));
         assertEquals("keep", Files.readString(root.resolve("user.txt")));
+        Path target = Files.createDirectory(root.resolve("real-runs"));
+        Path linked = root.resolve("linked-runs");
+        if (System.getProperty("os.name").startsWith("Windows")) {
+            Process junction =
+                    new ProcessBuilder(
+                                    "cmd.exe",
+                                    "/d",
+                                    "/c",
+                                    "mklink",
+                                    "/J",
+                                    linked.toString(),
+                                    target.toString())
+                            .redirectErrorStream(true)
+                            .start();
+            try {
+                assertTrue(junction.waitFor(5, java.util.concurrent.TimeUnit.SECONDS));
+                assertEquals(
+                        0,
+                        junction.exitValue(),
+                        new String(junction.getInputStream().readAllBytes()));
+            } finally {
+                junction.destroyForcibly();
+            }
+        } else {
+            Files.createSymbolicLink(linked, target);
+        }
+        try {
+            assertThrows(IOException.class, () -> new LocalRunControl(linked));
+        } finally {
+            Files.delete(linked);
+        }
         try (var run = new LocalRunControl(root.resolve("runs"))) {
             var posix = Files.getFileAttributeView(run.stateFile(), PosixFileAttributeView.class);
             if (posix != null)

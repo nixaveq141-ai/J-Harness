@@ -1,0 +1,70 @@
+{
+  "run": {
+    "id": 38854955517,
+    "head_sha": "cbdbdcd6be0cf3feb1ce6864b40d26908cd601ad",
+    "status": "completed",
+    "conclusion": "failure",
+    "html_url": "https://github.com/nixaveq141-ai/J-Harness/actions/runs/38854955517",
+    "created_at": "2026-10-16T05:16:56Z",
+    "updated_at": "2026-10-16T05:19:44Z"
+  },
+  "jobs": [
+    {
+      "id": 116824235166,
+      "name": "verify (windows-latest)",
+      "status": "completed",
+      "conclusion": "failure",
+      "html_url": "https://github.com/nixaveq141-ai/J-Harness/actions/runs/38854955517/job/116824235166"
+    },
+    {
+      "id": 116824235410,
+      "name": "verify (ubuntu-latest)",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/nixaveq141-ai/J-Harness/actions/runs/38854955517/job/116824235410"
+    },
+    {
+      "id": 116824235442,
+      "name": "verify (macos-latest)",
+      "status": "completed",
+      "conclusion": "failure",
+      "html_url": "https://github.com/nixaveq141-ai/J-Harness/actions/runs/38854955517/job/116824235442"
+    }
+  ],
+  "artifacts": [
+    {
+      "id": 12026967193,
+      "name": "test-results-macos-latest",
+      "digest": "sha256:cf5b4e64d4b7a24a34f1e5b15b43a5672ff87e84792478354a79bffc4e7efb92",
+      "size_in_bytes": 148083,
+      "expired": false
+    },
+    {
+      "id": 12026826559,
+      "name": "test-results-ubuntu-latest",
+      "digest": "sha256:e645a8d48505d5840213ca69f2420b4b7e6a399ab60fce38df7f0d89c8df9ea7",
+      "size_in_bytes": 10793483,
+      "expired": false
+    },
+    {
+      "id": 12026661879,
+      "name": "test-results-windows-latest",
+      "digest": "sha256:a63331f4e7a38e4be521335edf6740a12c10157e484f6aa92164a5dbd969d8dc",
+      "size_in_bytes": 163434,
+      "expired": false
+    }
+  ],
+  "failures": [
+    "macOS and hosted Windows temporary directory aliases rejected by existing control-directory security checks",
+    "hosted English Windows native encoding cannot echo Chinese losslessly in the test probe"
+  ],
+  "fix": "canonicalize three fixture roots; explicitly use UTF-8 in process probe and matching existing ProcessLimits configuration; preserve product behavior and all assertions; add symlink/junction rejection check",
+  "localVerification": {
+    "log": ".build-cache/M9-hosted-fix-verify.log",
+    "logSha256": "167ea9846b892cd7cbc6e6cf758cc5cecb2ca69420d255d9b084f46b3bd08773",
+    "tests": 296,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  }
+}

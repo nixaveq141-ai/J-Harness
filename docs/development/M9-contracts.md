@@ -1,6 +1,6 @@
 # M9 发布与兼容验证契约
 
-日期：2026-10-16。状态：本地准备和Windows候选验证已通过，真实三平台CI待授权推送后执行。用户已提供远端 https://github.com/nixaveq141-ai/J-Harness ，仓库Apache-2.0许可证已按原文采用；保留远端原有历史/许可。本地M8已收口，历史证据保持，不将其直接改标M9或CI成功。
+日期：2026-10-16。状态：本地准备和Windows候选验证已通过，真实三平台CI已获授权并执行，正在修复首轮差异后复验。用户已提供远端 https://github.com/nixaveq141-ai/J-Harness ，仓库Apache-2.0许可证已按原文采用；保留远端原有历史/许可。本地M8已收口，历史证据保持，不将其直接改标M9或CI成功。
 
 ## 范围与门禁
 
@@ -27,3 +27,7 @@ M9供应链进展：首次OSV对18个依赖查询发现Jackson core/databind 2.2
 doctor行为修正：Maven/Wrapper仍作为构建能力诊断字段显示，但不再决定二进制运行就绪；Java/JAVA_HOME、key、模型配置、Git和插件装配要求保留。未进行模型网络请求。
 
 依据：[Maven构建时间戳](https://maven.apache.org/guides/mini/guide-reproducible-builds.html)、[CycloneDX聚合SBOM](https://cyclonedx.github.io/cyclonedx-maven-plugin/makeAggregateBom-mojo.html)、[OSV分页协议](https://google.github.io/osv.dev/post-v1-querybatch/)。具体漏洞及修复区间见M9-security-before.json所存官方公告。
+
+M9真实CI首次失败与修复中：run38854955517的macOS ARM64在LocalRunControlTest/RunStatePermissionsTest遭遇系统临时目录路径别名，产品拒绝链接保护正常。仅将三处测试夹具临时根toRealPath规范化，保留产品保护；在现有权限测试中补充POSIX symlink/Windows junction拒绝断言，不新增跳过、不减弱原断言。原始日志保留.build-cache/M9-job-116824235442.log，待本地验证后重跑三平台。
+
+首轮Windows runner另发现同类临时路径别名，以及中文参数回显依赖本机native.encoding而在英文Windows代码页丢失字符。进程测试子程序明确UTF-8输出，读取测试显式配置ProcessLimits UTF-8（公共能力已有）；中文和特殊字符原断言完整保留，产品默认native编码未修改。Ubuntu首轮已全流程通过，但不冒充最终同提交三平台通过。

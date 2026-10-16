@@ -6,7 +6,7 @@
 
 - M0～M7 已按各阶段明确范围完成本地开发、验收与收口。M7 Windows / Linux 各 260 项测试通过，均 0 失败/错误/跳过；236 个 Java/POM SHA 一致。
 - 当前M8.1～M8.4已按契约范围收口：最终Windows/Linux容器各295项，0失败/错误/跳过；完整测试名和259个Java/POM SHA一致。七组最终JAR本地/真实Docker回归及清理通过。M8证据保留历史，不作为已修改源码的M9证明。
-- M9本地准备和Windows296项/候选验证已通过；用户仓库nixaveq141-ai/J-Harness的origin已连接，Apache-2.0许可已整合。真实三平台CI待授权推送验证分支，M9尚未验收，正式发布未完成；当前证据见docs/development/M9-contracts.md和docs/testing/M9-validation.md。
+- M9本地准备和Windows296项/候选验证已通过；用户已授权继续全部M9执行，验证分支已推送，真实三平台CI运行38854955517首轮失败，修复后复验中（提交cbdbdcd）。M9尚未验收，正式发布未完成；当前证据见docs/development/M9-contracts.md和docs/testing/M9-validation.md。
 - API / SDK 协议 1.9；JSONL 格式及事件 schemaVersion 为 1。
 - M7 已有本地/Docker ExecutionEnvironment、SDK、MCP stdio/HTTP JSON+SSE、受控 Skills、只读 Subagent、本机 Web API、CLI 生态配置/serve、Todo/Plan、固定来源网页抓取、单会话全文子串索引/比较/归档、环境/子任务/Web 离线核实。
 - 详细范围与延期项见 docs/requirements/upstream-capabilities.md；最新收口/发布门禁见 docs/testing/M8-closure.md，M7-closure.md保留历史。不将部分支持、延期项目写成已实现。当前没有前端页面。
@@ -156,3 +156,9 @@ M9本地进展：Jackson已升至2.21.7，18个外部依赖复扫PASS（0条未�
 2026-10-16 M9提交与接续：实现提交5890cb3；本地合并提交ebcf7dd保留origin/main的Apache-2.0原有历史，无产品源码变化。最终候选绑定干净提交ebcf7dd（workingTreeDirty=false），Windows安装冒烟和重复ZIP哈希一致再次通过。最终JSON证据已归档docs/testing/M9-*.json。下一步需要用户明确授权推送codex/m9-release-validation并运行真实三平台CI；M9未收口，未合并远端主分支、未发布。上次自动审批服务额度失败未执行的整理步骤本轮已完成。
 
 2026-10-16 M9远端执行授权：用户明确要求进入下一步并把M9全部运行完成，已授权推送codex/m9-release-validation及执行真实三平台CI、修复实际失败、归档结果；不含合并远端main或发布Release。当前开始远端执行，尚无CI通过结论。
+
+M9真实CI首次失败与修复中：run38854955517的macOS ARM64在LocalRunControlTest/RunStatePermissionsTest遭遇系统临时目录路径别名，产品拒绝链接保护正常。仅将三处测试夹具临时根toRealPath规范化，保留产品保护；在现有权限测试中补充POSIX symlink/Windows junction拒绝断言，不新增跳过、不减弱原断言。原始日志保留.build-cache/M9-job-116824235442.log，待本地验证后重跑三平台。
+
+首轮Windows runner另发现同类临时路径别名，以及中文参数回显依赖本机native.encoding而在英文Windows代码页丢失字符。进程测试子程序明确UTF-8输出，读取测试显式配置ProcessLimits UTF-8（公共能力已有）；中文和特殊字符原断言完整保留，产品默认native编码未修改。Ubuntu首轮已全流程通过，但不冒充最终同提交三平台通过。
+
+2026-10-16 M9首轮归档与复验：run38854955517的Ubuntu296项及扫描/候选安装通过；Windows/macOS夹具路径和编码失败详情已保留M9-ci-first-attempt.json。修复仅影响测试，新增链接拒绝断言，产品检查和中文断言未减弱；修复后Windows本地全量296项零失败/错误/跳过。当前提交修复后重新执行同一提交三平台，不将首轮Linux结果拼接成最终三平台通过。

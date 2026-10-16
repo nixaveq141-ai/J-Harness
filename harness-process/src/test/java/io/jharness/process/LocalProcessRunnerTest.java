@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import io.jharness.api.*;
 import io.jharness.workspace.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.time.Duration;
 import java.util.*;
@@ -18,7 +19,7 @@ class LocalProcessRunnerTest {
     LocalProcessRunner runner(int tree, int bytes) throws Exception {
         return new LocalProcessRunner(
                 new LocalWorkspace(root),
-                new ProcessLimits(Duration.ofSeconds(10), 1, tree, bytes),
+                new ProcessLimits(Duration.ofSeconds(10), 1, tree, bytes, StandardCharsets.UTF_8),
                 LocalProcessRunner.buildEnvironment(),
                 List.of("very-private-value"));
     }

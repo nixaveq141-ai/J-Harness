@@ -1,6 +1,6 @@
 # M9 发布验证记录
 
-日期：2026-10-16。状态：本地发布准备和Windows候选验证已通过；真实Windows/Linux/macOS CI待授权推送验证分支后执行，M9整体尚未验收，未正式发布。契约见[M9契约](../development/M9-contracts.md)。
+日期：2026-10-16。状态：本地发布准备和Windows候选验证已通过；真实Windows/Linux/macOS CI已执行首轮，修复夹具差异后复验中，M9整体尚未验收，未正式发布。契约见[M9契约](../development/M9-contracts.md)。
 
 | 项目 | 当前状态 | 证据与边界 |
 |---|---|---|
@@ -50,3 +50,11 @@ POSIX以`sh ./mvnw`替换Wrapper调用。最终SBOM在全部模块打包后再�
 最终候选ZIP SHA256：11e55a44fbe9b5934579acfdfdd30d515c6972a5db56c8dd9307b5132bbec495。对应manifest/安装冒烟均已归档；本轮未推送、未运行远端CI。后续文档证据提交不改变已验证候选的源码提交标识。
 
 2026-10-16 M9远端执行授权：用户明确要求进入下一步并把M9全部运行完成，已授权推送codex/m9-release-validation及执行真实三平台CI、修复实际失败、归档结果；不含合并远端main或发布Release。当前开始远端执行，尚无CI通过结论。
+
+2026-10-16 M9真实CI进展：用户已授权，验证分支已推送。提交cbdbdcd6be0cf3feb1ce6864b40d26908cd601ad对应实际运行https://github.com/nixaveq141-ai/J-Harness/actions/runs/38854955517，当前进行中，尚未记为通过。Git直连两次超时后，仅本次推送使用现有系统代理成功；未修改全局网络配置。
+
+M9真实CI首次失败与修复中：run38854955517的macOS ARM64在LocalRunControlTest/RunStatePermissionsTest遭遇系统临时目录路径别名，产品拒绝链接保护正常。仅将三处测试夹具临时根toRealPath规范化，保留产品保护；在现有权限测试中补充POSIX symlink/Windows junction拒绝断言，不新增跳过、不减弱原断言。原始日志保留.build-cache/M9-job-116824235442.log，待本地验证后重跑三平台。
+
+首轮Windows runner另发现同类临时路径别名，以及中文参数回显依赖本机native.encoding而在英文Windows代码页丢失字符。进程测试子程序明确UTF-8输出，读取测试显式配置ProcessLimits UTF-8（公共能力已有）；中文和特殊字符原断言完整保留，产品默认native编码未修改。Ubuntu首轮已全流程通过，但不冒充最终同提交三平台通过。
+
+2026-10-16 M9首轮归档与复验：run38854955517的Ubuntu296项及扫描/候选安装通过；Windows/macOS夹具路径和编码失败详情已保留M9-ci-first-attempt.json。修复仅影响测试，新增链接拒绝断言，产品检查和中文断言未减弱；修复后Windows本地全量296项零失败/错误/跳过。当前提交修复后重新执行同一提交三平台，不将首轮Linux结果拼接成最终三平台通过。
