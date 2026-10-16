@@ -1,6 +1,6 @@
 # M9 发布与兼容验证契约
 
-日期：2026-10-16。状态：远端已连接；按用户最新指示，本轮仅连接，本地发布准备暂停。用户已提供远端 https://github.com/nixaveq141-ai/J-Harness ，并确认仓库已放置Apache-2.0许可证；先核实和保留远端原有历史/许可。本地M8已收口，历史证据保持，不将其直接改标M9或CI成功。
+日期：2026-10-16。状态：本地准备和Windows候选验证已通过，真实三平台CI待授权推送后执行。用户已提供远端 https://github.com/nixaveq141-ai/J-Harness ，仓库Apache-2.0许可证已按原文采用；保留远端原有历史/许可。本地M8已收口，历史证据保持，不将其直接改标M9或CI成功。
 
 ## 范围与门禁
 
@@ -15,3 +15,15 @@ M9只处理发布准备、供应链与平台验证，不提前实现M10前端/M1
 ## 证据状态
 
 静态配置存在不等于CI执行。最终输出M9-validation.md及结构化结果，逐项区分已通过、待验证、外部依赖和保留限制。任何外部认证/网络/runner限制照实记录，继续可独立完成的本地工作；不得降低或跳过原断言掩盖平台失败。实质进展实时更新.agent、README、契约/验收及推进计划。
+
+M9供应链进展：首次OSV对18个依赖查询发现Jackson core/databind 2.21.4共11条未撤回公告，原始查询保留docs/testing/M9-security-before.json。官方修复区间和Maven Central均已核实，已升级到2.21.7并通过最终296项全量及18依赖复扫；未将旧结果记成清洁扫描。doctor不再要求运行目标工作区具备Maven，构建工具诊断字段保留，新增隔离回归。
+
+## 已实施的本地发布门禁（2026-10-16）
+
+`-Prelease-audit clean verify`生成含测试依赖的CycloneDX 1.6聚合SBOM（插件2.9.3）；常规verify仍可单独运行。`prepare-legal.py`从实际缓存JAR提取原文并生成18个坐标及JAR/POM SHA，补充固定上游法律材料。资源按坐标放入META-INF/jharness/third-party，避免Shade同名覆盖。`scan-osv.py`仅发送依赖坐标，处理逐查询分页，失败/未完成/未撤回发现均不允许候选；5项离线正反例核验该门禁。扫描不涵盖构建插件全传递依赖、JDK/OS或原生程序CPE。
+
+`build-candidate.py`要求清洁扫描绑定同一SBOM、法律资源与原始JAR/最终JAR一致，输出文件清单、来源提交和工作树状态及逐文件SHA；不冒充签名制品。`smoke-candidate.py`实际解压到带空格路径，调用分发启动器，验证doctor不联网、审批写入/报告、EOF拒绝、独立CLI取消、UNKNOWN拒绝续跑以及显式核实后恢复。只访问loopback替身。`collect-release-evidence.py`要求296项以上、零失败/错误/跳过及源码/日志时间一致，保存完整测试名、源码/制品SHA、runner/Java/CI URL。CI静态配置不等于执行通过。
+
+doctor行为修正：Maven/Wrapper仍作为构建能力诊断字段显示，但不再决定二进制运行就绪；Java/JAVA_HOME、key、模型配置、Git和插件装配要求保留。未进行模型网络请求。
+
+依据：[Maven构建时间戳](https://maven.apache.org/guides/mini/guide-reproducible-builds.html)、[CycloneDX聚合SBOM](https://cyclonedx.github.io/cyclonedx-maven-plugin/makeAggregateBom-mojo.html)、[OSV分页协议](https://google.github.io/osv.dev/post-v1-querybatch/)。具体漏洞及修复区间见M9-security-before.json所存官方公告。

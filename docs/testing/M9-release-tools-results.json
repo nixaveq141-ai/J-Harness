@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "tests": 5,
+  "failures": 0,
+  "logSha256": "064446ed3539c7ecc760dae8d1ef8abb2be29845ec3b83f91d35be927f794192",
+  "cases": [
+    "pagination completes only pending queries and blocks findings",
+    "network failure is incomplete",
+    "truncated results are incomplete",
+    "repeated page token is incomplete",
+    "no findings passes"
+  ]
+}

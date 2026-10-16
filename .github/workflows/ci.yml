@@ -1,7 +1,8 @@
-name: Java 21 build
+name: Java 21 release validation
 on:
   push:
   pull_request:
+  workflow_dispatch:
 permissions:
   contents: read
 jobs:
@@ -11,6 +12,7 @@ jobs:
       matrix:
         os: [windows-latest, ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -18,15 +20,41 @@ jobs:
           distribution: temurin
           java-version: '21'
           cache: maven
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
       - name: Verify on Windows
         if: runner.os == 'Windows'
-        run: .\mvnw.cmd -B verify
+        shell: pwsh
+        run: |
+          .\mvnw.cmd -B -Prelease-audit clean verify org.cyclonedx:cyclonedx-maven-plugin:2.9.3:makeAggregateBom *> verify.log
+          if ($LASTEXITCODE -ne 0) { Get-Content verify.log -Tail 100; exit $LASTEXITCODE }
       - name: Verify on POSIX
         if: runner.os != 'Windows'
-        run: sh ./mvnw -B verify
+        run: |
+          sh ./mvnw -B -Prelease-audit clean verify org.cyclonedx:cyclonedx-maven-plugin:2.9.3:makeAggregateBom > verify.log 2>&1 || { tail -100 verify.log; exit 1; }
+      - name: Validate release gates and install candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/test-release-tools.py
+          python scripts/collect-release-evidence.py verify.log
+          python scripts/prepare-legal.py
+          git diff --exit-code -- third-party
+          python scripts/scan-osv.py target/bom.json target/osv-results.json
+          python scripts/build-candidate.py
+          python scripts/smoke-candidate.py
       - name: Upload test evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: test-results-${{ matrix.os }}
-          path: '**/target/surefire-reports/'
+          path: |
+            **/target/surefire-reports/
+            verify.log
+            target/bom.json
+            target/osv-results.json
+            target/release-evidence.json
+            target/candidate-smoke.json
+            target/*candidate.zip
+            target/candidate-sha256.txt

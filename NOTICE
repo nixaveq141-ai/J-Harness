@@ -1,0 +1,9 @@
+J-Harness
+Copyright 2026 J-Harness contributors
+
+This product includes third-party software. See third-party/README.md and
+the coordinate-specific legal files and inventory distributed alongside it.
+
+The source distribution includes Apache Maven Wrapper 3.3.4 startup scripts,
+copyright The Apache Software Foundation, licensed under Apache-2.0.
+Maven itself is downloaded separately; it is not embedded in the runtime JAR.

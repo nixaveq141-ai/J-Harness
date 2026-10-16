@@ -334,7 +334,6 @@ public final class CliApplication {
                         && keyPresent
                         && modelConfigured
                         && Boolean.TRUE.equals(checks.get("git"))
-                        && (wrapper || Boolean.TRUE.equals(checks.get("mavenExecutableFound")))
                         && assembly;
         out.println(
                 Json.text(

@@ -5,8 +5,8 @@
 ## 当前接续状态
 
 - M0～M7 已按各阶段明确范围完成本地开发、验收与收口。M7 Windows / Linux 各 260 项测试通过，均 0 失败/错误/跳过；236 个 Java/POM SHA 一致。
-- 当前M8.1～M8.4已按契约范围收口：最终Windows/Linux容器各295项，0失败/错误/跳过；完整测试名和259个Java/POM SHA一致。七组最终JAR本地/真实Docker回归及清理通过。下一步M9本地发布准备，真实CI/macOS/正式发布门禁仍未闭合。
-- M9已于2026-10-16开始：用户提供GitHub仓库nixaveq141-ai/J-Harness并确认Apache-2.0许可；远端已连接并成功fetch origin/main；按用户最新要求，本轮仅处理连接，本地发布准备暂停。M9尚未验收，正式发布未完成，当前证据见M9-contracts.md和M9-validation.md。
+- 当前M8.1～M8.4已按契约范围收口：最终Windows/Linux容器各295项，0失败/错误/跳过；完整测试名和259个Java/POM SHA一致。七组最终JAR本地/真实Docker回归及清理通过。M8证据保留历史，不作为已修改源码的M9证明。
+- M9本地准备和Windows296项/候选验证已通过；用户仓库nixaveq141-ai/J-Harness的origin已连接，Apache-2.0许可已整合。真实三平台CI待授权推送验证分支，M9尚未验收，正式发布未完成；当前证据见docs/development/M9-contracts.md和docs/testing/M9-validation.md。
 - API / SDK 协议 1.9；JSONL 格式及事件 schemaVersion 为 1。
 - M7 已有本地/Docker ExecutionEnvironment、SDK、MCP stdio/HTTP JSON+SSE、受控 Skills、只读 Subagent、本机 Web API、CLI 生态配置/serve、Todo/Plan、固定来源网页抓取、单会话全文子串索引/比较/归档、环境/子任务/Web 离线核实。
 - 详细范围与延期项见 docs/requirements/upstream-capabilities.md；最新收口/发布门禁见 docs/testing/M8-closure.md，M7-closure.md保留历史。不将部分支持、延期项目写成已实现。当前没有前端页面。
@@ -26,6 +26,7 @@
 7. docs/examples/m7-cli.md、m7-config.json、m7-extensions.md、m7-web.md：可信配置与公共入口。
 8. docs/development/M8-contracts.md、docs/testing/M8-validation.md、M8-closure.md与M8-closure-results.json：M8支持范围/当前门禁；M8-results.json（slice=M8.4）及M8-linux-results.json为当前全量，M8.4-*-results.json为七组最终制品/冒烟/审计/校验器证据。M8.1/M8.2/M8.3-results.json和旧实机JSON保留历史；配置见m8-search-filter.md、m8-tool-scheduling.md、m8-model-resilience.md。
 9. docs/requirements/JHarness-next-plan-v1.0.md：M7之后的任务顺序、验收条件与下一次执行入口；新编号M8～M12属于新增实施计划。
+10. docs/development/M9-contracts.md、docs/testing/M9-validation.md：当前发布准备、候选/供应链证据与远端CI门禁。
 
 修改存储/恢复再读 M5；文件/进程/审批/CLI 对照 M2～M4，流式/压缩/配置读 M6 契约及测试。旧阶段记录是历史快照。
 
@@ -139,3 +140,15 @@ M8只按约定范围收口，不等于PRD全功能/发布完成：完整gitignor
 2026-10-16文档一致性复核：M8-validation、当前状态及推进计划已确认更新；补正NFR/AC顺序文档执行安排中遗漏的“M8.2尚未开始”旧句，标明历史快照与当前接续的区别。仅文档修订，无产品代码/测试改动；当前仍为M8收口完成、下一步M9本地准备。
 
 2026-10-16远端连接：使用本机现有nixaveq141-ai Git登录，已核实私有仓库/默认main，origin已配置并fetch origin/main=f90bb77（Initial commit，远端仅LICENSE）。按用户最新要求本轮仅连接并记录状态，本地发布准备暂停；没有合并、推送、运行CI或发布，原有本地未完成准备保留。
+
+2026-10-16 M9继续：已采用远端LICENSE原文，补充固定版本SBOM profile、构建时间戳及坐标独立的法律资源打包；正在生成清单并验证，尚未计为验收通过。pty4j内嵌Microsoft原生程序的精确构建来源尚不能从上游证明，保留为发布限制。
+
+M9供应链进展：首次OSV对18个依赖查询发现Jackson core/databind 2.21.4共11条未撤回公告，原始查询保留.build-cache/M9-osv-initial.json。官方修复区间和Maven Central均已核实，正在升级到2.21.7并重跑完整验证；未将旧结果记成清洁扫描。doctor不再要求运行目标工作区具备Maven，构建工具诊断字段保留，新增隔离回归。
+
+M9本地进展：Jackson已升至2.21.7，18个外部依赖复扫PASS（0条未撤回发现），升级后全量构建通过；最终候选打包/安装冒烟尚在验证。Wrapper下载包已核对官方SHA512，并固定SHA256。当前本地分支codex/m9-release-validation，尚未推送或运行远端CI。
+
+## 2026-10-16 M9本地候选验证
+
+最终Windows296项全量，0失败/错误/跳过；Jackson2.21.7、18依赖OSV复扫PASS，首次11条公告原文保留M9-security-before.json。项目采用远端Apache-2.0原文，坐标独立法律材料/来源/POM与JAR SHA已进入最终JAR；Wrapper固定官方分发SHA256。doctor不再强制目标工作区具备Maven，保留构建能力诊断并增加回归。最终JAR SHA24334b12a36597722f73a299b02f1a6acfadbd76e8b9e761a3e97805ce47b76c，强制重复打包相同。Windows候选安装、doctor零网络、审批写入/报告、EOF拒绝、外部取消、UNKNOWN拒绝续跑及显式核实恢复通过；扫描器5项离线门禁通过。
+
+本地分支codex/m9-release-validation；CI已实现最终SBOM/扫描/候选冒烟与证据归档，但没有远端执行，M9尚未收口。下一步在用户授权推送该分支后跑真实三平台CI并收集同一提交结果，不发布Release。pty4j内嵌Microsoft原生构建精确来源仍有限制，扫描不覆盖构建插件完整依赖/JDK/OS/独立原生程序。M8旧295项不作为当前改动后的M9验收。文档M9-validation.md为当前详细状态；失败夹具记录保留.build-cache，未改弱产品断言。

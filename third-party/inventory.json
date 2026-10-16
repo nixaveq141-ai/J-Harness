@@ -1,0 +1,426 @@
+[
+  {
+    "coordinate": "com.fasterxml.jackson.core:jackson-annotations:2.21",
+    "usage": "runtime",
+    "artifactUrl": "https://repo.maven.apache.org/maven2/com/fasterxml/jackson/core/jackson-annotations/2.21/jackson-annotations-2.21.jar",
+    "sourceUrl": "https://repo.maven.apache.org/maven2/com/fasterxml/jackson/core/jackson-annotations/2.21/jackson-annotations-2.21-sources.jar",
+    "jarSha256": "53ca085f4a150f703f49e1aabd935bd03b43e1ea3d55d135438292af22cef56b",
+    "pomSha256": "71cac5392151e2a528cc9a09179f0a334179f05c52f8e596cf58ddf12bb27f2b",
+    "declaredLicenses": [
+      {
+        "name": "The Apache Software License, Version 2.0",
+        "url": "https://www.apache.org/licenses/LICENSE-2.0.txt"
+      }
+    ],
+    "legal": [
+      {
+        "file": "artifacts/com.fasterxml.jackson.core/jackson-annotations/2.21/META-INF/LICENSE",
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+      },
+      {
+        "file": "artifacts/com.fasterxml.jackson.core/jackson-annotations/2.21/META-INF/NOTICE",
+        "sha256": "612b14bc77c944ce229cbba0d14919162cfea8ed802cbf06a8e865e032d03201"
+      }
+    ],
+    "supplemental": []
+  },
+  {
+    "coordinate": "com.fasterxml.jackson.core:jackson-core:2.21.7",
+    "usage": "runtime",
+    "artifactUrl": "https://repo.maven.apache.org/maven2/com/fasterxml/jackson/core/jackson-core/2.21.7/jackson-core-2.21.7.jar",
+    "sourceUrl": "https://repo.maven.apache.org/maven2/com/fasterxml/jackson/core/jackson-core/2.21.7/jackson-core-2.21.7-sources.jar",
+    "jarSha256": "8c5623b98f32d5f7e1287ff61ed50e08ab7b11381e991fff89327faabba42261",
+    "pomSha256": "70233c57a076fadb2f3af1ca25647dc65116d8c135df6c3cb79c95a2560eafce",
+    "declaredLicenses": [
+      {
+        "name": "The Apache Software License, Version 2.0",
+        "url": "https://www.apache.org/licenses/LICENSE-2.0.txt"
+      }
+    ],
+    "legal": [
+      {
+        "file": "artifacts/com.fasterxml.jackson.core/jackson-core/2.21.7/META-INF/FastDoubleParser-LICENSE",
+        "sha256": "59067508e44346bf93dc9c5e4d673a67ecd77988c2020bb5e0f8667eb199f396"
+      },
+      {
+        "file": "artifacts/com.fasterxml.jackson.core/jackson-core/2.21.7/META-INF/FastDoubleParser-ThirdParty-LICENSE",
+        "sha256": "dbc36f9422a40d58d1a214080583667cfd37d61c2fae1657d981edda2a60727f"
+      },
+      {
+        "file": "artifacts/com.fasterxml.jackson.core/jackson-core/2.21.7/META-INF/LICENSE",
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+      },
+      {
+        "file": "artifacts/com.fasterxml.jackson.core/jackson-core/2.21.7/META-INF/NOTICE",
+        "sha256": "e6aef1c0f4cf5b0f802c16b31fce309b3c3737450b93c40d6291bf6540aae3d1"
+      },
+      {
+        "file": "artifacts/com.fasterxml.jackson.core/jackson-core/2.21.7/META-INF/Schubfach-LICENSE",
+        "sha256": "12d39a6615219d73202300715e365bec2b958f858d1e837c8f2dace57f905969"
+      }
+    ],
+    "supplemental": []
+  },
+  {
+    "coordinate": "com.fasterxml.jackson.core:jackson-databind:2.21.7",
+    "usage": "runtime",
+    "artifactUrl": "https://repo.maven.apache.org/maven2/com/fasterxml/jackson/core/jackson-databind/2.21.7/jackson-databind-2.21.7.jar",
+    "sourceUrl": "https://repo.maven.apache.org/maven2/com/fasterxml/jackson/core/jackson-databind/2.21.7/jackson-databind-2.21.7-sources.jar",
+    "jarSha256": "1290c2795e93e8a6861a6c4d9ff0d844d32f5ea178362cb2721edf5561e828b1",
+    "pomSha256": "3191130a3cb7be2f1f05d4e68765e23a1880db719a23ee368a14a8b0477f7bb5",
+    "declaredLicenses": [
+      {
+        "name": "The Apache Software License, Version 2.0",
+        "url": "https://www.apache.org/licenses/LICENSE-2.0.txt"
+      }
+    ],
+    "legal": [
+      {
+        "file": "artifacts/com.fasterxml.jackson.core/jackson-databind/2.21.7/META-INF/LICENSE",
+        "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+      },
+      {
+        "file": "artifacts/com.fasterxml.jackson.core/jackson-databind/2.21.7/META-INF/NOTICE",
+        "sha256": "612b14bc77c944ce229cbba0d14919162cfea8ed802cbf06a8e865e032d03201"
+      }
+    ],
+    "supplemental": []
+  },
+  {
+    "coordinate": "net.java.dev.jna:jna-platform:5.14.0",
+    "usage": "runtime",
+    "artifactUrl": "https://repo.maven.apache.org/maven2/net/java/dev/jna/jna-platform/5.14.0/jna-platform-5.14.0.jar",
+    "sourceUrl": "https://repo.maven.apache.org/maven2/net/java/dev/jna/jna-platform/5.14.0/jna-platform-5.14.0-sources.jar",
+    "jarSha256": "ae4caceb3840730c2537f9b7fb55a01baba580286b4122951488bcee558c2449",
+    "pomSha256": "6cba0e04f9eecb16486000793bb27e103b0f4d0485e0554e2b4c0aed13d2ed16",
+    "declaredLicenses": [
+      {
+        "name": "LGPL-2.1-or-later",
+        "url": "https://www.gnu.org/licenses/old-licenses/lgpl-2.1"
+      },
+      {
+        "name": "Apache-2.0",
+        "url": "https://www.apache.org/licenses/LICENSE-2.0.txt"
+      }
+    ],
+    "legal": [
+      {
+        "file": "artifacts/net.java.dev.jna/jna-platform/5.14.0/META-INF/LICENSE",
+        "sha256": "521bb271ac56e0e29a1b1b688b94af17d00d378fc8e63478d8c8b2a7c4a229d0"
+      }
+    ],
+    "supplemental": []
+  },
+  {
+    "coordinate": "net.java.dev.jna:jna:5.14.0",
+    "usage": "runtime",
+    "artifactUrl": "https://repo.maven.apache.org/maven2/net/java/dev/jna/jna/5.14.0/jna-5.14.0.jar",
+    "sourceUrl": "https://repo.maven.apache.org/maven2/net/java/dev/jna/jna/5.14.0/jna-5.14.0-sources.jar",
+    "jarSha256": "34ed1e1f27fa896bca50dbc4e99cf3732967cec387a7a0d5e3486c09673fe8c6",
+    "pomSha256": "e04e25951501df25adc7b1dcdb6c53373c94897b84d3e14921292763ee07ae3d",
+    "declaredLicenses": [
+      {
+        "name": "LGPL-2.1-or-later",
+        "url": "https://www.gnu.org/licenses/old-licenses/lgpl-2.1"
+      },
+      {
+        "name": "Apache-2.0",
+        "url": "https://www.apache.org/licenses/LICENSE-2.0.txt"
+      }
+    ],
+    "legal": [
+      {
+        "file": "artifacts/net.java.dev.jna/jna/5.14.0/META-INF/LICENSE",
+        "sha256": "521bb271ac56e0e29a1b1b688b94af17d00d378fc8e63478d8c8b2a7c4a229d0"
+      }
+    ],
+    "supplemental": []
+  },
+  {
+    "coordinate": "org.apiguardian:apiguardian-api:1.1.2",
+    "usage": "test",
+    "artifactUrl": "https://repo.maven.apache.org/maven2/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar",
+    "sourceUrl": "https://repo.maven.apache.org/maven2/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2-sources.jar",
+    "jarSha256": "b509448ac506d607319f182537f0b35d71007582ec741832a1f111e5b5b70b38",
+    "pomSha256": "32355081d109095c3d5d374d5a43b4f4c1b75d549e983ef50723e2772e5302a0",
+    "declaredLicenses": [
+      {
+        "name": "The Apache License, Version 2.0",
+        "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
+      }
+    ],
+    "legal": [
+      {
+        "file": "artifacts/org.apiguardian/apiguardian-api/1.1.2/META-INF/LICENSE",
+        "sha256": "b40930bbcf80744c86c46a12bc9da056641d722716c378f5659b9e555ef833e1"
+      }
+    ],
+    "supplemental": []
+  },
+  {
+    "coordinate": "org.jetbrains.kotlin:kotlin-stdlib:2.1.21",
+    "usage": "runtime",
+    "artifactUrl": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-stdlib/2.1.21/kotlin-stdlib-2.1.21.jar",
+    "sourceUrl": "https://repo.maven.apache.org/maven2/org/jetbrains/kotlin/kotlin-stdlib/2.1.21/kotlin-stdlib-2.1.21-sources.jar",
+    "jarSha256": "263bdc679e1f62012db7b091796279b6d71cf36f4797a98ff1ace05835f201c8",
+    "pomSha256": "c5524086ca3e49a67986df8fdccd66037baf5f3c5a358b76f9dd609bee7bb638",
+    "declaredLicenses": [
+      {
+        "name": "The Apache License, Version 2.0",
+        "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
+      }
+    ],
+    "legal": [],
+    "supplemental": [
+      "kotlin-LICENSE",
+      "kotlin-NOTICE"
+    ]
+  },
+  {
+    "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+    "usage": "runtime",
+    "artifactUrl": "https://repo.maven.apache.org/maven2/org/jetbrains/pty4j/pty4j/0.13.12/pty4j-0.13.12.jar",
+    "sourceUrl": "https://repo.maven.apache.org/maven2/org/jetbrains/pty4j/pty4j/0.13.12/pty4j-0.13.12-sources.jar",
+    "jarSha256": "da86078dafc3c4e4e3a497981df9794e5d9ed081963ad9561d0e69657f2475d4",
+    "pomSha256": "9b015e59cda7efd5e4c1fafa5d57bf1df501cb619abebd47dbaab8b0aeb46db5",
+    "declaredLicenses": [
+      {
+        "name": "Eclipse Public License 1.0",
+        "url": "https://opensource.org/licenses/eclipse-1.0.php"
+      }
+    ],
+    "legal": [],
+    "supplemental": [
+      "pty4j-LICENSE",
+      "pty4j-NOTICE",
+      "winpty-LICENSE",
+      "terminal-LICENSE",
+      "terminal-NOTICE"
+    ]
+  },
+  {
+    "coordinate": "org.jetbrains:annotations:24.0.1",
+    "usage": "runtime",
+    "artifactUrl": "https://repo.maven.apache.org/maven2/org/jetbrains/annotations/24.0.1/annotations-24.0.1.jar",
+    "sourceUrl": "https://repo.maven.apache.org/maven2/org/jetbrains/annotations/24.0.1/annotations-24.0.1-sources.jar",
+    "jarSha256": "61666dbce7e42e6c85b43c04fcfb8293a21dcb55b3c80e869270ce42c01a6b35",
+    "pomSha256": "99bede29c0331c1952eee04bf9978de535a90c97e2defffa5e009335171925b0",
+    "declaredLicenses": [
+      {
+        "name": "The Apache Software License, Version 2.0",
+        "url": "https://www.apache.org/licenses/LICENSE-2.0.txt"
+      }
+    ],
+    "legal": [],
+    "supplemental": [
+      "annotations-LICENSE"
+    ]
+  },
+  {
+    "coordinate": "org.junit.jupiter:junit-jupiter-api:5.12.2",
+    "usage": "test",
+    "artifactUrl": "https://repo.maven.apache.org/maven2/org/junit/jupiter/junit-jupiter-api/5.12.2/junit-jupiter-api-5.12.2.jar",
+    "sourceUrl": "https://repo.maven.apache.org/maven2/org/junit/jupiter/junit-jupiter-api/5.12.2/junit-jupiter-api-5.12.2-sources.jar",
+    "jarSha256": "0b9ca728e4bcd9adc57f29deb9556ff9ed5e08b4e8843b875aba4e4e3e04f092",
+    "pomSha256": "566282166489bd40b12c3507b995e48f8e025e09a05e7d16dd2b98dc642cf7de",
+    "declaredLicenses": [
+      {
+        "name": "Eclipse Public License v2.0",
+        "url": "https://www.eclipse.org/legal/epl-v20.html"
+      }
+    ],
+    "legal": [
+      {
+        "file": "artifacts/org.junit.jupiter/junit-jupiter-api/5.12.2/META-INF/LICENSE-notice.md",
+        "sha256": "c7d843e0faf8a251278c9220f6b5326a42a01f08b855c1ec871bcef6211a7e2a"
+      },
+      {
+        "file": "artifacts/org.junit.jupiter/junit-jupiter-api/5.12.2/META-INF/LICENSE.md",
+        "sha256": "5aa4cd44c111add178d1c2e2fe36d58a484012c80167df925f826cd64d411bf0"
+      }
+    ],
+    "supplemental": []
+  },
+  {
+    "coordinate": "org.junit.jupiter:junit-jupiter-engine:5.12.2",
+    "usage": "test",
+    "artifactUrl": "https://repo.maven.apache.org/maven2/org/junit/jupiter/junit-jupiter-engine/5.12.2/junit-jupiter-engine-5.12.2.jar",
+    "sourceUrl": "https://repo.maven.apache.org/maven2/org/junit/jupiter/junit-jupiter-engine/5.12.2/junit-jupiter-engine-5.12.2-sources.jar",
+    "jarSha256": "f576c06b8accde9985063b8bc80526cb980eec24dee0b7221fc8ddd7ace65800",
+    "pomSha256": "3c719174509be9db1fa817ac63b78b21f1f67d068be471da3d04781bd4402aa3",
+    "declaredLicenses": [
+      {
+        "name": "Eclipse Public License v2.0",
+        "url": "https://www.eclipse.org/legal/epl-v20.html"
+      }
+    ],
+    "legal": [
+      {
+        "file": "artifacts/org.junit.jupiter/junit-jupiter-engine/5.12.2/META-INF/LICENSE-notice.md",
+        "sha256": "c7d843e0faf8a251278c9220f6b5326a42a01f08b855c1ec871bcef6211a7e2a"
+      },
+      {
+        "file": "artifacts/org.junit.jupiter/junit-jupiter-engine/5.12.2/META-INF/LICENSE.md",
+        "sha256": "5aa4cd44c111add178d1c2e2fe36d58a484012c80167df925f826cd64d411bf0"
+      }
+    ],
+    "supplemental": []
+  },
+  {
+    "coordinate": "org.junit.jupiter:junit-jupiter-params:5.12.2",
+    "usage": "test",
+    "artifactUrl": "https://repo.maven.apache.org/maven2/org/junit/jupiter/junit-jupiter-params/5.12.2/junit-jupiter-params-5.12.2.jar",
+    "sourceUrl": "https://repo.maven.apache.org/maven2/org/junit/jupiter/junit-jupiter-params/5.12.2/junit-jupiter-params-5.12.2-sources.jar",
+    "jarSha256": "b219ffa949b90a71aa3b6c2b606456b82bca0b2089b7459c8ff461156ff59b0f",
+    "pomSha256": "a5c7ef17cade7d5f74ab62072bbc6bc71cbd016806246bce425fcbbc1108493c",
+    "declaredLicenses": [
+      {
+        "name": "Eclipse Public License v2.0",
+        "url": "https://www.eclipse.org/legal/epl-v20.html"
+      }
+    ],
+    "legal": [
+      {
+        "file": "artifacts/org.junit.jupiter/junit-jupiter-params/5.12.2/META-INF/LICENSE-notice.md",
+        "sha256": "c7d843e0faf8a251278c9220f6b5326a42a01f08b855c1ec871bcef6211a7e2a"
+      },
+      {
+        "file": "artifacts/org.junit.jupiter/junit-jupiter-params/5.12.2/META-INF/LICENSE-univocity-parsers.md",
+        "sha256": "d25d17d20162cce14cdbb467a0f6d75a35ba488a4144637b17392eaa8042c122"
+      },
+      {
+        "file": "artifacts/org.junit.jupiter/junit-jupiter-params/5.12.2/META-INF/LICENSE.md",
+        "sha256": "5aa4cd44c111add178d1c2e2fe36d58a484012c80167df925f826cd64d411bf0"
+      }
+    ],
+    "supplemental": []
+  },
+  {
+    "coordinate": "org.junit.jupiter:junit-jupiter:5.12.2",
+    "usage": "test",
+    "artifactUrl": "https://repo.maven.apache.org/maven2/org/junit/jupiter/junit-jupiter/5.12.2/junit-jupiter-5.12.2.jar",
+    "sourceUrl": "https://repo.maven.apache.org/maven2/org/junit/jupiter/junit-jupiter/5.12.2/junit-jupiter-5.12.2-sources.jar",
+    "jarSha256": "3854b3ad434906b827fec474aa0d8da8b56e9e56d5fc7f2e20fc3f12ec4be894",
+    "pomSha256": "91ad8e4a4bf304232c941c9014ac91367beba131f1db58d5bfe499c790d46f17",
+    "declaredLicenses": [
+      {
+        "name": "Eclipse Public License v2.0",
+        "url": "https://www.eclipse.org/legal/epl-v20.html"
+      }
+    ],
+    "legal": [
+      {
+        "file": "artifacts/org.junit.jupiter/junit-jupiter/5.12.2/META-INF/LICENSE-notice.md",
+        "sha256": "c7d843e0faf8a251278c9220f6b5326a42a01f08b855c1ec871bcef6211a7e2a"
+      },
+      {
+        "file": "artifacts/org.junit.jupiter/junit-jupiter/5.12.2/META-INF/LICENSE.md",
+        "sha256": "5aa4cd44c111add178d1c2e2fe36d58a484012c80167df925f826cd64d411bf0"
+      }
+    ],
+    "supplemental": []
+  },
+  {
+    "coordinate": "org.junit.platform:junit-platform-commons:1.12.2",
+    "usage": "test",
+    "artifactUrl": "https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-commons/1.12.2/junit-platform-commons-1.12.2.jar",
+    "sourceUrl": "https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-commons/1.12.2/junit-platform-commons-1.12.2-sources.jar",
+    "jarSha256": "e683a01e85dfabea520c056ac6015a6162756e602ec653c0da85e233f0afbc18",
+    "pomSha256": "4f2b8a9065c909c6892d8622d553b6ab0a70321624499e3b69c1289f59ecc077",
+    "declaredLicenses": [
+      {
+        "name": "Eclipse Public License v2.0",
+        "url": "https://www.eclipse.org/legal/epl-v20.html"
+      }
+    ],
+    "legal": [
+      {
+        "file": "artifacts/org.junit.platform/junit-platform-commons/1.12.2/META-INF/LICENSE-notice.md",
+        "sha256": "c7d843e0faf8a251278c9220f6b5326a42a01f08b855c1ec871bcef6211a7e2a"
+      },
+      {
+        "file": "artifacts/org.junit.platform/junit-platform-commons/1.12.2/META-INF/LICENSE.md",
+        "sha256": "5aa4cd44c111add178d1c2e2fe36d58a484012c80167df925f826cd64d411bf0"
+      }
+    ],
+    "supplemental": []
+  },
+  {
+    "coordinate": "org.junit.platform:junit-platform-engine:1.12.2",
+    "usage": "test",
+    "artifactUrl": "https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-engine/1.12.2/junit-platform-engine-1.12.2.jar",
+    "sourceUrl": "https://repo.maven.apache.org/maven2/org/junit/platform/junit-platform-engine/1.12.2/junit-platform-engine-1.12.2-sources.jar",
+    "jarSha256": "cef0efcb5bd2e05e2b808d38bab5c655089c0c3001527376e74cb606a7911ec8",
+    "pomSha256": "9480b18a7965769d0083c2cb71105423f5302a8f046bb2047e6dbff09f383490",
+    "declaredLicenses": [
+      {
+        "name": "Eclipse Public License v2.0",
+        "url": "https://www.eclipse.org/legal/epl-v20.html"
+      }
+    ],
+    "legal": [
+      {
+        "file": "artifacts/org.junit.platform/junit-platform-engine/1.12.2/META-INF/LICENSE-notice.md",
+        "sha256": "c7d843e0faf8a251278c9220f6b5326a42a01f08b855c1ec871bcef6211a7e2a"
+      },
+      {
+        "file": "artifacts/org.junit.platform/junit-platform-engine/1.12.2/META-INF/LICENSE.md",
+        "sha256": "5aa4cd44c111add178d1c2e2fe36d58a484012c80167df925f826cd64d411bf0"
+      }
+    ],
+    "supplemental": []
+  },
+  {
+    "coordinate": "org.opentest4j:opentest4j:1.3.0",
+    "usage": "test",
+    "artifactUrl": "https://repo.maven.apache.org/maven2/org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.jar",
+    "sourceUrl": "https://repo.maven.apache.org/maven2/org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0-sources.jar",
+    "jarSha256": "48e2df636cab6563ced64dcdff8abb2355627cb236ef0bf37598682ddf742f1b",
+    "pomSha256": "9bf7cffc410f3e8372c2522578df9ca56d9d43bd937e30948706c232a943b355",
+    "declaredLicenses": [
+      {
+        "name": "The Apache License, Version 2.0",
+        "url": "https://www.apache.org/licenses/LICENSE-2.0.txt"
+      }
+    ],
+    "legal": [
+      {
+        "file": "artifacts/org.opentest4j/opentest4j/1.3.0/META-INF/LICENSE",
+        "sha256": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08"
+      }
+    ],
+    "supplemental": []
+  },
+  {
+    "coordinate": "org.slf4j:slf4j-api:2.0.13",
+    "usage": "runtime",
+    "artifactUrl": "https://repo.maven.apache.org/maven2/org/slf4j/slf4j-api/2.0.13/slf4j-api-2.0.13.jar",
+    "sourceUrl": "https://repo.maven.apache.org/maven2/org/slf4j/slf4j-api/2.0.13/slf4j-api-2.0.13-sources.jar",
+    "jarSha256": "e7c2a48e8515ba1f49fa637d57b4e2f590b3f5bd97407ac699c3aa5efb1204a9",
+    "pomSha256": "51805cfda80ca2ac82041b906d9865d39e9823e358a0eeb62379dfed475c1571",
+    "declaredLicenses": [],
+    "legal": [
+      {
+        "file": "artifacts/org.slf4j/slf4j-api/2.0.13/META-INF/LICENSE.txt",
+        "sha256": "4e7f90c86ab51278228bce153122f1d8df30149d13ce9ef524c8444a84c32dcc"
+      }
+    ],
+    "supplemental": []
+  },
+  {
+    "coordinate": "org.slf4j:slf4j-nop:2.0.13",
+    "usage": "runtime",
+    "artifactUrl": "https://repo.maven.apache.org/maven2/org/slf4j/slf4j-nop/2.0.13/slf4j-nop-2.0.13.jar",
+    "sourceUrl": "https://repo.maven.apache.org/maven2/org/slf4j/slf4j-nop/2.0.13/slf4j-nop-2.0.13-sources.jar",
+    "jarSha256": "8962a107b4a8bdf80b6c17e470cd3614ad3329643833ff5cf0c60c7dce9deaac",
+    "pomSha256": "3b8bdf7b4be159234e4c8f2ff66e44668581a570d827081ed8a7b4c118f3d7f7",
+    "declaredLicenses": [],
+    "legal": [
+      {
+        "file": "artifacts/org.slf4j/slf4j-nop/2.0.13/META-INF/LICENSE.txt",
+        "sha256": "4e7f90c86ab51278228bce153122f1d8df30149d13ce9ef524c8444a84c32dcc"
+      }
+    ],
+    "supplemental": []
+  }
+]

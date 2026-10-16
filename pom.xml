@@ -6,6 +6,8 @@
   <version>0.1.0-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>J-Harness</name>
+  <url>https://github.com/nixaveq141-ai/J-Harness</url>
+  <licenses><license><name>Apache License, Version 2.0</name><url>https://www.apache.org/licenses/LICENSE-2.0.txt</url><distribution>repo</distribution></license></licenses>
   <modules>
     <module>harness-api</module>
     <module>harness-events</module>
@@ -27,6 +29,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <junit.version>5.12.2</junit.version>
+    <project.build.outputTimestamp>2026-10-16T00:00:00Z</project.build.outputTimestamp>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -42,6 +45,7 @@
   </dependencies>
   <build>
     <plugins>
+      <plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-jar-plugin</artifactId><version>3.4.2</version></plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId><artifactId>maven-compiler-plugin</artifactId><version>3.14.1</version>
         <configuration>
@@ -61,4 +65,15 @@
       </plugin>
     </plugins>
   </build>
+  <profiles>
+    <profile>
+      <id>release-audit</id>
+      <build><plugins><plugin>
+        <groupId>org.cyclonedx</groupId><artifactId>cyclonedx-maven-plugin</artifactId><version>2.9.3</version>
+        <inherited>false</inherited>
+        <configuration><includeTestScope>true</includeTestScope><includeLicenseText>true</includeLicenseText><outputFormat>json</outputFormat><outputReactorProjects>false</outputReactorProjects><skipAttach>true</skipAttach></configuration>
+        <executions><execution><phase>verify</phase><goals><goal>makeAggregateBom</goal></goals></execution></executions>
+      </plugin></plugins></build>
+    </profile>
+  </profiles>
 </project>

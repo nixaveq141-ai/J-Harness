@@ -1,0 +1,9 @@
+{
+  "status": "PASS",
+  "jarBeforeSha256": "24334b12a36597722f73a299b02f1a6acfadbd76e8b9e761a3e97805ce47b76c",
+  "jarAfterSha256": "24334b12a36597722f73a299b02f1a6acfadbd76e8b9e761a3e97805ce47b76c",
+  "zipFirstSha256": "61c2d8bc207c9156012f7c23260292e86260799ac395e982bb0f8dea63fc8774",
+  "zipRepeatedSha256": "61c2d8bc207c9156012f7c23260292e86260799ac395e982bb0f8dea63fc8774",
+  "repackLogSha256": "00f00bc82563bb34f49a97e7d13031ccf968c23245cb77f6e6ca9637a8633675",
+  "scope": "forced JAR archive regeneration and repeated ZIP packaging; not cross-platform hermetic build proof"
+}

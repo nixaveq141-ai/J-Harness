@@ -1,0 +1,47 @@
+[
+  {
+    "file": "pty4j-LICENSE",
+    "url": "https://raw.githubusercontent.com/JetBrains/pty4j/b7554d649f6374183040e6554942b6d5b028b5e5/LICENSE",
+    "sha256": "3a4a6fe55f67f02b92be0ec9907e347de8ab5c8edf9214c5c8019e5820517884"
+  },
+  {
+    "file": "pty4j-NOTICE",
+    "url": "https://raw.githubusercontent.com/JetBrains/pty4j/b7554d649f6374183040e6554942b6d5b028b5e5/NOTICE",
+    "sha256": "7f1b01b809cecc274e9a0aaeba288ccb36a18cb96a97b8cc1fde58c1e713e845"
+  },
+  {
+    "file": "kotlin-LICENSE",
+    "url": "https://raw.githubusercontent.com/JetBrains/kotlin/v2.1.21/license/LICENSE.txt",
+    "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+  },
+  {
+    "file": "kotlin-NOTICE",
+    "url": "https://raw.githubusercontent.com/JetBrains/kotlin/v2.1.21/license/NOTICE.txt",
+    "sha256": "0b09a83d3ef7795c7dec65e815866597c066c53898f2852a76599b8f5552941a"
+  },
+  {
+    "file": "winpty-LICENSE",
+    "url": "https://raw.githubusercontent.com/rprichard/winpty/0.4.3/LICENSE",
+    "sha256": "c39e428064b4f3e4fe81a975bf0fd3b845922b431bc4d9a7ffc8bfb091981836"
+  },
+  {
+    "file": "wrapper-NOTICE",
+    "url": "https://raw.githubusercontent.com/apache/maven-wrapper/maven-wrapper-3.3.4/NOTICE",
+    "sha256": "706530c7c8baaa8dd4b37f3f12c87042c73b9d53051a0197770373516d85ec0f"
+  },
+  {
+    "file": "terminal-LICENSE",
+    "url": "https://raw.githubusercontent.com/microsoft/terminal/44b440bf043522ec06014b2cff30d0f52ca30b68/LICENSE",
+    "sha256": "5d177f23ecfeb0ea8e050b6a5a16355e1ae9a0b286436ca8f83ed08b3795be6b"
+  },
+  {
+    "file": "terminal-NOTICE",
+    "url": "https://raw.githubusercontent.com/microsoft/terminal/44b440bf043522ec06014b2cff30d0f52ca30b68/NOTICE.md",
+    "sha256": "e7fbaadee6ab20c28b87730a510ee5f5815d8fb4bd88d1d54d282dc2a74c0726"
+  },
+  {
+    "file": "annotations-LICENSE",
+    "url": "https://raw.githubusercontent.com/JetBrains/java-annotations/24.0.1/LICENSE.txt",
+    "sha256": "8c1e966c7855fb54027bcaf6ebe7a43abe4785791e8cf9148c363761d493d097"
+  }
+]
