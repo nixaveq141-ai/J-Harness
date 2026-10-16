@@ -1,0 +1,54 @@
+{
+  "milestone": "M8",
+  "slice": "M8.4",
+  "result": "SUCCESS",
+  "jarSha256": "12a8c812fc90035d6d6a6e78da8f5de3af6d3dcea28d72d54af68a9ccf37207e",
+  "capturedAt": "2026-10-16T01:59:20.659301+00:00",
+  "version": "J-Harness 0.1.0-SNAPSHOT / API 1.9",
+  "versionExitCode": 0,
+  "helpExitCode": 0,
+  "doctorExitCode": 0,
+  "doctor": {
+    "ready": true,
+    "apiProbe": "not sent; no model charges",
+    "checks": {
+      "java21": true,
+      "JAVA_HOME": true,
+      "apiKeyPresent": true,
+      "modelConfiguration": true,
+      "mavenWrapperConfigured": true,
+      "mavenExecutableFound": false,
+      "git": true,
+      "pluginAssembly": true,
+      "pluginDiagnostic": "OK"
+    },
+    "platform": "Windows 11",
+    "assemblyProbe": "inert model/storage; no tools executed",
+    "mavenProbe": "Wrapper configuration/executable presence only; distribution is not downloaded"
+  },
+  "unpreparedWorkspaceDiagnostic": {
+    "ready": false,
+    "mavenProbe": "Wrapper configuration/executable presence only; distribution is not downloaded",
+    "assemblyProbe": "inert model/storage; no tools executed",
+    "platform": "Windows 11",
+    "checks": {
+      "java21": true,
+      "JAVA_HOME": true,
+      "apiKeyPresent": true,
+      "modelConfiguration": true,
+      "mavenWrapperConfigured": false,
+      "mavenExecutableFound": false,
+      "git": true,
+      "pluginAssembly": true,
+      "pluginDiagnostic": "OK"
+    },
+    "apiProbe": "not sent; no model charges"
+  },
+  "logs": {
+    ".build-cache/M8.4-version.log": "2dc01df2dd8a588dd6a8c474f05f3747fd8c62076e35267474673011c35e2f8d",
+    ".build-cache/M8.4-help.log": "96fd344d165279ad64d3ba5faa7bbb5ca6615b22c99f1a7fe301cc48b862669a",
+    ".build-cache/M8.4-doctor.log": "1d331ba9fd99e51eb1aa68cacddd729c450e32a9c733aece71d5213cbe777c34",
+    ".build-cache/M8.4-doctor-unprepared-workspace.log": "626f6b5bdc12790a4581162370b60dbacbeacf9158862e0ce9859ea30ddc892e"
+  },
+  "paidModelRequests": false
+}

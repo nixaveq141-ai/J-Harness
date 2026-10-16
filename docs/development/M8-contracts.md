@@ -1,6 +1,6 @@
 # M8 核心补齐契约
 
-日期：2026-10-16。M8.1过滤、M8.2调度与M8.3标准模型限流/重试已完成Windows及本地/真实Docker验收，M8整阶段仍待M8.4收口。当前API/SDK协议1.9，JSONL格式/schemaVersion仍1。M8.1/M8.2历史切片分别使用API/SDK1.7/1.8。
+日期：2026-10-16。M8.1过滤、M8.2调度与M8.3标准模型限流/重试已完成Windows及本地/真实Docker验收，M8.4已完成所选范围收口，见M8-closure.md。当前API/SDK协议1.9，JSONL格式/schemaVersion仍1。M8.1/M8.2历史切片分别使用API/SDK1.7/1.8。
 
 ## M8.1：宿主检索过滤（FR-07.3）
 
@@ -48,6 +48,12 @@ API/SDK 1.9 新增 MODEL_EXECUTION / ModelExecution / ModelAttempt。Loop 提供
 
 429保留已预留费用的保守上界，不推测零计费；下一次请求重新通过剩余预算检查，次数不绕过整轮费用/时间。model.rejected关联精确requestEventId，先flush才允许重试；冷恢复只据明确HTTP_429拒绝事实结算对应请求。发送后取消/超时/UNKNOWN不写拒绝事实，保留未决并阻止续跑。成功仍由原assistant.message闭合步骤。任何checkpoint/拒绝事实flush失败不发送下一请求；模型工具、写入、审批语义不变。
 
-model.attempt.started、model.rate.waiting、model.retry.scheduled、model.execution.stopped记录尝试/限制/等待/停止原因；最终wire与每个model.requested前缀逐项核对。事件由调用线程写入，无worker写者。子任务配置独立、默认关闭；经典CLI、SDK、生态CLI与serve使用相同宿主配置。SDK旧三/四参数构造保留。验证结果另记M8-validation.md，M8.4尚未收口。
+model.attempt.started、model.rate.waiting、model.retry.scheduled、model.execution.stopped记录尝试/限制/等待/停止原因；最终wire与每个model.requested前缀逐项核对。事件由调用线程写入，无worker写者。子任务配置独立、默认关闭；经典CLI、SDK、生态CLI与serve使用相同宿主配置。SDK旧三/四参数构造保留。验证结果另记M8-validation.md；M8.4收口与发布边界见M8-closure.md。
 
 历史 model.verified 未带 sourceEvent 时，仅同一步恰有一个未决请求才接受其 stepId；多个未决尝试必须精确核实，不用旧格式一次清除。新CLI核实入口始终写入精确sourceEvent。ApiCostGuard.requestRejected只释放活跃预留槽位，不返还费用上界，SDK共享费用池同样遵守。
+
+## M8.4：整阶段收口门禁（2026-10-16）
+
+不扩展M8.1～M8.3的产品范围。先M8专项、再Windows全量及相同Java/POM快照的Linux容器全量；刷新最终JAR的environment/skills/subagent/web/filter/scheduling/resilience七类本地/真实Docker夹具。所有报告独立命名M8.4，不覆盖M7与M8.1～M8.3历史证据。两侧完整测试名/计数/源码SHA一致、七报告绑定同一最终JAR并确认清理后才收口；失败尝试单独保留。
+
+新增只读证据校验脚本verify-m8-closure.py，验证测试/日志/源码/最终制品关联并输出收口manifest；它不执行模型/工具、改写事实或代替人工核实。详细AC/NFR矩阵、平台及发布限制见M8-closure.md。API/SDK保持1.9，JSONL/schema仍1。

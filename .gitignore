@@ -11,3 +11,4 @@
 *.log
 .env
 .jharness/
+__pycache__/

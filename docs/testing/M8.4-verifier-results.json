@@ -1,0 +1,75 @@
+{
+  "milestone": "M8",
+  "slice": "M8.4",
+  "result": "SUCCESS",
+  "capturedAt": "2026-10-16T02:04:45.268296+00:00",
+  "verifierSha256": "6596cfdf506cf8d518c25647c80f745eb60b073a09a4975683b3b880990c9673",
+  "windowsEvidenceSha256": "c0f42503d09b22b6bf70f13dbee4d33e9dd56e77ae4703b1e02b3af383bc4f86",
+  "linuxEvidenceSha256": "df1481fd585a245403111a58077537f40c47434a4dbb2837c6b7f8ef71ca4acd",
+  "positiveCurrentEvidence": true,
+  "negativeCases": [
+    {
+      "case": "old_slice",
+      "rejected": true,
+      "reason": "Windows: wrong slice"
+    },
+    {
+      "case": "failed_tests",
+      "rejected": true,
+      "reason": "Windows: tests did not all pass"
+    },
+    {
+      "case": "skipped_tests",
+      "rejected": true,
+      "reason": "Linux: tests did not all pass"
+    },
+    {
+      "case": "missing_suite",
+      "rejected": true,
+      "reason": "Windows: inconsistent totals"
+    },
+    {
+      "case": "missing_probe",
+      "rejected": true,
+      "reason": "[Errno 2] No such file or directory: 'D:\\\\Documents\\\\my projects\\\\J-Harness\\\\.build-cache\\\\m8.4-verifier-cases-9b4af98cdc2344f48514e14be11a6de4\\\\missing_probe\\\\M8.4-skills-results.json'"
+    },
+    {
+      "case": "source_mismatch",
+      "rejected": true,
+      "reason": "Linux source mismatch: pom.xml"
+    },
+    {
+      "case": "stale_jar",
+      "rejected": true,
+      "reason": "web: stale or different JAR"
+    },
+    {
+      "case": "cleanup_unknown",
+      "rejected": true,
+      "reason": "skills: real Docker/cleanup missing"
+    },
+    {
+      "case": "fake_docker",
+      "rejected": true,
+      "reason": "environment: real Docker/cleanup missing"
+    },
+    {
+      "case": "wrong_image",
+      "rejected": true,
+      "reason": "filter: wrong production image"
+    },
+    {
+      "case": "old_probe_time",
+      "rejected": true,
+      "reason": "resilience: probe predates final JAR"
+    },
+    {
+      "case": "changed_log",
+      "rejected": true,
+      "reason": "Windows: log hash mismatch"
+    }
+  ],
+  "cliFailureExitCode": 1,
+  "noSuccessManifestOnRejectedInput": true,
+  "evidenceDirectory": ".build-cache/m8.4-verifier-cases-9b4af98cdc2344f48514e14be11a6de4"
+}

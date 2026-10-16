@@ -1,0 +1,44 @@
+{
+  "milestone": "M8",
+  "slice": "M8.4",
+  "result": "SUCCESS",
+  "scope": "M8 contracted local closure; not a release/remote-CI certification",
+  "capturedAt": "2026-10-16T02:04:45.570930+00:00",
+  "jarSha256": "12a8c812fc90035d6d6a6e78da8f5de3af6d3dcea28d72d54af68a9ccf37207e",
+  "javaPomFiles": 259,
+  "sourceSnapshotSha256": "5e7f76f6a4c302bffd633ffff2bc7aaabff56b4447bc19affe38246c41721035",
+  "windowsTotals": {
+    "tests": 295,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "linuxTotals": {
+    "tests": 295,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "sameTestCases": true,
+  "sameJavaPomSources": true,
+  "productionImage": "eclipse-temurin@sha256:ccbad9e7cb84c27092b12c40a4143e5733e050db9c3784d84f632dcf423fb2ef",
+  "actualDocker": true,
+  "cleanupVerified": true,
+  "evidenceSha256": {
+    "M8-results.json": "c0f42503d09b22b6bf70f13dbee4d33e9dd56e77ae4703b1e02b3af383bc4f86",
+    "M8-linux-results.json": "df1481fd585a245403111a58077537f40c47434a4dbb2837c6b7f8ef71ca4acd",
+    "M8.4-environment-results.json": "836bda28e7085771b44282163791372afb70fd2ed5896ffbffd544bdc5431f23",
+    "M8.4-skills-results.json": "717f8bb42949d6093bb80e3fb35028a5264275dc906004722e1c9db961da4ddd",
+    "M8.4-subagent-results.json": "2f837b3ac212537c608c2e343e50a44f7f0fe0b81702fd7f872911e93ae93068",
+    "M8.4-web-results.json": "5518c44a7a5e13715a26aef0789aca2f5c9a151937df1655173c963b891f308d",
+    "M8.4-filter-results.json": "d3ef735ce403e82e8ccc86dc98c325ed3a477d50e54a151b7df431ca2534826d",
+    "M8.4-scheduling-results.json": "724f44bc61fec1ba981facff4932e2c39255226e6cd439208efdbaf8d99815e1",
+    "M8.4-resilience-results.json": "457b58143b222e1be63f35d08e5d6ff1c8e07b7424c7c989c61cb0dacb06deaf"
+  },
+  "verifierSha256": "6596cfdf506cf8d518c25647c80f745eb60b073a09a4975683b3b880990c9673",
+  "paidModelRequests": false,
+  "remoteCi": "not run",
+  "macos": "not verified",
+  "releaseComplete": false,
+  "next": "M9 release preparation and platform validation"
+}

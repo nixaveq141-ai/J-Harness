@@ -1,0 +1,33 @@
+{
+  "milestone" : "M8.3",
+  "slice" : "packaged-cli-web-sdk-model-resilience",
+  "actualDocker" : true,
+  "cases" : {
+    "local" : {
+      "status" : "COMPLETED",
+      "hostExitCode" : 0,
+      "actualHttp" : true,
+      "requestsReconstructedAgainstWire" : 4,
+      "submissionDeduplicated" : true,
+      "parallelReadOnlyScheduling" : true,
+      "approvalBeforeWrite" : true,
+      "environmentClosed" : true
+    },
+    "docker" : {
+      "status" : "COMPLETED",
+      "hostExitCode" : 0,
+      "actualHttp" : true,
+      "requestsReconstructedAgainstWire" : 4,
+      "submissionDeduplicated" : true,
+      "parallelReadOnlyScheduling" : true,
+      "approvalBeforeWrite" : true,
+      "environmentClosed" : true
+    }
+  },
+  "image" : "eclipse-temurin@sha256:ccbad9e7cb84c27092b12c40a4143e5733e050db9c3784d84f632dcf423fb2ef",
+  "result" : "SUCCESS",
+  "cleanupVerified" : true,
+  "capturedAt" : "2026-10-16T01:49:54.913425100Z",
+  "evidenceDirectory" : "D:\\Documents\\my projects\\J-Harness\\.build-cache\\m8.4-resilience-probe\\resilience-351043c5-6abc-4a39-89b7-1dd98a846fca",
+  "jarSha256" : "12a8c812fc90035d6d6a6e78da8f5de3af6d3dcea28d72d54af68a9ccf37207e"
+}

@@ -124,7 +124,7 @@ Loop 只依赖公共 API；CLI 通过 AgentLoopFactory 服务选择实现。插�
 
 ## M8.1 检索过滤
 
-顶层 `searchFilter` 配置统一用于经典 CLI、生态入口/serve 和本地/Docker 环境：默认排除→根 `.gitignore`→用户有序规则，可分别关闭前两层。支持目录/glob/否定规则，`.git`、`.jharness` 和路径/链接保护不受覆盖；显式 grep 同样过滤，直接读取仍按原授权处理。过滤不是秘密隔离。具体语法、上限、SDK 构造与示例见 [检索过滤配置](docs/examples/m8-search-filter.md)。M8.1 已通过 Windows 269 项全量回归与真实 Docker 过滤对照/默认环境回归，见 [M8 验收](docs/testing/M8-validation.md)。M8.2 只读调度见下节，M8.3 模型限流/重试见下节，M8 整阶段仍在推进。
+顶层 `searchFilter` 配置统一用于经典 CLI、生态入口/serve 和本地/Docker 环境：默认排除→根 `.gitignore`→用户有序规则，可分别关闭前两层。支持目录/glob/否定规则，`.git`、`.jharness` 和路径/链接保护不受覆盖；显式 grep 同样过滤，直接读取仍按原授权处理。过滤不是秘密隔离。具体语法、上限、SDK 构造与示例见 [检索过滤配置](docs/examples/m8-search-filter.md)。M8.1 已通过 Windows 269 项全量回归与真实 Docker 过滤对照/默认环境回归，见 [M8 验收](docs/testing/M8-validation.md)。M8.2 只读调度见下节，M8.3 模型限流/重试见下节，M8.4 已完成所选范围收口。
 
 ## M8.2 只读工具调度
 
@@ -132,7 +132,13 @@ Loop 只依赖公共 API；CLI 通过 AgentLoopFactory 服务选择实现。插�
 
 ## M8.3 模型限流与重试
 
-顶层 `modelResilience` 默认关闭；启用后在同一作用域内限制请求间隔和等待者数量，仅对明确收到的非流式429作有限退避。每次尝试独立准备、预留费用、落盘及校验请求；UNKNOWN、超时、断流及工具调用不重放。标准插件唯一拥有重试次数，避免与适配器内层重试叠加，取消和卸载可停止等待。配置、SDK兼容构造及限制见 [模型限流与重试](docs/examples/m8-model-resilience.md)；M8.4整阶段收口另行推进。
+顶层 `modelResilience` 默认关闭；启用后在同一作用域内限制请求间隔和等待者数量，仅对明确收到的非流式429作有限退避。每次尝试独立准备、预留费用、落盘及校验请求；UNKNOWN、超时、断流及工具调用不重放。标准插件唯一拥有重试次数，避免与适配器内层重试叠加，取消和卸载可停止等待。配置、SDK兼容构造及限制见 [模型限流与重试](docs/examples/m8-model-resilience.md)；M8.4已完成所选范围收口，详见下节。
+
+## M8 收口
+
+M8.1～M8.4所选范围已完成：Windows与Linux容器各295项通过，零失败/错误/跳过，259个Java/POM哈希一致；七组最终JAR本地/真实Docker回归及清理通过。收口校验器绑定测试、源码、日志和制品，拒绝旧/不完整证据。验收矩阵、机器摘要与保留限制见 [M8收口](docs/testing/M8-closure.md)。API/SDK1.9，JSONL/schema仍1。
+
+下一阶段为M9发布准备与平台验证。远端CI/macOS及正式发布门禁尚未闭合；本轮没有付费模型请求，Web前端和Desktop仍未实现。
 
 ## 开发记录
 

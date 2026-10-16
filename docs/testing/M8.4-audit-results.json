@@ -1,0 +1,53 @@
+{
+  "milestone": "M8",
+  "slice": "M8.4",
+  "result": "SUCCESS",
+  "capturedAt": "2026-10-16T01:59:44.889710+00:00",
+  "javaPomFiles": 259,
+  "sameCurrentJavaPomSources": true,
+  "upstreamCommit": "c291e7961a515f6d7af9304e7fd1d257929aef26",
+  "upstreamEntryHashesRechecked": 19,
+  "upstreamReviewBoundary": "Existing fixed-entry SHA recheck only; no new upstream tests, compatibility or full security certification",
+  "preservedM7Files": {
+    "docs/testing/M7-closure.md": {
+      "gitBlob": "dfa1fc98bb269974d6744982c46d472f383768be",
+      "workingTreeSha256": "6f0757cc39545996a6db30e8173a512326419ba44b94a7bf906676528ec8df25"
+    },
+    "docs/testing/M7-docker-results.json": {
+      "gitBlob": "aac83bded776cc02d3af5d0e984731b3559d03d5",
+      "workingTreeSha256": "0b97546da48edd7b159a9930bea93e2751599b411b4f2aeb7f8c74c91833594d"
+    },
+    "docs/testing/M7-linux-results.json": {
+      "gitBlob": "3051fed7c213e62f9f03555f430a7b5e75ff9693",
+      "workingTreeSha256": "f98ee4847b8e6259e10b6688856185edc292edb9d84e6e7bb5e293982359262a"
+    },
+    "docs/testing/M7-results.json": {
+      "gitBlob": "f9c74173df3aeea8104a23fe7c35e1432da3acbb",
+      "workingTreeSha256": "bcdb3cc6a470a1c9edb10b264b7b94c9b949eeda2814b5748a65f5b4a6dddaae"
+    },
+    "docs/testing/M7-skills-docker-results.json": {
+      "gitBlob": "b5c24d12cad6c423fc9d6c54a63d63b0d0600d21",
+      "workingTreeSha256": "bca489a0c0dac217f3684b6cf246973b810455565fd33c7b814a5966c1536b61"
+    },
+    "docs/testing/M7-subagent-docker-results.json": {
+      "gitBlob": "3d08ec37f831ca119072be03a6f4d2c58ca331de",
+      "workingTreeSha256": "98cfc88d3228da8db69cfce6c293ab372de87414011e7eabd7fbb280a7057513"
+    },
+    "docs/testing/M7-upstream-review.json": {
+      "gitBlob": "139ac2b952108f093128800c8985dd9655aed403",
+      "workingTreeSha256": "290a62e3c40df3f5f7b27a619f84bae54b38f7e90170e2041d83888694e6aedf"
+    },
+    "docs/testing/M7-validation.md": {
+      "gitBlob": "122ae292414a165b49965dff8c81c9069bf110b0",
+      "workingTreeSha256": "09597691ec84bc004b2e023d748a68155c42846849347420f89a0a4f139725c6"
+    },
+    "docs/testing/M7-web-docker-results.json": {
+      "gitBlob": "3a3ad3e2dbbf71f8a34c3befeb4a521f624e9bd0",
+      "workingTreeSha256": "67a470fb2744293b9f15976e7bd63017ff9051f0f5087c7adb090ac9d57384c5"
+    }
+  },
+  "normalizedGitBlobsMatchBaseline": true,
+  "remoteCi": "not run; no Git remote",
+  "macos": "not verified",
+  "paidModelRequests": false
+}

@@ -1,6 +1,6 @@
 # M8 验收记录
 
-日期：2026-10-16。M8.1/M8.2/M8.3已完成各自范围的实现与验收；M8整阶段待M8.4收口。下方M8.1/M8.2为历史切片，最新证据见M8.3。
+日期：2026-10-16。M8.1/M8.2/M8.3已完成各自范围的实现与验收；M8.4已完成所选范围收口。下方M8.1～M8.3为历史切片，当前全量及最终制品证据见M8.4。
 
 | 范围 | 验收内容 | 状态 |
 |---|---|---|
@@ -75,7 +75,7 @@ API/SDK升级1.8，JSONL/schema仍1，旧构造/旧管线兼容串行。使用Fa
 
 ## M8.3 实际结果（2026-10-16）
 
-最终 Windows `.\mvnw.cmd -B clean verify` 通过295项，0失败/错误/跳过，包含Spotless、Java21 `-Xlint:all -Werror`和最终CLI打包。新增15项：M8ResilienceTest十三项、M8ResilienceConfigTest两项。结构化证据 [M8-results.json](M8-results.json)，slice=M8.3；M8.2原280项证据原样归档 [M8.2-results.json](M8.2-results.json)。原始全量日志 `.build-cache/M8.3-verify.log`，专项 `.build-cache/M8.3-targeted.log`，历史核实兼容复验 `.build-cache/M8.3-compatibility.log`。
+最终 Windows `.\mvnw.cmd -B clean verify` 通过295项，0失败/错误/跳过，包含Spotless、Java21 `-Xlint:all -Werror`和最终CLI打包。新增15项：M8ResilienceTest十三项、M8ResilienceConfigTest两项。结构化证据 [M8.3-results.json](M8.3-results.json)，slice=M8.3；M8.2原280项证据原样归档 [M8.2-results.json](M8.2-results.json)。原始全量日志 `.build-cache/M8.3-verify.log`，专项 `.build-cache/M8.3-targeted.log`，历史核实兼容复验 `.build-cache/M8.3-compatibility.log`。
 
 | 范围 | 实际验证 | 结果 |
 |---|---|---|
@@ -104,3 +104,13 @@ API/SDK升级1.8，JSONL/schema仍1，旧构造/旧管线兼容串行。使用Fa
 ```
 
 API/SDK1.9，JSONL/schema仍1；旧SDK构造保留，子任务重试独立且默认关闭。仅非流式429安全拒绝进入标准重试，工具/5xx/UNKNOWN不重放，任意自定义Java适配器仍须遵守合作取消契约。配置见 [模型限流与重试](../examples/m8-model-resilience.md)。没有付费模型请求、新Linux全量、macOS或远端CI证据；实际容器链路不等于Linux295项全量。下一步仅M8.4整阶段收口，前端/Desktop未提前推进。
+
+## M8.4 整阶段收口（2026-10-16）
+
+M8专项35项首先通过，再运行Windows `.\mvnw.cmd -B clean verify` 和固定Java21 Linux容器内 `sh ./mvnw -B -Dmaven.repo.local=/tmp/m2 clean verify`。两侧各295项，均0失败/错误/跳过；相同完整测试名、259个Java/POM文件SHA一致。Windows记录为[M8-results.json](M8-results.json)（slice=M8.4），Linux独立记录为[M8-linux-results.json](M8-linux-results.json)。M8.3旧全量原样归档[M8.3-results.json](M8.3-results.json)，没有覆盖M7历史证据。
+
+同一最终JAR已刷新七组本地/实际Docker夹具：environment、skills、subagent、web、filter、scheduling、resilience；结果均SUCCESS、cleanupVerified=true，SHA均为 `12a8c812fc90035d6d6a6e78da8f5de3af6d3dcea28d72d54af68a9ccf37207e`。version/help/doctor、固定上游19入口SHA及M7文件保留也已核实。Windows及Linux均包含格式、`-Xlint:all -Werror`、原生/进程/持久化/恢复、M8过滤/调度/重试测试，未削弱断言或跳过用例。
+
+新增verify-m8-closure.py绑定两侧全量、日志、源码、七份实机与当前制品；正例及12组篡改证据负例通过。完整AC/NFR矩阵、逐报告链接、准备失败记录及平台/发布边界见[M8收口](M8-closure.md)，机器核验摘要见[M8-closure-results.json](M8-closure-results.json)。本轮无产品Java/POM改动，无付费模型请求；Linux容器全量不冒充远端CI或原生Linux桌面，macOS仍未验证。
+
+M8按已约定范围完成。下一步M9发布准备与平台验证：无Git remote时先完成本地可做事项，不自行创建远端/推送/发布；前端M10、Desktop M11未提前推进。
