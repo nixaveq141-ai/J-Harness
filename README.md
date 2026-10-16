@@ -1,6 +1,6 @@
 # J-Harness
 
-基于 Java 21 的可扩展 Agent Harness，需求基线为 [PRD v1.1](docs/requirements/JHarness-PRD-v1.1.md)。M0～M7 的本地实现范围和验收见各阶段记录，M7 最新计数与源码版本见 [收口记录](docs/testing/M7-closure.md)；CLI、持久化与恢复、SSE、上下文压缩、PTY/后台任务、多模型路线与命名配置组合已贯通。真实 DeepSeek 验收及费用证据见 [M4 验收记录](docs/testing/M4-validation.md)。Windows/Linux/macOS 远端 CI 已实际通过，当前证据见[M9验收](docs/testing/M9-validation.md)。
+基于 Java 21 的可扩展 Agent Harness，需求基线为 [PRD v1.1](docs/requirements/JHarness-PRD-v1.1.md)。M0～M7 的本地实现范围和验收见各阶段记录，M7 最新计数与源码版本见 [收口记录](docs/testing/M7-closure.md)；CLI、持久化与恢复、SSE、上下文压缩、PTY/后台任务、多模型路线与命名配置组合已贯通。真实 DeepSeek 验收及费用证据见 [M4 验收记录](docs/testing/M4-validation.md)。M9源码的Windows/Linux/macOS远端CI历史证据见[M9验收](docs/testing/M9-validation.md)。M10新增Web工作台已完成本地验收，见[M10记录](docs/testing/M10-validation.md)。
 
 ## 构建与启动
 
@@ -13,6 +13,23 @@
 ```
 
 Linux 构建为 `sh ./mvnw -B verify`，启动为 `sh ./jharness --help`；Windows 11 本机与 Linux Java 21 容器分别保留验收证据。verify 包含 JUnit、编译警告检查（-Xlint:all -Werror）、Spotless 和模块打包。修改 Java 后运行 `.\mvnw.cmd spotless:apply`。可直接运行 `java -jar harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar --help`。
+
+## 浏览器任务工作台（M10）
+
+视觉和基础交互沿用DeepSeek Harness，名称与业务接入属于J-Harness；参考目录只读。支持连接、任务创建/列表/详情、事件时间线与有限SSE、审批/拒绝/取消、记录型Diff、事实报告和脱敏会话查询。完整说明见[前端说明](frontend/README.md)和[M10契约](docs/development/M10-contracts.md)。
+
+源码构建需先安装Node24/npm并构建前端，再执行Java打包；运行打包后的JAR不需要Node：
+
+```powershell
+cd frontend
+npm ci
+npm run build
+cd ..
+.\mvnw.cmd -B clean verify
+.\jharness.cmd --config docs/examples/m7-config.json serve
+```
+
+serve前按已有说明设置模型凭据与JHARNESS_WEB_TOKEN，浏览器打开输出的127.0.0.1地址并输入同一Web token。token仅保留在页面内存，刷新重新连接。页面不会因刷新/断线重提任务；UNKNOWN需按现有CLI流程离线核实。本机serve需保持宿主运行，EOF或退出关闭。当前浏览器证据不代表已完成新版本的远端三平台验证。
 
 ## 模型配置与交互
 
@@ -83,7 +100,7 @@ Profile/Preset/Bundle 选择与解析后 SHA 保存为 config.selected；模型�
 
 harness-ecosystem 提供本地/Docker 环境、版本化 SDK、MCP stdio/HTTP JSON+SSE、受控 Skills、只读子任务、Todo/Plan 和固定来源网页抓取。所有工具复用统一策略、审批、执行前落盘与恢复检查。子任务独立会话/预算/取消/费用池，父 Agent 是唯一工作区写者；默认串行，不自动并行模型工具调用。
 
-CLI 的 ecosystem 配置和 serve 启动入口见 [配置与命令](docs/examples/m7-cli.md) / [配置示例](docs/examples/m7-config.json)。Web 后端固定 loopback、Bearer、持久幂等任务、取消/审批、事件分页/SSE 与有来源的历史 Diff；没有前端页面、公网或多租户支持。SDK 宿主示例见 [扩展装配](docs/examples/m7-extensions.md) 与 [Web 装配](docs/examples/m7-web.md)。
+CLI 的 ecosystem 配置和 serve 启动入口见 [配置与命令](docs/examples/m7-cli.md) / [配置示例](docs/examples/m7-config.json)。Web 后端固定 loopback、Bearer、持久幂等任务、取消/审批、事件分页/SSE 与有来源的历史 Diff；M10新增同源浏览器工作台；公网或多租户仍不支持。SDK 宿主示例见 [扩展装配](docs/examples/m7-extensions.md) 与 [Web 装配](docs/examples/m7-web.md)。
 
 Docker 采用固定镜像摘要、非 root、只读根、禁外网、资源配额，文件/命令在同一环境；只挂载获准工作区和只读 worker。工作区整体可写，应使用不含秘密的专用目录；容器 PTY 不支持，失败不回退宿主。MCP/网页传输在宿主运行，其网络权限必须单独审核。
 
@@ -138,7 +155,7 @@ Loop 只依赖公共 API；CLI 通过 AgentLoopFactory 服务选择实现。插�
 
 M8.1～M8.4所选范围已完成：Windows与Linux容器各295项通过，零失败/错误/跳过，259个Java/POM哈希一致；七组最终JAR本地/真实Docker回归及清理通过。收口校验器绑定测试、源码、日志和制品，拒绝旧/不完整证据。验收矩阵、机器摘要与保留限制见 [M8收口](docs/testing/M8-closure.md)。API/SDK1.9，JSONL/schema仍1。
 
-下一阶段为M9发布准备与平台验证。远端CI/macOS及正式发布门禁尚未闭合；本轮没有付费模型请求，Web前端和Desktop仍未实现。
+上述为M8历史快照。M9发布验证已收口；M10 Web工作台已完成本地验收，Desktop留待M11。
 
 ## 开发记录
 
@@ -160,4 +177,6 @@ M8.1～M8.4所选范围已完成：Windows与Linux容器各295项通过，零失
 
 项目采用Apache-2.0，第三方条款见[法律材料](third-party/README.md)。每侧18依赖OSV查询、5项离线门禁和实际ZIP安装/审批/取消/显式恢复/报告通过；原始归档、候选及法律文件哈希已交叉核对。候选版本仍为0.1.0-SNAPSHOT，正式Release未创建。
 
-用法见[分发说明](docs/examples/m9-distribution.md)；详细结果、前轮失败修复及扫描/原生来源边界见[M9验收](docs/testing/M9-validation.md)、[平台矩阵](docs/testing/M9-platform-matrix.md)和[收口记录](docs/testing/M9-closure.md)。Windows10、独立WSL及其他CPU未新增认证。M10前端/M11 Desktop尚未实施。
+用法见[分发说明](docs/examples/m9-distribution.md)；详细结果、前轮失败修复及扫描/原生来源边界见[M9验收](docs/testing/M9-validation.md)、[平台矩阵](docs/testing/M9-platform-matrix.md)和[收口记录](docs/testing/M9-closure.md)。Windows10、独立WSL及其他CPU未新增认证。M10前端已完成本地验收，M11 Desktop尚未实施；M9结果不代表新源码已通过三平台CI。
+
+M10本地验收：Windows11/Java21全量307项零失败/错误/跳过；客户端8项和真实Chrome28项通过。依赖审计、原始来源、最终JAR与UI哈希、截图证据见[M10验收](docs/testing/M10-validation.md)。新三平台CI、Firefox/Safari及Desktop未因此认证。

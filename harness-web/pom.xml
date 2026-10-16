@@ -6,4 +6,8 @@
   <dependencies>
     <dependency><groupId>io.jharness</groupId><artifactId>harness-ecosystem</artifactId><version>${project.version}</version></dependency>
   </dependencies>
+  <build><resources>
+    <resource><directory>src/main/resources</directory></resource>
+    <resource><directory>${project.basedir}/../frontend/dist</directory><targetPath>ui</targetPath></resource>
+  </resources></build>
 </project>

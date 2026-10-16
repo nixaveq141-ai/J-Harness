@@ -1,0 +1,210 @@
+{
+  "status": "PASS",
+  "capturedAt": "2026-10-16T14:26:42.969Z",
+  "testedOrigin": "http://127.0.0.1:53763",
+  "browserVersion": "155.0.8059.82",
+  "browserChannel": "chrome",
+  "checks": [
+    {
+      "name": "invalid credentials do not connect or create a task",
+      "passed": true
+    },
+    {
+      "name": "sidebar resizing supports keyboard and bounded original geometry",
+      "passed": true
+    },
+    {
+      "name": "original hover and pointer-pressed feedback retained",
+      "passed": true
+    },
+    {
+      "name": "wrong approval association is rejected by actual Java API",
+      "passed": true
+    },
+    {
+      "name": "duplicate click creates exactly one actual task and approval writes real file",
+      "passed": true
+    },
+    {
+      "name": "downloaded report is based on actual recorded facts",
+      "passed": true
+    },
+    {
+      "name": "missing Diff is explicit without running Git",
+      "passed": true
+    },
+    {
+      "name": "in-flight query cannot mix changed keywords with an old cursor",
+      "passed": true
+    },
+    {
+      "name": "full sanitized session query reads real events",
+      "passed": true
+    },
+    {
+      "name": "refresh requires authentication and never resubmits task",
+      "passed": true
+    },
+    {
+      "name": "denial recorded by actual tool pipeline",
+      "passed": true
+    },
+    {
+      "name": "expired approval removed and cannot execute",
+      "passed": true
+    },
+    {
+      "name": "Diff displays actual recorded git result",
+      "passed": true
+    },
+    {
+      "name": "offline recovery never creates a new task",
+      "passed": true
+    },
+    {
+      "name": "invalid cursor pauses stream rather than silently replaying",
+      "passed": true
+    },
+    {
+      "name": "cancel routed through actual Java runtime",
+      "passed": true
+    },
+    {
+      "name": "UNKNOWN has explicit offline recovery guidance and no replay control",
+      "passed": true
+    },
+    {
+      "name": "lost submit response survives refresh and reconciles existing task with no POST replay",
+      "passed": true
+    },
+    {
+      "name": "model HTML is rendered as text",
+      "passed": true
+    },
+    {
+      "name": "configured secret is redacted from browser event text",
+      "passed": true
+    },
+    {
+      "name": "large payload omission is visible",
+      "passed": true
+    },
+    {
+      "name": "token absent from URL, storage, page text and downloaded report",
+      "passed": true
+    },
+    {
+      "name": "dark theme uses original theme tokens",
+      "passed": true
+    },
+    {
+      "name": "mobile tab indicator aligns with selected keyboard tab",
+      "passed": true
+    },
+    {
+      "name": "mobile has no viewport overflow and tabs support keyboard",
+      "passed": true
+    },
+    {
+      "name": "reduced motion disables original tab transition",
+      "passed": true
+    },
+    {
+      "name": "no uncaught browser exceptions",
+      "passed": true
+    },
+    {
+      "name": "keyless runtime reports zero paid requests",
+      "passed": true
+    }
+  ],
+  "runtime": {
+    "writeExists": true,
+    "opened": 9,
+    "paidRequests": 0,
+    "modelRequests": 14
+  },
+  "sourceSha256": {
+    "frontend/LICENSE-DeepSeek-Harness.txt": "ebb4f09972aee8608be255debaf78451a68e95c290f55c240dec2ecfa16ea6be",
+    "frontend/README.md": "9a760aeb3497d22f0deb532e45640c2bddcf7ed1d3465a5869fb483433e665d6",
+    "frontend/index.html": "d9cf6fca44ae3c18988d4ecbf18d923b17aca401d4a34ff5ab6ecd4584bdfade",
+    "frontend/package-lock.json": "5509cc45042a5c16d81f714f4d037acda9d152f15cb242dd7890972e673ec234",
+    "frontend/package.json": "340d50b62f27aec08417c0a48d2e13d1c94610bb819eef6f38a5216b70145ea9",
+    "frontend/scripts/package-ui.mjs": "afccd19e81e479ec3ecca1bb8617d41c125373de7d72844908d6db15f7f5228d",
+    "frontend/src/App.tsx": "4d74b44f10acc4af7e1b6f35772cd2cf25aab49fa9c5a77a4f3c10338e4de87b",
+    "frontend/src/api.ts": "7809dae911a0a06d9baa845b91f78f595882571e68a9da1ae251fc0ffa023a3c",
+    "frontend/src/main.tsx": "bf24c99d87b7e5861d68a6186cf6573ab119eedb57f30cc54599e5b35cf6b83b",
+    "frontend/src/style.css": "25c480cda5b9153849260874ffda5f6529ecf1d5939d47c6ebb6aadfe5de69a8",
+    "frontend/src/upstream/AppFrame.module.css": "f0bce7eb34595a249c7865b5e0542cfae175a50804060af46344aba906e6789c",
+    "frontend/src/upstream/Button.module.css": "d5e324be7782f28b320ebac3e5b48e3a3f95a6c8d90656c086a3a933e0b2c7a5",
+    "frontend/src/upstream/Button.tsx": "514c31404c5c8fb21ad906e92631b9c554c08d23c77437009e3443cef3a94e9c",
+    "frontend/src/upstream/Input.module.css": "e24eb924cfefcc009e486b25cd8de6afaf4bfff5d9c0c3da17b5afb6441c8632",
+    "frontend/src/upstream/Input.tsx": "f418f7ea495f16c5c656e87f61c27d262f86f39e8bf14c33b8eeccfb41492b67",
+    "frontend/src/upstream/Pill.module.css": "8059dd46e4a5340c00e6758278b6afb4f480c4dd2d11c7b555d914e52bd06f82",
+    "frontend/src/upstream/Pill.tsx": "851727b4f745755f8553a92bc5881e54d0479ea680d1686533ba210cb943ca2f",
+    "frontend/src/upstream/SegmentedTabs.module.css": "022efca5f83f640c83afcf472ef64b2776b2b20bfa351adda347171ba5cc4c18",
+    "frontend/src/upstream/SegmentedTabs.tsx": "c069e4bf6d76170420cf27b160b3e7d8f9f36669ef53702182459d57ba3637fd",
+    "frontend/src/upstream/SidebarRoot.module.css": "6eaadd716ab135e0d08696f11e979449c14734b38b94ae65408601bdf5ff8393",
+    "frontend/src/upstream/Tag.module.css": "ac135f028674d5bce37a2617902c86d5934b299742536056a2abc5e99583764e",
+    "frontend/src/upstream/Tag.tsx": "2f4845c6b5c7d6f06304de6b972127692a909c775bae72c14799acfd2dc56289",
+    "frontend/src/upstream/TextShimmer.module.css": "2353d6d72be5150aee3b528e7ae081a941f508f4ee3aa17243d6b0cc3b4240c7",
+    "frontend/src/upstream/TextShimmer.tsx": "ffd8cc02a2f76b73c5f1f7a4338fb5df8985a1abe3473eea974a900236b48b50",
+    "frontend/src/upstream/columns.ts": "db5e8fda5eef38ee4760e97ec15b0271f7f20639af5d936bdc78a36dd5a75e88",
+    "frontend/src/upstream/theme/base.css": "803926ce39f5ea48b652021d06b6ca65c4acc7be2c5c4e19bd904ab1dabf0b67",
+    "frontend/src/upstream/theme/corner-shape.css": "d94f82e1332b6d37e8345aafe1b6b4129faed65891edd3861c00b88940ec4d3f",
+    "frontend/src/upstream/theme/design-platform.css": "809b20ae477324fdf5181a2d338655a19919cabbf1b0e60adc149908462c5a66",
+    "frontend/src/upstream/theme/focus.css": "f7398e7730415592ab1e81cec36f8c5e23065becd06c050f0129a6fa44d247e8",
+    "frontend/src/upstream/theme/scrollbar.css": "673450184fe82a679b5759a7f93ceab17895b9f12e1196f7efb281304afd8398",
+    "frontend/tests/browser.mjs": "ecf2eaf61bec4d73af9bb19d13ab943f41684e1c36a389e9cce32ba099b0f5e3",
+    "frontend/tests/client.test.ts": "98a071bc40827c517e886b24fc4ddd8fae0c4d62f3af9540331b09179a695638",
+    "frontend/tsconfig.json": "6cc9d82a7f6b66bd67aa2d4361ba35928eca652c3e6e18f67025314486a11399",
+    "frontend/upstream.json": "7e94fc53932cc2d8fb4c6eba247697a60765e8d8d1db1e319646107fa78a5775",
+    "frontend/vite.config.ts": "7a1630303a5358646c4910d5717cfaa1487589018f4ca52a4eaa9d114ce0db59",
+    "harness-testkit/src/test/java/io/jharness/testkit/M10BrowserHost.java": "6c0a554eaaadb2b89f3eeb829c7ae88508bbc6cec354bdedfa3d896ad72e4671",
+    "harness-testkit/src/test/java/io/jharness/testkit/M10WebTest.java": "b8486937c3fa895d9629f06421d31221f54450bc816e5fba9c8b32fdeab8a2c8",
+    "harness-web/pom.xml": "c12541f6e8fdeba8e7efdba22afe6f97104e900048afab78dc7af7960e45db7a",
+    "harness-web/src/main/java/io/jharness/web/HarnessWebServer.java": "f9b2408616ee74e6bb4976f2b63178fed623cdbc7fd9caa3f1ffca7171764e45",
+    "harness-web/src/main/java/io/jharness/web/UiResources.java": "a195f540b28a3258043a6bef57cdfebe7f32d0ba3e170a50bb1f9dc866c34e44",
+    "harness-web/src/main/java/io/jharness/web/WebJson.java": "38fdcc09db8948f4bba3c172e0d4bb77ab3f0eae33fcfbd534f1d77f60edc3ca"
+  },
+  "requests": {
+    "taskSubmissions": 9,
+    "total": 126
+  },
+  "browserErrors": [],
+  "screenshots": [
+    {
+      "path": ".build-cache\\M10-connection.png",
+      "sha256": "5da602f4faf968893239b988035ea7c46e47b08778636eea4ea1422111451f12"
+    },
+    {
+      "path": ".build-cache\\M10-welcome.png",
+      "sha256": "4fec131b232fedf5fe3498d8c5bf431e4db17957b694246fb5bedb2beb5b70bd"
+    },
+    {
+      "path": ".build-cache\\M10-approval.png",
+      "sha256": "b282212b750c30f1d209f5e3ed700aaa0c8b6d542948d7062ad31d080ae8ef47"
+    },
+    {
+      "path": ".build-cache\\M10-report.png",
+      "sha256": "e941896f70c5b9c5a96f2274dc5e836dd8394137be7ee56b09615a89e3c524ce"
+    },
+    {
+      "path": ".build-cache\\M10-diff.png",
+      "sha256": "600daec438c68abfa510d1162a69845ee6b70a29997067b4c3d6cbd778785c3c"
+    },
+    {
+      "path": ".build-cache\\M10-unknown.png",
+      "sha256": "6c4928d38025ce4c658dad54b620d428a1b1cad2607ef251039bfd02532f9ef4"
+    },
+    {
+      "path": ".build-cache\\M10-dark.png",
+      "sha256": "f5ab31dfb149b8adf14ab1a48e6b60253df73e71f0cf356afa5f109fce7d24ba"
+    },
+    {
+      "path": ".build-cache\\M10-mobile.png",
+      "sha256": "63985be48649be7b9110af4624a3a6e0b4629dcf73f0061defee04be469e40c8"
+    }
+  ],
+  "jarSha256": "a540f149a16e746ca73a935c0476a1d67cd2007f208df82b898b599d5177f2e4"
+}

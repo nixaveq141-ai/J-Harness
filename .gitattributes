@@ -10,3 +10,8 @@ mvnw.cmd text eol=crlf
 third-party/** -text
 # CI evidence hashes refer to the original platform bytes, including JSON line endings.
 docs/testing/M9-*.json -text
+docs/testing/M10-*.json -text
+# Frontend source has stable LF bytes; copied upstream files retain their original bytes.
+frontend/** text eol=lf
+frontend/src/upstream/** -text
+frontend/LICENSE-DeepSeek-Harness.txt -text

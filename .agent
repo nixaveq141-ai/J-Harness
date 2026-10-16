@@ -4,15 +4,16 @@
 
 ## 当前接续状态
 
-- 2026-10-16新增M10前端复用静态评估：用户提供的deepseek-harness目录严格只读；建议按文件提取基础组件/主题/布局逻辑，任务/事件/审批/认证适配J-Harness；完整前端不可仅改API地址。见docs/development/M10-frontend-reuse-review.md及来源SHA清单。尚未移植代码或开始M10实现，未宣称浏览器验证通过。
+- 2026-10-16 M10本地约定范围已完成：React/TS/Vite同源工作台沿用只读DeepSeek Harness视觉/控件，Java307项零失败/错误/跳过、客户端8项、实际Chrome28项通过；263个Java/POM及前端来源/最终JAR哈希见M10-results.json/M10-browser-results.json。M10远端CI尚未执行，未推送或发布。下一步M11等待用户指令。
+- M10实施前历史评估（2026-10-16）：用户提供的deepseek-harness目录严格只读；建议按文件提取基础组件/主题/布局逻辑，任务/事件/审批/认证适配J-Harness；完整前端不可仅改API地址。见docs/development/M10-frontend-reuse-review.md及来源SHA清单。尚未移植代码或开始M10实现，未宣称浏览器验证通过。
 - M0～M7 已按各阶段明确范围完成本地开发、验收与收口。M7 Windows / Linux 各 260 项测试通过，均 0 失败/错误/跳过；236 个 Java/POM SHA 一致。
 - 当前M8.1～M8.4已按契约范围收口：最终Windows/Linux容器各295项，0失败/错误/跳过；完整测试名和259个Java/POM SHA一致。七组最终JAR本地/真实Docker回归及清理通过。M8证据保留历史，不作为已修改源码的M9证明。
 - M9约定范围已完成：源码ed02da0的真实CI 38858529628三侧各305项（0失败/错误/跳过），260个Java/POM与完整测试名一致；本机同源码305项及重复打包通过。当前证据见docs/testing/M9-validation.md、M9-platform-matrix.md、M9-ci-results.json、M9-closure.md。
 - API / SDK 协议 1.9；JSONL 格式及事件 schemaVersion 为 1。
 - M7 已有本地/Docker ExecutionEnvironment、SDK、MCP stdio/HTTP JSON+SSE、受控 Skills、只读 Subagent、本机 Web API、CLI 生态配置/serve、Todo/Plan、固定来源网页抓取、单会话全文子串索引/比较/归档、环境/子任务/Web 离线核实。
-- 详细功能范围及延期见docs/requirements/upstream-capabilities.md；M8-closure.md保留历史，当前发布验证见M9-closure.md/M9-ci-results.json。部分支持与延期不计已实现；当前没有前端页面。
+- 详细功能范围及延期见docs/requirements/upstream-capabilities.md；M8-closure.md保留历史，当前发布验证见M9-closure.md/M9-ci-results.json。部分支持与延期不计已实现；M10已有本机浏览器任务工作台，Desktop未实施。
 - 本轮使用本机 HTTP 替身/FakeLlm，没有付费模型请求；M4 DeepSeek 是独立历史证据。
-- origin为私有仓库nixaveq141-ai/J-Harness；codex/m9-release-validation已授权推送，实际CI https://github.com/nixaveq141-ai/J-Harness/actions/runs/38858529628 全绿。远端main未合并，正式Release未创建；M10待用户指示。
+- origin为私有仓库nixaveq141-ai/J-Harness；codex/m9-release-validation已授权推送，实际CI https://github.com/nixaveq141-ai/J-Harness/actions/runs/38858529628 全绿。远端main未合并，正式Release未创建；M10已按用户指示完成本地验收，尚未推送。
 - 用户长期要求：后续任务有实质进展时实时同步相关文档，不积压到任务结束。实现、范围/接口、验证结果、失败/限制或下一步变化时，及时更新受影响的README、契约、开发/验收记录、推进计划及本文件；证据尚未产生时明确标记进行中/未验证，不提前写成通过。提交前核对文档与源码、Git及实际证据一致。
 - 用户已授权建立首次本地提交，并要求以后每次完成有实质改动的工作后创建本地提交，无需逐次确认；提交前完成适用验证并检查差异和敏感文件。用户已有 .dsh-tmp/ 保留且忽略，不纳入提交；推送/创建远端/发布仍需相应授权。
 
@@ -187,3 +188,15 @@ M9约定范围已验收：真实CI https://github.com/nixaveq141-ai/J-Harness/ac
 当前分支codex/m9-release-validation已按本次授权推送；最终验收文档提交只归档证据，完整CI绑定上述源码提交，不重标制品。M9完成不等于正式Release、Windows10/独立WSL/其他CPU或完整第三方原生构建认证。原生Microsoft精确构建来源及扫描范围限制见M9-validation/M9-platform-matrix。M10前端、M11 Desktop保持未开始，下一步等待用户指令。无付费模型评测、远端main合并或Release发布。
 
 最终Windows CI原始候选ZIP在本机Windows11也完成实际安装/doctor/审批/取消/显式恢复/报告，7次loopback请求、0付费请求；ZIP SHA与同一CI Windows制品完全相同，见M9-local-candidate-smoke.json。
+
+## 2026-10-16 M10完成与接续
+
+本地分支：codex/m10-web-workbench。当前M10只本地提交，未推送。
+
+用户明确确认沿用DeepSeek Harness视觉/UI/鼠标交互。参考目录严格只读，25份前置文件与21份移植文件SHA核对、上游HEAD及tracked工作区均未变。直接保留原Button/Input/Tag/Pill/SegmentedTabs/TextShimmer和主题/布局源字节、MIT；独立数据与响应式适配，不宣称完整上游前端或全功能兼容。
+
+四个切片均在真实Java/SDK/文件系统+Chrome中通过：Bearer连接、幂等创建/核对、任务列表/详情、事件分页/有限SSE、断线/刷新不重提、精确审批/拒绝/过期/错误关联、取消与UNKNOWN离线核实说明、记录型Diff/事实报告下载/产物引用/脱敏会话查询。Host精确匹配、Origin仅无值或精确同源、拒绝cross-site；静态清单+CSP，不暴露任意文件。token仅页面内存，禁止URL/存储。无在线解除UNKNOWN或自动重放入口，API/SDK1.9及JSONL/schema1保持。
+
+最终本机Java clean verify 307项、客户端8项、Chrome155.0.8059.82的28项均通过，Windows11 AMD64；263个Java/POM和前端输入、最终JAR/包内UI、报告/日志/截图哈希见M10-results/M10-browser-results。原Windows进程夹具清理失败、浏览器fetch/查询竞态及测试定位失败如实保留于M10-validation/M10-first-attempt，不以首轮失败作为通过。npm完整审计0发现、锁文件生产闭包6包CycloneDX及8项证据负例归档；npm原生SBOM漏掉js-tokens，改为按锁文件逐边核验的生成器，不删依赖制造通过。
+
+源码构建先frontend/npm ci、npm run build，再Maven clean verify；Java serve同源托管，打包运行无需Node，缺前端资源时根路径503/API保持可用。CI配置已接入前端/浏览器/扫描，但M10新远端三平台、Firefox/Safari、新Docker、Desktop/公网/TLS/多用户未验收。M9证据保留历史，当前工作只本地提交，不沿用M9推送授权。下一阶段M11须等待用户指令，持续实时同步相关文档。

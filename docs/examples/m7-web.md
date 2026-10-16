@@ -51,3 +51,7 @@ Authorization: Bearer <token>
 
 phase=FINISHED 表示执行与关闭已确认结束；UNKNOWN 即使 status 是 COMPLETED 也不能当作安全收尾。完整审计/请求重建使用宿主 JSONL，Web 大事件会省略 payload。详细限制见 [M7 契约](../development/M7-contracts.md)。真实 HTTP/SSE 端到端用例见 M7WebTest。
 
+
+## M10浏览器接入增量
+
+M7原始API示例保持。M10允许精确同源Origin并继续验证Host和Bearer，拒绝cross-site/外部Origin；同源托管和新增info/submission/report/search接口见[M10契约](../development/M10-contracts.md)。静态页面公开不授予API权限，token不放入URL。

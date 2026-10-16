@@ -1,0 +1,16 @@
+{
+  "status": "FAILED_ATTEMPT_RETAINED",
+  "stage": "first full clean verify",
+  "failedTest": "LocalProcessRunnerTest.deniedTerminationReportsResidualAndUnknownRatherThanClaimingClean",
+  "failure": "JUnit temp-directory cleanup: Windows directory still held by another process; original assertions were unchanged",
+  "reportSha256": "c84b93c236b527d4bf262d732b476481994cad90833cf464aa636b341044d755",
+  "logSha256": "12d18e0f2e1a4965f82e589a80de18ff3e3c50a8f4bb10d727243de3c14ee9a5",
+  "focusedOriginalRecheck": "PASS",
+  "recheckLogSha256": "83d4bbd2cf261a864671790342a80b2974d1420fa7955c20d225fdf4eeae7328",
+  "subsequentFullVerify": {
+    "tests": 307,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  }
+}

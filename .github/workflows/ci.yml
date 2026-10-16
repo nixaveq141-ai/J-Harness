@@ -23,6 +23,20 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Build and verify browser client
+        working-directory: frontend
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm ci
+          npm test
+          npm audit --audit-level=low
+          npm run build
       - name: Verify on Windows
         if: runner.os == 'Windows'
         shell: pwsh
@@ -33,11 +47,24 @@ jobs:
         if: runner.os != 'Windows'
         run: |
           sh ./mvnw -B -Prelease-audit clean verify org.cyclonedx:cyclonedx-maven-plugin:2.9.3:makeAggregateBom > verify.log 2>&1 || { tail -100 verify.log; exit 1; }
+      - name: Install browser on Linux
+        if: runner.os == 'Linux'
+        working-directory: frontend
+        run: npx playwright install --with-deps chromium
+      - name: Install browser on Windows and macOS
+        if: runner.os != 'Linux'
+        working-directory: frontend
+        run: npx playwright install chromium
+      - name: Verify browser against packaged Java runtime
+        working-directory: frontend
+        run: npm run test:browser
       - name: Validate release gates and install candidate
         shell: bash
         run: |
           set -euo pipefail
           python scripts/test-release-tools.py
+          python scripts/frontend-sbom.py target/frontend-bom.json
+          npm --prefix frontend audit --json > target/frontend-audit.json
           python scripts/collect-release-evidence.py verify.log
           python scripts/prepare-legal.py
           git diff --exit-code -- third-party
@@ -53,8 +80,13 @@ jobs:
             **/target/surefire-reports/
             verify.log
             target/bom.json
+            target/frontend-bom.json
+            target/frontend-audit.json
             target/osv-results.json
             target/release-evidence.json
             target/candidate-smoke.json
             target/*candidate.zip
             target/candidate-sha256.txt
+            .build-cache/M10-browser-results.json
+            .build-cache/M10-browser-*.json
+            .build-cache/M10-*.png

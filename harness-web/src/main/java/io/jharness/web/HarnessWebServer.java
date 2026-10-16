@@ -169,14 +169,17 @@ public final class HarnessWebServer implements AutoCloseable {
         var deadline = deadlines.schedule(exchange::close, 10, TimeUnit.SECONDS);
         try (exchange) {
             try {
-                if (!authorized(exchange)) throw fault(401, "UNAUTHORIZED");
                 if (!exchange.getRequestHeaders()
                                 .getOrDefault("Host", List.of())
                                 .equals(List.of(address().getRawAuthority()))
-                        || exchange.getRequestHeaders().containsKey("Origin"))
-                    throw fault(403, "LOCAL_CLIENT_REQUIRED");
+                        || !trustedBrowser(exchange)) throw fault(403, "LOCAL_CLIENT_REQUIRED");
                 if (exchange.getRequestURI().getRawPath().contains("%"))
                     throw fault(400, "INVALID_PATH");
+                if (!exchange.getRequestURI().getPath().startsWith("/v1/")) {
+                    UiResources.serve(exchange);
+                    return;
+                }
+                if (!authorized(exchange)) throw fault(401, "UNAUTHORIZED");
                 route(exchange);
             } catch (WebFault ex) {
                 respond(exchange, ex.status, Map.of("error", ex.code));
@@ -198,10 +201,42 @@ public final class HarnessWebServer implements AutoCloseable {
                 && MessageDigest.isEqual(credential, digest(headers.getFirst().substring(7)));
     }
 
+    private boolean trustedBrowser(HttpExchange exchange) {
+        var origins = exchange.getRequestHeaders().getOrDefault("Origin", List.of());
+        var sites = exchange.getRequestHeaders().getOrDefault("Sec-Fetch-Site", List.of());
+        return (origins.isEmpty() || origins.equals(List.of(address().toString())))
+                && (sites.isEmpty()
+                        || sites.size() == 1
+                                && Set.of("same-origin", "same-site", "none")
+                                        .contains(sites.getFirst()));
+    }
+
     private void route(HttpExchange exchange) throws IOException {
         String method = exchange.getRequestMethod();
         var path = exchange.getRequestURI().getPath().split("/", -1);
         var query = query(exchange);
+        if (method.equals("GET") && query.isEmpty()) {
+            if (Arrays.equals(path, new String[] {"", "v1", "info"})) {
+                respond(
+                        exchange,
+                        200,
+                        Map.of(
+                                "profiles",
+                                profiles.keySet().stream().sorted().toList(),
+                                "protocolVersion",
+                                HarnessSdk.PROTOCOL_VERSION));
+                return;
+            }
+            if (path.length == 4 && path[1].equals("v1") && path[2].equals("submissions")) {
+                if (!path[3].matches("[A-Za-z0-9_-]{1,64}")) throw fault(400, "INVALID_REQUEST_ID");
+                synchronized (this) {
+                    Task task = submissions.get(hash(path[3]));
+                    if (task == null) throw fault(404, "SUBMISSION_NOT_FOUND");
+                    respond(exchange, 200, summary(task));
+                }
+                return;
+            }
+        }
         if (path.length < 3 || !path[1].equals("v1") || !path[2].equals("tasks"))
             throw fault(404, "NOT_FOUND");
         if (path.length == 3 && query.isEmpty()) {
@@ -237,6 +272,101 @@ public final class HarnessWebServer implements AutoCloseable {
                 response = summary(task);
             }
             respond(exchange, 200, response);
+        } else if (path.length == 5
+                && path[4].equals("report")
+                && method.equals("GET")
+                && query.isEmpty()) {
+            var recorded = events(task);
+            var counts = new TreeMap<String, Integer>();
+            for (var e : recorded) counts.merge(e.type(), 1, Integer::sum);
+            var facts =
+                    recorded.stream()
+                            .filter(
+                                    e ->
+                                            Set.of(
+                                                            "tool.completed",
+                                                            "tool.verified",
+                                                            "delivery.registered",
+                                                            "artifact.created",
+                                                            "turn.ended")
+                                                    .contains(e.type()))
+                            .toList();
+            var rows = new ArrayList<Map<String, Object>>();
+            int reportBytes = 4096;
+            for (int i = Math.max(0, facts.size() - 12); i < facts.size(); i++) {
+                var row = event(facts.get(i));
+                int length = WebJson.encode(row).length;
+                if (reportBytes + length > WebJson.RESPONSE_LIMIT - 1024) break;
+                rows.add(row);
+                reportBytes += length;
+            }
+            respond(
+                    exchange,
+                    200,
+                    Map.of(
+                            "source",
+                            "session-events",
+                            "task",
+                            summary(task),
+                            "eventCount",
+                            recorded.size(),
+                            "eventTypes",
+                            counts,
+                            "facts",
+                            rows,
+                            "factsLimited",
+                            facts.size() > rows.size()));
+        } else if (path.length == 5
+                && path[4].equals("search")
+                && method.equals("POST")
+                && query.isEmpty()) {
+            var input = body(exchange, Set.of("text", "after", "limit"));
+            String needle = text(input, "text", 256).toLowerCase(Locale.ROOT);
+            if (!(input.get("after") instanceof String after)
+                    || after.length() > 64
+                    || !(input.get("limit") instanceof Number number)
+                    || number.intValue() < 1
+                    || number.intValue() > 50
+                    || number.doubleValue() != number.intValue())
+                throw fault(400, "INVALID_SEARCH");
+            var recorded = events(task);
+            int index = 0;
+            if (!after.isEmpty()) {
+                while (index < recorded.size() && !recorded.get(index).eventId().equals(after))
+                    index++;
+                if (index == recorded.size()) throw fault(400, "UNKNOWN_CURSOR");
+                index++;
+            }
+            var matches = new ArrayList<Map<String, Object>>();
+            String next = after;
+            int bytes = 256;
+            for (; index < recorded.size(); index++) {
+                var e = recorded.get(index);
+                var safe = sanitizer.sanitize(e.payload());
+                if ((e.type() + new String(WebJson.encode(safe), StandardCharsets.UTF_8))
+                        .toLowerCase(Locale.ROOT)
+                        .contains(needle)) {
+                    var row = event(e);
+                    int length = WebJson.encode(row).length;
+                    if (matches.size() >= number.intValue()
+                            || bytes + length > WebJson.RESPONSE_LIMIT - 1024) break;
+                    matches.add(row);
+                    bytes += length;
+                }
+                next = e.eventId();
+            }
+            respond(
+                    exchange,
+                    200,
+                    Map.of(
+                            "events",
+                            matches,
+                            "next",
+                            next,
+                            "more",
+                            index < recorded.size(),
+                            "source",
+                            "sanitized-session-events"));
         } else if (path.length == 5
                 && path[4].equals("cancel")
                 && method.equals("POST")

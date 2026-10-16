@@ -12,3 +12,6 @@
 .env
 .jharness/
 __pycache__/
+**/node_modules/
+frontend/dist/
+frontend/test-results/

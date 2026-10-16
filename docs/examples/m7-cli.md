@@ -8,7 +8,7 @@
 .\jharness.cmd --config docs/examples/m7-config.json serve --require-read pom.xml
 ```
 
-serve 前另设 JHARNESS_WEB_TOKEN（32～256 位字母、数字、下划线、短横线）。输出 WEB 地址和固定 Profile default，HTTP 调用见 [Web 示例](m7-web.md)，POST 的 profile 使用 default。端口 0 由系统分配；:quit 或标准输入 EOF 关闭。它是本机单操作者后端，没有前端页面。CLI 中的验收条件同时用于该宿主的新 Web 任务。
+serve 前另设 JHARNESS_WEB_TOKEN（32～256 位字母、数字、下划线、短横线）。输出 WEB 地址和固定 Profile default，HTTP 调用见 [Web 示例](m7-web.md)，POST 的 profile 使用 default。端口 0 由系统分配；:quit 或标准输入 EOF 关闭。M10构建前端后，同一地址提供本机单操作者工作台，见frontend/README.md；未构建时根路径返回503，API仍可用。CLI 中的验收条件同时用于该宿主的新 Web 任务。
 
 ecosystem 配置启用同一 HarnessSdk 装配；缺省无 ecosystem 时沿用原 CLI。模型路线、命名配置组合、系统提示、参数、enabledTools、只读策略、压缩与显式证据条件沿用现有配置；不接受自定义 enabledPlugins，改由 ecosystem 选择插件。enabledTools 是精确白名单，省略时允许已注册工具；只读子任务仍受额外限制。默认串行执行，config.selected 记录该决定，不自动并行模型返回的一组调用。
 

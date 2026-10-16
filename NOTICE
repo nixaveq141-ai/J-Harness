@@ -7,3 +7,9 @@ the coordinate-specific legal files and inventory distributed alongside it.
 The source distribution includes Apache Maven Wrapper 3.3.4 startup scripts,
 copyright The Apache Software Foundation, licensed under Apache-2.0.
 Maven itself is downloaded separately; it is not embedded in the runtime JAR.
+
+The Web UI includes MIT-licensed components and styles from DeepSeek Harness,
+Copyright (c) 2026 DeepSeek. Source attribution is in frontend/upstream.json;
+the original license is in frontend/LICENSE-DeepSeek-Harness.txt. Distributed
+browser runtime dependency licenses are included at /ui-license.txt and in
+the packaged JAR under ui/ui-license.txt.

@@ -1,0 +1,50 @@
+{
+  "status": "PASS",
+  "negativeCases": [
+    {
+      "case": "failed browser run",
+      "rejected": true,
+      "exitCode": 1
+    },
+    {
+      "case": "missing browser coverage",
+      "rejected": true,
+      "exitCode": 1
+    },
+    {
+      "case": "wrong tested JAR",
+      "rejected": true,
+      "exitCode": 1
+    },
+    {
+      "case": "changed tested source digest",
+      "rejected": true,
+      "exitCode": 1
+    },
+    {
+      "case": "npm finding present",
+      "rejected": true,
+      "exitCode": 1
+    },
+    {
+      "case": "built resource differs from packaged resource",
+      "rejected": true,
+      "exitCode": 1
+    },
+    {
+      "case": "BOM drops required runtime dependency",
+      "rejected": true,
+      "exitCode": 1
+    },
+    {
+      "case": "BOM generator rejects missing production edge",
+      "rejected": true
+    }
+  ],
+  "sourceRepositoryUnchanged": true,
+  "initialSourceHashesVerified": 25,
+  "copiedOriginalHashesVerified": 21,
+  "collectorSha256": "f9ef5b42862f401c5105931d4798fcade0a65c1da576c7e6b1076029993e04f6",
+  "bomGeneratorSha256": "f3ee3eb73c68c0924eb79e695dfb12520a33a8b24e6c1d51aeb03d2761245faf",
+  "inputsRestored": true
+}
