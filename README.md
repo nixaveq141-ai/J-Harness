@@ -154,4 +154,6 @@ M8.1～M8.4所选范围已完成：Windows与Linux容器各295项通过，零失
 - [M6 契约](docs/development/M6-contracts.md) / [验收](docs/testing/M6-validation.md)
 - [上游能力对照](docs/requirements/upstream-capabilities.md)
 
+## M9 发布准备（进行中）
 
+已开始对三平台CI、启动器、第三方许可、SBOM/安全扫描及候选分发进行核实。用户提供的目标仓库为nixaveq141-ai/J-Harness，仓库已成功认证并连接origin、fetch main（私有仓库）；用户选择Apache-2.0。按最新指示本轮仅连接，本地发布准备暂停。M9尚未验收、正式发布未完成，进展与平台边界见[M9验证](docs/testing/M9-validation.md)。

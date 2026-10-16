@@ -6,11 +6,12 @@
 
 - M0～M7 已按各阶段明确范围完成本地开发、验收与收口。M7 Windows / Linux 各 260 项测试通过，均 0 失败/错误/跳过；236 个 Java/POM SHA 一致。
 - 当前M8.1～M8.4已按契约范围收口：最终Windows/Linux容器各295项，0失败/错误/跳过；完整测试名和259个Java/POM SHA一致。七组最终JAR本地/真实Docker回归及清理通过。下一步M9本地发布准备，真实CI/macOS/正式发布门禁仍未闭合。
+- M9已于2026-10-16开始：用户提供GitHub仓库nixaveq141-ai/J-Harness并确认Apache-2.0许可；远端已连接并成功fetch origin/main；按用户最新要求，本轮仅处理连接，本地发布准备暂停。M9尚未验收，正式发布未完成，当前证据见M9-contracts.md和M9-validation.md。
 - API / SDK 协议 1.9；JSONL 格式及事件 schemaVersion 为 1。
 - M7 已有本地/Docker ExecutionEnvironment、SDK、MCP stdio/HTTP JSON+SSE、受控 Skills、只读 Subagent、本机 Web API、CLI 生态配置/serve、Todo/Plan、固定来源网页抓取、单会话全文子串索引/比较/归档、环境/子任务/Web 离线核实。
 - 详细范围与延期项见 docs/requirements/upstream-capabilities.md；最新收口/发布门禁见 docs/testing/M8-closure.md，M7-closure.md保留历史。不将部分支持、延期项目写成已实现。当前没有前端页面。
 - 本轮使用本机 HTTP 替身/FakeLlm，没有付费模型请求；M4 DeepSeek 是独立历史证据。
-- 没有 Git remote，Windows/Linux/macOS 远端 CI 尚未运行，macOS 没有实机验收。Linux 容器构建与 Windows 本机结果分开记载。
+- origin已连接https://github.com/nixaveq141-ai/J-Harness.git（私有仓库，默认main），已认证读取并fetch；Windows/Linux/macOS远端CI尚未运行，macOS没有实机验收。Linux 容器构建与 Windows 本机结果分开记载。
 - 用户长期要求：后续任务有实质进展时实时同步相关文档，不积压到任务结束。实现、范围/接口、验证结果、失败/限制或下一步变化时，及时更新受影响的README、契约、开发/验收记录、推进计划及本文件；证据尚未产生时明确标记进行中/未验证，不提前写成通过。提交前核对文档与源码、Git及实际证据一致。
 - 用户已授权建立首次本地提交，并要求以后每次完成有实质改动的工作后创建本地提交，无需逐次确认；提交前完成适用验证并检查差异和敏感文件。用户已有 .dsh-tmp/ 保留且忽略，不纳入提交；推送/创建远端/发布仍需相应授权。
 
@@ -136,3 +137,5 @@ M8只按约定范围收口，不等于PRD全功能/发布完成：完整gitignor
 下一步M9：先做本地workflow/启动器/平台支持声明及许可、依赖清单等发布准备；远端CI需要用户明确仓库目标与相应授权，不自行建仓、推送、发布。M10前端/M11 Desktop不提前推进。按长期授权完成本地提交。
 
 2026-10-16文档一致性复核：M8-validation、当前状态及推进计划已确认更新；补正NFR/AC顺序文档执行安排中遗漏的“M8.2尚未开始”旧句，标明历史快照与当前接续的区别。仅文档修订，无产品代码/测试改动；当前仍为M8收口完成、下一步M9本地准备。
+
+2026-10-16远端连接：使用本机现有nixaveq141-ai Git登录，已核实私有仓库/默认main，origin已配置并fetch origin/main=f90bb77（Initial commit，远端仅LICENSE）。按用户最新要求本轮仅连接并记录状态，本地发布准备暂停；没有合并、推送、运行CI或发布，原有本地未完成准备保留。
