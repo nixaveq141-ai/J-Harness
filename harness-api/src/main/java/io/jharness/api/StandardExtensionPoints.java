@@ -2,6 +2,8 @@ package io.jharness.api;
 
 /** Stable seams for the M1 pipeline; adding behavior does not require patching its loop. */
 public final class StandardExtensionPoints {
+    public static final ExtensionPoint<ModelExecution> MODEL_EXECUTION =
+            new ExtensionPoint<>("model.execution", ModelExecution.class);
     public static final ExtensionPoint<ToolBatchExecution> TOOL_BATCH =
             new ExtensionPoint<>("tool.batch", ToolBatchExecution.class);
     public static final ExtensionPoint<ChatRequest> BEFORE_MODEL =

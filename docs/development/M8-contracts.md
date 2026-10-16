@@ -1,6 +1,6 @@
 # M8 核心补齐契约
 
-日期：2026-10-15。M8.1已完成Windows本地与真实Docker验收；M8.2调度已完成本地与真实Docker验收，M8.3横切插件尚未开始，M8整阶段进行中。当前API/SDK协议1.8，JSONL格式/schemaVersion仍1。M8.1历史切片使用API/SDK1.7。
+日期：2026-10-16。M8.1过滤、M8.2调度与M8.3标准模型限流/重试已完成Windows及本地/真实Docker验收，M8整阶段仍待M8.4收口。当前API/SDK协议1.9，JSONL格式/schemaVersion仍1。M8.1/M8.2历史切片分别使用API/SDK1.7/1.8。
 
 ## M8.1：宿主检索过滤（FR-07.3）
 
@@ -37,3 +37,17 @@ M8.1需有配置优先级/否定/目录/中文空格/上限/非法配置、直�
 tool.scheduled记录模式、原因、并发上限与时限，tool.batch.stopped记录停止原因。工具实现/注册在执行前再次检查，单次body与单次结算均防重入。LocalWorkspace观察版本缓存改为并发Map；写屏障仍不允许子任务读取替代父方版本依据。
 
 dry-run包装不暴露prepare能力，必须降为原串行预览管线；不能为并行而绕过dry-run。后续M8.3另做限流/重试，当前不改变网络未知结果不重放规则。
+
+## M8.3：标准模型限流 / 重试（已验收，2026-10-16）
+
+API/SDK 1.9 新增 MODEL_EXECUTION / ModelExecution / ModelAttempt。Loop 提供一次尝试的公共回调：每次重新 prepare、上下文限制、费用预留、request.context/model.requested、checkpoint、前缀重建、发送及费用结算。标准 ModelResiliencePlugin 经精确作用域服务与拦截链接入，卸载撤销，原引用每次重新查服务；不在工具包装器内重放调用。
+
+默认 modelResilience.enabled=false，沿用原行为。已有 BEFORE_MODEL 压缩、Budget 整轮时限和 ApiCostGuard 保留。旧适配器 complete 非流式429退避兼容；启用标准插件后只调用 completeSingleAttempt，由插件唯一拥有重试次数，旧/未知适配器默认拒绝单次发送契约。流式仍一次，不重试断流/格式错误/未知传输。仅可信适配器完整收到非流式429时抛 ModelRejectedException；普通错误代码不能获得重试资格。500/503不默认视为未处理证明。
+
+宿主配置 maxAttempts=1～4（含首次）、backoffMillis=0～10000（指数增长、封顶10秒）、totalTimeoutMillis=50～300000、minIntervalMillis=0～60000、maxWaiters=0～32。一个插件实例同一时刻只执行一个请求序列，有限等待者，无后台线程/无无界队列，满额立即 MODEL_RATE_QUEUE_FULL。总期限从进入服务起包含排队、限流、退避、发送及重试，叠加整轮时限。等待每10ms检查取消/关闭/期限，吞吐间隔按每次尝试开始计，实例间不共享配额。自定义Java适配器必须合作检查取消，不能保证强杀任意插件线程。
+
+429保留已预留费用的保守上界，不推测零计费；下一次请求重新通过剩余预算检查，次数不绕过整轮费用/时间。model.rejected关联精确requestEventId，先flush才允许重试；冷恢复只据明确HTTP_429拒绝事实结算对应请求。发送后取消/超时/UNKNOWN不写拒绝事实，保留未决并阻止续跑。成功仍由原assistant.message闭合步骤。任何checkpoint/拒绝事实flush失败不发送下一请求；模型工具、写入、审批语义不变。
+
+model.attempt.started、model.rate.waiting、model.retry.scheduled、model.execution.stopped记录尝试/限制/等待/停止原因；最终wire与每个model.requested前缀逐项核对。事件由调用线程写入，无worker写者。子任务配置独立、默认关闭；经典CLI、SDK、生态CLI与serve使用相同宿主配置。SDK旧三/四参数构造保留。验证结果另记M8-validation.md，M8.4尚未收口。
+
+历史 model.verified 未带 sourceEvent 时，仅同一步恰有一个未决请求才接受其 stepId；多个未决尝试必须精确核实，不用旧格式一次清除。新CLI核实入口始终写入精确sourceEvent。ApiCostGuard.requestRejected只释放活跃预留槽位，不返还费用上界，SDK共享费用池同样遵守。

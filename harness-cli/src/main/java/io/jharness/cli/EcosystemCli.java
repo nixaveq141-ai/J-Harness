@@ -200,7 +200,8 @@ final class EcosystemCli {
                                                             "prompts", List.of()))),
                             tools,
                             config.parameters(),
-                            config.scheduling()));
+                            config.scheduling(),
+                            config.resilience()));
         } catch (Exception ex) {
             try {
                 if (model != null) model.close();

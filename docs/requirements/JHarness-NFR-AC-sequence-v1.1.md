@@ -4,7 +4,7 @@
 
 本文是实施顺序建议，不修改需求基线。进度更新（2026-10-15）：M0～M7 选定范围的本地开发与验收已收口；最新 Windows / Linux 容器各 260 项测试通过，均 0 失败、0 错误、0 跳过，236 个 Java/POM 哈希一致。四组真实 Docker 结果覆盖执行环境/SDK、Skills、只读 Subagent 和最终打包 CLI/Web/SDK 联合链路。M4 的两种 Maven 示例重复真实 DeepSeek 验收为历史独立证据，不表示当前构建重新进行了付费模型验收。
 
-“阶段范围收口”不等于 PRD 全部子项已经实现。通用重试与限流插件、图片输入、Desktop 等仍有缺口；宿主显式只读工具并行已在后续M8.2交付；Workflow/PTC/Goal/Schedule/LSP 等按范围决定延期。没有 Git remote，Windows/Linux/macOS 远端 CI 未执行，macOS 无实机证据，因此 PRD13 的完整发布 DoD 尚未满足。详细对照见 [2026-10-15 需求状态审计](../testing/requirements-status-2026-10-15.md)、[M7 收口](../testing/M7-closure.md) 和 [上游范围决定](upstream-capabilities.md)。旧阶段验收记录保留历史语境。
+“阶段范围收口”不等于 PRD 全部子项已经实现。图片输入、Desktop 等仍有缺口；宿主显式只读工具并行在M8.2交付，标准模型限流/非流式429重试在M8.3按明确范围交付（2026-10-16，Windows295项及本地/真实Docker验收），M8整阶段待M8.4收口；Workflow/PTC/Goal/Schedule/LSP 等按范围决定延期。没有 Git remote，Windows/Linux/macOS 远端 CI 未执行，macOS 无实机证据，因此 PRD13 的完整发布 DoD 尚未满足。详细对照见 [2026-10-15 需求状态审计](../testing/requirements-status-2026-10-15.md)、[M7 收口](../testing/M7-closure.md) 和 [上游范围决定](upstream-capabilities.md)。旧阶段验收记录保留历史语境。
 
 后续执行入口：[JHarness-next-plan-v1.0.md](JHarness-next-plan-v1.0.md)。默认先 M8 核心缺口，再 M9 发布验证、M10 Web前端、M11 Desktop；M12 为按需扩展候选。M9 本地准备可提前，远端执行依赖明确仓库目标。新编号是实施排期，不改变原 PRD 的 M0～M7 定义。
 

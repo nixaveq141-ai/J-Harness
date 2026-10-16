@@ -50,6 +50,17 @@ final class SharedFeeBudget {
             }
 
             @Override
+            public void requestRejected(ChatRequest request) {
+                synchronized (SharedFeeBudget.this) {
+                    if (pending == null || pendingEpoch != epoch)
+                        throw BoundedJson.error("COST_ACCOUNTING_BREACH");
+                    delegate.requestRejected(request);
+                    pending = null; // Keep reserved unchanged: rejection is not proof of zero
+                    // billing.
+                }
+            }
+
+            @Override
             public BigDecimal actualCost(ChatRequest request, ChatResponse response) {
                 BigDecimal actual = Objects.requireNonNull(delegate.actualCost(request, response));
                 synchronized (SharedFeeBudget.this) {

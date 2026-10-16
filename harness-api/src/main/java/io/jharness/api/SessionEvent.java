@@ -29,6 +29,7 @@ public record SessionEvent(
                     case "step.started",
                                     "step.ended",
                                     "model.requested",
+                                    "model.rejected",
                                     "assistant.message",
                                     "request.context",
                                     "budget.reserved" ->

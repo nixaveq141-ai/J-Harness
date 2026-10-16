@@ -10,7 +10,8 @@ record SdkOptions(
         Map<String, Object> origin,
         SharedFeeBudget fees,
         Map<String, Object> parameters,
-        io.jharness.api.ToolSchedulingOptions scheduling) {
+        io.jharness.api.ToolSchedulingOptions scheduling,
+        io.jharness.api.ModelResilienceOptions resilience) {
     SdkOptions(
             String agentId,
             String prompt,
@@ -25,7 +26,8 @@ record SdkOptions(
                 origin,
                 fees,
                 parameters,
-                io.jharness.api.ToolSchedulingOptions.serial());
+                io.jharness.api.ToolSchedulingOptions.serial(),
+                io.jharness.api.ModelResilienceOptions.disabled());
     }
 
     SdkOptions(

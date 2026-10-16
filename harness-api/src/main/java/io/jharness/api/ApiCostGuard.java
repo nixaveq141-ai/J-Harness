@@ -16,6 +16,9 @@ public interface ApiCostGuard {
         return maximumCost(request);
     }
 
+    /** Known rejected response: retain the fee upper bound but release the active attempt slot. */
+    default void requestRejected(ChatRequest request) {}
+
     static ApiCostGuard unavailable() {
         return request -> {
             throw new HarnessException(

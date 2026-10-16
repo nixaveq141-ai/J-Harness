@@ -90,6 +90,16 @@ public final class OpenAiCompatibleLlmClient implements LlmClient {
 
     @Override
     public ChatResponse complete(ChatRequest request, CancellationToken cancellation) {
+        return complete(request, cancellation, false);
+    }
+
+    @Override
+    public ChatResponse completeSingleAttempt(ChatRequest request, CancellationToken cancellation) {
+        return complete(request, cancellation, true);
+    }
+
+    private ChatResponse complete(
+            ChatRequest request, CancellationToken cancellation, boolean single) {
         cancellation.throwIfCancelled();
         if (Boolean.TRUE.equals(request.parameters().get("stream"))) {
             try (StreamHandle handle = stream(request, cancellation)) {
@@ -140,7 +150,7 @@ public final class OpenAiCompatibleLlmClient implements LlmClient {
                 throw ex;
             }
             cancellation.throwIfCancelled();
-            if (response.statusCode() == 429 && attempt < config.rateLimitRetries) {
+            if (response.statusCode() == 429 && attempt < (single ? 0 : config.rateLimitRetries)) {
                 long until = System.nanoTime() + Math.min(1_000L, 100L << attempt) * 1_000_000;
                 while (System.nanoTime() < until) {
                     cancellation.throwIfCancelled();
@@ -154,6 +164,7 @@ public final class OpenAiCompatibleLlmClient implements LlmClient {
                 }
                 continue;
             }
+            if (single && response.statusCode() == 429) throw new ModelRejectedException();
             if (response.statusCode() != 200)
                 throw error(
                         switch (response.statusCode()) {

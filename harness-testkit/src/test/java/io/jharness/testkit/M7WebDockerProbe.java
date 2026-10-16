@@ -60,6 +60,18 @@ public final class M7WebDockerProbe {
     static Map<String, Object> run(
             String docker, String image, Path root, Path jar, boolean container, boolean parallel)
             throws Exception {
+        return run(docker, image, root, jar, container, parallel, false);
+    }
+
+    static Map<String, Object> run(
+            String docker,
+            String image,
+            Path root,
+            Path jar,
+            boolean container,
+            boolean parallel,
+            boolean resilience)
+            throws Exception {
         Files.createDirectories(root);
         Files.writeString(root.resolve("input.txt"), "before");
         var count = new AtomicInteger();
@@ -72,7 +84,16 @@ public final class M7WebDockerProbe {
                             JSON.readValue(
                                     exchange.getRequestBody().readNBytes(1024 * 1024),
                                     new TypeReference<Map<String, Object>>() {}));
-                    int step = count.getAndIncrement();
+                    int wireIndex = count.getAndIncrement();
+                    if (resilience && wireIndex == 0) {
+                        byte[] rejected = "{}".getBytes(java.nio.charset.StandardCharsets.UTF_8);
+                        exchange.sendResponseHeaders(429, rejected.length);
+                        try (exchange) {
+                            exchange.getResponseBody().write(rejected);
+                        }
+                        return;
+                    }
+                    int step = wireIndex - (resilience ? 1 : 0);
                     var message = new LinkedHashMap<String, Object>();
                     message.put("role", "assistant");
                     message.put("content", "fixture");
@@ -160,35 +181,58 @@ public final class M7WebDockerProbe {
                                     jar.toString())
                             : Map.of("kind", "local");
             var config =
-                    Map.of(
-                            "baseUrl",
-                            "http://127.0.0.1:" + model.getAddress().getPort() + "/v1",
-                            "model",
-                            "fixture",
-                            "apiKeyEnv",
-                            "FIXTURE_API_KEY",
-                            "toolScheduling",
-                            parallel
-                                    ? Map.of("mode", "readonly-parallel", "maxConcurrency", 2)
-                                    : Map.of("mode", "serial"),
-                            "maxSteps",
-                            4,
-                            "durationSeconds",
-                            60,
-                            "requestTimeoutSeconds",
-                            10,
-                            "ecosystem",
+                    new LinkedHashMap<String, Object>(
                             Map.of(
-                                    "environment",
-                                    execution,
-                                    "web",
+                                    "baseUrl",
+                                    "http://127.0.0.1:" + model.getAddress().getPort() + "/v1",
+                                    "model",
+                                    "fixture",
+                                    "apiKeyEnv",
+                                    "FIXTURE_API_KEY",
+                                    "modelResilience",
+                                    resilience
+                                            ? Map.of(
+                                                    "enabled",
+                                                    true,
+                                                    "maxAttempts",
+                                                    3,
+                                                    "backoffMillis",
+                                                    10,
+                                                    "totalTimeoutMillis",
+                                                    10000)
+                                            : Map.of(),
+                                    "toolScheduling",
+                                    parallel
+                                            ? Map.of(
+                                                    "mode",
+                                                    "readonly-parallel",
+                                                    "maxConcurrency",
+                                                    2)
+                                            : Map.of("mode", "serial"),
+                                    "maxSteps",
+                                    4,
+                                    "durationSeconds",
+                                    60,
+                                    "requestTimeoutSeconds",
+                                    10,
+                                    "ecosystem",
                                     Map.of(
-                                            "port",
-                                            0,
-                                            "tokenEnv",
-                                            "FIXTURE_WEB_TOKEN",
-                                            "approvalSeconds",
-                                            15)));
+                                            "environment",
+                                            execution,
+                                            "web",
+                                            Map.of(
+                                                    "port",
+                                                    0,
+                                                    "tokenEnv",
+                                                    "FIXTURE_WEB_TOKEN",
+                                                    "approvalSeconds",
+                                                    15))));
+            if (resilience) {
+                config.put("maxCost", "10");
+                config.put("inputTokenCeiling", 32768);
+                config.put("inputPerMillion", "1");
+                config.put("outputPerMillion", "1");
+            }
             Path configPath = root.resolve("host-config.json");
             JSON.writeValue(configPath.toFile(), config);
             var command =
@@ -308,7 +352,7 @@ public final class M7WebDockerProbe {
                             object(http(client, address, "POST", "/v1/tasks", submission, true))
                                     .get("taskId")),
                     "Submission deduplicated");
-            require(count.get() == 3, "No model replay");
+            require(count.get() == (resilience ? 4 : 3), "Exact model attempt count");
             var page =
                     http(
                             client,
@@ -324,6 +368,21 @@ public final class M7WebDockerProbe {
                     "Events and redaction");
             var repository = new JsonlSessionRepository(root.resolve(".jharness/sessions"));
             var events = repository.openReader(task).events();
+            if (resilience) {
+                require(
+                        events.stream().filter(e -> e.type().equals("model.rejected")).count() == 1,
+                        "One durable 429 rejection");
+                require(
+                        events.stream()
+                                        .filter(e -> e.type().equals("model.retry.scheduled"))
+                                        .count()
+                                == 1,
+                        "One observed retry");
+                require(
+                        events.stream().filter(e -> e.type().equals("budget.reserved")).count()
+                                == 4,
+                        "Every attempt reserves fees");
+            }
             if (parallel) {
                 require(
                         events.stream()
@@ -353,7 +412,7 @@ public final class M7WebDockerProbe {
                                         events.stream()
                                                 .filter(e -> e.type().equals("model.requested"))
                                                 .toList()
-                                                .get(1)
+                                                .get(resilience ? 2 : 1)
                                                 .eventId());
                 require(
                         prepared.messages().stream()
@@ -410,7 +469,8 @@ public final class M7WebDockerProbe {
                             "Reconstructed actual HTTP request");
                 }
             require(
-                    reconstructed == 3 && SessionRecovery.inspect(events).ready(),
+                    reconstructed == (resilience ? 4 : 3)
+                            && SessionRecovery.inspect(events).ready(),
                     "Durable reconstruction and recovery");
             var closed =
                     events.stream()

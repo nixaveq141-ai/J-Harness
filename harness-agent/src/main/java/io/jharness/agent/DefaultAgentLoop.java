@@ -34,7 +34,7 @@ public final class DefaultAgentLoop implements AgentLoop {
         String reason = "STEP_LIMIT";
         Set<String> callIds = new HashSet<>();
         List<ToolInvocation> unresolved = new ArrayList<>();
-        BigDecimal reservedCost = BigDecimal.ZERO;
+        BigDecimal[] reservedCost = {BigDecimal.ZERO};
         for (SessionEvent event : runtime.reader().events())
             if (event.callId() != null) callIds.add(event.callId());
         append("turn.started", EventLevel.TURN, turnId, null, null, Map.of());
@@ -64,84 +64,150 @@ public final class DefaultAgentLoop implements AgentLoop {
                 if (!core.llm().capabilities().tools())
                     request = new ChatRequest(request.messages(), List.of(), request.parameters());
                 request = clean(request);
-                cancellation.throwIfCancelled();
-                PreparedRequest prepared = Objects.requireNonNull(core.llm().prepare(request));
-                request = clean(prepared.request());
-                estimateContext(request, core.llm().capabilities().maxContextTokens());
-                BigDecimal bound = BigDecimal.ZERO;
-                if (core.budget().maxApiCost().isPresent()) {
-                    if (!runtime.costs().currency().equals(core.budget().currency()))
-                        throw new HarnessException(
-                                "COST_CURRENCY_MISMATCH", "Cost guard and budget currency differ");
-                    bound = Objects.requireNonNull(runtime.costs().maximumCost(request));
-                    if (bound.signum() < 0)
-                        throw new HarnessException(
-                                "COST_BUDGET_UNAVAILABLE", "Negative cost bound");
-                    if (reservedCost.add(bound).compareTo(core.budget().maxApiCost().get()) > 0)
-                        throw new HarnessException(
-                                "COST_LIMIT", "Next request exceeds remaining fee budget");
-                    reservedCost = reservedCost.add(bound);
-                    append(
-                            "budget.reserved",
-                            EventLevel.STEP,
-                            turnId,
-                            stepId,
-                            null,
-                            Map.of(
-                                    "currency",
-                                    core.budget().currency(),
-                                    "requestBound",
-                                    bound.toPlainString(),
-                                    "reserved",
-                                    reservedCost.toPlainString()));
-                }
-                cancellation.throwIfCancelled();
-                String requestId =
-                        runtime.requests()
-                                .record(
-                                        request,
-                                        runtime.scope().sessionId(),
-                                        turnId,
-                                        stepId,
-                                        core.session(),
-                                        core.events());
-                checkpoint(
-                        runtime.checkpoints()
-                                .beforeEachModelRequest(
-                                        new SessionState(
-                                                runtime.scope().sessionId(), TaskStatus.RUNNING)));
-                cancellation.throwIfCancelled();
-                ChatRequest replay =
-                        runtime.requests().reconstruct(runtime.reader().events(), requestId);
-                if (!request.equals(replay))
-                    throw new HarnessException(
-                            "REQUEST_REPLAY_MISMATCH",
-                            "Journal did not reconstruct the prepared request");
+                final ChatRequest modelRequest = request;
+                final String modelTurn = turnId, modelStep = stepId;
+                ModelExecution execution =
+                        core.events()
+                                .invoke(
+                                        StandardExtensionPoints.MODEL_EXECUTION,
+                                        ModelExecution.once(),
+                                        value -> value);
                 ChatResponse response =
-                        Objects.requireNonNull(core.llm().complete(replay, cancellation));
-                if (core.budget().maxApiCost().isPresent()) {
-                    BigDecimal actual =
-                            Objects.requireNonNull(runtime.costs().actualCost(replay, response));
-                    if (actual.signum() < 0 || actual.compareTo(bound) > 0)
-                        throw new HarnessException(
-                                "COST_ACCOUNTING_BREACH", "Actual cost exceeds reservation");
-                    reservedCost = reservedCost.subtract(bound).add(actual);
-                    append(
-                            "budget.settled",
-                            EventLevel.STEP,
-                            turnId,
-                            stepId,
-                            null,
-                            Map.of(
-                                    "currency",
-                                    core.budget().currency(),
-                                    "chargedUpperBound",
-                                    actual.toPlainString(),
-                                    "reserved",
-                                    reservedCost.toPlainString(),
-                                    "usage",
-                                    runtime.sanitizer().sanitize(response.usage())));
-                }
+                        execution.execute(
+                                (singleSend, attemptCancellation) -> {
+                                    attemptCancellation.throwIfCancelled();
+                                    ChatRequest attemptRequest =
+                                            clean(core.llm().prepare(modelRequest).request());
+                                    estimateContext(
+                                            attemptRequest,
+                                            core.llm().capabilities().maxContextTokens());
+                                    BigDecimal bound = BigDecimal.ZERO;
+                                    if (core.budget().maxApiCost().isPresent()) {
+                                        if (!runtime.costs()
+                                                .currency()
+                                                .equals(core.budget().currency()))
+                                            throw new HarnessException(
+                                                    "COST_CURRENCY_MISMATCH",
+                                                    "Cost guard and budget currency differ");
+                                        bound =
+                                                Objects.requireNonNull(
+                                                        runtime.costs()
+                                                                .maximumCost(attemptRequest));
+                                        if (bound.signum() < 0)
+                                            throw new HarnessException(
+                                                    "COST_BUDGET_UNAVAILABLE",
+                                                    "Negative cost bound");
+                                        if (reservedCost[0]
+                                                        .add(bound)
+                                                        .compareTo(core.budget().maxApiCost().get())
+                                                > 0)
+                                            throw new HarnessException(
+                                                    "COST_LIMIT",
+                                                    "Next request exceeds remaining fee budget");
+                                        reservedCost[0] = reservedCost[0].add(bound);
+                                        append(
+                                                "budget.reserved",
+                                                EventLevel.STEP,
+                                                modelTurn,
+                                                modelStep,
+                                                null,
+                                                Map.of(
+                                                        "currency",
+                                                        core.budget().currency(),
+                                                        "requestBound",
+                                                        bound.toPlainString(),
+                                                        "reserved",
+                                                        reservedCost[0].toPlainString()));
+                                    }
+                                    attemptCancellation.throwIfCancelled();
+                                    String attemptRequestId =
+                                            runtime.requests()
+                                                    .record(
+                                                            attemptRequest,
+                                                            runtime.scope().sessionId(),
+                                                            modelTurn,
+                                                            modelStep,
+                                                            core.session(),
+                                                            core.events());
+                                    checkpoint(
+                                            runtime.checkpoints()
+                                                    .beforeEachModelRequest(
+                                                            new SessionState(
+                                                                    runtime.scope().sessionId(),
+                                                                    TaskStatus.RUNNING)));
+                                    attemptCancellation.throwIfCancelled();
+                                    ChatRequest replay =
+                                            runtime.requests()
+                                                    .reconstruct(
+                                                            runtime.reader().events(),
+                                                            attemptRequestId);
+                                    if (!attemptRequest.equals(replay))
+                                        throw new HarnessException(
+                                                "REQUEST_REPLAY_MISMATCH",
+                                                "Journal did not reconstruct the prepared request");
+                                    ChatResponse attemptResponse;
+                                    try {
+                                        attemptResponse =
+                                                Objects.requireNonNull(
+                                                        singleSend
+                                                                ? core.llm()
+                                                                        .completeSingleAttempt(
+                                                                                replay,
+                                                                                attemptCancellation)
+                                                                : core.llm()
+                                                                        .complete(
+                                                                                replay,
+                                                                                attemptCancellation));
+                                    } catch (ModelRejectedException rejected) {
+                                        append(
+                                                "model.rejected",
+                                                EventLevel.STEP,
+                                                modelTurn,
+                                                modelStep,
+                                                null,
+                                                Map.of(
+                                                        "requestEventId",
+                                                        attemptRequestId,
+                                                        "reason",
+                                                        "HTTP_429"));
+                                        core.session().flush();
+                                        if (core.budget().maxApiCost().isPresent())
+                                            runtime.costs().requestRejected(replay);
+                                        throw rejected;
+                                    }
+                                    if (core.budget().maxApiCost().isPresent()) {
+                                        BigDecimal actual =
+                                                Objects.requireNonNull(
+                                                        runtime.costs()
+                                                                .actualCost(
+                                                                        replay, attemptResponse));
+                                        if (actual.signum() < 0 || actual.compareTo(bound) > 0)
+                                            throw new HarnessException(
+                                                    "COST_ACCOUNTING_BREACH",
+                                                    "Actual cost exceeds reservation");
+                                        reservedCost[0] =
+                                                reservedCost[0].subtract(bound).add(actual);
+                                        append(
+                                                "budget.settled",
+                                                EventLevel.STEP,
+                                                modelTurn,
+                                                modelStep,
+                                                null,
+                                                Map.of(
+                                                        "currency",
+                                                        core.budget().currency(),
+                                                        "chargedUpperBound",
+                                                        actual.toPlainString(),
+                                                        "reserved",
+                                                        reservedCost[0].toPlainString(),
+                                                        "usage",
+                                                        runtime.sanitizer()
+                                                                .sanitize(
+                                                                        attemptResponse.usage())));
+                                    }
+                                    return attemptResponse;
+                                },
+                                cancellation);
                 cancellation.throwIfCancelled();
                 response =
                         core.events()
@@ -316,11 +382,11 @@ public final class DefaultAgentLoop implements AgentLoop {
                                 "reason",
                                 reason,
                                 "reservedApiCost",
-                                reservedCost.toPlainString(),
+                                reservedCost[0].toPlainString(),
                                 "currency",
                                 core.budget().currency()));
         if (core.budget().currency().equals("USD"))
-            finalState.put("reservedApiCostUsd", reservedCost.toPlainString());
+            finalState.put("reservedApiCostUsd", reservedCost[0].toPlainString());
         append(
                 "turn.ended",
                 EventLevel.TURN,

@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /** Embedded, single-session owner. Hosts supply trusted configuration and evidence evaluator. */
 public final class HarnessSdk implements AutoCloseable {
-    public static final String PROTOCOL_VERSION = "1.8";
+    public static final String PROTOCOL_VERSION = "1.9";
     private final PluginScope scope;
     private final SessionWriter writer;
     private final SessionReader reader;
@@ -27,6 +27,7 @@ public final class HarnessSdk implements AutoCloseable {
     private final boolean rootBudget;
     private final Map<String, Object> parameters;
     private final ToolSchedulingOptions scheduling;
+    private final ModelResilienceOptions resilience;
     private final AtomicBoolean cancelled = new AtomicBoolean(), closed = new AtomicBoolean();
 
     /**
@@ -100,7 +101,8 @@ public final class HarnessSdk implements AutoCloseable {
                         Map.of(),
                         null,
                         configuration.parameters(),
-                        configuration.scheduling()));
+                        configuration.scheduling(),
+                        configuration.resilience()));
     }
 
     HarnessSdk(
@@ -121,6 +123,7 @@ public final class HarnessSdk implements AutoCloseable {
         scope = new PluginScope(sessionId, options.agentId());
         parameters = options.parameters();
         scheduling = options.scheduling();
+        resilience = options.resilience();
         tools =
                 options.tools() == null
                         ? new ScopedToolRegistry()
@@ -261,6 +264,7 @@ public final class HarnessSdk implements AutoCloseable {
                                     new PolicyPlugin(policy, approvals),
                                     new ToolsPlugin(sanitizer),
                                     new ToolSchedulingPlugin(options.scheduling()),
+                                    new ModelResiliencePlugin(options.resilience()),
                                     new AgentPlugin(services)));
             plugins.addAll(extensions);
             assembly =
@@ -320,7 +324,9 @@ public final class HarnessSdk implements AutoCloseable {
                                 "feeScope",
                                 rootBudget ? "parent-turn" : "inherited-parent-turn",
                                 "toolScheduling",
-                                scheduling.configuration())));
+                                scheduling.configuration(),
+                                "modelResilience",
+                                resilience.configuration())));
         writer.append(
                 SessionEvent.session(
                         scope.sessionId(),

@@ -1,0 +1,10 @@
+{
+  "modelResilience": {
+    "enabled": true,
+    "maxAttempts": 3,
+    "backoffMillis": 100,
+    "totalTimeoutMillis": 30000,
+    "minIntervalMillis": 250,
+    "maxWaiters": 0
+  }
+}

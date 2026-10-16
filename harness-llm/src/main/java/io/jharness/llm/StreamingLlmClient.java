@@ -61,6 +61,12 @@ public final class StreamingLlmClient implements LlmClient, ModelRouter {
     }
 
     @Override
+    public ChatResponse completeSingleAttempt(ChatRequest request, CancellationToken cancellation) {
+        if (capabilities().streaming()) return complete(request, cancellation);
+        return delegate.completeSingleAttempt(request, cancellation);
+    }
+
+    @Override
     public StreamHandle stream(ChatRequest request, CancellationToken cancellation) {
         return delegate.stream(request, cancellation);
     }

@@ -48,14 +48,30 @@ public final class ObservedLlmClient implements LlmClient, ModelRouter {
 
     @Override
     public ChatResponse complete(ChatRequest request, CancellationToken cancellation) {
+        return complete(request, cancellation, false);
+    }
+
+    @Override
+    public ChatResponse completeSingleAttempt(ChatRequest request, CancellationToken cancellation) {
+        return complete(request, cancellation, true);
+    }
+
+    private ChatResponse complete(
+            ChatRequest request, CancellationToken cancellation, boolean single) {
         long start = System.nanoTime();
         ChatResponse response = null;
         String outcome = "SUCCESS";
         try {
-            response = delegate.complete(request, cancellation);
+            response =
+                    single
+                            ? delegate.completeSingleAttempt(request, cancellation)
+                            : delegate.complete(request, cancellation);
             return response;
         } catch (RuntimeException ex) {
-            outcome = ex instanceof HarnessException h ? h.code() : "MODEL_FAILED";
+            outcome =
+                    ex instanceof ModelRejectedException
+                            ? "MODEL_RATE_LIMIT"
+                            : ex instanceof HarnessException h ? h.code() : "MODEL_FAILED";
             throw ex;
         } finally {
             Map<String, Object> metrics = new LinkedHashMap<>();

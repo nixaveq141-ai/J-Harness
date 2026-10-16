@@ -94,7 +94,7 @@ Docker 采用固定镜像摘要、非 root、只读根、禁外网、资源配�
 
 | 模块 | 职责 |
 |---|---|
-| harness-api | API 1.6 服务、事件、会话、模型、工作区、策略和执行环境契约 |
+| harness-api | API 1.9 服务、事件、会话、模型、工作区、策略和执行环境契约 |
 | harness-events | 异步通知、串行事件、拦截链与诊断 |
 | harness-plugin | 精确作用域注册、静态装配、依赖与生命周期 |
 | harness-session | 内存/JSONL、单写者、查询、分叉、迁移、恢复、请求重建、检查点与产物 |
@@ -124,11 +124,15 @@ Loop 只依赖公共 API；CLI 通过 AgentLoopFactory 服务选择实现。插�
 
 ## M8.1 检索过滤
 
-顶层 `searchFilter` 配置统一用于经典 CLI、生态入口/serve 和本地/Docker 环境：默认排除→根 `.gitignore`→用户有序规则，可分别关闭前两层。支持目录/glob/否定规则，`.git`、`.jharness` 和路径/链接保护不受覆盖；显式 grep 同样过滤，直接读取仍按原授权处理。过滤不是秘密隔离。具体语法、上限、SDK 构造与示例见 [检索过滤配置](docs/examples/m8-search-filter.md)。M8.1 已通过 Windows 269 项全量回归与真实 Docker 过滤对照/默认环境回归，见 [M8 验收](docs/testing/M8-validation.md)。M8.2 只读调度见下节，M8.3 横切插件尚未实现，M8 整阶段仍在推进。
+顶层 `searchFilter` 配置统一用于经典 CLI、生态入口/serve 和本地/Docker 环境：默认排除→根 `.gitignore`→用户有序规则，可分别关闭前两层。支持目录/glob/否定规则，`.git`、`.jharness` 和路径/链接保护不受覆盖；显式 grep 同样过滤，直接读取仍按原授权处理。过滤不是秘密隔离。具体语法、上限、SDK 构造与示例见 [检索过滤配置](docs/examples/m8-search-filter.md)。M8.1 已通过 Windows 269 项全量回归与真实 Docker 过滤对照/默认环境回归，见 [M8 验收](docs/testing/M8-validation.md)。M8.2 只读调度见下节，M8.3 模型限流/重试见下节，M8 整阶段仍在推进。
 
 ## M8.2 只读工具调度
 
-顶层 `toolScheduling` 默认串行，显式 `readonly-parallel` 可启用宿主白名单内、注册 READ_ONLY 且策略直接 ALLOW 的工具并行。并发上限 1～8，结果按原调用顺序聚合，写入、命令和 ASK 审批先等待前面读取结算。取消/超时触发中断，仍未退出的工作线程记录 UNKNOWN；不重放未知结果。经典 CLI、SDK、生态入口/serve 共用调度插件，dry-run 与旧管线保持串行。配置、扩展及线程安全要求见 [只读调度](docs/examples/m8-tool-scheduling.md)，实际验证见 [M8 验收](docs/testing/M8-validation.md)。API/SDK 协议为 1.8，JSONL/schema 仍为 1；旧构造保留串行默认。
+顶层 `toolScheduling` 默认串行，显式 `readonly-parallel` 可启用宿主白名单内、注册 READ_ONLY 且策略直接 ALLOW 的工具并行。并发上限 1～8，结果按原调用顺序聚合，写入、命令和 ASK 审批先等待前面读取结算。取消/超时触发中断，仍未退出的工作线程记录 UNKNOWN；不重放未知结果。经典 CLI、SDK、生态入口/serve 共用调度插件，dry-run 与旧管线保持串行。配置、扩展及线程安全要求见 [只读调度](docs/examples/m8-tool-scheduling.md)，实际验证见 [M8 验收](docs/testing/M8-validation.md)。API/SDK 协议为 1.9，JSONL/schema 仍为 1；旧构造保留串行默认。
+
+## M8.3 模型限流与重试
+
+顶层 `modelResilience` 默认关闭；启用后在同一作用域内限制请求间隔和等待者数量，仅对明确收到的非流式429作有限退避。每次尝试独立准备、预留费用、落盘及校验请求；UNKNOWN、超时、断流及工具调用不重放。标准插件唯一拥有重试次数，避免与适配器内层重试叠加，取消和卸载可停止等待。配置、SDK兼容构造及限制见 [模型限流与重试](docs/examples/m8-model-resilience.md)；M8.4整阶段收口另行推进。
 
 ## 开发记录
 

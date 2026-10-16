@@ -1,0 +1,55 @@
+{
+  "milestone" : "M8.1",
+  "result" : "SUCCESS",
+  "actualDocker" : true,
+  "image" : "eclipse-temurin@sha256:ccbad9e7cb84c27092b12c40a4143e5733e050db9c3784d84f632dcf423fb2ef",
+  "cases" : [ {
+    "local" : {
+      "grepPaths" : [ "cache/keep.txt" ],
+      "explicitReadRetained" : true,
+      "metadataAndTraversalDenied" : true,
+      "paths" : [ "cache/keep.txt", "hidden.txt", "target/out.txt", "visible.txt", "中文 空格/nested.txt" ],
+      "isolatedViewMatches" : true,
+      "listMatchesSearch" : true
+    },
+    "configuration" : {
+      "useDefaultExcludes" : true,
+      "useGitignore" : true,
+      "rules" : [ "!hidden.txt", "!target/", "!cache/", "cache/*", "!cache/keep.txt" ]
+    },
+    "docker" : {
+      "grepPaths" : [ "cache/keep.txt" ],
+      "explicitReadRetained" : true,
+      "metadataAndTraversalDenied" : true,
+      "paths" : [ "cache/keep.txt", "hidden.txt", "target/out.txt", "visible.txt", "中文 空格/nested.txt" ],
+      "isolatedViewMatches" : true,
+      "listMatchesSearch" : true
+    }
+  }, {
+    "local" : {
+      "grepPaths" : [ "cache/drop.txt", "cache/keep.txt" ],
+      "explicitReadRetained" : true,
+      "metadataAndTraversalDenied" : true,
+      "paths" : [ "cache/drop.txt", "cache/keep.txt", "hidden.txt", "target/out.txt", "中文 空格/nested.txt" ],
+      "isolatedViewMatches" : true,
+      "listMatchesSearch" : true
+    },
+    "configuration" : {
+      "useDefaultExcludes" : false,
+      "useGitignore" : false,
+      "rules" : [ "/visible.txt" ]
+    },
+    "docker" : {
+      "grepPaths" : [ "cache/drop.txt", "cache/keep.txt" ],
+      "explicitReadRetained" : true,
+      "metadataAndTraversalDenied" : true,
+      "paths" : [ "cache/drop.txt", "cache/keep.txt", "hidden.txt", "target/out.txt", "中文 空格/nested.txt" ],
+      "isolatedViewMatches" : true,
+      "listMatchesSearch" : true
+    }
+  } ],
+  "cleanupVerified" : true,
+  "evidenceDirectory" : "D:\\Documents\\my projects\\J-Harness\\.build-cache\\m8.3-filter-probe\\filter-7b809ec3-dbac-4b38-9ac8-e4c780fd7f9b",
+  "capturedAt" : "2026-10-16T00:58:58.841448900Z",
+  "jarSha256" : "868e56d14b9af17eb3346bba0e1b3ee23ad77d4b20bac4c95a2bc0337d596d9a"
+}

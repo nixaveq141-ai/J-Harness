@@ -1,6 +1,6 @@
 # M8 验收记录
 
-日期：2026-10-15。M8.1/M8.2已完成本地实现和验收；M8整阶段进行中。下方M8.1记录是历史切片，最新证据见M8.2。
+日期：2026-10-16。M8.1/M8.2/M8.3已完成各自范围的实现与验收；M8整阶段待M8.4收口。下方M8.1/M8.2为历史切片，最新证据见M8.3。
 
 | 范围 | 验收内容 | 状态 |
 |---|---|---|
@@ -41,7 +41,7 @@ M8.1结束时下一步为M8.2：先定义可替换只读工具调度的并发、
 
 ## M8.2 实际结果与验收矩阵
 
-最终Windows命令 `.\mvnw.cmd -B clean verify` 于2026-10-15通过：280项，0失败、0错误、0跳过，含格式、Java21 `-Xlint:all -Werror` 和最终CLI打包。新增11项：M8SchedulingTest八项、M8SchedulingConfigTest两项、M8FilterIntegrationTest新增dry-run一项；原有集成用例同时增加经典/生态CLI的并行配置和日志断言。结构化记录为 [M8-results.json](M8-results.json)，slice=M8.2，原始日志 `.build-cache/M8.2-verify.log`。M8.1的269项原样保存在独立JSON，M7历史结果不覆盖。
+最终Windows命令 `.\mvnw.cmd -B clean verify` 于2026-10-15通过：280项，0失败、0错误、0跳过，含格式、Java21 `-Xlint:all -Werror` 和最终CLI打包。新增11项：M8SchedulingTest八项、M8SchedulingConfigTest两项、M8FilterIntegrationTest新增dry-run一项；原有集成用例同时增加经典/生态CLI的并行配置和日志断言。结构化记录为 [M8.2-results.json](M8.2-results.json)，slice=M8.2，原始日志 `.build-cache/M8.2-verify.log`。M8.1的269项原样保存在独立JSON，M7历史结果不覆盖。
 
 | 范围 | 实际验证 | 结果 |
 |---|---|---|
@@ -72,3 +72,35 @@ M8.1结束时下一步为M8.2：先定义可替换只读工具调度的并发、
 ```
 
 API/SDK升级1.8，JSONL/schema仍1，旧构造/旧管线兼容串行。使用FakeLlm及本机HTTP替身，无付费请求；没有新增Linux全量、macOS、远端CI、前端或Desktop证据。宿主启用的工具及执行/结果拦截器须线程安全并符合只读契约；框架不能隔离任意Java插件或强杀不合作线程。默认串行不设置并行读取期限，SDK可设置50ms～60秒，CLI为整数1～60秒。下一步M8.3限流/重试插件，其后M8.4收口；M8整阶段未完成。
+
+## M8.3 实际结果（2026-10-16）
+
+最终 Windows `.\mvnw.cmd -B clean verify` 通过295项，0失败/错误/跳过，包含Spotless、Java21 `-Xlint:all -Werror`和最终CLI打包。新增15项：M8ResilienceTest十三项、M8ResilienceConfigTest两项。结构化证据 [M8-results.json](M8-results.json)，slice=M8.3；M8.2原280项证据原样归档 [M8.2-results.json](M8.2-results.json)。原始全量日志 `.build-cache/M8.3-verify.log`，专项 `.build-cache/M8.3-targeted.log`，历史核实兼容复验 `.build-cache/M8.3-compatibility.log`。
+
+| 范围 | 实际验证 | 结果 |
+|---|---|---|
+| 默认与所有权 | 默认无新增重试；旧适配器显式429退避仍保留；插件对legacyRetries=3的适配器只发送所需2次，独占重试次数 | 通过 |
+| 次数/时间/费用 | maxAttempts含首次，429次数耗尽；费用保留上界后阻止下一发送；总期限包含退避及合作发送，间隔有实际时间断言 | 通过 |
+| 限流资源/取消 | latch固定一个执行中和一个等待者，第三调用立即拒绝；取消等待主体0次；退避取消不再发送；关闭打断间隔等待 | 通过 |
+| UNKNOWN | 传输未知、超时、断流和伪造MODEL_RATE_LIMIT普通错误均只发送一次、无拒绝事实，SDK再次运行拒绝 | 通过 |
+| 持久化/重建 | 请求checkpoint失败发送0次，拒绝事实flush失败不再重试；每个尝试拥有独立model.requested，可由对应日志前缀重建 | 通过 |
+| 作用域/卸载/替换 | 注入替代ModelExecution服务，卸载后保留扩展引用不能执行；标准服务close拒绝后续请求并停止等待 | 通过 |
+| 多尝试恢复 | model.rejected只结算精确requestEventId；旧请求核实不能清除新请求；历史无sourceEvent格式仅唯一未决时兼容 | 通过 |
+| 配置/跨入口 | 非法字段/类型/范围、插件禁用、Profile整对象覆盖；经典/生态CLI真实HTTP的429→重试→读取→完成与脱敏 | 通过 |
+| 全量回归 | M0～M8.2，包含审批、版本、取消、恢复、压缩、SSE、只读调度与进程边界 | 通过 |
+
+首次全量发现历史model.verified仅带stepId的两处恢复用例被新精确关联规则阻断；保留原断言，补回仅唯一未决时的兼容并复验通过。失败日志保留 `.build-cache/M8.3-verify-attempt1.log`。主动Web夹具首次仍用旧请求序号定位工具结果，新增429使序号偏移；修正定位但保留顺序/wire/次数断言，失败日志 `.build-cache/M8.3-resilience-probe-attempt1.log`。夹具文件换行触发的格式失败亦保留 `.build-cache/M8.3-verify-format-attempt.log`；最终格式与全量均通过，不将失败尝试计作通过。
+
+## M8.3 最终制品本地 / Docker
+
+[M8.3-resilience-docker-results.json](M8.3-resilience-docker-results.json)：最终JAR启动真实CLI serve，经认证Web API→SDK在本地及实际Docker环境执行。每侧首先完整429拒绝一次、只重试一次，再进行并行模式读取、审批写入和完成；四次HTTP发送分别具备独立费用预留及prepared请求，与各自日志前缀重建的完整wire逐项相同。检查幂等提交、原序工具结果、拒绝/重试事件及环境关闭。本HTTP模型替身位于宿主，不把Docker network=none误称为禁止宿主模型网络。
+
+[M8.3-filter-regression.json](M8.3-filter-regression.json)：同一最终JAR复验两组本地/实际Docker过滤、子视图、直接读取授权、metadata/越权保护及容器清理。旧过滤夹具内部milestone=M8.1为历史标识，新文件/JAR SHA说明M8.3回归。两报告均SUCCESS、cleanupVerified=true；JAR SHA `868e56d14b9af17eb3346bba0e1b3ee23ad77d4b20bac4c95a2bc0337d596d9a`。固定镜像同M8.2；引擎未启动的准备阶段不算验收成功，启动并核实Engine后执行。
+
+```powershell
+& "$env:JAVA_HOME/bin/java.exe" -cp 'harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar;harness-testkit/target/test-classes;harness-testkit/target/classes' io.jharness.testkit.M8ResilienceDockerProbe DOCKER IMAGE_AT_SHA256 '.build-cache/m8.3-resilience-probe' 'harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar' 'docs/testing/M8.3-resilience-docker-results.json'
+& "$env:JAVA_HOME/bin/java.exe" -cp 'harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar;harness-testkit/target/test-classes;harness-testkit/target/classes' io.jharness.testkit.M8FilterDockerProbe DOCKER IMAGE_AT_SHA256 '.build-cache/m8.3-filter-probe' 'harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar' 'docs/testing/M8.3-filter-regression.json'
+.\scripts\collect-test-evidence.ps1 -Milestone M8 -Slice M8.3 -VerificationLog '.build-cache/M8.3-verify.log'
+```
+
+API/SDK1.9，JSONL/schema仍1；旧SDK构造保留，子任务重试独立且默认关闭。仅非流式429安全拒绝进入标准重试，工具/5xx/UNKNOWN不重放，任意自定义Java适配器仍须遵守合作取消契约。配置见 [模型限流与重试](../examples/m8-model-resilience.md)。没有付费模型请求、新Linux全量、macOS或远端CI证据；实际容器链路不等于Linux295项全量。下一步仅M8.4整阶段收口，前端/Desktop未提前推进。

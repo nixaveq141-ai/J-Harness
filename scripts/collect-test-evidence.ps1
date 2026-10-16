@@ -1,4 +1,4 @@
-param(
+﻿param(
     [ValidateSet('M0', 'M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'M7', 'M8')][string]$Milestone = 'M4',
     [string]$Slice = '',
     [string]$VerificationLog = '',
@@ -53,7 +53,7 @@ foreach ($buildFile in @('pom.xml', 'mvnw', 'mvnw.cmd', '.mvn/wrapper/maven-wrap
 
 $totals = [ordered]@{}
 if ($Milestone -eq 'M8') {
-    foreach ($entry in @('docs/development/M8-contracts.md', 'docs/examples/m8-filter-config.json', 'docs/examples/m8-scheduling-config.json', 'docs/examples/m8-tool-scheduling.md')) {
+    foreach ($entry in @('docs/development/M8-contracts.md', 'docs/examples/m8-filter-config.json', 'docs/examples/m8-scheduling-config.json', 'docs/examples/m8-tool-scheduling.md', 'docs/examples/m8-model-resilience.json', 'docs/examples/m8-model-resilience.md')) {
         $sources[$entry] = (Get-FileHash -LiteralPath (Join-Path $workspacePath $entry) -Algorithm SHA256).Hash.ToLowerInvariant()
     }
 }

@@ -17,16 +17,41 @@ public record SessionRecovery(
                 && pendingTerminals.isEmpty();
     }
 
+    /** Exact attempt identity, for manual verification when a step contains retries. */
+    public static boolean isRequestPending(List<SessionEvent> events, String requestEventId) {
+        return pendingRequestEvents(events).containsKey(requestEventId);
+    }
+
+    private static Map<String, String> pendingRequestEvents(List<SessionEvent> events) {
+        Map<String, String> requests = new LinkedHashMap<>();
+        for (var e : events) {
+            if (e.type().equals("model.requested")) requests.put(e.eventId(), e.stepId());
+            if (e.type().equals("assistant.message"))
+                requests.values().removeIf(step -> Objects.equals(step, e.stepId()));
+            if (e.type().equals("model.rejected") && "HTTP_429".equals(e.payload().get("reason")))
+                requests.remove(e.payload().get("requestEventId"), e.stepId());
+            if (e.type().equals("model.verified")) {
+                if (e.payload().containsKey("sourceEvent"))
+                    requests.remove(e.payload().get("sourceEvent"), e.payload().get("stepId"));
+                else if (requests.values().stream()
+                                .filter(step -> Objects.equals(step, e.payload().get("stepId")))
+                                .count()
+                        == 1)
+                    requests.values()
+                            .removeIf(step -> Objects.equals(step, e.payload().get("stepId")));
+            }
+        }
+        return requests;
+    }
+
     public static SessionRecovery inspect(List<SessionEvent> events) {
-        Set<String> calls = new LinkedHashSet<>(), requests = new LinkedHashSet<>();
+        Set<String> calls = new LinkedHashSet<>();
+        Map<String, String> requests = pendingRequestEvents(events);
         for (var e : events) {
             if (e.type().equals("assistant.message")
                     && e.payload().get("tool_calls") instanceof List<?> list)
                 for (Object call : list) calls.add((String) Values.object(call).get("id"));
             if (e.type().equals("tool.completed")) calls.remove(e.callId());
-            if (e.type().equals("model.requested")) requests.add(e.stepId());
-            if (e.type().equals("assistant.message")) requests.remove(e.stepId());
-            if (e.type().equals("model.verified")) requests.remove(e.payload().get("stepId"));
         }
         Map<String, String> terminalStates = new LinkedHashMap<>();
         for (var event : events) {
@@ -73,7 +98,7 @@ public record SessionRecovery(
                 projection.taskStatus(),
                 List.copyOf(uncertain),
                 List.copyOf(calls),
-                List.copyOf(requests),
+                requests.values().stream().distinct().toList(),
                 terminalStates.entrySet().stream()
                         .filter(e -> Set.of("RUNNING", "UNKNOWN").contains(e.getValue()))
                         .map(Map.Entry::getKey)

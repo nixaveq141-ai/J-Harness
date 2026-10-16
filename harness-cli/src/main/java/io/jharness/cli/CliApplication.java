@@ -544,7 +544,7 @@ public final class CliApplication {
                                         () ->
                                                 new HarnessException(
                                                         "REQUEST_NOT_FOUND", "Unknown request"));
-                if (!SessionRecovery.inspect(events).pendingRequests().contains(requested.stepId()))
+                if (!SessionRecovery.isRequestPending(events, requested.eventId()))
                     throw new HarnessException("VERIFICATION_NOT_REQUIRED", "Request is settled");
                 writer.append(
                         SessionEvent.session(
@@ -1401,6 +1401,7 @@ public final class CliApplication {
                         @Override
                         public void start(PluginContext context) {
                             context.register(ToolRegistry.class, "default", tools);
+                            context.register(SessionWriter.class, "default", writer);
                         }
 
                         @Override
@@ -1471,6 +1472,7 @@ public final class CliApplication {
                                     approvals),
                             new ToolsPlugin(clean),
                             new ToolSchedulingPlugin(config.scheduling()),
+                            new ModelResiliencePlugin(config.resilience()),
                             new LlmPlugin(model),
                             agentPlugin.apply(services));
             container =

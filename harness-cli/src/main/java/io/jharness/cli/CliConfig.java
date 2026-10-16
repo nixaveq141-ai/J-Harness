@@ -23,7 +23,8 @@ public final class CliConfig {
                     "agent-default",
                     "context-compaction",
                     "terminal-local",
-                    "tool-scheduling");
+                    "tool-scheduling",
+                    "model-resilience");
     static final Set<String> KEYS =
             Set.of(
                     "baseUrl",
@@ -56,7 +57,8 @@ public final class CliConfig {
                     "defaultProfile",
                     "ecosystem",
                     "searchFilter",
-                    "toolScheduling");
+                    "toolScheduling",
+                    "modelResilience");
     final Map<String, Object> values;
     final Map<String, Object> selection;
 
@@ -73,6 +75,10 @@ public final class CliConfig {
         this.values = Values.snapshot(values);
         searchFilter();
         scheduling();
+        resilience();
+        if (resilience().enabled() && !enabled().contains("model-resilience"))
+            throw new HarnessException(
+                    "INVALID_MODEL_RESILIENCE", "Model resilience plugin disabled");
         if (values.containsKey("ecosystem"))
             EcosystemConfig.validate(Values.object(values.get("ecosystem")));
         for (String name : List.of("baseUrl", "model", "apiKeyEnv", "currency", "defaultProfile"))
@@ -139,6 +145,10 @@ public final class CliConfig {
 
     WorkspaceSearchFilter searchFilter() {
         return WorkspaceSearchFilter.from(values.getOrDefault("searchFilter", Map.of()));
+    }
+
+    ModelResilienceOptions resilience() {
+        return ModelResilienceOptions.from(values.getOrDefault("modelResilience", Map.of()));
     }
 
     ToolSchedulingOptions scheduling() {
