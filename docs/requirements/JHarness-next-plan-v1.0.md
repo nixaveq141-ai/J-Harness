@@ -1,5 +1,7 @@
 # J-Harness 后续推进计划 v1.0
 
+2026-10-16补充：按用户要求完成M10设置增量（模型连接/API Key系统凭据库、插件与扩展入口）；Java313项、客户端8项、设置Chrome21项、原工作台28项、入口8项通过。M11尚未开始。范围与最新证据见[M10设置增量](../development/M10-settings.md)及[验收](../testing/M10-settings-validation.md)。基础M10验收是历史范围，不能覆盖本次改动。
+
 更新：2026-10-16。依据 [PRD v1.1](JHarness-PRD-v1.1.md)、[NFR / AC 顺序](JHarness-NFR-AC-sequence-v1.1.md) 和 [需求状态审计](../testing/requirements-status-2026-10-15.md)。
 
 本文件新增 M7 之后的实施排期，不改写 PRD，也不把延期项视为已经交付。M8～M12 是本次新增的管理编号；原 PRD 第10节仅定义 M0～M7。后续范围变化在本文件记录，再同步契约和能力对照。

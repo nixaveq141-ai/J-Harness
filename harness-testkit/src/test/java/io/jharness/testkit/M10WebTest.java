@@ -12,6 +12,75 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 class M10WebTest {
+    @Test
+    void settingsRequireOperatorAuthAndUnknownBindingBlocksMutation() throws Exception {
+        try (var host = new M10BrowserHost(root)) {
+            var saved = new java.util.concurrent.atomic.AtomicInteger();
+            host.server.settings(
+                    new io.jharness.web.HarnessWebServer.Settings() {
+                        public Map<String, Object> read() {
+                            return Map.of("revision", "fixture");
+                        }
+
+                        public Map<String, Object> save(Map<String, Object> input) {
+                            saved.incrementAndGet();
+                            return read();
+                        }
+                    });
+            var input =
+                    Map.of(
+                            "revision",
+                            "fixture",
+                            "models",
+                            List.of(),
+                            "selected",
+                            "default",
+                            "extensions",
+                            Map.of(),
+                            "apiKeys",
+                            Map.of());
+            assertEquals(401, request(host, "POST", "/v1/settings", input, false).statusCode());
+            assertEquals(
+                    403,
+                    request(
+                                    host,
+                                    "POST",
+                                    "/v1/settings",
+                                    input,
+                                    true,
+                                    "Origin",
+                                    "https://evil.invalid")
+                            .statusCode());
+            assertEquals(200, request(host, "GET", "/v1/settings", null, true).statusCode());
+            assertEquals(200, request(host, "POST", "/v1/settings", input, true).statusCode());
+            assertEquals(1, saved.get());
+            var task =
+                    object(
+                            request(
+                                    host,
+                                    "POST",
+                                    "/v1/tasks",
+                                    Map.of(
+                                            "profile",
+                                            "unknown",
+                                            "goal",
+                                            "fixture",
+                                            "requestId",
+                                            "settings-test"),
+                                    true));
+            String id = (String) task.get("taskId");
+            long deadline = System.nanoTime() + Duration.ofSeconds(5).toNanos();
+            while (!object(request(host, "GET", "/v1/tasks/" + id, null, true))
+                    .get("phase")
+                    .equals("UNKNOWN")) {
+                assertTrue(System.nanoTime() < deadline);
+                Thread.sleep(20);
+            }
+            assertEquals(409, request(host, "POST", "/v1/settings", input, true).statusCode());
+            assertEquals(1, saved.get());
+        }
+    }
+
     @TempDir Path root;
     private static final ObjectMapper JSON = new ObjectMapper();
     private final HttpClient client = HttpClient.newHttpClient();

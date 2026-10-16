@@ -1,5 +1,7 @@
 # 上游能力对照与 M7 范围决定
 
+2026-10-16最新M10增量：Web设置可管理模型连接/API URL/API Key（Windows系统凭据库）及Planning/压缩/MCP/Skills/只读子任务/网页来源配置。Java313项、客户端8项、设置Chrome21项、原工作台28项、启动器8项通过，插件已在真实任务中调用。证据见[M10设置验收](../testing/M10-settings-validation.md)。核心插件任意卸载、市场、热加载仍未实现；下面M7与基础M10记录保留各自历史范围。
+
 更新：2026-10-15。固定提交为 [c291e7961a515f6d7af9304e7fd1d257929aef26](https://github.com/deepseek-ai/deepseek-harness/commit/c291e7961a515f6d7af9304e7fd1d257929aef26)，不宣称为当前最新版本。
 
 本轮实际下载官方 codeload 固定提交归档，SHA256 为 `e268fe8bd0049cd77da25fd051cb06d71896d2b28ec1270bd5890e54fa70d42a`。Git 传输失败，未获得可核实 HEAD 的 checkout；归档取证不冒充 git rev-parse。已检查 19 个能力入口及相关声明，路径/SHA/行数见 [源码核验清单](../testing/M7-upstream-review.json)。这不是上游测试运行、全仓安全审计或 Cordis 格式/二进制兼容认证。

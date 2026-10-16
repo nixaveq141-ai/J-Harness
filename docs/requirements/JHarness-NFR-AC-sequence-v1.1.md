@@ -1,5 +1,7 @@
 # J-Harness NFR / AC 开发与测试推进顺序
 
+2026-10-16 M10设置增量已完成本地验收：可信操作者设置入口补齐模型/API URL/API Key（Windows系统凭据库）和插件配置，沿用FR-17/18/19、NFR-06及原权限/审批/UNKNOWN边界。Java313项、客户端8项、设置Chrome21项、原工作台28项、入口8项通过；最新证据见[M10设置验收](../testing/M10-settings-validation.md)。历史三平台与基础M10证据不重标，M11等待用户指令。
+
 依据：[JHarness-PRD-v1.1.md](./JHarness-PRD-v1.1.md) 第 8、10、11、13 节及关联 FR。
 
 本文是实施顺序建议，不修改需求基线。进度更新（2026-10-15）：M0～M7 选定范围的本地开发与验收已收口；最新 Windows / Linux 容器各 260 项测试通过，均 0 失败、0 错误、0 跳过，236 个 Java/POM 哈希一致。四组真实 Docker 结果覆盖执行环境/SDK、Skills、只读 Subagent 和最终打包 CLI/Web/SDK 联合链路。M4 的两种 Maven 示例重复真实 DeepSeek 验收为历史独立证据，不表示当前构建重新进行了付费模型验收。

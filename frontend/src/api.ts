@@ -11,12 +11,34 @@ export interface Approval {
   approvalId: string; callId: string; sessionId: string; tool: string
   arguments: Record<string, unknown>; sideEffectLevel: string
 }
+export interface ModelConnection {
+  id: string; label: string; baseUrl: string; model: string; apiKeyEnv: string; keyConfigured: boolean
+  pricing: Record<string, unknown>
+  disableThinking: boolean
+}
+export interface SettingsData {
+  revision: string; models: ModelConnection[]; selected: string; extensions: Record<string, unknown>
+  credentialStore: string; corePlugins: string[]; credentialCleanupPending: boolean
+}
+function settings(value: unknown): SettingsData {
+  const v = object(value)
+  if (!Array.isArray(v.models) || v.models.length < 1 || v.models.length > 16 || !Array.isArray(v.corePlugins)) throw new ApiError('INVALID_RESPONSE')
+  const models = v.models.map(raw => {
+    const m = object(raw)
+    if (typeof m.keyConfigured !== 'boolean' || typeof m.disableThinking !== 'boolean') throw new ApiError('INVALID_RESPONSE')
+    return { id: identifier(m.id), label: text(m.label, 80), baseUrl: text(m.baseUrl, 512), model: text(m.model, 128),
+      apiKeyEnv: text(m.apiKeyEnv, 128), keyConfigured: m.keyConfigured, pricing: object(m.pricing), disableThinking: m.disableThinking }
+  })
+  return { revision: text(v.revision, 64), models, selected: identifier(v.selected), extensions: object(v.extensions),
+    credentialStore: text(v.credentialStore), corePlugins: v.corePlugins.map(x => text(x)), credentialCleanupPending: v.credentialCleanupPending === true }
+}
 export class ApiError extends Error {
   constructor(public code: string, public status = 0) { super(code) }
 }
 const errors = new Set(['UNAUTHORIZED', 'LOCAL_CLIENT_REQUIRED', 'UNKNOWN_CURSOR', 'STREAM_LIMIT',
   'STALE_APPROVAL', 'WORKSPACE_BUSY', 'TASK_LIMIT', 'ACTIVE_LIMIT', 'SUBMISSION_NOT_FOUND',
-  'SUBMISSION_NOT_CONFIRMED', 'REQUEST_ID_CONFLICT', 'DIFF_NOT_RECORDED', 'RESPONSE_LIMIT', 'NOT_FOUND'])
+  'SUBMISSION_NOT_CONFIRMED', 'REQUEST_ID_CONFLICT', 'DIFF_NOT_RECORDED', 'RESPONSE_LIMIT', 'NOT_FOUND',
+  'SETTINGS_CONFLICT', 'INVALID_SETTINGS', 'SECRET_CONFIG', 'CREDENTIAL_STORE_UNAVAILABLE', 'API_KEY_MISSING', 'INVALID_CONFIG', 'COST_BUDGET_UNAVAILABLE'])
 export function object(value: unknown): Record<string, unknown> {
   if (typeof value !== 'object' || value === null || Array.isArray(value)) throw new ApiError('INVALID_RESPONSE')
   return value as Record<string, unknown>
@@ -54,6 +76,10 @@ export function mergeEvents(old: SessionEvent[], incoming: SessionEvent[]): Sess
 export const isTerminal = (t: Task) => ['FINISHED', 'UNKNOWN', 'VERIFIED'].includes(t.phase)
 export const uncertain = (t: Task) => t.phase === 'UNKNOWN' || t.status === 'UNKNOWN'
 export class Api {
+  async settings() { return settings(await this.json('/v1/settings')) }
+  async saveSettings(value: SettingsData, apiKeys: Record<string, string>) {
+    return settings(await this.json('/v1/settings', { revision: value.revision, models: value.models, selected: value.selected, extensions: value.extensions, apiKeys }))
+  }
   constructor(private token: string, private fetcher: typeof fetch = fetch) {
     if (!/^[A-Za-z0-9_-]{32,256}$/.test(token)) throw new ApiError('INVALID_TOKEN')
   }
@@ -62,7 +88,7 @@ export class Api {
     const onAbort = () => abort.abort()
     if (signal?.aborted) abort.abort()
     signal?.addEventListener('abort', onAbort, { once: true })
-    const timer = setTimeout(() => abort.abort(), 12000)
+    const timer = setTimeout(() => abort.abort(), path === '/v1/settings' ? 45000 : 12000)
     try {
       const fetcher = this.fetcher
       const response = await fetcher(path, { method: body === undefined ? 'GET' : 'POST',

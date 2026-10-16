@@ -1,0 +1,9 @@
+{
+  "status": "FAILED_FIXTURE_CLEANUP",
+  "description": "Product assertions completed; browser fixture called held response twice in finally. Kept as failed attempt, fixed fixture and reran acceptance.",
+  "files": {
+    ".build-cache/M10-settings-browser-first-attempt.log": "5ef403d0928b05cf7d5839708918ec2f88e99d3ca1fa2eb2fb83179871504cb1",
+    ".build-cache/M10-settings-browser-first-attempt.json": "b94f1f607ac61e20602808caa65a46b456fb457250fff370efe6134cd9f4aa44"
+  },
+  "jarLockAttempt": "Initial clean failed on old running JAR; no separate raw log retained. User closed service; final full clean verify passed."
+}

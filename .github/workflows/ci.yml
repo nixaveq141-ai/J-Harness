@@ -61,6 +61,10 @@ jobs:
       - name: Verify Windows workbench launcher
         if: runner.os == 'Windows'
         run: python scripts/test-open-workbench.py
+      - name: Verify Windows workbench settings and system credentials
+        if: runner.os == 'Windows'
+        working-directory: frontend
+        run: npm run test:settings
       - name: Validate release gates and install candidate
         shell: bash
         run: |
@@ -92,5 +96,6 @@ jobs:
             target/candidate-sha256.txt
             .build-cache/M10-browser-results.json
             .build-cache/M10-launcher-results.json
+            .build-cache/M10-settings-browser-results.json
             .build-cache/M10-browser-*.json
             .build-cache/M10-*.png

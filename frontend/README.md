@@ -1,5 +1,9 @@
 # J-Harness Web 工作台
 
+连接后点击左侧「设置」管理模型连接及插件扩展，见[使用说明](../docs/examples/web-ui-settings.md)。Windows API Key使用当前用户Credential Manager持久保存，不在浏览器保存/回显。非秘密设置独立保存到工作区元数据；设置只影响后续新任务，运行/UNKNOWN占用时不能修改。
+
+Windows新增`npm run test:settings`：使用实际CLI JAR、系统凭据库、Chrome/Playwright与loopback模型替身验证模型/插件设置、重启、脱敏和草稿保护，最终清理合成凭据；不使用付费服务。与原浏览器测试一样，需要先build并完成Maven打包，已安装Chrome时设置JHARNESS_BROWSER_CHANNEL=chrome。当前验收见[M10设置验收](../docs/testing/M10-settings-validation.md)。
+
 React 18 / TypeScript / Vite。视觉与基础控件沿用用户指定的 DeepSeek Harness，来源、原始 SHA 和修改标志见 upstream.json，原始 MIT 见 LICENSE-DeepSeek-Harness.txt。参考项目目录不参与安装、构建或运行。
 
 ## 构建与启动

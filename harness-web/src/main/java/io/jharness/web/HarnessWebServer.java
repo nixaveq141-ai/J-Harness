@@ -14,6 +14,22 @@ import java.util.concurrent.*;
 
 /** Local single-operator HTTP adapter. All execution capabilities come from trusted profiles. */
 public final class HarnessWebServer implements AutoCloseable {
+    /** Trusted operator settings; mutations are serialized with task admission. */
+    public interface Settings {
+        Map<String, Object> read() throws IOException;
+
+        Map<String, Object> save(Map<String, Object> input) throws IOException;
+
+        default void prepareTask() throws IOException {}
+    }
+
+    private Settings settings;
+
+    public synchronized void settings(Settings value) {
+        if (settings != null) throw new IllegalStateException("Settings already attached");
+        settings = Objects.requireNonNull(value);
+    }
+
     @FunctionalInterface
     public interface SdkFactory {
         HarnessSdk open(String sessionId, ApprovalService approvals, DataSanitizer sanitizer)
@@ -166,7 +182,11 @@ public final class HarnessWebServer implements AutoCloseable {
     }
 
     private void handle(HttpExchange exchange) {
-        var deadline = deadlines.schedule(exchange::close, 10, TimeUnit.SECONDS);
+        var deadline =
+                deadlines.schedule(
+                        exchange::close,
+                        exchange.getRequestURI().getPath().equals("/v1/settings") ? 40 : 10,
+                        TimeUnit.SECONDS);
         try (exchange) {
             try {
                 if (!exchange.getRequestHeaders()
@@ -215,6 +235,33 @@ public final class HarnessWebServer implements AutoCloseable {
         String method = exchange.getRequestMethod();
         var path = exchange.getRequestURI().getPath().split("/", -1);
         var query = query(exchange);
+        if (Arrays.equals(path, new String[] {"", "v1", "settings"}) && query.isEmpty()) {
+            synchronized (this) {
+                if (settings == null) throw fault(404, "NOT_FOUND");
+                if (method.equals("GET")) {
+                    respond(exchange, 200, settings.read());
+                } else if (method.equals("POST")) {
+                    var input =
+                            body(
+                                    exchange,
+                                    Set.of(
+                                            "revision",
+                                            "models",
+                                            "selected",
+                                            "extensions",
+                                            "apiKeys"));
+                    if (!occupied.isEmpty()) throw fault(409, "WORKSPACE_BUSY");
+                    try {
+                        respond(exchange, 200, settings.save(input));
+                    } catch (HarnessException ex) {
+                        throw fault(ex.code().equals("SETTINGS_CONFLICT") ? 409 : 400, ex.code());
+                    } catch (IllegalArgumentException ex) {
+                        throw fault(400, "INVALID_SETTINGS");
+                    }
+                } else throw fault(405, "METHOD_NOT_ALLOWED");
+            }
+            return;
+        }
         if (method.equals("GET") && query.isEmpty()) {
             if (Arrays.equals(path, new String[] {"", "v1", "info"})) {
                 respond(
@@ -453,6 +500,15 @@ public final class HarnessWebServer implements AutoCloseable {
         }
         var selected = profiles.get(profile);
         if (selected == null) throw fault(400, "UNKNOWN_PROFILE");
+        if (settings != null) {
+            try {
+                settings.prepareTask();
+            } catch (HarnessException ex) {
+                throw fault(400, ex.code());
+            } catch (IOException ex) {
+                throw fault(503, "CREDENTIAL_STORE_UNAVAILABLE");
+            }
+        }
         if (tasks.size() >= maxTasks || occupied.size() >= maxActive)
             throw fault(429, "TASK_LIMIT");
         if (occupied.contains(selected.workspaceBinding())) throw fault(409, "WORKSPACE_BUSY");

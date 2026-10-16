@@ -318,17 +318,26 @@ final class EcosystemCli {
         if (args.positional.size() != 1 || args.has("session")) Arguments.fail();
         var web = Values.object(ecosystem.getOrDefault("web", Map.of()));
         String token = environment.get(EcosystemConfig.text(web, "tokenEnv", "JHARNESS_WEB_TOKEN"));
+        var settings =
+                new WorkbenchSettings(config, environment, metadata, new SystemCredentials());
         var profile =
                 new HarnessWebServer.Profile(
                         workspace.toString(),
                         sessions,
-                        (id, approvals, sanitizer) ->
-                                open(
-                                        id,
-                                        args,
-                                        approvals,
-                                        sanitizer,
-                                        new PrintStream(OutputStream.nullOutputStream())));
+                        (id, approvals, sanitizer) -> {
+                            var runtime = settings.runtime();
+                            return new EcosystemCli(
+                                            runtime.config(),
+                                            runtime.environment(),
+                                            workspace,
+                                            metadata)
+                                    .open(
+                                            id,
+                                            args,
+                                            approvals,
+                                            sanitizer,
+                                            new PrintStream(OutputStream.nullOutputStream()));
+                        });
         try (var server =
                         new HarnessWebServer(
                                 EcosystemConfig.number(web, "port", 0, 65535),
@@ -336,12 +345,15 @@ final class EcosystemCli {
                                 Map.of("default", profile),
                                 new JsonlSessionRepository(metadata.directory("web")),
                                 EcosystemConfig.text(web, "catalogId", "web-catalog"),
-                                new SecretRedactor(secrets),
+                                data ->
+                                        settings.sanitize(
+                                                new SecretRedactor(secrets).sanitize(data)),
                                 1,
                                 EcosystemConfig.number(web, "maxTasks", 32, 32),
                                 Duration.ofSeconds(
                                         EcosystemConfig.number(web, "approvalSeconds", 30, 60)));
                 var input = new TerminalInput(stdin)) {
+            server.settings(settings);
             var hook = new Thread(server::close, "web-cli-shutdown");
             Runtime.getRuntime().addShutdownHook(hook);
             try {

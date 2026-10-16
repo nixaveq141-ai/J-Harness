@@ -1,4 +1,32 @@
 /* J-Harness data bindings and responsive composition over the original DSH theme. */
+.settings-page { flex: 1; min-height: 0; overflow-y: auto; padding: 28px clamp(16px, 4vw, 56px); }
+.settings-heading, .settings-list-heading, .settings-save, .extension-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.settings-heading { margin-bottom: 24px; }
+.settings-heading h2 { font-size: 22px; margin: 0; }
+.settings-heading p { margin-bottom: 0; }
+.settings-models { display: grid; grid-template-columns: minmax(160px, 230px) minmax(0, 560px); gap: 32px; margin-top: 28px; }
+.settings-connection { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; width: 100%; text-align: left; padding: 14px 10px; border-radius: 10px; margin-top: 5px; }
+.settings-connection small { width: 100%; color: var(--dsw-alias-label-tertiary); overflow-wrap: anywhere; }
+.settings-connection:hover, .settings-connection.selected { background: var(--dsw-alias-bg-layer-3); }
+.settings-connection:active { background: var(--dsw-alias-interactive-bg-active); }
+.connection-editor { border: 0; margin: 0; padding: 0; min-width: 0; }
+.connection-editor label, .extension-config label { display: grid; gap: 8px; margin: 0 0 18px; }
+.connection-editor label > span { width: 100%; }
+.connection-editor select { background: var(--dsw-alias-bg-base); color: inherit; padding: 10px; border: 1px solid var(--dsw-alias-border-l3); border-radius: 8px; }
+.field-help { color: var(--dsw-alias-label-secondary); font-size: 12px; margin: -8px 0 20px; }
+.settings-actions, .settings-save > div { display: flex; flex-wrap: wrap; gap: 8px; }
+.settings-actions { margin-top: 24px; }
+.settings-page summary { cursor: pointer; padding: 12px 0; font-weight: 550; }
+.settings-extensions { max-width: 850px; padding-top: 18px; }
+.extension-row, .extension-config { padding: 14px 0; border-bottom: 1px solid var(--dsw-alias-border-l3); }
+.extension-row h3 { font-size: 15px; margin: 0; }
+.extension-row p { margin-bottom: 0; }
+.settings-check { display: flex !important; align-items: center; gap: 8px !important; white-space: nowrap; }
+.settings-check input { width: 18px; height: 18px; accent-color: var(--dsw-alias-state-business-primary); }
+.extension-config textarea { width: 100%; resize: vertical; min-height: 130px; border: 1px solid var(--dsw-alias-border-l3); border-radius: 8px; padding: 12px; background: var(--dsw-alias-bg-layer-3); color: inherit; font-family: var(--ds-font-family-code); font-size: 13px; }
+.core-plugins { display: flex; flex-wrap: wrap; gap: 8px; }
+.settings-save { margin-top: 32px; padding: 20px 0; border-top: 1px solid var(--dsw-alias-border-l3); font-size: 12px; }
+@media (max-width: 900px) { .settings-models { grid-template-columns: 1fr; gap: 24px; } .settings-heading, .settings-save, .extension-row { align-items: flex-start; flex-wrap: wrap; } }
 * { box-sizing: border-box; }
 html, body, #root { height: 100%; margin: 0; }
 body { font-family: var(--dsw-font-family); color: var(--dsw-alias-label-primary); background: var(--dsw-alias-bg-base); font-size: 14px; }

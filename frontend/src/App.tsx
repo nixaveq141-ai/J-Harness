@@ -5,6 +5,7 @@ import { Input } from './upstream/Input'
 import { Tag } from './upstream/Tag'
 import { SegmentedTabs, type SegmentedTab } from './upstream/SegmentedTabs'
 import { TextShimmer } from './upstream/TextShimmer'
+import { Settings } from './Settings'
 import frameCss from './upstream/AppFrame.module.css'
 import sidebarCss from './upstream/SidebarRoot.module.css'
 import { clampWidth, SIDEBAR_DEFAULT, SIDEBAR_MIN, SIDEBAR_MAX } from './upstream/columns'
@@ -14,6 +15,7 @@ const labels: Record<string, string> = { ACCEPTED: '已接收', RUNNING: '进行
   DENIED: '已拒绝', LIMIT_REACHED: '达到限制', UNKNOWN: '结果待核实', VERIFIED: '已离线核实', CREATED: '已创建' }
 const errorLabels: Record<string, string> = {
   UNAUTHORIZED: '连接凭据无效或已更换，请重新连接。', INVALID_TOKEN: '请输入 32～256 位的有效连接凭据。',
+  API_KEY_MISSING: '默认模型尚未配置 API Key，请打开设置补充密钥。',
   LOCAL_CLIENT_REQUIRED: '请求未通过本机同源检查，请使用服务输出的原始地址。',
   CONNECTION_LOST: '连接中断。读取可以重连；任务提交不会自动重发。',
   UNKNOWN_CURSOR: '事件游标已失效，已暂停续读。请点击“重载历史”。',
@@ -61,6 +63,8 @@ const tabs: [SegmentedTab<Inspector>, ...SegmentedTab<Inspector>[]] = [
 ]
 
 export function App() {
+  const [settingsOpen, setSettingsOpen] = useState(false)
+  const [settingsGuard, setSettingsGuard] = useState(false)
   const [api, setApi] = useState<Api | null>(null), [token, setToken] = useState('')
   const [connecting, setConnecting] = useState(false), [profiles, setProfiles] = useState<string[]>([])
   const [profile, setProfile] = useState(''), [tasks, setTasks] = useState<Task[]>([])
@@ -83,8 +87,8 @@ export function App() {
   useEffect(() => { if (autoScroll.current) listEnd.current?.scrollIntoView({ block: 'nearest' }) }, [events.length])
   const updateTask = useCallback((task: Task) => setTasks(old => [task, ...old.filter(t => t.taskId !== task.taskId)]), [])
   const toggleSidebar = () => { setAnimating(true); setSideOpen(v => !v); setTimeout(() => setAnimating(false), 320) }
-  const selectTask = (id: string) => { setSelected(id); setFocusedEvent(null); autoScroll.current = true; setError('') }
-  const disconnect = () => { generation.current++; setApi(null); setToken(''); setTasks([]); setEvents([]); setApprovals([]); setFocusedEvent(null); setError(''); setLive('已断开') }
+  const selectTask = (id: string) => { if (settingsGuard) return; setSettingsOpen(false); setSelected(id); setFocusedEvent(null); autoScroll.current = true; setError('') }
+  const disconnect = () => { generation.current++; setSettingsOpen(false); setApi(null); setToken(''); setTasks([]); setEvents([]); setApprovals([]); setFocusedEvent(null); setError(''); setLive('已断开') }
   useEffect(() => {
     if (!api) return
     const abort = new AbortController()
@@ -182,7 +186,10 @@ export function App() {
       storage('jh-pending', ''); setPending('')
       if (currentApi.current !== api) return
       updateTask(t); selectTask(t.taskId); setGoal('')
-    } catch (e) { if (currentApi.current === api) setError(errorText(e) + ' 请核对本次提交状态。') }
+    } catch (e) { if (currentApi.current === api) {
+      if (e instanceof ApiError && e.code === 'API_KEY_MISSING') { storage('jh-pending', ''); setPending(''); setError(errorText(e)) }
+      else setError(errorText(e) + ' 请核对本次提交状态。')
+    } }
     finally { createLock.current = false; setSubmitting(false) }
   }
   async function reconcile() {
@@ -216,18 +223,18 @@ export function App() {
     <aside className={`${frameCss.sidebarCol} navigation`} aria-label="任务导航">
       <div className={`${sidebarCss.root} nav-inner`}>
         <div className="brand-row"><span className="brand-mark" aria-hidden="true">J</span><strong className="nav-expanded">J-Harness</strong><Button aria-label={sideOpen ? '收起任务导航' : '展开任务导航'} title="切换导航" className="nav-toggle" onClick={toggleSidebar}><Icon name="panel" /></Button></div>
-        <Button className="new-task" onClick={() => selectTask('')} icon={<Icon name="plus" />}><span className="nav-expanded">新建任务</span></Button>
+        <Button className="new-task" disabled={settingsGuard} onClick={() => selectTask('')} icon={<Icon name="plus" />}><span className="nav-expanded">新建任务</span></Button>
         <div className="nav-expanded nav-filter"><Input aria-label="筛选任务" placeholder="搜索任务 ID 或状态" icon={<Icon name="search" />} value={filter} onChange={e => setFilter(e.target.value)} /></div>
         <div className="nav-expanded section-label">最近任务 <span>{tasks.length}</span></div>
         <nav className="task-list nav-expanded" aria-label="最近任务">
-          {tasks.filter(t => `${t.taskId} ${t.profile} ${labels[t.status] ?? t.status}`.toLowerCase().includes(filter.toLowerCase())).map(t => <button key={t.taskId} className={`task-item ${selected === t.taskId ? 'selected' : ''}`} aria-current={selected === t.taskId ? 'page' : undefined} onClick={() => selectTask(t.taskId)}>
+          {tasks.filter(t => `${t.taskId} ${t.profile} ${labels[t.status] ?? t.status}`.toLowerCase().includes(filter.toLowerCase())).map(t => <button disabled={settingsGuard} key={t.taskId} className={`task-item ${selected === t.taskId ? 'selected' : ''}`} aria-current={selected === t.taskId ? 'page' : undefined} onClick={() => selectTask(t.taskId)}>
             <span className="task-name"><Icon name="file" /><span>任务 {t.taskId.slice(0, 8)}</span></span><span className="task-subline">{t.profile}<Status value={t} /></span>
           </button>)}
           {api && tasks.length === 0 && <p className="muted nav-empty">还没有任务。<br />创建后会在这里保留记录。</p>}
           {!api && <p className="muted nav-empty">连接本机服务后<br />查看任务记录。</p>}
         </nav>
-        <div className="nav-footer"><Button onClick={() => setDark(v => !v)} aria-label={dark ? '切换浅色主题' : '切换深色主题'} icon={<Icon name="moon" />}><span className="nav-expanded">{dark ? '浅色主题' : '深色主题'}</span></Button>
-          <div className="nav-expanded connection-state"><span className={`connection-dot ${api ? 'online' : ''}`} />{api ? '本机服务已连接' : '尚未连接'}{api && <button className="text-button" onClick={disconnect}>断开</button>}</div>
+        <div className="nav-footer"><Button aria-label="工作台设置" title="工作台设置" disabled={!api} onClick={() => { setSettingsOpen(true); setInspectorOpen(false); if (window.matchMedia('(max-width: 760px)').matches) setSideOpen(false) }} icon={<Icon name="panel" />}><span className="nav-expanded">设置</span></Button><Button onClick={() => setDark(v => !v)} aria-label={dark ? '切换浅色主题' : '切换深色主题'} icon={<Icon name="moon" />}><span className="nav-expanded">{dark ? '浅色主题' : '深色主题'}</span></Button>
+          <div className="nav-expanded connection-state"><span className={`connection-dot ${api ? 'online' : ''}`} />{api ? '本机服务已连接' : '尚未连接'}{api && <button disabled={settingsGuard} className="text-button" onClick={disconnect}>断开</button>}</div>
           <a className="nav-expanded license-link" href="/ui-license.txt" target="_blank" rel="noreferrer">开源许可</a></div>
       </div>
     </aside>
@@ -240,7 +247,7 @@ export function App() {
       {!api ? <section className="welcome connection-page"><div className="intro-symbol">J</div><h2>连接你的工作台</h2><p>在浏览器中创建任务、查看执行过程，并决定每一步操作。</p>
         <form onSubmit={e => void connect(e)} className="connection-form"><label htmlFor="token">本机连接凭据</label><Input id="token" type="password" autoComplete="off" spellCheck={false} value={token} onChange={e => setToken(e.target.value)} placeholder="输入 JHARNESS_WEB_TOKEN" required maxLength={256} />
           <Button variant="primary" type="submit" disabled={connecting}>{connecting ? '正在连接…' : '连接本机服务'}</Button></form><p className="small muted">凭据仅保留在本页内存中，刷新后需要重新连接。</p></section>
-        : <>
+        : settingsOpen ? <Settings api={api} onBack={() => setSettingsOpen(false)} onGuardChange={setSettingsGuard} /> : <>
           {pending && <div className="pending-banner" role="status"><div><strong>本次提交待核对</strong><p>为避免重复执行，已暂停创建。核对操作只读取后台记录。</p></div><Button variant="outline" disabled={!!busy || submitting} onClick={() => void reconcile()}>核对提交状态</Button>
             <button className="text-button" disabled={submitting || !!busy} onClick={() => { if (window.confirm('这只清除本页待核对记录，后台任务可能仍在执行。确定已检查任务列表并清除？')) { storage('jh-pending', ''); setPending('') } }}>清除本页记录</button></div>}
           {!selected ? <section className="welcome"><div className="intro-symbol">J</div><h2>今天，想完成什么？</h2><p>描述目标，让 J-Harness 在你的工作区中协助完成。</p><div className="suggestions">{['阅读项目结构，梳理模块职责', '检查最近的修改，指出潜在问题', '分析一个问题，并提出修复方案'].map(s => <button key={s} onClick={() => setGoal(s)}><Icon name="file" />{s}<Icon name="chevron" /></button>)}</div></section>

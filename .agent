@@ -4,6 +4,8 @@
 
 ## 当前接续状态
 
+- 2026-10-16 M10设置增量已完成本地验收：左侧设置提供模型连接增删改/默认选择、API URL/模型名/系统凭据Key、独立费用及thinking参数；插件页提供Planning/压缩开关和MCP/Skills/只读子任务/网页来源配置。Windows Credential Manager重启读回，密钥不进配置/响应/浏览器存储，运行/UNKNOWN占用拒绝修改，缺Key在任务受理前拒绝。Java313项零失败/错误/跳过、客户端8项、设置Chrome21项、原工作台Chrome28项、入口8项通过，同一最终JAR与267份Java/POM哈希见M10-settings-results.json及M10-settings-validation.md。没有付费请求、远端CI/推送/发布；原M10结果保留历史。M11等待用户指令。
+
 - 2026-10-16 M10便捷入口增量：用户要求入口名不使用中文，新增Windows根目录web-ui.cmd（英文），自动就绪检查/打开浏览器/复制token；只修改启动脚本与说明，Java及UI业务代码保持已验收版本。新增真实启动器验收见M10-launcher-results.json，基础M10结果保留历史；本轮仍只本地提交。
 - 2026-10-16 M10本地约定范围已完成：React/TS/Vite同源工作台沿用只读DeepSeek Harness视觉/控件，Java307项零失败/错误/跳过、客户端8项、实际Chrome28项通过；263个Java/POM及前端来源/最终JAR哈希见M10-results.json/M10-browser-results.json。M10远端CI尚未执行，未推送或发布。下一步M11等待用户指令。
 - M10实施前历史评估（2026-10-16）：用户提供的deepseek-harness目录严格只读；建议按文件提取基础组件/主题/布局逻辑，任务/事件/审批/认证适配J-Harness；完整前端不可仅改API地址。见docs/development/M10-frontend-reuse-review.md及来源SHA清单。尚未移植代码或开始M10实现，未宣称浏览器验证通过。
@@ -56,7 +58,7 @@
 - JSONL 强制落盘及容量/节点边界不放宽；未来格式拒写，中段损坏拒绝，尾修复/迁移先备份再原子替换。搜索/投影是派生缓存，不成为事实来源。
 - 文件/命令/cwd 属于同一环境，保持相对路径、穿越/链接/保留名拒绝、版本依据与原子覆盖。Docker 不支持 PTY，不能回退宿主。
 - 精确 PluginScope 隔离，停止/失败逆序撤销资源和注册；子任务只读、父是唯一写者、独立会话/模型/预算/观察缓存。关闭子任务不能关闭父环境或父审批服务。
-- key/token 只从环境取得，日志/报告/产物/流式展示统一脱敏；不能进入命令环境。命令环境仅明确白名单，POSIX 保留 LANG/LC_ALL/LC_CTYPE 并在缺省时设 LANG=C.UTF-8。
+- key/token默认从环境取得；2026-10-16用户明确授权Web设置的模型密钥由系统凭据库持久保存，可信宿主读取后仅注入SDK内存，不写明文配置或浏览器存储。日志/报告/产物/流式展示统一脱敏；不能进入工具命令环境。命令环境仅明确白名单，POSIX保留LANG/LC_ALL/LC_CTYPE并在缺省时设LANG=C.UTF-8。
 - 完成由实际证据判断，区分 SUCCESS/FAILED/DENIED/CANCELLED/TIMEOUT/UNKNOWN，不以模型说明或计划批准替代执行。
 - 输入/输出/事件/任务/等待/清理均有界。本地进程清理仍为 ProcessHandle 采样，不能宣传 Job Object 或 OS 隔离。Docker 安全属性按实测描述；MCP/网页宿主网络不受 Docker network=none 限制。
 - Web 固定 loopback/单操作者 Bearer，catalog 幂等与绑定占用仅在该 catalog 域内。VERIFY 不证明任意不合作线程已停止；必须先停止旧宿主、检查真实资源和 SDK 未决事实。

@@ -1,5 +1,7 @@
 # J-Harness
 
+Web工作台新增「设置」入口：可添加/修改/删除模型连接、API URL和API Key并选择默认连接；密钥按用户选择保存在Windows凭据管理器，重启后可用。「插件与扩展」提供Planning、上下文压缩以及MCP/Skills等配置入口。详见[使用说明](docs/examples/web-ui-settings.md)与[增量验收](docs/testing/M10-settings-validation.md)。
+
 基于 Java 21 的可扩展 Agent Harness，需求基线为 [PRD v1.1](docs/requirements/JHarness-PRD-v1.1.md)。M0～M7 的本地实现范围和验收见各阶段记录，M7 最新计数与源码版本见 [收口记录](docs/testing/M7-closure.md)；CLI、持久化与恢复、SSE、上下文压缩、PTY/后台任务、多模型路线与命名配置组合已贯通。真实 DeepSeek 验收及费用证据见 [M4 验收记录](docs/testing/M4-validation.md)。M9源码的Windows/Linux/macOS远端CI历史证据见[M9验收](docs/testing/M9-validation.md)。M10新增Web工作台已完成本地验收，见[M10记录](docs/testing/M10-validation.md)。
 
 ## 构建与启动
@@ -31,7 +33,7 @@ cd ..
 .\jharness.cmd --config docs/examples/m7-config.json serve
 ```
 
-serve前按已有说明设置模型凭据与JHARNESS_WEB_TOKEN，浏览器打开输出的127.0.0.1地址并输入同一Web token。token仅保留在页面内存，刷新重新连接。页面不会因刷新/断线重提任务；UNKNOWN需按现有CLI流程离线核实。本机serve需保持宿主运行，EOF或退出关闭。当前浏览器证据不代表已完成新版本的远端三平台验证。
+手动serve前设置JHARNESS_WEB_TOKEN，浏览器打开输出的127.0.0.1地址并输入同一Web token。模型密钥可在连接后的设置页保存到系统凭据库，也可继续使用配置指定的环境变量。Web token仅保留在页面内存，刷新重新连接。页面不会因刷新/断线重提任务；UNKNOWN需按现有CLI流程离线核实。本机serve需保持宿主运行，EOF或退出关闭。当前浏览器证据不代表已完成新版本的远端三平台验证。
 
 ## 模型配置与交互
 
