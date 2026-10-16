@@ -17,7 +17,7 @@
 
 1. README.md：能力、启动与限制。
 2. docs/requirements/JHarness-PRD-v1.1.md 与 JHarness-NFR-AC-sequence-v1.1.md：需求/阶段顺序，不擅自用实施文档替换 PRD。
-3. docs/development/M7-contracts.md、docs/testing/M7-validation.md、M7-closure.md：当前接口/验收/发布门禁。
+3. docs/development/M7-contracts.md、docs/testing/M7-validation.md、M7-closure.md：M7基础接口及历史验收/发布边界；M8扩展与当前门禁以第8项为准。
 4. docs/testing/M7-results.json、M7-linux-results.json：实际全量计数、平台与源码 SHA。
 5. docs/testing/M7-docker-results.json、M7-skills-docker-results.json、M7-subagent-docker-results.json、M7-web-docker-results.json：四类最终打包实机结果；必须核对最终 JAR SHA 一致。
 6. docs/requirements/upstream-capabilities.md、docs/testing/M7-upstream-review.json：固定提交的范围取舍及 19 个源码入口 SHA。
@@ -82,6 +82,8 @@ Docker CLI 为 C:/Users/Lenovo/AppData/Local/Programs/DockerDesktop/resources/bi
 
 M7 范围收口完成；延期或部分支持项目不算已实现。后续默认顺序已更新为M8核心缺口→M9发布验证→M10 Web前端→M11 Desktop，M12为按需扩展候选；M9本地准备可提前。下一次用户要求继续时，从M9本地发布准备开始；M8.1～M8.4已完成所选范围收口。详细范围以 docs/requirements/JHarness-next-plan-v1.0.md 为准。没有Git remote时不自行建仓/推送，不因计划存在就开始付费模型调用或发布。
 
+以下带日期的小节保留各次工作的历史快照；其中“下一步”表示当时接续，当前入口以上方当前状态和最新M8.4接续为准。
+
 ## 2026-10-15 PRD / 实施顺序审计
 
 对照结果见 docs/testing/requirements-status-2026-10-15.md。M0～M7 选定范围的本地验收已收口，不等于全部 PRD 实现或完整发布 DoD。FR-25 自动工具并行/通用重试限流、FR-27 Desktop、图片与文件过滤细节等仍有缺口；其他允许延期项见上游表。CI 仅已配置、未执行；PRD13第8条未闭合。已修正顺序文档开头旧的“M7进行中/251项”，未改 PRD 或产品代码。此次仅静态审计与现有证据哈希复核，未重新跑测试。
@@ -131,3 +133,5 @@ M8专项35项先通过，最终Windows `.\mvnw.cmd -B clean verify` 与固定JDK
 M8只按约定范围收口，不等于PRD全功能/发布完成：完整gitignore、工具重试、强杀不合作Java线程/Job Object、前端/Desktop等保持既有限制/延期。无付费模型请求、远端CI/macOS/正式发布；Linux仅Docker内全量，不冒充原生Linux桌面或独立WSL认证。
 
 下一步M9：先做本地workflow/启动器/平台支持声明及许可、依赖清单等发布准备；远端CI需要用户明确仓库目标与相应授权，不自行建仓、推送、发布。M10前端/M11 Desktop不提前推进。按长期授权完成本地提交。
+
+2026-10-16文档一致性复核：M8-validation、当前状态及推进计划已确认更新；补正NFR/AC顺序文档执行安排中遗漏的“M8.2尚未开始”旧句，标明历史快照与当前接续的区别。仅文档修订，无产品代码/测试改动；当前仍为M8收口完成、下一步M9本地准备。
