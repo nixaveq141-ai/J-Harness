@@ -1,0 +1,44 @@
+{
+  "run": {
+    "id": 38856550794,
+    "head_sha": "00a66862ccbb33fac68a52543a885087f88eb4fe",
+    "html_url": "https://github.com/nixaveq141-ai/J-Harness/actions/runs/38856550794",
+    "status": "completed",
+    "conclusion": "failure",
+    "created_at": "2026-10-16T05:35:16Z",
+    "updated_at": "2026-10-16T05:38:48Z"
+  },
+  "jobs": [
+    {
+      "id": 116829194207,
+      "name": "verify (ubuntu-latest)",
+      "html_url": "https://github.com/nixaveq141-ai/J-Harness/actions/runs/38856550794/job/116829194207",
+      "status": "completed",
+      "conclusion": "success"
+    },
+    {
+      "id": 116829194364,
+      "name": "verify (windows-latest)",
+      "html_url": "https://github.com/nixaveq141-ai/J-Harness/actions/runs/38856550794/job/116829194364",
+      "status": "completed",
+      "conclusion": "failure"
+    },
+    {
+      "id": 116829194391,
+      "name": "verify (macos-latest)",
+      "html_url": "https://github.com/nixaveq141-ai/J-Harness/actions/runs/38856550794/job/116829194391",
+      "status": "completed",
+      "conclusion": "success"
+    }
+  ],
+  "failure": "Hosted Windows real offline Wrapper repair fixture spent its first 20-second command deadline without output and returned TIMEOUT; Linux/macOS whole gates passed but are not combined with another commit",
+  "fix": "prepare the real existing Maven3.9.9 Wrapper cache and native launcher first, using the same minimal process environment; retain 20-second command and 45-second agent budget and all compile-fail/repair/compile-success assertions",
+  "windowsLogSha256": "afbba07f7799b2bfc61b84762116d591daf8a8914701a5a7a8ef635a30c7ed57",
+  "localRelatedTests": {
+    "tests": 9,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "logSha256": "e6ccfbdbab1a2400972e72de5d1e6070ad4d749b12df64093c887a2d0f017704"
+  }
+}

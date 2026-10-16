@@ -337,6 +337,44 @@ class M3RuntimeIntegrationTest {
             String version = f.files.versionOf(new ExecPath("src/main/java/Broken.java"));
             Path repo = Path.of("..").toRealPath();
             boolean windows = System.getProperty("os.name").startsWith("Windows");
+            if (windows) {
+                // The offline scenario starts with a prepared Wrapper cache. Warm the native
+                // PowerShell/.NET launcher separately instead of spending the agent's unchanged
+                // 20-second command deadline on hosted Windows first-start initialization.
+                Path preparationLog = temporary.resolve("wrapper-ready.log");
+                var preparation =
+                        new ProcessBuilder(
+                                        "cmd.exe",
+                                        "/d",
+                                        "/s",
+                                        "/c",
+                                        "call \"" + repo.resolve("mvnw.cmd") + "\" -B -o --version")
+                                .directory(f.root.toFile())
+                                .redirectErrorStream(true)
+                                .redirectOutput(preparationLog.toFile());
+                preparation.environment().clear();
+                preparation.environment().putAll(LocalProcessRunner.buildEnvironment());
+                preparation.environment().put("MVNW_VERBOSE", "true");
+                Process ready = preparation.start();
+                try {
+                    assertTrue(
+                            ready.waitFor(60, TimeUnit.SECONDS), "Wrapper preparation timed out");
+                    byte[] preparationBytes = Files.readAllBytes(preparationLog);
+                    int nulBytes = 0;
+                    for (byte value : preparationBytes) if (value == 0) nulBytes++;
+                    var diagnosticEncoding =
+                            nulBytes > preparationBytes.length / 4
+                                    ? java.nio.charset.StandardCharsets.UTF_16LE
+                                    : java.nio.charset.Charset.forName(
+                                            System.getProperty("native.encoding", "UTF-8"));
+                    String diagnostic = new String(preparationBytes, diagnosticEncoding);
+                    assertEquals(0, ready.exitValue(), diagnostic);
+                    assertTrue(diagnostic.contains("Apache Maven 3.9.9"), diagnostic);
+                    assertTrue(diagnostic.contains("found existing MAVEN_HOME"), diagnostic);
+                } finally {
+                    ready.destroyForcibly();
+                }
+            }
             List<String> command =
                     windows
                             ? List.of("call \"" + repo.resolve("mvnw.cmd") + "\" -B -o compile")

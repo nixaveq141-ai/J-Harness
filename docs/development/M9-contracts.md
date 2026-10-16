@@ -37,3 +37,7 @@ M9第二轮macOS已通过进程/取消控制测试，进一步发现M7ClosureTes
 M9第二轮进一步定位：Windows JUnit原始XML确认子Java启动器已把中文argv转成??（Cp1252），不是输出解码；按OpenJDK21 CP_ACP实现，Windows参数边界测试改用支持Unicode的PowerShell -File原生接收器，中文/空格/&/;及退出码/双流断言不变。Linux暴露真实Subagent取消事件竞争：子任务先观察共享token结束，父线程直接取完成结果时漏记cancel_requested。现于父线程等待前/结果取得后记录一次已观察的取消请求，保留单次CAS、UNKNOWN和不重放语义；原失败回归重复10次，预计全量305项，尚待验证。
 
 M9复验修复就绪：进程/搜索/子任务相关38项通过（取消事实原回归重复10次），原断言全部保留。Windows Unicode argv接收器最终采用临时编译的.NET原生exe；直接Shell接收器按产品ARGV防护被拒绝的本地失败日志保留。Java21 CP_ACP限制不冒称被产品修复，产品Shell保护未改。父线程取消事实竞争已修复；准备第三轮同提交全量，预计305项。第二轮失败与原始日志SHA见M9-ci-second-attempt.json。
+
+M9第三轮：Linux/macOS305项及扫描、安装、恢复全流程通过，Windows已通过中文及取消回归，剩余实际Wrapper失败→修复→重建夹具在首个20秒命令期限内零输出超时。新增Windows离线前置准备：相同最小环境运行真实Wrapper --version，确认已有缓存及固定Maven3.9.9，单独完成PowerShell/.NET冷启动；代理内20秒命令/45秒总预算和失败→修复→真实重建断言均保持。第三轮失败日志保留.build-cache/M9-job-116829194364.log，继续同提交三平台复验，不拼接通过结果。
+
+M9第四轮准备：Windows真实Wrapper前置缓存/版本/原生启动核验及原编译失败→修复→重建流程的9项专项通过，20秒/45秒原限额未改。前置日志按Windows实际UTF-16/本机编码识别，开发中的两次日志解码失败保留.build-cache/M9-wrapper-prep*-targeted.log。第三轮运行与失败SHA已归档M9-ci-third-attempt.json；继续同一新提交三平台完整复验。
