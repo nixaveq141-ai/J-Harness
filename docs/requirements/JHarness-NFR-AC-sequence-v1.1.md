@@ -1,5 +1,7 @@
 # J-Harness NFR / AC 开发与测试推进顺序
 
+2026-10-17：M10入口按用户要求改为无需填写本机连接凭据。自动会话仍保留本机同源边界、统一脱敏及原任务/UNKNOWN规则，Java314项、客户端9项、Chrome工作台28项/设置21项、启动器8项通过；见[M10直接入口验收](../testing/M10-auto-validation.md)。旧平台结果保留历史，M11未开始。
+
 2026-10-16 M10设置增量已完成本地验收：可信操作者设置入口补齐模型/API URL/API Key（Windows系统凭据库）和插件配置，沿用FR-17/18/19、NFR-06及原权限/审批/UNKNOWN边界。Java313项、客户端8项、设置Chrome21项、原工作台28项、入口8项通过；最新证据见[M10设置验收](../testing/M10-settings-validation.md)。历史三平台与基础M10证据不重标，M11等待用户指令。
 
 依据：[JHarness-PRD-v1.1.md](./JHarness-PRD-v1.1.md) 第 8、10、11、13 节及关联 FR。

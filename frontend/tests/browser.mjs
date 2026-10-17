@@ -16,6 +16,7 @@ const host = spawn(java, ['-Dfile.encoding=UTF-8', '-cp', cp, 'io.jharness.testk
 let hostOutput = ''; host.stdout.on('data', d => { hostOutput += d }); host.stderr.on('data', d => { hostOutput += d })
 const wait = ms => new Promise(r => setTimeout(r, ms))
 const checks = [], screenshots = [], errors = [], requests = []
+const browserCredentials = new Set()
 let browser, base, context, page
 const check = (name, detail = true) => { assert.ok(detail, name); checks.push({ name, passed: true }); console.log('PASS', name) }
 async function until(predicate, timeout = 15000) {
@@ -33,12 +34,13 @@ try {
   context = await browser.newContext({ viewport: { width: 1440, height: 960 }, acceptDownloads: true })
   page = await context.newPage()
   page.on('pageerror', e => errors.push(e.message))
+  page.on('response', r => { if (new URL(r.url()).pathname === '/v1/browser-session') void r.json().then(v => browserCredentials.add(v.token)).catch(() => {}) })
   page.on('request', r => { if (r.url().includes('/v1/')) requests.push({ method: r.method(), path: new URL(r.url()).pathname }) })
   async function screenshot(name) {
     const p = join(out, `M10-${name}.png`); await page.screenshot({ path: p, fullPage: true }); screenshots.push(p)
   }
   const createCount = () => requests.filter(r => r.method === 'POST' && r.path === '/v1/tasks').length
-  async function connect() { await page.getByLabel('本机连接凭据').fill(token); await page.getByRole('button', { name: '连接本机服务', exact: true }).click(); await page.locator('.connection-state').filter({ hasText: '本机服务已连接' }).waitFor() }
+  async function connect() { await page.locator('.connection-state').filter({ hasText: '本机服务已连接' }).waitFor() }
   async function newTask(profile, goal) {
     await page.getByRole('button', { name: '新建任务', exact: true }).click()
     await page.getByLabel('任务配置').selectOption(profile)
@@ -50,10 +52,8 @@ try {
   async function ended(id) { await until(async () => ['FINISHED', 'UNKNOWN', 'VERIFIED'].includes((await api(`/v1/tasks/${id}`)).body.phase)) }
   await page.goto(base)
   await screenshot('connection')
-  await page.getByLabel('本机连接凭据').fill('invalid_token_0123456789_ABCDEFGHIJKLMNOPQRSTUVWXYZ')
-  await page.getByRole('button', { name: '连接本机服务', exact: true }).click()
-  await page.getByRole('alert').filter({ hasText: '凭据无效' }).waitFor()
-  check('invalid credentials do not connect or create a task', createCount() === 0)
+  const invalid = await context.request.get(base + '/v1/info', { headers: { Authorization: 'Bearer invalid_token_0123456789_ABCDEFGHIJKLMNOPQRSTUVWXYZ' } })
+  check('invalid API credentials rejected while browser enters automatically', invalid.status() === 401 && createCount() === 0 && await page.getByLabel('本机连接凭据').count() === 0)
   await connect(); await screenshot('welcome')
   const separator = page.getByRole('separator', { name: '调整导航宽度' })
   const width = Number(await separator.getAttribute('aria-valuenow'))
@@ -107,10 +107,10 @@ try {
   check('in-flight query cannot mix changed keywords with an old cursor')
   check('full sanitized session query reads real events')
   const countBeforeRefresh = createCount()
-  await page.reload(); await page.getByLabel('本机连接凭据').waitFor()
-  assert.equal(await page.getByLabel('本机连接凭据').inputValue(), '')
+  await page.reload(); await connect()
+  assert.equal(await page.getByLabel('本机连接凭据').count(), 0)
   await connect(); await page.getByText('已同步全部记录', { exact: true }).waitFor()
-  check('refresh requires authentication and never resubmits task', createCount() === countBeforeRefresh)
+  check('refresh automatically reconnects and never resubmits task', createCount() === countBeforeRefresh)
   const deniedId = await newTask('write', '拒绝本次文件操作')
   await page.getByRole('button', { name: '拒绝', exact: true }).waitFor()
   await page.getByRole('button', { name: '拒绝', exact: true }).click(); await ended(deniedId)
@@ -179,7 +179,8 @@ try {
   await page.getByText('大事件正文已省略，仅保留摘要和哈希。', { exact: true }).first().waitFor()
   check('large payload omission is visible')
   const stored = await page.evaluate(() => JSON.stringify({ local: { ...localStorage }, session: { ...sessionStorage } }))
-  check('token absent from URL, storage, page text and downloaded report', !stored.includes(token) && !page.url().includes(token) && !(await page.locator('body').innerText()).includes(token) && !JSON.stringify(report).includes(token))
+  const visible = await page.locator('body').innerText()
+  check('token absent from URL, storage, page text and downloaded report', browserCredentials.size > 0 && [token, ...browserCredentials].every(secret => typeof secret === 'string' && !stored.includes(secret) && !page.url().includes(secret) && !visible.includes(secret) && !JSON.stringify(report).includes(secret)))
   await page.getByRole('button', { name: '切换深色主题', exact: true }).click()
   assert.equal(await page.locator('body').getAttribute('data-ds-dark-theme'), '')
   await screenshot('dark')

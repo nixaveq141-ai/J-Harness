@@ -8,11 +8,11 @@ React 18 / TypeScript / Vite。视觉与基础控件沿用用户指定的 DeepSe
 
 ## 构建与启动
 
-Windows已构建后的便捷入口：双击仓库根目录`web-ui.cmd`，自动打开浏览器并把Web连接凭据复制到剪贴板；在页面粘贴连接。无需手动生成token或复制端口。说明与自定义工作区参数见docs/examples/web-ui-launcher.md。
+Windows已构建后的便捷入口：双击仓库根目录`web-ui.cmd`，自动打开浏览器并直接进入工作台；不显示凭据输入框、不改剪贴板。无需手动生成token或复制端口。说明与自定义工作区参数见docs/examples/web-ui-launcher.md。
 
 需要 Node 22.20.1+ 或24、npm、JDK21；先在本目录执行 `npm ci`、`npm test`、`npm run build`，再在仓库根目录执行 `./mvnw -B clean verify`（Windows使用mvnw.cmd）。Maven将dist内容嵌入harness-web和CLI JAR；运行二进制不需要Node。
 
-按docs/examples/m7-cli.md配置模型/工具/工作区；设置JHARNESS_WEB_TOKEN后运行 `jharness serve`（Windows使用jharness.cmd）。在浏览器打开输出的 `http://127.0.0.1:端口/`，输入同一Web token连接。token只驻留页面内存；刷新后重新输入，绝不拼入URL。
+按docs/examples/m7-cli.md配置模型/工具/工作区；设置JHARNESS_WEB_TOKEN后运行 `jharness serve`（Windows使用jharness.cmd）。在浏览器打开输出的 `http://127.0.0.1:端口/`，页面通过同源自动会话连接；刷新自动重连，无需输入Web token。会话只驻留页面内存，不进入URL或Web Storage。
 
 标准serve仍保持可信宿主配置、权限与审批。任务目标不能更改模型地址、工作区或工具白名单。页面没有自动重试任务和在线解除UNKNOWN的入口；取消是请求，不代表撤销已发生操作。未记录Diff时明确展示缺失；事实报告/产物引用来自日志，不自动读取文件或执行Git。
 

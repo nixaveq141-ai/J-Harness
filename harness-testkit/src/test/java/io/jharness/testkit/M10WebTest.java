@@ -13,6 +13,71 @@ import org.junit.jupiter.api.io.TempDir;
 
 class M10WebTest {
     @Test
+    void browserSessionIsAutomaticButRequiresExactBrowserOrigin() throws Exception {
+        try (var host = new M10BrowserHost(root)) {
+            String origin = host.server.address().toString();
+            assertEquals(
+                    403,
+                    request(host, "POST", "/v1/browser-session", Map.of(), false).statusCode());
+            for (String site : List.of("same-site", "cross-site", "none"))
+                assertEquals(
+                        403,
+                        request(
+                                        host,
+                                        "POST",
+                                        "/v1/browser-session",
+                                        Map.of(),
+                                        false,
+                                        "Origin",
+                                        origin,
+                                        "Sec-Fetch-Site",
+                                        site)
+                                .statusCode());
+            assertEquals(
+                    403,
+                    request(
+                                    host,
+                                    "POST",
+                                    "/v1/browser-session",
+                                    Map.of(),
+                                    false,
+                                    "Origin",
+                                    "https://evil.invalid",
+                                    "Sec-Fetch-Site",
+                                    "same-origin")
+                            .statusCode());
+            var result =
+                    request(
+                            host,
+                            "POST",
+                            "/v1/browser-session",
+                            Map.of(),
+                            false,
+                            "Origin",
+                            origin,
+                            "Sec-Fetch-Site",
+                            "same-origin");
+            assertEquals(200, result.statusCode());
+            assertEquals("no-store", result.headers().firstValue("Cache-Control").orElseThrow());
+            String token = (String) object(result).get("token");
+            assertNotEquals(M10BrowserHost.TOKEN, token);
+            assertEquals(
+                    200,
+                    request(
+                                    host,
+                                    "GET",
+                                    "/v1/info",
+                                    null,
+                                    false,
+                                    "Authorization",
+                                    "Bearer " + token)
+                            .statusCode());
+            assertEquals(401, request(host, "GET", "/v1/info", null, false).statusCode());
+            assertEquals(0, host.opened.get());
+        }
+    }
+
+    @Test
     void settingsRequireOperatorAuthAndUnknownBindingBlocksMutation() throws Exception {
         try (var host = new M10BrowserHost(root)) {
             var saved = new java.util.concurrent.atomic.AtomicInteger();

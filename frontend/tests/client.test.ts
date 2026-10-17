@@ -3,6 +3,19 @@ import assert from 'node:assert/strict'
 import { Api, ApiError, mergeEvents, task, type SessionEvent } from '../src/api.ts'
 
 const token = 'test_token_0123456789_ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+test('browser connection obtains an in-memory session without user input', async () => {
+  const calls: { path: string; init: RequestInit }[] = []
+  const api = await Api.connect((async (path, init) => {
+    calls.push({ path: String(path), init: init! })
+    return json(String(path) === '/v1/browser-session' ? { token } : { profiles: ['default'], protocolVersion: '1.9' })
+  }) as typeof fetch)
+  assert.deepEqual((await api.info()).profiles, ['default'])
+  assert.equal(calls[0]!.path, '/v1/browser-session')
+  assert.equal(calls[0]!.init.method, 'POST')
+  assert.equal(calls[0]!.init.body, '{}')
+  assert.equal(new Headers(calls[1]!.init.headers).get('Authorization'), `Bearer ${token}`)
+  assert.ok(calls.every(c => !c.path.includes(token)))
+})
 const event: SessionEvent = { eventId: 'event_1', type: 'assistant.message', timestamp: '2026-10-16T00:00:00Z', callId: null, payload: { content: '<script>window.injected=true</script>' } }
 const row = { taskId: 'task_1', profile: 'default', phase: 'RUNNING', status: 'RUNNING',
   error: '', cancelRequested: false, recovered: false, protocolVersion: '1.9' }

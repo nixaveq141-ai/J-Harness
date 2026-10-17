@@ -1,5 +1,7 @@
 # J-Harness 后续推进计划 v1.0
 
+2026-10-17：按用户要求完成M10直接入口增量，移除本机凭据手动输入和剪贴板复制，自动进入及刷新重连。Java314项、客户端9项、工作台28项/设置21项、入口8项通过，见[M10直接入口验收](../testing/M10-auto-validation.md)。M11未开始，先前证据保留历史，无推送或发布。
+
 2026-10-16补充：按用户要求完成M10设置增量（模型连接/API Key系统凭据库、插件与扩展入口）；Java313项、客户端8项、设置Chrome21项、原工作台28项、入口8项通过。M11尚未开始。范围与最新证据见[M10设置增量](../development/M10-settings.md)及[验收](../testing/M10-settings-validation.md)。基础M10验收是历史范围，不能覆盖本次改动。
 
 更新：2026-10-16。依据 [PRD v1.1](JHarness-PRD-v1.1.md)、[NFR / AC 顺序](JHarness-NFR-AC-sequence-v1.1.md) 和 [需求状态审计](../testing/requirements-status-2026-10-15.md)。

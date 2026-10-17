@@ -18,7 +18,7 @@ Linux 构建为 `sh ./mvnw -B verify`，启动为 `sh ./jharness --help`；Windo
 
 ## 浏览器任务工作台（M10）
 
-Windows快捷入口：在项目目录双击 [`web-ui.cmd`](web-ui.cmd)。脚本自动启动本机服务、打开默认浏览器并复制连接凭据；在页面粘贴并连接即可。保持启动窗口打开，输入`:quit`停止。优先使用工作区已有`.jharness/config.json`，否则使用DeepSeek示例配置；模型Key沿用所选配置的环境变量，不写入启动脚本。详见[入口说明](docs/examples/web-ui-launcher.md)。
+Windows快捷入口：在项目目录双击 [`web-ui.cmd`](web-ui.cmd)。脚本自动启动本机服务、打开默认浏览器，页面自动进入工作台，无需输入本机连接凭据，也不再修改剪贴板。保持启动窗口打开，输入`:quit`停止。优先使用工作区已有`.jharness/config.json`，否则使用DeepSeek示例配置；模型Key沿用所选配置的环境变量，不写入启动脚本。详见[入口说明](docs/examples/web-ui-launcher.md)。
 
 视觉和基础交互沿用DeepSeek Harness，名称与业务接入属于J-Harness；参考目录只读。支持连接、任务创建/列表/详情、事件时间线与有限SSE、审批/拒绝/取消、记录型Diff、事实报告和脱敏会话查询。完整说明见[前端说明](frontend/README.md)和[M10契约](docs/development/M10-contracts.md)。
 
@@ -33,7 +33,7 @@ cd ..
 .\jharness.cmd --config docs/examples/m7-config.json serve
 ```
 
-手动serve前设置JHARNESS_WEB_TOKEN，浏览器打开输出的127.0.0.1地址并输入同一Web token。模型密钥可在连接后的设置页保存到系统凭据库，也可继续使用配置指定的环境变量。Web token仅保留在页面内存，刷新重新连接。页面不会因刷新/断线重提任务；UNKNOWN需按现有CLI流程离线核实。本机serve需保持宿主运行，EOF或退出关闭。当前浏览器证据不代表已完成新版本的远端三平台验证。
+手动serve前设置JHARNESS_WEB_TOKEN，浏览器打开输出的127.0.0.1地址后自动进入工作台。模型密钥可在连接后的设置页保存到系统凭据库，也可继续使用配置指定的环境变量。浏览器自动取得仅在内存中使用的本机会话，刷新自动重连，不把凭据放进URL或Web Storage。页面不会因刷新/断线重提任务；UNKNOWN需按现有CLI流程离线核实。本机serve需保持宿主运行，EOF或退出关闭。当前浏览器证据不代表已完成新版本的远端三平台验证。
 
 ## 模型配置与交互
 

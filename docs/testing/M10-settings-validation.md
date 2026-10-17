@@ -1,5 +1,7 @@
 # M10 设置增量验收
 
+2026-10-17后续入口改为无需输入本机凭据，设置与凭据库回归仍通过；当前Java314项、客户端9项、工作台28项、设置21项、入口8项，见[M10直接入口验收](M10-auto-validation.md)。本文313项结果保留为此前设置版本的历史。
+
 2026-10-16：本地验收通过。用户要求模型/API URL/API Key可在页面管理，插件有实际入口，并明确选择系统凭据库持久保存Key。使用说明见[web-ui-settings.md](../examples/web-ui-settings.md)，契约见[M10-settings.md](../development/M10-settings.md)。
 
 | 验收范围 | 结果与证据 |

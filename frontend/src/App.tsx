@@ -14,7 +14,7 @@ const labels: Record<string, string> = { ACCEPTED: '已接收', RUNNING: '进行
   FINISHED: '已结束', COMPLETED: '已完成', SUCCESS: '成功', FAILED: '失败', CANCELLED: '已取消',
   DENIED: '已拒绝', LIMIT_REACHED: '达到限制', UNKNOWN: '结果待核实', VERIFIED: '已离线核实', CREATED: '已创建' }
 const errorLabels: Record<string, string> = {
-  UNAUTHORIZED: '连接凭据无效或已更换，请重新连接。', INVALID_TOKEN: '请输入 32～256 位的有效连接凭据。',
+  UNAUTHORIZED: '本机会话已失效，请重新连接。',
   API_KEY_MISSING: '默认模型尚未配置 API Key，请打开设置补充密钥。',
   LOCAL_CLIENT_REQUIRED: '请求未通过本机同源检查，请使用服务输出的原始地址。',
   CONNECTION_LOST: '连接中断。读取可以重连；任务提交不会自动重发。',
@@ -65,7 +65,7 @@ const tabs: [SegmentedTab<Inspector>, ...SegmentedTab<Inspector>[]] = [
 export function App() {
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [settingsGuard, setSettingsGuard] = useState(false)
-  const [api, setApi] = useState<Api | null>(null), [token, setToken] = useState('')
+  const [api, setApi] = useState<Api | null>(null)
   const [connecting, setConnecting] = useState(false), [profiles, setProfiles] = useState<string[]>([])
   const [profile, setProfile] = useState(''), [tasks, setTasks] = useState<Task[]>([])
   const [selected, setSelected] = useState(() => storage('jh-selected'))
@@ -88,7 +88,6 @@ export function App() {
   const updateTask = useCallback((task: Task) => setTasks(old => [task, ...old.filter(t => t.taskId !== task.taskId)]), [])
   const toggleSidebar = () => { setAnimating(true); setSideOpen(v => !v); setTimeout(() => setAnimating(false), 320) }
   const selectTask = (id: string) => { if (settingsGuard) return; setSettingsOpen(false); setSelected(id); setFocusedEvent(null); autoScroll.current = true; setError('') }
-  const disconnect = () => { generation.current++; setSettingsOpen(false); setApi(null); setToken(''); setTasks([]); setEvents([]); setApprovals([]); setFocusedEvent(null); setError(''); setLive('已断开') }
   useEffect(() => {
     if (!api) return
     const abort = new AbortController()
@@ -167,15 +166,16 @@ export function App() {
     } })()
     return () => abort.abort()
   }, [api, selected, active?.phase])
-  async function connect(e: FormEvent) {
-    e.preventDefault(); if (connecting) return
+  useEffect(() => { void connect(); return () => { generation.current++ } }, [])
+  async function connect() {
+    if (connecting) return
     setConnecting(true); setError(''); const attempt = ++generation.current
     try {
-      const candidate = new Api(token.trim()), info = await candidate.info()
+      const candidate = await Api.connect(), info = await candidate.info()
       if (attempt !== generation.current) return
-      setProfiles(info.profiles); setProfile(info.profiles[0] ?? ''); setApi(candidate); setToken(''); setLive('已连接')
+      setProfiles(info.profiles); setProfile(info.profiles[0] ?? ''); setApi(candidate); setLive('已连接')
     } catch (e) { if (attempt === generation.current) setError(errorText(e)) }
-    finally { setConnecting(false) }
+    finally { if (attempt === generation.current) setConnecting(false) }
   }
   async function submit(e: FormEvent) {
     e.preventDefault(); if (!api || !goal.trim() || pending || createLock.current) return
@@ -234,7 +234,7 @@ export function App() {
           {!api && <p className="muted nav-empty">连接本机服务后<br />查看任务记录。</p>}
         </nav>
         <div className="nav-footer"><Button aria-label="工作台设置" title="工作台设置" disabled={!api} onClick={() => { setSettingsOpen(true); setInspectorOpen(false); if (window.matchMedia('(max-width: 760px)').matches) setSideOpen(false) }} icon={<Icon name="panel" />}><span className="nav-expanded">设置</span></Button><Button onClick={() => setDark(v => !v)} aria-label={dark ? '切换浅色主题' : '切换深色主题'} icon={<Icon name="moon" />}><span className="nav-expanded">{dark ? '浅色主题' : '深色主题'}</span></Button>
-          <div className="nav-expanded connection-state"><span className={`connection-dot ${api ? 'online' : ''}`} />{api ? '本机服务已连接' : '尚未连接'}{api && <button disabled={settingsGuard} className="text-button" onClick={disconnect}>断开</button>}</div>
+          <div className="nav-expanded connection-state"><span className={`connection-dot ${api ? 'online' : ''}`} />{api ? '本机服务已连接' : '尚未连接'}</div>
           <a className="nav-expanded license-link" href="/ui-license.txt" target="_blank" rel="noreferrer">开源许可</a></div>
       </div>
     </aside>
@@ -244,9 +244,7 @@ export function App() {
     <main id="main-content" className={`${frameCss.centerCol} main-column`}>
       <header className="topbar"><div className="task-heading"><h1>{taskTitle}</h1>{active && <Status value={active} />}</div><div className="top-actions"><span className="local-badge">本机工作台</span><Button aria-label={inspectorOpen ? '关闭任务详情' : '打开任务详情'} title="任务详情" onClick={() => setInspectorOpen(v => !v)}><Icon name="panel" /></Button></div></header>
       {error && <div className="error-banner" role="alert"><span>{error}</span><button aria-label="关闭提示" onClick={() => setError('')}><Icon name="close" /></button></div>}
-      {!api ? <section className="welcome connection-page"><div className="intro-symbol">J</div><h2>连接你的工作台</h2><p>在浏览器中创建任务、查看执行过程，并决定每一步操作。</p>
-        <form onSubmit={e => void connect(e)} className="connection-form"><label htmlFor="token">本机连接凭据</label><Input id="token" type="password" autoComplete="off" spellCheck={false} value={token} onChange={e => setToken(e.target.value)} placeholder="输入 JHARNESS_WEB_TOKEN" required maxLength={256} />
-          <Button variant="primary" type="submit" disabled={connecting}>{connecting ? '正在连接…' : '连接本机服务'}</Button></form><p className="small muted">凭据仅保留在本页内存中，刷新后需要重新连接。</p></section>
+      {!api ? <section className="welcome connection-page"><div className="intro-symbol">J</div><h2>{connecting ? '正在打开工作台…' : '本机服务暂时无法连接'}</h2><p>请保持启动窗口运行。</p><Button variant="primary" disabled={connecting} onClick={() => void connect()}>重新连接</Button></section>
         : settingsOpen ? <Settings api={api} onBack={() => setSettingsOpen(false)} onGuardChange={setSettingsGuard} /> : <>
           {pending && <div className="pending-banner" role="status"><div><strong>本次提交待核对</strong><p>为避免重复执行，已暂停创建。核对操作只读取后台记录。</p></div><Button variant="outline" disabled={!!busy || submitting} onClick={() => void reconcile()}>核对提交状态</Button>
             <button className="text-button" disabled={submitting || !!busy} onClick={() => { if (window.confirm('这只清除本页待核对记录，后台任务可能仍在执行。确定已检查任务列表并清除？')) { storage('jh-pending', ''); setPending('') } }}>清除本页记录</button></div>}

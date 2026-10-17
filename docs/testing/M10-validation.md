@@ -1,5 +1,7 @@
 # M10 Web 工作台验收记录
 
+2026-10-17直接入口增量已通过：取消手动输入本机凭据，页面自动进入/刷新重连，启动器不改剪贴板。Java314项、客户端9项、工作台Chrome28项、设置21项、入口8项通过，见[M10-auto-validation.md](M10-auto-validation.md)。下文先前版本证据保留历史。
+
 2026-10-16后续设置增量已完成：模型连接/API Key系统凭据库及插件入口，当前Java313项、客户端8项、设置Chrome21项、原工作台28项、启动器8项通过。完整最新证据见[M10-settings-validation.md](M10-settings-validation.md)。下文Java307项及原制品哈希均为基础M10历史，不重标为新版本。
 
 2026-10-16：**M10约定范围已完成本地验收**。用户确认沿用DeepSeek Harness视觉/UI/鼠标交互；原参考目录严格只读。契约见[M10-contracts](../development/M10-contracts.md)，原始调研保留为实施前历史。

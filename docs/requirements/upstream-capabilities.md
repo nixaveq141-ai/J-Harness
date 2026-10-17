@@ -1,5 +1,7 @@
 # 上游能力对照与 M7 范围决定
 
+2026-10-17：Web工作台移除手动输入本机连接凭据，页面自动进入及刷新重连；模型Key系统凭据库与插件配置/实际调用保持。当前Java314项、客户端9项、Chrome工作台28项/设置21项、入口8项通过，见[M10直接入口验收](../testing/M10-auto-validation.md)。原阶段记录保留历史。
+
 2026-10-16最新M10增量：Web设置可管理模型连接/API URL/API Key（Windows系统凭据库）及Planning/压缩/MCP/Skills/只读子任务/网页来源配置。Java313项、客户端8项、设置Chrome21项、原工作台28项、启动器8项通过，插件已在真实任务中调用。证据见[M10设置验收](../testing/M10-settings-validation.md)。核心插件任意卸载、市场、热加载仍未实现；下面M7与基础M10记录保留各自历史范围。
 
 更新：2026-10-15。固定提交为 [c291e7961a515f6d7af9304e7fd1d257929aef26](https://github.com/deepseek-ai/deepseek-harness/commit/c291e7961a515f6d7af9304e7fd1d257929aef26)，不宣称为当前最新版本。

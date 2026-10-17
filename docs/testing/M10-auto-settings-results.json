@@ -1,0 +1,113 @@
+{
+  "date": "2026-10-17T00:36:14.864Z",
+  "platform": "win32",
+  "browser": "155.0.8059.82",
+  "checks": [
+    {
+      "name": "settings rejects unauthenticated operator",
+      "passed": true
+    },
+    {
+      "name": "settings rejects cross-origin mutation",
+      "passed": true
+    },
+    {
+      "name": "missing key rejected before task admission",
+      "passed": true
+    },
+    {
+      "name": "unsaved settings guard task navigation",
+      "passed": true
+    },
+    {
+      "name": "browser creates selects and persists model and plugin configuration",
+      "passed": true
+    },
+    {
+      "name": "responses and disk exclude key and credential target",
+      "passed": true
+    },
+    {
+      "name": "stale revision conflicts",
+      "passed": true
+    },
+    {
+      "name": "invalid endpoint rejected",
+      "passed": true
+    },
+    {
+      "name": "secret input cleared and browser storage empty of secret",
+      "passed": true
+    },
+    {
+      "name": "new task uses saved model URL and vault key",
+      "passed": true
+    },
+    {
+      "name": "new connection does not inherit provider specific thinking parameter",
+      "passed": true
+    },
+    {
+      "name": "configured plugin tools reach actual model request",
+      "passed": true
+    },
+    {
+      "name": "active task rejects settings changes",
+      "passed": true
+    },
+    {
+      "name": "configured plugins execute through SDK and durable events",
+      "passed": true
+    },
+    {
+      "name": "event output excludes raw API key",
+      "passed": true
+    },
+    {
+      "name": "host stops without printing key",
+      "passed": true
+    },
+    {
+      "name": "restart restores connection and system credential",
+      "passed": true
+    },
+    {
+      "name": "mobile settings have no document overflow",
+      "passed": true
+    },
+    {
+      "name": "existing connection edited without key resubmission",
+      "passed": true
+    },
+    {
+      "name": "connection deletion persists and clears managed credential",
+      "passed": true
+    },
+    {
+      "name": "no browser runtime errors",
+      "passed": true
+    }
+  ],
+  "screenshots": [
+    {
+      "path": ".build-cache\\M10-settings-plugins.png",
+      "sha256": "ab4919adc268ce3172de6af298f241413105cdd1aebbdc1bd2dff277de95ccf4"
+    },
+    {
+      "path": ".build-cache\\M10-settings-models.png",
+      "sha256": "a1276fb20cc143785f43e023970ada69ec3b95b47b47ee523f37511d54f2cc38"
+    },
+    {
+      "path": ".build-cache\\M10-settings-dark.png",
+      "sha256": "6cce9a7ac2ee880aa7c0ea53f64f624a8d51e5918c7405b69a9aa157974bd5ed"
+    },
+    {
+      "path": ".build-cache\\M10-settings-mobile.png",
+      "sha256": "4ca0073a4edf66cc92f20aa77a4c43abff5914e002169c8eba51af3b66ff691a"
+    }
+  ],
+  "modelRequests": 2,
+  "paidRequests": 0,
+  "jarSha256": "8ba58ee0ff0c7a31de531f76ab25c7499fb2813805e3d602a1347847b68a62a4",
+  "fixtureCredentialsCleaned": true
+}

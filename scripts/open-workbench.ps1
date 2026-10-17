@@ -134,14 +134,9 @@ try {
     if (-not $address) {
         throw 'Workbench did not become ready. Check that the UI is built, configuration is valid, and this workspace is not already served in another window. No existing process was stopped.'
     }
-    if (-not $NoClipboard) {
-        try { Set-Clipboard -Value $token -ErrorAction Stop }
-        catch { throw 'Cannot copy the connection credential. Close this launcher and retry from a normal interactive Windows session.' }
-    }
     if (-not $NoBrowser) { Start-Process -FilePath $address.AbsoluteUri -ErrorAction Stop | Out-Null }
     Write-Host ('WORKBENCH_READY ' + $address.AbsoluteUri)
-    if (-not $NoClipboard) { Write-Host 'Credential copied. Paste it into the page connection field (Ctrl+V).' }
-    Write-Host 'Keep this window open. Enter :quit to stop. Opening the page does not invoke a model.'
+    Write-Host 'Workbench opens directly. Keep this window open. Enter :quit to stop.'
     while (-not $hostProcess.HasExited) {
         $inputLine = [Console]::ReadLine()
         if ($null -eq $inputLine -or $inputLine -eq ':quit') { break }
@@ -150,7 +145,7 @@ try {
     # Messages from PowerShell/.NET can contain untrusted configuration text; keep failures bounded.
     $known = @('Java 21 was not found.', 'Packaged JAR is missing.', 'Workspace must be a directory.',
         'Invalid web token environment variable name.', 'Web token and model API key must use different',
-        'Configured web token has an invalid format.', 'Workbench did not become ready.', 'Cannot copy the connection credential.')
+        'Configured web token has an invalid format.', 'Workbench did not become ready.')
     $message = [string]$_.Exception.Message
     if ($known | Where-Object { $message.StartsWith($_) }) { Write-Host ('ERROR: ' + $message) }
     else { Write-Host 'ERROR: Could not open the workbench. Check the workspace/config paths, JSON configuration and Java 21 installation.' }

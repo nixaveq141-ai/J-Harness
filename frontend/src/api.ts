@@ -76,6 +76,11 @@ export function mergeEvents(old: SessionEvent[], incoming: SessionEvent[]): Sess
 export const isTerminal = (t: Task) => ['FINISHED', 'UNKNOWN', 'VERIFIED'].includes(t.phase)
 export const uncertain = (t: Task) => t.phase === 'UNKNOWN' || t.status === 'UNKNOWN'
 export class Api {
+  static async connect(fetcher: typeof fetch = fetch): Promise<Api> {
+    const transport = new Api('0'.repeat(32), fetcher)
+    const result = object(await transport.json('/v1/browser-session', {}))
+    return new Api(text(result.token), fetcher)
+  }
   async settings() { return settings(await this.json('/v1/settings')) }
   async saveSettings(value: SettingsData, apiKeys: Record<string, string>) {
     return settings(await this.json('/v1/settings', { revision: value.revision, models: value.models, selected: value.selected, extensions: value.extensions, apiKeys }))
@@ -92,7 +97,7 @@ export class Api {
     try {
       const fetcher = this.fetcher
       const response = await fetcher(path, { method: body === undefined ? 'GET' : 'POST',
-        headers: { Authorization: `Bearer ${this.token}`, ...(body === undefined ? {} : { 'Content-Type': 'application/json' }),
+        headers: { ...(path === '/v1/browser-session' ? {} : { Authorization: `Bearer ${this.token}` }), ...(body === undefined ? {} : { 'Content-Type': 'application/json' }),
           ...(accept ? { Accept: accept } : {}) },
         ...(body === undefined ? {} : { body: JSON.stringify(body) }), signal: abort.signal,
         cache: 'no-store', credentials: 'omit', redirect: 'error' })

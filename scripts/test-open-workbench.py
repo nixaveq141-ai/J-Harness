@@ -60,6 +60,7 @@ def stop(p, url, output):
     p.stdin.close()
     assert p.wait(timeout=15) == 0, ''.join(output)
     assert TOKEN not in ''.join(output)
+    assert 'Paste it' not in ''.join(output) and 'Credential copied' not in ''.join(output)
     try:
         request(url)
         raise AssertionError('Owned HTTP host remained alive after quit')
@@ -133,7 +134,7 @@ def main():
         assert not (ROOT / '打开工作台.cmd').exists()
         checks.append('entry filename is ASCII web-ui.cmd')
     sha = lambda p: hashlib.sha256((ROOT / p).read_bytes()).hexdigest()
-    result = {'status': 'PASS', 'capturedAt': datetime.datetime.now(datetime.timezone.utc).isoformat(), 'checks': checks, 'browserAndClipboardSideEffects': 'disabled for automation; production defaults open browser and copy token',
+    result = {'status': 'PASS', 'capturedAt': datetime.datetime.now(datetime.timezone.utc).isoformat(), 'checks': checks, 'browserAndClipboardSideEffects': 'browser opening disabled for automation; production opens browser directly and never copies a credential',
               'paidRequests': 0, 'modelEndpoint': 'unreachable loopback :9; no task submissions',
               'sourceSha256': {p: sha(p) for p in ['web-ui.cmd', 'scripts/open-workbench.ps1', 'scripts/test-open-workbench.py']},
               'jarSha256': sha('harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar')}

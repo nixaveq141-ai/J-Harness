@@ -55,6 +55,7 @@ public final class HarnessWebServer implements AutoCloseable {
     private final SessionWriter catalog;
     private final String catalogId;
     private final byte[] credential;
+    private final String browserToken = UUID.randomUUID().toString() + UUID.randomUUID();
     private final DataSanitizer sanitizer;
     private final Duration approvalTimeout;
     private final int maxActive, maxTasks;
@@ -95,7 +96,7 @@ public final class HarnessWebServer implements AutoCloseable {
         this.maxTasks = maxTasks;
         this.approvalTimeout = approvalTimeout;
         credential = digest(bearerToken);
-        var redactor = new SecretRedactor(List.of(bearerToken));
+        var redactor = new SecretRedactor(List.of(bearerToken, browserToken));
         this.sanitizer = data -> redactor.sanitize(sanitizer.sanitize(data));
         catalog =
                 new SanitizingSessionWriter(
@@ -199,6 +200,26 @@ public final class HarnessWebServer implements AutoCloseable {
                     UiResources.serve(exchange);
                     return;
                 }
+                if (exchange.getRequestURI().getPath().equals("/v1/browser-session")) {
+                    if (!exchange.getRequestMethod().equals("POST")
+                            || exchange.getRequestURI().getRawQuery() != null
+                            || !exchange.getRequestHeaders()
+                                    .getOrDefault("Origin", List.of())
+                                    .equals(List.of(address().toString()))
+                            || !exchange.getRequestHeaders()
+                                    .getOrDefault("Sec-Fetch-Site", List.of())
+                                    .equals(List.of("same-origin")))
+                        throw fault(403, "LOCAL_CLIENT_REQUIRED");
+                    body(exchange, Set.of());
+                    // This response is intentionally not passed through the event/output redactor.
+                    byte[] bytes = WebJson.encode(Map.of("token", browserToken));
+                    exchange.getResponseHeaders().set("Content-Type", "application/json");
+                    exchange.getResponseHeaders().set("Cache-Control", "no-store");
+                    exchange.getResponseHeaders().set("X-Content-Type-Options", "nosniff");
+                    exchange.sendResponseHeaders(200, bytes.length);
+                    exchange.getResponseBody().write(bytes);
+                    return;
+                }
                 if (!authorized(exchange)) throw fault(401, "UNAUTHORIZED");
                 route(exchange);
             } catch (WebFault ex) {
@@ -218,7 +239,9 @@ public final class HarnessWebServer implements AutoCloseable {
         var headers = exchange.getRequestHeaders().getOrDefault("Authorization", List.of());
         return headers.size() == 1
                 && headers.getFirst().startsWith("Bearer ")
-                && MessageDigest.isEqual(credential, digest(headers.getFirst().substring(7)));
+                && (MessageDigest.isEqual(credential, digest(headers.getFirst().substring(7)))
+                        || MessageDigest.isEqual(
+                                digest(browserToken), digest(headers.getFirst().substring(7))));
     }
 
     private boolean trustedBrowser(HttpExchange exchange) {

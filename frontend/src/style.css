@@ -91,9 +91,6 @@ button { background: transparent; border: 0; }
 .suggestions button:hover { background: var(--dsw-alias-interactive-bg-hover); }
 .suggestions button:active { background: var(--dsw-alias-interactive-bg-active); }
 .suggestions button svg:last-child { margin-left: auto; width: 14px; }
-.connection-form { display: grid; gap: 12px; width: min(100%, 360px); margin: 8px 0 20px; }
-.connection-form > span { height: 42px; }
-.connection-form > button { height: 42px; }
 .connection-page { overflow: auto; }
 .small { font-size: 12px; }
 .muted { color: var(--dsw-alias-label-secondary); }
@@ -174,7 +171,7 @@ button { background: transparent; border: 0; }
   .welcome { padding: 20px 16px; }.welcome h2 { font-size: 24px; }.welcome > p { font-size: 12px; }.suggestions { margin-top: 6px; }.suggestions button { font-size: 12px; }
   .composer { width: calc(100% - 24px); border-radius: 18px; padding: 12px; }.composer-shortcut { display: none; }.composer-toolbar > button { margin-left: auto; }
   .timeline { padding: 10px 14px; }.approval-region { padding: 8px 12px; max-height: 48vh; }.approval-card { padding: 12px; }.activity-footer { padding: 8px 12px; }
-  .error-banner, .pending-banner { margin: 0 12px 8px; padding: 10px; }.workspace-note { font-size: 10px; }.connection-form { width: 100%; }
+  .error-banner, .pending-banner { margin: 0 12px 8px; padding: 10px; }.workspace-note { font-size: 10px; }
 }
 @media (prefers-reduced-motion: reduce) { .task-item, .suggestions button, .event-chevron { transition: none; } }
 @media (pointer: coarse) { .workbench button { min-height: 44px; }.nav-toggle { min-width: 36px; }.event-inspect { min-width: 44px; } }

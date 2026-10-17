@@ -47,7 +47,7 @@ async function api(path, body, auth = true, extra = {}) {
   return { status: response.status(), body: await response.json() }
 }
 const saveBody = v => ({ revision: v.revision, models: v.models, selected: v.selected, extensions: v.extensions, apiKeys: {} })
-async function connect() { await page.goto(base); await page.getByLabel('本机连接凭据').fill(token); await page.getByRole('button', { name: '连接本机服务', exact: true }).click(); await page.getByRole('button', { name: '工作台设置', exact: true }).click(); await page.getByText('模型连接', { exact: true }).waitFor() }
+async function connect() { await page.goto(base); await page.getByRole('button', { name: '工作台设置', exact: true }).click(); await page.getByText('模型连接', { exact: true }).waitFor() }
 async function shot(name) { await wait(300); const path = join(out, `M10-settings-${name}.png`); await page.screenshot({ path, fullPage: true }); screenshots.push({ path: path.replace(root + '\\', ''), sha256: createHash('sha256').update(await readFile(path)).digest('hex') }) }
 try {
   await start()
