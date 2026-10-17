@@ -1,5 +1,6 @@
 package io.jharness.cli;
 
+import java.io.IOException;
 import java.util.*;
 
 /** Opt-in real OS integration, launched separately; never substituted by MemoryVault. */
@@ -13,6 +14,7 @@ public final class CredentialStoreProbe {
         var checks = new LinkedHashMap<String, Boolean>();
         var vault = new SystemCredentials();
         boolean succeeded = false;
+        String failureCode = "";
         try {
             require(vault.supported());
             checks.put("available", true);
@@ -30,6 +32,13 @@ public final class CredentialStoreProbe {
             new SystemCredentials().delete(target);
             checks.put("deleteMissing", true);
             succeeded = true;
+        } catch (Exception failure) {
+            // Only fixed categories: native errors and exception text may contain secrets.
+            failureCode =
+                    failure instanceof IOException
+                                    && "Credential store timeout".equals(failure.getMessage())
+                            ? "WORKER_TIMEOUT"
+                            : "PROBE_FAILED";
         } finally {
             try {
                 vault.delete(target);
@@ -48,6 +57,8 @@ public final class CredentialStoreProbe {
                                     vault.description(),
                                     "passed",
                                     succeeded,
+                                    "failureCode",
+                                    failureCode,
                                     "checks",
                                     checks)));
         }
