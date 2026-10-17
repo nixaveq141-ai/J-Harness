@@ -1,0 +1,57 @@
+{
+  "date": "2026-10-17",
+  "kind": "static-source-comparison",
+  "status": "REVIEW_COMPLETE",
+  "jHarnessBaseCommit": "2c26a2b7e4130cd1c019f940e1129a6fcc9f4fca",
+  "referenceRoot": "D:\\Documents\\my projects\\deepseek-harness",
+  "referenceHead": "d743267388641bc76f17c45ce8b4c231aed1d32c",
+  "referenceMonitoredFiles": 1954,
+  "referenceMonitoredFilesUnchanged": true,
+  "referenceWorktreeCleanAtEnd": true,
+  "referenceBaselineFileSha256": "4d03220395e0689b579cf4481275c9dcc1a4c786cb511613d5bdef2559dcaeff",
+  "referenceSourcesSha256": {
+    "packages/client/ui-workspace/README.md": "89948e9a30c41a5b75a5197a6b7bdf0d971db9b8fb20d79f25c42956c9ed3c43",
+    "packages/client/ui-workspace/src/client/session-actions/ForkSession.tsx": "4945d0ce8244d41376c691b93b12b6681ec84d4e888d4a4389467d8a0156ba7c",
+    "packages/client/ui-workspace/src/client/session-actions/ArchiveSession.tsx": "d9c3c3819e119448b5bc8e26feefeb61896a1838e74b5d44bba4b68c538c8e1c",
+    "packages/client/ui-conversation/README.md": "50ace8f2ba5a7c6788146d4c47b5419f2329c4580b107387b7a16c690225a1d6",
+    "packages/client/ui-conversation/src/client/locales.ts": "a3e742a0a5a067fb5c5b44fa8baede83f3c30785aead80bd89e5186267f6693c",
+    "packages/client/ui-chat/README.md": "ac253aab2778447b1f57776d73ebea15bb49878f119718e0e794de466d9cdff3",
+    "packages/client/ui-user-questions/README.md": "422961925cde308ff4cf572a088592007da683fc5535eaf680d4debc82e6857e",
+    "packages/interaction/tool-ask-user/src/index.ts": "592f5b7b2e8528180b1bce69b33010d38b1e4352514484cada991c0add0e5bef",
+    "packages/client/ui-sidebar-files/src/client/FilesBody.tsx": "52ac73a7a921b9702096331c29dd4a8b7f559da6e9d92ea3a225a62f826f52ee",
+    "packages/client/ui-deliverables/README.md": "72205fe2cd82f4f0b7724108e588761c3801895f7c229751fe469f71eb8a93b9",
+    "packages/client/ui-settings-models/src/client/protocol-label.ts": "d7b5bf8b367a7248b24de51f4a828a87abde903935d216175074d51a5e06fed7",
+    "docs/user/guide/providers.md": "4d12216e0027ad14b1225e6854c4ee5ae564980d5b323f41a94a909c22c6403e",
+    "packages/mcp/mcp-resources/src/tools.ts": "a415aa6edea0ae5efdb71e02bb48d79a454ce97e0cc9f3b5f0c15631d5994090",
+    "packages/mcp/mcp-client/README.md": "346ad21f0c7f8bd7248a021513228769fcde1dec7065a3ea77e809f999805806",
+    "packages/skill/skill-filesystem/README.md": "cf1690d124c3e0532dfbf231b65396550ed705097a2925507b4cffbc2c6e4966",
+    "packages/client/ui-skill/README.md": "2cfd76d205c55c8f72ff9d99060e7f5641209447041509da767ea53c1edb1247",
+    "packages/client/ui-permission-presets/README.md": "92b8dd3ac33c772cb86544a07f47c0b71214fa2bbf9065fceba9cf9ccfa8002c",
+    "packages/session-query/session-query-sqlite/README.md": "b3b878a8a475476c659a46976433dddefbb0ecbfede3b53da580e57034ab5bbb",
+    "packages/sdk/README.md": "32fc20040b3f41689373f71b0af015d962eb2e95b9eaa7a655a4c2e990bf5daa"
+  },
+  "jHarnessSourcesSha256": {
+    "frontend/src/App.tsx": "8fd9190d00a7ca64a41ed56570b19c4e784b7ec72cd7b8e6835d4ec98b0b2122",
+    "frontend/src/Settings.tsx": "b1733b9e7eb2388f031860775f98c71e859e9b81d548556ae173024bcc004862",
+    "harness-web/src/main/java/io/jharness/web/HarnessWebServer.java": "b886db3f8f808fbe99e527691ba84284c90dae8000ef1e772ec7fb26979c08e0",
+    "harness-cli/src/main/java/io/jharness/cli/EcosystemCli.java": "2df10b6815c00eec8f313a84e5ed0e3c140348b4ed21c94db3c04753b88783ae",
+    "harness-cli/src/main/java/io/jharness/cli/WorkbenchSettings.java": "3e1a30536c108fa4af7584586d319c96fa994971c4e1e45b7abad555397ddb49",
+    "harness-cli/src/main/java/io/jharness/cli/CliApplication.java": "9d88f5a0bc520b8220e0924d378aea34b1b15d426e575d07b9c0977d657448d8",
+    "harness-llm/src/main/java/io/jharness/llm/OpenAiCompatibleConfig.java": "d547a5871d4b07fc6e0753dadda9998e5e71289ef7dc3ecb42accc7b033b5545",
+    "harness-ecosystem/src/main/java/io/jharness/ecosystem/McpPlugin.java": "54cb8a64502428b38757d042784952653b5b1f1bd3f3606328eaae498b81480c",
+    "harness-ecosystem/src/main/java/io/jharness/ecosystem/SkillsPlugin.java": "8139e4b7cc27f8a1c4b4cf033b94c6c5198e3dfb531c245dddde48ab038a788a",
+    "harness-session/src/main/java/io/jharness/session/SessionSearchIndex.java": "799f13827b0d07255456f7161fe2d59073d0be460054d2d8f8cd4de2841cae62",
+    "docs/testing/M10-auto-results.json": "e8d708e723af77dab8413f36bb6d338cf600301ac4277ae670d3367f5ab8704e"
+  },
+  "reportSha256": "731979dbb7f5624a823162aa557ce55a4d78e1b353124afdf67f4f820ca2f80f",
+  "excluded": [
+    "M11 Desktop",
+    "M12 multimodal, process strengthening, plugin hot reload, Goal/Schedule, Workflow, PTC, Web search/LSP",
+    "Existing non-goals: Teams, voice, browser/desktop automation, Cordis format compatibility"
+  ],
+  "limitations": [
+    "Read-only source/document review; no reference install/build/runtime/tests",
+    "1954-file monitoring is a specified subset, not full-repository audit",
+    "No new product tests, paid model calls, performance/quality parity measurement or implementation"
+  ]
+}

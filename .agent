@@ -4,6 +4,8 @@
 
 ## 当前接续状态
 
+- 2026-10-17只读差距复核完成：对照用户指定deepseek-harness HEAD d743267，明确排除M11/M12及既有非目标，剩余差距按Web入口/核心能力/证据区分，见docs/development/M10-upstream-gap-review-2026-10-17.md和M10-gap-review-results.json。重点是多轮交互、工作区/会话管理（catalog最多32条）、结构化问题、文件/产物与对话展示、多模型协议/设置引导、扩展表单/MCP资源及错误恢复说明；检索/外部SDK按需求选择。参考1954份监测文件前后SHA及HEAD一致、结束时工作区干净。仅静态审查和文档更新，没有运行参考项目/新增产品测试，不自动立项，不改变M11/M12顺序。
+
 - 2026-10-17 M10直接入口已完成：用户明确删除手动输入本机连接凭据步骤。页面同源自动会话、刷新自动重连，启动器不再复制凭据/修改剪贴板；保留loopback、精确Host/Origin和业务API会话校验，旧CLI Bearer兼容。Java314项零失败/错误/跳过、客户端9项、真实Chrome工作台28项与设置21项、入口8项通过，同一最终JAR及267份Java/POM哈希见M10-auto-results.json/M10-auto-validation.md。无付费请求、推送或远端CI；旧M10设置证据保留历史，M11等待用户指令。
 
 - 2026-10-16 M10设置增量已完成本地验收：左侧设置提供模型连接增删改/默认选择、API URL/模型名/系统凭据Key、独立费用及thinking参数；插件页提供Planning/压缩开关和MCP/Skills/只读子任务/网页来源配置。Windows Credential Manager重启读回，密钥不进配置/响应/浏览器存储，运行/UNKNOWN占用拒绝修改，缺Key在任务受理前拒绝。Java313项零失败/错误/跳过、客户端8项、设置Chrome21项、原工作台Chrome28项、入口8项通过，同一最终JAR与267份Java/POM哈希见M10-settings-results.json及M10-settings-validation.md。没有付费请求、远端CI/推送/发布；原M10结果保留历史。M11等待用户指令。
