@@ -12,6 +12,32 @@ import org.junit.jupiter.api.io.TempDir;
 class WorkbenchSettingsTest {
     @TempDir Path temp;
 
+    @Test
+    void permissionSelectionIsBoundedPersistentAndDoesNotRewriteRuntimeSnapshots()
+            throws Exception {
+        var vault = new MemoryVault();
+        var manager = manager(vault);
+        var initial = manager.read();
+        assertEquals("default", initial.get("policy"));
+        manager.save(input(initial, Map.of("default", "synthetic-permission-key")));
+        var original = manager.runtime();
+        var change = input(manager.read(), Map.of());
+        change.put("policy", "read-only");
+        manager.save(change);
+        assertEquals("read-only", manager.runtime().config().string("policy", ""));
+        assertEquals("default", original.config().string("policy", ""));
+        assertEquals("read-only", manager(vault).runtime().config().string("policy", ""));
+        // Older clients omit the new optional field: they must preserve an existing restriction.
+        manager.save(input(manager.read(), Map.of()));
+        assertEquals("read-only", manager.read().get("policy"));
+        var invalid = input(manager.read(), Map.of());
+        invalid.put("policy", "allow-all");
+        assertEquals(
+                "INVALID_SETTINGS",
+                assertThrows(HarnessException.class, () -> manager.save(invalid)).code());
+        assertEquals("read-only", manager.read().get("policy"));
+    }
+
     static final class MemoryVault extends SystemCredentials {
         @Override
         void update(Map<String, String> writes, List<String> deletes) throws IOException {

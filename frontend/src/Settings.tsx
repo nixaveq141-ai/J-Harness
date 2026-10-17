@@ -10,10 +10,11 @@ import { Input } from './upstream/Input'
 import { Tag } from './upstream/Tag'
 import { SegmentedTabs, type SegmentedTab } from './upstream/SegmentedTabs'
 
-type Tab = 'models' | 'plugins'
+type Tab = 'models' | 'plugins' | 'permissions'
 const tabs: [SegmentedTab<Tab>, ...SegmentedTab<Tab>[]] = [
   { value: 'models', label: '模型与连接', id: 'settings-models', panelId: 'settings-panel-models' },
   { value: 'plugins', label: '插件与扩展', id: 'settings-plugins', panelId: 'settings-panel-plugins' },
+  { value: 'permissions', label: '权限', id: 'settings-permissions', panelId: 'settings-panel-permissions' },
 ]
 const extensionTypes = [
   { key: 'mcp', name: 'MCP 服务', help: '配置 stdio 或 HTTP 服务。任务启动时连接，工具执行仍需策略与审批。', example: [{ id: 'docs', transport: 'http', url: 'http://127.0.0.1:3001/mcp', timeoutSeconds: 15, effects: {} }] },
@@ -99,7 +100,15 @@ export function Settings({ api, onBack, onGuardChange }: { api: Api; onBack: () 
               {([['maxCost', '单任务费用上限'], ['inputPerMillion', '每百万输入 token 价格'], ['outputPerMillion', '每百万输出 token 价格'], ['inputTokenCeiling', '输入 token 预留上限']] as const).map(([k, label]) => <label key={k}>{label}<Input type="number" min="0" value={String(model.pricing[k] ?? '')} onChange={e => update({ pricing: { ...model.pricing, [k]: k === 'inputTokenCeiling' ? Number(e.target.value) : e.target.value } })} /></label>)}</>}
           </details>
           <div className="settings-actions"><Button variant="outline" disabled={model.id === data.selected} onClick={() => { setData({ ...data, selected: model.id }); setDirty(true) }}>设为默认连接</Button><Button disabled={data.models.length < 2} onClick={() => { const models = data.models.filter(m => m.id !== model.id); setData({ ...data, models, selected: data.selected === model.id ? models[0]!.id : data.selected }); setEditing(models[0]!.id); setKeys(old => { const next = { ...old }; delete next[model.id]; return next }); setDirty(true) }}>删除连接</Button></div>
-        </fieldset>}</div> : <div className="settings-extensions">
+        </fieldset>}</div> : tab === 'permissions' ? <div className="settings-extensions permission-settings">
+          <h3>任务权限</h3><label>权限模式<select aria-label="权限模式" disabled={busy} value={data.policy} onChange={e => { setData({ ...data, policy: e.target.value as SettingsData['policy'] }); setDirty(true); setNotice('') }}>
+            <option value="default">默认 · 有影响的操作逐次审批</option><option value="read-only">只读 · 拒绝写入及命令执行</option>
+          </select></label>
+          <p>{data.policy === 'read-only' ? '仅允许标记为只读的工具。文件写入及命令执行将被策略拒绝。' : '只读工具可执行；写入和普通命令需要逐次批准，精确匹配的宿主可信命令可由默认策略允许。'}</p>
+          <p className="muted">作用范围：当前宿主的后续新任务。保存不会修改既有任务的配置快照；运行中或结果待核实时不能保存。工作区路径、工具白名单和审批约束仍生效。</p>
+          <h3>三种确认各自生效</h3><p>问题回答提供信息，计划批准确认方案，工具审批才决定某一次操作。回答问题或批准计划不会授予写入、Shell 或其他执行权限。</p>
+          <p className="muted">命令模式有误时不会由页面自动改成 Shell。需要修改参数、显式选择模式并通过原有策略与审批。</p>
+        </div> : <div className="settings-extensions">
           <div className="extension-row"><div><h3>任务规划</h3><p className="muted">允许模型调用 Todo / Plan 工具；计划通过不等于执行审批。</p></div><label className="settings-check"><input type="checkbox" checked={data.extensions.planning === true} disabled={busy} onChange={e => { setData({ ...data, extensions: { ...data.extensions, planning: e.target.checked } }); setDirty(true) }} />启用任务规划</label></div>
           <div className="extension-row"><div><h3>上下文压缩</h3><p className="muted">使用现有提取式压缩器，保留完整协议组与事实记录。</p></div><label className="settings-check"><input type="checkbox" checked={data.extensions.compactContext === true} disabled={busy} onChange={e => { setData({ ...data, extensions: { ...data.extensions, compactContext: e.target.checked } }); setDirty(true) }} />启用上下文压缩</label></div>
           {extensionTypes.map(x => <details className="extension-config" key={x.key}><summary>{x.name}</summary><p className="muted">{x.help}</p><label>{x.name}配置<textarea aria-label={`${x.name}配置`} rows={9} disabled={busy} spellCheck={false} value={drafts[x.key] ?? ''} onChange={e => { setDrafts({ ...drafts, [x.key]: e.target.value }); setDirty(true) }} /></label><details><summary>配置示例</summary><pre>{JSON.stringify(x.example, null, 2)}</pre></details></details>)}

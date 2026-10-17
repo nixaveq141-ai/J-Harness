@@ -6,6 +6,7 @@ import { Tag } from './upstream/Tag'
 import { SegmentedTabs, type SegmentedTab } from './upstream/SegmentedTabs'
 import { TextShimmer } from './upstream/TextShimmer'
 import { Settings } from './Settings'
+import { DiagnosisPanel } from './DiagnosisPanel'
 import frameCss from './upstream/AppFrame.module.css'
 import sidebarCss from './upstream/SidebarRoot.module.css'
 import { clampWidth, SIDEBAR_DEFAULT, SIDEBAR_MIN, SIDEBAR_MAX } from './upstream/columns'
@@ -46,7 +47,7 @@ function Icon({ name }: { name: 'plus' | 'panel' | 'arrow' | 'close' | 'search' 
 function Status({ value }: { value: Task }) {
   const unknown = uncertain(value)
   return <Tag tone={unknown ? 'warning' : value.status === 'COMPLETED' ? 'success' : value.status === 'FAILED' ? 'danger' : 'neutral'}>
-    {unknown ? '结果待核实' : labels[value.status] ?? labels[value.phase] ?? value.status}
+    {value.phase === 'VERIFIED' ? '已离线核实' : unknown ? '结果待核实' : labels[value.status] ?? labels[value.phase] ?? value.status}
   </Tag>
 }
 const eventLabels: Record<string, string> = { 'tool.requested': '请求工具', 'tool.completed': '工具结果',
@@ -80,11 +81,19 @@ export function App() {
   const [animating, setAnimating] = useState(false)
   const createLock = useRef(false), actionLock = useRef(false), generation = useRef(0), readFailures = useRef(0)
   const listEnd = useRef<HTMLDivElement>(null), autoScroll = useRef(true)
+  const diagnosisAnchor = useRef<HTMLDivElement>(null), presentedDiagnosis = useRef('')
   const active = tasks.find(t => t.taskId === selected)
+  const hasProblems = !!active && isTerminal(active) && (uncertain(active) || active.status !== 'COMPLETED' || events.some(e => e.type === 'tool.completed' && e.payload.status !== 'SUCCESS'))
   const currentApi = useRef(api); currentApi.current = api
   useEffect(() => { document.body.toggleAttribute('data-ds-dark-theme', dark); try { localStorage.setItem('jh-theme', dark ? 'dark' : 'light') } catch { /* optional preference */ } }, [dark])
   useEffect(() => { storage('jh-selected', selected) }, [selected])
   useEffect(() => { if (autoScroll.current) listEnd.current?.scrollIntoView({ block: 'nearest' }) }, [events.length])
+  useEffect(() => {
+    if (!hasProblems || !selected || presentedDiagnosis.current === selected || !autoScroll.current
+      || !['已同步全部记录', '结果待核实 · 不会重放任务'].includes(live)) return
+    const frame = requestAnimationFrame(() => { diagnosisAnchor.current?.scrollIntoView({ block: 'start' }); presentedDiagnosis.current = selected })
+    return () => cancelAnimationFrame(frame)
+  }, [hasProblems, selected, live])
   const updateTask = useCallback((task: Task) => setTasks(old => [task, ...old.filter(t => t.taskId !== task.taskId)]), [])
   const toggleSidebar = () => { setAnimating(true); setSideOpen(v => !v); setTimeout(() => setAnimating(false), 320) }
   const selectTask = (id: string) => { if (settingsGuard) return; setSettingsOpen(false); setSelected(id); setFocusedEvent(null); autoScroll.current = true; setError('') }
@@ -223,7 +232,7 @@ export function App() {
     <aside className={`${frameCss.sidebarCol} navigation`} aria-label="任务导航">
       <div className={`${sidebarCss.root} nav-inner`}>
         <div className="brand-row"><span className="brand-mark" aria-hidden="true">J</span><strong className="nav-expanded">J-Harness</strong><Button aria-label={sideOpen ? '收起任务导航' : '展开任务导航'} title="切换导航" className="nav-toggle" onClick={toggleSidebar}><Icon name="panel" /></Button></div>
-        <Button className="new-task" disabled={settingsGuard} onClick={() => selectTask('')} icon={<Icon name="plus" />}><span className="nav-expanded">新建任务</span></Button>
+        <Button className="new-task" aria-label="新建任务" title="新建任务" disabled={settingsGuard} onClick={() => selectTask('')} icon={<Icon name="plus" />}><span className="nav-expanded">新建任务</span></Button>
         <div className="nav-expanded nav-filter"><Input aria-label="筛选任务" placeholder="搜索任务 ID 或状态" icon={<Icon name="search" />} value={filter} onChange={e => setFilter(e.target.value)} /></div>
         <div className="nav-expanded section-label">最近任务 <span>{tasks.length}</span></div>
         <nav className="task-list nav-expanded" aria-label="最近任务">
@@ -251,6 +260,7 @@ export function App() {
           {!selected ? <section className="welcome"><div className="intro-symbol">J</div><h2>今天，想完成什么？</h2><p>描述目标，让 J-Harness 在你的工作区中协助完成。</p><div className="suggestions">{['阅读项目结构，梳理模块职责', '检查最近的修改，指出潜在问题', '分析一个问题，并提出修复方案'].map(s => <button key={s} onClick={() => setGoal(s)}><Icon name="file" />{s}<Icon name="chevron" /></button>)}</div></section>
             : <section className="timeline" aria-label="任务事件时间线" onScroll={e => { const el = e.currentTarget; autoScroll.current = el.scrollHeight - el.scrollTop - el.clientHeight < 100 }}>
               {active && uncertain(active) && <div className="unknown-notice"><strong>结果待核实</strong><p>部分操作可能已发生，当前不能安全地自动重试。请停止旧宿主，检查实际资源，再通过 CLI 离线核实；本页面不会重放任务。</p></div>}
+              {api && active && isTerminal(active) && <div ref={diagnosisAnchor} tabIndex={-1}><DiagnosisPanel key={active.taskId} api={api} task={active} refresh={historyKey} /></div>}
               {events.length === 0 && <p className="muted timeline-empty">尚无事件记录。正在读取任务状态。</p>}
               {events.map(e => <EventRow key={e.eventId} event={e} onSelect={() => { setFocusedEvent(e); setTab('detail'); setInspectorOpen(true) }} />)}
               <div ref={listEnd} />
@@ -263,7 +273,7 @@ export function App() {
             onKeyDown={e => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey) && !e.nativeEvent.isComposing) { e.preventDefault(); e.currentTarget.form?.requestSubmit() } }} />
             <div className="composer-toolbar"><label className="profile-picker">配置 <select aria-label="任务配置" value={profile} onChange={e => setProfile(e.target.value)}>{profiles.map(p => <option key={p}>{p}</option>)}</select></label><span className="composer-shortcut">Ctrl / ⌘ + Enter</span><Button type="submit" variant="primary" aria-label="创建任务" disabled={!goal.trim() || !profile || submitting || !!pending}><Icon name="arrow" /></Button></div></form>}
           {selected && <footer className="activity-footer"><TextShimmer active={!!active && !isTerminal(active)}>{live}</TextShimmer>{active && active.cancelRequested && <span>已请求取消，正在等待执行事实</span>}
-            <div><Button onClick={() => { setError(''); setHistoryKey(k => k + 1) }}>重载历史</Button>{active && !isTerminal(active) && <Button variant="outline" icon={<Icon name="stop" />} disabled={!!busy || active.cancelRequested} onClick={() => void cancel()}>取消任务</Button>}</div></footer>}
+            <div>{hasProblems && <Button onClick={() => { diagnosisAnchor.current?.scrollIntoView({ block: 'start' }); diagnosisAnchor.current?.focus({ preventScroll: true }); autoScroll.current = false }}>执行诊断</Button>}<Button onClick={() => { setError(''); setHistoryKey(k => k + 1) }}>重载历史</Button>{active && !isTerminal(active) && <Button variant="outline" icon={<Icon name="stop" />} disabled={!!busy || active.cancelRequested} onClick={() => void cancel()}>取消任务</Button>}</div></footer>}
           <div className="workspace-note">工具操作沿用工作区权限与审批 · 执行结果以记录为准</div>
         </>}
     </main>
@@ -330,7 +340,7 @@ function RecordedDiff({ value }: { value: unknown }) {
 function FactReport({ value }: { value: unknown }) {
   const report = safeObject(value), summary = safeObject(report.task)
   const facts = Array.isArray(report.facts) ? report.facts.map(safeObject) : []
-  return <div className="fact-report"><h2>{labels[String(summary.status)] ?? String(summary.status ?? '状态未记录')}</h2>
+  return <div className="fact-report"><h2>{summary.phase === 'VERIFIED' ? '已离线核实（不代表任务成功）' : labels[String(summary.status)] ?? String(summary.status ?? '状态未记录')}</h2>
     <p className="muted">已记录 {String(report.eventCount ?? 0)} 条事件 · 配置 {String(summary.profile ?? '')}</p>
     <h3>操作与产物</h3>{facts.length === 0 && <p className="muted">没有可用的操作结果记录。</p>}
     {facts.map((f, i) => { const p = safeObject(f.payload), result = safeObject(p.value); return <div className="report-fact" key={i}>

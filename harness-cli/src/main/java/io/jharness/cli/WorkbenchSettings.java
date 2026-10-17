@@ -120,6 +120,8 @@ final class WorkbenchSettings implements HarnessWebServer.Settings, DataSanitize
                 visible,
                 "selected",
                 state.get("selected"),
+                "policy",
+                policy(state),
                 "extensions",
                 state.get("extensions"),
                 "credentialStore",
@@ -179,7 +181,9 @@ final class WorkbenchSettings implements HarnessWebServer.Settings, DataSanitize
                                 "selected",
                                 input.get("selected"),
                                 "extensions",
-                                input.get("extensions")));
+                                input.get("extensions"),
+                                "policy",
+                                input.getOrDefault("policy", policy(state))));
         validate(candidate);
         registerReferences(candidate);
         if (!sanitize(candidate).equals(candidate)) throw error("SECRET_CONFIG");
@@ -286,11 +290,16 @@ final class WorkbenchSettings implements HarnessWebServer.Settings, DataSanitize
                 });
         values.put("ecosystem", ecosystem);
         values.put("compactContext", ext.getOrDefault("compactContext", false));
+        values.put("policy", policy(config));
         return values;
     }
 
     private void validate(Map<String, Object> value) {
-        if (!value.keySet().equals(Set.of("models", "selected", "extensions")))
+        var keys = new HashSet<>(value.keySet());
+        keys.remove("policy");
+        if (!keys.equals(Set.of("models", "selected", "extensions")))
+            throw error("INVALID_SETTINGS");
+        if (!Set.of("default", "read-only").contains(policy(value)))
             throw error("INVALID_SETTINGS");
         var ids = new HashSet<String>();
         for (var model : models(value)) {
@@ -341,6 +350,13 @@ final class WorkbenchSettings implements HarnessWebServer.Settings, DataSanitize
         }
         if (!secret.isEmpty() && !secrets.contains(secret)) secrets.add(secret);
         return secret;
+    }
+
+    private String policy(Map<String, Object> config) {
+        Object policy = config.getOrDefault("policy", base.string("policy", "default"));
+        if (!(policy instanceof String text) || !Set.of("default", "read-only").contains(text))
+            throw error("INVALID_SETTINGS");
+        return text;
     }
 
     private void registerReferences(Map<String, Object> value) {

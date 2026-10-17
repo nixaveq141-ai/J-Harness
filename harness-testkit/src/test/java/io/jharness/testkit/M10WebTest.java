@@ -13,6 +13,46 @@ import org.junit.jupiter.api.io.TempDir;
 
 class M10WebTest {
     @Test
+    void diagnosisIsAuthenticatedReadOnlySanitizedAndCannotClearUnknown() throws Exception {
+        try (var host = new M10BrowserHost(root)) {
+            var created =
+                    object(
+                            request(
+                                    host,
+                                    "POST",
+                                    "/v1/tasks",
+                                    Map.of(
+                                            "profile",
+                                            "unknown",
+                                            "goal",
+                                            "fixture-secret-do-not-display",
+                                            "requestId",
+                                            "diagnosis-id"),
+                                    true));
+            String id = (String) created.get("taskId");
+            long end = System.nanoTime() + Duration.ofSeconds(5).toNanos();
+            while (System.nanoTime() < end
+                    && !"UNKNOWN"
+                            .equals(
+                                    object(request(host, "GET", "/v1/tasks/" + id, null, true))
+                                            .get("phase"))) Thread.sleep(20);
+            String path = "/v1/tasks/" + id + "/diagnosis";
+            assertEquals(401, request(host, "GET", path, null, false).statusCode());
+            var diagnosis = request(host, "GET", path, null, true);
+            assertEquals(200, diagnosis.statusCode());
+            assertEquals("no-store", diagnosis.headers().firstValue("Cache-Control").orElseThrow());
+            assertEquals("UNKNOWN", ((Map<?, ?>) object(diagnosis).get("task")).get("phase"));
+            assertEquals(id, ((Map<?, ?>) object(diagnosis).get("association")).get("sessionId"));
+            assertFalse(diagnosis.body().contains(M10BrowserHost.TOKEN));
+            assertEquals(405, request(host, "POST", path, Map.of(), true).statusCode());
+            assertEquals(
+                    "UNKNOWN",
+                    object(request(host, "GET", "/v1/tasks/" + id, null, true)).get("phase"));
+            assertEquals(1, host.opened.get());
+        }
+    }
+
+    @Test
     void browserSessionIsAutomaticButRequiresExactBrowserOrigin() throws Exception {
         try (var host = new M10BrowserHost(root)) {
             String origin = host.server.address().toString();

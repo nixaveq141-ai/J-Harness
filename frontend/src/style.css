@@ -12,7 +12,10 @@
 .connection-editor { border: 0; margin: 0; padding: 0; min-width: 0; }
 .connection-editor label, .extension-config label { display: grid; gap: 8px; margin: 0 0 18px; }
 .connection-editor label > span { width: 100%; }
-.connection-editor select { background: var(--dsw-alias-bg-base); color: inherit; padding: 10px; border: 1px solid var(--dsw-alias-border-l3); border-radius: 8px; }
+.connection-editor select, .permission-settings select { background: var(--dsw-alias-bg-base); color: inherit; padding: 10px; border: 1px solid var(--dsw-alias-border-l3); border-radius: 8px; max-width: 100%; }
+.permission-settings { max-width: 72ch; line-height: 1.8; overflow-wrap: anywhere; }
+.permission-settings label { display: grid; gap: 8px; max-width: 360px; }
+.permission-settings h3 { margin: 24px 0 8px; font-size: 16px; }
 .field-help { color: var(--dsw-alias-label-secondary); font-size: 12px; margin: -8px 0 20px; }
 .settings-actions, .settings-save > div { display: flex; flex-wrap: wrap; gap: 8px; }
 .settings-actions { margin-top: 24px; }
@@ -134,6 +137,21 @@ button { background: transparent; border: 0; }
 .activity-footer > div { display: flex; gap: 8px; }
 .unknown-notice { padding: 16px; background: var(--dsw-alias-bg-module-platform); border-radius: 12px; margin-bottom: 20px; }
 .unknown-notice p { margin: 6px 0 0; }
+.diagnosis { margin-bottom: 24px; padding-block: 8px 20px; border-bottom: .5px solid var(--dsw-alias-border-l3); overflow-wrap: anywhere; font-size: 14px; line-height: 1.7; }
+.diagnosis h3 { margin: 22px 0 8px; font-size: 16px; }
+.diagnosis > h3:first-child { margin-top: 0; }
+.diagnosis p { margin: 8px 0 12px; max-width: 72ch; }
+.diagnosis-title { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.diagnosis-issue { padding-block: 16px; border-top: .5px solid var(--dsw-alias-border-l3); }
+.diagnosis dl { margin-block: 12px; }
+.diagnosis dl > div { display: grid; grid-template-columns: 8.5em minmax(0, 1fr); gap: 12px; margin-block: 6px; }
+.diagnosis dt { color: var(--dsw-alias-label-secondary); }
+.diagnosis dd { margin: 0; }
+.diagnosis details { margin-block: 12px; }
+.diagnosis summary { cursor: pointer; }
+.diagnosis pre { font-size: 12px; max-height: 240px; overflow: auto; white-space: pre-wrap; }
+.verification-guide li { margin-block: 12px; padding-inline-start: 4px; }
+.verification-guide ol { padding-inline-start: 24px; }
 .error-banner, .pending-banner { display: flex; gap: 12px; align-items: center; margin: 0 24px 10px; padding: 12px 16px; border-radius: 12px; background: var(--dsw-alias-bg-module-platform); font-size: 12px; flex-shrink: 0; }
 .error-banner { color: var(--dsw-alias-label-primary); border: .5px solid var(--dsw-alias-border-l3); }
 .error-banner > button { margin-left: auto; display: flex; }
@@ -171,6 +189,7 @@ button { background: transparent; border: 0; }
   .welcome { padding: 20px 16px; }.welcome h2 { font-size: 24px; }.welcome > p { font-size: 12px; }.suggestions { margin-top: 6px; }.suggestions button { font-size: 12px; }
   .composer { width: calc(100% - 24px); border-radius: 18px; padding: 12px; }.composer-shortcut { display: none; }.composer-toolbar > button { margin-left: auto; }
   .timeline { padding: 10px 14px; }.approval-region { padding: 8px 12px; max-height: 48vh; }.approval-card { padding: 12px; }.activity-footer { padding: 8px 12px; }
+  .diagnosis dl > div { grid-template-columns: minmax(0, 1fr); gap: 0; margin-block: 12px; }
   .error-banner, .pending-banner { margin: 0 12px 8px; padding: 10px; }.workspace-note { font-size: 10px; }
 }
 @media (prefers-reduced-motion: reduce) { .task-item, .suggestions button, .event-chevron { transition: none; } }

@@ -1,0 +1,129 @@
+{
+  "date": "2026-10-17T01:32:08.109Z",
+  "platform": "win32",
+  "browser": "155.0.8059.82",
+  "checks": [
+    {
+      "name": "settings rejects unauthenticated operator",
+      "passed": true
+    },
+    {
+      "name": "settings rejects cross-origin mutation",
+      "passed": true
+    },
+    {
+      "name": "missing key rejected before task admission",
+      "passed": true
+    },
+    {
+      "name": "unsaved settings guard task navigation",
+      "passed": true
+    },
+    {
+      "name": "browser creates selects and persists model and plugin configuration",
+      "passed": true
+    },
+    {
+      "name": "responses and disk exclude key and credential target",
+      "passed": true
+    },
+    {
+      "name": "stale revision conflicts",
+      "passed": true
+    },
+    {
+      "name": "invalid endpoint rejected",
+      "passed": true
+    },
+    {
+      "name": "secret input cleared and browser storage empty of secret",
+      "passed": true
+    },
+    {
+      "name": "new task uses saved model URL and vault key",
+      "passed": true
+    },
+    {
+      "name": "new connection does not inherit provider specific thinking parameter",
+      "passed": true
+    },
+    {
+      "name": "configured plugin tools reach actual model request",
+      "passed": true
+    },
+    {
+      "name": "active task rejects settings changes",
+      "passed": true
+    },
+    {
+      "name": "configured plugins execute through SDK and durable events",
+      "passed": true
+    },
+    {
+      "name": "event output excludes raw API key",
+      "passed": true
+    },
+    {
+      "name": "browser permission selection persists a bounded mode",
+      "passed": true
+    },
+    {
+      "name": "selected permission reaches real SDK and blocks model write before body",
+      "passed": true
+    },
+    {
+      "name": "host stops without printing key",
+      "passed": true
+    },
+    {
+      "name": "restart restores connection and system credential",
+      "passed": true
+    },
+    {
+      "name": "restart retains read-only permission and old snapshot stays default",
+      "passed": true
+    },
+    {
+      "name": "mobile settings have no document overflow",
+      "passed": true
+    },
+    {
+      "name": "existing connection edited without key resubmission",
+      "passed": true
+    },
+    {
+      "name": "connection deletion persists and clears managed credential",
+      "passed": true
+    },
+    {
+      "name": "no browser runtime errors",
+      "passed": true
+    }
+  ],
+  "screenshots": [
+    {
+      "path": ".build-cache\\M10-settings-plugins.png",
+      "sha256": "2c9b3192e8799d902f2ba9a7730416e672536c803386733538949ef7a4a22f74"
+    },
+    {
+      "path": ".build-cache\\M10-settings-models.png",
+      "sha256": "098e6a32a98fd66637ff2ac48d13ccf6e51d7969772aaf4dfa7028638c9fa302"
+    },
+    {
+      "path": ".build-cache\\M10-settings-permissions.png",
+      "sha256": "ec9e95546a85981c13864a29a645a2cbf71502f8db41485d677db2c427bb8915"
+    },
+    {
+      "path": ".build-cache\\M10-settings-dark.png",
+      "sha256": "42bc309b530d043dcf48db5bd26e88b53ed52ba4de36e644903955ef81b33a0b"
+    },
+    {
+      "path": ".build-cache\\M10-settings-mobile.png",
+      "sha256": "6df524f9f60edbeff80e6cd55d6fb10df01d11c97c12f44ec7b84cd18e30f5dc"
+    }
+  ],
+  "modelRequests": 4,
+  "paidRequests": 0,
+  "jarSha256": "0303b8837e29260f21e2a8c4e85419afd3037c1a8684c3735cafa04b09d98b00",
+  "fixtureCredentialsCleaned": true
+}

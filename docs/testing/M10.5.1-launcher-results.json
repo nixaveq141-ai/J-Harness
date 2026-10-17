@@ -1,0 +1,23 @@
+{
+  "status": "PASS",
+  "capturedAt": "2026-10-17T01:28:57.519091+00:00",
+  "checks": [
+    "PowerShell entry: actual UI/API ready, authenticated metadata, private API and paths with spaces/ampersand",
+    "duplicate launch fails without stopping existing service or exposing token",
+    "quit gracefully closes owned Java service and leaves no listening port",
+    "web-ui.cmd starts and stops the real packaged UI",
+    "saved workspace config is selected and absent credential generates a fresh private token",
+    "missing Java produces bounded actionable error",
+    "token cannot overwrite protected environment variables",
+    "entry filename is ASCII web-ui.cmd"
+  ],
+  "browserAndClipboardSideEffects": "browser opening disabled for automation; production opens browser directly and never copies a credential",
+  "paidRequests": 0,
+  "modelEndpoint": "unreachable loopback :9; no task submissions",
+  "sourceSha256": {
+    "web-ui.cmd": "c28ea8a03f496f223c67f06d595d55925f6cc83e01aaed58d1d6511c5142d82e",
+    "scripts/open-workbench.ps1": "8dfd5bc75455aa975cf6b0494dd5bf579465e47dbd8d306a7053ab93e8e392bc",
+    "scripts/test-open-workbench.py": "46f206026802ed811817dbc5976f941ede86ad376ea26dbd1a1c9ffb9eb33f7e"
+  },
+  "jarSha256": "0303b8837e29260f21e2a8c4e85419afd3037c1a8684c3735cafa04b09d98b00"
+}

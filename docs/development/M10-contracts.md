@@ -34,3 +34,7 @@ frontend 中 npm ci / npm run build 产生 dist；Maven 将 dist 作为 harness-
 2026-10-16便捷入口增量：Windows英文名`web-ui.cmd`调用open-workbench.ps1，实际UI+鉴权API就绪后自动打开浏览器并复制凭据。支持既有配置/自定义工作区，token仅子进程环境和用户剪贴板，不入URL/文件/日志。服务仍由启动窗口持有，重复启动不停止既有宿主；不增加在线解除UNKNOWN或自动重放。新增启动器验证独立记录，不改Java/前端业务代码。
 
 Java307项、客户端8项、真实Chrome28项通过；细节和平台限制见M10-validation.md/M10-results.json。API/SDK1.9及JSONL/schema1保持，新增HTTP读取接口是兼容增量。M10远端矩阵未执行，不继承M9旧源码的CI认证。
+
+## 2026-10-17 M10.5.1 增量契约入口
+
+新增只读GET /v1/tasks/{id}/diagnosis（schemaVersion=1）、可选settings.policy（default/read-only）及核实交接UI，详细兼容、关联、恢复及服务边界见[M10.5.1契约](M10.5.1-contracts.md)。SDK协议1.9与事件格式1不变；旧客户端不传policy时保留现有限制。旧阶段证据保留历史，新验收独立归档。

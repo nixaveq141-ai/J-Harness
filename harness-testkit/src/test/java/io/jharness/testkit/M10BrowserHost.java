@@ -22,7 +22,10 @@ public final class M10BrowserHost implements AutoCloseable {
     M10BrowserHost(Path base) throws Exception {
         root = base.toRealPath();
         var profiles = new LinkedHashMap<String, HarnessWebServer.Profile>();
-        for (String name : List.of("write", "read", "diff", "cancel", "unknown", "html", "large")) {
+        for (String name :
+                List.of(
+                        "write", "read", "diff", "cancel", "unknown", "html", "large", "shell",
+                        "timeout")) {
             Path workspace = Files.createDirectories(root.resolve(name)).toRealPath();
             Files.writeString(workspace.resolve("input.txt"), "hello from a real workspace\n");
             if (name.equals("diff")) {
@@ -52,30 +55,73 @@ public final class M10BrowserHost implements AutoCloseable {
                                 if (name.equals("unknown"))
                                     throw new IllegalStateException("Uncertain fixture open");
                                 var calls =
-                                        name.equals("write")
+                                        name.equals("shell") || name.equals("timeout")
                                                 ? List.of(
                                                         new ToolInvocation(
-                                                                "browser-write",
-                                                                "write_file",
+                                                                "browser-command",
+                                                                "execute_command",
                                                                 Map.of(
-                                                                        "path",
-                                                                        "browser-note.txt",
-                                                                        "content",
-                                                                        "来自浏览器的修改"),
-                                                                SideEffectLevel.WORKSPACE_WRITE))
-                                                : name.equals("diff")
+                                                                        "argv",
+                                                                        name.equals("shell")
+                                                                                ? List.of(
+                                                                                        "cmd.exe",
+                                                                                        "/c",
+                                                                                        "echo fixture")
+                                                                                : List.of(
+                                                                                        Path.of(
+                                                                                                        System
+                                                                                                                .getProperty(
+                                                                                                                        "java.home"),
+                                                                                                        "bin",
+                                                                                                        System
+                                                                                                                        .getProperty(
+                                                                                                                                "os.name")
+                                                                                                                        .startsWith(
+                                                                                                                                "Windows")
+                                                                                                                ? "java.exe"
+                                                                                                                : "java")
+                                                                                                .toString(),
+                                                                                        "-cp",
+                                                                                        System
+                                                                                                .getProperty(
+                                                                                                        "java.class.path"),
+                                                                                        M105ProcessFixture
+                                                                                                .class
+                                                                                                .getName()),
+                                                                        "mode",
+                                                                        "ARGV",
+                                                                        "timeoutMs",
+                                                                        200),
+                                                                SideEffectLevel.SYSTEM_IMPACT))
+                                                : name.equals("write")
                                                         ? List.of(
                                                                 new ToolInvocation(
-                                                                        "browser-diff",
-                                                                        "git_diff",
-                                                                        Map.of(),
-                                                                        SideEffectLevel.READ_ONLY))
-                                                        : List.of(
-                                                                new ToolInvocation(
-                                                                        "browser-read",
-                                                                        "read_file",
-                                                                        Map.of("path", "input.txt"),
-                                                                        SideEffectLevel.READ_ONLY));
+                                                                        "browser-write",
+                                                                        "write_file",
+                                                                        Map.of(
+                                                                                "path",
+                                                                                "browser-note.txt",
+                                                                                "content",
+                                                                                "来自浏览器的修改"),
+                                                                        SideEffectLevel
+                                                                                .WORKSPACE_WRITE))
+                                                        : name.equals("diff")
+                                                                ? List.of(
+                                                                        new ToolInvocation(
+                                                                                "browser-diff",
+                                                                                "git_diff",
+                                                                                Map.of(),
+                                                                                SideEffectLevel
+                                                                                        .READ_ONLY))
+                                                                : List.of(
+                                                                        new ToolInvocation(
+                                                                                "browser-read",
+                                                                                "read_file",
+                                                                                Map.of(
+                                                                                        "path",
+                                                                                        "input.txt"),
+                                                                                SideEffectLevel
+                                                                                        .READ_ONLY));
                                 String content =
                                         name.equals("html")
                                                 ? "<img src=x onerror=\"window.injected=true\">"

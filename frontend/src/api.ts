@@ -18,10 +18,12 @@ export interface ModelConnection {
 }
 export interface SettingsData {
   revision: string; models: ModelConnection[]; selected: string; extensions: Record<string, unknown>
+  policy: 'default' | 'read-only'
   credentialStore: string; corePlugins: string[]; credentialCleanupPending: boolean
 }
 function settings(value: unknown): SettingsData {
   const v = object(value)
+  if (v.policy !== undefined && v.policy !== 'default' && v.policy !== 'read-only') throw new ApiError('INVALID_RESPONSE')
   if (!Array.isArray(v.models) || v.models.length < 1 || v.models.length > 16 || !Array.isArray(v.corePlugins)) throw new ApiError('INVALID_RESPONSE')
   const models = v.models.map(raw => {
     const m = object(raw)
@@ -29,7 +31,7 @@ function settings(value: unknown): SettingsData {
     return { id: identifier(m.id), label: text(m.label, 80), baseUrl: text(m.baseUrl, 512), model: text(m.model, 128),
       apiKeyEnv: text(m.apiKeyEnv, 128), keyConfigured: m.keyConfigured, pricing: object(m.pricing), disableThinking: m.disableThinking }
   })
-  return { revision: text(v.revision, 64), models, selected: identifier(v.selected), extensions: object(v.extensions),
+  return { revision: text(v.revision, 64), models, selected: identifier(v.selected), extensions: object(v.extensions), policy: v.policy === 'read-only' ? 'read-only' : 'default',
     credentialStore: text(v.credentialStore), corePlugins: v.corePlugins.map(x => text(x)), credentialCleanupPending: v.credentialCleanupPending === true }
 }
 export class ApiError extends Error {
@@ -74,7 +76,7 @@ export function mergeEvents(old: SessionEvent[], incoming: SessionEvent[]): Sess
   return [...old, ...incoming.filter(e => { if (seen.has(e.eventId)) return false; seen.add(e.eventId); return true })].slice(0, 4000)
 }
 export const isTerminal = (t: Task) => ['FINISHED', 'UNKNOWN', 'VERIFIED'].includes(t.phase)
-export const uncertain = (t: Task) => t.phase === 'UNKNOWN' || t.status === 'UNKNOWN'
+export const uncertain = (t: Task) => t.phase !== 'VERIFIED' && (t.phase === 'UNKNOWN' || t.status === 'UNKNOWN')
 export class Api {
   static async connect(fetcher: typeof fetch = fetch): Promise<Api> {
     const transport = new Api('0'.repeat(32), fetcher)
@@ -83,7 +85,7 @@ export class Api {
   }
   async settings() { return settings(await this.json('/v1/settings')) }
   async saveSettings(value: SettingsData, apiKeys: Record<string, string>) {
-    return settings(await this.json('/v1/settings', { revision: value.revision, models: value.models, selected: value.selected, extensions: value.extensions, apiKeys }))
+    return settings(await this.json('/v1/settings', { revision: value.revision, models: value.models, selected: value.selected, extensions: value.extensions, policy: value.policy, apiKeys }))
   }
   constructor(private token: string, private fetcher: typeof fetch = fetch) {
     if (!/^[A-Za-z0-9_-]{32,256}$/.test(token)) throw new ApiError('INVALID_TOKEN')
@@ -201,6 +203,28 @@ export class Api {
     finally { clearTimeout(timeout); signal.removeEventListener('abort', abort); await reader.cancel().catch(() => {}); reader.releaseLock() }
   }
   async report(id: string) { return this.json(`/v1/tasks/${identifier(id)}/report`) }
+  async diagnosis(id: string, signal?: AbortSignal) { return diagnosis(await this.json(`/v1/tasks/${identifier(id)}/diagnosis`, undefined, signal)) }
   async diff(id: string) { return this.json(`/v1/tasks/${identifier(id)}/diff`) }
   async search(id: string, text: string, after = '') { return page(await this.json(`/v1/tasks/${identifier(id)}/search`, { text, after, limit: 20 })) }
+}
+
+export interface Diagnosis {
+  schemaVersion: number; source: string; eventCount: number; task: Task
+  association: Record<string, unknown>; configuration: Record<string, unknown>; turnIds: string[]
+  issues: Record<string, unknown>[]; issuesLimited: boolean; sdkFactsSettled: boolean
+  pending: { uncertainCalls: string[]; unsettledCalls: string[]; pendingRequests: string[]; pendingTerminals: string[]; limited: boolean }
+}
+function diagnosis(value: unknown): Diagnosis {
+  const v = object(value), p = object(v.pending)
+  if (v.schemaVersion !== 1 || v.source !== 'session-events' || !Number.isSafeInteger(v.eventCount) || (v.eventCount as number) < 0
+    || typeof v.sdkFactsSettled !== 'boolean' || typeof v.issuesLimited !== 'boolean' || typeof p.limited !== 'boolean'
+    || !Array.isArray(v.issues) || v.issues.length > 12) throw new ApiError('INVALID_RESPONSE')
+  function ids(raw: unknown): string[] {
+    if (!Array.isArray(raw) || raw.length > 64) throw new ApiError('INVALID_RESPONSE')
+    return raw.map(x => text(x))
+  }
+  return { schemaVersion: 1, source: 'session-events', eventCount: v.eventCount as number, task: task(v.task),
+    association: object(v.association), configuration: object(v.configuration), turnIds: ids(v.turnIds),
+    issues: v.issues.map(object), issuesLimited: v.issuesLimited, sdkFactsSettled: v.sdkFactsSettled,
+    pending: { uncertainCalls: ids(p.uncertainCalls), unsettledCalls: ids(p.unsettledCalls), pendingRequests: ids(p.pendingRequests), pendingTerminals: ids(p.pendingTerminals), limited: p.limited } }
 }

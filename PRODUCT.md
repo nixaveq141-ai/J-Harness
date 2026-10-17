@@ -20,6 +20,8 @@ J-Harness 的本机单操作者，通过浏览器管理可信配置中的开发�
 
 ## Capabilities and Constraints
 
+失败摘要、主体执行/清理证据及未决事实来自宿主记录；安全核实向导与JSON交接只读。设置提供default/read-only权限选择，仅用于后续新任务；问题回答、计划批准和执行审批互不替代。
+
 Java Runtime 是执行、权限和持久化的事实来源。页面只调用本机受控 API；UNKNOWN 不自动重放。M10 不包含公网、多用户、Desktop 或付费模型评测。
 
 ## Brand Commitments

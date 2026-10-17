@@ -8,7 +8,8 @@
     "build": "tsc --noEmit && vite build && node scripts/package-ui.mjs",
     "test": "node --import tsx --test tests/client.test.ts",
     "test:browser": "node tests/browser.mjs",
-    "test:settings": "node tests/settings.mjs"
+    "test:settings": "node tests/settings.mjs",
+    "test:diagnosis": "node tests/diagnosis.mjs"
   },
   "dependencies": {
     "clsx": "2.1.1",

@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'node:assert/strict'
-import { Api, ApiError, mergeEvents, task, type SessionEvent } from '../src/api.ts'
+import { Api, ApiError, mergeEvents, task, uncertain, type SessionEvent } from '../src/api.ts'
 
 const token = 'test_token_0123456789_ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 test('browser connection obtains an in-memory session without user input', async () => {
@@ -20,6 +20,20 @@ const event: SessionEvent = { eventId: 'event_1', type: 'assistant.message', tim
 const row = { taskId: 'task_1', profile: 'default', phase: 'RUNNING', status: 'RUNNING',
   error: '', cancelRequested: false, recovered: false, protocolVersion: '1.9' }
 const json = (value: unknown, status = 200) => new Response(JSON.stringify(value), { status, headers: { 'content-type': 'application/json' } })
+
+test('diagnosis is read only and rejects incompatible or excessive facts', async () => {
+  assert.equal(uncertain({ ...row, phase: 'VERIFIED', status: 'UNKNOWN' }), false)
+  const data = { schemaVersion: 1, source: 'session-events', eventCount: 0, task: row, association: {}, configuration: {}, turnIds: [],
+    issues: [], issuesLimited: false, sdkFactsSettled: false, pending: { uncertainCalls: [], unsettledCalls: [], pendingRequests: [], pendingTerminals: [], limited: false } }
+  let payload: unknown = data
+  const calls: string[] = []
+  const api = new Api(token, (async (url, init) => { assert.equal(init?.method, 'GET'); calls.push(String(url)); return json(payload) }) as typeof fetch)
+  assert.equal((await api.diagnosis('task_1')).sdkFactsSettled, false)
+  payload = { ...data, schemaVersion: 2 }; await assert.rejects(api.diagnosis('task_1'), ApiError)
+  payload = { ...data, issues: Array.from({ length: 13 }, () => ({})) }; await assert.rejects(api.diagnosis('task_1'), ApiError)
+  payload = { ...data, pending: { ...data.pending, pendingRequests: Array(65).fill('step') } }; await assert.rejects(api.diagnosis('task_1'), ApiError)
+  assert.ok(calls.every(p => p === '/v1/tasks/task_1/diagnosis'))
+})
 
 test('mutations are never automatically retried and token stays in headers', async () => {
   const calls: { url: string; init: RequestInit }[] = []

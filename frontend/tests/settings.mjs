@@ -12,7 +12,7 @@ const jar = join(root, 'harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar')
 const java = join(process.env.JAVA_HOME, 'bin/java.exe')
 const token = 'settings_browser_0123456789_ABCDEFGHIJKLMNOPQRSTUVWXYZ', secret = `synthetic-${randomUUID()}`
 const checks = [], wire = [], screenshots = [], pageErrors = []
-let host, hostOutput = '', base, browser, page, context, held, block = true, toolSent = false, result
+let host, hostOutput = '', base, browser, page, context, held, block = true, toolSent = false, permissionProbe = false, result
 const wait = ms => new Promise(r => setTimeout(r, ms))
 async function until(predicate, timeout = 20000) { const start = Date.now(); while (Date.now() - start < timeout) { if (await predicate()) return; await wait(100) } throw new Error('Timed out awaiting fixture condition') }
 function check(name, condition = true) { assert.ok(condition, name); checks.push({ name, passed: true }); console.log('PASS', name) }
@@ -24,7 +24,8 @@ const provider = createServer(async (request, response) => {
     if (response.writableEnded) return
     const tool = !toolSent; toolSent = true
     response.writeHead(200, { 'Content-Type': 'application/json' })
-    response.end(JSON.stringify({ id: 'fixture', model: body.model, choices: [{ index: 0, finish_reason: tool ? 'tool_calls' : 'stop', message: tool ? { role: 'assistant', content: null, tool_calls: [{ id: 'settings-todo', type: 'function', function: { name: 'todo_list', arguments: '{}' } }, { id: 'settings-skill', type: 'function', function: { name: 'skill_guide__load', arguments: '{}' } }] } : { role: 'assistant', content: 'Local fixture complete.' } }], usage: { prompt_tokens: 30, completion_tokens: 10, total_tokens: 40 } }))
+    const calls = permissionProbe ? [{ id: 'permission-write', type: 'function', function: { name: 'write_file', arguments: JSON.stringify({ path: 'permission-blocked.txt', content: 'must not execute' }) } }] : [{ id: 'settings-todo', type: 'function', function: { name: 'todo_list', arguments: '{}' } }, { id: 'settings-skill', type: 'function', function: { name: 'skill_guide__load', arguments: '{}' } }]
+    response.end(JSON.stringify({ id: 'fixture', model: body.model, choices: [{ index: 0, finish_reason: tool ? 'tool_calls' : 'stop', message: tool ? { role: 'assistant', content: null, tool_calls: calls } : { role: 'assistant', content: 'Local fixture complete.' } }], usage: { prompt_tokens: 30, completion_tokens: 10, total_tokens: 40 } }))
   }
   if (block) held = reply; else reply()
 })
@@ -95,14 +96,34 @@ try {
   const events = (await api(`/v1/tasks/${task.taskId}/events?limit=100`)).body.events
   check('configured plugins execute through SDK and durable events', events.some(e => e.type === 'tool.completed' && e.payload.tool === 'todo_list' && e.payload.status === 'SUCCESS') && events.some(e => e.type === 'tool.completed' && e.payload.tool === 'skill_guide__load' && e.payload.status === 'SUCCESS'))
   check('event output excludes raw API key', !JSON.stringify(events).includes(secret))
+  await page.getByRole('button', { name: '工作台设置', exact: true }).click()
+  await page.getByRole('tab', { name: '权限', exact: true }).click()
+  await page.getByLabel('权限模式', { exact: true }).selectOption('read-only')
+  await page.getByRole('button', { name: '保存设置', exact: true }).click()
+  await page.getByText('设置已保存，将用于后续新任务。', { exact: true }).waitFor()
+  await shot('permissions')
+  check('browser permission selection persists a bounded mode', (await api('/v1/settings')).body.policy === 'read-only' && (await api('/v1/settings', { ...saveBody((await api('/v1/settings')).body), policy: 'allow-all' })).status === 400)
+  permissionProbe = true; toolSent = false
+  await page.getByRole('button', { name: '返回任务', exact: true }).click()
+  await page.getByRole('button', { name: '新建任务', exact: true }).click()
+  await page.getByLabel('任务目标').fill('Read-only policy fixture; model will attempt a write.')
+  await page.getByRole('button', { name: '创建任务', exact: true }).click()
+  await until(async () => { const id = await page.evaluate(() => sessionStorage.getItem('jh-selected')); return id && id !== task.taskId })
+  const permissionId = await page.evaluate(() => sessionStorage.getItem('jh-selected'))
+  await until(async () => (await api(`/v1/tasks/${permissionId}`)).body.phase === 'FINISHED')
+  const permissionEvents = (await api(`/v1/tasks/${permissionId}/events?limit=100`)).body.events
+  check('selected permission reaches real SDK and blocks model write before body', permissionEvents.some(e => e.type === 'config.selected' && e.payload.resolved.policy === 'read-only') && permissionEvents.some(e => e.type === 'tool.completed' && e.callId === 'permission-write' && e.payload.status === 'DENIED' && e.payload.bodyEntered === false) && !((await readdir(workspace)).includes('permission-blocked.txt')))
   await stop(); check('host stops without printing key', !hostOutput.includes(secret))
   await start(); await connect()
   const restored = (await api('/v1/settings')).body
   check('restart restores connection and system credential', restored.selected === saved.selected && restored.models.find(m => m.id === saved.selected).keyConfigured)
+  check('restart retains read-only permission and old snapshot stays default', restored.policy === 'read-only' && events.some(e => e.type === 'config.selected' && e.payload.resolved.policy === 'default'))
+  await page.getByRole('tab', { name: '权限', exact: true }).click()
   await page.getByRole('button', { name: '切换深色主题', exact: true }).click(); await shot('dark')
   await page.setViewportSize({ width: 390, height: 844 }); await shot('mobile')
   check('mobile settings have no document overflow', await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth))
   await page.setViewportSize({ width: 1440, height: 960 })
+  await page.getByRole('tab', { name: '模型与连接', exact: true }).click()
   await page.getByLabel('连接名称', { exact: true }).fill('已编辑连接')
   await page.getByRole('button', { name: '保存设置', exact: true }).click(); await page.getByText('设置已保存，将用于后续新任务。', { exact: true }).waitFor()
   check('existing connection edited without key resubmission', (await api('/v1/settings')).body.models.find(m => m.id === saved.selected).label === '已编辑连接')

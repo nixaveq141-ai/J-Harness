@@ -272,7 +272,8 @@ public final class HarnessWebServer implements AutoCloseable {
                                             "models",
                                             "selected",
                                             "extensions",
-                                            "apiKeys"));
+                                            "apiKeys"),
+                                    Set.of("policy"));
                     if (!occupied.isEmpty()) throw fault(409, "WORKSPACE_BUSY");
                     try {
                         respond(exchange, 200, settings.save(input));
@@ -342,6 +343,26 @@ public final class HarnessWebServer implements AutoCloseable {
                 response = summary(task);
             }
             respond(exchange, 200, response);
+        } else if (path.length == 5
+                && path[4].equals("diagnosis")
+                && method.equals("GET")
+                && query.isEmpty()) {
+            var diagnosis = new LinkedHashMap<>(TaskDiagnosis.inspect(events(task), sanitizer));
+            synchronized (this) {
+                diagnosis.put("task", summary(task));
+                diagnosis.put(
+                        "association",
+                        Map.of(
+                                "sessionId",
+                                task.id,
+                                "requestHash",
+                                task.requestHash,
+                                "workspaceBinding",
+                                task.binding,
+                                "catalogId",
+                                catalogId));
+            }
+            respond(exchange, 200, diagnosis);
         } else if (path.length == 5
                 && path[4].equals("report")
                 && method.equals("GET")
@@ -685,7 +706,11 @@ public final class HarnessWebServer implements AutoCloseable {
                 }
             }
             return new ApprovalService.ApprovalDecision(
-                    false, "Approval expired or cancelled", "web-server");
+                    false,
+                    task.cancelled
+                            ? "Approval cancelled"
+                            : closed ? "Approval unavailable" : "Approval expired",
+                    "web-server");
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
             return new ApprovalService.ApprovalDecision(
@@ -873,6 +898,11 @@ public final class HarnessWebServer implements AutoCloseable {
 
     private static Map<String, Object> body(HttpExchange exchange, Set<String> keys)
             throws IOException {
+        return body(exchange, keys, Set.of());
+    }
+
+    private static Map<String, Object> body(
+            HttpExchange exchange, Set<String> keys, Set<String> optional) throws IOException {
         if (!exchange.getRequestHeaders()
                         .getOrDefault("Content-Type", List.of())
                         .equals(List.of("application/json"))
@@ -894,7 +924,9 @@ public final class HarnessWebServer implements AutoCloseable {
         } catch (IOException | RuntimeException ex) {
             throw fault(400, "INVALID_JSON");
         }
-        if (!value.keySet().equals(keys)) throw fault(400, "INVALID_BODY");
+        var actual = new HashSet<>(value.keySet());
+        actual.removeAll(optional);
+        if (!actual.equals(keys)) throw fault(400, "INVALID_BODY");
         return value;
     }
 
