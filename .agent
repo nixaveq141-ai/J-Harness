@@ -6,6 +6,8 @@
 
 - 2026-10-17 M10.5.4原生凭据增量已完成本地验证，整片仍实施中：新增macOS Keychain/Linux Secret Service隔离worker、可用性提示和不可用清理保护；Windows/Linux原生7项各通过，Linux缺失/锁定明确不可用，Java338/客户端16/Chrome设置26通过。280份Java/POM及最终同一JAR/UI见M10.5.4-native-results.json；最终JAR 8c8dcca693983e6f0a3af707d30fbb7dff3b3e8b2658c154686baa8ddedc7e4b。真实Linux首测发现service句柄问题已修复并全复验。用户无Mac，已准备三平台native-credentials.yml，拟推送codex/m1054-native-validation（通用CI忽略该分支），用户于2026-10-17明确授权本次推送/三平台凭据CI，fdd326b已推送至该验证分支，CI 39013201037运行中，不计macOS通过。下一步远端原生验证及模型选择/逐轮快照/能力/多协议实现，后者均未完成。契约/验收见M10.5.4对应文档，无付费模型请求或参考目录改动。
 
+- 2026-10-17远端原生凭据CI进展：用户已授权推送/运行。首轮39013201037的macOS/Linux步骤通过、Windows失败，且报告因隐藏目录被上传器排除；6afea50修复限定JSON上传/缺文件失败并增加无秘密固定错误分类，CI 39013479912取得报告，Windows确认为WORKER_TIMEOUT。正在将Windows PowerShell动态C#编译改为隔离JVM内JNA调用相同CredReadW/WriteW/DeleteW/Free（命名、UTF-8内容、Persist=2不变），保持7秒时限。本机真实新worker已通过原生7项，最终全回归/远端复验待完成。
+
 - 2026-10-17 M10.5.3已完成本地验收：同会话续轮、独立受理ID、8条待执行队列/取消与完整轮次边界补充已交付；重启暂停、显式开始、UNKNOWN阻塞及丢响应GET核对保持。Web目录2备份升级至3，SDK1.9/JSONL1保持；输入关联userEventId及实际Loop轮次，前缀可重建。Java337项零失败/错误/跳过、客户端16、Chrome多轮15/历史19/设置24/诊断13/工作台28、入口8通过；278份Java/POM与最终同一JAR/UI见docs/testing/M10.5.3-results.json及validation.md。旧M3临时目录清理曾失败，保留失败日志后同源码完整复验通过；三项界面P2已修复并通过独立审查。参考目录未改，无付费请求/推送/远端CI。下一入口M10.5.4，.4～.9及M11/M12未完成。
 
 - 2026-10-17用户明确要求清空本项目Web UI全部会话，并选择先核实再清空。已按实际只读统计命令、原PID/宿主进程检查及独占CLI追加PARTIAL工具核实，SDK ready=true（仍FAILED）后原目录核实通过；清除4条会话、旧catalog/备份、对应日志/产物和空锁。实际Web API view=all返回historyCount=0/hotCount=0，验证宿主正常关闭，无任务/模型调用。设置、系统凭据、工作区文件和参考目录未改动。详见docs/development/web-history-maintenance-2026-10-17.md；运行数据不提交，M10.5.3仍为下一入口。

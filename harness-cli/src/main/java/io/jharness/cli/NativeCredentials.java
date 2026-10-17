@@ -2,6 +2,7 @@ package io.jharness.cli;
 
 import com.sun.jna.*;
 import com.sun.jna.ptr.*;
+import com.sun.jna.win32.StdCallLibrary;
 import io.jharness.api.Values;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -19,7 +20,10 @@ public final class NativeCredentials {
                 throw new IllegalArgumentException();
             String result = "";
             String os = System.getProperty("os.name");
-            try (Vault vault = os.startsWith("Mac") ? new Keychain() : new SecretService()) {
+            try (Vault vault =
+                    os.startsWith("Windows")
+                            ? new WindowsVault()
+                            : os.startsWith("Mac") ? new Keychain() : new SecretService()) {
                 for (var raw : operations) {
                     var op = Values.object(raw);
                     String action = (String) op.get("action");
@@ -49,6 +53,103 @@ public final class NativeCredentials {
 
         @Override
         default void close() {}
+    }
+
+    /** CREDENTIALW layout; keep the existing generic/current-user local-machine persistence. */
+    @Structure.FieldOrder({
+        "flags",
+        "type",
+        "target",
+        "comment",
+        "writtenLow",
+        "writtenHigh",
+        "size",
+        "blob",
+        "persist",
+        "count",
+        "attributes",
+        "alias",
+        "user"
+    })
+    public static final class WindowsCredential extends Structure {
+        public int flags, type;
+        public WString target, comment;
+        public int writtenLow, writtenHigh, size;
+        public Pointer blob;
+        public int persist, count;
+        public Pointer attributes;
+        public WString alias, user;
+
+        public WindowsCredential() {}
+
+        WindowsCredential(Pointer pointer) {
+            super(pointer);
+            read();
+        }
+    }
+
+    public interface WindowsApi extends StdCallLibrary {
+        boolean CredReadW(WString target, int type, int flags, PointerByReference result);
+
+        boolean CredWriteW(WindowsCredential credential, int flags);
+
+        boolean CredDeleteW(WString target, int type, int flags);
+
+        void CredFree(Pointer pointer);
+    }
+
+    private static final class WindowsVault implements Vault {
+        private final WindowsApi api = Native.load("Advapi32", WindowsApi.class);
+
+        private void check(boolean success) {
+            if (!success) throw new IllegalStateException("Native vault unavailable");
+        }
+
+        @Override
+        public String run(String action, String target, String value) {
+            var name = new WString(target);
+            if (action.equals("probe")) return "available";
+            if (action.equals("delete")) {
+                if (!api.CredDeleteW(name, 1, 0) && Native.getLastError() != 1168) check(false);
+                return "";
+            }
+            if (action.equals("write")) {
+                byte[] bytes = value.getBytes(StandardCharsets.UTF_8);
+                try (Memory memory = new Memory(Math.max(1, bytes.length))) {
+                    try {
+                        memory.write(0, bytes, 0, bytes.length);
+                        var credential = new WindowsCredential();
+                        credential.type = 1;
+                        credential.target = name;
+                        credential.size = bytes.length;
+                        credential.blob = memory;
+                        credential.persist = 2;
+                        credential.user = new WString("J-Harness");
+                        check(api.CredWriteW(credential, 0));
+                    } finally {
+                        memory.clear();
+                    }
+                } finally {
+                    Arrays.fill(bytes, (byte) 0);
+                }
+                return "";
+            }
+            var result = new PointerByReference();
+            if (!api.CredReadW(name, 1, 0, result)) {
+                if (Native.getLastError() == 1168) return "";
+                check(false);
+            }
+            try {
+                var credential = new WindowsCredential(result.getValue());
+                if (credential.size < 0 || credential.size > 1024)
+                    throw new IllegalStateException();
+                if (credential.size == 0) return "";
+                return new String(
+                        credential.blob.getByteArray(0, credential.size), StandardCharsets.UTF_8);
+            } finally {
+                api.CredFree(result.getValue());
+            }
+        }
     }
 
     private static final class Keychain implements Vault {

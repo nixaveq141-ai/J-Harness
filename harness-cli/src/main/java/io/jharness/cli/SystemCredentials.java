@@ -43,11 +43,15 @@ class SystemCredentials {
 
     private String invokeNative(List<Map<String, String>> operations) throws IOException {
         String os = System.getProperty("os.name");
-        if (!os.startsWith("Mac") && !os.equals("Linux"))
+        if (!os.startsWith("Mac") && !os.equals("Linux") && !os.startsWith("Windows"))
             throw new IOException("Credential store unavailable on this platform");
         var builder =
                 new ProcessBuilder(
-                        Path.of(System.getProperty("java.home"), "bin", "java").toString(),
+                        Path.of(
+                                        System.getProperty("java.home"),
+                                        "bin",
+                                        os.startsWith("Windows") ? "java.exe" : "java")
+                                .toString(),
                         "-cp",
                         System.getProperty("java.class.path"),
                         NativeCredentials.class.getName());
@@ -55,6 +59,10 @@ class SystemCredentials {
                 builder,
                 operations,
                 List.of(
+                        "SystemRoot",
+                        "USERPROFILE",
+                        "LOCALAPPDATA",
+                        "APPDATA",
                         "HOME",
                         "TMPDIR",
                         "TMP",
@@ -97,67 +105,7 @@ class SystemCredentials {
             throw new HarnessException(
                     "CREDENTIAL_STORE_UNAVAILABLE",
                     "Native credential store unavailable; use an environment variable");
-        if (!System.getProperty("os.name").startsWith("Windows")) return invokeNative(operations);
-        String source =
-                """
-                using System;
-                using System.Runtime.InteropServices;
-                using System.Text;
-                public static class Vault {
-                  [StructLayout(LayoutKind.Sequential, CharSet=CharSet.Unicode)]
-                  public struct C { public uint Flags, Type; public string Target, Comment;
-                    public System.Runtime.InteropServices.ComTypes.FILETIME Last;
-                    public uint Size; public IntPtr Blob; public uint Persist, Count;
-                    public IntPtr Attr; public string Alias, User; }
-                  [DllImport("advapi32.dll", EntryPoint="CredWriteW", CharSet=CharSet.Unicode, SetLastError=true)]
-                  static extern bool Write(ref C c, uint flags);
-                  [DllImport("advapi32.dll", EntryPoint="CredReadW", CharSet=CharSet.Unicode, SetLastError=true)]
-                  static extern bool Read(string target, uint type, uint flags, out IntPtr p);
-                  [DllImport("advapi32.dll", EntryPoint="CredDeleteW", CharSet=CharSet.Unicode, SetLastError=true)]
-                  static extern bool Delete(string target, uint type, uint flags);
-                  [DllImport("advapi32.dll")] static extern void CredFree(IntPtr p);
-                  public static string Run(string action, string target, string value) {
-                    if (action=="write") {
-                      byte[] bytes=Encoding.UTF8.GetBytes(value); IntPtr p=Marshal.AllocHGlobal(bytes.Length);
-                      try { Marshal.Copy(bytes,0,p,bytes.Length);
-                        C c=new C { Type=1, Target=target, Size=(uint)bytes.Length, Blob=p, Persist=2, User="J-Harness" };
-                        if(!Write(ref c,0)) throw new Exception();
-                      } finally { for(int i=0;i<bytes.Length;i++) Marshal.WriteByte(p,i,0); Marshal.FreeHGlobal(p); Array.Clear(bytes,0,bytes.Length); }
-                      return "";
-                    }
-                    if(action=="delete") { if(!Delete(target,1,0) && Marshal.GetLastWin32Error()!=1168) throw new Exception(); return ""; }
-                    IntPtr data; if(!Read(target,1,0,out data)) { if(Marshal.GetLastWin32Error()==1168) return ""; throw new Exception(); }
-                    try { C c=(C)Marshal.PtrToStructure(data,typeof(C)); if(c.Size>1024) throw new Exception();
-                      byte[] bytes=new byte[c.Size]; Marshal.Copy(c.Blob,bytes,0,bytes.Length); return Encoding.UTF8.GetString(bytes);
-                    } finally { CredFree(data); }
-                  }
-                }
-                """;
-        String script =
-                "$ErrorActionPreference='Stop'; try { Add-Type -TypeDefinition @'\n"
-                        + source
-                        + "'@; $items=([Console]::In.ReadToEnd() | ConvertFrom-Json); $r=''; foreach($v in $items) { $r=[Vault]::Run($v.action,$v.target,$v.value) }; [Console]::Out.Write([Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($r))) } catch { exit 7 }";
-        String executable =
-                Path.of(
-                                System.getenv("SystemRoot"),
-                                "System32",
-                                "WindowsPowerShell",
-                                "v1.0",
-                                "powershell.exe")
-                        .toString();
-        var builder =
-                new ProcessBuilder(
-                                executable,
-                                "-NoProfile",
-                                "-NonInteractive",
-                                "-EncodedCommand",
-                                Base64.getEncoder()
-                                        .encodeToString(script.getBytes(StandardCharsets.UTF_16LE)))
-                        .redirectError(ProcessBuilder.Redirect.DISCARD);
-        return run(
-                builder,
-                operations,
-                List.of("SystemRoot", "TEMP", "TMP", "USERPROFILE", "LOCALAPPDATA"));
+        return invokeNative(operations);
     }
 
     private String run(
