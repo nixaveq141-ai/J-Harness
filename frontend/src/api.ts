@@ -35,6 +35,13 @@ function settings(value: unknown): SettingsData {
   return { revision: text(v.revision, 64), models, selected: identifier(v.selected), extensions: object(v.extensions), policy: v.policy === 'read-only' ? 'read-only' : 'default',
     credentialStore: text(v.credentialStore), corePlugins: v.corePlugins.map(x => text(x)), credentialCleanupPending: v.credentialCleanupPending === true }
 }
+export interface TurnSubmission { submissionId: string; kind: 'message' | 'supplement'; state: string; turnId: string; status: string; sequence: number; preview: string }
+export function turnSubmission(value: unknown): TurnSubmission {
+  const v = object(value)
+  if (!/^[a-f0-9]{64}$/.test(text(v.submissionId, 64)) || !['message', 'supplement'].includes(text(v.kind)) || !['QUEUED','PAUSED','RUNNING','UNKNOWN','FINISHED','CANCELLED','VERIFIED'].includes(text(v.state)) || !Number.isInteger(v.sequence) || (v.sequence as number) < 2) throw new ApiError('INVALID_RESPONSE')
+  return { submissionId: text(v.submissionId,64), kind: v.kind as 'message' | 'supplement', state: text(v.state), turnId: text(v.turnId,64), status: text(v.status), sequence: v.sequence as number, preview: v.preview === undefined ? '' : text(v.preview, 200) }
+}
+function turnReceipt(value: unknown, expectedId: string) { const v = object(value), current = task(v.task); if (current.taskId !== expectedId) throw new ApiError('INVALID_RESPONSE'); return { task: current, submission: turnSubmission(v.submission) } }
 export class ApiError extends Error {
   constructor(public code: string, public status = 0) { super(code) }
 }
@@ -80,6 +87,16 @@ export function mergeEvents(old: SessionEvent[], incoming: SessionEvent[]): Sess
 export const isTerminal = (t: Task) => ['FINISHED', 'UNKNOWN', 'VERIFIED'].includes(t.phase)
 export const uncertain = (t: Task) => t.phase !== 'VERIFIED' && (t.phase === 'UNKNOWN' || t.status === 'UNKNOWN')
 export class Api {
+  async turns(id: string, offset = 0) {
+    const v = object(await this.json(`/v1/tasks/${identifier(id)}/turns?offset=${offset}`))
+    if (!Array.isArray(v.submissions) || v.submissions.length > 32 || typeof v.more !== 'boolean' || !Number.isInteger(v.next) || !Number.isInteger(v.total)) throw new ApiError('INVALID_RESPONSE')
+    return { submissions: v.submissions.map(turnSubmission), more: v.more, next: v.next as number, total: v.total as number }
+  }
+  async submitTurn(id: string, requestId: string, text: string, kind: 'message' | 'supplement') {
+    return turnReceipt(await this.json(`/v1/tasks/${identifier(id)}/turns`, { requestId: identifier(requestId), text, kind }), id)
+  }
+  async turnStatus(id: string, requestId: string) { return turnReceipt(await this.json(`/v1/tasks/${identifier(id)}/turns?request=${identifier(requestId)}`), id) }
+  async turnAction(id: string, hash: string, action: 'cancel' | 'start') { return turnReceipt(await this.json(`/v1/tasks/${identifier(id)}/turns/${identifier(hash)}/${action}`, {}), id) }
   async workspaces() { return workspaceData(await this.json('/v1/workspaces')) }
   async registerWorkspace(path: string, name: string) { return workspaceData(await this.json('/v1/workspaces', { path, name })) }
   async taskPage(profile = '', view = 'active', after = '', signal?: AbortSignal) {

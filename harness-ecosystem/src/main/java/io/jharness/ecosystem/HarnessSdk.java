@@ -147,8 +147,7 @@ public final class HarnessSdk implements AutoCloseable {
         PluginContainer assembly = null;
         try {
             var events = reader.events();
-            if (events.stream().anyMatch(e -> e.type().equals("session.archived")))
-                throw BoundedJson.error("SESSION_ARCHIVED");
+            if (SessionLifecycle.archived(events)) throw BoundedJson.error("SESSION_ARCHIVED");
             if (!SessionRecovery.inspect(events).ready())
                 throw BoundedJson.error("UNKNOWN_SIDE_EFFECT");
             var created = events.stream().filter(e -> e.type().equals("sdk.created")).findFirst();
@@ -294,6 +293,12 @@ public final class HarnessSdk implements AutoCloseable {
 
     /** A run is serialized; cancellation is callable concurrently and is never reset implicitly. */
     public synchronized Snapshot run(String goal, CancellationToken cancellation) {
+        return run(goal, cancellation, Map.of());
+    }
+
+    /** Optional host submission association; applied only at a new complete-turn boundary. */
+    public synchronized Snapshot run(
+            String goal, CancellationToken cancellation, Map<String, String> input) {
         if (closed.get()) throw BoundedJson.error("SDK_CLOSED");
         var token = (CancellationToken) () -> cancelled.get() || cancellation.isCancelled();
         token.throwIfCancelled();
@@ -327,11 +332,30 @@ public final class HarnessSdk implements AutoCloseable {
                                 scheduling.configuration(),
                                 "modelResilience",
                                 resilience.configuration())));
-        writer.append(
+        var userMessage =
                 SessionEvent.session(
-                        scope.sessionId(),
-                        "user.message",
-                        Map.of("role", "user", "content", goal)));
+                        scope.sessionId(), "user.message", Map.of("role", "user", "content", goal));
+        if (!input.isEmpty()) {
+            if (!input.keySet().equals(Set.of("requestHash", "kind"))
+                    || !input.get("requestHash").matches("[a-f0-9]{64}")
+                    || !Set.of("message", "supplement").contains(input.get("kind")))
+                throw BoundedJson.error("INVALID_SUBMISSION");
+            writer.append(
+                    SessionEvent.session(
+                            scope.sessionId(),
+                            "sdk.input.applied",
+                            Map.of(
+                                    "requestHash",
+                                    input.get("requestHash"),
+                                    "kind",
+                                    input.get("kind"),
+                                    "userEventId",
+                                    userMessage.eventId(),
+                                    "boundary",
+                                    "next-turn")));
+        }
+        writer.append(userMessage);
+        writer.flush();
         var loop =
                 registry.requireUnique(AgentLoopFactory.class, scope)
                         .create(

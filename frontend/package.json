@@ -10,7 +10,8 @@
     "test:browser": "node tests/browser.mjs",
     "test:settings": "node tests/settings.mjs",
     "test:diagnosis": "node tests/diagnosis.mjs",
-    "test:history": "node tests/history.mjs"
+    "test:history": "node tests/history.mjs",
+    "test:turns": "node tests/turns.mjs"
   },
   "dependencies": {
     "clsx": "2.1.1",

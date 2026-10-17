@@ -1,3 +1,4 @@
+import { TurnComposer } from './TurnComposer'
 import { useCallback, useEffect, useRef, useState, type FormEvent, type PointerEvent } from 'react'
 import { Api, ApiError, isTerminal, uncertain, mergeEvents, object, type Task, type Approval, type SessionEvent, type Page } from './api'
 import { Button } from './upstream/Button'
@@ -54,7 +55,7 @@ function Status({ value }: { value: Task }) {
 }
 const eventLabels: Record<string, string> = { 'tool.requested': '请求工具', 'tool.completed': '工具结果',
   'model.requested': '发送模型请求', 'model.responded': '收到模型响应', 'approval.requested': '等待审批',
-  'approval.decided': '审批决定', 'turn.started': '开始任务', 'turn.ended': '本轮结束',
+  'approval.decided': '审批决定', 'sdk.input.applied': '应用后续输入', 'turn.started': '开始轮次', 'turn.ended': '本轮结束',
   'assistant.message': '助手', 'user.message': '任务目标', 'config.selected': '应用可信配置',
   'tool.intent': '记录执行意图', 'tool.verified': '操作已核实', 'delivery.registered': '产物记录' }
 type Inspector = 'detail' | 'diff' | 'report' | 'search'
@@ -68,7 +69,8 @@ const tabs: [SegmentedTab<Inspector>, ...SegmentedTab<Inspector>[]] = [
 export function App() {
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [settingsGuard, setSettingsGuard] = useState(false), [sessionGuard, setSessionGuard] = useState(false)
-  const navigationGuard = settingsGuard || sessionGuard
+  const [turnGuard, setTurnGuard] = useState(false)
+  const navigationGuard = settingsGuard || sessionGuard || turnGuard
   const [viewProfile, setViewProfile] = useState(''), [viewMode, setViewMode] = useState('active')
   const pageMoving = useRef(false)
   const [pageLoading, setPageLoading] = useState(false)
@@ -160,7 +162,7 @@ export function App() {
               setEvents(old => mergeEvents(old, p.events)); cursor = p.next; more = p.more; count += p.events.length
               if (count >= 4000) { setLive('已达到显示上限，请使用查询'); return }
             }
-            setLive(uncertain(t) ? '结果待核实 · 不会重放任务' : '已同步全部记录'); return
+            setLive(uncertain(t) ? '结果待核实 · 不会重放任务' : '已同步全部记录'); await sleep(1200, abort.signal); continue
           }
           setLive('实时更新中')
           await api.stream(selected, cursor, e => { cursor = e.eventId; count++; setEvents(old => mergeEvents(old, [e])) }, abort.signal)
@@ -267,7 +269,7 @@ export function App() {
           {!api && <p className="muted nav-empty">连接本机服务后<br />查看任务记录。</p>}
         </nav>
         <div className="nav-expanded history-pages"><Button aria-label="上一页会话" disabled={navigationGuard || pageLoading || pageStack.length === 0} onClick={() => { if (pageMoving.current) return; pageMoving.current = true; setPageLoading(true); setPageCursor(pageStack.at(-1)!); setPageStack(old => old.slice(0, -1)) }}>上一页</Button><span>{pageStack.length + 1}</span><Button aria-label="下一页会话" disabled={navigationGuard || pageLoading || !morePages} onClick={() => { if (pageMoving.current) return; pageMoving.current = true; setPageLoading(true); setPageStack(old => [...old, pageCursor]); setPageCursor(nextPage) }}>下一页</Button></div>
-        <div className="nav-footer"><Button aria-label="工作台设置" title="工作台设置" disabled={!api || sessionGuard} onClick={() => { setSettingsOpen(true); setInspectorOpen(false); if (window.matchMedia('(max-width: 760px)').matches) setSideOpen(false) }} icon={<Icon name="panel" />}><span className="nav-expanded">设置</span></Button><Button onClick={() => setDark(v => !v)} aria-label={dark ? '切换浅色主题' : '切换深色主题'} icon={<Icon name="moon" />}><span className="nav-expanded">{dark ? '浅色主题' : '深色主题'}</span></Button>
+        <div className="nav-footer"><Button aria-label="工作台设置" title="工作台设置" disabled={!api || sessionGuard || turnGuard} onClick={() => { setSettingsOpen(true); setInspectorOpen(false); if (window.matchMedia('(max-width: 760px)').matches) setSideOpen(false) }} icon={<Icon name="panel" />}><span className="nav-expanded">设置</span></Button><Button onClick={() => setDark(v => !v)} aria-label={dark ? '切换浅色主题' : '切换深色主题'} icon={<Icon name="moon" />}><span className="nav-expanded">{dark ? '浅色主题' : '深色主题'}</span></Button>
           <div className="nav-expanded connection-state"><span className={`connection-dot ${api ? 'online' : ''}`} />{api ? '本机服务已连接' : '尚未连接'}</div>
           <a className="nav-expanded license-link" href="/ui-license.txt" target="_blank" rel="noreferrer">开源许可</a></div>
       </div>
@@ -298,6 +300,7 @@ export function App() {
           {!selected && <form className="composer" onSubmit={e => void submit(e)}><textarea aria-label="任务目标" placeholder="描述你的任务…" value={goal} maxLength={16384} onChange={e => setGoal(e.target.value)} rows={3} disabled={submitting}
             onKeyDown={e => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey) && !e.nativeEvent.isComposing) { e.preventDefault(); e.currentTarget.form?.requestSubmit() } }} />
             <div className="composer-toolbar"><label className="profile-picker">执行工作区 <select aria-label="任务配置" value={profile} onChange={e => setProfile(e.target.value)}>{profiles.map(p => <option key={p} value={p}>{workspaceNames[p] ?? p}</option>)}</select></label><span className="composer-shortcut">Ctrl / ⌘ + Enter</span><Button type="submit" variant="primary" aria-label="创建任务" disabled={!goal.trim() || !profile || submitting || !!pending}><Icon name="arrow" /></Button></div></form>}
+          {selected && api && active && <TurnComposer key={selected} api={api} task={active} onUpdated={updateTask} onHistory={() => { autoScroll.current = true }} onGuard={setTurnGuard} />}
           {selected && <footer className="activity-footer"><TextShimmer active={!!active && !isTerminal(active)}>{live}</TextShimmer>{active && active.cancelRequested && <span>已请求取消，正在等待执行事实</span>}
             <div>{hasProblems && <Button onClick={() => { diagnosisAnchor.current?.scrollIntoView({ block: 'start' }); diagnosisAnchor.current?.focus({ preventScroll: true }); autoScroll.current = false }}>执行诊断</Button>}<Button onClick={() => { setError(''); setHistoryKey(k => k + 1) }}>重载历史</Button>{active && !isTerminal(active) && <Button variant="outline" icon={<Icon name="stop" />} disabled={!!busy || active.cancelRequested} onClick={() => void cancel()}>取消任务</Button>}</div></footer>}
           <div className="workspace-note">工具操作沿用工作区权限与审批 · 执行结果以记录为准</div>

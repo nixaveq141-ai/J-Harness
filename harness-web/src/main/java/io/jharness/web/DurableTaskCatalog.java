@@ -30,9 +30,11 @@ final class DurableTaskCatalog implements SessionWriter {
         directory = repository.directory().resolve("tasks-" + hash(id).substring(0, 24));
         var legacy = repository.openReader(id).events();
         var marker = legacy.stream().filter(e -> e.type().equals("web.catalog.version")).toList();
-        if (marker.size() > 1
+        if (marker.size() > 2
                 || !marker.isEmpty()
-                        && !Integer.valueOf(2).equals(marker.getFirst().payload().get("version")))
+                        && !Integer.valueOf(2).equals(marker.getFirst().payload().get("version"))
+                || marker.size() == 2
+                        && !Integer.valueOf(3).equals(marker.getLast().payload().get("version")))
             throw error("FUTURE_WEB_CATALOG");
         if (!marker.isEmpty()
                 && (!Files.isDirectory(directory, LinkOption.NOFOLLOW_LINKS)
@@ -83,7 +85,22 @@ final class DurableTaskCatalog implements SessionWriter {
                                     "store",
                                     directory.getFileName().toString())));
             owner.flush();
-        } else if (!legacy.getLast().equals(marker.getFirst())) throw error("INVALID_WEB_CATALOG");
+        } else if (!legacy.getLast().equals(marker.getLast())) throw error("INVALID_WEB_CATALOG");
+        if (marker.size() < 2) {
+            Path backup = repository.backupOwned(id, owner);
+            owner.append(
+                    SessionEvent.session(
+                            id,
+                            "web.catalog.version",
+                            Map.of(
+                                    "version",
+                                    3,
+                                    "backup",
+                                    backup.getFileName().toString(),
+                                    "store",
+                                    directory.getFileName().toString())));
+            owner.flush();
+        }
         scan(history -> count++);
     }
 

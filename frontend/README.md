@@ -1,5 +1,7 @@
 # J-Harness Web 工作台
 
+M10.5.3增加同会话续轮、有界队列、取消排队、下一轮补充和丢响应GET核对；重启后的队列须显式开始，UNKNOWN仍阻塞。草稿仅页面内存，见[多轮说明](../docs/examples/m10.5.3-turns.md)。`npm run test:turns`使用实际CLI/Chrome和loopback替身，无付费请求。
+
 M10.5.2增加工作区注册/选择及会话命名、置顶、分叉、导出、归档/恢复和分页。历史与32个对象热集分离，磁盘目录配额10000条；只注册操作者拥有的已有真实目录，不读取目标配置。使用与边界见[会话管理](../docs/examples/m10.5.2-history.md)。`npm run test:history`使用实际CLI/Chrome和本机模型替身验证65条历史及重启，不调用付费模型。
 
 M10.5.1新增执行诊断（错误分类、主体执行、耗时/期限、清理及未决事实）、只读安全核实向导/离线交接、设置→权限的default/read-only选择，见[诊断与离线核实](../docs/examples/m10.5.1-recovery.md)。不提供在线清除UNKNOWN或自动重放。`npm run test:diagnosis`使用实际Java宿主、Chrome及无副作用的超时进程替身验证诊断；须先构建UI和最终JAR并编译testkit。验收见[M10.5.1记录](../docs/testing/M10.5.1-validation.md)。

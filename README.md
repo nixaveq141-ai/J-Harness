@@ -1,8 +1,10 @@
 # J-Harness
 
-后续开发已按用户要求插入 **M10.5工作台完善 → M11 Desktop → M12扩展**。M10.5包含九个切片，当前.1已完成本地验收、.2已完成本地验收，其余待开始，覆盖多轮交互、会话容量/管理、错误恢复、模型协议、提问、展示、扩展、检索/SDK及整阶段验证；详细顺序和验收见[M10.5计划](docs/requirements/M10.5-workbench-improvement-plan.md)。M10.5.1已实现执行诊断、只读核实交接和权限选择，已完成本地验收，见[本片记录](docs/testing/M10.5.1-validation.md)。
+后续开发已按用户要求插入 **M10.5工作台完善 → M11 Desktop → M12扩展**。M10.5包含九个切片，当前.1～.3已完成本地验收，.4～.9待开始，覆盖多轮交互、会话容量/管理、错误恢复、模型协议、提问、展示、扩展、检索/SDK及整阶段验证；详细顺序和验收见[M10.5计划](docs/requirements/M10.5-workbench-improvement-plan.md)。M10.5.1已实现执行诊断、只读核实交接和权限选择，已完成本地验收，见[本片记录](docs/testing/M10.5.1-validation.md)。
 
 M10.5.2已支持工作区注册/切换、会话命名/置顶/分叉/导出/归档/恢复和分页，解除累计32条后不能新建的问题；使用见[会话管理](docs/examples/m10.5.2-history.md)。
+
+M10.5.3现可在已完成会话底部继续对话，忙碌时排队或发送下一轮补充，支持取消排队和受理核对；重启后显式开始，详见[多轮说明](docs/examples/m10.5.3-turns.md)。
 
 Web工作台新增「设置」入口：可添加/修改/删除模型连接、API URL和API Key并选择默认连接；密钥按用户选择保存在Windows凭据管理器，重启后可用。「插件与扩展」提供Planning、上下文压缩以及MCP/Skills等配置入口。详见[使用说明](docs/examples/web-ui-settings.md)与[增量验收](docs/testing/M10-settings-validation.md)。
 
@@ -190,3 +192,5 @@ M8.1～M8.4所选范围已完成：Windows与Linux容器各295项通过，零失
 M10本地验收：Windows11/Java21全量307项零失败/错误/跳过；客户端8项和真实Chrome28项通过。依赖审计、原始来源、最终JAR与UI哈希、截图证据见[M10验收](docs/testing/M10-validation.md)。新三平台CI、Firefox/Safari及Desktop未因此认证。
 
 M10.5.2收口（2026-10-17）：工作区注册/选择、会话管理及32对象热集与持久历史分离已完成本地验收；Java331、客户端13、Chrome历史19/设置24/诊断13/工作台28、入口8项通过，276份Java/POM及最终同一JAR/UI证据见[M10.5.2记录](docs/testing/M10.5.2-validation.md)。下一步M10.5.3，.3～.9及M11门禁尚未闭合；未推送、未运行远端CI或付费模型。
+
+M10.5.3收口（2026-10-17）：同会话多轮、独立受理/核对、有界队列/取消及下一轮补充已完成本地验收。Java337、客户端16、Chrome多轮15/历史19/设置24/诊断13/工作台28、入口8项通过；278份Java/POM及最终同一JAR/UI见[M10.5.3记录](docs/testing/M10.5.3-validation.md)。重启暂停队列，UNKNOWN及原离线核实限制保持；下一步M10.5.4，.4～.9及M11门禁未闭合，无付费请求、推送或远端CI。

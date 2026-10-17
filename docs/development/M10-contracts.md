@@ -42,3 +42,7 @@ Java307项、客户端8项、真实Chrome28项通过；细节和平台限制见M
 ## M10.5.2 接续
 
 2026-10-17新增可信工作区注册/选择、会话管理及磁盘历史分页，旧目录经备份迁移到Web目录版本2；SDK1.9与会话事件格式1保持。当前接口、32对象热集/10000历史配额及工作区占用约束见[M10.5.2契约](M10.5.2-contracts.md)，本地验收见../testing/M10.5.2-validation.md。
+
+## M10.5.3 接续
+
+同会话多轮及队列契约见[M10.5.3-contracts.md](M10.5.3-contracts.md)：新增GET/POST /v1/tasks/{id}/turns（GET使用offset分页或request核对）、POST /v1/tasks/{id}/turns/{submissionHash}/start或cancel；独立受理ID，重启暂停不自动执行，SDK未知事实不被队列操作清除。Web目录2经备份迁移到3，旧宿主拒写，SDK1.9和JSONL格式1保持。已完成本地验收，当前证据见../testing/M10.5.3-validation.md。

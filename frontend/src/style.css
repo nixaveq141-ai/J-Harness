@@ -207,3 +207,14 @@ button { background: transparent; border: 0; }
 }
 @media (prefers-reduced-motion: reduce) { .task-item, .suggestions button, .event-chevron { transition: none; } }
 @media (pointer: coarse) { .workbench button { min-height: 44px; }.nav-toggle { min-width: 36px; }.event-inspect { min-width: 44px; } }
+
+.turn-composer { border-radius: 16px; padding: 12px 16px; max-height: 44vh; overflow-y: auto; }
+.turn-heading, .turn-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.turn-heading { margin-bottom: 8px; }.turn-heading > span, .turn-hint { font-size: 11px; color: var(--dsw-alias-label-secondary); }
+.turn-toolbar { margin-top: 8px; justify-content: flex-end; }.turn-toolbar > label { margin-right: auto; }
+.turn-toolbar select { color: inherit; background: var(--dsw-alias-bg-layer-3); border: 1px solid var(--dsw-alias-border-l3); border-radius: 6px; padding: 4px; }
+.turn-hint { margin: 6px 0 0; }.turn-queue { margin-top: 8px; }.turn-queue ol { list-style: none; padding: 0; margin: 8px 0; }
+.turn-queue li { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 6px; padding: 8px 0; border-bottom: 1px solid var(--dsw-alias-border-l3); font-size: 12px; }
+.turn-queue li small { display: block; color: var(--dsw-alias-label-secondary); }.turn-pending { font-size: 12px; }
+
+.turn-queue li > span { min-width: 0; overflow-wrap: anywhere; }

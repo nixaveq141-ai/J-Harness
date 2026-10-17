@@ -162,3 +162,5 @@ sessions verify-environment / verify-subagent 调用既有人工事实核实 API
 Workflow、PTC、Goal/Schedule、LSP、自动只读工具并行与通用重试/限流插件、Desktop UI 等决定及理由逐项见 [上游能力对照](../requirements/upstream-capabilities.md)。默认串行与显式有界只读子任务并发是当前调度能力，不能称为自动并行工具调度。当前本地 SDK/Web 生命周期不是桌面 UI；图片输入未实现。M7 收口是这一明确范围的交付，不是上游全产品复刻。
 
 
+
+M10.5.3 SDK增量（2026-10-17）：兼容原run(goal,cancellation)，新增携带requestHash/kind的公共重载，先记录sdk.input.applied与userEventId再开始新Loop；不直接改变运行轮次，日志前缀仍可重建。归档判断采用最新archived/restored事实，使已恢复会话可续轮。实际多轮/恢复验收见M10.5.3-contracts.md及对应记录。

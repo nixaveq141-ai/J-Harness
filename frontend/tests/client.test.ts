@@ -117,3 +117,23 @@ test('submission reconciliation uses only GET', async () => {
   assert.equal((await api.submission('fixed_id')).taskId, 'task_1')
   assert.deepEqual(methods, ['GET'])
 })
+
+test('continued submission lost response sends once and reconciliation is GET only', async () => {
+  const calls: string[] = []
+  const api = new Api(token, (async (url, init) => { calls.push(`${init!.method} ${url}`); throw new Error('offline') }) as typeof fetch)
+  await assert.rejects(api.submitTurn('task_1', 'message_1', 'sensitive draft', 'message'), ApiError)
+  assert.deepEqual(calls, ['POST /v1/tasks/task_1/turns'])
+  await assert.rejects(api.turnStatus('task_1', 'message_1'), ApiError)
+  assert.deepEqual(calls, ['POST /v1/tasks/task_1/turns', 'GET /v1/tasks/task_1/turns?request=message_1'])
+})
+test('turn paging rejects malformed states and oversized queue pages', async () => {
+  const invalid = new Api(token, (async () => json({ submissions: Array(33).fill({}), more: false, next: 33, total: 33 })) as typeof fetch)
+  await assert.rejects(invalid.turns('task_1'), ApiError)
+  const bad = new Api(token, (async () => json({ task: row, submission: { submissionId: 'a'.repeat(64), kind: 'message', state: 'pretend-success', sequence: 2, turnId: '', status: '' } })) as typeof fetch)
+  await assert.rejects(bad.turnStatus('task_1', 'message_1'), ApiError)
+})
+test('queue actions use submission identity and preserve task association', async () => {
+  const hash = 'b'.repeat(64)
+  const api = new Api(token, (async (url, init) => { assert.equal(url, `/v1/tasks/task_1/turns/${hash}/cancel`); assert.equal(init!.method, 'POST'); return json({ task: row, submission: { submissionId: hash, kind: 'supplement', state: 'CANCELLED', sequence: 2, turnId: '', status: '' } }) }) as typeof fetch)
+  assert.equal((await api.turnAction('task_1', hash, 'cancel')).submission.state, 'CANCELLED')
+})

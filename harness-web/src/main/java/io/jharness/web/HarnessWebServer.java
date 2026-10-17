@@ -264,6 +264,7 @@ public final class HarnessWebServer implements AutoCloseable {
                         task.cancelled = Boolean.TRUE.equals(p.get("cancelRequested"));
                     }
                     case "web.task.verified" -> {
+                        task.turns.verified();
                         task.phase = "VERIFIED";
                         task.error = "EXTERNALLY_VERIFIED_NO_REPLAY";
                     }
@@ -272,7 +273,13 @@ public final class HarnessWebServer implements AutoCloseable {
                         task.pinned = Boolean.TRUE.equals(p.get("pinned"));
                         task.archived = Boolean.TRUE.equals(p.get("archived"));
                     }
-                    default -> throw new IllegalArgumentException("Unknown task fact");
+                    default -> {
+                        if (!event.type().startsWith("web.turn."))
+                            throw new IllegalArgumentException("Unknown task fact");
+                        task.turns.apply(event);
+                        if (Set.of("web.turn.started", "web.turn.interrupted")
+                                .contains(event.type())) task.phase = "UNKNOWN";
+                    }
                 }
             }
             if (event.type().equals("web.task.accepted") || event.type().equals("web.task.changed"))
@@ -282,6 +289,8 @@ public final class HarnessWebServer implements AutoCloseable {
                 || !profiles.containsKey(task.profile)
                 || !profiles.get(task.profile).workspaceBinding().equals(task.binding))
             throw new IllegalArgumentException("Catalog/profile mismatch");
+        if (task.turns.inputs.values().stream().anyMatch(i -> i.state.equals("UNKNOWN")))
+            task.phase = "UNKNOWN";
         reconcileArchival(task);
         return task;
     }
@@ -346,6 +355,39 @@ public final class HarnessWebServer implements AutoCloseable {
                     catalog.append(SessionEvent.session(catalogId, "web.task.accepted", accepted));
                     catalog.flush();
                     task = find((String) pending.get("taskId"));
+                }
+                if (task != null && pending.get("turnHash") instanceof String turnHash) {
+                    var input = task.turns.inputs.get(turnHash);
+                    if (input == null) {
+                        var interrupted =
+                                Map.<String, Object>of(
+                                        "taskId",
+                                        task.id,
+                                        "requestHash",
+                                        turnHash,
+                                        "goalHash",
+                                        pending.get("turnGoalHash"),
+                                        "kind",
+                                        pending.get("turnKind"));
+                        var fact =
+                                SessionEvent.session(
+                                        catalogId, "web.turn.interrupted", interrupted);
+                        catalog.append(fact);
+                        catalog.flush();
+                        task.turns.apply(fact);
+                        task.phase = "UNKNOWN";
+                    } else if (TurnQueue.PENDING.contains(input.state)) {
+                        input.state = "UNKNOWN";
+                        task.phase = "UNKNOWN";
+                        // Admission exists but start may have failed after the workspace pointer.
+                        var fact =
+                                SessionEvent.session(
+                                        catalogId,
+                                        "web.turn.started",
+                                        Map.of("taskId", task.id, "requestHash", turnHash));
+                        catalog.append(fact);
+                        catalog.flush();
+                    }
                 }
                 if (task != null
                         && (task.phase.equals("FINISHED") || task.phase.equals("VERIFIED"))
@@ -658,6 +700,10 @@ public final class HarnessWebServer implements AutoCloseable {
                 response = summary(task);
             }
             respond(exchange, 200, response);
+        } else if (path.length >= 5 && path[4].equals("turns")) {
+            synchronized (this) {
+                turnRoute(exchange, task, path, method, query);
+            }
         } else if (path.length == 5
                 && path[4].equals("metadata")
                 && method.equals("POST")
@@ -970,6 +1016,7 @@ public final class HarnessWebServer implements AutoCloseable {
         if (diskCatalog == null && tasks.size() >= maxTasks || occupied.size() >= maxActive)
             throw fault(429, "TASK_LIMIT");
         if (occupied.contains(selected.workspaceBinding())) throw fault(409, "WORKSPACE_BUSY");
+        if (followup(requestHash) != null) throw fault(409, "REQUEST_ID_CONFLICT");
         String sanitizedGoal = clean(goal);
         var task =
                 new Task(
@@ -1038,6 +1085,247 @@ public final class HarnessWebServer implements AutoCloseable {
         if (!SessionRecovery.inspect(events(task)).ready()) throw fault(409, "RECOVERY_REQUIRED");
     }
 
+    private Map.Entry<Task, TurnQueue.Input> followup(String hash) {
+        if (diskCatalog == null) return null;
+        var found = new ArrayList<Map.Entry<Task, TurnQueue.Input>>();
+        diskCatalog.scan(
+                history -> {
+                    if (history.stream()
+                            .anyMatch(
+                                    e ->
+                                            Set.of("web.turn.accepted", "web.turn.interrupted")
+                                                            .contains(e.type())
+                                                    && hash.equals(
+                                                            e.payload().get("requestHash")))) {
+                        var task = find((String) history.getFirst().payload().get("taskId"));
+                        found.add(Map.entry(task, task.turns.inputs.get(hash)));
+                    }
+                });
+        if (found.size() > 1) throw fault(503, "INVALID_SUBMISSION_INDEX");
+        return found.isEmpty() ? null : found.getFirst();
+    }
+
+    private Map<String, Object> inputView(Task task, TurnQueue.Input input) {
+        int n = new ArrayList<>(task.turns.inputs.keySet()).indexOf(input.hash) + 2;
+        return Map.of("task", summary(task), "submission", input.view(n));
+    }
+
+    private void turnRoute(
+            HttpExchange exchange,
+            Task task,
+            String[] path,
+            String method,
+            Map<String, String> query)
+            throws IOException {
+        if (diskCatalog == null) throw fault(400, "TURNS_UNAVAILABLE");
+        if (path.length == 5 && method.equals("GET")) {
+            if (query.keySet().equals(Set.of("request"))) {
+                if (!query.get("request").matches("[A-Za-z0-9_-]{1,64}"))
+                    throw fault(400, "INVALID_REQUEST_ID");
+                var input = task.turns.inputs.get(hash(query.get("request")));
+                if (input == null) throw fault(404, "SUBMISSION_NOT_FOUND");
+                respond(exchange, 200, inputView(task, input));
+                return;
+            }
+            if (!Set.of("offset").containsAll(query.keySet())) throw fault(400, "INVALID_QUERY");
+            int offset;
+            try {
+                offset = Integer.parseInt(query.getOrDefault("offset", "0"));
+            } catch (NumberFormatException ex) {
+                throw fault(400, "INVALID_QUERY");
+            }
+            if (offset < 0 || offset > task.turns.inputs.size()) throw fault(400, "INVALID_QUERY");
+            respond(exchange, 200, task.turns.page(offset));
+            return;
+        }
+        if (!query.isEmpty()) throw fault(400, "INVALID_QUERY");
+        if (path.length == 5 && method.equals("POST")) {
+            var input = body(exchange, Set.of("requestId", "text", "kind"));
+            respond(
+                    exchange,
+                    202,
+                    enqueue(
+                            task,
+                            text(input, "requestId", 64),
+                            text(input, "text", 16384),
+                            text(input, "kind", 16)));
+            return;
+        }
+        if (path.length == 7 && method.equals("POST")) {
+            body(exchange, Set.of());
+            var input = task.turns.inputs.get(path[5]);
+            if (input == null) throw fault(404, "SUBMISSION_NOT_FOUND");
+            if (path[6].equals("cancel")) {
+                if (TurnQueue.PENDING.contains(input.state)) {
+                    var fact =
+                            SessionEvent.session(
+                                    catalogId,
+                                    "web.turn.cancelled",
+                                    Map.of("taskId", task.id, "requestHash", input.hash));
+                    persistInput(task, fact);
+                    input.content = "";
+                    input.state = "CANCELLED";
+                } else if (!input.state.equals("CANCELLED"))
+                    throw fault(409, "SUBMISSION_ALREADY_STARTED");
+            } else if (path[6].equals("start")) {
+                if (!TurnQueue.PENDING.contains(input.state) || task.turns.head() != input)
+                    throw fault(409, "QUEUE_ORDER_CONFLICT");
+                continuationReady(task);
+                prepareTurn();
+                startInput(task, input);
+            } else throw fault(404, "NOT_FOUND");
+            respond(exchange, 200, inputView(task, input));
+            return;
+        }
+        throw fault(405, "METHOD_NOT_ALLOWED");
+    }
+
+    private void prepareTurn() throws IOException {
+        if (closed || broken) throw fault(503, "WEB_UNAVAILABLE");
+        if (settings != null) {
+            try {
+                settings.prepareTask();
+            } catch (HarnessException ex) {
+                throw fault(400, ex.code());
+            }
+        }
+    }
+
+    private void continuationReady(Task task) {
+        if (closed || broken) throw fault(503, "WEB_UNAVAILABLE");
+        reconcileArchival(task);
+        if (task.archived) throw fault(409, "SESSION_ARCHIVED");
+        if (!Set.of("FINISHED", "VERIFIED").contains(task.phase)
+                || task.sdk != null
+                || occupied.contains(task.binding)) throw fault(409, "WORKSPACE_BUSY");
+        if (!SessionRecovery.inspect(events(task)).ready()) throw fault(409, "RECOVERY_REQUIRED");
+        if (events(task).stream().noneMatch(e -> e.type().equals("sdk.created")))
+            throw fault(409, "SESSION_HISTORY_UNAVAILABLE");
+        if (occupied.size() >= maxActive) throw fault(429, "ACTIVE_LIMIT");
+    }
+
+    private Map<String, Object> enqueue(Task task, String requestId, String content, String kind)
+            throws IOException {
+        if (closed || broken) throw fault(503, "WEB_UNAVAILABLE");
+        if (!requestId.matches("[A-Za-z0-9_-]{1,64}")) throw fault(400, "INVALID_REQUEST_ID");
+        if (!Set.of("message", "supplement").contains(kind)) throw fault(400, "INVALID_BODY");
+        String requestHash = hash(requestId), goalHash = hash(content);
+        var prior = followup(requestHash);
+        if (prior != null) {
+            if (!prior.getKey().id.equals(task.id)
+                    || !prior.getValue().goalHash.equals(goalHash)
+                    || !prior.getValue().kind.equals(kind)) throw fault(409, "REQUEST_ID_CONFLICT");
+            return inputView(prior.getKey(), prior.getValue());
+        }
+        if (submission(requestHash) != null) throw fault(409, "REQUEST_ID_CONFLICT");
+        reconcileArchival(task);
+        if (task.phase.equals("UNKNOWN") || task.archived)
+            throw fault(409, task.archived ? "SESSION_ARCHIVED" : "RECOVERY_REQUIRED");
+        if (task.turns.inputs.size() >= 256 || task.turns.pending() >= 8)
+            throw fault(429, "QUEUE_LIMIT");
+        if (task.turns.inputs.values().stream().anyMatch(i -> i.state.equals("PAUSED")))
+            throw fault(409, "QUEUE_PAUSED");
+        boolean idle = Set.of("FINISHED", "VERIFIED").contains(task.phase);
+        if (idle) {
+            continuationReady(task);
+            prepareTurn();
+        } else if (!occupied.contains(task.binding) || task.worker == null)
+            throw fault(409, "WORKSPACE_BUSY");
+        String safe = clean(content);
+        var fact =
+                SessionEvent.session(
+                        catalogId,
+                        "web.turn.accepted",
+                        Map.of(
+                                "taskId",
+                                task.id,
+                                "requestHash",
+                                requestHash,
+                                "goalHash",
+                                goalHash,
+                                "content",
+                                safe,
+                                "kind",
+                                kind));
+        persistInput(task, fact);
+        var input = task.turns.inputs.get(requestHash);
+        input.state = "QUEUED";
+        if (idle) advance(task);
+        return inputView(task, input);
+    }
+
+    private void persistInput(Task task, SessionEvent fact) {
+        try {
+            catalog.append(fact);
+            catalog.flush();
+            task.turns.apply(fact);
+        } catch (RuntimeException ex) {
+            broken = true;
+            throw fault(503, "SUBMISSION_NOT_CONFIRMED");
+        }
+    }
+
+    private void pauseInputs(Task task) {
+        for (var input : task.turns.inputs.values())
+            if (input.state.equals("QUEUED")) {
+                persistInput(
+                        task,
+                        SessionEvent.session(
+                                catalogId,
+                                "web.turn.paused",
+                                Map.of("taskId", task.id, "requestHash", input.hash)));
+            }
+    }
+
+    private void advance(Task task) {
+        var input = task.turns.head();
+        if (input == null || !input.state.equals("QUEUED")) return;
+        try {
+            continuationReady(task);
+            prepareTurn();
+            startInput(task, input);
+        } catch (IOException ex) {
+            if (!broken) pauseInputs(task);
+        } catch (WebFault ex) {
+            if (broken) throw ex;
+            pauseInputs(task);
+        }
+    }
+
+    private void startInput(Task task, TurnQueue.Input input) {
+        try {
+            var pointer = new LinkedHashMap<String, Object>(accepted(task));
+            pointer.put("turnHash", input.hash);
+            pointer.put("turnGoalHash", input.goalHash);
+            pointer.put("turnKind", input.kind);
+            var lease = leases.get(task.binding);
+            if (lease != null) lease.accept(pointer, catalogBinding);
+            persistInput(
+                    task,
+                    SessionEvent.session(
+                            catalogId,
+                            "web.turn.started",
+                            Map.of("taskId", task.id, "requestHash", input.hash)));
+            input.state = "RUNNING";
+            task.phase = "STARTING";
+            task.status = "CREATED";
+            task.error = "";
+            task.cancelled = false;
+            task.recovered = false;
+            occupied.add(task.binding);
+            String content = input.content;
+            task.worker = new Thread(() -> execute(task, content, input), "jharness-web-turn");
+            task.worker.setDaemon(true);
+            task.worker.start();
+        } catch (IOException | RuntimeException ex) {
+            input.state = "UNKNOWN";
+            task.phase = "UNKNOWN";
+            occupied.add(task.binding);
+            broken = true;
+            throw fault(503, "SUBMISSION_NOT_CONFIRMED");
+        }
+    }
+
     private Map<String, Object> fullEvent(SessionEvent e) {
         var row = new LinkedHashMap<String, Object>();
         row.put("eventId", e.eventId());
@@ -1063,6 +1351,7 @@ public final class HarnessWebServer implements AutoCloseable {
                 throw fault(409, "REQUEST_ID_CONFLICT");
             return summary(prior);
         }
+        if (followup(requestHash) != null) throw fault(409, "REQUEST_ID_CONFLICT");
         maintenanceReady(parent);
         if (occupied.size() >= maxActive) throw fault(429, "ACTIVE_LIMIT");
         var profile = profiles.get(parent.profile);
@@ -1083,7 +1372,6 @@ public final class HarnessWebServer implements AutoCloseable {
                         requestHash,
                         goalHash,
                         parent.binding);
-        task.archived = SessionLifecycle.archived(history.subList(0, end + 1));
         task.archived = SessionLifecycle.archived(history.subList(0, end + 1));
         task.name =
                 clean(
@@ -1156,6 +1444,10 @@ public final class HarnessWebServer implements AutoCloseable {
     }
 
     private void execute(Task task, String goal) {
+        execute(task, goal, null);
+    }
+
+    private void execute(Task task, String goal, TurnQueue.Input input) {
         String phase = "FINISHED", status = "UNKNOWN", error = "";
         HarnessSdk sdk = null;
         try {
@@ -1176,7 +1468,15 @@ public final class HarnessWebServer implements AutoCloseable {
                 task.status = "RUNNING";
             }
             if (!sdk.snapshot().sessionId().equals(task.id)) throw new IllegalStateException();
-            status = sdk.run(goal, () -> task.cancelled).status().name();
+            status =
+                    sdk.run(
+                                    goal,
+                                    () -> task.cancelled,
+                                    input == null
+                                            ? Map.of()
+                                            : Map.of("requestHash", input.hash, "kind", input.kind))
+                            .status()
+                            .name();
         } catch (CancellationException ex) {
             status = "CANCELLED";
         } catch (Exception ex) {
@@ -1206,6 +1506,31 @@ public final class HarnessWebServer implements AutoCloseable {
                 task.approvals.clear();
                 if (!closed) {
                     try {
+                        if (input != null) {
+                            if (phase.equals("FINISHED")) {
+                                String turnId =
+                                        events(task).stream()
+                                                .filter(e -> e.type().equals("turn.started"))
+                                                .reduce((a, b) -> b)
+                                                .map(SessionEvent::turnId)
+                                                .orElse("");
+                                var fact =
+                                        SessionEvent.session(
+                                                catalogId,
+                                                "web.turn.finished",
+                                                Map.of(
+                                                        "taskId",
+                                                        task.id,
+                                                        "requestHash",
+                                                        input.hash,
+                                                        "status",
+                                                        status,
+                                                        "turnId",
+                                                        turnId));
+                                catalog.append(fact);
+                                task.turns.apply(fact);
+                            } else input.state = "UNKNOWN";
+                        }
                         catalog.append(
                                 SessionEvent.session(
                                         catalogId,
@@ -1237,6 +1562,15 @@ public final class HarnessWebServer implements AutoCloseable {
                         task.phase = "UNKNOWN";
                         task.error = "WORKSPACE_CHECKPOINT_FAILED";
                     }
+                }
+                if (!closed && !broken) {
+                    if (task.phase.equals("FINISHED") && !task.cancelled) {
+                        try {
+                            advance(task);
+                        } catch (WebFault ex) {
+                            /* failed checkpoint already preserves UNKNOWN */
+                        }
+                    } else pauseInputs(task);
                 }
                 notifyAll();
             }
@@ -1348,6 +1682,7 @@ public final class HarnessWebServer implements AutoCloseable {
         value.put("archived", task.archived);
         value.put("createdAt", task.createdAt);
         value.put("revision", task.revision);
+        value.put("queuedInputs", task.turns.pending());
         return value;
     }
 
@@ -1608,6 +1943,7 @@ public final class HarnessWebServer implements AutoCloseable {
 
     private static final class Task {
         final String id, profile, requestHash, goalHash, binding;
+        final TurnQueue turns = new TurnQueue();
         final Map<String, Pending> approvals = new LinkedHashMap<>();
         String phase = "STARTING", status = "CREATED", error = "";
         String name = "", createdAt = java.time.Instant.now().toString(), revision = "";
@@ -1704,7 +2040,13 @@ public final class HarnessWebServer implements AutoCloseable {
                             .filter(
                                     e ->
                                             taskId.equals(e.payload().get("taskId"))
-                                                    && !e.type().equals("web.task.changed"))
+                                                    && Set.of(
+                                                                    "web.task.accepted",
+                                                                    "web.task.finished",
+                                                                    "web.task.verified",
+                                                                    "web.turn.started",
+                                                                    "web.turn.interrupted")
+                                                            .contains(e.type()))
                             .reduce((a, b) -> b)
                             .orElseThrow();
             if (last.type().equals("web.task.verified")
