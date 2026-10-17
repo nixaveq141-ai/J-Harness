@@ -1,5 +1,7 @@
 # J-Harness
 
+后续开发已按用户要求插入 **M10.5工作台完善 → M11 Desktop → M12扩展**。M10.5包含九个待开始切片，覆盖多轮交互、会话容量/管理、错误恢复、模型协议、提问、展示、扩展、检索/SDK及整阶段验证；详细顺序和验收见[M10.5计划](docs/requirements/M10.5-workbench-improvement-plan.md)。当前只完成规划，不代表新增功能已经实现。
+
 Web工作台新增「设置」入口：可添加/修改/删除模型连接、API URL和API Key并选择默认连接；密钥按用户选择保存在Windows凭据管理器，重启后可用。「插件与扩展」提供Planning、上下文压缩以及MCP/Skills等配置入口。详见[使用说明](docs/examples/web-ui-settings.md)与[增量验收](docs/testing/M10-settings-validation.md)。
 
 基于 Java 21 的可扩展 Agent Harness，需求基线为 [PRD v1.1](docs/requirements/JHarness-PRD-v1.1.md)。M0～M7 的本地实现范围和验收见各阶段记录，M7 最新计数与源码版本见 [收口记录](docs/testing/M7-closure.md)；CLI、持久化与恢复、SSE、上下文压缩、PTY/后台任务、多模型路线与命名配置组合已贯通。真实 DeepSeek 验收及费用证据见 [M4 验收记录](docs/testing/M4-validation.md)。M9源码的Windows/Linux/macOS远端CI历史证据见[M9验收](docs/testing/M9-validation.md)。M10新增Web工作台已完成本地验收，见[M10记录](docs/testing/M10-validation.md)。

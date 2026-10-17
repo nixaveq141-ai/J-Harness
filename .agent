@@ -4,6 +4,8 @@
 
 ## 当前接续状态
 
+- 2026-10-17用户正式调整后续顺序：将差距G01～G09纳入M11之前的M10.5工作台完善，.1～.9全部待开始。详细范围/依赖/验收见docs/requirements/M10.5-workbench-improvement-plan.md；下一次继续从M10.5.1统一契约、错误解释与安全核实引导开始，随后会话/32条容量→多轮→模型协议→提问→展示→扩展→检索/TS/Python SDK→整阶段验证。M10.5实际收口前不进入M11，M11/M12编号与原范围保持；本次仅规划，未实现/运行产品测试，不新增通过结论，持续只读deepseek-harness。下面带日期记录保留当时状态，以本条为当前入口。
+
 - 2026-10-17只读差距复核完成：对照用户指定deepseek-harness HEAD d743267，明确排除M11/M12及既有非目标，剩余差距按Web入口/核心能力/证据区分，见docs/development/M10-upstream-gap-review-2026-10-17.md和M10-gap-review-results.json。重点是多轮交互、工作区/会话管理（catalog最多32条）、结构化问题、文件/产物与对话展示、多模型协议/设置引导、扩展表单/MCP资源及错误恢复说明；检索/外部SDK按需求选择。参考1954份监测文件前后SHA及HEAD一致、结束时工作区干净。仅静态审查和文档更新，没有运行参考项目/新增产品测试，不自动立项，不改变M11/M12顺序。
 
 - 2026-10-17 M10直接入口已完成：用户明确删除手动输入本机连接凭据步骤。页面同源自动会话、刷新自动重连，启动器不再复制凭据/修改剪贴板；保留loopback、精确Host/Origin和业务API会话校验，旧CLI Bearer兼容。Java314项零失败/错误/跳过、客户端9项、真实Chrome工作台28项与设置21项、入口8项通过，同一最终JAR及267份Java/POM哈希见M10-auto-results.json/M10-auto-validation.md。无付费请求、推送或远端CI；旧M10设置证据保留历史，M11等待用户指令。
@@ -34,7 +36,7 @@
 6. docs/requirements/upstream-capabilities.md、docs/testing/M7-upstream-review.json：固定提交的范围取舍及 19 个源码入口 SHA。
 7. docs/examples/m7-cli.md、m7-config.json、m7-extensions.md、m7-web.md：可信配置与公共入口。
 8. docs/development/M8-contracts.md、docs/testing/M8-validation.md、M8-closure.md与M8-closure-results.json：M8支持范围/当前门禁；M8-results.json（slice=M8.4）及M8-linux-results.json为当前全量，M8.4-*-results.json为七组最终制品/冒烟/审计/校验器证据。M8.1/M8.2/M8.3-results.json和旧实机JSON保留历史；配置见m8-search-filter.md、m8-tool-scheduling.md、m8-model-resilience.md。
-9. docs/requirements/JHarness-next-plan-v1.0.md：M7之后的任务顺序、验收条件与下一次执行入口；新编号M8～M12属于新增实施计划。
+9. docs/requirements/JHarness-next-plan-v1.0.md与M10.5-workbench-improvement-plan.md：M7之后的任务顺序、M11前九切片、依赖/验收条件与下一次执行入口；M8～M12及M10.5属于新增实施编号。
 10. docs/development/M9-contracts.md、docs/testing/M9-validation.md：当前发布准备、候选/供应链证据与远端CI门禁。
 
 修改存储/恢复再读 M5；文件/进程/审批/CLI 对照 M2～M4，流式/压缩/配置读 M6 契约及测试。旧阶段记录是历史快照。
