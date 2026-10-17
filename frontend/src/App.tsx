@@ -7,6 +7,8 @@ import { SegmentedTabs, type SegmentedTab } from './upstream/SegmentedTabs'
 import { TextShimmer } from './upstream/TextShimmer'
 import { Settings } from './Settings'
 import { DiagnosisPanel } from './DiagnosisPanel'
+import { WorkspacePicker } from './WorkspacePicker'
+import { SessionActions } from './SessionActions'
 import frameCss from './upstream/AppFrame.module.css'
 import sidebarCss from './upstream/SidebarRoot.module.css'
 import { clampWidth, SIDEBAR_DEFAULT, SIDEBAR_MIN, SIDEBAR_MAX } from './upstream/columns'
@@ -65,10 +67,16 @@ const tabs: [SegmentedTab<Inspector>, ...SegmentedTab<Inspector>[]] = [
 
 export function App() {
   const [settingsOpen, setSettingsOpen] = useState(false)
-  const [settingsGuard, setSettingsGuard] = useState(false)
+  const [settingsGuard, setSettingsGuard] = useState(false), [sessionGuard, setSessionGuard] = useState(false)
+  const navigationGuard = settingsGuard || sessionGuard
+  const [viewProfile, setViewProfile] = useState(''), [viewMode, setViewMode] = useState('active')
+  const pageMoving = useRef(false)
+  const [pageLoading, setPageLoading] = useState(false)
+  const [pageCursor, setPageCursor] = useState(''), [nextPage, setNextPage] = useState(''), [morePages, setMorePages] = useState(false), [pageStack, setPageStack] = useState<string[]>([])
+  const [detailTask, setDetailTask] = useState<Task | null>(null)
   const [api, setApi] = useState<Api | null>(null)
   const [connecting, setConnecting] = useState(false), [profiles, setProfiles] = useState<string[]>([])
-  const [profile, setProfile] = useState(''), [tasks, setTasks] = useState<Task[]>([])
+  const [profile, setProfile] = useState(''), [tasks, setTasks] = useState<Task[]>([]), [workspaceNames, setWorkspaceNames] = useState<Record<string, string>>({})
   const [selected, setSelected] = useState(() => storage('jh-selected'))
   const [events, setEvents] = useState<SessionEvent[]>([]), [approvals, setApprovals] = useState<Approval[]>([])
   const [goal, setGoal] = useState(''), [filter, setFilter] = useState(''), [error, setError] = useState('')
@@ -82,7 +90,8 @@ export function App() {
   const createLock = useRef(false), actionLock = useRef(false), generation = useRef(0), readFailures = useRef(0)
   const listEnd = useRef<HTMLDivElement>(null), autoScroll = useRef(true)
   const diagnosisAnchor = useRef<HTMLDivElement>(null), presentedDiagnosis = useRef('')
-  const active = tasks.find(t => t.taskId === selected)
+  const selectedRef = useRef(selected); selectedRef.current = selected
+  const active = detailTask?.taskId === selected ? detailTask : tasks.find(t => t.taskId === selected)
   const hasProblems = !!active && isTerminal(active) && (uncertain(active) || active.status !== 'COMPLETED' || events.some(e => e.type === 'tool.completed' && e.payload.status !== 'SUCCESS'))
   const currentApi = useRef(api); currentApi.current = api
   useEffect(() => { document.body.toggleAttribute('data-ds-dark-theme', dark); try { localStorage.setItem('jh-theme', dark ? 'dark' : 'light') } catch { /* optional preference */ } }, [dark])
@@ -94,21 +103,27 @@ export function App() {
     const frame = requestAnimationFrame(() => { diagnosisAnchor.current?.scrollIntoView({ block: 'start' }); presentedDiagnosis.current = selected })
     return () => cancelAnimationFrame(frame)
   }, [hasProblems, selected, live])
-  const updateTask = useCallback((task: Task) => setTasks(old => [task, ...old.filter(t => t.taskId !== task.taskId)]), [])
+  const updateTask = useCallback((task: Task) => {
+    setTasks(old => old.map(t => t.taskId === task.taskId ? task : t))
+    if (selectedRef.current === task.taskId) setDetailTask(task)
+  }, [])
+  function resetPages() { setPageCursor(''); setPageStack([]) }
+  function showTask(task: Task) { setDetailTask(task); setSelected(task.taskId); setTasks(old => [task, ...old.filter(t => t.taskId !== task.taskId)].slice(0, 32)); setViewMode(task.archived ? 'archived' : 'active'); if (viewProfile && task.profile !== viewProfile) setViewProfile(task.profile); resetPages(); setError('') }
+
   const toggleSidebar = () => { setAnimating(true); setSideOpen(v => !v); setTimeout(() => setAnimating(false), 320) }
-  const selectTask = (id: string) => { if (settingsGuard) return; setSettingsOpen(false); setSelected(id); setFocusedEvent(null); autoScroll.current = true; setError('') }
+  const selectTask = (id: string) => { if (navigationGuard) return; setDetailTask(null); if (!id) resetPages(); setSettingsOpen(false); setSelected(id); setFocusedEvent(null); autoScroll.current = true; setError('') }
   useEffect(() => {
     if (!api) return
     const abort = new AbortController()
     void (async () => {
       while (!abort.signal.aborted) {
-        try { const result = await api.tasks(abort.signal); if (!abort.signal.aborted) setTasks(result.reverse()) }
-        catch (e) { if (!abort.signal.aborted) { setError(errorText(e)); if (e instanceof ApiError && e.status === 401) { setApi(null); break } } }
+        try { const result = await api.taskPage(viewProfile, viewMode, pageCursor, abort.signal); if (!abort.signal.aborted) { pageMoving.current = false; setPageLoading(false); setTasks(result.tasks); setNextPage(result.next); setMorePages(result.more); const current = result.tasks.find(t => t.taskId === selectedRef.current); if (current) setDetailTask(current) } }
+        catch (e) { if (!abort.signal.aborted) { pageMoving.current = false; setPageLoading(false); setError(errorText(e)); if (e instanceof ApiError && e.code === 'UNKNOWN_CURSOR') { resetPages(); break } if (e instanceof ApiError && e.status === 401) { setApi(null); break } } }
         await sleep(2000, abort.signal)
       }
     })()
     return () => abort.abort()
-  }, [api])
+  }, [api, viewProfile, viewMode, pageCursor])
   useEffect(() => { readFailures.current = 0 }, [api, selected])
   useEffect(() => {
     const narrow = window.matchMedia('(max-width: 760px)')
@@ -194,17 +209,24 @@ export function App() {
       const t = await api.submit(profile, text, id)
       storage('jh-pending', ''); setPending('')
       if (currentApi.current !== api) return
-      updateTask(t); selectTask(t.taskId); setGoal('')
+      showTask(t); setGoal('')
     } catch (e) { if (currentApi.current === api) {
       if (e instanceof ApiError && e.code === 'API_KEY_MISSING') { storage('jh-pending', ''); setPending(''); setError(errorText(e)) }
       else setError(errorText(e) + ' 请核对本次提交状态。')
     } }
     finally { createLock.current = false; setSubmitting(false) }
   }
+  async function forkSession(eventId: string) {
+    if (!api || !active || pending || createLock.current) return
+    const requestId = crypto.randomUUID(); createLock.current = true; setSubmitting(true); setPending(requestId); storage('jh-pending', requestId); setError('')
+    try { const value = await api.fork(active, eventId, requestId); storage('jh-pending', ''); setPending(''); if (currentApi.current === api) showTask(value) }
+    catch (e) { setError(errorText(e) + ' 请核对本次提交状态。') }
+    finally { createLock.current = false; setSubmitting(false) }
+  }
   async function reconcile() {
     if (!api || !pending || actionLock.current) return
     actionLock.current = true; setBusy('reconcile')
-    try { const t = await api.submission(pending); storage('jh-pending', ''); setPending(''); if (currentApi.current === api) { updateTask(t); selectTask(t.taskId); setGoal(''); setError('') } }
+    try { const t = await api.submission(pending); storage('jh-pending', ''); setPending(''); if (currentApi.current === api) { showTask(t); setGoal(''); setError('') } }
     catch (e) { setError(errorText(e)) } finally { actionLock.current = false; setBusy('') }
   }
   async function decide(a: Approval, approved: boolean) {
@@ -224,7 +246,7 @@ export function App() {
   function drag(e: PointerEvent<HTMLDivElement>) {
     e.currentTarget.setPointerCapture(e.pointerId); setDragging(true)
   }
-  const taskTitle = active ? `任务 ${active.taskId.slice(0, 8)}` : '新任务'
+  const taskTitle = active ? active.name || `任务 ${active.taskId.slice(-8)}` : '新任务'
   return <div className={`${frameCss.frame} workbench ${sideOpen ? '' : 'sidebar-closed'} ${inspectorOpen ? 'with-inspector' : ''}`}
     data-animating={animating || undefined} data-dragging={dragging || undefined}
     style={{ '--sidebar-width': `${sidebarWidth}px` } as React.CSSProperties}>
@@ -232,17 +254,20 @@ export function App() {
     <aside className={`${frameCss.sidebarCol} navigation`} aria-label="任务导航">
       <div className={`${sidebarCss.root} nav-inner`}>
         <div className="brand-row"><span className="brand-mark" aria-hidden="true">J</span><strong className="nav-expanded">J-Harness</strong><Button aria-label={sideOpen ? '收起任务导航' : '展开任务导航'} title="切换导航" className="nav-toggle" onClick={toggleSidebar}><Icon name="panel" /></Button></div>
-        <Button className="new-task" aria-label="新建任务" title="新建任务" disabled={settingsGuard} onClick={() => selectTask('')} icon={<Icon name="plus" />}><span className="nav-expanded">新建任务</span></Button>
+        <Button className="new-task" aria-label="新建任务" title="新建任务" disabled={navigationGuard} onClick={() => selectTask('')} icon={<Icon name="plus" />}><span className="nav-expanded">新建任务</span></Button>
+        {api && <WorkspacePicker api={api} value={viewProfile} disabled={navigationGuard} onProfiles={rows => { setProfiles(rows.map(w => w.id)); setWorkspaceNames(Object.fromEntries(rows.map(w => [w.id, w.name]))) }} onSelect={id => { setViewProfile(id); if (id) setProfile(id); selectTask(''); resetPages() }} />}
+        <div className="nav-expanded history-view"><label>会话视图<select aria-label="会话视图" value={viewMode} disabled={navigationGuard} onChange={e => { setViewMode(e.target.value); selectTask(''); resetPages() }}><option value="active">未归档</option><option value="archived">已归档</option><option value="all">全部会话</option></select></label></div>
         <div className="nav-expanded nav-filter"><Input aria-label="筛选任务" placeholder="搜索任务 ID 或状态" icon={<Icon name="search" />} value={filter} onChange={e => setFilter(e.target.value)} /></div>
-        <div className="nav-expanded section-label">最近任务 <span>{tasks.length}</span></div>
+        <div className="nav-expanded section-label">会话 <span>{tasks.length}</span></div>
         <nav className="task-list nav-expanded" aria-label="最近任务">
-          {tasks.filter(t => `${t.taskId} ${t.profile} ${labels[t.status] ?? t.status}`.toLowerCase().includes(filter.toLowerCase())).map(t => <button disabled={settingsGuard} key={t.taskId} className={`task-item ${selected === t.taskId ? 'selected' : ''}`} aria-current={selected === t.taskId ? 'page' : undefined} onClick={() => selectTask(t.taskId)}>
-            <span className="task-name"><Icon name="file" /><span>任务 {t.taskId.slice(0, 8)}</span></span><span className="task-subline">{t.profile}<Status value={t} /></span>
+          {tasks.filter(t => `${t.taskId} ${t.profile} ${labels[t.status] ?? t.status}`.toLowerCase().includes(filter.toLowerCase())).map(t => <button disabled={navigationGuard} key={t.taskId} className={`task-item ${selected === t.taskId ? 'selected' : ''}`} aria-current={selected === t.taskId ? 'page' : undefined} onClick={() => selectTask(t.taskId)}>
+            <span className="task-name"><Icon name="file" /><span>{t.pinned ? '置顶 · ' : ''}{t.name || `任务 ${t.taskId.slice(-8)}`}</span></span><span className="task-subline">{workspaceNames[t.profile] ?? t.profile}<Status value={t} /></span>
           </button>)}
           {api && tasks.length === 0 && <p className="muted nav-empty">还没有任务。<br />创建后会在这里保留记录。</p>}
           {!api && <p className="muted nav-empty">连接本机服务后<br />查看任务记录。</p>}
         </nav>
-        <div className="nav-footer"><Button aria-label="工作台设置" title="工作台设置" disabled={!api} onClick={() => { setSettingsOpen(true); setInspectorOpen(false); if (window.matchMedia('(max-width: 760px)').matches) setSideOpen(false) }} icon={<Icon name="panel" />}><span className="nav-expanded">设置</span></Button><Button onClick={() => setDark(v => !v)} aria-label={dark ? '切换浅色主题' : '切换深色主题'} icon={<Icon name="moon" />}><span className="nav-expanded">{dark ? '浅色主题' : '深色主题'}</span></Button>
+        <div className="nav-expanded history-pages"><Button aria-label="上一页会话" disabled={navigationGuard || pageLoading || pageStack.length === 0} onClick={() => { if (pageMoving.current) return; pageMoving.current = true; setPageLoading(true); setPageCursor(pageStack.at(-1)!); setPageStack(old => old.slice(0, -1)) }}>上一页</Button><span>{pageStack.length + 1}</span><Button aria-label="下一页会话" disabled={navigationGuard || pageLoading || !morePages} onClick={() => { if (pageMoving.current) return; pageMoving.current = true; setPageLoading(true); setPageStack(old => [...old, pageCursor]); setPageCursor(nextPage) }}>下一页</Button></div>
+        <div className="nav-footer"><Button aria-label="工作台设置" title="工作台设置" disabled={!api || sessionGuard} onClick={() => { setSettingsOpen(true); setInspectorOpen(false); if (window.matchMedia('(max-width: 760px)').matches) setSideOpen(false) }} icon={<Icon name="panel" />}><span className="nav-expanded">设置</span></Button><Button onClick={() => setDark(v => !v)} aria-label={dark ? '切换浅色主题' : '切换深色主题'} icon={<Icon name="moon" />}><span className="nav-expanded">{dark ? '浅色主题' : '深色主题'}</span></Button>
           <div className="nav-expanded connection-state"><span className={`connection-dot ${api ? 'online' : ''}`} />{api ? '本机服务已连接' : '尚未连接'}</div>
           <a className="nav-expanded license-link" href="/ui-license.txt" target="_blank" rel="noreferrer">开源许可</a></div>
       </div>
@@ -259,6 +284,7 @@ export function App() {
             <button className="text-button" disabled={submitting || !!busy} onClick={() => { if (window.confirm('这只清除本页待核对记录，后台任务可能仍在执行。确定已检查任务列表并清除？')) { storage('jh-pending', ''); setPending('') } }}>清除本页记录</button></div>}
           {!selected ? <section className="welcome"><div className="intro-symbol">J</div><h2>今天，想完成什么？</h2><p>描述目标，让 J-Harness 在你的工作区中协助完成。</p><div className="suggestions">{['阅读项目结构，梳理模块职责', '检查最近的修改，指出潜在问题', '分析一个问题，并提出修复方案'].map(s => <button key={s} onClick={() => setGoal(s)}><Icon name="file" />{s}<Icon name="chevron" /></button>)}</div></section>
             : <section className="timeline" aria-label="任务事件时间线" onScroll={e => { const el = e.currentTarget; autoScroll.current = el.scrollHeight - el.scrollTop - el.clientHeight < 100 }}>
+              {api && active && <SessionActions key={active.taskId} api={api} task={active} lastEvent={events.at(-1)?.eventId ?? ''} onUpdated={value => { updateTask(value); resetPages(); setViewMode(value.archived ? 'archived' : 'active') }} onFork={forkSession} onGuard={setSessionGuard} />}
               {active && uncertain(active) && <div className="unknown-notice"><strong>结果待核实</strong><p>部分操作可能已发生，当前不能安全地自动重试。请停止旧宿主，检查实际资源，再通过 CLI 离线核实；本页面不会重放任务。</p></div>}
               {api && active && isTerminal(active) && <div ref={diagnosisAnchor} tabIndex={-1}><DiagnosisPanel key={active.taskId} api={api} task={active} refresh={historyKey} /></div>}
               {events.length === 0 && <p className="muted timeline-empty">尚无事件记录。正在读取任务状态。</p>}
@@ -271,7 +297,7 @@ export function App() {
             <div className="approval-actions"><Button variant="outline" disabled={!!busy} onClick={() => void decide(a, false)}>拒绝</Button><Button variant="primary" disabled={!!busy} onClick={() => void decide(a, true)}>{busy === a.approvalId ? '正在处理…' : '批准本次操作'}</Button></div></div>)}</section>}
           {!selected && <form className="composer" onSubmit={e => void submit(e)}><textarea aria-label="任务目标" placeholder="描述你的任务…" value={goal} maxLength={16384} onChange={e => setGoal(e.target.value)} rows={3} disabled={submitting}
             onKeyDown={e => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey) && !e.nativeEvent.isComposing) { e.preventDefault(); e.currentTarget.form?.requestSubmit() } }} />
-            <div className="composer-toolbar"><label className="profile-picker">配置 <select aria-label="任务配置" value={profile} onChange={e => setProfile(e.target.value)}>{profiles.map(p => <option key={p}>{p}</option>)}</select></label><span className="composer-shortcut">Ctrl / ⌘ + Enter</span><Button type="submit" variant="primary" aria-label="创建任务" disabled={!goal.trim() || !profile || submitting || !!pending}><Icon name="arrow" /></Button></div></form>}
+            <div className="composer-toolbar"><label className="profile-picker">执行工作区 <select aria-label="任务配置" value={profile} onChange={e => setProfile(e.target.value)}>{profiles.map(p => <option key={p} value={p}>{workspaceNames[p] ?? p}</option>)}</select></label><span className="composer-shortcut">Ctrl / ⌘ + Enter</span><Button type="submit" variant="primary" aria-label="创建任务" disabled={!goal.trim() || !profile || submitting || !!pending}><Icon name="arrow" /></Button></div></form>}
           {selected && <footer className="activity-footer"><TextShimmer active={!!active && !isTerminal(active)}>{live}</TextShimmer>{active && active.cancelRequested && <span>已请求取消，正在等待执行事实</span>}
             <div>{hasProblems && <Button onClick={() => { diagnosisAnchor.current?.scrollIntoView({ block: 'start' }); diagnosisAnchor.current?.focus({ preventScroll: true }); autoScroll.current = false }}>执行诊断</Button>}<Button onClick={() => { setError(''); setHistoryKey(k => k + 1) }}>重载历史</Button>{active && !isTerminal(active) && <Button variant="outline" icon={<Icon name="stop" />} disabled={!!busy || active.cancelRequested} onClick={() => void cancel()}>取消任务</Button>}</div></footer>}
           <div className="workspace-note">工具操作沿用工作区权限与审批 · 执行结果以记录为准</div>

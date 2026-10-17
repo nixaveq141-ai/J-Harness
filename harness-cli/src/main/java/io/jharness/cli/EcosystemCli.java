@@ -320,29 +320,48 @@ final class EcosystemCli {
         String token = environment.get(EcosystemConfig.text(web, "tokenEnv", "JHARNESS_WEB_TOKEN"));
         var settings =
                 new WorkbenchSettings(config, environment, metadata, new SystemCredentials());
-        var profile =
-                new HarnessWebServer.Profile(
-                        workspace.toString(),
-                        sessions,
-                        (id, approvals, sanitizer) -> {
-                            var runtime = settings.runtime();
-                            return new EcosystemCli(
-                                            runtime.config(),
-                                            runtime.environment(),
-                                            workspace,
-                                            metadata)
-                                    .open(
-                                            id,
-                                            args,
-                                            approvals,
-                                            sanitizer,
-                                            new PrintStream(OutputStream.nullOutputStream()));
+        var workspaces =
+                new WorkbenchWorkspaces(
+                        metadata,
+                        settings,
+                        root -> {
+                            var targetMetadata = new Metadata(root);
+                            var targetSessions =
+                                    new JsonlSessionRepository(
+                                            targetMetadata.directory("sessions"));
+                            var checked = new WorkbenchWorkspaces.RootCheck(root);
+                            return new HarnessWebServer.Profile(
+                                    root.toString(),
+                                    targetSessions,
+                                    (id, approvals, sanitizer) -> {
+                                        // Revalidate the root before constructing execution
+                                        // capabilities.
+                                        checked.verify();
+                                        var runtime = settings.runtime();
+                                        return new EcosystemCli(
+                                                        runtime.config(),
+                                                        runtime.environment(),
+                                                        root,
+                                                        targetMetadata)
+                                                .open(
+                                                        id,
+                                                        args,
+                                                        approvals,
+                                                        sanitizer,
+                                                        new PrintStream(
+                                                                OutputStream.nullOutputStream()));
+                                    },
+                                    (source, target) ->
+                                            new LocalArtifactStore(
+                                                            targetMetadata.directory("artifacts"),
+                                                            settings)
+                                                    .copyScope(source, target));
                         });
         try (var server =
                         new HarnessWebServer(
                                 EcosystemConfig.number(web, "port", 0, 65535),
                                 token,
-                                Map.of("default", profile),
+                                workspaces.profiles(),
                                 new JsonlSessionRepository(metadata.directory("web")),
                                 EcosystemConfig.text(web, "catalogId", "web-catalog"),
                                 data ->
@@ -354,6 +373,7 @@ final class EcosystemCli {
                                         EcosystemConfig.number(web, "approvalSeconds", 30, 60)));
                 var input = new TerminalInput(stdin)) {
             server.settings(settings);
+            server.workspaces(workspaces);
             var hook = new Thread(server::close, "web-cli-shutdown");
             Runtime.getRuntime().addShutdownHook(hook);
             try {

@@ -856,7 +856,7 @@ public final class CliApplication {
                 new SanitizingSessionWriter(
                         repo.openWriter(session, WriteOwnership.EXCLUSIVE), sanitizer)) {
             var reader = repo.openReader(session);
-            if (reader.events().stream().anyMatch(e -> e.type().equals("session.archived")))
+            if (SessionLifecycle.archived(reader.events()))
                 throw new HarnessException(
                         "SESSION_ARCHIVED", "Archived session is read-only; fork for new work");
             if (reader.events().isEmpty())

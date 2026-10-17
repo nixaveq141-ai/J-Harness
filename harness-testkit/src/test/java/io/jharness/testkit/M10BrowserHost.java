@@ -40,6 +40,7 @@ public final class M10BrowserHost implements AutoCloseable {
                         "-c",
                         "commit.gpgsign=false",
                         "commit",
+                        "--allow-empty",
                         "-qm",
                         "baseline");
                 Files.writeString(workspace.resolve("input.txt"), "a real recorded diff\n");
@@ -192,7 +193,14 @@ public final class M10BrowserHost implements AutoCloseable {
                                                         "recorded tool outcome"),
                                         ApiCostGuard.unavailable(),
                                         List.of());
-                            }));
+                            },
+                            (source, target) ->
+                                    new LocalArtifactStore(
+                                                    root.resolve(name + "-artifacts"),
+                                                    new SecretRedactor(
+                                                            List.of(
+                                                                    "fixture-secret-do-not-display")))
+                                            .copyScope(source, target)));
         }
         server =
                 new HarnessWebServer(

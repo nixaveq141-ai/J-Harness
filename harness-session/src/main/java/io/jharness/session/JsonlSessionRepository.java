@@ -50,6 +50,27 @@ public final class JsonlSessionRepository implements SessionRepository {
         this(root, TailPolicy.REJECT, channel -> channel.force(true), code -> {});
     }
 
+    /** Physical-provider composition only; callers must retain normal repository ownership. */
+    public Path directory() {
+        return root;
+    }
+
+    /** Exact-byte checkpoint while the supplied writer already owns this log. */
+    public Path backupOwned(String id, SessionWriter owner) {
+        if (!(owner instanceof JsonlSessionRepository.Writer writer)
+                || !writer.path.equals(file(id, ".jsonl"))) throw error("OWNERSHIP_REQUIRED");
+        synchronized (gate(writer.path)) {
+            writer.valid();
+            Path backup = root.resolve(id + ".backup-" + UUID.randomUUID() + ".bak");
+            try {
+                forcedFile(backup, bytes(writer.path));
+                return backup;
+            } catch (IOException ex) {
+                throw error("SESSION_BACKUP_FAILED");
+            }
+        }
+    }
+
     public JsonlSessionRepository(
             Path root, TailPolicy policy, DurabilityBarrier barrier, Consumer<String> diagnostics)
             throws IOException {
@@ -216,6 +237,14 @@ public final class JsonlSessionRepository implements SessionRepository {
 
     /** Snapshot with inherited event IDs, preserving request/evidence references. */
     public String fork(String id, String eventId, Consumer<String> prepareArtifacts) {
+        return forkTo(id, eventId, "s-" + UUID.randomUUID(), prepareArtifacts);
+    }
+
+    /** Deterministic destination for host-owned idempotent snapshot admission. */
+    public String forkTo(
+            String id, String eventId, String target, Consumer<String> prepareArtifacts) {
+        file(target, ".jsonl");
+        if (id.equals(target)) throw error("SESSION_EXISTS");
         try (Maintenance ownership = maintenance(id)) {
             ownership.ensureValid();
             Path source = file(id, ".jsonl");
@@ -226,7 +255,6 @@ public final class JsonlSessionRepository implements SessionRepository {
                 for (int i = 0; i < parsed.events.size(); i++)
                     if (parsed.events.get(i).eventId().equals(eventId)) end = i;
                 if (end < 0) throw error("EVENT_NOT_FOUND");
-                String target = "s-" + UUID.randomUUID();
                 byte[] snapshot = bytes(source);
                 List<Map<String, Object>> prefix = new ArrayList<>();
                 int start = 0;

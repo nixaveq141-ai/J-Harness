@@ -18,7 +18,7 @@ test('browser connection obtains an in-memory session without user input', async
 })
 const event: SessionEvent = { eventId: 'event_1', type: 'assistant.message', timestamp: '2026-10-16T00:00:00Z', callId: null, payload: { content: '<script>window.injected=true</script>' } }
 const row = { taskId: 'task_1', profile: 'default', phase: 'RUNNING', status: 'RUNNING',
-  error: '', cancelRequested: false, recovered: false, protocolVersion: '1.9' }
+  error: '', cancelRequested: false, recovered: false, protocolVersion: '1.9', name: '', pinned: false, archived: false, revision: '', createdAt: '' }
 const json = (value: unknown, status = 200) => new Response(JSON.stringify(value), { status, headers: { 'content-type': 'application/json' } })
 
 test('diagnosis is read only and rejects incompatible or excessive facts', async () => {
@@ -33,6 +33,30 @@ test('diagnosis is read only and rejects incompatible or excessive facts', async
   payload = { ...data, issues: Array.from({ length: 13 }, () => ({})) }; await assert.rejects(api.diagnosis('task_1'), ApiError)
   payload = { ...data, pending: { ...data.pending, pendingRequests: Array(65).fill('step') } }; await assert.rejects(api.diagnosis('task_1'), ApiError)
   assert.ok(calls.every(p => p === '/v1/tasks/task_1/diagnosis'))
+})
+
+test('history pagination has bounded rows and explicit workspace filters', async () => {
+  let value: unknown = { tasks: [row], next: 'cursor_1', more: true }
+  const api = new Api(token, (async (path, init) => { assert.equal(init?.method, 'GET'); assert.ok(String(path).includes('profile=default')); return json(value) }) as typeof fetch)
+  const page = await api.taskPage('default', 'archived')
+  assert.equal(page.tasks[0].taskId, row.taskId); assert.equal(page.more, true)
+  value = { tasks: Array(33).fill(row), next: '', more: false }
+  await assert.rejects(api.taskPage('default'), ApiError)
+})
+
+test('session metadata uses revision and fork has an independent submission identity', async () => {
+  const calls: { path: string; body: Record<string, unknown> }[] = []
+  const api = new Api(token, (async (path, init) => { calls.push({ path: String(path), body: JSON.parse(String(init?.body)) }); return json(row) }) as typeof fetch)
+  await api.metadata(row, { name: 'renamed', pinned: true, archived: false })
+  await api.fork(row, 'event_1', 'fork_request')
+  assert.equal(calls[0].body.revision, row.revision); assert.equal(calls[0].body.name, 'renamed')
+  assert.deepEqual(calls[1].body, { eventId: 'event_1', requestId: 'fork_request' })
+  assert.ok(calls[1].path.endsWith('/fork'))
+})
+
+test('export rejects substituted session identity', async () => {
+  const api = new Api(token, (async () => json({ sessionId: 'other', content: '{}', sha256: 'a'.repeat(64), artifactsIncluded: false })) as typeof fetch)
+  await assert.rejects(api.exportSession(row.taskId), ApiError)
 })
 
 test('mutations are never automatically retried and token stays in headers', async () => {

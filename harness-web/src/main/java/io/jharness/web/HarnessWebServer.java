@@ -11,6 +11,7 @@ import java.security.*;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.function.Consumer;
 
 /** Local single-operator HTTP adapter. All execution capabilities come from trusted profiles. */
 public final class HarnessWebServer implements AutoCloseable {
@@ -25,6 +26,23 @@ public final class HarnessWebServer implements AutoCloseable {
 
     private Settings settings;
 
+    public interface Workspaces {
+        Map<String, Object> read();
+
+        Map.Entry<String, Profile> register(String path, String name) throws IOException;
+    }
+
+    @FunctionalInterface
+    public interface ForkArtifacts {
+        void copy(String source, String target) throws IOException;
+    }
+
+    private Workspaces workspaces;
+
+    public synchronized void workspaces(Workspaces value) {
+        workspaces = Objects.requireNonNull(value);
+    }
+
     public synchronized void settings(Settings value) {
         if (settings != null) throw new IllegalStateException("Settings already attached");
         settings = Objects.requireNonNull(value);
@@ -36,7 +54,15 @@ public final class HarnessWebServer implements AutoCloseable {
                 throws Exception;
     }
 
-    public record Profile(String workspaceBinding, SessionRepository sessions, SdkFactory factory) {
+    public record Profile(
+            String workspaceBinding,
+            SessionRepository sessions,
+            SdkFactory factory,
+            ForkArtifacts artifacts) {
+        public Profile(String workspaceBinding, SessionRepository sessions, SdkFactory factory) {
+            this(workspaceBinding, sessions, factory, null);
+        }
+
         public Profile {
             Values.required(workspaceBinding, "workspace binding");
             Objects.requireNonNull(sessions);
@@ -53,7 +79,10 @@ public final class HarnessWebServer implements AutoCloseable {
     private final Set<String> occupied = new HashSet<>();
     private final Semaphore streams = new Semaphore(2);
     private final SessionWriter catalog;
-    private final String catalogId;
+    private final DurableTaskCatalog diskCatalog;
+    private final Map<String, WorkspaceLease> leases = new HashMap<>();
+    private final Map<String, Cursor> cursors = new LinkedHashMap<>();
+    private final String catalogId, catalogBinding;
     private final byte[] credential;
     private final String browserToken = UUID.randomUUID().toString() + UUID.randomUUID();
     private final DataSanitizer sanitizer;
@@ -90,23 +119,48 @@ public final class HarnessWebServer implements AutoCloseable {
                 || approvalTimeout.isZero()
                 || approvalTimeout.compareTo(Duration.ofSeconds(60)) > 0)
             throw new IllegalArgumentException("Invalid local Web configuration");
-        this.profiles = Map.copyOf(profiles);
+        this.profiles = new LinkedHashMap<>(profiles);
         this.catalogId = Values.required(catalogId, "catalog id");
+        catalogBinding =
+                hash(
+                        catalogRepository instanceof JsonlSessionRepository physical
+                                ? physical.directory().resolve(catalogId).toString()
+                                : catalogId);
         this.maxActive = maxActive;
         this.maxTasks = maxTasks;
         this.approvalTimeout = approvalTimeout;
         credential = digest(bearerToken);
         var redactor = new SecretRedactor(List.of(bearerToken, browserToken));
         this.sanitizer = data -> redactor.sanitize(sanitizer.sanitize(data));
-        catalog =
-                new SanitizingSessionWriter(
-                        catalogRepository.openWriter(catalogId, WriteOwnership.EXCLUSIVE),
-                        this.sanitizer);
+        var owner = catalogRepository.openWriter(catalogId, WriteOwnership.EXCLUSIVE);
+        try {
+            diskCatalog =
+                    catalogRepository instanceof JsonlSessionRepository physical
+                            ? new DurableTaskCatalog(physical, catalogId, owner, this.sanitizer)
+                            : null;
+            catalog =
+                    diskCatalog == null
+                            ? new SanitizingSessionWriter(owner, this.sanitizer)
+                            : diskCatalog;
+        } catch (IOException | RuntimeException ex) {
+            owner.close();
+            throw ex;
+        }
         HttpServer server = null;
         try {
             if (!catalog.durable())
                 throw new IllegalArgumentException("Durable Web catalog required");
-            restore(catalogRepository.openReader(catalogId).events());
+            if (diskCatalog == null) restore(catalogRepository.openReader(catalogId).events());
+            else
+                diskCatalog.scan(
+                        history -> {
+                            var task = parseTask(history);
+                            if (task.phase.equals("UNKNOWN")) {
+                                cache(task);
+                                occupied.add(task.binding);
+                            }
+                        });
+            for (var profile : profiles.values()) attachLease(profile);
             server = HttpServer.create(new InetSocketAddress("127.0.0.1", port), 16);
             http = server;
             requests =
@@ -125,6 +179,7 @@ public final class HarnessWebServer implements AutoCloseable {
             http.start();
         } catch (IOException | RuntimeException ex) {
             if (server != null) server.stop(0);
+            leases.values().forEach(WorkspaceLease::close);
             catalog.close();
             throw ex;
         }
@@ -180,6 +235,236 @@ public final class HarnessWebServer implements AutoCloseable {
         tasks.values().stream()
                 .filter(t -> t.phase.equals("UNKNOWN"))
                 .forEach(t -> occupied.add(t.binding));
+    }
+
+    private Task parseTask(List<SessionEvent> history) {
+        Task task = null;
+        for (var event : history) {
+            var p = event.payload();
+            if (event.type().equals("web.task.accepted")) {
+                if (task != null) throw new IllegalArgumentException("Repeated admission");
+                task =
+                        new Task(
+                                (String) p.get("taskId"),
+                                (String) p.get("profile"),
+                                (String) p.get("requestHash"),
+                                (String) p.get("goalHash"),
+                                (String) p.get("workspaceBinding"));
+                task.phase = "UNKNOWN";
+                task.recovered = true;
+                task.createdAt = event.timestamp().toString();
+            } else {
+                if (task == null || !task.id.equals(p.get("taskId")))
+                    throw new IllegalArgumentException("Invalid task catalog");
+                switch (event.type()) {
+                    case "web.task.finished" -> {
+                        task.phase = (String) p.get("phase");
+                        task.status = (String) p.get("status");
+                        task.error = (String) p.get("error");
+                        task.cancelled = Boolean.TRUE.equals(p.get("cancelRequested"));
+                    }
+                    case "web.task.verified" -> {
+                        task.phase = "VERIFIED";
+                        task.error = "EXTERNALLY_VERIFIED_NO_REPLAY";
+                    }
+                    case "web.task.changed" -> {
+                        task.name = (String) p.get("name");
+                        task.pinned = Boolean.TRUE.equals(p.get("pinned"));
+                        task.archived = Boolean.TRUE.equals(p.get("archived"));
+                    }
+                    default -> throw new IllegalArgumentException("Unknown task fact");
+                }
+            }
+            if (event.type().equals("web.task.accepted") || event.type().equals("web.task.changed"))
+                task.revision = event.eventId();
+        }
+        if (task == null
+                || !profiles.containsKey(task.profile)
+                || !profiles.get(task.profile).workspaceBinding().equals(task.binding))
+            throw new IllegalArgumentException("Catalog/profile mismatch");
+        reconcileArchival(task);
+        return task;
+    }
+
+    private void cache(Task task) {
+        tasks.remove(task.id);
+        tasks.put(task.id, task);
+        submissions.put(task.requestHash, task);
+        while (tasks.size() > maxTasks) {
+            var evicted =
+                    tasks.values().stream()
+                            .filter(
+                                    t ->
+                                            !t.phase.equals("UNKNOWN")
+                                                    && t.sdk == null
+                                                    && (t.phase.equals("FINISHED")
+                                                            || t.phase.equals("VERIFIED")))
+                            .findFirst()
+                            .orElseThrow(
+                                    () -> new IllegalStateException("Active hot set exhausted"));
+            tasks.remove(evicted.id);
+            submissions.remove(evicted.requestHash);
+        }
+    }
+
+    private Task find(String id) {
+        var task = tasks.get(id);
+        if (task == null && diskCatalog != null) {
+            var history = diskCatalog.byId(id);
+            if (!history.isEmpty()) {
+                task = parseTask(history);
+                cache(task);
+            }
+        }
+        return task;
+    }
+
+    private Task submission(String hash) {
+        var task = submissions.get(hash);
+        if (task == null && diskCatalog != null) {
+            var history = diskCatalog.byHash(hash);
+            if (!history.isEmpty()) {
+                task = find((String) history.getFirst().payload().get("taskId"));
+            }
+        }
+        return task;
+    }
+
+    private void attachLease(Profile profile) throws IOException {
+        if (!(profile.sessions() instanceof JsonlSessionRepository physical)
+                || leases.containsKey(profile.workspaceBinding())) return;
+        var lease = new WorkspaceLease(physical);
+        leases.put(profile.workspaceBinding(), lease);
+        var pending = lease.pending();
+        if (!pending.isEmpty()) {
+            occupied.add(profile.workspaceBinding());
+            if (catalogBinding.equals(pending.get("catalogKey"))) {
+                var task = find((String) pending.get("taskId"));
+                if (task == null && diskCatalog != null) {
+                    var accepted = new LinkedHashMap<>(pending);
+                    accepted.remove("catalogKey");
+                    catalog.append(SessionEvent.session(catalogId, "web.task.accepted", accepted));
+                    catalog.flush();
+                    task = find((String) pending.get("taskId"));
+                }
+                if (task != null
+                        && (task.phase.equals("FINISHED") || task.phase.equals("VERIFIED"))
+                        && SessionRecovery.inspect(events(task)).ready()) {
+                    lease.clear(task.id, catalogBinding);
+                    occupied.remove(task.binding);
+                }
+            }
+        } else {
+            var uncertain =
+                    tasks.values().stream()
+                            .filter(
+                                    t ->
+                                            t.binding.equals(profile.workspaceBinding())
+                                                    && t.phase.equals("UNKNOWN"))
+                            .findFirst();
+            if (uncertain.isPresent()) lease.accept(accepted(uncertain.get()), catalogBinding);
+        }
+    }
+
+    private Map<String, Object> accepted(Task task) {
+        return Map.of(
+                "taskId",
+                task.id,
+                "profile",
+                task.profile,
+                "requestHash",
+                task.requestHash,
+                "goalHash",
+                task.goalHash,
+                "workspaceBinding",
+                task.binding);
+    }
+
+    private record Cursor(
+            boolean pinned, String createdAt, String id, String profile, String view) {}
+
+    private static int after(Task task, Cursor cursor) {
+        int result = Boolean.compare(!task.pinned, !cursor.pinned);
+        if (result == 0) result = cursor.createdAt.compareTo(task.createdAt);
+        return result == 0 ? task.id.compareTo(cursor.id) : result;
+    }
+
+    private Map<String, Object> taskPage(Map<String, String> query) {
+        if (!Set.of("profile", "view", "after", "limit").containsAll(query.keySet()))
+            throw fault(400, "INVALID_QUERY");
+        String profile = query.getOrDefault("profile", ""),
+                view = query.getOrDefault("view", "active");
+        if (!profile.isEmpty() && !profiles.containsKey(profile)
+                || !Set.of("active", "archived", "all").contains(view))
+            throw fault(400, "INVALID_QUERY");
+        int limit;
+        try {
+            limit = Integer.parseInt(query.getOrDefault("limit", "32"));
+        } catch (NumberFormatException ex) {
+            throw fault(400, "INVALID_QUERY");
+        }
+        if (limit < 1 || limit > 32) throw fault(400, "INVALID_QUERY");
+        Cursor cursor = null;
+        if (query.containsKey("after")) {
+            cursor = cursors.get(query.get("after"));
+            if (cursor == null || !cursor.profile.equals(profile) || !cursor.view.equals(view))
+                throw fault(400, "UNKNOWN_CURSOR");
+        }
+        var order =
+                Comparator.comparing((Task t) -> !t.pinned)
+                        .thenComparing(t -> t.createdAt, Comparator.reverseOrder())
+                        .thenComparing(t -> t.id);
+        var queue = new PriorityQueue<Task>(limit + 2, order.reversed());
+        Cursor boundary = cursor;
+        Consumer<Task> receive =
+                task -> {
+                    reconcileArchival(task);
+                    if (!profile.isEmpty()
+                                    && !task.binding.equals(
+                                            profiles.get(profile).workspaceBinding())
+                            || view.equals("active") && task.archived
+                            || view.equals("archived") && !task.archived
+                            || boundary != null && after(task, boundary) <= 0) return;
+                    queue.add(task);
+                    if (queue.size() > limit + 1) queue.remove();
+                };
+        if (diskCatalog == null) tasks.values().forEach(receive);
+        else
+            diskCatalog.scan(
+                    history -> {
+                        var t = parseTask(history);
+                        receive.accept(tasks.getOrDefault(t.id, t));
+                    });
+        var page = new ArrayList<>(queue);
+        page.sort(order);
+        boolean more = page.size() > limit;
+        if (more) page.removeLast();
+        String next = "";
+        if (more) {
+            next = UUID.randomUUID().toString();
+            cursors.put(
+                    next,
+                    new Cursor(
+                            page.getLast().pinned,
+                            page.getLast().createdAt,
+                            page.getLast().id,
+                            profile,
+                            view));
+            if (cursors.size() > 32) cursors.remove(cursors.keySet().iterator().next());
+        }
+        return Map.of(
+                "tasks",
+                page.stream().map(this::summary).toList(),
+                "next",
+                next,
+                "more",
+                more,
+                "hotCount",
+                tasks.size(),
+                "hotLimit",
+                maxTasks,
+                "historyCount",
+                diskCatalog == null ? tasks.size() : diskCatalog.count());
     }
 
     private void handle(HttpExchange exchange) {
@@ -301,17 +586,47 @@ public final class HarnessWebServer implements AutoCloseable {
             if (path.length == 4 && path[1].equals("v1") && path[2].equals("submissions")) {
                 if (!path[3].matches("[A-Za-z0-9_-]{1,64}")) throw fault(400, "INVALID_REQUEST_ID");
                 synchronized (this) {
-                    Task task = submissions.get(hash(path[3]));
+                    Task task = submission(hash(path[3]));
                     if (task == null) throw fault(404, "SUBMISSION_NOT_FOUND");
                     respond(exchange, 200, summary(task));
                 }
                 return;
             }
         }
+        if (Arrays.equals(path, new String[] {"", "v1", "workspaces"}) && query.isEmpty()) {
+            synchronized (this) {
+                if (method.equals("GET")) {
+                    respond(exchange, 200, workspaceInfo());
+                    return;
+                }
+                if (method.equals("POST") && workspaces != null) {
+                    var input = body(exchange, Set.of("path", "name"));
+                    if (profiles.size() >= 16) throw fault(409, "WORKSPACE_LIMIT");
+                    try {
+                        var registered =
+                                workspaces.register(
+                                        text(input, "path", 1024), clean(text(input, "name", 80)));
+                        try {
+                            attachLease(registered.getValue());
+                        } catch (IOException | HarnessException ex) {
+                            occupied.add(registered.getValue().workspaceBinding());
+                        }
+                        profiles.put(registered.getKey(), registered.getValue());
+                        respond(exchange, 200, workspaceInfo());
+                        return;
+                    } catch (HarnessException ex) {
+                        throw fault(409, ex.code());
+                    } catch (IOException ex) {
+                        throw fault(400, "WORKSPACE_PATH_DENIED");
+                    }
+                }
+                throw fault(405, "METHOD_NOT_ALLOWED");
+            }
+        }
         if (path.length < 3 || !path[1].equals("v1") || !path[2].equals("tasks"))
             throw fault(404, "NOT_FOUND");
-        if (path.length == 3 && query.isEmpty()) {
-            if (method.equals("POST")) {
+        if (path.length == 3) {
+            if (method.equals("POST") && query.isEmpty()) {
                 var body = body(exchange, Set.of("profile", "goal", "requestId"));
                 respond(
                         exchange,
@@ -325,7 +640,7 @@ public final class HarnessWebServer implements AutoCloseable {
             if (method.equals("GET")) {
                 Map<String, Object> response;
                 synchronized (this) {
-                    response = Map.of("tasks", tasks.values().stream().map(this::summary).toList());
+                    response = taskPage(query);
                 }
                 respond(exchange, 200, response);
                 return;
@@ -334,7 +649,7 @@ public final class HarnessWebServer implements AutoCloseable {
         if (path.length < 4) throw fault(405, "METHOD_NOT_ALLOWED");
         Task task;
         synchronized (this) {
-            task = tasks.get(path[3]);
+            task = find(path[3]);
             if (task == null) throw fault(404, "NOT_FOUND");
         }
         if (path.length == 4 && method.equals("GET") && query.isEmpty()) {
@@ -343,6 +658,104 @@ public final class HarnessWebServer implements AutoCloseable {
                 response = summary(task);
             }
             respond(exchange, 200, response);
+        } else if (path.length == 5
+                && path[4].equals("metadata")
+                && method.equals("POST")
+                && query.isEmpty()) {
+            var input = body(exchange, Set.of("revision", "name", "pinned", "archived"));
+            synchronized (this) {
+                if (!task.revision.equals(input.get("revision")))
+                    throw fault(409, "SESSION_CONFLICT");
+                if (!(input.get("pinned") instanceof Boolean pinned)
+                        || !(input.get("archived") instanceof Boolean archived))
+                    throw fault(400, "INVALID_BODY");
+                String name = clean(text(input, "name", 80));
+                if (archived != task.archived) {
+                    maintenanceReady(task);
+                    SessionLifecycle.setArchived(
+                            profiles.get(task.profile).sessions(), task.id, archived, sanitizer);
+                }
+                var change =
+                        SessionEvent.session(
+                                catalogId,
+                                "web.task.changed",
+                                Map.of(
+                                        "taskId",
+                                        task.id,
+                                        "name",
+                                        name,
+                                        "pinned",
+                                        pinned,
+                                        "archived",
+                                        archived));
+                try {
+                    task.revision = catalog.append(change);
+                    catalog.flush();
+                } catch (RuntimeException ex) {
+                    broken = true;
+                    throw fault(503, "SUBMISSION_NOT_CONFIRMED");
+                }
+                task.name = name;
+                task.pinned = pinned;
+                task.archived = archived;
+                cursors.clear();
+                respond(exchange, 200, summary(task));
+            }
+        } else if (path.length == 5
+                && path[4].equals("fork")
+                && method.equals("POST")
+                && query.isEmpty()) {
+            var input = body(exchange, Set.of("eventId", "requestId"));
+            synchronized (this) {
+                respond(
+                        exchange,
+                        202,
+                        forkTask(task, text(input, "eventId", 64), text(input, "requestId", 64)));
+            }
+        } else if (path.length == 5
+                && path[4].equals("export")
+                && method.equals("GET")
+                && query.isEmpty()) {
+            synchronized (this) {
+                maintenanceReady(task);
+                var repository = profiles.get(task.profile).sessions();
+                if (repository.openReader(task.id).events().isEmpty())
+                    throw fault(404, "SESSION_HISTORY_UNAVAILABLE");
+                if (repository.openReader(task.id).events().isEmpty())
+                    throw fault(404, "SESSION_HISTORY_UNAVAILABLE");
+                try (var writer = repository.openWriter(task.id, WriteOwnership.EXCLUSIVE)) {
+                    var content = new ByteArrayOutputStream();
+                    content.write(
+                            WebJson.encode(
+                                    Map.of(
+                                            "format",
+                                            "jharness-jsonl",
+                                            "version",
+                                            1,
+                                            "sessionId",
+                                            task.id)));
+                    content.write('\n');
+                    for (var e : repository.openReader(task.id).events()) {
+                        var row = fullEvent(e);
+                        content.write(WebJson.encode(row));
+                        content.write('\n');
+                        if (content.size() > 220000) throw fault(413, "EXPORT_LIMIT");
+                    }
+                    writer.flush();
+                    respond(
+                            exchange,
+                            200,
+                            Map.of(
+                                    "sessionId",
+                                    task.id,
+                                    "content",
+                                    content.toString(StandardCharsets.UTF_8),
+                                    "sha256",
+                                    hashBytes(content.toByteArray()),
+                                    "artifactsIncluded",
+                                    false));
+                }
+            }
         } else if (path.length == 5
                 && path[4].equals("diagnosis")
                 && method.equals("GET")
@@ -536,7 +949,7 @@ public final class HarnessWebServer implements AutoCloseable {
         if (closed || broken) throw fault(503, "WEB_UNAVAILABLE");
         if (!requestId.matches("[A-Za-z0-9_-]{1,64}")) throw fault(400, "INVALID_REQUEST_ID");
         String requestHash = hash(requestId), goalHash = hash(goal);
-        var prior = submissions.get(requestHash);
+        var prior = submission(requestHash);
         if (prior != null) {
             if (!prior.profile.equals(profile) || !prior.goalHash.equals(goalHash))
                 throw fault(409, "REQUEST_ID_CONFLICT");
@@ -544,6 +957,7 @@ public final class HarnessWebServer implements AutoCloseable {
         }
         var selected = profiles.get(profile);
         if (selected == null) throw fault(400, "UNKNOWN_PROFILE");
+        if (occupied.contains(selected.workspaceBinding())) throw fault(409, "WORKSPACE_BUSY");
         if (settings != null) {
             try {
                 settings.prepareTask();
@@ -553,38 +967,30 @@ public final class HarnessWebServer implements AutoCloseable {
                 throw fault(503, "CREDENTIAL_STORE_UNAVAILABLE");
             }
         }
-        if (tasks.size() >= maxTasks || occupied.size() >= maxActive)
+        if (diskCatalog == null && tasks.size() >= maxTasks || occupied.size() >= maxActive)
             throw fault(429, "TASK_LIMIT");
         if (occupied.contains(selected.workspaceBinding())) throw fault(409, "WORKSPACE_BUSY");
         String sanitizedGoal = clean(goal);
         var task =
                 new Task(
-                        "web-" + UUID.randomUUID(),
+                        diskCatalog == null
+                                ? "web-" + UUID.randomUUID()
+                                : "web-" + catalogBinding.substring(0, 32) + "-" + requestHash,
                         profile,
                         requestHash,
                         goalHash,
                         selected.workspaceBinding());
-        tasks.put(task.id, task);
-        submissions.put(requestHash, task);
+        cache(task);
+        cursors.clear();
         occupied.add(task.binding);
         try {
-            catalog.append(
-                    SessionEvent.session(
-                            catalogId,
-                            "web.task.accepted",
-                            Map.of(
-                                    "taskId",
-                                    task.id,
-                                    "profile",
-                                    profile,
-                                    "requestHash",
-                                    requestHash,
-                                    "goalHash",
-                                    goalHash,
-                                    "workspaceBinding",
-                                    task.binding)));
+            var lease = leases.get(task.binding);
+            if (lease != null) lease.accept(accepted(task), catalogBinding);
+            var admission = SessionEvent.session(catalogId, "web.task.accepted", accepted(task));
+            task.createdAt = admission.timestamp().toString();
+            task.revision = catalog.append(admission);
             catalog.flush();
-        } catch (RuntimeException ex) {
+        } catch (IOException | RuntimeException ex) {
             broken = true;
             task.phase = "UNKNOWN";
             throw fault(503, "SUBMISSION_NOT_CONFIRMED");
@@ -593,6 +999,160 @@ public final class HarnessWebServer implements AutoCloseable {
                 daemonFactory("jharness-web-task").newThread(() -> execute(task, sanitizedGoal));
         task.worker.start();
         return summary(task);
+    }
+
+    private Map<String, Object> workspaceInfo() {
+        var rows = new ArrayList<Map<String, Object>>();
+        if (workspaces != null) {
+            for (Object raw : (List<?>) workspaces.read().get("workspaces")) {
+                var row = new LinkedHashMap<>(Values.object(raw));
+                var profile = profiles.get(row.get("id"));
+                row.put("busy", profile != null && occupied.contains(profile.workspaceBinding()));
+                rows.add(row);
+            }
+        } else
+            profiles.forEach(
+                    (id, profile) ->
+                            rows.add(
+                                    Map.of(
+                                            "id",
+                                            id,
+                                            "name",
+                                            id,
+                                            "path",
+                                            profile.workspaceBinding(),
+                                            "busy",
+                                            occupied.contains(profile.workspaceBinding()))));
+        return Map.of(
+                "workspaces",
+                rows,
+                "canRegister",
+                workspaces != null,
+                "pagedHistory",
+                diskCatalog != null);
+    }
+
+    private void maintenanceReady(Task task) {
+        if (!Set.of("FINISHED", "VERIFIED").contains(task.phase) || occupied.contains(task.binding))
+            throw fault(409, "WORKSPACE_BUSY");
+        if (!SessionRecovery.inspect(events(task)).ready()) throw fault(409, "RECOVERY_REQUIRED");
+    }
+
+    private Map<String, Object> fullEvent(SessionEvent e) {
+        var row = new LinkedHashMap<String, Object>();
+        row.put("eventId", e.eventId());
+        row.put("sessionId", e.sessionId());
+        row.put("type", e.type());
+        row.put("timestamp", e.timestamp().toString());
+        row.put("schemaVersion", e.schemaVersion());
+        row.put("level", e.level().name());
+        row.put("turnId", e.turnId());
+        row.put("stepId", e.stepId());
+        row.put("callId", e.callId());
+        row.put("payload", sanitizer.sanitize(e.payload()));
+        return row;
+    }
+
+    private Map<String, Object> forkTask(Task parent, String event, String requestId)
+            throws IOException {
+        if (!requestId.matches("[A-Za-z0-9_-]{1,64}")) throw fault(400, "INVALID_REQUEST_ID");
+        String requestHash = hash(requestId), goalHash = hash("fork:" + parent.id + ":" + event);
+        var prior = submission(requestHash);
+        if (prior != null) {
+            if (!prior.profile.equals(parent.profile) || !prior.goalHash.equals(goalHash))
+                throw fault(409, "REQUEST_ID_CONFLICT");
+            return summary(prior);
+        }
+        maintenanceReady(parent);
+        if (occupied.size() >= maxActive) throw fault(429, "ACTIVE_LIMIT");
+        var profile = profiles.get(parent.profile);
+        if (!(profile.sessions() instanceof JsonlSessionRepository physical)
+                || diskCatalog == null
+                || profile.artifacts() == null) throw fault(400, "FORK_UNAVAILABLE");
+        var history = events(parent);
+        int end = -1;
+        for (int i = 0; i < history.size(); i++)
+            if (history.get(i).eventId().equals(event)) end = i;
+        if (end < 0) throw fault(400, "UNKNOWN_CURSOR");
+        if (!SessionRecovery.inspect(history.subList(0, end + 1)).ready())
+            throw fault(409, "RECOVERY_REQUIRED");
+        var task =
+                new Task(
+                        "web-" + catalogBinding.substring(0, 32) + "-" + requestHash,
+                        parent.profile,
+                        requestHash,
+                        goalHash,
+                        parent.binding);
+        task.archived = SessionLifecycle.archived(history.subList(0, end + 1));
+        task.archived = SessionLifecycle.archived(history.subList(0, end + 1));
+        task.name =
+                clean(
+                        parent.name.substring(0, Math.min(70, parent.name.length()))
+                                + " \u00b7 \u5206\u53c9");
+        cache(task);
+        occupied.add(task.binding);
+        cursors.clear();
+        try {
+            var lease = leases.get(task.binding);
+            if (lease != null) lease.accept(accepted(task), catalogBinding);
+            task.revision =
+                    catalog.append(
+                            SessionEvent.session(catalogId, "web.task.accepted", accepted(task)));
+            catalog.flush();
+            physical.forkTo(
+                    parent.id,
+                    event,
+                    task.id,
+                    target -> {
+                        try {
+                            profile.artifacts().copy(parent.id, target);
+                        } catch (IOException ex) {
+                            throw new HarnessException(
+                                    "ARTIFACT_COPY_FAILED", "Artifact snapshot failed");
+                        }
+                    });
+            task.phase = "FINISHED";
+            task.revision =
+                    catalog.append(
+                            SessionEvent.session(
+                                    catalogId,
+                                    "web.task.finished",
+                                    Map.of(
+                                            "taskId",
+                                            task.id,
+                                            "phase",
+                                            task.phase,
+                                            "status",
+                                            task.status,
+                                            "error",
+                                            "",
+                                            "parentSessionId",
+                                            parent.id,
+                                            "fromEventId",
+                                            event)));
+            task.revision =
+                    catalog.append(
+                            SessionEvent.session(
+                                    catalogId,
+                                    "web.task.changed",
+                                    Map.of(
+                                            "taskId",
+                                            task.id,
+                                            "name",
+                                            task.name,
+                                            "pinned",
+                                            false,
+                                            "archived",
+                                            task.archived)));
+            catalog.flush();
+            if (lease != null) lease.clear(task.id, catalogBinding);
+            occupied.remove(task.binding);
+            return summary(task);
+        } catch (IOException | RuntimeException ex) {
+            task.phase = "UNKNOWN";
+            broken = true;
+            throw fault(503, "SUBMISSION_NOT_CONFIRMED");
+        }
     }
 
     private void execute(Task task, String goal) {
@@ -651,15 +1211,33 @@ public final class HarnessWebServer implements AutoCloseable {
                                         catalogId,
                                         "web.task.finished",
                                         Map.of(
-                                                "taskId", task.id, "phase", phase, "status", status,
-                                                "error", error)));
+                                                "taskId",
+                                                task.id,
+                                                "phase",
+                                                phase,
+                                                "status",
+                                                status,
+                                                "error",
+                                                error,
+                                                "cancelRequested",
+                                                task.cancelled)));
                         catalog.flush();
                     } catch (RuntimeException ex) {
                         broken = true;
                         task.phase = "UNKNOWN";
                     }
                 }
-                if (task.phase.equals("FINISHED")) occupied.remove(task.binding);
+                if (task.phase.equals("FINISHED") && !closed) {
+                    try {
+                        var lease = leases.get(task.binding);
+                        if (lease != null) lease.clear(task.id, catalogBinding);
+                        occupied.remove(task.binding);
+                    } catch (IOException | RuntimeException ex) {
+                        broken = true;
+                        task.phase = "UNKNOWN";
+                        task.error = "WORKSPACE_CHECKPOINT_FAILED";
+                    }
+                }
                 notifyAll();
             }
         }
@@ -738,28 +1316,49 @@ public final class HarnessWebServer implements AutoCloseable {
                                                 false, "Task cancelled", "web-server")));
     }
 
+    private void reconcileArchival(Task task) {
+        if (!Set.of("FINISHED", "VERIFIED").contains(task.phase)) return;
+        var history = events(task);
+        if (!history.isEmpty()) task.archived = SessionLifecycle.archived(history);
+    }
+
     private Map<String, Object> summary(Task task) {
-        return Map.of(
-                "taskId",
-                task.id,
-                "profile",
-                task.profile,
-                "phase",
-                task.phase,
-                "status",
-                task.status,
-                "error",
-                task.error,
-                "cancelRequested",
-                task.cancelled,
-                "recovered",
-                task.recovered,
-                "protocolVersion",
-                HarnessSdk.PROTOCOL_VERSION);
+        reconcileArchival(task);
+        var value =
+                new LinkedHashMap<String, Object>(
+                        Map.of(
+                                "taskId",
+                                task.id,
+                                "profile",
+                                task.profile,
+                                "phase",
+                                task.phase,
+                                "status",
+                                task.status,
+                                "error",
+                                task.error,
+                                "cancelRequested",
+                                task.cancelled,
+                                "recovered",
+                                task.recovered,
+                                "protocolVersion",
+                                HarnessSdk.PROTOCOL_VERSION));
+        value.put("name", task.name);
+        value.put("pinned", task.pinned);
+        value.put("archived", task.archived);
+        value.put("createdAt", task.createdAt);
+        value.put("revision", task.revision);
+        return value;
     }
 
     private List<SessionEvent> events(Task task) {
         var repository = profiles.get(task.profile).sessions();
+        if (repository instanceof JsonlSessionRepository physical) {
+            if (!java.nio.file.Files.exists(
+                    physical.directory().resolve(task.id + ".jsonl"),
+                    java.nio.file.LinkOption.NOFOLLOW_LINKS)) return List.of();
+            return repository.openReader(task.id).events();
+        }
         if (!repository.list().contains(task.id)) return List.of();
         return repository.openReader(task.id).events();
     }
@@ -1011,17 +1610,33 @@ public final class HarnessWebServer implements AutoCloseable {
         final String id, profile, requestHash, goalHash, binding;
         final Map<String, Pending> approvals = new LinkedHashMap<>();
         String phase = "STARTING", status = "CREATED", error = "";
+        String name = "", createdAt = java.time.Instant.now().toString(), revision = "";
+        boolean pinned, archived;
         volatile boolean cancelled;
         boolean recovered;
         HarnessSdk sdk;
         Thread worker;
 
         Task(String id, String profile, String requestHash, String goalHash, String binding) {
+            if (id == null
+                    || !id.matches("[A-Za-z0-9_-]{1,128}")
+                    || profile == null
+                    || !profile.matches("[A-Za-z0-9_-]{1,32}")
+                    || requestHash == null
+                    || !requestHash.matches("[a-f0-9]{64}")
+                    || goalHash == null
+                    || !goalHash.matches("[a-f0-9]{64}")
+                    || binding == null
+                    || binding.isBlank()
+                    || binding.length() > 1024)
+                throw new IllegalArgumentException("Invalid task identity");
             this.id = id;
             this.profile = profile;
             this.requestHash = requestHash;
             this.goalHash = goalHash;
             this.binding = binding;
+            this.name =
+                    "\u4f1a\u8bdd " + requestHash.substring(0, Math.min(8, requestHash.length()));
         }
     }
 
@@ -1039,11 +1654,38 @@ public final class HarnessWebServer implements AutoCloseable {
         if (reason == null || reason.isBlank() || reason.length() > 4096)
             throw new HarnessException(
                     "VERIFICATION_REASON_REQUIRED", "Provide externally checked facts");
-        try (var writer =
-                new SanitizingSessionWriter(
-                        catalogRepository.openWriter(catalogId, WriteOwnership.EXCLUSIVE),
-                        sanitizer)) {
-            var events = catalogRepository.openReader(catalogId).events();
+        try (var owner = catalogRepository.openWriter(catalogId, WriteOwnership.EXCLUSIVE);
+                var lease =
+                        sessions instanceof JsonlSessionRepository physical
+                                ? new WorkspaceLease(physical)
+                                : null) {
+            var disk =
+                    catalogRepository instanceof JsonlSessionRepository physical
+                            ? new DurableTaskCatalog(physical, catalogId, owner, sanitizer)
+                            : null;
+            SessionWriter writer =
+                    disk == null ? new SanitizingSessionWriter(owner, sanitizer) : disk;
+            String catalogKey =
+                    hash(
+                            catalogRepository instanceof JsonlSessionRepository physical
+                                    ? physical.directory().resolve(catalogId).toString()
+                                    : catalogId);
+            if (lease != null && !lease.pending().isEmpty()) {
+                if (!taskId.equals(lease.pending().get("taskId"))
+                        || !catalogKey.equals(lease.pending().get("catalogKey")))
+                    throw new HarnessException(
+                            "ENVIRONMENT_MISMATCH", "Use original catalog and task");
+                if (disk != null && disk.byId(taskId).isEmpty()) {
+                    var admission = new LinkedHashMap<>(lease.pending());
+                    admission.remove("catalogKey");
+                    writer.append(SessionEvent.session(catalogId, "web.task.accepted", admission));
+                    writer.flush();
+                }
+            }
+            var events =
+                    disk == null
+                            ? catalogRepository.openReader(catalogId).events()
+                            : disk.byId(taskId);
             var accepted =
                     events.stream()
                             .filter(
@@ -1059,14 +1701,21 @@ public final class HarnessWebServer implements AutoCloseable {
                 throw new HarnessException("ENVIRONMENT_MISMATCH", "Wrong workspace binding");
             var last =
                     events.stream()
-                            .filter(e -> taskId.equals(e.payload().get("taskId")))
+                            .filter(
+                                    e ->
+                                            taskId.equals(e.payload().get("taskId"))
+                                                    && !e.type().equals("web.task.changed"))
                             .reduce((a, b) -> b)
                             .orElseThrow();
             if (last.type().equals("web.task.verified")
                     || last.type().equals("web.task.finished")
                             && !"UNKNOWN".equals(last.payload().get("phase")))
                 throw new HarnessException("VERIFICATION_NOT_REQUIRED", "Task already settled");
-            if (sessions.list().contains(taskId)) {
+            if (sessions instanceof JsonlSessionRepository physical
+                    ? java.nio.file.Files.exists(
+                            physical.directory().resolve(taskId + ".jsonl"),
+                            java.nio.file.LinkOption.NOFOLLOW_LINKS)
+                    : sessions.list().contains(taskId)) {
                 try (var child = sessions.openWriter(taskId, WriteOwnership.EXCLUSIVE)) {
                     var history = sessions.openReader(taskId).events();
                     if (history.stream()
@@ -1103,6 +1752,9 @@ public final class HarnessWebServer implements AutoCloseable {
                                     "resolution",
                                     "external inspection; no replay or completion claim")));
             writer.flush();
+            if (lease != null) lease.clear(taskId, catalogKey);
+        } catch (IOException ex) {
+            throw new HarnessException("WEB_VERIFICATION_FAILED", "Offline maintenance failed", ex);
         }
     }
 
@@ -1130,6 +1782,7 @@ public final class HarnessWebServer implements AutoCloseable {
         }
         synchronized (this) {
             catalog.close();
+            leases.values().forEach(WorkspaceLease::close);
         }
     }
 }

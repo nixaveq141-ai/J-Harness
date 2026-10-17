@@ -1,6 +1,7 @@
 export interface Task {
   taskId: string; profile: string; phase: string; status: string; error: string
   cancelRequested: boolean; recovered: boolean; protocolVersion: string
+  name: string; pinned: boolean; archived: boolean; revision: string; createdAt: string
 }
 export interface SessionEvent {
   eventId: string; type: string; timestamp: string; callId?: string | null
@@ -40,7 +41,7 @@ export class ApiError extends Error {
 const errors = new Set(['UNAUTHORIZED', 'LOCAL_CLIENT_REQUIRED', 'UNKNOWN_CURSOR', 'STREAM_LIMIT',
   'STALE_APPROVAL', 'WORKSPACE_BUSY', 'TASK_LIMIT', 'ACTIVE_LIMIT', 'SUBMISSION_NOT_FOUND',
   'SUBMISSION_NOT_CONFIRMED', 'REQUEST_ID_CONFLICT', 'DIFF_NOT_RECORDED', 'RESPONSE_LIMIT', 'NOT_FOUND',
-  'SETTINGS_CONFLICT', 'INVALID_SETTINGS', 'SECRET_CONFIG', 'CREDENTIAL_STORE_UNAVAILABLE', 'API_KEY_MISSING', 'INVALID_CONFIG', 'COST_BUDGET_UNAVAILABLE'])
+  'SETTINGS_CONFLICT', 'INVALID_SETTINGS', 'SECRET_CONFIG', 'CREDENTIAL_STORE_UNAVAILABLE', 'API_KEY_MISSING', 'INVALID_CONFIG', 'COST_BUDGET_UNAVAILABLE', 'SESSION_CONFLICT', 'RECOVERY_REQUIRED', 'EXPORT_LIMIT', 'FORK_UNAVAILABLE', 'WORKSPACE_PATH_DENIED', 'WORKSPACE_OWNER_MISMATCH', 'WORKSPACE_EXISTS', 'WORKSPACE_LIMIT', 'SESSION_ALREADY_OWNED', 'SESSION_BUSY', 'INVALID_WORKSPACE_NAME', 'WEB_HISTORY_QUOTA'])
 export function object(value: unknown): Record<string, unknown> {
   if (typeof value !== 'object' || value === null || Array.isArray(value)) throw new ApiError('INVALID_RESPONSE')
   return value as Record<string, unknown>
@@ -59,7 +60,8 @@ export function task(value: unknown): Task {
   for (const k of ['cancelRequested', 'recovered']) if (typeof v[k] !== 'boolean') throw new ApiError('INVALID_RESPONSE')
   return { taskId: identifier(v.taskId), profile: identifier(v.profile), phase: text(v.phase),
     status: text(v.status), error: text(v.error), cancelRequested: v.cancelRequested as boolean,
-    recovered: v.recovered as boolean, protocolVersion: text(v.protocolVersion) }
+    recovered: v.recovered as boolean, protocolVersion: text(v.protocolVersion), name: v.name === undefined ? '' : text(v.name, 80),
+    pinned: v.pinned === true, archived: v.archived === true, revision: v.revision === undefined ? '' : text(v.revision, 64), createdAt: v.createdAt === undefined ? '' : text(v.createdAt) }
 }
 function event(value: unknown): SessionEvent {
   const v = object(value)
@@ -78,6 +80,23 @@ export function mergeEvents(old: SessionEvent[], incoming: SessionEvent[]): Sess
 export const isTerminal = (t: Task) => ['FINISHED', 'UNKNOWN', 'VERIFIED'].includes(t.phase)
 export const uncertain = (t: Task) => t.phase !== 'VERIFIED' && (t.phase === 'UNKNOWN' || t.status === 'UNKNOWN')
 export class Api {
+  async workspaces() { return workspaceData(await this.json('/v1/workspaces')) }
+  async registerWorkspace(path: string, name: string) { return workspaceData(await this.json('/v1/workspaces', { path, name })) }
+  async taskPage(profile = '', view = 'active', after = '', signal?: AbortSignal) {
+    const params = new URLSearchParams({ limit: '32', view, ...(profile ? { profile: identifier(profile) } : {}), ...(after ? { after: identifier(after) } : {}) })
+    const v = object(await this.json(`/v1/tasks?${params}`, undefined, signal))
+    if (!Array.isArray(v.tasks) || v.tasks.length > 32 || typeof v.more !== 'boolean') throw new ApiError('INVALID_RESPONSE')
+    return { tasks: v.tasks.map(task), next: text(v.next, 64), more: v.more }
+  }
+  async metadata(value: Task, patch: { name: string; pinned: boolean; archived: boolean }) {
+    return task(await this.json(`/v1/tasks/${identifier(value.taskId)}/metadata`, { revision: value.revision, ...patch }))
+  }
+  async fork(value: Task, eventId: string, requestId: string) { return task(await this.json(`/v1/tasks/${identifier(value.taskId)}/fork`, { eventId: identifier(eventId), requestId: identifier(requestId) })) }
+  async exportSession(id: string) {
+    const v = object(await this.json(`/v1/tasks/${identifier(id)}/export`))
+    if (v.sessionId !== id || v.artifactsIncluded !== false || !/^[a-f0-9]{64}$/.test(text(v.sha256, 64))) throw new ApiError('INVALID_RESPONSE')
+    return { content: text(v.content, 220000), sha256: text(v.sha256, 64) }
+  }
   static async connect(fetcher: typeof fetch = fetch): Promise<Api> {
     const transport = new Api('0'.repeat(32), fetcher)
     const result = object(await transport.json('/v1/browser-session', {}))
@@ -206,6 +225,16 @@ export class Api {
   async diagnosis(id: string, signal?: AbortSignal) { return diagnosis(await this.json(`/v1/tasks/${identifier(id)}/diagnosis`, undefined, signal)) }
   async diff(id: string) { return this.json(`/v1/tasks/${identifier(id)}/diff`) }
   async search(id: string, text: string, after = '') { return page(await this.json(`/v1/tasks/${identifier(id)}/search`, { text, after, limit: 20 })) }
+}
+
+export interface Workspace { id: string; name: string; path: string; busy: boolean }
+function workspaceData(raw: unknown) {
+  const v = object(raw)
+  if (!Array.isArray(v.workspaces) || v.workspaces.length > 16 || typeof v.canRegister !== 'boolean') throw new ApiError('INVALID_RESPONSE')
+  return { canRegister: v.canRegister, workspaces: v.workspaces.map(raw => {
+    const w = object(raw)
+    return { id: identifier(w.id), name: text(w.name, 80), path: text(w.path, 1024), busy: w.busy === true }
+  }) }
 }
 
 export interface Diagnosis {

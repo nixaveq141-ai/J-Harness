@@ -47,6 +47,19 @@ button { background: transparent; border: 0; }
 .workbench.sidebar-closed { --sidebar-width: 64px !important; }
 .navigation { grid-column: 1; grid-row: 1; }
 .nav-inner { padding: 14px 12px 12px; }
+.workspace-picker, .history-view { font-size: 12px; margin: 10px 2px; min-width: 0; }
+.workspace-picker { max-height: 35vh; overflow-y: auto; flex-shrink: 0; }
+.workspace-picker label, .history-view label { display: grid; gap: 6px; }
+.workspace-picker select, .history-view select { width: 100%; min-width: 0; padding: 7px; border: 1px solid var(--dsw-alias-border-l3); border-radius: 8px; background: var(--dsw-alias-bg-base); color: inherit; }
+.workspace-picker p { font-size: 11px; color: var(--dsw-alias-label-secondary); line-height: 1.7; overflow-wrap: anywhere; }
+.workspace-picker details { margin-top: 8px; }.workspace-picker summary { cursor: pointer; }
+.workspace-picker details label { margin-block: 8px; }
+.history-pages { display: flex; gap: 4px; align-items: center; justify-content: space-between; font-size: 12px; padding-block: 8px; }
+.session-actions { margin-bottom: 20px; padding: 4px 0 16px; border-bottom: .5px solid var(--dsw-alias-border-l3); font-size: 13px; line-height: 1.8; overflow-wrap: anywhere; }
+.session-actions > summary { cursor: pointer; padding-block: 8px; }
+.session-actions label { display: grid; gap: 6px; margin-block: 8px; min-width: 0; }
+.session-controls { display: flex; gap: 8px; align-items: end; flex-wrap: wrap; margin-block: 12px; }
+.session-controls label { flex: 1 1 160px; margin: 0; }.session-controls label > span { width: 100%; }
 .brand-row { display: flex; align-items: center; height: 44px; gap: 9px; padding: 0 5px; margin-bottom: 20px; white-space: nowrap; }
 .brand-row strong { font-size: 17px; font-weight: 650; letter-spacing: -.35px; }
 .brand-mark { color: var(--dsw-alias-state-business-primary); font-size: 26px; font-weight: 750; line-height: 32px; }

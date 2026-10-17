@@ -440,7 +440,7 @@ class M7WebTest {
     }
 
     @Test
-    void sharedWorkspaceAndRetainedTaskBoundsRejectWithoutOpeningMoreModels() throws Exception {
+    void sharedWorkspaceIsExclusiveAndSettledHistoryOutlivesHotSet() throws Exception {
         var profile = profile(() -> List.of(response(write()), response()));
         try (var server =
                 new HarnessWebServer(
@@ -469,15 +469,22 @@ class M7WebTest {
             approval(server, second);
             request(server, "POST", "/v1/tasks/" + second + "/cancel", Map.of());
             finished(server, second);
-            assertEquals(
-                    429,
+            var third =
                     request(
-                                    server,
-                                    "POST",
-                                    "/v1/tasks",
-                                    Map.of("profile", "local", "goal", "x", "requestId", "three"))
-                            .statusCode());
-            assertEquals(2, opened.get());
+                            server,
+                            "POST",
+                            "/v1/tasks",
+                            Map.of("profile", "local", "goal", "x", "requestId", "three"));
+            assertEquals(202, third.statusCode());
+            String thirdId = (String) object(third).get("taskId");
+            approval(server, thirdId);
+            request(server, "POST", "/v1/tasks/" + thirdId + "/cancel", Map.of());
+            finished(server, thirdId);
+            assertEquals(3, opened.get());
+            assertTrue(
+                    ((Number) object(request(server, "GET", "/v1/tasks", null)).get("hotCount"))
+                                    .intValue()
+                            <= 2);
         }
     }
 
@@ -584,7 +591,7 @@ class M7WebTest {
                         "UNKNOWN",
                         object(request(restored, "GET", "/v1/tasks/" + id, null)).get("phase"));
                 assertEquals(
-                        429,
+                        409,
                         request(
                                         restored,
                                         "POST",
@@ -625,7 +632,7 @@ class M7WebTest {
             assertEquals("UNKNOWN", finished(server, id).get("phase"));
             assertFalse(SessionRecovery.inspect(sessions.openReader(id).events()).ready());
             assertEquals(
-                    429,
+                    409,
                     request(
                                     server,
                                     "POST",
