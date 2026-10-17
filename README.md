@@ -195,4 +195,4 @@ M10.5.2收口（2026-10-17）：工作区注册/选择、会话管理及32对象
 
 M10.5.3收口（2026-10-17）：同会话多轮、独立受理/核对、有界队列/取消及下一轮补充已完成本地验收。Java337、客户端16、Chrome多轮15/历史19/设置24/诊断13/工作台28、入口8项通过；278份Java/POM及最终同一JAR/UI见[M10.5.3记录](docs/testing/M10.5.3-validation.md)。重启暂停队列，UNKNOWN及原离线核实限制保持；下一步M10.5.4，.4～.9及M11门禁未闭合，无付费请求、推送或远端CI。
 
-M10.5.4原生凭据增量已实现Windows Credential Manager、macOS Keychain、Linux Secret Service/libsecret路径；Windows/Linux本地真实持久化已验，macOS待GitHub runner实测。Linux需要已解锁的默认凭据集合和用户D-Bus会话；服务缺失/锁定可使用环境变量，不回退明文文件。M10.5.4模型选择/逐轮快照/多协议仍在推进，不能据此视为整片完成，见[当前验收](docs/testing/M10.5.4-validation.md)。
+M10.5.4原生凭据增量已实现Windows Credential Manager、macOS Keychain、Linux Secret Service/libsecret路径；Windows/Linux/macOS原生持久化已通过[三平台CI](https://github.com/nixaveq141-ai/J-Harness/actions/runs/39014489141)，Windows旧/新凭据兼容及本机Java338/Chrome设置26通过；这组CI只覆盖原生凭据专项。Linux需要已解锁的默认凭据集合和用户D-Bus会话；服务缺失/锁定可使用环境变量，不回退明文文件。M10.5.4模型选择/逐轮快照/多协议仍在推进，不能据此视为整片完成，见[当前验收](docs/testing/M10.5.4-validation.md)。

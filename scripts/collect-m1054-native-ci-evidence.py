@@ -83,6 +83,15 @@ suites = [ET.parse(p).getroot() for p in root.glob('harness-*/target/surefire-re
 totals = {k: sum(int(s.get(k, '0')) for s in suites) for k in ['tests', 'failures', 'errors', 'skipped']}
 require(totals == dict(tests=338, failures=0, errors=0, skipped=0), 'Incomplete local Java tests')
 jar_hash = sha(root / 'harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar')
+local_native = load(cache / 'M10.5.4-native-credentials.json')
+require(local_native['jarSha256'] == jar_hash and local_native['sourceSha256'] == manifest
+        and local_native['passed'] and local_native['expectationMet'], 'Local native probe drift')
+with zipfile.ZipFile(root / 'harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar') as z:
+    files = z.read('ui/ui-files.txt').decode().splitlines()
+    require({p for p in z.namelist() if p.startswith('ui/') and not p.endswith('/')}
+            == {'ui/' + p for p in files} | {'ui/ui-files.txt'}, 'Stale packaged UI')
+    ui_manifest = {p: hashlib.sha256(z.read('ui/' + p)).hexdigest() for p in files}
+    require(all(sha(root / 'frontend/dist' / p) == digest for p, digest in ui_manifest.items()), 'Local UI/JAR drift')
 browser = load(cache / 'M10-settings-browser-results.json')
 compat = load(cache / 'M10.5.4-windows-compat.json')
 require(browser['jarSha256'] == jar_hash and len(browser['checks']) == 26
@@ -94,7 +103,9 @@ evidence = dict(scope='M10.5.4 native credentials', status='PASS', milestoneStat
                 capturedAt=datetime.datetime.now(datetime.timezone.utc).isoformat(),
                 runId=run_id, runUrl=run['html_url'], sourceCommit=commit,
                 sourceSha256=manifest, platforms=platforms, localJava=totals,
-                localJarSha256=jar_hash, chromeSettings=browser, windowsCompatibility=compat,
+                localJarSha256=jar_hash, uiFilesSha256=ui_manifest,
+                localNative={k: v for k, v in local_native.items() if k != 'sourceSha256'},
+                chromeSettings=browser, windowsCompatibility=compat,
                 localVerifyLogSha256=sha(log), collectionToolSha256=sha(Path(__file__)), paidModelRequests=0,
                 limits=['CI runs native probes, not the full Java/browser release matrix.',
                         'Each platform JAR hash is recorded separately; source manifests must match.',
