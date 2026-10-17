@@ -129,6 +129,19 @@ try {
   check('existing connection edited without key resubmission', (await api('/v1/settings')).body.models.find(m => m.id === saved.selected).label === '已编辑连接')
   await page.getByRole('button', { name: '删除连接', exact: true }).click(); await page.getByRole('button', { name: '保存设置', exact: true }).click(); await page.getByText('设置已保存，将用于后续新任务。', { exact: true }).waitFor()
   check('connection deletion persists and clears managed credential', (await api('/v1/settings')).body.models.length === 1 && !(await api('/v1/settings')).body.credentialCleanupPending)
+  // UI-only unavailable-service state. Native availability is validated by the separate OS probe.
+  await page.route('**/v1/settings', async route => {
+    const response = await route.fetch()
+    await route.fulfill({ response, json: { ...(await response.json()), credentialStore: 'unavailable' } })
+  })
+  await page.getByRole('button', { name: '放弃修改并重新读取', exact: true }).click()
+  await page.getByText('系统凭据服务暂不可用，请解锁或启动服务后重启工作台。', { exact: false }).waitFor()
+  check('unavailable service explains recovery and disables vault input', await page.getByLabel('API Key', { exact: true }).isDisabled() && await page.getByText('留空使用已存密钥或下方环境变量。', { exact: false }).isVisible())
+  await page.setViewportSize({ width: 390, height: 844 })
+  await page.getByText('系统凭据服务暂不可用，请解锁或启动服务后重启工作台。', { exact: false }).scrollIntoViewIfNeeded()
+  await shot('unavailable-mobile')
+  check('unavailable recovery copy fits mobile settings', await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth))
+  await page.unroute('**/v1/settings')
   check('no browser runtime errors', pageErrors.length === 0)
   result = { date: new Date().toISOString(), platform: process.platform, browser: browser.version(), checks, screenshots, modelRequests: wire.length, paidRequests: 0, jarSha256: createHash('sha256').update(await readFile(jar)).digest('hex') }
 } finally {

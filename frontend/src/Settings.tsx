@@ -27,7 +27,7 @@ function message(e: unknown) {
   const labels: Record<string, string> = {
     SETTINGS_CONFLICT: '设置已在其他页面更新。请重新读取后修改。', WORKSPACE_BUSY: '有运行中或待核实的任务，请结束任务或先离线核实。',
     INVALID_SETTINGS: '请检查字段格式、唯一连接 ID 和扩展配置。', SECRET_CONFIG: '配置中包含密钥。请只在 API Key 栏填写密钥。',
-    CREDENTIAL_STORE_UNAVAILABLE: '当前系统尚未提供凭据库适配。可使用已有环境变量连接。', NOT_FOUND: '当前宿主未启用设置管理，请使用最新的 web-ui.cmd 启动。',
+    CREDENTIAL_STORE_UNAVAILABLE: '系统凭据服务暂不可用。请解锁或启动凭据服务后重启工作台，也可为新连接使用环境变量。', NOT_FOUND: '当前宿主未启用设置管理，请使用最新的 web-ui.cmd 启动。',
     COST_BUDGET_UNAVAILABLE: '启用费用上限时，请填写该模型的价格和输入 token 上限。', INVALID_CONFIG: '配置校验未通过，请检查数值和扩展字段。',
   }
   return labels[e.code] ?? '保存或读取未完成。请重新读取核对结果，再决定是否重试；不会自动重发。'
@@ -91,7 +91,7 @@ export function Settings({ api, onBack, onGuardChange }: { api: Api; onBack: () 
           <label>连接名称<Input value={model.label} maxLength={80} onChange={e => update({ label: e.target.value })} /></label>
           <label>API URL<Input type="url" value={model.baseUrl} maxLength={512} onChange={e => update({ baseUrl: e.target.value })} /></label><p className="field-help">填写 OpenAI 兼容服务的基础地址，例如 https://api.deepseek.com；不要附带密钥。</p>
           <label>模型名称<Input value={model.model} maxLength={128} placeholder="服务端的模型 ID" onChange={e => update({ model: e.target.value })} /></label>
-          <label>API Key<Input type="password" autoComplete="off" spellCheck={false} maxLength={1024} value={keys[model.id] ?? ''} disabled={data.credentialStore === 'unavailable'} placeholder={model.keyConfigured ? '已配置；留空保留原密钥' : '输入 API Key'} onChange={e => { setKeys({ ...keys, [model.id]: e.target.value }); setDirty(true) }} /></label><p className="field-help">{data.credentialStore === 'unavailable' ? '本系统凭据库尚未适配。' : `密钥保存到 ${data.credentialStore}，页面不回显原文。`} 留空使用已存密钥或下方环境变量。</p>
+          <label>API Key<Input type="password" autoComplete="off" spellCheck={false} maxLength={1024} value={keys[model.id] ?? ''} disabled={data.credentialStore === 'unavailable'} placeholder={model.keyConfigured ? '已配置；留空保留原密钥' : '输入 API Key'} onChange={e => { setKeys({ ...keys, [model.id]: e.target.value }); setDirty(true) }} /></label><p className="field-help">{data.credentialStore === 'unavailable' ? '系统凭据服务暂不可用，请解锁或启动服务后重启工作台。' : `密钥保存到 ${data.credentialStore}，页面不回显原文。`} 留空使用已存密钥或下方环境变量。</p>
           <details><summary>环境变量与费用限制</summary><label>备用密钥环境变量<Input value={model.apiKeyEnv} maxLength={128} onChange={e => update({ apiKeyEnv: e.target.value })} /></label>
             <label className="settings-check"><input type="checkbox" checked={model.disableThinking} onChange={e => update({ disableThinking: e.target.checked })} />发送 thinking: disabled（仅服务支持时）</label>
             <p className="field-help">价格需由你核实。切换服务或模型时，请同步修改价格。未启用费用上限时，仍受任务步数和时限约束。</p>

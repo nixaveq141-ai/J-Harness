@@ -13,6 +13,45 @@ class WorkbenchSettingsTest {
     @TempDir Path temp;
 
     @Test
+    void unavailableNativeVaultPreservesSettingsAndBlocksAdmissionWithoutFallback()
+            throws Exception {
+        var memory = new MemoryVault();
+        var original = manager(memory);
+        original.save(input(original.read(), Map.of("default", "synthetic-unavailable-key")));
+        byte[] before = Files.readAllBytes(temp.resolve(".jharness/settings/workbench.json"));
+        var unavailable =
+                new SystemCredentials() {
+                    @Override
+                    boolean supported() {
+                        return false;
+                    }
+
+                    @Override
+                    String read(String target) throws IOException {
+                        throw new IOException("Unavailable");
+                    }
+                };
+        var reopened = manager(unavailable);
+        assertEquals("unavailable", reopened.read().get("credentialStore"));
+        var model = Values.object(((List<?>) reopened.read().get("models")).getFirst());
+        assertEquals(false, model.get("keyConfigured"));
+        assertThrows(IOException.class, reopened::runtime);
+        assertArrayEquals(
+                before, Files.readAllBytes(temp.resolve(".jharness/settings/workbench.json")));
+        assertFalse(Json.text(reopened.read()).contains("synthetic-unavailable-key"));
+        var replacement = new LinkedHashMap<>(model);
+        replacement.put("id", "environment-only");
+        var change = input(reopened.read(), Map.of());
+        change.put("models", List.of(replacement));
+        change.put("selected", "environment-only");
+        var saved = reopened.save(change);
+        assertEquals(true, saved.get("credentialCleanupPending"));
+        assertEquals("environment-only", manager(unavailable).read().get("selected"));
+        assertEquals(
+                1, memory.values.size()); // An inaccessible old native item is not claimed deleted.
+    }
+
+    @Test
     void permissionSelectionIsBoundedPersistentAndDoesNotRewriteRuntimeSnapshots()
             throws Exception {
         var vault = new MemoryVault();

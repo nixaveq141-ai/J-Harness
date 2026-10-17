@@ -7,10 +7,61 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-/** Windows Credential Manager, current Windows user. No secret in argv or temporary files. */
+/** Current-user native vault. No secret in argv, environment or temporary files. */
 class SystemCredentials {
-    boolean supported() {
-        return System.getProperty("os.name").startsWith("Windows");
+    private Boolean available;
+
+    synchronized boolean supported() {
+        if (System.getProperty("os.name").startsWith("Windows")) return true;
+        if (available == null) {
+            try {
+                available =
+                        "available"
+                                .equals(
+                                        invokeNative(
+                                                List.of(
+                                                        Map.of(
+                                                                "action",
+                                                                "probe",
+                                                                "target",
+                                                                "J-Harness/probe",
+                                                                "value",
+                                                                ""))));
+            } catch (IOException | RuntimeException failure) {
+                available = false;
+            }
+        }
+        return available;
+    }
+
+    String description() {
+        if (!supported()) return "unavailable";
+        String os = System.getProperty("os.name");
+        if (os.startsWith("Windows")) return "Windows Credential Manager";
+        return os.startsWith("Mac") ? "macOS Keychain" : "Linux Secret Service";
+    }
+
+    private String invokeNative(List<Map<String, String>> operations) throws IOException {
+        String os = System.getProperty("os.name");
+        if (!os.startsWith("Mac") && !os.equals("Linux"))
+            throw new IOException("Credential store unavailable on this platform");
+        var builder =
+                new ProcessBuilder(
+                        Path.of(System.getProperty("java.home"), "bin", "java").toString(),
+                        "-cp",
+                        System.getProperty("java.class.path"),
+                        NativeCredentials.class.getName());
+        return run(
+                builder,
+                operations,
+                List.of(
+                        "HOME",
+                        "TMPDIR",
+                        "TMP",
+                        "TEMP",
+                        "DBUS_SESSION_BUS_ADDRESS",
+                        "XDG_RUNTIME_DIR",
+                        "XDG_DATA_HOME"));
     }
 
     String read(String target) throws IOException {
@@ -44,7 +95,9 @@ class SystemCredentials {
     private String invoke(List<Map<String, String>> operations) throws IOException {
         if (!supported())
             throw new HarnessException(
-                    "CREDENTIAL_STORE_UNAVAILABLE", "Windows credential store required");
+                    "CREDENTIAL_STORE_UNAVAILABLE",
+                    "Native credential store unavailable; use an environment variable");
+        if (!System.getProperty("os.name").startsWith("Windows")) return invokeNative(operations);
         String source =
                 """
                 using System;
@@ -101,9 +154,21 @@ class SystemCredentials {
                                 Base64.getEncoder()
                                         .encodeToString(script.getBytes(StandardCharsets.UTF_16LE)))
                         .redirectError(ProcessBuilder.Redirect.DISCARD);
+        return run(
+                builder,
+                operations,
+                List.of("SystemRoot", "TEMP", "TMP", "USERPROFILE", "LOCALAPPDATA"));
+    }
+
+    private String run(
+            ProcessBuilder builder,
+            List<Map<String, String>> operations,
+            List<String> permittedEnvironment)
+            throws IOException {
+        builder.redirectError(ProcessBuilder.Redirect.DISCARD);
         var inherited = new HashMap<>(builder.environment());
         builder.environment().clear();
-        for (String name : List.of("SystemRoot", "TEMP", "TMP", "USERPROFILE", "LOCALAPPDATA")) {
+        for (String name : permittedEnvironment) {
             if (inherited.containsKey(name)) builder.environment().put(name, inherited.get(name));
         }
         var process = builder.start();
@@ -117,7 +182,11 @@ class SystemCredentials {
                 throw new IOException("Credential store operation failed");
             byte[] bytes = process.getInputStream().readNBytes(2049);
             if (bytes.length > 2048) throw new IOException("Credential store response limit");
-            return new String(Base64.getDecoder().decode(bytes), StandardCharsets.UTF_8);
+            try {
+                return new String(Base64.getDecoder().decode(bytes), StandardCharsets.UTF_8);
+            } catch (IllegalArgumentException invalid) {
+                throw new IOException("Credential store response invalid");
+            }
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
             throw new IOException("Credential store interrupted");

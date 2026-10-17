@@ -92,7 +92,7 @@ final class WorkbenchSettings implements HarnessWebServer.Settings, DataSanitize
         validate(state);
         registerReferences(state);
         // Register all saved credentials before any data can be exposed by Web or SDK.
-        for (var m : models(state)) key(m);
+        for (var m : models(state)) keyAvailable(m);
     }
 
     @Override
@@ -110,7 +110,7 @@ final class WorkbenchSettings implements HarnessWebServer.Settings, DataSanitize
         for (var model : models(state)) {
             var v = new LinkedHashMap<>(model);
             v.remove("credentialRef");
-            v.put("keyConfigured", !key(model).isBlank());
+            v.put("keyConfigured", keyAvailable(model));
             visible.add(v);
         }
         return Map.of(
@@ -125,7 +125,7 @@ final class WorkbenchSettings implements HarnessWebServer.Settings, DataSanitize
                 "extensions",
                 state.get("extensions"),
                 "credentialStore",
-                vault.supported() ? "Windows Credential Manager" : "unavailable",
+                vault.description(),
                 "corePlugins",
                 CliConfig.PLUGINS.stream().sorted().toList(),
                 "credentialCleanupPending",
@@ -225,7 +225,7 @@ final class WorkbenchSettings implements HarnessWebServer.Settings, DataSanitize
         try {
             vault.update(Map.of(), obsolete.stream().map(ref -> namespace + "/" + ref).toList());
             obsolete.forEach(credentialCache::remove);
-        } catch (IOException ex) {
+        } catch (IOException | HarnessException ex) {
             credentialCleanupPending = true;
         }
         return read();
@@ -350,6 +350,16 @@ final class WorkbenchSettings implements HarnessWebServer.Settings, DataSanitize
         }
         if (!secret.isEmpty() && !secrets.contains(secret)) secrets.add(secret);
         return secret;
+    }
+
+    private boolean keyAvailable(Map<String, Object> model) {
+        try {
+            return !key(model).isBlank();
+        } catch (IOException | HarnessException unavailable) {
+            // Preserve configuration and allow the settings page to repair unavailable references.
+            // Task admission still uses key(), so no failed lookup can silently select another key.
+            return false;
+        }
     }
 
     private String policy(Map<String, Object> config) {

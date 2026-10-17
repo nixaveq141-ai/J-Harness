@@ -1,6 +1,7 @@
 name: Java 21 release validation
 on:
   push:
+    branches-ignore: [codex/m1054-native-validation]
   pull_request:
   workflow_dispatch:
 permissions:
