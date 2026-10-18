@@ -1,0 +1,18 @@
+{
+  "status": "PASS",
+  "capturedAt": "2026-10-18T12:21:53.139Z",
+  "jarSha256": "197ba3803566f8cc8cb4ed3ae0d85b604e0e09055205d0fc57104aca24fd179e",
+  "checks": [
+    {
+      "name": "typescript documented example with actual owned Java and successful read_file fact",
+      "passed": true,
+      "factsSha256": "d74df28729254d7d45d92a373162f07e16c0c68f31602331ac360c68eea670ad"
+    },
+    {
+      "name": "python documented example with actual owned Java and successful read_file fact",
+      "passed": true,
+      "factsSha256": "0a3c230ba63f013981261c2e994506bb812d8e9f29c5c7830e22047ce245c5c1"
+    }
+  ],
+  "paidRequests": 0
+}

@@ -1,3 +1,4 @@
+import { ContentSearch } from './ContentSearch'
 import { ContentReader } from './ContentPanel'
 import { Conversation } from './Conversation'
 import { ContentPanel, type FileSelection } from './ContentPanel'
@@ -96,6 +97,7 @@ export function App() {
   const [selected, setSelected] = useState(() => storage('jh-selected'))
   const [events, setEvents] = useState<SessionEvent[]>([]), [approvals, setApprovals] = useState<Approval[]>([])
   const [modelId, setModelId] = useState('')
+  const [searchOpen, setSearchOpen] = useState(false)
   const [goal, setGoal] = useState(''), [filter, setFilter] = useState(''), [error, setError] = useState('')
   const [pending, setPending] = useState(() => storage('jh-pending')), [submitting, setSubmitting] = useState(false)
   const [busy, setBusy] = useState(''), [live, setLive] = useState('连接后自动更新'), [historyKey, setHistoryKey] = useState(0)
@@ -128,7 +130,7 @@ export function App() {
   function showTask(task: Task) { setDetailTask(task); setSelected(task.taskId); setTasks(old => [task, ...old.filter(t => t.taskId !== task.taskId)].slice(0, 32)); setViewMode(task.archived ? 'archived' : 'active'); if (viewProfile && task.profile !== viewProfile) setViewProfile(task.profile); resetPages(); setError('') }
 
   const toggleSidebar = () => { setAnimating(true); setSideOpen(v => !v); setTimeout(() => setAnimating(false), 320) }
-  const selectTask = (id: string) => { if (navigationGuard) return; setDetailTask(null); if (!id) resetPages(); setSettingsOpen(false); setSelected(id); setFocusedEvent(null); autoScroll.current = true; setError('') }
+  const selectTask = (id: string) => { if (navigationGuard) return; setDetailTask(null); if (!id) resetPages(); setSettingsOpen(false); setSearchOpen(false); setSelected(id); setFocusedEvent(null); autoScroll.current = true; setError('') }
   useEffect(() => {
     if (!api) return
     const abort = new AbortController()
@@ -276,6 +278,7 @@ export function App() {
         {api && <WorkspacePicker api={api} value={viewProfile} disabled={navigationGuard} onProfiles={rows => { setProfiles(rows.map(w => w.id)); setWorkspaceNames(Object.fromEntries(rows.map(w => [w.id, w.name]))) }} onSelect={id => { setViewProfile(id); if (id) setProfile(id); selectTask(''); resetPages() }} />}
         <div className="nav-expanded history-view"><label>会话视图<select aria-label="会话视图" value={viewMode} disabled={navigationGuard} onChange={e => { setViewMode(e.target.value); selectTask(''); resetPages() }}><option value="active">未归档</option><option value="archived">已归档</option><option value="all">全部会话</option></select></label></div>
         <div className="nav-expanded nav-filter"><Input aria-label="筛选任务" placeholder="搜索任务 ID 或状态" icon={<Icon name="search" />} value={filter} onChange={e => setFilter(e.target.value)} /></div>
+        <div className="nav-expanded"><Button disabled={navigationGuard} onClick={()=>{setSettingsOpen(false);setSearchOpen(true)}}>内容检索</Button></div>
         <div className="nav-expanded section-label">会话 <span>{tasks.length}</span></div>
         <nav className="task-list nav-expanded" aria-label="最近任务">
           {tasks.filter(t => `${t.taskId} ${t.profile} ${labels[t.status] ?? t.status}`.toLowerCase().includes(filter.toLowerCase())).map(t => <button disabled={navigationGuard} key={t.taskId} className={`task-item ${selected === t.taskId ? 'selected' : ''}`} aria-current={selected === t.taskId ? 'page' : undefined} onClick={() => selectTask(t.taskId)}>
@@ -285,7 +288,7 @@ export function App() {
           {!api && <p className="muted nav-empty">连接本机服务后<br />查看任务记录。</p>}
         </nav>
         <div className="nav-expanded history-pages"><Button aria-label="上一页会话" disabled={navigationGuard || pageLoading || pageStack.length === 0} onClick={() => { if (pageMoving.current) return; pageMoving.current = true; setPageLoading(true); setPageCursor(pageStack.at(-1)!); setPageStack(old => old.slice(0, -1)) }}>上一页</Button><span>{pageStack.length + 1}</span><Button aria-label="下一页会话" disabled={navigationGuard || pageLoading || !morePages} onClick={() => { if (pageMoving.current) return; pageMoving.current = true; setPageLoading(true); setPageStack(old => [...old, pageCursor]); setPageCursor(nextPage) }}>下一页</Button></div>
-        <div className="nav-footer"><Button aria-label="工作台设置" title="工作台设置" disabled={!api || sessionGuard || turnGuard || questionGuard} onClick={() => { setSettingsOpen(true); setInspectorOpen(false); if (window.matchMedia('(max-width: 760px)').matches) setSideOpen(false) }} icon={<Icon name="panel" />}><span className="nav-expanded">设置</span></Button><Button onClick={() => setDark(v => !v)} aria-label={dark ? '切换浅色主题' : '切换深色主题'} icon={<Icon name="moon" />}><span className="nav-expanded">{dark ? '浅色主题' : '深色主题'}</span></Button>
+        <div className="nav-footer"><Button aria-label="工作台设置" title="工作台设置" disabled={!api || sessionGuard || turnGuard || questionGuard} onClick={() => { setSearchOpen(false); setSettingsOpen(true); setInspectorOpen(false); if (window.matchMedia('(max-width: 760px)').matches) setSideOpen(false) }} icon={<Icon name="panel" />}><span className="nav-expanded">设置</span></Button><Button onClick={() => setDark(v => !v)} aria-label={dark ? '切换浅色主题' : '切换深色主题'} icon={<Icon name="moon" />}><span className="nav-expanded">{dark ? '浅色主题' : '深色主题'}</span></Button>
           <div className="nav-expanded connection-state"><span className={`connection-dot ${api ? 'online' : ''}`} />{api ? '本机服务已连接' : '尚未连接'}</div>
           <a className="nav-expanded license-link" href="/ui-license.txt" target="_blank" rel="noreferrer">开源许可</a></div>
       </div>
@@ -294,10 +297,10 @@ export function App() {
       onPointerDown={drag} onPointerMove={e => { if (e.currentTarget.hasPointerCapture(e.pointerId)) setSidebarWidth(clampWidth(e.clientX, SIDEBAR_MIN, SIDEBAR_MAX)) }} onPointerUp={e => { e.currentTarget.releasePointerCapture(e.pointerId); setDragging(false) }} onLostPointerCapture={() => setDragging(false)}
       onKeyDown={e => { if (['ArrowLeft', 'ArrowRight'].includes(e.key)) { e.preventDefault(); setSidebarWidth(w => clampWidth(w + (e.key === 'ArrowLeft' ? -16 : 16), SIDEBAR_MIN, SIDEBAR_MAX)) } }} />
     <main id="main-content" className={`${frameCss.centerCol} main-column`}>
-      <header className="topbar"><div className="task-heading"><h1>{taskTitle}</h1>{active && <Status value={active} />}</div><div className="top-actions"><span className="local-badge">本机工作台</span><Button aria-label={inspectorOpen ? '关闭任务详情' : '打开任务详情'} title="任务详情" onClick={() => setInspectorOpen(v => !v)}><Icon name="panel" /></Button></div></header>
+      <header className="topbar"><div className="task-heading"><h1>{searchOpen?'内容检索':taskTitle}</h1>{active && !searchOpen && <Status value={active} />}</div><div className="top-actions"><span className="local-badge">本机工作台</span><Button aria-label={inspectorOpen ? '关闭任务详情' : '打开任务详情'} title="任务详情" onClick={() => setInspectorOpen(v => !v)}><Icon name="panel" /></Button></div></header>
       {error && <div className="error-banner" role="alert"><span>{error}</span><button aria-label="关闭提示" onClick={() => setError('')}><Icon name="close" /></button></div>}
       {!api ? <section className="welcome connection-page"><div className="intro-symbol">J</div><h2>{connecting ? '正在打开工作台…' : '本机服务暂时无法连接'}</h2><p>请保持启动窗口运行。</p><Button variant="primary" disabled={connecting} onClick={() => void connect()}>重新连接</Button></section>
-        : settingsOpen ? <Settings api={api} onBack={() => { setModelId(''); setSettingsOpen(false) }} onGuardChange={setSettingsGuard} /> : <>
+        : searchOpen ? <ContentSearch api={api} profile={viewProfile} view={viewMode} currentSession={selected} workspaces={workspaceNames} onBack={()=>setSearchOpen(false)} onOpen={async id=>{const task=await api.detail(id);showTask(task);setFocusedEvent(null);setInspectorOpen(false);setSearchOpen(false)}}/> : settingsOpen ? <Settings api={api} onBack={() => { setModelId(''); setSettingsOpen(false) }} onGuardChange={setSettingsGuard} /> : <>
           {pending && <div className="pending-banner" role="status"><div><strong>本次提交待核对</strong><p>为避免重复执行，已暂停创建。核对操作只读取后台记录。</p></div><Button variant="outline" disabled={!!busy || submitting} onClick={() => void reconcile()}>核对提交状态</Button>
             <button className="text-button" disabled={submitting || !!busy} onClick={() => { if (window.confirm('这只清除本页待核对记录，后台任务可能仍在执行。确定已检查任务列表并清除？')) { storage('jh-pending', ''); setPending('') } }}>清除本页记录</button></div>}
           {!selected ? <section className="welcome"><div className="intro-symbol">J</div><h2>今天，想完成什么？</h2><p>描述目标，让 J-Harness 在你的工作区中协助完成。</p><div className="suggestions">{['阅读项目结构，梳理模块职责', '检查最近的修改，指出潜在问题', '分析一个问题，并提出修复方案'].map(s => <button key={s} onClick={() => setGoal(s)}><Icon name="file" />{s}<Icon name="chevron" /></button>)}</div></section>

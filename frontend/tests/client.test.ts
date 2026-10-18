@@ -240,3 +240,27 @@ test('actual tool inventory rejects duplicate names invalid effects and false re
     body = v; await assert.rejects(api.tools('task_1'), ApiError)
   }
 })
+
+test('content search validates source and exact workspace session archive scope', async () => {
+  const input={text:'alpha',mode:'tokens' as const,profile:'default',view:'active',sessionId:'task_1',cursor:'',limit:20,rebuild:false}
+  const hit={profile:'default',sessionId:'task_1',eventId:'event_1',turnId:'',name:'Search',archived:false,type:'user.message',timestamp:'2026-10-18T00:00:00Z',snippet:'alpha',score:1}
+  const sample={source:'sanitized-session-content',matches:[hit],total:1,more:false,next:'',snapshotId:'snapshot_1',reusedEvents:0,rebuiltSessions:1}
+  let body:unknown=sample
+  const api=new Api(token,(async()=>json(body)) as typeof fetch)
+  assert.equal((await api.searchContent(input)).matches[0].eventId,'event_1')
+  for(const change of [{profile:'other'},{sessionId:'other'},{archived:true},{score:0},{timestamp:'invalid'}]) {
+    body={...sample,matches:[{...hit,...change}]};await assert.rejects(api.searchContent(input),ApiError)
+  }
+  body={...sample,source:'raw-log'};await assert.rejects(api.searchContent(input),ApiError)
+})
+
+test('content search rejects duplicate matches and nonprogressing pagination', async () => {
+  const input={text:'alpha',mode:'phrase' as const,profile:'',view:'all',sessionId:'',cursor:'',limit:20,rebuild:false}
+  const hit={profile:'default',sessionId:'task_1',eventId:'event_1',turnId:'',name:'Search',archived:false,type:'user.message',timestamp:'2026-10-18T00:00:00Z',snippet:'alpha',score:100}
+  let body:unknown
+  const api=new Api(token,(async()=>json(body)) as typeof fetch)
+  for(const value of [{matches:[hit,hit],total:2,more:false,next:''},{matches:[],total:1,more:true,next:'cursor'},{matches:[hit],total:1,more:false,next:'cursor'},{matches:[hit],total:4097,more:false,next:''}]) {
+    body={source:'sanitized-session-content',snapshotId:'snapshot_1',reusedEvents:0,rebuiltSessions:0,...value}
+    await assert.rejects(api.searchContent(input),ApiError)
+  }
+})

@@ -1,0 +1,85 @@
+{
+  "status": "PASS",
+  "capturedAt": "2026-10-18T12:21:40.396Z",
+  "checks": [
+    {
+      "name": "completed session retains a continuation composer",
+      "passed": true
+    },
+    {
+      "name": "unsent draft protects navigation and never enters browser storage",
+      "passed": true
+    },
+    {
+      "name": "double click sends one independently admitted continuation",
+      "passed": true
+    },
+    {
+      "name": "lost response and refresh reconcile by GET without duplicate POST",
+      "passed": true
+    },
+    {
+      "name": "three actual SDK turns share original session and distinct loop turn identities",
+      "passed": true
+    },
+    {
+      "name": "prepared request history includes prior turns with secrets sanitized",
+      "passed": true
+    },
+    {
+      "name": "busy input queue supports cancellation and defers supplements",
+      "passed": true
+    },
+    {
+      "name": "background queue settlement preserves reading position in earlier history",
+      "passed": true
+    },
+    {
+      "name": "supplement applies at next full-turn boundary and cancelled text never applies",
+      "passed": true
+    },
+    {
+      "name": "two concurrent clients receive the same submission and one execution",
+      "passed": true
+    },
+    {
+      "name": "mobile continuation has no horizontal overflow and keyboard input is reachable",
+      "passed": true
+    },
+    {
+      "name": "restart does not replay active or queued messages and UNKNOWN blocks continuing",
+      "passed": true
+    },
+    {
+      "name": "offline verification leaves queued message paused until explicit operator action",
+      "passed": true
+    },
+    {
+      "name": "explicit start continues same session once after recovery",
+      "passed": true
+    },
+    {
+      "name": "no browser errors or credential leaks in persistent UI storage",
+      "passed": true
+    }
+  ],
+  "screenshots": [
+    {
+      "path": ".build-cache\\M10.5.3-turns-desktop.png",
+      "sha256": "9da21e1b6d6b81cf0f941efa589ac40c0ab57a33ede12a4e504ac387feba1d9a"
+    },
+    {
+      "path": ".build-cache\\M10.5.3-turns-dark.png",
+      "sha256": "4414eea09536b38ec4e84fcb5044eb3fea77a354c7c0114016e12e693dd174a5"
+    },
+    {
+      "path": ".build-cache\\M10.5.3-turns-mobile.png",
+      "sha256": "24e2258fe8a97c2f91c2ea241401d2b03d68843ee955368e29a04d8e15a43861"
+    }
+  ],
+  "jarSha256": "197ba3803566f8cc8cb4ed3ae0d85b604e0e09055205d0fc57104aca24fd179e",
+  "browserVersion": "155.0.8059.82",
+  "paidRequests": 0,
+  "hostStopped": true,
+  "modelRequests": 15
+}

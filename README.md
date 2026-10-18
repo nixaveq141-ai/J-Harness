@@ -4,6 +4,8 @@
 
 M10.5.2已支持工作区注册/切换、会话命名/置顶/分叉/导出/归档/恢复和分页，解除累计32条后不能新建的问题；使用见[会话管理](docs/examples/m10.5.2-history.md)。
 
+内容检索支持授权工作区/会话、归档、词语/短语与来源读取；外部集成见[TS/Python SDK](sdk/README.md)和[检索说明](docs/examples/m1058-search-sdk.md)。
+
 扩展设置支持可视化条目、显式技能目录与 `/技能名` 候选；MCP 支持受控文本资源和简单 URI 模板。详见[M10.5.7说明](docs/examples/m1057-extensions.md)。
 
 M10.5.3现可在已完成会话底部继续对话，忙碌时排队或发送下一轮补充，支持取消排队和受理核对；重启后显式开始，详见[多轮说明](docs/examples/m10.5.3-turns.md)。
@@ -209,3 +211,5 @@ M10.5.6已完成本地验收：对话/安全Markdown与代码复制、工具/变
 2026-10-18 M10.5.7已完成本地验收：MCP/Skills/只读子任务条目表单与高级JSON互通、显式项目/用户技能根有界扫描/frontmatter/快照查看及slash候选、MCP文本资源/单变量模板发现读取、持久实际工具清单已交付。脚本/子任务仍独立审批，缺MCP凭据受理前拒绝，连接装配异常保留UNKNOWN且禁止修改/重试。最终Java399、客户端29、Chrome229（扩展35+既有194）、启动器8、Windows原生7通过；297份Java/POM及最终同一JAR/UI见M10.5.7-results.json和validation.md。API/SDK1.13、JSONL1/Web目录4；原生worker未改，历史三平台凭据证据独立保留。无付费请求、推送或参考项目修改；保留原审查草稿。下一入口M10.5.8，整阶段及M11/M12未完成。
 
 扩展配置与边界见[使用说明](docs/examples/m1057-extensions.md)、[契约](docs/development/M10.5.7-contracts.md)和[验收记录](docs/testing/M10.5.7-validation.md)。
+
+2026-10-18 M10.5.8已完成本地验收：授权跨会话/工作区正文检索、词语/短语/相关性/归档/稳定分页及来源定位、有界可替换派生索引、独立stdio JSON-RPC1.0与TS/Python客户端和示例已交付。超时/断线先对账，问题回答不批准工具，UNKNOWN不重放。最终Java410、客户端31、Chrome257（检索28+既有229）、SDK58、文档示例2、启动器8、Windows原生7通过；305份Java/POM与最终同一JAR/UI见M10.5.8-results.json及validation.md。API/SDK1.14、JSONL1/Web目录4；原生worker未改，旧三平台凭据证据独立保留。无付费请求、推送或参考项目修改；保留原审查草稿。下一入口M10.5.9，整阶段及M11/M12未完成。

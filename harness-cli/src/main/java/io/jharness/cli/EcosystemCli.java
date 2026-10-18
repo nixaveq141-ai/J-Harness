@@ -218,7 +218,7 @@ final class EcosystemCli {
             throw new HarnessException(
                     "SDK_DRY_RUN_UNSUPPORTED",
                     "Use offline --dry-run --plan; ecosystem operations are never executed in dry run");
-        if (command.equals("serve")) return serve(args, stdin, out);
+        if (Set.of("serve", "sdk-stdio").contains(command)) return serve(args, stdin, out);
         if (!Set.of("run", "resume", "repl").contains(command)) Arguments.fail();
         String id = args.get("session", "s-" + UUID.randomUUID());
         if (command.equals("resume") && !args.has("session")) Arguments.fail();
@@ -317,7 +317,12 @@ final class EcosystemCli {
     private int serve(Arguments args, InputStream stdin, PrintStream out) throws Exception {
         if (args.positional.size() != 1 || args.has("session")) Arguments.fail();
         var web = Values.object(ecosystem.getOrDefault("web", Map.of()));
-        String token = environment.get(EcosystemConfig.text(web, "tokenEnv", "JHARNESS_WEB_TOKEN"));
+        boolean stdio = args.positional.getFirst().equals("sdk-stdio");
+        String token =
+                stdio
+                        ? UUID.randomUUID().toString() + UUID.randomUUID()
+                        : environment.get(
+                                EcosystemConfig.text(web, "tokenEnv", "JHARNESS_WEB_TOKEN"));
         var settings =
                 new WorkbenchSettings(config, environment, metadata, new SystemCredentials());
         var workspaces =
@@ -398,32 +403,41 @@ final class EcosystemCli {
                                                     throw new HarnessException(
                                                             "INSPECTION_UNAVAILABLE",
                                                             "No host fallback for nonlocal environments");
-                                            }));
+                                            }),
+                                    new TokenSessionSearch(
+                                            targetMetadata.directory("content-search"),
+                                            targetSessions,
+                                            DataSanitizer.chain(
+                                                    new SecretRedactor(secrets), settings)));
                         });
         try (var server =
-                        new HarnessWebServer(
-                                EcosystemConfig.number(web, "port", 0, 65535),
-                                token,
-                                workspaces.profiles(),
-                                new JsonlSessionRepository(metadata.directory("web")),
-                                EcosystemConfig.text(web, "catalogId", "web-catalog"),
-                                DataSanitizer.chain(new SecretRedactor(secrets), settings),
-                                1,
-                                EcosystemConfig.number(web, "maxTasks", 32, 32),
-                                Duration.ofSeconds(
-                                        EcosystemConfig.number(web, "approvalSeconds", 30, 60)));
-                var input = new TerminalInput(stdin)) {
+                new HarnessWebServer(
+                        stdio ? 0 : EcosystemConfig.number(web, "port", 0, 65535),
+                        token,
+                        workspaces.profiles(),
+                        new JsonlSessionRepository(metadata.directory("web")),
+                        EcosystemConfig.text(web, "catalogId", "web-catalog"),
+                        DataSanitizer.chain(new SecretRedactor(secrets), settings),
+                        1,
+                        EcosystemConfig.number(web, "maxTasks", 32, 32),
+                        Duration.ofSeconds(
+                                EcosystemConfig.number(web, "approvalSeconds", 30, 60)))) {
             server.settings(settings);
             server.workspaces(workspaces);
             var hook = new Thread(server::close, "web-cli-shutdown");
             Runtime.getRuntime().addShutdownHook(hook);
             try {
-                out.println(
-                        "WEB " + server.address() + " PROFILE default; :quit or EOF stops host");
-                out.flush();
-                while (!input.eof()) {
-                    String line = input.poll(Duration.ofMillis(100));
-                    if (":quit".equals(line)) break;
+                if (stdio) return new StdioSdkServer(server.address(), token).run(stdin, out);
+                try (var input = new TerminalInput(stdin)) {
+                    out.println(
+                            "WEB "
+                                    + server.address()
+                                    + " PROFILE default; :quit or EOF stops host");
+                    out.flush();
+                    while (!input.eof()) {
+                        String line = input.poll(Duration.ofMillis(100));
+                        if (":quit".equals(line)) break;
+                    }
                 }
             } finally {
                 try {

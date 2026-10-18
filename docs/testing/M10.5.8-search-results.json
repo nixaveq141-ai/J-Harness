@@ -1,0 +1,133 @@
+{
+  "status": "PASS",
+  "capturedAt": "2026-10-18T12:20:45.027Z",
+  "checks": [
+    {
+      "name": "content search requires authentication",
+      "passed": true
+    },
+    {
+      "name": "content search rejects cross-origin request",
+      "passed": true
+    },
+    {
+      "name": "search spans more than hot-set capacity",
+      "passed": true
+    },
+    {
+      "name": "tokens require all whole words across workspaces",
+      "passed": true
+    },
+    {
+      "name": "relevance ranks repeated matches before recency",
+      "passed": true
+    },
+    {
+      "name": "pagination keeps stable snapshot without overlap",
+      "passed": true
+    },
+    {
+      "name": "phrase mode preserves word order",
+      "passed": true
+    },
+    {
+      "name": "Chinese token search finds actual message",
+      "passed": true
+    },
+    {
+      "name": "archived scope is explicit",
+      "passed": true
+    },
+    {
+      "name": "workspace scope cannot read another registered session",
+      "passed": true
+    },
+    {
+      "name": "single-session scope resolves exact source",
+      "passed": true
+    },
+    {
+      "name": "changed query cannot reuse cursor",
+      "passed": true
+    },
+    {
+      "name": "archival invalidates prior visibility cursor",
+      "passed": true
+    },
+    {
+      "name": "secrets cannot be rediscovered through derived search",
+      "passed": true
+    },
+    {
+      "name": "result event id resolves actual sanitized fact",
+      "passed": true
+    },
+    {
+      "name": "corrupt index rebuilds without changing facts",
+      "passed": true
+    },
+    {
+      "name": "browser uses content results with source identity",
+      "passed": true
+    },
+    {
+      "name": "browser loads stable next page",
+      "passed": true
+    },
+    {
+      "name": "browser reads exact event content",
+      "passed": true
+    },
+    {
+      "name": "opening source does not submit a task",
+      "passed": true
+    },
+    {
+      "name": "browser supports content search within selected session",
+      "passed": true
+    },
+    {
+      "name": "browser exposes explicit derived-index rebuild",
+      "passed": true
+    },
+    {
+      "name": "empty state is explicit",
+      "passed": true
+    },
+    {
+      "name": "query and snippet never execute markup",
+      "passed": true
+    },
+    {
+      "name": "search controls fit mobile viewport",
+      "passed": true
+    },
+    {
+      "name": "restart rebuilds or reuses indices without model replay",
+      "passed": true
+    },
+    {
+      "name": "all real requests use redacted authorized loopback context",
+      "passed": true
+    },
+    {
+      "name": "no browser runtime exceptions",
+      "passed": true
+    }
+  ],
+  "screenshots": [
+    {
+      "path": ".build-cache\\M10.5.8-search-desktop.png",
+      "sha256": "ea716738e74ec72ba66b2cbc2ecf5f924108faf056a1bef113045ad48da5836c"
+    },
+    {
+      "path": ".build-cache\\M10.5.8-search-mobile.png",
+      "sha256": "943d7e3d9eb938c67a7dd132940ece159abebe2ea0d5541dc7f7b59a0f7c87be"
+    }
+  ],
+  "browserVersion": "155.0.8059.82",
+  "browserChannel": "chrome",
+  "jarSha256": "197ba3803566f8cc8cb4ed3ae0d85b604e0e09055205d0fc57104aca24fd179e",
+  "paidRequests": 0,
+  "modelRequests": 39
+}

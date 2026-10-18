@@ -9,6 +9,8 @@ export interface SessionEvent {
   eventId: string; type: string; timestamp: string; callId?: string | null; turnId?:string|null; stepId?:string|null
   payload: Record<string, unknown>
 }
+export interface ContentHit { profile: string; sessionId: string; eventId: string; turnId: string; name: string; archived: boolean; type: string; timestamp: string; snippet: string; score: number }
+export interface ContentResults { matches: ContentHit[]; total: number; more: boolean; next: string; snapshotId: string; reusedEvents: number; rebuiltSessions: number }
 export interface Page { events: SessionEvent[]; next: string; more: boolean }
 export interface Approval {
   approvalId: string; callId: string; sessionId: string; tool: string
@@ -75,7 +77,7 @@ export class ApiError extends Error {
 const errors = new Set(['INSPECTION_UNAVAILABLE','INSPECTION_DENIED','PATH_DENIED','FILE_NOT_FOUND','FILE_LIMIT','FILE_CONFLICT','CONTENT_CHANGED','INVALID_RANGE','BINARY_FILE','UNSUPPORTED_ENCODING','ARTIFACT_NOT_FOUND','ARTIFACT_CORRUPT','ARTIFACT_DENIED','DRAFT_CONFLICT','QUESTION_ASSOCIATION_MISMATCH','QUESTION_NOT_FOUND','QUESTION_CLOSED','ANSWER_CONFLICT','INVALID_ANSWER','INVALID_QUESTION','UNAUTHORIZED', 'LOCAL_CLIENT_REQUIRED', 'UNKNOWN_CURSOR', 'STREAM_LIMIT',
   'STALE_APPROVAL', 'WORKSPACE_BUSY', 'TASK_LIMIT', 'ACTIVE_LIMIT', 'SUBMISSION_NOT_FOUND',
   'SUBMISSION_NOT_CONFIRMED', 'REQUEST_ID_CONFLICT', 'DIFF_NOT_RECORDED', 'RESPONSE_LIMIT', 'NOT_FOUND',
-  'UNKNOWN_MODEL', 'MODEL_SELECTION_REQUIRED', 'QUEUE_LIMIT', 'QUEUE_PAUSED', 'QUEUE_ORDER_CONFLICT', 'SUBMISSION_ALREADY_STARTED', 'SESSION_ARCHIVED', 'SETTINGS_CONFLICT', 'INVALID_SETTINGS', 'SECRET_CONFIG', 'CREDENTIAL_STORE_UNAVAILABLE', 'API_KEY_MISSING', 'INVALID_CONFIG', 'COST_BUDGET_UNAVAILABLE', 'SESSION_CONFLICT', 'RECOVERY_REQUIRED', 'EXPORT_LIMIT', 'FORK_UNAVAILABLE', 'WORKSPACE_PATH_DENIED', 'WORKSPACE_OWNER_MISMATCH', 'WORKSPACE_EXISTS', 'WORKSPACE_LIMIT', 'SESSION_ALREADY_OWNED', 'SESSION_BUSY', 'INVALID_WORKSPACE_NAME', 'WEB_HISTORY_QUOTA'])
+  'UNKNOWN_MODEL', 'MODEL_SELECTION_REQUIRED', 'QUEUE_LIMIT', 'QUEUE_PAUSED', 'QUEUE_ORDER_CONFLICT', 'SUBMISSION_ALREADY_STARTED', 'SESSION_ARCHIVED', 'SETTINGS_CONFLICT', 'INVALID_SETTINGS', 'SECRET_CONFIG', 'CREDENTIAL_STORE_UNAVAILABLE', 'API_KEY_MISSING', 'INVALID_CONFIG', 'COST_BUDGET_UNAVAILABLE', 'SESSION_CONFLICT', 'RECOVERY_REQUIRED', 'EXPORT_LIMIT', 'FORK_UNAVAILABLE', 'WORKSPACE_PATH_DENIED', 'WORKSPACE_OWNER_MISMATCH', 'WORKSPACE_EXISTS', 'WORKSPACE_LIMIT', 'SESSION_ALREADY_OWNED', 'SESSION_BUSY', 'INVALID_WORKSPACE_NAME', 'WEB_HISTORY_QUOTA','SEARCH_CURSOR_EXPIRED','SEARCH_SCOPE_LIMIT','SEARCH_INDEX_LIMIT','SEARCH_RESULT_LIMIT','SEARCH_BUSY','SEARCH_UNAVAILABLE','SEARCH_SCOPE_DENIED','INVALID_SEARCH','SEARCH_PATH_DENIED','CANCELLED','MCP_CREDENTIAL_MISSING'])
 export function object(value: unknown): Record<string, unknown> {
   if (typeof value !== 'object' || value === null || Array.isArray(value)) throw new ApiError('INVALID_RESPONSE')
   return value as Record<string, unknown>
@@ -168,6 +170,17 @@ export class Api {
   async turnStatus(id: string, requestId: string) { return turnReceipt(await this.json(`/v1/tasks/${identifier(id)}/turns?request=${identifier(requestId)}`), id) }
   async turnAction(id: string, hash: string, action: 'cancel' | 'start') { return turnReceipt(await this.json(`/v1/tasks/${identifier(id)}/turns/${identifier(hash)}/${action}`, {}), id) }
   async workspaces() { return workspaceData(await this.json('/v1/workspaces')) }
+  async searchContent(input: { text: string; mode: 'tokens' | 'phrase'; profile: string; view: string; sessionId: string; cursor: string; limit: number; rebuild: boolean }, signal?: AbortSignal): Promise<ContentResults> {
+    const v = object(await this.json('/v1/search', input, signal)), names = new Set<string>()
+    if (v.source !== 'sanitized-session-content' || !Array.isArray(v.matches) || v.matches.length > input.limit || !Number.isInteger(v.total) || (v.total as number)<v.matches.length || (v.total as number)>4096 || typeof v.more !== 'boolean' || v.more && !v.matches.length || !Number.isInteger(v.reusedEvents) || !Number.isInteger(v.rebuiltSessions)) throw new ApiError('INVALID_RESPONSE')
+    const next = text(v.next,64), snapshotId = identifier(v.snapshotId)
+    if (v.more !== !!next) throw new ApiError('INVALID_RESPONSE')
+    const matches = v.matches.map(raw => { const h=object(raw), sessionId=identifier(h.sessionId), eventId=identifier(h.eventId), profile=identifier(h.profile), key=profile+':'+sessionId+':'+eventId
+      if(names.has(key)||input.profile&&input.profile!==profile||input.sessionId&&input.sessionId!==sessionId||typeof h.archived!=='boolean'||input.view!=='all'&&h.archived!==(input.view==='archived')||!Number.isInteger(h.score)||(h.score as number)<1||!Number.isFinite(Date.parse(String(h.timestamp)))) throw new ApiError('INVALID_RESPONSE')
+      names.add(key); return { profile,sessionId,eventId,turnId:text(h.turnId,64),name:text(h.name,80),archived:h.archived,type:text(h.type,64),timestamp:text(h.timestamp,64),snippet:text(h.snippet,400),score:h.score as number }
+    })
+    return { matches,total:v.total as number,more:v.more,next,snapshotId,reusedEvents:v.reusedEvents as number,rebuiltSessions:v.rebuiltSessions as number }
+  }
   async skills(profile: string, signal?: AbortSignal): Promise<SkillEntry[]> {
     const v = object(await this.json('/v1/skills?profile=' + identifier(profile), undefined, signal))
     if (v.snapshot !== true || !Array.isArray(v.skills) || v.skills.length > 24) throw new ApiError('INVALID_RESPONSE')

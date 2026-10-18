@@ -86,9 +86,19 @@ public final class HarnessWebServer implements AutoCloseable {
             SessionRepository sessions,
             SdkFactory factory,
             ForkArtifacts artifacts,
-            ContentInspection content) {
+            ContentInspection content,
+            ContentSearchProvider search) {
+        public Profile(
+                String binding,
+                SessionRepository sessions,
+                SdkFactory factory,
+                ForkArtifacts artifacts,
+                ContentInspection content) {
+            this(binding, sessions, factory, artifacts, content, null);
+        }
+
         public Profile(String workspaceBinding, SessionRepository sessions, SdkFactory factory) {
-            this(workspaceBinding, sessions, factory, null, null);
+            this(workspaceBinding, sessions, factory, null, null, null);
         }
 
         public Profile(
@@ -96,7 +106,7 @@ public final class HarnessWebServer implements AutoCloseable {
                 SessionRepository sessions,
                 SdkFactory factory,
                 ForkArtifacts artifacts) {
-            this(binding, sessions, factory, artifacts, null);
+            this(binding, sessions, factory, artifacts, null, null);
         }
 
         public Profile {
@@ -118,6 +128,7 @@ public final class HarnessWebServer implements AutoCloseable {
     private final DurableTaskCatalog diskCatalog;
     private final Map<String, WorkspaceLease> leases = new HashMap<>();
     private final Map<String, Cursor> cursors = new LinkedHashMap<>();
+    private final WorkbenchContentSearch contentSearch = new WorkbenchContentSearch();
     private final String catalogId, catalogBinding;
     private final byte[] credential;
     private final String browserToken = UUID.randomUUID().toString() + UUID.randomUUID();
@@ -630,6 +641,46 @@ public final class HarnessWebServer implements AutoCloseable {
         String method = exchange.getRequestMethod();
         var path = exchange.getRequestURI().getPath().split("/", -1);
         var query = query(exchange);
+        if (Arrays.equals(path, new String[] {"", "v1", "search"})) {
+            if (!method.equals("POST") || !query.isEmpty()) throw fault(405, "METHOD_NOT_ALLOWED");
+            var input =
+                    body(
+                            exchange,
+                            Set.of(
+                                    "text",
+                                    "mode",
+                                    "profile",
+                                    "view",
+                                    "sessionId",
+                                    "cursor",
+                                    "limit",
+                                    "rebuild"));
+            try {
+                List<Map<String, Object>> scope = new ArrayList<>();
+                Map<String, Profile> allowed;
+                synchronized (this) {
+                    allowed = Map.copyOf(profiles);
+                    Consumer<Task> receive =
+                            task ->
+                                    scope.add(
+                                            Map.of(
+                                                    "sessionId",
+                                                    task.id,
+                                                    "profile",
+                                                    task.profile,
+                                                    "name",
+                                                    task.name,
+                                                    "archived",
+                                                    task.archived));
+                    if (diskCatalog == null) tasks.values().forEach(receive);
+                    else diskCatalog.scan(history -> receive.accept(parseTask(history)));
+                }
+                respond(exchange, 200, contentSearch.search(input, scope, allowed));
+            } catch (HarnessException ex) {
+                throw fault(ex.code().equals("SEARCH_CURSOR_EXPIRED") ? 409 : 400, ex.code());
+            }
+            return;
+        }
         if (Arrays.equals(path, new String[] {"", "v1", "skills"})) {
             if (!method.equals("GET")) throw fault(405, "METHOD_NOT_ALLOWED");
             if (!query.keySet().equals(Set.of("profile"))) throw fault(400, "INVALID_QUERY");

@@ -1,0 +1,113 @@
+{
+  "status": "PASS",
+  "date": "2026-10-18T12:21:20.289Z",
+  "checks": [
+    {
+      "name": "input exposes three trusted model connections",
+      "passed": true
+    },
+    {
+      "name": "configuration check performs no provider request",
+      "passed": true
+    },
+    {
+      "name": "next model selection leaves active request unchanged",
+      "passed": true
+    },
+    {
+      "name": "settings mutation blocked during active round",
+      "passed": true
+    },
+    {
+      "name": "queued Responses round uses captured route and SSE",
+      "passed": true
+    },
+    {
+      "name": "Responses replays encrypted state with linked tool output",
+      "passed": true
+    },
+    {
+      "name": "model selection does not mutate saved default",
+      "passed": true
+    },
+    {
+      "name": "prepared envelopes persist protocol model and cost bound",
+      "passed": true
+    },
+    {
+      "name": "Anthropic round maps tools system and linked result",
+      "passed": true
+    },
+    {
+      "name": "current round and next message model have separate labels",
+      "passed": true
+    },
+    {
+      "name": "Anthropic SSE round executes only validated tool arguments",
+      "passed": true
+    },
+    {
+      "name": "all protocol calls authenticate only through headers",
+      "passed": true
+    },
+    {
+      "name": "model controls fit mobile viewport",
+      "passed": true
+    },
+    {
+      "name": "protocol switch retains fee cap and clears inherited prices",
+      "passed": true
+    },
+    {
+      "name": "missing verified prices rejects save",
+      "passed": true
+    },
+    {
+      "name": "pending check locks connection navigation",
+      "passed": true
+    },
+    {
+      "name": "settings check is explicitly local and free of model calls",
+      "passed": true
+    },
+    {
+      "name": "no browser runtime errors",
+      "passed": true
+    },
+    {
+      "name": "restart retains last executing model metadata",
+      "passed": true
+    },
+    {
+      "name": "catalog upgraded to version four",
+      "passed": true
+    },
+    {
+      "name": "accepted queued inputs retain immutable nonsecret snapshot",
+      "passed": true
+    },
+    {
+      "name": "saved settings and session events contain no API key",
+      "passed": true
+    }
+  ],
+  "screenshots": [
+    {
+      "path": ".build-cache/M10.5.4-models-desktop.png",
+      "sha256": "4aadbdccd83b6f93fc9a9203528ac30c6408a27ae4f404a7fa6f161923cad001"
+    },
+    {
+      "path": ".build-cache/M10.5.4-models-mobile.png",
+      "sha256": "a8bd24b76d9088edb81827719fb461c6947815e6e346a9974f34f911f287da3f"
+    },
+    {
+      "path": ".build-cache/M10.5.4-model-settings-mobile.png",
+      "sha256": "7857cd8b4d0bb7589c16668d156472e468d8bd1e22e679de76a10374f30ad999"
+    }
+  ],
+  "browser": "155.0.8059.82",
+  "paidRequests": 0,
+  "modelRequests": 8,
+  "jarSha256": "197ba3803566f8cc8cb4ed3ae0d85b604e0e09055205d0fc57104aca24fd179e",
+  "hostStopped": true
+}

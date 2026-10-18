@@ -18,3 +18,4 @@ docs/testing/M10.5.*.json -text
 frontend/** text eol=lf
 frontend/src/upstream/** -text
 frontend/LICENSE-DeepSeek-Harness.txt -text
+sdk/** text eol=lf

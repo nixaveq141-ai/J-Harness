@@ -86,7 +86,7 @@ public final class CliApplication {
                 out.println(files.gitDiff("working", CancellationToken.NONE));
                 return 0;
             }
-            if (command.equals("serve")
+            if (Set.of("serve", "sdk-stdio").contains(command)
                     || config.values.containsKey("ecosystem")
                             && Set.of("run", "resume", "repl").contains(command))
                 return new EcosystemCli(config, environment, workspace, metadata)
@@ -1558,6 +1558,7 @@ public final class CliApplication {
             jharness config set KEY VALUE             # secrets only via apiKeyEnv
             jharness sessions list | sessions inspect|recover --session ID
             jharness serve [--workspace PATH --config JSON] # loopback Bearer API; token from environment
+            jharness sdk-stdio [--workspace PATH --config JSON] # stdio JSON-RPC 1.0; initialize first
             jharness sessions search --session ID --text QUERY [--rebuild-index --offset N --limit N]
             jharness sessions compare --session ID --other-session ID
             jharness sessions archive --session ID --reason "checked completion" # retains logs/artifacts
