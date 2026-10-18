@@ -26,11 +26,14 @@ public final class OpenAiCompatibleLlmClient implements LlmClient {
                     "thinking",
                     "tool_choice",
                     "response_format",
-                    "stream_options");
+                    "stream_options",
+                    "protocol",
+                    "reasoning_effort");
     private final OpenAiCompatibleConfig config;
     private final ObjectMapper json;
     private final HttpClient http;
     private final SecretRedactor redactor;
+    private final ProtocolCodec codec;
 
     public OpenAiCompatibleLlmClient(OpenAiCompatibleConfig config) {
         this.config = Objects.requireNonNull(config);
@@ -51,6 +54,7 @@ public final class OpenAiCompatibleLlmClient implements LlmClient {
                         .connectTimeout(config.timeout)
                         .build();
         redactor = new SecretRedactor(List.of(config.apiKey));
+        codec = new ProtocolCodec(config.protocol, config.model, json, config.endpoint.toString());
     }
 
     @Override
@@ -62,6 +66,14 @@ public final class OpenAiCompatibleLlmClient implements LlmClient {
     public PreparedRequest prepare(ChatRequest request) {
         if (!PARAMETERS.containsAll(request.parameters().keySet()))
             throw error("UNSUPPORTED_PARAMETER");
+        if (request.parameters().containsKey("protocol")
+                && !config.protocol.id().equals(request.parameters().get("protocol")))
+            throw error("MODEL_ROUTE_MISMATCH");
+        if (request.parameters().containsKey("reasoning_effort")
+                && (config.protocol != ModelProtocol.RESPONSES
+                        || !Set.of("none", "low", "medium", "high")
+                                .contains(request.parameters().get("reasoning_effort"))))
+            throw error("UNSUPPORTED_REASONING");
         if (request.parameters().containsKey("thinking")
                 && !Map.of("type", "disabled").equals(request.parameters().get("thinking")))
             throw error("UNSUPPORTED_REASONING");
@@ -73,8 +85,15 @@ public final class OpenAiCompatibleLlmClient implements LlmClient {
             throw error("UNSUPPORTED_STREAM");
         if (Boolean.TRUE.equals(request.parameters().get("stream")) && !capabilities().streaming())
             throw error("UNSUPPORTED_STREAM");
+        for (var message : request.messages())
+            if (message.containsKey("provider_state")
+                    && !Objects.equals(
+                            message.get("provider_state"),
+                            redactor.sanitize(Values.object(message.get("provider_state")))))
+                throw error("MODEL_STATE_UNSAFE");
         Map<String, Object> parameters = new LinkedHashMap<>(request.parameters());
         parameters.put("model", config.model);
+        parameters.put("protocol", config.protocol.id());
         parameters.put("stream", Boolean.TRUE.equals(request.parameters().get("stream")));
         if (!capabilities().tools()) parameters.remove("tool_choice");
         ChatRequest prepared =
@@ -115,9 +134,8 @@ public final class OpenAiCompatibleLlmClient implements LlmClient {
             long remaining = budget - (System.nanoTime() - started);
             if (remaining <= 0) throw error("MODEL_TIMEOUT");
             HttpRequest outgoing =
-                    HttpRequest.newBuilder(config.endpoint)
+                    requestBuilder()
                             .timeout(Duration.ofNanos(remaining))
-                            .header("Authorization", "Bearer " + config.apiKey)
                             .header("Content-Type", "application/json")
                             .POST(HttpRequest.BodyPublishers.ofByteArray(body))
                             .build();
@@ -208,9 +226,8 @@ public final class OpenAiCompatibleLlmClient implements LlmClient {
                 cancellation.throwIfCancelled();
                 long started = System.nanoTime();
                 var outgoing =
-                        HttpRequest.newBuilder(config.endpoint)
+                        requestBuilder()
                                 .timeout(config.timeout)
-                                .header("Authorization", "Bearer " + config.apiKey)
                                 .header("Content-Type", "application/json")
                                 .header("Accept", "text/event-stream")
                                 .POST(HttpRequest.BodyPublishers.ofByteArray(encode(prepared)))
@@ -339,7 +356,7 @@ public final class OpenAiCompatibleLlmClient implements LlmClient {
         wire.put("messages", messages);
         if (!request.tools().isEmpty()) wire.put("tools", request.tools());
         try {
-            byte[] bytes = json.writeValueAsBytes(wire);
+            byte[] bytes = json.writeValueAsBytes(codec.encode(wire, request));
             if (bytes.length > 1024 * 1024) throw error("MODEL_REQUEST_TOO_LARGE");
             return bytes;
         } catch (JsonProcessingException ex) {
@@ -349,7 +366,7 @@ public final class OpenAiCompatibleLlmClient implements LlmClient {
 
     private ChatResponse parse(byte[] bytes) {
         try {
-            Map<String, Object> root = read(bytes);
+            Map<String, Object> root = codec.decode(read(bytes));
             if (!(root.get("choices") instanceof List<?> choices) || choices.size() != 1)
                 throw error("MODEL_BAD_RESPONSE");
             Map<String, Object> choice = Values.object(choices.getFirst());
@@ -396,12 +413,27 @@ public final class OpenAiCompatibleLlmClient implements LlmClient {
             return new ChatResponse(
                     redactor.text(content == null ? "" : (String) content),
                     calls,
-                    redactor.sanitize(usage));
+                    redactor.sanitize(usage),
+                    safeState(root.getOrDefault("provider_state", Map.of())));
         } catch (HarnessException ex) {
             throw ex;
         } catch (Exception ex) {
             throw error("MODEL_BAD_RESPONSE");
         }
+    }
+
+    private Map<String, Object> safeState(Object raw) {
+        var state = Values.object(raw);
+        if (!state.equals(redactor.sanitize(state))) throw error("MODEL_STATE_UNSAFE");
+        return state;
+    }
+
+    private HttpRequest.Builder requestBuilder() {
+        var builder = HttpRequest.newBuilder(config.endpoint);
+        if (config.protocol == ModelProtocol.ANTHROPIC)
+            builder.header("x-api-key", config.apiKey).header("anthropic-version", "2023-06-01");
+        else builder.header("Authorization", "Bearer " + config.apiKey);
+        return builder;
     }
 
     private Map<String, Object> read(byte[] bytes) throws java.io.IOException {
@@ -434,9 +466,14 @@ public final class OpenAiCompatibleLlmClient implements LlmClient {
         private final java.util.function.Consumer<ChatResponse> consumer;
         private Flow.Subscription subscription;
         private int bytes;
+        private String eventName = "";
         private String finish;
         private Map<String, Object> usage = Map.of();
         private boolean done;
+        private final ProtocolStream alternate =
+                config.protocol == ModelProtocol.CHAT_COMPLETIONS
+                        ? null
+                        : new ProtocolStream(config.protocol, json);
 
         SseBody(java.util.function.Consumer<ChatResponse> consumer) {
             this.consumer = Objects.requireNonNull(consumer);
@@ -477,6 +514,8 @@ public final class OpenAiCompatibleLlmClient implements LlmClient {
                             if (valueLine.endsWith("\r"))
                                 valueLine = valueLine.substring(0, valueLine.length() - 1);
                             if (valueLine.isEmpty()) frame();
+                            else if (valueLine.startsWith("event:"))
+                                eventName = valueLine.substring(6).strip();
                             else if (valueLine.startsWith("data:")) {
                                 if (!data.isEmpty()) data.append('\n');
                                 data.append(valueLine.substring(5).stripLeading());
@@ -492,10 +531,28 @@ public final class OpenAiCompatibleLlmClient implements LlmClient {
         }
 
         private void frame() throws java.io.IOException {
-            if (data.isEmpty()) return;
+            if (data.isEmpty()) {
+                eventName = "";
+                return;
+            }
             String payload = data.toString();
             data.setLength(0);
             if (done) throw error("MODEL_BAD_RESPONSE");
+            if (alternate != null) {
+                var event = read(payload.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+                if (!eventName.isEmpty() && !eventName.equals(event.get("type")))
+                    throw error("MODEL_BAD_RESPONSE");
+                eventName = "";
+                alternate.frame(event);
+                String clean = redactor.text(alternate.preview());
+                consumer.accept(
+                        new ChatResponse(
+                                clean.substring(
+                                        0, Math.max(0, clean.length() - config.apiKey.length())),
+                                List.of(),
+                                Map.of()));
+                return;
+            }
             if (payload.equals("[DONE]")) {
                 done = true;
                 return;
@@ -567,6 +624,11 @@ public final class OpenAiCompatibleLlmClient implements LlmClient {
         @Override
         public void onComplete() {
             try {
+                if (alternate != null) {
+                    if (line.size() != 0 || !data.isEmpty()) throw error("MODEL_STREAM_INCOMPLETE");
+                    body.complete(parse(json.writeValueAsBytes(alternate.finish())));
+                    return;
+                }
                 if (!done || !line.toString().isBlank() || !data.isEmpty() || finish == null)
                     throw error("MODEL_STREAM_INCOMPLETE");
                 Map<String, Object> message = new LinkedHashMap<>();

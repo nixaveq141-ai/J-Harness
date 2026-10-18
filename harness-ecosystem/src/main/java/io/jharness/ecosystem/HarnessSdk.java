@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /** Embedded, single-session owner. Hosts supply trusted configuration and evidence evaluator. */
 public final class HarnessSdk implements AutoCloseable {
-    public static final String PROTOCOL_VERSION = "1.9";
+    public static final String PROTOCOL_VERSION = "1.10";
     private final PluginScope scope;
     private final SessionWriter writer;
     private final SessionReader reader;

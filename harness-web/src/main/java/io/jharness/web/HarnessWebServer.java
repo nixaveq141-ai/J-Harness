@@ -22,6 +22,20 @@ public final class HarnessWebServer implements AutoCloseable {
         Map<String, Object> save(Map<String, Object> input) throws IOException;
 
         default void prepareTask() throws IOException {}
+
+        default Map<String, Object> capture(String modelId) throws IOException {
+            prepareTask();
+            if (!modelId.isEmpty())
+                throw new HarnessException("UNKNOWN_MODEL", "Model selection unavailable");
+            return Map.of();
+        }
+
+        default void prepareSelection(Map<String, Object> selection) throws IOException {}
+
+        default Map<String, Object> check(String modelId) throws IOException {
+            capture(modelId);
+            return Map.of("valid", true, "networkChecked", false, "requestSent", false);
+        }
     }
 
     private Settings settings;
@@ -52,6 +66,15 @@ public final class HarnessWebServer implements AutoCloseable {
     public interface SdkFactory {
         HarnessSdk open(String sessionId, ApprovalService approvals, DataSanitizer sanitizer)
                 throws Exception;
+
+        default HarnessSdk open(
+                String sessionId,
+                ApprovalService approvals,
+                DataSanitizer sanitizer,
+                Map<String, Object> selection)
+                throws Exception {
+            return open(sessionId, approvals, sanitizer);
+        }
     }
 
     public record Profile(
@@ -208,6 +231,7 @@ public final class HarnessWebServer implements AutoCloseable {
                                 (String) payload.get("requestHash"),
                                 (String) payload.get("goalHash"),
                                 (String) payload.get("workspaceBinding"));
+                task.selection = Values.object(payload.getOrDefault("selection", Map.of()));
                 task.phase = "UNKNOWN";
                 task.recovered = true;
                 if (!profiles.containsKey(task.profile)
@@ -250,6 +274,7 @@ public final class HarnessWebServer implements AutoCloseable {
                                 (String) p.get("requestHash"),
                                 (String) p.get("goalHash"),
                                 (String) p.get("workspaceBinding"));
+                task.selection = Values.object(p.getOrDefault("selection", Map.of()));
                 task.phase = "UNKNOWN";
                 task.recovered = true;
                 task.createdAt = event.timestamp().toString();
@@ -277,6 +302,9 @@ public final class HarnessWebServer implements AutoCloseable {
                         if (!event.type().startsWith("web.turn."))
                             throw new IllegalArgumentException("Unknown task fact");
                         task.turns.apply(event);
+                        if (event.type().equals("web.turn.started"))
+                            task.executionSelection =
+                                    task.turns.inputs.get(p.get("requestHash")).selection;
                         if (Set.of("web.turn.started", "web.turn.interrupted")
                                 .contains(event.type())) task.phase = "UNKNOWN";
                     }
@@ -368,7 +396,9 @@ public final class HarnessWebServer implements AutoCloseable {
                                         "goalHash",
                                         pending.get("turnGoalHash"),
                                         "kind",
-                                        pending.get("turnKind"));
+                                        pending.get("turnKind"),
+                                        "selection",
+                                        pending.getOrDefault("turnSelection", Map.of()));
                         var fact =
                                 SessionEvent.session(
                                         catalogId, "web.turn.interrupted", interrupted);
@@ -419,7 +449,9 @@ public final class HarnessWebServer implements AutoCloseable {
                 "goalHash",
                 task.goalHash,
                 "workspaceBinding",
-                task.binding);
+                task.binding,
+                "selection",
+                task.selection);
     }
 
     private record Cursor(
@@ -665,18 +697,47 @@ public final class HarnessWebServer implements AutoCloseable {
                 throw fault(405, "METHOD_NOT_ALLOWED");
             }
         }
+        if (path.length >= 3 && path[1].equals("v1") && path[2].equals("models")) {
+            if (settings == null || !query.isEmpty()) throw fault(404, "NOT_FOUND");
+            if (path.length == 3 && method.equals("GET")) {
+                var state = settings.read();
+                respond(
+                        exchange,
+                        200,
+                        Map.of(
+                                "models",
+                                state.get("models"),
+                                "selected",
+                                state.get("selected"),
+                                "revision",
+                                state.get("revision")));
+                return;
+            }
+            if (path.length == 4 && path[3].equals("check") && method.equals("POST")) {
+                var input = body(exchange, Set.of("modelId"));
+                try {
+                    respond(exchange, 200, settings.check(text(input, "modelId", 32)));
+                } catch (HarnessException ex) {
+                    throw fault(400, ex.code());
+                }
+                return;
+            }
+            throw fault(405, "METHOD_NOT_ALLOWED");
+        }
         if (path.length < 3 || !path[1].equals("v1") || !path[2].equals("tasks"))
             throw fault(404, "NOT_FOUND");
         if (path.length == 3) {
             if (method.equals("POST") && query.isEmpty()) {
-                var body = body(exchange, Set.of("profile", "goal", "requestId"));
+                var body =
+                        body(exchange, Set.of("profile", "goal", "requestId"), Set.of("modelId"));
                 respond(
                         exchange,
                         202,
                         submit(
                                 text(body, "profile", 32),
                                 text(body, "goal", 16384),
-                                text(body, "requestId", 64)));
+                                text(body, "requestId", 64),
+                                optionalModel(body)));
                 return;
             }
             if (method.equals("GET")) {
@@ -991,28 +1052,23 @@ public final class HarnessWebServer implements AutoCloseable {
         } else throw fault(405, "METHOD_OR_QUERY_NOT_ALLOWED");
     }
 
-    private synchronized Map<String, Object> submit(String profile, String goal, String requestId) {
+    private synchronized Map<String, Object> submit(
+            String profile, String goal, String requestId, String modelId) {
         if (closed || broken) throw fault(503, "WEB_UNAVAILABLE");
         if (!requestId.matches("[A-Za-z0-9_-]{1,64}")) throw fault(400, "INVALID_REQUEST_ID");
         String requestHash = hash(requestId), goalHash = hash(goal);
         var prior = submission(requestHash);
         if (prior != null) {
-            if (!prior.profile.equals(profile) || !prior.goalHash.equals(goalHash))
+            if (!prior.profile.equals(profile)
+                    || !prior.goalHash.equals(goalHash)
+                    || !modelId.isEmpty() && !modelId.equals(prior.selection.get("modelRoute")))
                 throw fault(409, "REQUEST_ID_CONFLICT");
             return summary(prior);
         }
         var selected = profiles.get(profile);
         if (selected == null) throw fault(400, "UNKNOWN_PROFILE");
         if (occupied.contains(selected.workspaceBinding())) throw fault(409, "WORKSPACE_BUSY");
-        if (settings != null) {
-            try {
-                settings.prepareTask();
-            } catch (HarnessException ex) {
-                throw fault(400, ex.code());
-            } catch (IOException ex) {
-                throw fault(503, "CREDENTIAL_STORE_UNAVAILABLE");
-            }
-        }
+        Map<String, Object> selection = captureModel(modelId);
         if (diskCatalog == null && tasks.size() >= maxTasks || occupied.size() >= maxActive)
             throw fault(429, "TASK_LIMIT");
         if (occupied.contains(selected.workspaceBinding())) throw fault(409, "WORKSPACE_BUSY");
@@ -1027,6 +1083,7 @@ public final class HarnessWebServer implements AutoCloseable {
                         requestHash,
                         goalHash,
                         selected.workspaceBinding());
+        task.selection = selection;
         cache(task);
         cursors.clear();
         occupied.add(task.binding);
@@ -1140,7 +1197,7 @@ public final class HarnessWebServer implements AutoCloseable {
         }
         if (!query.isEmpty()) throw fault(400, "INVALID_QUERY");
         if (path.length == 5 && method.equals("POST")) {
-            var input = body(exchange, Set.of("requestId", "text", "kind"));
+            var input = body(exchange, Set.of("requestId", "text", "kind"), Set.of("modelId"));
             respond(
                     exchange,
                     202,
@@ -1148,7 +1205,8 @@ public final class HarnessWebServer implements AutoCloseable {
                             task,
                             text(input, "requestId", 64),
                             text(input, "text", 16384),
-                            text(input, "kind", 16)));
+                            text(input, "kind", 16),
+                            optionalModel(input)));
             return;
         }
         if (path.length == 7 && method.equals("POST")) {
@@ -1171,7 +1229,7 @@ public final class HarnessWebServer implements AutoCloseable {
                 if (!TurnQueue.PENDING.contains(input.state) || task.turns.head() != input)
                     throw fault(409, "QUEUE_ORDER_CONFLICT");
                 continuationReady(task);
-                prepareTurn();
+                prepareTurn(input.selection);
                 startInput(task, input);
             } else throw fault(404, "NOT_FOUND");
             respond(exchange, 200, inputView(task, input));
@@ -1180,13 +1238,36 @@ public final class HarnessWebServer implements AutoCloseable {
         throw fault(405, "METHOD_NOT_ALLOWED");
     }
 
-    private void prepareTurn() throws IOException {
+    private static String optionalModel(Map<String, Object> body) {
+        if (!body.containsKey("modelId")) return "";
+        return text(body, "modelId", 32);
+    }
+
+    private Map<String, Object> captureModel(String modelId) {
+        if (settings == null) {
+            if (!modelId.isEmpty()) throw fault(400, "UNKNOWN_MODEL");
+            return Map.of();
+        }
+        try {
+            return settings.capture(modelId);
+        } catch (HarnessException ex) {
+            throw fault(400, ex.code());
+        } catch (IOException ex) {
+            throw fault(503, "CREDENTIAL_STORE_UNAVAILABLE");
+        }
+    }
+
+    private void prepareTurn(Map<String, Object> selection) throws IOException {
         if (closed || broken) throw fault(503, "WEB_UNAVAILABLE");
+        // Legacy submissions have no frozen route and must be explicitly re-submitted.
+        if (settings != null && selection.isEmpty()) throw fault(409, "MODEL_SELECTION_REQUIRED");
         if (settings != null) {
             try {
-                settings.prepareTask();
+                settings.prepareSelection(selection);
             } catch (HarnessException ex) {
                 throw fault(400, ex.code());
+            } catch (IOException ex) {
+                throw fault(503, "CREDENTIAL_STORE_UNAVAILABLE");
             }
         }
     }
@@ -1204,7 +1285,8 @@ public final class HarnessWebServer implements AutoCloseable {
         if (occupied.size() >= maxActive) throw fault(429, "ACTIVE_LIMIT");
     }
 
-    private Map<String, Object> enqueue(Task task, String requestId, String content, String kind)
+    private Map<String, Object> enqueue(
+            Task task, String requestId, String content, String kind, String modelId)
             throws IOException {
         if (closed || broken) throw fault(503, "WEB_UNAVAILABLE");
         if (!requestId.matches("[A-Za-z0-9_-]{1,64}")) throw fault(400, "INVALID_REQUEST_ID");
@@ -1214,7 +1296,10 @@ public final class HarnessWebServer implements AutoCloseable {
         if (prior != null) {
             if (!prior.getKey().id.equals(task.id)
                     || !prior.getValue().goalHash.equals(goalHash)
-                    || !prior.getValue().kind.equals(kind)) throw fault(409, "REQUEST_ID_CONFLICT");
+                    || !prior.getValue().kind.equals(kind)
+                    || !modelId.isEmpty()
+                            && !modelId.equals(prior.getValue().selection.get("modelRoute")))
+                throw fault(409, "REQUEST_ID_CONFLICT");
             return inputView(prior.getKey(), prior.getValue());
         }
         if (submission(requestHash) != null) throw fault(409, "REQUEST_ID_CONFLICT");
@@ -1228,9 +1313,9 @@ public final class HarnessWebServer implements AutoCloseable {
         boolean idle = Set.of("FINISHED", "VERIFIED").contains(task.phase);
         if (idle) {
             continuationReady(task);
-            prepareTurn();
         } else if (!occupied.contains(task.binding) || task.worker == null)
             throw fault(409, "WORKSPACE_BUSY");
+        var selection = captureModel(modelId);
         String safe = clean(content);
         var fact =
                 SessionEvent.session(
@@ -1246,7 +1331,9 @@ public final class HarnessWebServer implements AutoCloseable {
                                 "content",
                                 safe,
                                 "kind",
-                                kind));
+                                kind,
+                                "selection",
+                                selection));
         persistInput(task, fact);
         var input = task.turns.inputs.get(requestHash);
         input.state = "QUEUED";
@@ -1282,7 +1369,7 @@ public final class HarnessWebServer implements AutoCloseable {
         if (input == null || !input.state.equals("QUEUED")) return;
         try {
             continuationReady(task);
-            prepareTurn();
+            prepareTurn(input.selection);
             startInput(task, input);
         } catch (IOException ex) {
             if (!broken) pauseInputs(task);
@@ -1298,6 +1385,7 @@ public final class HarnessWebServer implements AutoCloseable {
             pointer.put("turnHash", input.hash);
             pointer.put("turnGoalHash", input.goalHash);
             pointer.put("turnKind", input.kind);
+            pointer.put("turnSelection", input.selection);
             var lease = leases.get(task.binding);
             if (lease != null) lease.accept(pointer, catalogBinding);
             persistInput(
@@ -1307,6 +1395,7 @@ public final class HarnessWebServer implements AutoCloseable {
                             "web.turn.started",
                             Map.of("taskId", task.id, "requestHash", input.hash)));
             input.state = "RUNNING";
+            task.executionSelection = input.selection;
             task.phase = "STARTING";
             task.status = "CREATED";
             task.error = "";
@@ -1460,7 +1549,8 @@ public final class HarnessWebServer implements AutoCloseable {
                             .open(
                                     task.id,
                                     (call, context) -> approve(task, call, context),
-                                    sanitizer);
+                                    sanitizer,
+                                    input == null ? task.selection : input.selection);
             synchronized (this) {
                 task.sdk = sdk;
                 if (task.cancelled || closed) sdk.cancel();
@@ -1677,6 +1767,12 @@ public final class HarnessWebServer implements AutoCloseable {
                                 task.recovered,
                                 "protocolVersion",
                                 HarnessSdk.PROTOCOL_VERSION));
+        var modelSelection =
+                task.executionSelection.isEmpty() ? task.selection : task.executionSelection;
+        var resolved = Values.object(modelSelection.getOrDefault("resolved", Map.of()));
+        value.put("modelId", modelSelection.getOrDefault("modelRoute", ""));
+        value.put("modelName", resolved.getOrDefault("model", ""));
+        value.put("modelProtocol", resolved.getOrDefault("protocol", "chat-completions"));
         value.put("name", task.name);
         value.put("pinned", task.pinned);
         value.put("archived", task.archived);
@@ -1943,6 +2039,7 @@ public final class HarnessWebServer implements AutoCloseable {
 
     private static final class Task {
         final String id, profile, requestHash, goalHash, binding;
+        Map<String, Object> selection = Map.of(), executionSelection = Map.of();
         final TurnQueue turns = new TurnQueue();
         final Map<String, Pending> approvals = new LinkedHashMap<>();
         String phase = "STARTING", status = "CREATED", error = "";

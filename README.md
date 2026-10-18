@@ -121,7 +121,7 @@ Docker 采用固定镜像摘要、非 root、只读根、禁外网、资源配�
 
 | 模块 | 职责 |
 |---|---|
-| harness-api | API 1.9 服务、事件、会话、模型、工作区、策略和执行环境契约 |
+| harness-api | API 1.10 服务、事件、会话、模型、工作区、策略和执行环境契约 |
 | harness-events | 异步通知、串行事件、拦截链与诊断 |
 | harness-plugin | 精确作用域注册、静态装配、依赖与生命周期 |
 | harness-session | 内存/JSONL、单写者、查询、分叉、迁移、恢复、请求重建、检查点与产物 |
@@ -195,4 +195,6 @@ M10.5.2收口（2026-10-17）：工作区注册/选择、会话管理及32对象
 
 M10.5.3收口（2026-10-17）：同会话多轮、独立受理/核对、有界队列/取消及下一轮补充已完成本地验收。Java337、客户端16、Chrome多轮15/历史19/设置24/诊断13/工作台28、入口8项通过；278份Java/POM及最终同一JAR/UI见[M10.5.3记录](docs/testing/M10.5.3-validation.md)。重启暂停队列，UNKNOWN及原离线核实限制保持；下一步M10.5.4，.4～.9及M11门禁未闭合，无付费请求、推送或远端CI。
 
-M10.5.4原生凭据增量已实现Windows Credential Manager、macOS Keychain、Linux Secret Service/libsecret路径；Windows/Linux/macOS原生持久化已通过[三平台CI](https://github.com/nixaveq141-ai/J-Harness/actions/runs/39014489141)，Windows旧/新凭据兼容及本机Java338/Chrome设置26通过；这组CI只覆盖原生凭据专项。Linux需要已解锁的默认凭据集合和用户D-Bus会话；服务缺失/锁定可使用环境变量，不回退明文文件。M10.5.4模型选择/逐轮快照/多协议仍在推进，不能据此视为整片完成，见[当前验收](docs/testing/M10.5.4-validation.md)。
+M10.5.4原生凭据增量已实现Windows Credential Manager、macOS Keychain、Linux Secret Service/libsecret路径；Windows/Linux/macOS原生持久化已通过[三平台CI](https://github.com/nixaveq141-ai/J-Harness/actions/runs/39014489141)，Windows旧/新凭据兼容及本机Java338/Chrome设置26通过；这组CI只覆盖原生凭据专项。Linux需要已解锁的默认凭据集合和用户D-Bus会话；服务缺失/锁定可使用环境变量，不回退明文文件。该次CI只证明原生凭据路径；M10.5.4模型选择/逐轮快照/多协议已于2026-10-18完成本地验收，见[当前验收](docs/testing/M10.5.4-validation.md)。
+
+M10.5.4于2026-10-18完成本地验收（Java358、客户端19、Chrome123、启动器8、Windows原生7）：输入区可选择模型连接，下一条消息与当前轮模型分别显示；每条消息在受理时冻结协议/能力/预算。设置新增每连接能力、Responses推理参数与仅本地的配置检查；文本/工具支持Chat Completions、Responses、Anthropic Messages及SSE。API/SDK1.10、JSONL1、Web目录备份升级4；使用方法及支持边界见[模型连接说明](docs/examples/m1054-models.md)，最终验收状态见[M10.5.4记录](docs/testing/M10.5.4-validation.md)。

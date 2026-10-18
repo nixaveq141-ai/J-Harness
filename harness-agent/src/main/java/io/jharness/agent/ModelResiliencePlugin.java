@@ -23,7 +23,7 @@ public final class ModelResiliencePlugin implements HarnessPlugin {
     }
 
     public String version() {
-        return "1.9";
+        return "1.10";
     }
 
     public void start(PluginContext context) {

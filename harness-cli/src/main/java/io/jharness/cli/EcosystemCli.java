@@ -333,23 +333,43 @@ final class EcosystemCli {
                             return new HarnessWebServer.Profile(
                                     root.toString(),
                                     targetSessions,
-                                    (id, approvals, sanitizer) -> {
-                                        // Revalidate the root before constructing execution
-                                        // capabilities.
-                                        checked.verify();
-                                        var runtime = settings.runtime();
-                                        return new EcosystemCli(
-                                                        runtime.config(),
-                                                        runtime.environment(),
-                                                        root,
-                                                        targetMetadata)
-                                                .open(
-                                                        id,
-                                                        args,
-                                                        approvals,
-                                                        sanitizer,
-                                                        new PrintStream(
-                                                                OutputStream.nullOutputStream()));
+                                    new HarnessWebServer.SdkFactory() {
+                                        @Override
+                                        public HarnessSdk open(
+                                                String id,
+                                                ApprovalService approvals,
+                                                DataSanitizer sanitizer)
+                                                throws Exception {
+                                            throw new HarnessException(
+                                                    "MODEL_SELECTION_REQUIRED",
+                                                    "Frozen selection required");
+                                        }
+
+                                        @Override
+                                        public HarnessSdk open(
+                                                String id,
+                                                ApprovalService approvals,
+                                                DataSanitizer sanitizer,
+                                                Map<String, Object> selection)
+                                                throws Exception {
+                                            // Revalidate the root before constructing execution
+                                            // capabilities.
+                                            checked.verify();
+                                            var runtime = settings.runtime(selection);
+                                            return new EcosystemCli(
+                                                            runtime.config(),
+                                                            runtime.environment(),
+                                                            root,
+                                                            targetMetadata)
+                                                    .open(
+                                                            id,
+                                                            args,
+                                                            approvals,
+                                                            sanitizer,
+                                                            new PrintStream(
+                                                                    OutputStream
+                                                                            .nullOutputStream()));
+                                        }
                                     },
                                     (source, target) ->
                                             new LocalArtifactStore(

@@ -1,3 +1,4 @@
+import { ModelPicker } from './ModelPicker'
 import { TurnComposer } from './TurnComposer'
 import { useCallback, useEffect, useRef, useState, type FormEvent, type PointerEvent } from 'react'
 import { Api, ApiError, isTerminal, uncertain, mergeEvents, object, type Task, type Approval, type SessionEvent, type Page } from './api'
@@ -19,7 +20,7 @@ const labels: Record<string, string> = { ACCEPTED: '已接收', RUNNING: '进行
   DENIED: '已拒绝', LIMIT_REACHED: '达到限制', UNKNOWN: '结果待核实', VERIFIED: '已离线核实', CREATED: '已创建' }
 const errorLabels: Record<string, string> = {
   UNAUTHORIZED: '本机会话已失效，请重新连接。',
-  API_KEY_MISSING: '默认模型尚未配置 API Key，请打开设置补充密钥。',
+  API_KEY_MISSING: '所选模型尚未配置 API Key，请打开设置补充密钥。',
   LOCAL_CLIENT_REQUIRED: '请求未通过本机同源检查，请使用服务输出的原始地址。',
   CONNECTION_LOST: '连接中断。读取可以重连；任务提交不会自动重发。',
   UNKNOWN_CURSOR: '事件游标已失效，已暂停续读。请点击“重载历史”。',
@@ -81,6 +82,7 @@ export function App() {
   const [profile, setProfile] = useState(''), [tasks, setTasks] = useState<Task[]>([]), [workspaceNames, setWorkspaceNames] = useState<Record<string, string>>({})
   const [selected, setSelected] = useState(() => storage('jh-selected'))
   const [events, setEvents] = useState<SessionEvent[]>([]), [approvals, setApprovals] = useState<Approval[]>([])
+  const [modelId, setModelId] = useState('')
   const [goal, setGoal] = useState(''), [filter, setFilter] = useState(''), [error, setError] = useState('')
   const [pending, setPending] = useState(() => storage('jh-pending')), [submitting, setSubmitting] = useState(false)
   const [busy, setBusy] = useState(''), [live, setLive] = useState('连接后自动更新'), [historyKey, setHistoryKey] = useState(0)
@@ -208,7 +210,7 @@ export function App() {
     const id = crypto.randomUUID(), text = goal.trim(); createLock.current = true; setSubmitting(true)
     setPending(id); storage('jh-pending', id); setError('')
     try {
-      const t = await api.submit(profile, text, id)
+      const t = await api.submit(profile, text, id, modelId)
       storage('jh-pending', ''); setPending('')
       if (currentApi.current !== api) return
       showTask(t); setGoal('')
@@ -281,7 +283,7 @@ export function App() {
       <header className="topbar"><div className="task-heading"><h1>{taskTitle}</h1>{active && <Status value={active} />}</div><div className="top-actions"><span className="local-badge">本机工作台</span><Button aria-label={inspectorOpen ? '关闭任务详情' : '打开任务详情'} title="任务详情" onClick={() => setInspectorOpen(v => !v)}><Icon name="panel" /></Button></div></header>
       {error && <div className="error-banner" role="alert"><span>{error}</span><button aria-label="关闭提示" onClick={() => setError('')}><Icon name="close" /></button></div>}
       {!api ? <section className="welcome connection-page"><div className="intro-symbol">J</div><h2>{connecting ? '正在打开工作台…' : '本机服务暂时无法连接'}</h2><p>请保持启动窗口运行。</p><Button variant="primary" disabled={connecting} onClick={() => void connect()}>重新连接</Button></section>
-        : settingsOpen ? <Settings api={api} onBack={() => setSettingsOpen(false)} onGuardChange={setSettingsGuard} /> : <>
+        : settingsOpen ? <Settings api={api} onBack={() => { setModelId(''); setSettingsOpen(false) }} onGuardChange={setSettingsGuard} /> : <>
           {pending && <div className="pending-banner" role="status"><div><strong>本次提交待核对</strong><p>为避免重复执行，已暂停创建。核对操作只读取后台记录。</p></div><Button variant="outline" disabled={!!busy || submitting} onClick={() => void reconcile()}>核对提交状态</Button>
             <button className="text-button" disabled={submitting || !!busy} onClick={() => { if (window.confirm('这只清除本页待核对记录，后台任务可能仍在执行。确定已检查任务列表并清除？')) { storage('jh-pending', ''); setPending('') } }}>清除本页记录</button></div>}
           {!selected ? <section className="welcome"><div className="intro-symbol">J</div><h2>今天，想完成什么？</h2><p>描述目标，让 J-Harness 在你的工作区中协助完成。</p><div className="suggestions">{['阅读项目结构，梳理模块职责', '检查最近的修改，指出潜在问题', '分析一个问题，并提出修复方案'].map(s => <button key={s} onClick={() => setGoal(s)}><Icon name="file" />{s}<Icon name="chevron" /></button>)}</div></section>
@@ -299,7 +301,7 @@ export function App() {
             <div className="approval-actions"><Button variant="outline" disabled={!!busy} onClick={() => void decide(a, false)}>拒绝</Button><Button variant="primary" disabled={!!busy} onClick={() => void decide(a, true)}>{busy === a.approvalId ? '正在处理…' : '批准本次操作'}</Button></div></div>)}</section>}
           {!selected && <form className="composer" onSubmit={e => void submit(e)}><textarea aria-label="任务目标" placeholder="描述你的任务…" value={goal} maxLength={16384} onChange={e => setGoal(e.target.value)} rows={3} disabled={submitting}
             onKeyDown={e => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey) && !e.nativeEvent.isComposing) { e.preventDefault(); e.currentTarget.form?.requestSubmit() } }} />
-            <div className="composer-toolbar"><label className="profile-picker">执行工作区 <select aria-label="任务配置" value={profile} onChange={e => setProfile(e.target.value)}>{profiles.map(p => <option key={p} value={p}>{workspaceNames[p] ?? p}</option>)}</select></label><span className="composer-shortcut">Ctrl / ⌘ + Enter</span><Button type="submit" variant="primary" aria-label="创建任务" disabled={!goal.trim() || !profile || submitting || !!pending}><Icon name="arrow" /></Button></div></form>}
+            <div className="composer-toolbar">{profiles.length > 1 && <label className="profile-picker">执行工作区 <select aria-label="任务配置" value={profile} onChange={e => setProfile(e.target.value)}>{profiles.map(p => <option key={p} value={p}>{workspaceNames[p] ?? p}</option>)}</select></label>}<ModelPicker api={api} value={modelId} onChange={setModelId} disabled={submitting || !!pending} /><span className="composer-shortcut">Ctrl / ⌘ + Enter</span><Button type="submit" variant="primary" aria-label="创建任务" disabled={!goal.trim() || !profile || submitting || !!pending}><Icon name="arrow" /></Button></div></form>}
           {selected && api && active && <TurnComposer key={selected} api={api} task={active} onUpdated={updateTask} onHistory={() => { autoScroll.current = true }} onGuard={setTurnGuard} />}
           {selected && <footer className="activity-footer"><TextShimmer active={!!active && !isTerminal(active)}>{live}</TextShimmer>{active && active.cancelRequested && <span>已请求取消，正在等待执行事实</span>}
             <div>{hasProblems && <Button onClick={() => { diagnosisAnchor.current?.scrollIntoView({ block: 'start' }); diagnosisAnchor.current?.focus({ preventScroll: true }); autoScroll.current = false }}>执行诊断</Button>}<Button onClick={() => { setError(''); setHistoryKey(k => k + 1) }}>重载历史</Button>{active && !isTerminal(active) && <Button variant="outline" icon={<Icon name="stop" />} disabled={!!busy || active.cancelRequested} onClick={() => void cancel()}>取消任务</Button>}</div></footer>}

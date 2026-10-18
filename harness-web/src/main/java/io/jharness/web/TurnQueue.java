@@ -10,6 +10,7 @@ final class TurnQueue {
 
     static final class Input {
         final String hash, goalHash, kind;
+        Map<String, Object> selection = Map.of();
         String content, state, turnId = "", status = "";
 
         Input(String hash, String goalHash, String kind, String content, String state) {
@@ -41,6 +42,8 @@ final class TurnQueue {
                     status,
                     "sequence",
                     sequence,
+                    "modelId",
+                    selection.getOrDefault("modelRoute", ""),
                     "preview",
                     content.substring(0, Math.min(200, content.length())));
         }
@@ -61,6 +64,7 @@ final class TurnQueue {
                             (String) p.get("kind"),
                             (String) p.getOrDefault("content", ""),
                             event.type().equals("web.turn.interrupted") ? "UNKNOWN" : "PAUSED"));
+            inputs.get(hash).selection = Values.object(p.getOrDefault("selection", Map.of()));
             return;
         }
         var input = inputs.get(hash);

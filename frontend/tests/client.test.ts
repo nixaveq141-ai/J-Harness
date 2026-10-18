@@ -137,3 +137,25 @@ test('queue actions use submission identity and preserve task association', asyn
   const api = new Api(token, (async (url, init) => { assert.equal(url, `/v1/tasks/task_1/turns/${hash}/cancel`); assert.equal(init!.method, 'POST'); return json({ task: row, submission: { submissionId: hash, kind: 'supplement', state: 'CANCELLED', sequence: 2, turnId: '', status: '' } }) }) as typeof fetch)
   assert.equal((await api.turnAction('task_1', hash, 'cancel')).submission.state, 'CANCELLED')
 })
+
+test('model choice travels only with its admission and reconciliation remains read only', async () => {
+  const bodies: unknown[] = []
+  const api = new Api(token, (async (_url, init) => { if (init?.body) bodies.push(JSON.parse(String(init.body))); return json(row) }) as typeof fetch)
+  await api.submit('default', 'goal', 'request_a', 'model_b')
+  assert.deepEqual(bodies, [{ profile: 'default', goal: 'goal', requestId: 'request_a', modelId: 'model_b' }])
+  await api.submission('request_a')
+  assert.equal(bodies.length, 1)
+})
+test('model catalog retains protocol capabilities and rejects unsupported protocol', async () => {
+  const model = { id: 'b', label: 'B', baseUrl: 'https://example.com/v1', model: 'model-b', apiKeyEnv: 'TEST_KEY', keyConfigured: true, disableThinking: false, protocol: 'responses', reasoningEffort: 'low', maxOutputTokens: 256, toolsSupported: true, streamSupported: true, streaming: true, pricing: { maxCost: '1' } }
+  const api = new Api(token, (async () => json({ revision: 'r', selected: 'b', models: [model] })) as typeof fetch)
+  assert.deepEqual((await api.models()).models[0], model)
+  const invalid = new Api(token, (async () => json({ revision: 'r', selected: 'b', models: [{ ...model, protocol: 'unknown' }] })) as typeof fetch)
+  await assert.rejects(invalid.models(), ApiError)
+})
+test('configuration check rejects claims of implicit network verification', async () => {
+  const api = new Api(token, (async (_url, init) => { assert.deepEqual(JSON.parse(String(init?.body)), { modelId: 'b' }); return json({ valid: true, networkChecked: false, requestSent: false }) }) as typeof fetch)
+  assert.equal((await api.checkModel('b')).requestSent, false)
+  const invalid = new Api(token, (async () => json({ valid: true, networkChecked: true, requestSent: true })) as typeof fetch)
+  await assert.rejects(invalid.checkModel('b'), ApiError)
+})

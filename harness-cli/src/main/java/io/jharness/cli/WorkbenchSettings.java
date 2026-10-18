@@ -13,6 +13,16 @@ import java.util.concurrent.CopyOnWriteArrayList;
 final class WorkbenchSettings implements HarnessWebServer.Settings, DataSanitizer {
     private static final Set<String> EXTENSIONS =
             Set.of("mcp", "skills", "subagents", "planning", "webSources");
+    private static final Set<String> MODEL_OPTIONS =
+            Set.of(
+                    "protocol",
+                    "reasoningEffort",
+                    "contextTokens",
+                    "maxOutputTokens",
+                    "requestTimeoutSeconds",
+                    "toolsSupported",
+                    "streamSupported",
+                    "streaming");
     private final CliConfig base;
     private final Map<String, String> environment;
     private final Metadata metadata;
@@ -88,6 +98,12 @@ final class WorkbenchSettings implements HarnessWebServer.Settings, DataSanitize
                         "default",
                         "extensions",
                         extensions);
+        var initialModel = new LinkedHashMap<>(models(state).getFirst());
+        for (String option : MODEL_OPTIONS)
+            if (base.values.containsKey(option)) initialModel.put(option, base.values.get(option));
+        var initialState = new LinkedHashMap<>(state);
+        initialState.put("models", List.of(initialModel));
+        state = initialState;
         if (Files.exists(file, LinkOption.NOFOLLOW_LINKS)) state = Json.read(file, 32768);
         validate(state);
         registerReferences(state);
@@ -109,6 +125,14 @@ final class WorkbenchSettings implements HarnessWebServer.Settings, DataSanitize
         var visible = new ArrayList<Map<String, Object>>();
         for (var model : models(state)) {
             var v = new LinkedHashMap<>(model);
+            var resolved = new CliConfig(configuration(state, model));
+            v.put("protocol", resolved.string("protocol", "chat-completions"));
+            v.put("contextTokens", resolved.contextTokens());
+            v.put("maxOutputTokens", resolved.maxOutputTokens());
+            v.put("requestTimeoutSeconds", resolved.requestTimeout().toSeconds());
+            v.put("toolsSupported", !Boolean.FALSE.equals(resolved.values.get("toolsSupported")));
+            v.put("streamSupported", Boolean.TRUE.equals(resolved.values.get("streamSupported")));
+            v.put("streaming", Boolean.TRUE.equals(resolved.values.get("streaming")));
             v.remove("credentialRef");
             v.put("keyConfigured", keyAvailable(model));
             visible.add(v);
@@ -142,7 +166,9 @@ final class WorkbenchSettings implements HarnessWebServer.Settings, DataSanitize
         var next = new ArrayList<Map<String, Object>>();
         var writes = new LinkedHashMap<String, String>();
         for (var raw : models(input)) {
-            if (!Set.of(
+            var allowed = new HashSet<>(MODEL_OPTIONS);
+            allowed.addAll(
+                    Set.of(
                             "id",
                             "label",
                             "baseUrl",
@@ -150,8 +176,8 @@ final class WorkbenchSettings implements HarnessWebServer.Settings, DataSanitize
                             "apiKeyEnv",
                             "keyConfigured",
                             "pricing",
-                            "disableThinking")
-                    .containsAll(raw.keySet())) throw error("INVALID_SETTINGS");
+                            "disableThinking"));
+            if (!allowed.containsAll(raw.keySet())) throw error("INVALID_SETTINGS");
             var model = new LinkedHashMap<>(raw);
             model.remove("keyConfigured");
             String id = field(model, "id", 32);
@@ -238,23 +264,77 @@ final class WorkbenchSettings implements HarnessWebServer.Settings, DataSanitize
         runtime();
     }
 
+    @Override
+    public void prepareSelection(Map<String, Object> selection) throws IOException {
+        runtime(selection);
+    }
+
     synchronized RuntimeConfig runtime() throws IOException {
+        return runtime(capture(""));
+    }
+
+    @Override
+    public synchronized Map<String, Object> capture(String modelId) throws IOException {
+        String selected = modelId.isEmpty() ? (String) state.get("selected") : modelId;
         var model =
                 models(state).stream()
-                        .filter(m -> m.get("id").equals(state.get("selected")))
+                        .filter(m -> m.get("id").equals(selected))
                         .findFirst()
-                        .orElseThrow();
-        var values = configuration(state, model);
+                        .orElseThrow(() -> error("UNKNOWN_MODEL"));
+        if (key(model).isBlank()) throw error("API_KEY_MISSING");
+        var resolved = configuration(state, model);
+        new CliConfig(resolved).costs();
+        var snapshot =
+                Map.<String, Object>of(
+                        "modelRoute",
+                        selected,
+                        "settingsRevision",
+                        revision(),
+                        "resolved",
+                        resolved,
+                        "credentialRef",
+                        model.get("credentialRef"),
+                        "apiKeyEnv",
+                        model.get("apiKeyEnv"));
+        if (!sanitize(snapshot).equals(snapshot)
+                || Json.text(snapshot).getBytes(StandardCharsets.UTF_8).length > 32768)
+            throw error("INVALID_SETTINGS");
+        return Values.snapshot(snapshot);
+    }
+
+    synchronized RuntimeConfig runtime(Map<String, Object> snapshot) throws IOException {
+        if (snapshot.isEmpty()) throw error("MODEL_SELECTION_REQUIRED");
+        var values = new LinkedHashMap<>(Values.object(snapshot.get("resolved")));
         var env = new HashMap<>(environment);
-        String key = key(model);
+        String key = key(snapshot);
         if (key.isBlank()) throw error("API_KEY_MISSING");
         values.put("apiKeyEnv", "JHARNESS_UI_API_KEY");
         env.put("JHARNESS_UI_API_KEY", key);
         return new RuntimeConfig(
                 new CliConfig(
                         values,
-                        Map.of("modelRoute", model.get("id"), "settingsRevision", revision())),
+                        Map.of(
+                                "modelRoute",
+                                snapshot.get("modelRoute"),
+                                "settingsRevision",
+                                snapshot.get("settingsRevision"))),
                 Map.copyOf(env));
+    }
+
+    @Override
+    public synchronized Map<String, Object> check(String modelId) throws IOException {
+        var snapshot = capture(modelId);
+        return Map.of(
+                "valid",
+                true,
+                "keyConfigured",
+                true,
+                "modelId",
+                snapshot.get("modelRoute"),
+                "networkChecked",
+                false,
+                "requestSent",
+                false);
     }
 
     private Map<String, Object> configuration(
@@ -276,6 +356,12 @@ final class WorkbenchSettings implements HarnessWebServer.Settings, DataSanitize
                         "currency")
                 .containsAll(pricing.keySet())) throw error("INVALID_SETTINGS");
         values.putAll(pricing);
+        for (String option : MODEL_OPTIONS) {
+            values.remove(option);
+            if (model.containsKey(option)) values.put(option, model.get(option));
+            else if (!Set.of("protocol", "reasoningEffort").contains(option)
+                    && base.values.containsKey(option)) values.put(option, base.values.get(option));
+        }
         values.put("baseUrl", model.get("baseUrl"));
         values.put("model", model.get("model"));
         values.put("disableThinking", model.get("disableThinking"));
@@ -303,17 +389,20 @@ final class WorkbenchSettings implements HarnessWebServer.Settings, DataSanitize
             throw error("INVALID_SETTINGS");
         var ids = new HashSet<String>();
         for (var model : models(value)) {
-            if (!model.keySet()
-                    .equals(
-                            Set.of(
-                                    "id",
-                                    "label",
-                                    "baseUrl",
-                                    "model",
-                                    "credentialRef",
-                                    "apiKeyEnv",
-                                    "pricing",
-                                    "disableThinking"))) throw error("INVALID_SETTINGS");
+            var required =
+                    Set.of(
+                            "id",
+                            "label",
+                            "baseUrl",
+                            "model",
+                            "credentialRef",
+                            "apiKeyEnv",
+                            "pricing",
+                            "disableThinking");
+            var allowed = new HashSet<>(required);
+            allowed.addAll(MODEL_OPTIONS);
+            if (!model.keySet().containsAll(required) || !allowed.containsAll(model.keySet()))
+                throw error("INVALID_SETTINGS");
             String id = field(model, "id", 32);
             if (!id.matches("[A-Za-z0-9_-]+") || !ids.add(id)) throw error("INVALID_SETTINGS");
             field(model, "label", 80);
@@ -329,6 +418,9 @@ final class WorkbenchSettings implements HarnessWebServer.Settings, DataSanitize
             if (!field(model, "apiKeyEnv", 128).matches("[A-Za-z_][A-Za-z0-9_]*"))
                 throw error("INVALID_SETTINGS");
             var checked = new CliConfig(configuration(value, model));
+            if (Boolean.TRUE.equals(checked.values.get("streaming"))
+                    && !Boolean.TRUE.equals(checked.values.get("streamSupported")))
+                throw error("INVALID_SETTINGS");
             checked.budget();
             checked.costs();
         }

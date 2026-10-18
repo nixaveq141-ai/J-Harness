@@ -47,6 +47,8 @@ final class ConfigurationSelection {
                             "inputPerMillion",
                             "outputPerMillion",
                             "disableThinking",
+                            "protocol",
+                            "reasoningEffort",
                             "toolsSupported",
                             "streamSupported")
                     .containsAll(model.keySet())) throw error("INVALID_CONFIG");

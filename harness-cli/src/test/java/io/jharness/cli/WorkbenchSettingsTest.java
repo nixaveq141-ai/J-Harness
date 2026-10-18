@@ -13,6 +13,43 @@ class WorkbenchSettingsTest {
     @TempDir Path temp;
 
     @Test
+    void acceptedModelAndBudgetSnapshotSurvivesDefaultAndCapabilityChanges() throws Exception {
+        var vault = new MemoryVault();
+        var manager = manager(vault);
+        manager.save(input(manager.read(), Map.of("default", "synthetic-snapshot-key")));
+        var old = manager.capture("default");
+        var read = manager.read();
+        var first = new LinkedHashMap<>(Values.object(((List<?>) read.get("models")).getFirst()));
+        first.put("maxOutputTokens", 256);
+        first.put("contextTokens", 8192);
+        first.put("protocol", "responses");
+        first.put("reasoningEffort", "low");
+        first.put("disableThinking", false);
+        var second = new LinkedHashMap<>(first);
+        second.put("id", "other");
+        second.put("model", "new-model");
+        var change = input(read, Map.of("other", "synthetic-other-key"));
+        change.put("models", List.of(first, second));
+        change.put("selected", "other");
+        manager.save(change);
+        var reopened = manager(vault);
+        assertEquals("initial", reopened.runtime(old).config().string("model", ""));
+        assertEquals(
+                "chat-completions", reopened.runtime(old).config().parameters().get("protocol"));
+        var chosen = reopened.capture("default");
+        assertEquals("default", reopened.runtime(chosen).config().selection.get("modelRoute"));
+        assertEquals("responses", reopened.runtime(chosen).config().parameters().get("protocol"));
+        assertEquals(256, reopened.runtime(chosen).config().maxOutputTokens());
+        assertEquals("new-model", reopened.runtime().config().string("model", ""));
+        assertEquals(false, reopened.check("default").get("requestSent"));
+        assertFalse(Json.text(old).contains("synthetic-snapshot-key"));
+        vault.values.clear();
+        assertEquals(
+                "API_KEY_MISSING",
+                assertThrows(HarnessException.class, () -> manager(vault).runtime(old)).code());
+    }
+
+    @Test
     void unavailableNativeVaultPreservesSettingsAndBlocksAdmissionWithoutFallback()
             throws Exception {
         var memory = new MemoryVault();

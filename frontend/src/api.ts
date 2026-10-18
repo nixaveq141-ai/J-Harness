@@ -1,6 +1,7 @@
 export interface Task {
   taskId: string; profile: string; phase: string; status: string; error: string
   cancelRequested: boolean; recovered: boolean; protocolVersion: string
+  modelId?: string; modelName?: string; modelProtocol?: string
   name: string; pinned: boolean; archived: boolean; revision: string; createdAt: string
 }
 export interface SessionEvent {
@@ -15,6 +16,9 @@ export interface Approval {
 export interface ModelConnection {
   id: string; label: string; baseUrl: string; model: string; apiKeyEnv: string; keyConfigured: boolean
   pricing: Record<string, unknown>
+  protocol?: 'chat-completions' | 'responses' | 'anthropic'; reasoningEffort?: string
+  contextTokens?: number; maxOutputTokens?: number; requestTimeoutSeconds?: number
+  toolsSupported?: boolean; streamSupported?: boolean; streaming?: boolean
   disableThinking: boolean
 }
 export interface SettingsData {
@@ -29,7 +33,12 @@ function settings(value: unknown): SettingsData {
   const models = v.models.map(raw => {
     const m = object(raw)
     if (typeof m.keyConfigured !== 'boolean' || typeof m.disableThinking !== 'boolean') throw new ApiError('INVALID_RESPONSE')
-    return { id: identifier(m.id), label: text(m.label, 80), baseUrl: text(m.baseUrl, 512), model: text(m.model, 128),
+    const options: Partial<ModelConnection> = {}
+    if (m.protocol !== undefined) { if (!['chat-completions','responses','anthropic'].includes(String(m.protocol))) throw new ApiError('INVALID_RESPONSE'); options.protocol = m.protocol as ModelConnection['protocol'] }
+    if (m.reasoningEffort !== undefined) { if (!['none','low','medium','high'].includes(String(m.reasoningEffort))) throw new ApiError('INVALID_RESPONSE'); options.reasoningEffort = String(m.reasoningEffort) }
+    for (const k of ['contextTokens','maxOutputTokens','requestTimeoutSeconds'] as const) if (m[k] !== undefined) { if (!Number.isInteger(m[k]) || (m[k] as number) < 1) throw new ApiError('INVALID_RESPONSE'); options[k] = m[k] as number }
+    for (const k of ['toolsSupported','streamSupported','streaming'] as const) if (m[k] !== undefined) { if (typeof m[k] !== 'boolean') throw new ApiError('INVALID_RESPONSE'); options[k] = m[k] as boolean }
+    return { ...options, id: identifier(m.id), label: text(m.label, 80), baseUrl: text(m.baseUrl, 512), model: text(m.model, 128),
       apiKeyEnv: text(m.apiKeyEnv, 128), keyConfigured: m.keyConfigured, pricing: object(m.pricing), disableThinking: m.disableThinking }
   })
   return { revision: text(v.revision, 64), models, selected: identifier(v.selected), extensions: object(v.extensions), policy: v.policy === 'read-only' ? 'read-only' : 'default',
@@ -48,7 +57,7 @@ export class ApiError extends Error {
 const errors = new Set(['UNAUTHORIZED', 'LOCAL_CLIENT_REQUIRED', 'UNKNOWN_CURSOR', 'STREAM_LIMIT',
   'STALE_APPROVAL', 'WORKSPACE_BUSY', 'TASK_LIMIT', 'ACTIVE_LIMIT', 'SUBMISSION_NOT_FOUND',
   'SUBMISSION_NOT_CONFIRMED', 'REQUEST_ID_CONFLICT', 'DIFF_NOT_RECORDED', 'RESPONSE_LIMIT', 'NOT_FOUND',
-  'SETTINGS_CONFLICT', 'INVALID_SETTINGS', 'SECRET_CONFIG', 'CREDENTIAL_STORE_UNAVAILABLE', 'API_KEY_MISSING', 'INVALID_CONFIG', 'COST_BUDGET_UNAVAILABLE', 'SESSION_CONFLICT', 'RECOVERY_REQUIRED', 'EXPORT_LIMIT', 'FORK_UNAVAILABLE', 'WORKSPACE_PATH_DENIED', 'WORKSPACE_OWNER_MISMATCH', 'WORKSPACE_EXISTS', 'WORKSPACE_LIMIT', 'SESSION_ALREADY_OWNED', 'SESSION_BUSY', 'INVALID_WORKSPACE_NAME', 'WEB_HISTORY_QUOTA'])
+  'UNKNOWN_MODEL', 'MODEL_SELECTION_REQUIRED', 'QUEUE_LIMIT', 'QUEUE_PAUSED', 'QUEUE_ORDER_CONFLICT', 'SUBMISSION_ALREADY_STARTED', 'SESSION_ARCHIVED', 'SETTINGS_CONFLICT', 'INVALID_SETTINGS', 'SECRET_CONFIG', 'CREDENTIAL_STORE_UNAVAILABLE', 'API_KEY_MISSING', 'INVALID_CONFIG', 'COST_BUDGET_UNAVAILABLE', 'SESSION_CONFLICT', 'RECOVERY_REQUIRED', 'EXPORT_LIMIT', 'FORK_UNAVAILABLE', 'WORKSPACE_PATH_DENIED', 'WORKSPACE_OWNER_MISMATCH', 'WORKSPACE_EXISTS', 'WORKSPACE_LIMIT', 'SESSION_ALREADY_OWNED', 'SESSION_BUSY', 'INVALID_WORKSPACE_NAME', 'WEB_HISTORY_QUOTA'])
 export function object(value: unknown): Record<string, unknown> {
   if (typeof value !== 'object' || value === null || Array.isArray(value)) throw new ApiError('INVALID_RESPONSE')
   return value as Record<string, unknown>
@@ -65,7 +74,7 @@ function identifier(value: unknown): string {
 export function task(value: unknown): Task {
   const v = object(value)
   for (const k of ['cancelRequested', 'recovered']) if (typeof v[k] !== 'boolean') throw new ApiError('INVALID_RESPONSE')
-  return { taskId: identifier(v.taskId), profile: identifier(v.profile), phase: text(v.phase),
+  return { modelId: v.modelId === undefined ? '' : text(v.modelId,32), modelName: v.modelName === undefined ? '' : text(v.modelName,128), modelProtocol: v.modelProtocol === undefined ? '' : text(v.modelProtocol,32), taskId: identifier(v.taskId), profile: identifier(v.profile), phase: text(v.phase),
     status: text(v.status), error: text(v.error), cancelRequested: v.cancelRequested as boolean,
     recovered: v.recovered as boolean, protocolVersion: text(v.protocolVersion), name: v.name === undefined ? '' : text(v.name, 80),
     pinned: v.pinned === true, archived: v.archived === true, revision: v.revision === undefined ? '' : text(v.revision, 64), createdAt: v.createdAt === undefined ? '' : text(v.createdAt) }
@@ -92,8 +101,8 @@ export class Api {
     if (!Array.isArray(v.submissions) || v.submissions.length > 32 || typeof v.more !== 'boolean' || !Number.isInteger(v.next) || !Number.isInteger(v.total)) throw new ApiError('INVALID_RESPONSE')
     return { submissions: v.submissions.map(turnSubmission), more: v.more, next: v.next as number, total: v.total as number }
   }
-  async submitTurn(id: string, requestId: string, text: string, kind: 'message' | 'supplement') {
-    return turnReceipt(await this.json(`/v1/tasks/${identifier(id)}/turns`, { requestId: identifier(requestId), text, kind }), id)
+  async submitTurn(id: string, requestId: string, text: string, kind: 'message' | 'supplement', modelId = '') {
+    return turnReceipt(await this.json(`/v1/tasks/${identifier(id)}/turns`, { requestId: identifier(requestId), text, kind, ...(modelId ? { modelId } : {}) }), id)
   }
   async turnStatus(id: string, requestId: string) { return turnReceipt(await this.json(`/v1/tasks/${identifier(id)}/turns?request=${identifier(requestId)}`), id) }
   async turnAction(id: string, hash: string, action: 'cancel' | 'start') { return turnReceipt(await this.json(`/v1/tasks/${identifier(id)}/turns/${identifier(hash)}/${action}`, {}), id) }
@@ -118,6 +127,16 @@ export class Api {
     const transport = new Api('0'.repeat(32), fetcher)
     const result = object(await transport.json('/v1/browser-session', {}))
     return new Api(text(result.token), fetcher)
+  }
+  async models() {
+    const v = object(await this.json('/v1/models'))
+    // Reuse the settings model validator without accepting arbitrary model metadata.
+    return { models: settings({ ...v, extensions: {}, corePlugins: [], credentialStore: '', credentialCleanupPending: false }).models, selected: identifier(v.selected) }
+  }
+  async checkModel(modelId: string) {
+    const v = object(await this.json('/v1/models/check', { modelId: identifier(modelId) }))
+    if (v.valid !== true || v.networkChecked !== false || v.requestSent !== false) throw new ApiError('INVALID_RESPONSE')
+    return v
   }
   async settings() { return settings(await this.json('/v1/settings')) }
   async saveSettings(value: SettingsData, apiKeys: Record<string, string>) {
@@ -186,7 +205,7 @@ export class Api {
     if (!Array.isArray(v.tasks) || v.tasks.length > 32) throw new ApiError('INVALID_RESPONSE')
     return v.tasks.map(task)
   }
-  async submit(profile: string, goal: string, requestId: string) { return task(await this.json('/v1/tasks', { profile, goal, requestId })) }
+  async submit(profile: string, goal: string, requestId: string, modelId = '') { return task(await this.json('/v1/tasks', { profile, goal, requestId, ...(modelId ? { modelId } : {}) })) }
   async submission(requestId: string) { return task(await this.json(`/v1/submissions/${identifier(requestId)}`)) }
   async detail(id: string, signal?: AbortSignal) { return task(await this.json(`/v1/tasks/${identifier(id)}`, undefined, signal)) }
   async cancel(id: string) { return task(await this.json(`/v1/tasks/${identifier(id)}/cancel`, {})) }

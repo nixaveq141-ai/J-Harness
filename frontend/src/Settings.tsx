@@ -57,8 +57,8 @@ export function Settings({ api, onBack, onGuardChange }: { api: Api; onBack: () 
     if (!data) return
     setData({ ...data, models: data.models.map(m => {
       if (m.id !== editing) return m
-      const changedModel = patch.model !== undefined && patch.model !== m.model || patch.baseUrl !== undefined && patch.baseUrl !== m.baseUrl
-      return { ...m, ...patch, ...(changedModel && m.pricing.maxCost !== undefined ? { pricing: { ...m.pricing, inputPerMillion: '', outputPerMillion: '' } } : {}) }
+      const changedModel = patch.model !== undefined && patch.model !== m.model || patch.baseUrl !== undefined && patch.baseUrl !== m.baseUrl || patch.protocol !== undefined && patch.protocol !== m.protocol
+      return { ...m, ...patch, ...(patch.protocol !== undefined ? { reasoningEffort: undefined, disableThinking: false } : {}), ...(changedModel && m.pricing.maxCost !== undefined ? { pricing: { ...m.pricing, inputPerMillion: '', outputPerMillion: '' } } : {}) }
     }) }); setDirty(true); setNotice('')
   }
   async function save() {
@@ -69,7 +69,14 @@ export function Settings({ api, onBack, onGuardChange }: { api: Api; onBack: () 
     const pendingKeys = Object.fromEntries(Object.entries(keys).filter(([, value]) => value !== ''))
     if (Object.keys(pendingKeys).length > 4) { setError('一次最多更新 4 个连接的密钥，请分次保存。'); return }
     lock.current = true; setBusy(true); setError(''); setNotice(''); setKeys({})
-    try { const v = await api.saveSettings({ ...data, extensions }, pendingKeys); if (alive.current) { apply(v); setNotice('设置已保存，将用于后续新任务。') } }
+    try { const v = await api.saveSettings({ ...data, extensions }, pendingKeys); if (alive.current) { apply(v); setNotice('设置已保存，将用于后续新消息。') } }
+    catch (e) { if (alive.current) setError(message(e)) }
+    finally { lock.current = false; if (alive.current) setBusy(false) }
+  }
+  async function checkSaved(model: ModelConnection) {
+    if (lock.current || dirty) return
+    lock.current = true; setBusy(true); setError(''); setNotice('')
+    try { await api.checkModel(model.id); if (alive.current) setNotice(model.label + '：本地配置有效、密钥可读取。未连接服务，未发送模型请求。') }
     catch (e) { if (alive.current) setError(message(e)) }
     finally { lock.current = false; if (alive.current) setBusy(false) }
   }
@@ -86,20 +93,29 @@ export function Settings({ api, onBack, onGuardChange }: { api: Api; onBack: () 
             const id = `model-${crypto.randomUUID().slice(0, 8)}`
             setData({ ...data, models: [...data.models, { id, label: '新连接', baseUrl: 'https://api.deepseek.com', model: '', apiKeyEnv: 'JHARNESS_API_KEY', keyConfigured: false, pricing: {}, disableThinking: false }] }); setEditing(id); setDirty(true)
           }}>添加连接</Button></div>
-          {data.models.map(m => <button className={`settings-connection ${m.id === editing ? 'selected' : ''}`} key={m.id} disabled={busy} onClick={() => setEditing(m.id)}><span>{m.label}</span><small>{m.model || '尚未填写模型'}</small>{m.id === data.selected && <Tag>默认</Tag>}</button>)}
+          {data.models.map(m => <button className={`settings-connection ${m.id === editing ? 'selected' : ''}`} key={m.id} disabled={busy} onClick={() => { setEditing(m.id); setNotice(''); setError('') }}><span>{m.label}</span><small>{m.model || '尚未填写模型'}</small>{m.id === data.selected && <Tag>默认</Tag>}</button>)}
         </div>{model && <fieldset className="connection-editor" disabled={busy}>
           <label>连接名称<Input value={model.label} maxLength={80} onChange={e => update({ label: e.target.value })} /></label>
-          <label>API URL<Input type="url" value={model.baseUrl} maxLength={512} onChange={e => update({ baseUrl: e.target.value })} /></label><p className="field-help">填写 OpenAI 兼容服务的基础地址，例如 https://api.deepseek.com；不要附带密钥。</p>
+          <label>API URL<Input type="url" value={model.baseUrl} maxLength={512} onChange={e => update({ baseUrl: e.target.value })} /></label><p className="field-help">填写服务基础地址（可含 /v1），不要追加 /chat/completions、/responses 或 /messages；不要附带密钥。</p>
+          <label>API 协议<select aria-label="API 协议" value={model.protocol ?? 'chat-completions'} onChange={e => update({ protocol: e.target.value as ModelConnection['protocol'] })}><option value="chat-completions">Chat Completions</option><option value="responses">Responses</option><option value="anthropic">Anthropic Messages</option></select></label>
           <label>模型名称<Input value={model.model} maxLength={128} placeholder="服务端的模型 ID" onChange={e => update({ model: e.target.value })} /></label>
           <label>API Key<Input type="password" autoComplete="off" spellCheck={false} maxLength={1024} value={keys[model.id] ?? ''} disabled={data.credentialStore === 'unavailable'} placeholder={model.keyConfigured ? '已配置；留空保留原密钥' : '输入 API Key'} onChange={e => { setKeys({ ...keys, [model.id]: e.target.value }); setDirty(true) }} /></label><p className="field-help">{data.credentialStore === 'unavailable' ? '系统凭据服务暂不可用，请解锁或启动服务后重启工作台。' : `密钥保存到 ${data.credentialStore}，页面不回显原文。`} 留空使用已存密钥或下方环境变量。</p>
+          <details><summary>能力与请求限制</summary>
+            <p className="field-help">按服务实际能力填写。暂不支持图像和 Anthropic thinking；不兼容的返回会停止本轮。</p>
+            {([['contextTokens','上下文 token 上限',65536],['maxOutputTokens','最大输出 token',4096],['requestTimeoutSeconds','请求超时（秒）',90]] as const).map(([k,label,fallback]) => <label key={k}>{label}<Input type="number" min="1" value={model[k] ?? fallback} onChange={e => update({ [k]: Number(e.target.value) })} /></label>)}
+            <label className="settings-check"><input type="checkbox" checked={model.toolsSupported !== false} onChange={e => update({ toolsSupported: e.target.checked })} />支持工具调用</label>
+            <label className="settings-check"><input type="checkbox" checked={model.streamSupported === true} onChange={e => update({ streamSupported: e.target.checked, ...(!e.target.checked ? { streaming: false } : {}) })} />服务支持流式响应</label>
+            <label className="settings-check"><input type="checkbox" checked={model.streaming === true} disabled={!model.streamSupported} onChange={e => update({ streaming: e.target.checked })} />使用流式响应</label>
+            {model.protocol === 'responses' && <label>推理强度<select aria-label="推理强度" value={model.reasoningEffort ?? ''} onChange={e => update({ reasoningEffort: e.target.value || undefined })}><option value="">服务默认</option>{['none','low','medium','high'].map(v => <option key={v}>{v}</option>)}</select></label>}
+          </details>
           <details><summary>环境变量与费用限制</summary><label>备用密钥环境变量<Input value={model.apiKeyEnv} maxLength={128} onChange={e => update({ apiKeyEnv: e.target.value })} /></label>
-            <label className="settings-check"><input type="checkbox" checked={model.disableThinking} onChange={e => update({ disableThinking: e.target.checked })} />发送 thinking: disabled（仅服务支持时）</label>
+            {model.protocol !== 'responses' && <label className="settings-check"><input type="checkbox" checked={model.disableThinking} onChange={e => update({ disableThinking: e.target.checked })} />发送 thinking: disabled（仅服务支持时）</label>}
             <p className="field-help">价格需由你核实。切换服务或模型时，请同步修改价格。未启用费用上限时，仍受任务步数和时限约束。</p>
             <label className="settings-check"><input type="checkbox" checked={model.pricing.maxCost !== undefined} onChange={e => update({ pricing: e.target.checked ? { currency: 'USD', maxCost: '1', inputPerMillion: '', outputPerMillion: '', inputTokenCeiling: 100000 } : {} })} />启用费用上限</label>
             {model.pricing.maxCost !== undefined && <><label>币种<select value={String(model.pricing.currency ?? 'USD')} onChange={e => update({ pricing: { ...model.pricing, currency: e.target.value } })}><option>USD</option><option>CNY</option></select></label>
               {([['maxCost', '单任务费用上限'], ['inputPerMillion', '每百万输入 token 价格'], ['outputPerMillion', '每百万输出 token 价格'], ['inputTokenCeiling', '输入 token 预留上限']] as const).map(([k, label]) => <label key={k}>{label}<Input type="number" min="0" value={String(model.pricing[k] ?? '')} onChange={e => update({ pricing: { ...model.pricing, [k]: k === 'inputTokenCeiling' ? Number(e.target.value) : e.target.value } })} /></label>)}</>}
           </details>
-          <div className="settings-actions"><Button variant="outline" disabled={model.id === data.selected} onClick={() => { setData({ ...data, selected: model.id }); setDirty(true) }}>设为默认连接</Button><Button disabled={data.models.length < 2} onClick={() => { const models = data.models.filter(m => m.id !== model.id); setData({ ...data, models, selected: data.selected === model.id ? models[0]!.id : data.selected }); setEditing(models[0]!.id); setKeys(old => { const next = { ...old }; delete next[model.id]; return next }); setDirty(true) }}>删除连接</Button></div>
+          <div className="settings-actions"><Button variant="outline" disabled={dirty || busy} onClick={() => void checkSaved(model)}>检查已保存配置</Button><Button variant="outline" disabled={model.id === data.selected} onClick={() => { setData({ ...data, selected: model.id }); setDirty(true) }}>设为默认连接</Button><Button disabled={data.models.length < 2} onClick={() => { const models = data.models.filter(m => m.id !== model.id); setData({ ...data, models, selected: data.selected === model.id ? models[0]!.id : data.selected }); setEditing(models[0]!.id); setKeys(old => { const next = { ...old }; delete next[model.id]; return next }); setDirty(true) }}>删除连接</Button></div>
         </fieldset>}</div> : tab === 'permissions' ? <div className="settings-extensions permission-settings">
           <h3>任务权限</h3><label>权限模式<select aria-label="权限模式" disabled={busy} value={data.policy} onChange={e => { setData({ ...data, policy: e.target.value as SettingsData['policy'] }); setDirty(true); setNotice('') }}>
             <option value="default">默认 · 有影响的操作逐次审批</option><option value="read-only">只读 · 拒绝写入及命令执行</option>

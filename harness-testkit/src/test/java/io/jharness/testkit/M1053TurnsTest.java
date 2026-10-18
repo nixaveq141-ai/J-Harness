@@ -26,6 +26,8 @@ class M1053TurnsTest {
     final AtomicInteger opens = new AtomicInteger();
     volatile CountDownLatch entered = new CountDownLatch(0), release = new CountDownLatch(0);
     volatile boolean uncertain;
+    boolean frozenFixture, rejectSelection;
+    final List<Map<String, Object>> selections = new CopyOnWriteArrayList<>();
     JsonlSessionRepository sessions, catalog;
 
     @BeforeEach
@@ -94,16 +96,67 @@ class M1053TurnsTest {
                                     ApiCostGuard.unavailable(),
                                     List.of());
                         });
-        return new HarnessWebServer(
-                0,
-                M10BrowserHost.TOKEN,
-                Map.of("local", profile),
-                catalog,
-                "turns",
-                new SecretRedactor(List.of("synthetic-secret")),
-                1,
-                32,
-                Duration.ofSeconds(1));
+        var originalFactory = profile.factory();
+        profile =
+                new HarnessWebServer.Profile(
+                        profile.workspaceBinding(),
+                        sessions,
+                        new HarnessWebServer.SdkFactory() {
+                            public HarnessSdk open(
+                                    String id, ApprovalService approvals, DataSanitizer sanitizer)
+                                    throws Exception {
+                                return originalFactory.open(id, approvals, sanitizer);
+                            }
+
+                            public HarnessSdk open(
+                                    String id,
+                                    ApprovalService approvals,
+                                    DataSanitizer sanitizer,
+                                    Map<String, Object> selection)
+                                    throws Exception {
+                                selections.add(selection);
+                                return open(id, approvals, sanitizer);
+                            }
+                        });
+        var server =
+                new HarnessWebServer(
+                        0,
+                        M10BrowserHost.TOKEN,
+                        Map.of("local", profile),
+                        catalog,
+                        "turns",
+                        new SecretRedactor(List.of("synthetic-secret")),
+                        1,
+                        32,
+                        Duration.ofSeconds(1));
+        if (frozenFixture)
+            server.settings(
+                    new HarnessWebServer.Settings() {
+                        public Map<String, Object> read() {
+                            return Map.of();
+                        }
+
+                        public Map<String, Object> save(Map<String, Object> value) {
+                            throw new UnsupportedOperationException();
+                        }
+
+                        public void prepareSelection(Map<String, Object> selection) {
+                            if (rejectSelection)
+                                throw new HarnessException(
+                                        "API_KEY_MISSING", "Synthetic missing original credential");
+                        }
+
+                        public Map<String, Object> capture(String id) {
+                            return Map.of(
+                                    "modelRoute",
+                                    id.isEmpty() ? "new-default" : id,
+                                    "settingsRevision",
+                                    "changed",
+                                    "resolved",
+                                    Map.of("model", "new-model"));
+                        }
+                    });
+        return server;
     }
 
     HttpResponse<String> req(HarnessWebServer host, String path, Object body) throws Exception {
@@ -378,7 +431,21 @@ class M1053TurnsTest {
                                     "kind",
                                     "message",
                                     "content",
-                                    "next")));
+                                    "next",
+                                    "selection",
+                                    frozenFixture
+                                            ? Map.of(
+                                                    "modelRoute",
+                                                    "original-model",
+                                                    "settingsRevision",
+                                                    "old",
+                                                    "resolved",
+                                                    Map.of(
+                                                            "model",
+                                                            "original-model",
+                                                            "maxCost",
+                                                            "1"))
+                                            : Map.of())));
             writer.flush();
         }
         int before = opens.get();
@@ -399,6 +466,49 @@ class M1053TurnsTest {
             settled(host, id, 2);
             assertEquals(before + 1, opens.get());
         }
+    }
+
+    @Test
+    void lostOriginalCredentialPausesQueueBeforeExecutionAndCanBeRepaired() throws Exception {
+        frozenFixture = true;
+        entered = new CountDownLatch(1);
+        release = new CountDownLatch(1);
+        try (var host = host()) {
+            String id = create(host);
+            assertTrue(entered.await(5, TimeUnit.SECONDS));
+            var receipt =
+                    Values.object(
+                            turn(host, id, "credential-pause", "next", "message")
+                                    .get("submission"));
+            rejectSelection = true;
+            release.countDown();
+            settled(host, id, 1);
+            long deadline = System.nanoTime() + Duration.ofSeconds(3).toNanos();
+            while (!inputs(host, id).getFirst().get("state").equals("PAUSED")
+                    && System.nanoTime() < deadline) Thread.sleep(10);
+            assertEquals("PAUSED", inputs(host, id).getFirst().get("state"));
+            String path = "/v1/tasks/" + id + "/turns/" + receipt.get("submissionId") + "/start";
+            var refused = req(host, path, Map.of());
+            assertEquals(400, refused.statusCode());
+            assertTrue(refused.body().contains("API_KEY_MISSING"));
+            assertEquals(1, opens.get());
+            assertEquals("FINISHED", data(req(host, "/v1/tasks/" + id, null)).get("phase"));
+            rejectSelection = false;
+            data(req(host, path, Map.of()));
+            settled(host, id, 2);
+            assertEquals(2, opens.get());
+        } finally {
+            release.countDown();
+        }
+    }
+
+    @Test
+    void pausedModelSnapshotReachesFactoryAfterRestartDespiteChangedDefault() throws Exception {
+        frozenFixture = true;
+        restartLeavesAcceptedQueuePausedAndRequiresExplicitStart();
+        assertEquals("original-model", selections.getLast().get("modelRoute"));
+        assertEquals("old", selections.getLast().get("settingsRevision"));
+        assertEquals("1", Values.object(selections.getLast().get("resolved")).get("maxCost"));
     }
 
     @Test

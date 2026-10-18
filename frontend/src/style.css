@@ -218,3 +218,10 @@ button { background: transparent; border: 0; }
 .turn-queue li small { display: block; color: var(--dsw-alias-label-secondary); }.turn-pending { font-size: 12px; }
 
 .turn-queue li > span { min-width: 0; overflow-wrap: anywhere; }
+
+/* Inherit the existing composer controls; long model names remain within the viewport. */
+.composer-toolbar { flex-wrap: wrap; gap: 8px; }
+.model-picker { display: flex; align-items: center; gap: 6px; min-width: 0; max-width: 100%; font-size: 12px; }
+.model-picker select { min-width: 0; max-width: 280px; color: inherit; background: var(--dsw-alias-bg-layer-3); border: 1px solid var(--dsw-alias-border-l3); border-radius: 6px; padding: 5px; text-overflow: ellipsis; }
+.turn-heading > span { overflow-wrap: anywhere; }
+@media (max-width: 760px) { .model-picker { width: 100%; }.model-picker select { flex: 1; max-width: 100%; }.turn-heading > span { width: 100%; } }

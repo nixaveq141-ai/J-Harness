@@ -227,6 +227,8 @@ public final class DefaultAgentLoop implements AgentLoop {
                 Map<String, Object> assistant = new LinkedHashMap<>();
                 assistant.put("role", "assistant");
                 assistant.put("content", response.text());
+                if (!response.providerState().isEmpty())
+                    assistant.put("provider_state", response.providerState());
                 if (!response.toolCalls().isEmpty())
                     assistant.put(
                             "tool_calls",
@@ -434,6 +436,13 @@ public final class DefaultAgentLoop implements AgentLoop {
     }
 
     private ChatRequest clean(ChatRequest request) {
+        for (var message : request.messages())
+            if (message.containsKey("provider_state")) {
+                var state = Values.object(message.get("provider_state"));
+                if (!state.equals(runtime.sanitizer().sanitize(state)))
+                    throw new HarnessException(
+                            "MODEL_STATE_UNSAFE", "Provider state cannot be redacted safely");
+            }
         return new ChatRequest(
                 request.messages().stream().map(runtime.sanitizer()::sanitize).toList(),
                 request.tools().stream().map(runtime.sanitizer()::sanitize).toList(),
@@ -442,6 +451,10 @@ public final class DefaultAgentLoop implements AgentLoop {
 
     private ChatResponse clean(ChatResponse response) {
         Map<String, Object> text = runtime.sanitizer().sanitize(Map.of("text", response.text()));
+        if (!response.providerState()
+                .equals(runtime.sanitizer().sanitize(response.providerState())))
+            throw new HarnessException(
+                    "MODEL_STATE_UNSAFE", "Provider state cannot be redacted safely");
         return new ChatResponse(
                 (String) text.get("text"),
                 response.toolCalls().stream()
@@ -461,7 +474,8 @@ public final class DefaultAgentLoop implements AgentLoop {
                                                 runtime.sanitizer().sanitize(call.arguments()),
                                                 call.sideEffectLevel()))
                         .toList(),
-                runtime.sanitizer().sanitize(response.usage()));
+                runtime.sanitizer().sanitize(response.usage()),
+                response.providerState());
     }
 
     private static void estimateContext(ChatRequest request, int limit) {

@@ -30,12 +30,10 @@ final class DurableTaskCatalog implements SessionWriter {
         directory = repository.directory().resolve("tasks-" + hash(id).substring(0, 24));
         var legacy = repository.openReader(id).events();
         var marker = legacy.stream().filter(e -> e.type().equals("web.catalog.version")).toList();
-        if (marker.size() > 2
-                || !marker.isEmpty()
-                        && !Integer.valueOf(2).equals(marker.getFirst().payload().get("version"))
-                || marker.size() == 2
-                        && !Integer.valueOf(3).equals(marker.getLast().payload().get("version")))
-            throw error("FUTURE_WEB_CATALOG");
+        if (marker.size() > 3) throw error("FUTURE_WEB_CATALOG");
+        for (int i = 0; i < marker.size(); i++)
+            if (!Integer.valueOf(i + 2).equals(marker.get(i).payload().get("version")))
+                throw error("FUTURE_WEB_CATALOG");
         if (!marker.isEmpty()
                 && (!Files.isDirectory(directory, LinkOption.NOFOLLOW_LINKS)
                         || !directory
@@ -95,6 +93,21 @@ final class DurableTaskCatalog implements SessionWriter {
                             Map.of(
                                     "version",
                                     3,
+                                    "backup",
+                                    backup.getFileName().toString(),
+                                    "store",
+                                    directory.getFileName().toString())));
+            owner.flush();
+        }
+        if (marker.size() < 3) {
+            Path backup = repository.backupOwned(id, owner);
+            owner.append(
+                    SessionEvent.session(
+                            id,
+                            "web.catalog.version",
+                            Map.of(
+                                    "version",
+                                    4,
                                     "backup",
                                     backup.getFileName().toString(),
                                     "store",

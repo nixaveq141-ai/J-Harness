@@ -14,6 +14,7 @@ public final class OpenAiCompatibleConfig {
     final int maxResponseBytes;
     final int rateLimitRetries;
     final ModelCapabilities capabilities;
+    final ModelProtocol protocol;
 
     public OpenAiCompatibleConfig(
             URI baseUrl,
@@ -23,6 +24,26 @@ public final class OpenAiCompatibleConfig {
             int maxResponseBytes,
             int rateLimitRetries,
             ModelCapabilities capabilities) {
+        this(
+                baseUrl,
+                model,
+                apiKey,
+                timeout,
+                maxResponseBytes,
+                rateLimitRetries,
+                capabilities,
+                ModelProtocol.CHAT_COMPLETIONS);
+    }
+
+    public OpenAiCompatibleConfig(
+            URI baseUrl,
+            String model,
+            String apiKey,
+            Duration timeout,
+            int maxResponseBytes,
+            int rateLimitRetries,
+            ModelCapabilities capabilities,
+            ModelProtocol protocol) {
         Objects.requireNonNull(baseUrl);
         String host = baseUrl.getHost();
         boolean loopback =
@@ -36,6 +57,11 @@ public final class OpenAiCompatibleConfig {
             throw new IllegalArgumentException(
                     "Use HTTPS or loopback HTTP without URL credentials/query/fragment");
         this.model = Values.required(model, "model");
+        if (model.length() > 128
+                || model.chars()
+                        .anyMatch(c -> Character.isISOControl(c) || Character.isWhitespace(c)))
+            throw new IllegalArgumentException("Invalid model name");
+        this.protocol = Objects.requireNonNull(protocol);
         this.apiKey = Values.required(apiKey, "apiKey");
         if (apiKey.contains("\r") || apiKey.contains("\n"))
             throw new IllegalArgumentException("Invalid API key");
@@ -46,7 +72,7 @@ public final class OpenAiCompatibleConfig {
                 || maxResponseBytes > 16 * 1024 * 1024
                 || rateLimitRetries < 0
                 || rateLimitRetries > 3) throw new IllegalArgumentException("Invalid HTTP limits");
-        this.endpoint = URI.create(baseUrl.toString().replaceAll("/+$", "") + "/chat/completions");
+        this.endpoint = URI.create(baseUrl.toString().replaceAll("/+$", "") + protocol.path);
         this.timeout = timeout;
         this.maxResponseBytes = maxResponseBytes;
         this.rateLimitRetries = rateLimitRetries;

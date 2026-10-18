@@ -41,6 +41,8 @@ public final class CliConfig {
                     "inputPerMillion",
                     "outputPerMillion",
                     "disableThinking",
+                    "protocol",
+                    "reasoningEffort",
                     "enabledPlugins",
                     "streaming",
                     "compactContext",
@@ -83,6 +85,15 @@ public final class CliConfig {
             EcosystemConfig.validate(Values.object(values.get("ecosystem")));
         for (String name : List.of("baseUrl", "model", "apiKeyEnv", "currency", "defaultProfile"))
             if (values.containsKey(name)) string(name, "");
+        ModelProtocol protocol = ModelProtocol.fromId(string("protocol", "chat-completions"));
+        if (values.containsKey("reasoningEffort")
+                && (protocol != ModelProtocol.RESPONSES
+                        || !Set.of("none", "low", "medium", "high")
+                                .contains(string("reasoningEffort", "none"))))
+            throw new HarnessException("INVALID_CONFIG", "Reasoning effort requires Responses");
+        if (protocol == ModelProtocol.RESPONSES
+                && Boolean.TRUE.equals(values.get("disableThinking")))
+            throw new HarnessException("INVALID_CONFIG", "Use reasoningEffort with Responses");
         steps();
         duration();
         requestTimeout();
@@ -106,7 +117,8 @@ public final class CliConfig {
                             Boolean.TRUE.equals(values.get("streamSupported")),
                             false,
                             false,
-                            contextTokens()));
+                            contextTokens()),
+                    ModelProtocol.fromId(string("protocol", "chat-completions")));
         if (!string("apiKeyEnv", "JHARNESS_API_KEY").matches("[A-Za-z_][A-Za-z0-9_]*"))
             throw new HarnessException("INVALID_CONFIG", "Invalid environment variable name");
         for (String flag :
@@ -237,7 +249,8 @@ public final class CliConfig {
                         Boolean.TRUE.equals(values.get("streamSupported")),
                         false,
                         false,
-                        contextTokens()));
+                        contextTokens()),
+                ModelProtocol.fromId(string("protocol", "chat-completions")));
     }
 
     Budget budget() {
@@ -270,6 +283,9 @@ public final class CliConfig {
             map.put("stream", true);
             map.put("stream_options", Map.of("include_usage", true));
         }
+        map.put("protocol", string("protocol", "chat-completions"));
+        if (values.containsKey("reasoningEffort"))
+            map.put("reasoning_effort", string("reasoningEffort", "none"));
         if (Boolean.TRUE.equals(values.get("disableThinking")))
             map.put("thinking", Map.of("type", "disabled"));
         return map;

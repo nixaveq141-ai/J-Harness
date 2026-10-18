@@ -72,7 +72,7 @@ try {
   await page.getByLabel('Skills配置', { exact: true }).fill(JSON.stringify([{ id: 'guide', directory: 'skills/guide', resources: {}, scripts: {} }], null, 2))
   await shot('plugins')
   await page.getByRole('button', { name: '保存设置', exact: true }).click()
-  await page.getByText('设置已保存，将用于后续新任务。', { exact: true }).waitFor()
+  await page.getByText('设置已保存，将用于后续新消息。', { exact: true }).waitFor()
   const saved = (await api('/v1/settings')).body
   const selected = saved.models.find(m => m.id === saved.selected)
   check('browser creates selects and persists model and plugin configuration', selected.model === 'settings-model' && selected.keyConfigured && saved.extensions.planning && saved.extensions.skills[0].id === 'guide')
@@ -100,7 +100,7 @@ try {
   await page.getByRole('tab', { name: '权限', exact: true }).click()
   await page.getByLabel('权限模式', { exact: true }).selectOption('read-only')
   await page.getByRole('button', { name: '保存设置', exact: true }).click()
-  await page.getByText('设置已保存，将用于后续新任务。', { exact: true }).waitFor()
+  await page.getByText('设置已保存，将用于后续新消息。', { exact: true }).waitFor()
   await shot('permissions')
   check('browser permission selection persists a bounded mode', (await api('/v1/settings')).body.policy === 'read-only' && (await api('/v1/settings', { ...saveBody((await api('/v1/settings')).body), policy: 'allow-all' })).status === 400)
   permissionProbe = true; toolSent = false
@@ -125,9 +125,9 @@ try {
   await page.setViewportSize({ width: 1440, height: 960 })
   await page.getByRole('tab', { name: '模型与连接', exact: true }).click()
   await page.getByLabel('连接名称', { exact: true }).fill('已编辑连接')
-  await page.getByRole('button', { name: '保存设置', exact: true }).click(); await page.getByText('设置已保存，将用于后续新任务。', { exact: true }).waitFor()
+  await page.getByRole('button', { name: '保存设置', exact: true }).click(); await page.getByText('设置已保存，将用于后续新消息。', { exact: true }).waitFor()
   check('existing connection edited without key resubmission', (await api('/v1/settings')).body.models.find(m => m.id === saved.selected).label === '已编辑连接')
-  await page.getByRole('button', { name: '删除连接', exact: true }).click(); await page.getByRole('button', { name: '保存设置', exact: true }).click(); await page.getByText('设置已保存，将用于后续新任务。', { exact: true }).waitFor()
+  await page.getByRole('button', { name: '删除连接', exact: true }).click(); await page.getByRole('button', { name: '保存设置', exact: true }).click(); await page.getByText('设置已保存，将用于后续新消息。', { exact: true }).waitFor()
   check('connection deletion persists and clears managed credential', (await api('/v1/settings')).body.models.length === 1 && !(await api('/v1/settings')).body.credentialCleanupPending)
   // UI-only unavailable-service state. Native availability is validated by the separate OS probe.
   await page.route('**/v1/settings', async route => {

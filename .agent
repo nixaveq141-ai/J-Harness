@@ -1,8 +1,10 @@
 # J-Harness 项目接续说明
 
-最后更新：2026-10-17（Asia/Shanghai）。根目录 AGENTS.md 引用本文件。开始实现前阅读，并以当前源码、Git 与验收记录核实日期快照。
+最后更新：2026-10-18（Asia/Shanghai）。根目录 AGENTS.md 引用本文件。开始实现前阅读，并以当前源码、Git 与验收记录核实日期快照。
 
 ## 当前接续状态
+
+- 2026-10-18 M10.5.4已完成本地验收：输入区模型/服务选择、逐消息冻结配置与原凭据暂停恢复、每连接能力/推理/费用设置、仅本地配置检查，以及Chat Completions/Responses/Anthropic文本/工具JSON+SSE已交付。最终Java358、客户端19、Chrome模型22/设置26/多轮15/历史19/诊断13/工作台28、启动器8和Windows原生7通过；284份Java/POM、最终同一JAR/UI见M10.5.4-results.json/validation.md。原生worker未改变，macOS/Linux/Windows三平台原生历史CI39014489141保持独立，不冒充本次三平台全量。API/SDK1.10、Web目录备份升级4、JSONL1；独立UI审查P2已修复。无付费请求、参考目录修改或推送，保留另一任务原有未提交审查文档。下一入口M10.5.5（未开始），M10.5整阶段及M11/M12未完成。
 
 - 2026-10-17 M10.5.4原生凭据增量三平台验证完成，整片仍实施中：用户明确授权本次原生凭据验证分支推送/CI，修复代码81a9dee已推送codex/m1054-native-validation，CI39014489141 Windows2022/macOS15/Ubuntu24三侧原生7项各通过，Linux缺失/锁定明确不可用；报告ZIP与GitHub摘要匹配、280份Java/POM一致。Windows由PowerShell/Add-Type改隔离JVM/JNA直调原API以修复真实runner超时，保持命名/type=1/Persist=2/UTF-8和7秒时限，旧新兼容4项通过。本机最终Java338、Chrome设置26及原生7通过；本地JAR d89e0a799e388e467703b5d5ae897462428d59b3355feefa758df10b53d26081与最终UI一致。证据见M10.5.4-native-ci-results.json/validation.md；旧native-results.json保留历史。首两轮失败及隐藏目录上传修复已记录，用户关闭占JAR宿主后干净复验通过，无强制关闭/清除用户记录。下一入口仍为M10.5.4模型选择、逐轮快照、能力及多协议（均未交付），不进入.5或M11。无付费模型请求或参考目录改动。
 
@@ -28,7 +30,7 @@
 - M0～M7 已按各阶段明确范围完成本地开发、验收与收口。M7 Windows / Linux 各 260 项测试通过，均 0 失败/错误/跳过；236 个 Java/POM SHA 一致。
 - 当前M8.1～M8.4已按契约范围收口：最终Windows/Linux容器各295项，0失败/错误/跳过；完整测试名和259个Java/POM SHA一致。七组最终JAR本地/真实Docker回归及清理通过。M8证据保留历史，不作为已修改源码的M9证明。
 - M9约定范围已完成：源码ed02da0的真实CI 38858529628三侧各305项（0失败/错误/跳过），260个Java/POM与完整测试名一致；本机同源码305项及重复打包通过。当前证据见docs/testing/M9-validation.md、M9-platform-matrix.md、M9-ci-results.json、M9-closure.md。
-- API / SDK 协议 1.9；JSONL 格式及事件 schemaVersion 为 1。
+- API / SDK 协议 1.10；JSONL 格式及事件 schemaVersion 为 1；Web目录4。
 - M7 已有本地/Docker ExecutionEnvironment、SDK、MCP stdio/HTTP JSON+SSE、受控 Skills、只读 Subagent、本机 Web API、CLI 生态配置/serve、Todo/Plan、固定来源网页抓取、单会话全文子串索引/比较/归档、环境/子任务/Web 离线核实。
 - 详细功能范围及延期见docs/requirements/upstream-capabilities.md；M8-closure.md保留历史，当前发布验证见M9-closure.md/M9-ci-results.json。部分支持与延期不计已实现；M10已有本机浏览器任务工作台，Desktop未实施。
 - 本轮使用本机 HTTP 替身/FakeLlm，没有付费模型请求；M4 DeepSeek 是独立历史证据。
