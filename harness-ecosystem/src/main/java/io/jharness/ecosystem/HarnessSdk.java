@@ -12,12 +12,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /** Embedded, single-session owner. Hosts supply trusted configuration and evidence evaluator. */
 public final class HarnessSdk implements AutoCloseable {
-    public static final String PROTOCOL_VERSION = "1.11";
+    public static final String PROTOCOL_VERSION = "1.12";
     private final PluginScope scope;
     private final SessionWriter writer;
     private final SessionReader reader;
     private final ExecutionEnvironment environment;
     private final LlmClient model;
+    private final ModelDisplayBuffer display;
     private final PolicyEngine policy;
     private final Budget budget;
     private final PluginContainer container;
@@ -131,7 +132,7 @@ public final class HarnessSdk implements AutoCloseable {
         rootBudget = options.fees() == null;
         fees = rootBudget ? new SharedFeeBudget(budget) : options.fees();
         this.environment = Objects.requireNonNull(environment);
-        this.model = Objects.requireNonNull(model);
+        Objects.requireNonNull(model);
         this.policy = Objects.requireNonNull(policy);
         this.budget = Objects.requireNonNull(budget);
         Objects.requireNonNull(completion);
@@ -141,9 +142,14 @@ public final class HarnessSdk implements AutoCloseable {
         binding.put("workspaceBinding", workspaceBinding);
         binding.put("agentId", scope.agentId());
         reader = repository.openReader(sessionId);
+        display = new ModelDisplayBuffer(scope, reader, sanitizer);
+        var displayModel = model.withDisplay(display::accept);
         writer =
                 new SanitizingSessionWriter(
                         repository.openWriter(sessionId, WriteOwnership.EXCLUSIVE), sanitizer);
+        this.model =
+                new io.jharness.llm.ObservedLlmClient(
+                        displayModel, writer, reader, sanitizer, sessionId);
         PluginContainer assembly = null;
         try {
             var events = reader.events();
@@ -227,6 +233,38 @@ public final class HarnessSdk implements AutoCloseable {
                             context.register(ToolRegistry.class, "default", tools);
                             context.register(SessionWriter.class, "default", writer);
                             context.register(SessionReader.class, "default", reader);
+                            context.register(ModelDisplay.class, "default", display);
+                            context.events()
+                                    .intercept(
+                                            StandardExtensionPoints.BEFORE_MODEL,
+                                            (request, next) -> {
+                                                display.reset();
+                                                return next.proceed(request);
+                                            },
+                                            -1000);
+                            if (environment.files() instanceof WorkspaceFiles view)
+                                context.register(
+                                        ContentInspection.class,
+                                        "default",
+                                        new WorkspaceContentInspection(
+                                                view,
+                                                artifacts,
+                                                sanitizer,
+                                                (call, toolContext) ->
+                                                        context.events()
+                                                                .invoke(
+                                                                        PolicyExtensionPoints
+                                                                                .EVALUATE,
+                                                                        policy,
+                                                                        value -> value)
+                                                                .evaluate(
+                                                                        call,
+                                                                        new ToolContext(
+                                                                                scope,
+                                                                                toolContext
+                                                                                        .cancellation())),
+                                                () -> {},
+                                                scope.sessionId()));
                             context.register(
                                     SdkHost.class,
                                     "default",
@@ -373,6 +411,14 @@ public final class HarnessSdk implements AutoCloseable {
         loop.run(token);
         writer.flush();
         return snapshot();
+    }
+
+    public ContentInspection content() {
+        return registry.requireUnique(ContentInspection.class, scope);
+    }
+
+    public ModelDisplay display() {
+        return display;
     }
 
     public UserQuestionService questions() {

@@ -34,6 +34,15 @@ public final class SecretRedactor implements DataSanitizer {
     }
 
     @Override
+    public String streamingText(String cumulative) {
+        String clean = text(cumulative);
+        int hold = secrets.stream().mapToInt(String::length).max().orElse(0),
+                end = Math.max(0, clean.length() - hold);
+        if (end > 0 && Character.isHighSurrogate(clean.charAt(end - 1))) end--;
+        return clean.substring(0, end);
+    }
+
+    @Override
     public Map<String, Object> sanitize(Map<String, Object> data) {
         Map<String, Object> result = new LinkedHashMap<>();
         data.forEach(

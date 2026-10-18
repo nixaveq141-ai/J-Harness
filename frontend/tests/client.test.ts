@@ -178,3 +178,43 @@ test('draft saves carry revision and never use answer endpoint', async () => {
   const api = new Api(token, (async (url, init) => { assert.equal(url,'/v1/tasks/task_1/questions/q1/draft'); const body = JSON.parse(String(init?.body)); assert.equal(body.revision,3); assert.equal(body.requestId,undefined); return json({ selected: ['a'], text: 'draft', revision: 4 }) }) as typeof fetch)
   assert.equal((await api.questionDraft(questionFixture as import('../src/api').UserQuestion,['a'],'draft',3)).revision,4)
 })
+
+
+test('file references and links fail closed for active protocols and traversal', async () => {
+  const {fileReference,linkTarget}=await import('../src/content.ts')
+  assert.deepEqual(fileReference('src/Main.java#L42'),{path:'src/Main.java',line:42})
+  assert.deepEqual(fileReference('src/测试.java:7'),{path:'src/测试.java',line:7})
+  for(const path of ['../secret.txt','/etc/passwd','C:/secret.txt','javascript:alert(1)','data:text/html,x','file:///x','src/a.ts?x'])
+    assert.equal(linkTarget(path),'blocked',path)
+  assert.equal(linkTarget('https://example.test/docs'),'external')
+  assert.equal(linkTarget('https://user:secret@example.test/docs'),'blocked')
+})
+test('content pages reject missing sanitization, zero progress and overlong pages',async()=>{
+  const {contentPage}=await import('../src/api.ts')
+  const valid={text:'abc',offset:0,nextOffset:3,more:false,totalCharacters:3,contentSha256:'a'.repeat(64),startLine:1,source:'recorded-event',sanitized:true}
+  assert.equal(contentPage(valid).text,'abc')
+  for(const value of [{...valid,sanitized:false},{...valid,nextOffset:4},{...valid,text:'',nextOffset:0,more:true},{...valid,text:'x'.repeat(16385),nextOffset:16385,totalCharacters:16385}])
+    assert.throws(()=>contentPage(value),ApiError)
+})
+test('inspection is scoped GET and rejects source or session substitution',async()=>{
+  const calls: {path:string;init:RequestInit}[]=[]
+  const sample={text:'abc',offset:0,nextOffset:3,more:false,totalCharacters:3,contentSha256:'a'.repeat(64),startLine:1,source:'recorded-event',sanitized:true,sessionId:'task_1',eventId:'event_1'}
+  let body=sample
+  const api=new Api(token,(async(path,init)=>{calls.push({path:String(path),init:init!});return json(body)}) as typeof fetch)
+  assert.equal((await api.content('task_1','content','event_1')).text,'abc')
+  assert.equal(calls[0].init.method,'GET');assert.equal(calls[0].init.body,undefined)
+  body={...sample,sessionId:'other'};await assert.rejects(api.content('task_1','content','event_1'),ApiError)
+})
+test('temporary display rejects oversized content and cross-session responses',async()=>{
+  let body={sessionId:'task_1',source:'temporary-model-stream',state:'STREAMING',text:'pending',sourceEvent:'event_1',truncated:false}
+  const api=new Api(token,(async()=>json(body)) as typeof fetch)
+  assert.equal((await api.display('task_1')).state,'STREAMING')
+  body={...body,text:'x'.repeat(65537)};await assert.rejects(api.display('task_1'),ApiError)
+  body={...body,text:'',sessionId:'other'};await assert.rejects(api.display('task_1'),ApiError)
+})
+
+test('tool projection association includes the turn even for imported duplicate ids',async()=>{
+  const {toolAssociation}=await import('../src/content.ts')
+  assert.notEqual(toolAssociation({turnId:'first',callId:'same'}),toolAssociation({turnId:'second',callId:'same'}))
+  assert.equal(toolAssociation({callId:'legacy'}),':legacy')
+})

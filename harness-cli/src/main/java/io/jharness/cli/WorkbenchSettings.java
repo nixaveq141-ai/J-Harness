@@ -112,6 +112,11 @@ final class WorkbenchSettings implements HarnessWebServer.Settings, DataSanitize
     }
 
     @Override
+    public String streamingText(String cumulative) {
+        return new SecretRedactor(List.copyOf(secrets)).streamingText(cumulative);
+    }
+
+    @Override
     public Map<String, Object> sanitize(Map<String, Object> value) {
         return new SecretRedactor(List.copyOf(secrets)).sanitize(value);
     }

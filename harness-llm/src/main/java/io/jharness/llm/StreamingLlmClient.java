@@ -10,12 +10,26 @@ public final class StreamingLlmClient implements LlmClient, ModelRouter {
     private final Consumer<String> display;
     private final SecretRedactor redactor;
     private final int hold;
+    private final List<String> secrets;
 
     public StreamingLlmClient(LlmClient delegate, Consumer<String> display, List<String> secrets) {
         this.delegate = Objects.requireNonNull(delegate);
         this.display = Objects.requireNonNull(display);
+        this.secrets = List.copyOf(secrets);
         redactor = new SecretRedactor(secrets);
         hold = secrets.stream().filter(Objects::nonNull).mapToInt(String::length).max().orElse(0);
+    }
+
+    @Override
+    public LlmClient withDisplay(Consumer<String> observer) {
+        Objects.requireNonNull(observer);
+        return new StreamingLlmClient(
+                delegate,
+                text -> {
+                    display.accept(text);
+                    observer.accept(text);
+                },
+                secrets);
     }
 
     @Override

@@ -4,6 +4,11 @@ public interface LlmClient extends AutoCloseable {
     @Override
     default void close() {}
 
+    /** Optional independent host display observer; callback snapshots are never execution facts. */
+    default LlmClient withDisplay(java.util.function.Consumer<String> display) {
+        return this;
+    }
+
     ModelCapabilities capabilities();
 
     PreparedRequest prepare(ChatRequest request);

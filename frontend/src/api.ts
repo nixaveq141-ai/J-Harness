@@ -5,7 +5,7 @@ export interface Task {
   name: string; pinned: boolean; archived: boolean; revision: string; createdAt: string
 }
 export interface SessionEvent {
-  eventId: string; type: string; timestamp: string; callId?: string | null
+  eventId: string; type: string; timestamp: string; callId?: string | null; turnId?:string|null; stepId?:string|null
   payload: Record<string, unknown>
 }
 export interface Page { events: SessionEvent[]; next: string; more: boolean }
@@ -71,7 +71,7 @@ export function userQuestion(value: unknown): UserQuestion {
 export class ApiError extends Error {
   constructor(public code: string, public status = 0) { super(code) }
 }
-const errors = new Set(['DRAFT_CONFLICT','QUESTION_ASSOCIATION_MISMATCH','QUESTION_NOT_FOUND','QUESTION_CLOSED','ANSWER_CONFLICT','INVALID_ANSWER','INVALID_QUESTION','UNAUTHORIZED', 'LOCAL_CLIENT_REQUIRED', 'UNKNOWN_CURSOR', 'STREAM_LIMIT',
+const errors = new Set(['INSPECTION_UNAVAILABLE','INSPECTION_DENIED','PATH_DENIED','FILE_NOT_FOUND','FILE_LIMIT','FILE_CONFLICT','CONTENT_CHANGED','INVALID_RANGE','BINARY_FILE','UNSUPPORTED_ENCODING','ARTIFACT_NOT_FOUND','ARTIFACT_CORRUPT','ARTIFACT_DENIED','DRAFT_CONFLICT','QUESTION_ASSOCIATION_MISMATCH','QUESTION_NOT_FOUND','QUESTION_CLOSED','ANSWER_CONFLICT','INVALID_ANSWER','INVALID_QUESTION','UNAUTHORIZED', 'LOCAL_CLIENT_REQUIRED', 'UNKNOWN_CURSOR', 'STREAM_LIMIT',
   'STALE_APPROVAL', 'WORKSPACE_BUSY', 'TASK_LIMIT', 'ACTIVE_LIMIT', 'SUBMISSION_NOT_FOUND',
   'SUBMISSION_NOT_CONFIRMED', 'REQUEST_ID_CONFLICT', 'DIFF_NOT_RECORDED', 'RESPONSE_LIMIT', 'NOT_FOUND',
   'UNKNOWN_MODEL', 'MODEL_SELECTION_REQUIRED', 'QUEUE_LIMIT', 'QUEUE_PAUSED', 'QUEUE_ORDER_CONFLICT', 'SUBMISSION_ALREADY_STARTED', 'SESSION_ARCHIVED', 'SETTINGS_CONFLICT', 'INVALID_SETTINGS', 'SECRET_CONFIG', 'CREDENTIAL_STORE_UNAVAILABLE', 'API_KEY_MISSING', 'INVALID_CONFIG', 'COST_BUDGET_UNAVAILABLE', 'SESSION_CONFLICT', 'RECOVERY_REQUIRED', 'EXPORT_LIMIT', 'FORK_UNAVAILABLE', 'WORKSPACE_PATH_DENIED', 'WORKSPACE_OWNER_MISMATCH', 'WORKSPACE_EXISTS', 'WORKSPACE_LIMIT', 'SESSION_ALREADY_OWNED', 'SESSION_BUSY', 'INVALID_WORKSPACE_NAME', 'WEB_HISTORY_QUOTA'])
@@ -99,7 +99,7 @@ export function task(value: unknown): Task {
 function event(value: unknown): SessionEvent {
   const v = object(value)
   return { eventId: identifier(v.eventId), type: text(v.type, 128), timestamp: text(v.timestamp),
-    callId: v.callId == null ? null : text(v.callId), payload: object(v.payload) }
+    callId: v.callId == null ? null : text(v.callId), ...(v.turnId===undefined?{}:{turnId:v.turnId===null?null:identifier(v.turnId)}),...(v.stepId===undefined?{}:{stepId:v.stepId===null?null:identifier(v.stepId)}), payload: object(v.payload) }
 }
 function page(value: unknown): Page {
   const v = object(value)
@@ -113,6 +113,32 @@ export function mergeEvents(old: SessionEvent[], incoming: SessionEvent[]): Sess
 export const isTerminal = (t: Task) => ['FINISHED', 'UNKNOWN', 'VERIFIED'].includes(t.phase)
 export const uncertain = (t: Task) => t.phase !== 'VERIFIED' && (t.phase === 'UNKNOWN' || t.status === 'UNKNOWN')
 export class Api {
+  async display(id:string,signal?:AbortSignal) {
+    const v=object(await this.json('/v1/tasks/'+identifier(id)+'/display',undefined,signal))
+    if(v.sessionId!==id||v.source!=='temporary-model-stream'||!['IDLE','UNAVAILABLE','STREAMING','INTERRUPTED','PERSISTED'].includes(String(v.state)))throw new ApiError('INVALID_RESPONSE')
+    return {state:text(v.state),text:text(v.text,65536),sourceEvent:v.sourceEvent===undefined?'':text(v.sourceEvent,64),truncated:v.truncated===true}
+  }
+  async files(id:string,path='.',signal?:AbortSignal) {
+    const v=object(await this.json('/v1/tasks/'+identifier(id)+'/files?path='+encodedPath(path),undefined,signal))
+    if(v.source!=='current-workspace'||!Array.isArray(v.entries)||v.entries.length>200||typeof v.truncated!=='boolean')throw new ApiError('INVALID_RESPONSE')
+    return {entries:v.entries.map(raw=>{const e=object(raw);if(!['file','directory'].includes(String(e.type)))throw new ApiError('INVALID_RESPONSE');return {path:text(e.path,512),type:String(e.type)}}),truncated:v.truncated}
+  }
+  async content(id:string,kind:'file'|'artifacts'|'content',target:string,offset=0,version='',line=0,signal?:AbortSignal):Promise<ContentPage> {
+    if(!Number.isSafeInteger(offset)||offset<0||offset>8388608||!Number.isSafeInteger(line)||line<0)throw new ApiError('INVALID_RESPONSE')
+    if(kind==='artifacts'&&!/^[0-9a-f-]{36}-[a-f0-9]{64}$/.test(target))throw new ApiError('INVALID_RESPONSE')
+    if(version&&!/^[a-f0-9]{64}$/.test(version))throw new ApiError('INVALID_RESPONSE')
+    const path='/v1/tasks/'+identifier(id)+'/'+kind+(kind==='file'?'?path='+encodedPath(target)+'&line='+line:'/'+(kind==='content'?identifier(target):target)+'?')+'&offset='+offset+(version?'&version='+version:'')
+    const v=contentPage(await this.json(path.replace('?&','?'),undefined,signal))
+    if(kind==='file'&&(v.source!=='current-workspace'||v.path!==target||!/^[a-f0-9]{64}$/.test(String(v.fileVersion)))||kind==='artifacts'&&v.source!=='recorded-artifact'||kind==='content'&&v.source!=='recorded-event')throw new ApiError('INVALID_RESPONSE')
+    if(kind!=='file'&&v.sessionId!==id||kind==='artifacts'&&v.artifactId!==target||kind==='content'&&v.eventId!==target)throw new ApiError('INVALID_RESPONSE')
+    if(v.offset!==offset&&!line||version&&(kind==='file'?v.fileVersion:v.contentSha256)!==version)throw new ApiError('INVALID_RESPONSE')
+    return v
+  }
+  async artifacts(id:string,signal?:AbortSignal) {
+    const v=object(await this.json('/v1/tasks/'+identifier(id)+'/artifacts',undefined,signal))
+    if(v.sessionId!==id||!Array.isArray(v.artifacts)||v.artifacts.length>64||typeof v.limited!=='boolean')throw new ApiError('INVALID_RESPONSE')
+    return {artifacts:v.artifacts.map(raw=>{const a=object(raw),id=text(a.id,101);if(!/^[0-9a-f-]{36}-[a-f0-9]{64}$/.test(id)||a.sha256!==id.slice(37))throw new ApiError('INVALID_RESPONSE');return{id,sha256:String(a.sha256)}}),limited:v.limited}
+  }
   async questions(id: string) { return (await this.questionPage(id)).questions }
   async questionPage(id: string, offset = 0) {
     if (!Number.isInteger(offset) || offset<0 || offset>64) throw new ApiError('INVALID_RESPONSE')
@@ -326,4 +352,18 @@ function diagnosis(value: unknown): Diagnosis {
     association: object(v.association), configuration: object(v.configuration), turnIds: ids(v.turnIds),
     issues: v.issues.map(object), issuesLimited: v.issuesLimited, sdkFactsSettled: v.sdkFactsSettled,
     pending: { uncertainCalls: ids(p.uncertainCalls), unsettledCalls: ids(p.unsettledCalls), pendingRequests: ids(p.pendingRequests), pendingTerminals: ids(p.pendingTerminals), limited: p.limited } }
+}
+
+function encodedPath(path:string) {if(!path||path.length>512)throw new ApiError('INVALID_RESPONSE');return btoa(String.fromCharCode(...new TextEncoder().encode(path))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
+export interface ContentPage {
+  text:string;offset:number;nextOffset:number;more:boolean;totalCharacters:number;contentSha256:string;startLine:number
+  source:string;sanitized:true;sessionId?:string;eventId?:string;artifactId?:string;artifactSha256?:string;path?:string;readAt?:string;fileVersion?:string
+}
+export function contentPage(value:unknown):ContentPage {
+  const v=object(value)
+  if(v.sanitized!==true||typeof v.more!=='boolean'||!['current-workspace','recorded-artifact','recorded-event'].includes(String(v.source))||!Number.isSafeInteger(v.startLine)||(v.startLine as number)<1)throw new ApiError('INVALID_RESPONSE')
+  for(const k of ['offset','nextOffset','totalCharacters'])if(!Number.isSafeInteger(v[k])||(v[k] as number)<0||(v[k] as number)>8388608)throw new ApiError('INVALID_RESPONSE')
+  const body=text(v.text,16384)
+  if((v.nextOffset as number)!==(v.offset as number)+body.length||(v.nextOffset as number)>(v.totalCharacters as number)||v.more!==((v.nextOffset as number)<(v.totalCharacters as number))||v.more&&body.length===0||!/^[a-f0-9]{64}$/.test(String(v.contentSha256)))throw new ApiError('INVALID_RESPONSE')
+  return {...v,text:body} as unknown as ContentPage
 }

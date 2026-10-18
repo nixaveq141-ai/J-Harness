@@ -200,7 +200,16 @@ public final class M10BrowserHost implements AutoCloseable {
                                                     new SecretRedactor(
                                                             List.of(
                                                                     "fixture-secret-do-not-display")))
-                                            .copyScope(source, target)));
+                                            .copyScope(source, target),
+                            new WorkspaceContentInspection(
+                                    new io.jharness.workspace.LocalWorkspace(workspace),
+                                    new LocalArtifactStore(
+                                            root.resolve(name + "-artifacts"),
+                                            new SecretRedactor(
+                                                    List.of("fixture-secret-do-not-display"))),
+                                    new SecretRedactor(List.of("fixture-secret-do-not-display")),
+                                    new DefaultPolicyEngine(),
+                                    () -> {})));
         }
         server =
                 new HarnessWebServer(

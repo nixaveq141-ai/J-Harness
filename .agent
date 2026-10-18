@@ -4,6 +4,8 @@
 
 ## 当前接续状态
 
+- 2026-10-18 M10.5.6已完成本地验收：对话优先、安全Markdown/代码复制、工具与实际变更卡、临时流式显示、真实耗时/用量及结束摘要、注册本机根文件树/行号/版本预览、会话产物和大事件分页/下载已交付。临时文本完整脱敏并有界，停止显示/刷新不重放，重启不恢复临时字节；记录Diff与当前文件明确区分。最终Java388、客户端27、Chrome194（展示45/提问26/模型22/设置26/多轮15/历史19/诊断13/基础28）、启动器8、Windows原生7通过，独立UI终审通过；295份Java/POM及同一最终JAR/UI见M10.5.6-results.json和validation.md。API/SDK1.12、JSONL1/Web目录4；原生worker未改，历史三平台专项证据独立保留，不冒充新全量CI。无付费请求、推送或参考项目修改；另一任务审查草稿保留。下一入口M10.5.7（未开始），M10.5整阶段及M11/M12未完成。
+
 - 2026-10-18 M10.5.5已完成本地验收：公共作用域提问服务/ask_user、单选/多选/文字回答卡、显式回答/跳过、持久关联/幂等和脱敏草稿已交付。推荐不自动提交，回答不批准工具/计划；截止/取消/总时限与重启中断不伪造答案。最终Java371、客户端22、Chrome提问26/模型22/设置26/多轮15/历史19/诊断13/工作台28、启动器8及Windows原生7通过；287份Java/POM、同一最终JAR/UI见M10.5.5-results.json/validation.md。独立UI发现的草稿卸载/乱序和历史回归发现的同级key冲突已修复，原版严格历史测试通过。API/SDK1.11、JSONL1/Web目录4；原生worker未改，历史三平台凭据CI独立保留，不冒充新三平台全量。无付费请求、推送或参考目录修改，保留另一任务审查草稿。下一入口M10.5.6（未开始），M10.5整阶段及M11/M12未完成。
 
 - 2026-10-18 M10.5.4已完成本地验收：输入区模型/服务选择、逐消息冻结配置与原凭据暂停恢复、每连接能力/推理/费用设置、仅本地配置检查，以及Chat Completions/Responses/Anthropic文本/工具JSON+SSE已交付。最终Java358、客户端19、Chrome模型22/设置26/多轮15/历史19/诊断13/工作台28、启动器8和Windows原生7通过；284份Java/POM、最终同一JAR/UI见M10.5.4-results.json/validation.md。原生worker未改变，macOS/Linux/Windows三平台原生历史CI39014489141保持独立，不冒充本次三平台全量。API/SDK1.10、Web目录备份升级4、JSONL1；独立UI审查P2已修复。无付费请求、参考目录修改或推送，保留另一任务原有未提交审查文档。下一入口M10.5.5（未开始），M10.5整阶段及M11/M12未完成。
@@ -32,7 +34,7 @@
 - M0～M7 已按各阶段明确范围完成本地开发、验收与收口。M7 Windows / Linux 各 260 项测试通过，均 0 失败/错误/跳过；236 个 Java/POM SHA 一致。
 - 当前M8.1～M8.4已按契约范围收口：最终Windows/Linux容器各295项，0失败/错误/跳过；完整测试名和259个Java/POM SHA一致。七组最终JAR本地/真实Docker回归及清理通过。M8证据保留历史，不作为已修改源码的M9证明。
 - M9约定范围已完成：源码ed02da0的真实CI 38858529628三侧各305项（0失败/错误/跳过），260个Java/POM与完整测试名一致；本机同源码305项及重复打包通过。当前证据见docs/testing/M9-validation.md、M9-platform-matrix.md、M9-ci-results.json、M9-closure.md。
-- API / SDK 协议 1.11；JSONL 格式及事件 schemaVersion 为 1；Web目录4。
+- API / SDK 协议 1.12；JSONL 格式及事件 schemaVersion 为 1；Web目录4。
 - M7 已有本地/Docker ExecutionEnvironment、SDK、MCP stdio/HTTP JSON+SSE、受控 Skills、只读 Subagent、本机 Web API、CLI 生态配置/serve、Todo/Plan、固定来源网页抓取、单会话全文子串索引/比较/归档、环境/子任务/Web 离线核实。
 - 详细功能范围及延期见docs/requirements/upstream-capabilities.md；M8-closure.md保留历史，当前发布验证见M9-closure.md/M9-ci-results.json。部分支持与延期不计已实现；M10已有本机浏览器任务工作台，Desktop未实施。
 - 本轮使用本机 HTTP 替身/FakeLlm，没有付费模型请求；M4 DeepSeek 是独立历史证据。

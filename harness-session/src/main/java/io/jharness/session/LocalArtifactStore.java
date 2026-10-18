@@ -64,6 +64,16 @@ public final class LocalArtifactStore implements ArtifactStore {
                 || limit < 1
                 || limit > 256 * 1024)
             throw new HarnessException("ARTIFACT_DENIED", "Invalid reference or page");
+        String text = readText(session, id);
+        return text.substring(
+                Math.min(offset, text.length()),
+                (int) Math.min(text.length(), (long) offset + limit));
+    }
+
+    @Override
+    public String readText(String session, String id) throws IOException {
+        if (id == null || !id.matches("[0-9a-f-]{36}-[0-9a-f]{64}"))
+            throw new HarnessException("ARTIFACT_DENIED", "Invalid reference");
         Path file = directory(session, false).resolve(id + ".txt");
         if (!Files.isRegularFile(file, LinkOption.NOFOLLOW_LINKS))
             throw new HarnessException("ARTIFACT_NOT_FOUND", "Artifact not in this scope");
@@ -73,10 +83,7 @@ public final class LocalArtifactStore implements ArtifactStore {
         }
         if (bytes.length > LIMIT || !hash(bytes).equals(id.substring(37)))
             throw new HarnessException("ARTIFACT_CORRUPT", "Artifact integrity check failed");
-        String text = new String(bytes, StandardCharsets.UTF_8);
-        return text.substring(
-                Math.min(offset, text.length()),
-                (int) Math.min(text.length(), (long) offset + limit));
+        return new String(bytes, StandardCharsets.UTF_8);
     }
 
     private static String hash(byte[] bytes) {

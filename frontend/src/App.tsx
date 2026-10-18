@@ -1,3 +1,6 @@
+import { ContentReader } from './ContentPanel'
+import { Conversation } from './Conversation'
+import { ContentPanel, type FileSelection } from './ContentPanel'
 import { Questions } from './Questions'
 import { ModelPicker } from './ModelPicker'
 import { TurnComposer } from './TurnComposer'
@@ -60,17 +63,22 @@ const eventLabels: Record<string, string> = { 'tool.requested': '请求工具', 
   'approval.decided': '审批决定', 'sdk.input.applied': '应用后续输入', 'turn.started': '开始轮次', 'turn.ended': '本轮结束',
   'assistant.message': '助手', 'user.message': '任务目标', 'config.selected': '应用可信配置',
   'tool.intent': '记录执行意图', 'tool.verified': '操作已核实', 'delivery.registered': '产物记录' }
-type Inspector = 'detail' | 'diff' | 'report' | 'search'
+type Inspector = 'detail' | 'diff' | 'report' | 'search' | 'files' | 'artifacts'
 const tabs: [SegmentedTab<Inspector>, ...SegmentedTab<Inspector>[]] = [
   { value: 'detail', label: '详情', id: 'tab-detail', panelId: 'panel-detail' },
   { value: 'diff', label: 'Diff', id: 'tab-diff', panelId: 'panel-diff' },
   { value: 'report', label: '报告', id: 'tab-report', panelId: 'panel-report' },
   { value: 'search', label: '查询', id: 'tab-search', panelId: 'panel-search' },
+  { value: 'files', label: '文件', id: 'tab-files', panelId: 'panel-files' },
+  { value: 'artifacts', label: '产物', id: 'tab-artifacts', panelId: 'panel-artifacts' },
 ]
 
 export function App() {
+  const [fileSelection,setFileSelection] = useState<FileSelection|null>(null)
+  const openFile = (path:string,line:number) => {setFileSelection({path,line,serial:Date.now()});setTab('files');setInspectorOpen(true)}
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [settingsGuard, setSettingsGuard] = useState(false), [sessionGuard, setSessionGuard] = useState(false)
+  const [inputCollapsed,setInputCollapsed] = useState(false)
   const [questionWaiting,setQuestionWaiting] = useState(false)
   const [questionGuard,setQuestionGuard] = useState(false)
   const [turnGuard, setTurnGuard] = useState(false)
@@ -132,6 +140,7 @@ export function App() {
     return () => abort.abort()
   }, [api, viewProfile, viewMode, pageCursor])
   useEffect(() => { readFailures.current = 0 }, [api, selected])
+  useEffect(()=>setFileSelection(null),[selected])
   useEffect(() => {
     const narrow = window.matchMedia('(max-width: 760px)')
     const update = () => { if (narrow.matches) setSideOpen(false) }
@@ -295,7 +304,7 @@ export function App() {
               {active && uncertain(active) && <div className="unknown-notice"><strong>结果待核实</strong><p>部分操作可能已发生，当前不能安全地自动重试。请停止旧宿主，检查实际资源，再通过 CLI 离线核实；本页面不会重放任务。</p></div>}
               {api && active && isTerminal(active) && <div ref={diagnosisAnchor} tabIndex={-1}><DiagnosisPanel key={active.taskId} api={api} task={active} refresh={historyKey} /></div>}
               {events.length === 0 && <p className="muted timeline-empty">尚无事件记录。正在读取任务状态。</p>}
-              {events.map(e => <EventRow key={e.eventId} event={e} onSelect={() => { setFocusedEvent(e); setTab('detail'); setInspectorOpen(true) }} />)}
+              {api && active && <Conversation key={'conversation-'+active.taskId} api={api} task={active} events={events} onFile={openFile} onInspect={e=>{setFocusedEvent(e);setTab('detail');setInspectorOpen(true)}} renderEvent={e=><EventRow key={e.eventId} event={e} onSelect={()=>{setFocusedEvent(e);setTab('detail');setInspectorOpen(true)}}/>}/>}
               {api && active && <Questions key={"questions-"+active.taskId} api={api} id={active.taskId} onGuard={setQuestionGuard} onWaiting={setQuestionWaiting} />}
               <div ref={listEnd} />
             </section>}
@@ -306,7 +315,7 @@ export function App() {
           {!selected && <form className="composer" onSubmit={e => void submit(e)}><textarea aria-label="任务目标" placeholder="描述你的任务…" value={goal} maxLength={16384} onChange={e => setGoal(e.target.value)} rows={3} disabled={submitting}
             onKeyDown={e => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey) && !e.nativeEvent.isComposing) { e.preventDefault(); e.currentTarget.form?.requestSubmit() } }} />
             <div className="composer-toolbar">{profiles.length > 1 && <label className="profile-picker">执行工作区 <select aria-label="任务配置" value={profile} onChange={e => setProfile(e.target.value)}>{profiles.map(p => <option key={p} value={p}>{workspaceNames[p] ?? p}</option>)}</select></label>}<ModelPicker api={api} value={modelId} onChange={setModelId} disabled={submitting || !!pending} /><span className="composer-shortcut">Ctrl / ⌘ + Enter</span><Button type="submit" variant="primary" aria-label="创建任务" disabled={!goal.trim() || !profile || submitting || !!pending}><Icon name="arrow" /></Button></div></form>}
-          {selected && api && active && <div className="turn-composer-slot" hidden={questionWaiting}><TurnComposer key={selected} api={api} task={active} onUpdated={updateTask} onHistory={() => { autoScroll.current = true }} onGuard={setTurnGuard} /></div>}
+          {selected && api && active && <div className="turn-composer-slot" hidden={questionWaiting}><Button className={"turn-read-toggle"+(inputCollapsed?" collapsed":"")} aria-expanded={!inputCollapsed} onClick={()=>setInputCollapsed(v=>!v)}>{inputCollapsed?'展开输入区':'收起输入区（保留草稿）'}</Button><div className="turn-input-body" hidden={inputCollapsed}><TurnComposer key={selected} api={api} task={active} onUpdated={updateTask} onHistory={() => { autoScroll.current = true }} onGuard={setTurnGuard} /></div></div>}
           {selected && <footer className="activity-footer"><TextShimmer active={!!active && !isTerminal(active)}>{live}</TextShimmer>{active && active.cancelRequested && <span>已请求取消，正在等待执行事实</span>}
             <div>{hasProblems && <Button onClick={() => { diagnosisAnchor.current?.scrollIntoView({ block: 'start' }); diagnosisAnchor.current?.focus({ preventScroll: true }); autoScroll.current = false }}>执行诊断</Button>}<Button onClick={() => { setError(''); setHistoryKey(k => k + 1) }}>重载历史</Button>{active && !isTerminal(active) && <Button variant="outline" icon={<Icon name="stop" />} disabled={!!busy || active.cancelRequested} onClick={() => void cancel()}>取消任务</Button>}</div></footer>}
           <div className="workspace-note">工具操作沿用工作区权限与审批 · 执行结果以记录为准</div>
@@ -314,7 +323,7 @@ export function App() {
     </main>
     {inspectorOpen && <aside className="inspector" aria-label="任务详情面板"><div className="inspector-heading"><strong>任务详情</strong><Button aria-label="关闭任务详情" onClick={() => setInspectorOpen(false)}><Icon name="close" /></Button></div>
       <SegmentedTabs items={tabs} value={tab} onChange={setTab} label="任务详情分类" />
-      <InspectorPanel key={`${selected}:${tab}:${api ? 'on' : 'off'}`} api={api} task={active} tab={tab} event={focusedEvent} />
+      <InspectorPanel key={`${selected}:${tab}:${api ? 'on' : 'off'}`} api={api} task={active} tab={tab} event={focusedEvent} fileSelection={fileSelection} onFile={openFile} />
     </aside>}
   </div>
 }
@@ -331,7 +340,7 @@ function EventRow({ event, onSelect }: { event: SessionEvent; onSelect: () => vo
     {open && <div className="event-body"><time>{event.timestamp}</time><pre>{pretty(event.payload)}</pre></div>}
   </article>
 }
-function InspectorPanel({ api, task, tab, event }: { api: Api | null; task?: Task; tab: Inspector; event: SessionEvent | null }) {
+function InspectorPanel({ api, task, tab, event, fileSelection,onFile }: { api: Api | null; task?: Task; tab: Inspector; event: SessionEvent | null; fileSelection:FileSelection|null;onFile:(path:string,line:number)=>void }) {
   const [data, setData] = useState<unknown>(null), [error, setError] = useState(''), [loading, setLoading] = useState(false)
   const [query, setQuery] = useState(''), [result, setResult] = useState<Page | null>(null)
   const mounted = useRef(true), searchLock = useRef(false)
@@ -354,22 +363,27 @@ function InspectorPanel({ api, task, tab, event }: { api: Api | null; task?: Tas
   }
   return <section className="inspector-body" role="tabpanel" id={`panel-${tab}`} aria-labelledby={`tab-${tab}`}>
     {!api || !task ? <p className="empty-detail">选择一个已连接的任务，查看执行详情。</p> : <>
+      {(tab==='files'||tab==='artifacts')&&<ContentPanel api={api} id={task.taskId} mode={tab} selection={tab==='files'?fileSelection:null}/>}
       {tab === 'detail' && <><div className="detail-label">{event ? '事件记录' : '任务状态'}</div><pre>{pretty(event ?? task)}</pre><p className="muted">点击时间线右侧的详情图标，可查看完整关联信息。</p></>}
       {tab === 'search' && <><p className="muted">查询该会话的完整脱敏事件正文；大事件返回省略标识。</p><form className="search-form" onSubmit={e => { e.preventDefault(); void search() }}><Input aria-label="查询会话内容" value={query} maxLength={256} disabled={loading} placeholder="输入事件类型或内容" onChange={e => { setQuery(e.target.value); setResult(null) }} /><Button type="submit" variant="outline" disabled={loading || !query.trim()}>查询</Button></form>
         {result && <><p className="small">已找到 {result.events.length} 条匹配记录</p>{result.events.map(e => <details key={e.eventId}><summary>{e.type}</summary><pre>{pretty(e)}</pre></details>)}{result.more && <Button disabled={loading} onClick={() => void search(true)}>加载更多匹配</Button>}</>}
       </>}
       {loading && <p role="status">正在读取…</p>}{error && <p role="status" className="inline-error">{error}</p>}
-      {data !== null && <><div className="detail-label">{tab === 'report' ? '基于已记录事件的事实报告' : '记录的 git_diff 工具结果'}</div>{tab === 'report' ? <FactReport value={data} /> : <RecordedDiff value={data} />}{tab === 'report' && <Button variant="outline" onClick={() => { const url = URL.createObjectURL(new Blob([pretty(data)], { type: 'application/json' })); const a = document.createElement('a'); a.href = url; a.download = `${task.taskId}-report.json`; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000) }}>下载事实报告</Button>}</>}
+      {data !== null && <><div className="detail-label">{tab === 'report' ? '基于已记录事件的事实报告' : '记录的 git_diff 工具结果'}</div>{tab === 'report' ? <FactReport value={data} /> : <RecordedDiff value={data} api={api} id={task.taskId} onFile={onFile} />}{tab === 'report' && <Button variant="outline" onClick={() => { const url = URL.createObjectURL(new Blob([pretty(data)], { type: 'application/json' })); const a = document.createElement('a'); a.href = url; a.download = `${task.taskId}-report.json`; a.click(); setTimeout(() => URL.revokeObjectURL(url), 1000) }}>下载事实报告</Button>}</>}
     </>}
   </section>
 }
 
 function safeObject(v: unknown): Record<string, unknown> { try { return object(v) } catch { return {} } }
-function RecordedDiff({ value }: { value: unknown }) {
+function RecordedDiff({ value,api,id,onFile }: { value: unknown;api:Api;id:string;onFile:(path:string,line:number)=>void }) {
+  const [read,setRead]=useState(false),[artifactRead,setArtifactRead]=useState(false)
   const event = safeObject(safeObject(value).event), payload = safeObject(event.payload), result = safeObject(payload.value)
   const text = typeof result.stdout === 'string' ? result.stdout : typeof result.diff === 'string' ? result.diff : typeof payload.content === 'string' ? payload.content : ''
-  return <><p className="small muted">来源：已记录的工具调用。{String(payload.status ?? '')}</p>
-    {payload.omitted === true ? <p>该事件正文已省略，无法显示完整 Diff。</p> : text ? <pre className="diff-view">{text.split('\n').map((line, i) => <span className={line.startsWith('+') ? 'diff-add' : line.startsWith('-') ? 'diff-delete' : ''} key={i}>{line}{'\n'}</span>)}</pre> : <p className="muted">工具没有返回可展示的差异正文。</p>}
+  return <><p className="small muted">当时记录的工具差异。当前文件可能已经变化，页面不会自动运行Git。{String(payload.status ?? '')}</p>
+    <div className="content-actions">{[...new Set(text.split('\n').filter(line=>line.startsWith('+++ b/')).map(line=>line.slice(6)))].slice(0,64).map(path=><Button key={path} onClick={()=>onFile(path,1)}>查看当前文件 {path}</Button>)}</div>
+    {typeof result.artifactRef==='string'&&<><Button onClick={()=>setArtifactRead(v=>!v)}>读取Diff产物</Button>{artifactRead&&<ContentReader api={api} id={id} kind="artifacts" target={result.artifactRef}/>}</>}
+    {payload.omitted===true && typeof event.eventId==='string'&&<><Button onClick={()=>setRead(v=>!v)}>回读记录的Diff正文</Button>{read&&<ContentReader api={api} id={id} kind="content" target={event.eventId}/>}</>}
+    {payload.omitted === true ? <p>大Diff按源事件分页读取，不代表当前工作区状态。</p> : text ? <pre className="diff-view">{text.split('\n').map((line, i) => <span className={line.startsWith('+') ? 'diff-add' : line.startsWith('-') ? 'diff-delete' : ''} key={i}>{line}{'\n'}</span>)}</pre> : <p className="muted">工具没有返回可展示的差异正文。</p>}
     <details><summary>查看原始记录与关联</summary><pre>{pretty(value)}</pre></details></>
 }
 function FactReport({ value }: { value: unknown }) {

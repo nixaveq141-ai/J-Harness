@@ -375,7 +375,30 @@ final class EcosystemCli {
                                             new LocalArtifactStore(
                                                             targetMetadata.directory("artifacts"),
                                                             settings)
-                                                    .copyScope(source, target));
+                                                    .copyScope(source, target),
+                                    new WorkspaceContentInspection(
+                                            new io.jharness.workspace.LocalWorkspace(
+                                                    root, config.searchFilter()),
+                                            new LocalArtifactStore(
+                                                    targetMetadata.directory("artifacts"),
+                                                    settings),
+                                            DataSanitizer.chain(
+                                                    new SecretRedactor(secrets), settings),
+                                            new DefaultPolicyEngine(),
+                                            () -> {
+                                                checked.verify();
+                                                if (!EcosystemConfig.text(
+                                                                Values.object(
+                                                                        ecosystem.getOrDefault(
+                                                                                "environment",
+                                                                                Map.of())),
+                                                                "kind",
+                                                                "local")
+                                                        .equals("local"))
+                                                    throw new HarnessException(
+                                                            "INSPECTION_UNAVAILABLE",
+                                                            "No host fallback for nonlocal environments");
+                                            }));
                         });
         try (var server =
                         new HarnessWebServer(
@@ -384,9 +407,7 @@ final class EcosystemCli {
                                 workspaces.profiles(),
                                 new JsonlSessionRepository(metadata.directory("web")),
                                 EcosystemConfig.text(web, "catalogId", "web-catalog"),
-                                data ->
-                                        settings.sanitize(
-                                                new SecretRedactor(secrets).sanitize(data)),
+                                DataSanitizer.chain(new SecretRedactor(secrets), settings),
                                 1,
                                 EcosystemConfig.number(web, "maxTasks", 32, 32),
                                 Duration.ofSeconds(

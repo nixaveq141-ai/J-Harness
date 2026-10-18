@@ -81,9 +81,18 @@ public final class HarnessWebServer implements AutoCloseable {
             String workspaceBinding,
             SessionRepository sessions,
             SdkFactory factory,
-            ForkArtifacts artifacts) {
+            ForkArtifacts artifacts,
+            ContentInspection content) {
         public Profile(String workspaceBinding, SessionRepository sessions, SdkFactory factory) {
-            this(workspaceBinding, sessions, factory, null);
+            this(workspaceBinding, sessions, factory, null, null);
+        }
+
+        public Profile(
+                String binding,
+                SessionRepository sessions,
+                SdkFactory factory,
+                ForkArtifacts artifacts) {
+            this(binding, sessions, factory, artifacts, null);
         }
 
         public Profile {
@@ -154,7 +163,7 @@ public final class HarnessWebServer implements AutoCloseable {
         this.approvalTimeout = approvalTimeout;
         credential = digest(bearerToken);
         var redactor = new SecretRedactor(List.of(bearerToken, browserToken));
-        this.sanitizer = data -> redactor.sanitize(sanitizer.sanitize(data));
+        this.sanitizer = DataSanitizer.chain(sanitizer, redactor);
         var owner = catalogRepository.openWriter(catalogId, WriteOwnership.EXCLUSIVE);
         try {
             diskCatalog =
@@ -761,6 +770,9 @@ public final class HarnessWebServer implements AutoCloseable {
                 response = summary(task);
             }
             respond(exchange, 200, response);
+        } else if (path.length >= 5
+                && Set.of("files", "file", "artifacts", "content", "display").contains(path[4])) {
+            contentRoute(exchange, task, path, method, query);
         } else if (path.length >= 5 && path[4].equals("questions")) {
             questionRoute(exchange, task, path, method, query);
         } else if (path.length >= 5 && path[4].equals("turns")) {
@@ -1052,6 +1064,184 @@ public final class HarnessWebServer implements AutoCloseable {
             }
             respond(exchange, 200, Map.of("accepted", true));
         } else throw fault(405, "METHOD_OR_QUERY_NOT_ALLOWED");
+    }
+
+    private static int contentNumber(Map<String, String> query, String key, int fallback) {
+        try {
+            return Integer.parseInt(query.getOrDefault(key, Integer.toString(fallback)));
+        } catch (NumberFormatException bad) {
+            throw fault(400, "INVALID_QUERY");
+        }
+    }
+
+    private static String contentPath(Map<String, String> query) {
+        try {
+            String value = query.getOrDefault("path", "Lg");
+            byte[] bytes = Base64.getUrlDecoder().decode(value);
+            if (!Base64.getUrlEncoder().withoutPadding().encodeToString(bytes).equals(value))
+                throw new IllegalArgumentException();
+            return StandardCharsets.UTF_8
+                    .newDecoder()
+                    .onMalformedInput(java.nio.charset.CodingErrorAction.REPORT)
+                    .decode(java.nio.ByteBuffer.wrap(bytes))
+                    .toString();
+        } catch (IllegalArgumentException | java.nio.charset.CharacterCodingException bad) {
+            throw fault(400, "INVALID_QUERY");
+        }
+    }
+
+    private static void references(Object value, Set<String> ids) {
+        if (value instanceof Map<?, ?> map)
+            for (var entry : map.entrySet()) {
+                Object child = entry.getValue();
+                if (Set.of("artifactRef", "artifactId", "id").contains(entry.getKey())
+                        && child instanceof String text
+                        && text.matches("[0-9a-f-]{36}-[0-9a-f]{64}")) {
+                    if (ids.size() < 64) ids.add(text);
+                } else references(child, ids);
+            }
+        else if (value instanceof List<?> list) for (Object item : list) references(item, ids);
+    }
+
+    private Set<String> artifactReferences(Task task) {
+        Set<String> ids = new LinkedHashSet<>();
+        for (var e : events(task))
+            if (Set.of(
+                            "tool.completed",
+                            "delivery.registered",
+                            "artifact.created",
+                            "terminal.snapshot",
+                            "environment.closed")
+                    .contains(e.type())) references(e.payload(), ids);
+        return ids;
+    }
+
+    private void contentRoute(
+            HttpExchange exchange,
+            Task task,
+            String[] path,
+            String method,
+            Map<String, String> query)
+            throws IOException {
+        if (!method.equals("GET")) throw fault(405, "METHOD_NOT_ALLOWED");
+        if (!Set.of("path", "offset", "line", "version").containsAll(query.keySet()))
+            throw fault(400, "INVALID_QUERY");
+        try {
+            var provider = profiles.get(task.profile).content();
+            Map<String, Object> out;
+            switch (path[4]) {
+                case "display" -> {
+                    if (path.length != 5 || !query.isEmpty()) throw fault(400, "INVALID_QUERY");
+                    HarnessSdk sdk;
+                    Map<String, Object> last;
+                    synchronized (this) {
+                        sdk = task.sdk;
+                        last = task.display;
+                    }
+                    out = sdk == null ? last : sdk.display().snapshot();
+                    if (out.isEmpty())
+                        out =
+                                Map.of(
+                                        "sessionId",
+                                        task.id,
+                                        "state",
+                                        "UNAVAILABLE",
+                                        "source",
+                                        "temporary-model-stream",
+                                        "text",
+                                        "");
+                }
+                case "files" -> {
+                    if (path.length != 5 || !Set.of("path").containsAll(query.keySet()))
+                        throw fault(400, "INVALID_QUERY");
+                    if (provider == null) throw fault(404, "INSPECTION_UNAVAILABLE");
+                    out = provider.list(contentPath(query), CancellationToken.NONE);
+                }
+                case "file" -> {
+                    if (path.length != 5) throw fault(404, "NOT_FOUND");
+                    if (provider == null) throw fault(404, "INSPECTION_UNAVAILABLE");
+                    out =
+                            provider.file(
+                                    contentPath(query),
+                                    contentNumber(query, "offset", 0),
+                                    contentNumber(query, "line", 0),
+                                    query.getOrDefault("version", ""),
+                                    CancellationToken.NONE);
+                }
+                case "artifacts" -> {
+                    var ids = artifactReferences(task);
+                    if (path.length == 5 && query.isEmpty()) {
+                        out =
+                                Map.of(
+                                        "sessionId",
+                                        task.id,
+                                        "artifacts",
+                                        ids.stream()
+                                                .map(
+                                                        id ->
+                                                                Map.of(
+                                                                        "id",
+                                                                        id,
+                                                                        "sha256",
+                                                                        id.substring(37)))
+                                                .toList(),
+                                        "limited",
+                                        ids.size() == 64);
+                    } else if (path.length == 6
+                            && Set.of("offset", "version").containsAll(query.keySet())) {
+                        if (!ids.contains(path[5])) throw fault(404, "ARTIFACT_NOT_FOUND");
+                        if (provider == null) throw fault(404, "INSPECTION_UNAVAILABLE");
+                        out =
+                                provider.artifact(
+                                        task.id,
+                                        path[5],
+                                        contentNumber(query, "offset", 0),
+                                        query.getOrDefault("version", ""),
+                                        CancellationToken.NONE);
+                    } else throw fault(400, "INVALID_QUERY");
+                }
+                case "content" -> {
+                    if (path.length != 6
+                            || !Set.of("offset", "version").containsAll(query.keySet()))
+                        throw fault(400, "INVALID_QUERY");
+                    var e =
+                            events(task).stream()
+                                    .filter(event -> event.eventId().equals(path[5]))
+                                    .findFirst()
+                                    .orElseThrow(() -> fault(404, "NOT_FOUND"));
+                    var clean = sanitizer.sanitize(e.payload());
+                    boolean message =
+                            Set.of("user.message", "assistant.message").contains(e.type())
+                                    && clean.get("content") instanceof String;
+                    String text =
+                            message
+                                    ? (String) clean.get("content")
+                                    : new String(WebJson.encode(clean), StandardCharsets.UTF_8);
+                    out =
+                            new LinkedHashMap<>(
+                                    io.jharness.ecosystem.ContentPages.page(
+                                            text,
+                                            contentNumber(query, "offset", 0),
+                                            query.getOrDefault("version", "")));
+                    out.put("source", "recorded-event");
+                    out.put("eventId", e.eventId());
+                    out.put("sessionId", task.id);
+                    out.put("format", message ? "text" : "json");
+                }
+                default -> throw fault(404, "NOT_FOUND");
+            }
+            respond(exchange, 200, out);
+        } catch (HarnessException ex) {
+            throw fault(
+                    Set.of("FILE_CONFLICT", "CONTENT_CHANGED").contains(ex.code())
+                            ? 409
+                            : Set.of("ARTIFACT_NOT_FOUND", "FILE_NOT_FOUND").contains(ex.code())
+                                    ? 404
+                                    : 400,
+                    ex.code());
+        } catch (IllegalArgumentException ex) {
+            throw fault(400, "INVALID_QUERY");
+        }
     }
 
     private void questionRoute(
@@ -1682,6 +1872,7 @@ public final class HarnessWebServer implements AutoCloseable {
         } finally {
             if (sdk != null) {
                 synchronized (this) {
+                    task.display = sdk.display().snapshot();
                     task.phase = "CLOSING";
                 }
                 try {
@@ -2020,13 +2211,16 @@ public final class HarnessWebServer implements AutoCloseable {
     private static Map<String, String> query(HttpExchange exchange) {
         String raw = exchange.getRequestURI().getRawQuery();
         if (raw == null) return Map.of();
-        if (raw.length() > 512) throw fault(400, "INVALID_QUERY");
+        if (raw.length() > 4096) throw fault(400, "INVALID_QUERY");
         var result = new HashMap<String, String>();
         for (String item : raw.split("&", -1)) {
             var pair = item.split("=", -1);
             if (pair.length != 2
                     || !pair[0].matches("[a-z]+")
-                    || !pair[1].matches("[A-Za-z0-9_-]{1,64}")
+                    || !pair[1].matches(
+                            pair[0].equals("path")
+                                    ? "[A-Za-z0-9_-]{1,2048}"
+                                    : "[A-Za-z0-9_-]{1,64}")
                     || result.putIfAbsent(pair[0], pair[1]) != null)
                 throw fault(400, "INVALID_QUERY");
         }
@@ -2155,6 +2349,7 @@ public final class HarnessWebServer implements AutoCloseable {
         volatile boolean cancelled;
         boolean recovered;
         HarnessSdk sdk;
+        Map<String, Object> display = Map.of();
         Thread worker;
 
         Task(String id, String profile, String requestHash, String goalHash, String binding) {
