@@ -69,6 +69,7 @@ try {
   await page.getByRole('tab', { name: '插件与扩展', exact: true }).click()
   await page.getByLabel('启用任务规划').check()
   await page.locator('.extension-config').filter({ has: page.locator('summary', { hasText: /^Skills$/ }) }).locator('summary').first().click()
+  await page.locator('.extension-config').filter({ has: page.locator('summary', { hasText: /^Skills$/ }) }).getByText('高级 JSON', { exact: true }).click()
   await page.getByLabel('Skills配置', { exact: true }).fill(JSON.stringify([{ id: 'guide', directory: 'skills/guide', resources: {}, scripts: {} }], null, 2))
   await shot('plugins')
   await page.getByRole('button', { name: '保存设置', exact: true }).click()

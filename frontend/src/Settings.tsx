@@ -9,6 +9,7 @@ import { Button } from './upstream/Button'
 import { Input } from './upstream/Input'
 import { Tag } from './upstream/Tag'
 import { SegmentedTabs, type SegmentedTab } from './upstream/SegmentedTabs'
+import { ExtensionEditor } from './ExtensionEditor'
 
 type Tab = 'models' | 'plugins' | 'permissions'
 const tabs: [SegmentedTab<Tab>, ...SegmentedTab<Tab>[]] = [
@@ -19,12 +20,14 @@ const tabs: [SegmentedTab<Tab>, ...SegmentedTab<Tab>[]] = [
 const extensionTypes = [
   { key: 'mcp', name: 'MCP 服务', help: '配置 stdio 或 HTTP 服务。任务启动时连接，工具执行仍需策略与审批。', example: [{ id: 'docs', transport: 'http', url: 'http://127.0.0.1:3001/mcp', timeoutSeconds: 15, effects: {} }] },
   { key: 'skills', name: 'Skills', help: '注册工作区内的技能目录、资源及受控脚本。保存配置不会运行脚本。', example: [{ id: 'guide', directory: 'skills/guide', resources: { guide: 'SKILL.md' }, scripts: {} }] },
+  { key: 'skillRoots', name: '技能目录发现', help: '显式允许项目或用户技能根；只扫描直属目录，加载冻结文本，不监视或安装。frontmatter 支持单行 name、description；名称冲突会拒绝装配。', example: [{ id: 'project', kind: 'project', directory: 'skills' }] },
   { key: 'subagents', name: '只读子任务', help: '为模型提供可调用的只读调查角色；不能授予写入权限。', example: { reviewer: { prompt: 'Read-only investigation', tools: ['read_file'], requireRead: ['README.md'], maxSteps: 4, durationSeconds: 30 } } },
   { key: 'webSources', name: '网页来源', help: '为网页抓取工具配置固定来源名称和 URL。', example: { documentation: 'https://example.com/docs' } },
 ] as const
 function message(e: unknown) {
   if (!(e instanceof ApiError)) return '操作未完成，请检查本机服务。'
   const labels: Record<string, string> = {
+    MCP_CREDENTIAL_MISSING: 'MCP 凭据环境变量缺失，请修正扩展设置或宿主环境后重启。未连接 MCP 或模型服务。',
     SETTINGS_CONFLICT: '设置已在其他页面更新。请重新读取后修改。', WORKSPACE_BUSY: '有运行中或待核实的任务，请结束任务或先离线核实。',
     INVALID_SETTINGS: '请检查字段格式、唯一连接 ID 和扩展配置。', SECRET_CONFIG: '配置中包含密钥。请只在 API Key 栏填写密钥。',
     CREDENTIAL_STORE_UNAVAILABLE: '系统凭据服务暂不可用。请解锁或启动凭据服务后重启工作台，也可为新连接使用环境变量。', NOT_FOUND: '当前宿主未启用设置管理，请使用最新的 web-ui.cmd 启动。',
@@ -46,7 +49,7 @@ export function Settings({ api, onBack, onGuardChange }: { api: Api; onBack: () 
     return () => window.removeEventListener('beforeunload', protect)
   }, [dirty, busy])
   useEffect(() => { alive.current = true; void load(); return () => { alive.current = false } }, [api])
-  function apply(v: SettingsData) { setData(v); setEditing(v.selected); setKeys({}); setDirty(false); setDrafts(Object.fromEntries(extensionTypes.map(x => [x.key, JSON.stringify(v.extensions[x.key] ?? (x.key === 'mcp' || x.key === 'skills' ? [] : {}), null, 2)]))) }
+  function apply(v: SettingsData) { setData(v); setEditing(v.selected); setKeys({}); setDirty(false); setDrafts(Object.fromEntries(extensionTypes.map(x => [x.key, JSON.stringify(v.extensions[x.key] ?? (x.key === 'mcp' || x.key === 'skills' || x.key === 'skillRoots' ? [] : {}), null, 2)]))) }
   async function load() {
     if (lock.current) return
     lock.current = true; setBusy(true); setError('')
@@ -127,7 +130,9 @@ export function Settings({ api, onBack, onGuardChange }: { api: Api; onBack: () 
         </div> : <div className="settings-extensions">
           <div className="extension-row"><div><h3>任务规划</h3><p className="muted">允许模型调用 Todo / Plan 工具；计划通过不等于执行审批。</p></div><label className="settings-check"><input type="checkbox" checked={data.extensions.planning === true} disabled={busy} onChange={e => { setData({ ...data, extensions: { ...data.extensions, planning: e.target.checked } }); setDirty(true) }} />启用任务规划</label></div>
           <div className="extension-row"><div><h3>上下文压缩</h3><p className="muted">使用现有提取式压缩器，保留完整协议组与事实记录。</p></div><label className="settings-check"><input type="checkbox" checked={data.extensions.compactContext === true} disabled={busy} onChange={e => { setData({ ...data, extensions: { ...data.extensions, compactContext: e.target.checked } }); setDirty(true) }} />启用上下文压缩</label></div>
-          {extensionTypes.map(x => <details className="extension-config" key={x.key}><summary>{x.name}</summary><p className="muted">{x.help}</p><label>{x.name}配置<textarea aria-label={`${x.name}配置`} rows={9} disabled={busy} spellCheck={false} value={drafts[x.key] ?? ''} onChange={e => { setDrafts({ ...drafts, [x.key]: e.target.value }); setDirty(true) }} /></label><details><summary>配置示例</summary><pre>{JSON.stringify(x.example, null, 2)}</pre></details></details>)}
+          {extensionTypes.map(x => <details className="extension-config" key={x.key}><summary>{x.name}</summary><p className="muted">{x.help}</p>
+            {x.key !== 'webSources' && <ExtensionEditor kind={x.key} value={drafts[x.key] ?? ''} disabled={busy} onChange={value => { setDrafts({ ...drafts, [x.key]: value }); setDirty(true); setNotice('') }} />}
+            <details open={x.key === 'webSources'}><summary>高级 JSON</summary><label>{x.name}配置<textarea aria-label={`${x.name}配置`} rows={9} disabled={busy} spellCheck={false} value={drafts[x.key] ?? ''} onChange={e => { setDrafts({ ...drafts, [x.key]: e.target.value }); setDirty(true); setNotice('') }} /></label><details><summary>配置示例</summary><pre>{JSON.stringify(x.example, null, 2)}</pre></details></details></details>)}
           <details className="extension-config"><summary>核心组件（由宿主管理）</summary><p className="muted">会话、权限、工具管线和环境等核心组件随 SDK 装配，不能在这里任意卸载。此处不提供插件市场或任意 JAR 安装。</p><div className="core-plugins">{data.corePlugins.map(p => <Tag key={p}>{p}</Tag>)}</div></details>
           <p className="muted">保存后，扩展在新任务启动时加载。MCP 工具和 Skills 由模型按任务调用，仍使用原有权限、审批和事件展示。</p>
         </div>}

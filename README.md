@@ -4,6 +4,8 @@
 
 M10.5.2已支持工作区注册/切换、会话命名/置顶/分叉/导出/归档/恢复和分页，解除累计32条后不能新建的问题；使用见[会话管理](docs/examples/m10.5.2-history.md)。
 
+扩展设置支持可视化条目、显式技能目录与 `/技能名` 候选；MCP 支持受控文本资源和简单 URI 模板。详见[M10.5.7说明](docs/examples/m1057-extensions.md)。
+
 M10.5.3现可在已完成会话底部继续对话，忙碌时排队或发送下一轮补充，支持取消排队和受理核对；重启后显式开始，详见[多轮说明](docs/examples/m10.5.3-turns.md)。
 
 Web工作台新增「设置」入口：可添加/修改/删除模型连接、API URL和API Key并选择默认连接；密钥按用户选择保存在Windows凭据管理器，重启后可用。「插件与扩展」提供Planning、上下文压缩以及MCP/Skills等配置入口。详见[使用说明](docs/examples/web-ui-settings.md)与[增量验收](docs/testing/M10-settings-validation.md)。
@@ -121,7 +123,7 @@ Docker 采用固定镜像摘要、非 root、只读根、禁外网、资源配�
 
 | 模块 | 职责 |
 |---|---|
-| harness-api | API 1.12 服务、事件、会话、模型、工作区、策略和执行环境契约 |
+| harness-api | API 1.13 服务、事件、会话、模型、工作区、策略和执行环境契约 |
 | harness-events | 异步通知、串行事件、拦截链与诊断 |
 | harness-plugin | 精确作用域注册、静态装配、依赖与生命周期 |
 | harness-session | 内存/JSONL、单写者、查询、分叉、迁移、恢复、请求重建、检查点与产物 |
@@ -203,3 +205,7 @@ M10.5.5主动提问已完成本地验收：模型可通过ask_user提出单选�
 
 
 M10.5.6已完成本地验收：对话/安全Markdown与代码复制、工具/变更卡、有界临时流式、实际用量、文件树与行号预览、产物/大事件分页下载及记录Diff与当前文件区分。Java388、客户端27、Chrome194、入口8及Windows原生7通过；API/SDK1.12。见[使用说明](docs/examples/m1056-content.md)与[验收记录](docs/testing/M10.5.6-validation.md)。下一入口M10.5.7，整阶段及M11/M12尚未完成。
+
+2026-10-18 M10.5.7已完成本地验收：MCP/Skills/只读子任务条目表单与高级JSON互通、显式项目/用户技能根有界扫描/frontmatter/快照查看及slash候选、MCP文本资源/单变量模板发现读取、持久实际工具清单已交付。脚本/子任务仍独立审批，缺MCP凭据受理前拒绝，连接装配异常保留UNKNOWN且禁止修改/重试。最终Java399、客户端29、Chrome229（扩展35+既有194）、启动器8、Windows原生7通过；297份Java/POM及最终同一JAR/UI见M10.5.7-results.json和validation.md。API/SDK1.13、JSONL1/Web目录4；原生worker未改，历史三平台凭据证据独立保留。无付费请求、推送或参考项目修改；保留原审查草稿。下一入口M10.5.8，整阶段及M11/M12未完成。
+
+扩展配置与边界见[使用说明](docs/examples/m1057-extensions.md)、[契约](docs/development/M10.5.7-contracts.md)和[验收记录](docs/testing/M10.5.7-validation.md)。

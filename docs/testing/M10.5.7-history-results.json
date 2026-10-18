@@ -1,0 +1,106 @@
+{
+  "status": "PASS",
+  "capturedAt": "2026-10-18T11:35:17.742Z",
+  "browserVersion": "155.0.8059.82",
+  "checks": [
+    {
+      "name": "operator registers canonical workspace and selects it without model calls",
+      "passed": true
+    },
+    {
+      "name": "duplicate and metadata root registration are rejected",
+      "passed": true
+    },
+    {
+      "name": "actual SDK read is bound to selected root",
+      "passed": true
+    },
+    {
+      "name": "unsaved session name protects navigation",
+      "passed": true
+    },
+    {
+      "name": "rename and pin are persisted facts",
+      "passed": true
+    },
+    {
+      "name": "export is complete valid JSONL with original associations and no credential",
+      "passed": true
+    },
+    {
+      "name": "fork creates independent session without executing model",
+      "passed": true
+    },
+    {
+      "name": "archival preserves history and switches archived view",
+      "passed": true
+    },
+    {
+      "name": "restoration retains all original facts",
+      "passed": true
+    },
+    {
+      "name": "workspace switch changes next SDK root and filtered history",
+      "passed": true
+    },
+    {
+      "name": "model cannot escape root or read sibling sentinel",
+      "passed": true
+    },
+    {
+      "name": "65 completed production CLI tasks exceed hot limit and page without loss",
+      "passed": true
+    },
+    {
+      "name": "browser reads bounded next page",
+      "passed": true
+    },
+    {
+      "name": "narrow navigation and workspace controls have no document overflow",
+      "passed": true
+    },
+    {
+      "name": "workspace picker is keyboard focusable",
+      "passed": true
+    },
+    {
+      "name": "restart restores registry, labels and complete history without model request",
+      "passed": true
+    },
+    {
+      "name": "cold duplicate submission after restart returns original without execution",
+      "passed": true
+    },
+    {
+      "name": "restart permits further tasks while retaining original session",
+      "passed": true
+    },
+    {
+      "name": "no browser exceptions or credential leaks",
+      "passed": true
+    }
+  ],
+  "screenshots": [
+    {
+      "path": ".build-cache\\M10.5.2-session-management.png",
+      "sha256": "1ef87e1c3c3ae70fcdb6b46701981e76568ef7cb45cf7a4e50de1a57699a5852"
+    },
+    {
+      "path": ".build-cache\\M10.5.2-history-pages.png",
+      "sha256": "5c0bee5a251509fd8602700df784983025eaa71b22fb8d278ab5e86e77f5a639"
+    },
+    {
+      "path": ".build-cache\\M10.5.2-dark.png",
+      "sha256": "25af6139197d63419d205a6bc74058bc658c8829679214bb391d39b44092f1a9"
+    },
+    {
+      "path": ".build-cache\\M10.5.2-mobile.png",
+      "sha256": "d696365005119c0db23265d403ce593ab468c6876762d04f066bf53aceb8d30a"
+    }
+  ],
+  "completedCycles": 65,
+  "modelRequests": 138,
+  "paidRequests": 0,
+  "hostStopped": true,
+  "jarSha256": "4b717b2e518727d73c0228a18ccf9b5d1a2185908a935c66937fd8d54d7c5ed9"
+}

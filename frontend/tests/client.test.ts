@@ -218,3 +218,25 @@ test('tool projection association includes the turn even for imported duplicate 
   assert.notEqual(toolAssociation({turnId:'first',callId:'same'}),toolAssociation({turnId:'second',callId:'same'}))
   assert.equal(toolAssociation({callId:'legacy'}),':legacy')
 })
+
+test('skill catalog validates names hashes tool association and never posts', async () => {
+  const skill = { id:'guide', description:'Guide', root:'project', directory:'guide', text:'body', sha256:'a'.repeat(64), tool:'skill_guide__load', untrusted:true }
+  let body: unknown = { snapshot:true, skills:[skill] }
+  const calls: string[] = []
+  const api = new Api(token, (async (url, init) => { calls.push(init!.method + ' ' + url); return json(body) }) as typeof fetch)
+  assert.equal((await api.skills('default'))[0].id, 'guide')
+  for (const skills of [[skill,skill],[{...skill,tool:'run_command'}],[{...skill,id:'../outside'}],[{...skill,sha256:'invalid'}],[{...skill,untrusted:false}]]) {
+    body = { snapshot:true, skills }; await assert.rejects(api.skills('default'), ApiError)
+  }
+  assert.ok(calls.every(c => c === 'GET /v1/skills?profile=default'))
+})
+
+test('actual tool inventory rejects duplicate names invalid effects and false records', async () => {
+  const tool = { name:'mcp_notes__read_resource', description:'Untrusted', sideEffect:'READ_ONLY' }
+  let body: unknown = { recorded:true, tools:[tool] }
+  const api = new Api(token, (async () => json(body)) as typeof fetch)
+  assert.equal((await api.tools('task_1')).tools[0].sideEffect, 'READ_ONLY')
+  for (const v of [{recorded:true,tools:[tool,tool]},{recorded:true,tools:[{...tool,sideEffect:'ALLOW_ALL'}]},{recorded:false,tools:[tool]}]) {
+    body = v; await assert.rejects(api.tools('task_1'), ApiError)
+  }
+})

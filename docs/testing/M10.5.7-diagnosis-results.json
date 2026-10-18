@@ -1,0 +1,894 @@
+{
+  "status": "PASS",
+  "capturedAt": "2026-10-18T11:35:35.997Z",
+  "checks": [
+    {
+      "name": "real ARGV shell validation explains body not started and explicit modes",
+      "passed": true
+    },
+    {
+      "name": "original correlation and timeout are preserved",
+      "passed": true
+    },
+    {
+      "name": "actual timed out Java process reports partial cleanup and uncertainty",
+      "passed": true
+    },
+    {
+      "name": "UI never equates environment closure or empty residuals to task success",
+      "passed": true
+    },
+    {
+      "name": "handoff contains exact task catalog and read-only checklist",
+      "passed": true
+    },
+    {
+      "name": "guide download and refresh append no facts and never replay",
+      "passed": true
+    },
+    {
+      "name": "narrow dark diagnostic and guide do not overflow",
+      "passed": true
+    },
+    {
+      "name": "verification guide is keyboard accessible",
+      "passed": true
+    },
+    {
+      "name": "actual approval expiry is shown as denied and body not entered",
+      "passed": true
+    },
+    {
+      "name": "cancelled model request retains pending recovery facts",
+      "passed": true
+    },
+    {
+      "name": "refresh restores diagnosis without task submission or unsafe verification",
+      "passed": true
+    },
+    {
+      "name": "no browser runtime errors",
+      "passed": true
+    },
+    {
+      "name": "fixture closes with zero paid requests",
+      "passed": true
+    }
+  ],
+  "screenshots": [
+    {
+      "path": ".build-cache\\M10.5.1-shell.png",
+      "sha256": "b3de4be30add8889ea656e84fb6149edd05871eef4d1bd8e5ef5679f7d650e38"
+    },
+    {
+      "path": ".build-cache\\M10.5.1-guide.png",
+      "sha256": "b0fbc13814239ea1fb9e3a2a86a7035c335f54670e2920daea9fe6cb21f3e6a3"
+    },
+    {
+      "path": ".build-cache\\M10.5.1-dark.png",
+      "sha256": "817415c8cb7f871234d03971225f5ce433dc94819585f1de6fb9ed67eaade704"
+    },
+    {
+      "path": ".build-cache\\M10.5.1-mobile.png",
+      "sha256": "86765986d691296282b18edafd48870555864d1223a2f4f5fbd2485ad25ce8f7"
+    }
+  ],
+  "browserVersion": "155.0.8059.82",
+  "jarSha256": "4b717b2e518727d73c0228a18ccf9b5d1a2185908a935c66937fd8d54d7c5ed9",
+  "runtime": {
+    "opened": 4,
+    "paidRequests": 0,
+    "modelRequests": 5,
+    "writeExists": false
+  },
+  "requests": [
+    {
+      "path": "/",
+      "method": "GET"
+    },
+    {
+      "path": "/assets/index--fWLLBap.js",
+      "method": "GET"
+    },
+    {
+      "path": "/assets/index-DwiOgguL.css",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/browser-session",
+      "method": "POST"
+    },
+    {
+      "path": "/v1/info",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/workspaces",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/models",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks",
+      "method": "POST"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-2e4206d76b0a4d4b64141feca129a43e89d9f6356aa6a7e10546fe667cb21f80/display",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-2e4206d76b0a4d4b64141feca129a43e89d9f6356aa6a7e10546fe667cb21f80/questions",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/models",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-2e4206d76b0a4d4b64141feca129a43e89d9f6356aa6a7e10546fe667cb21f80/turns",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-2e4206d76b0a4d4b64141feca129a43e89d9f6356aa6a7e10546fe667cb21f80/events",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-2e4206d76b0a4d4b64141feca129a43e89d9f6356aa6a7e10546fe667cb21f80/approvals",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-2e4206d76b0a4d4b64141feca129a43e89d9f6356aa6a7e10546fe667cb21f80",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-2e4206d76b0a4d4b64141feca129a43e89d9f6356aa6a7e10546fe667cb21f80",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-2e4206d76b0a4d4b64141feca129a43e89d9f6356aa6a7e10546fe667cb21f80/approvals",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-2e4206d76b0a4d4b64141feca129a43e89d9f6356aa6a7e10546fe667cb21f80/events",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-2e4206d76b0a4d4b64141feca129a43e89d9f6356aa6a7e10546fe667cb21f80/display",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-2e4206d76b0a4d4b64141feca129a43e89d9f6356aa6a7e10546fe667cb21f80/display",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-2e4206d76b0a4d4b64141feca129a43e89d9f6356aa6a7e10546fe667cb21f80/questions",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-2e4206d76b0a4d4b64141feca129a43e89d9f6356aa6a7e10546fe667cb21f80/approvals",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-2e4206d76b0a4d4b64141feca129a43e89d9f6356aa6a7e10546fe667cb21f80/display",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-2e4206d76b0a4d4b64141feca129a43e89d9f6356aa6a7e10546fe667cb21f80/turns",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-2e4206d76b0a4d4b64141feca129a43e89d9f6356aa6a7e10546fe667cb21f80",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-2e4206d76b0a4d4b64141feca129a43e89d9f6356aa6a7e10546fe667cb21f80/display",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-2e4206d76b0a4d4b64141feca129a43e89d9f6356aa6a7e10546fe667cb21f80/approvals",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-2e4206d76b0a4d4b64141feca129a43e89d9f6356aa6a7e10546fe667cb21f80/questions",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-2e4206d76b0a4d4b64141feca129a43e89d9f6356aa6a7e10546fe667cb21f80/approvals/5efd9221-3f6b-4901-9231-998e213ba75d",
+      "method": "POST"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-2e4206d76b0a4d4b64141feca129a43e89d9f6356aa6a7e10546fe667cb21f80/approvals",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-2e4206d76b0a4d4b64141feca129a43e89d9f6356aa6a7e10546fe667cb21f80/display",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-2e4206d76b0a4d4b64141feca129a43e89d9f6356aa6a7e10546fe667cb21f80/diagnosis",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-2e4206d76b0a4d4b64141feca129a43e89d9f6356aa6a7e10546fe667cb21f80/display",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-2e4206d76b0a4d4b64141feca129a43e89d9f6356aa6a7e10546fe667cb21f80",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-2e4206d76b0a4d4b64141feca129a43e89d9f6356aa6a7e10546fe667cb21f80/approvals",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-2e4206d76b0a4d4b64141feca129a43e89d9f6356aa6a7e10546fe667cb21f80/events",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-2e4206d76b0a4d4b64141feca129a43e89d9f6356aa6a7e10546fe667cb21f80/questions",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-2e4206d76b0a4d4b64141feca129a43e89d9f6356aa6a7e10546fe667cb21f80/turns",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-2e4206d76b0a4d4b64141feca129a43e89d9f6356aa6a7e10546fe667cb21f80",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/models",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks",
+      "method": "POST"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-dd75db8ae2d7fabdd22e6ec2cebdc2ed4342b2ac24c9fd25a58425552cff6921/display",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-dd75db8ae2d7fabdd22e6ec2cebdc2ed4342b2ac24c9fd25a58425552cff6921/questions",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/models",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-dd75db8ae2d7fabdd22e6ec2cebdc2ed4342b2ac24c9fd25a58425552cff6921/turns",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-dd75db8ae2d7fabdd22e6ec2cebdc2ed4342b2ac24c9fd25a58425552cff6921/events",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-dd75db8ae2d7fabdd22e6ec2cebdc2ed4342b2ac24c9fd25a58425552cff6921/approvals",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-dd75db8ae2d7fabdd22e6ec2cebdc2ed4342b2ac24c9fd25a58425552cff6921",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-dd75db8ae2d7fabdd22e6ec2cebdc2ed4342b2ac24c9fd25a58425552cff6921",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-dd75db8ae2d7fabdd22e6ec2cebdc2ed4342b2ac24c9fd25a58425552cff6921/approvals",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-dd75db8ae2d7fabdd22e6ec2cebdc2ed4342b2ac24c9fd25a58425552cff6921/events",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-dd75db8ae2d7fabdd22e6ec2cebdc2ed4342b2ac24c9fd25a58425552cff6921/display",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-dd75db8ae2d7fabdd22e6ec2cebdc2ed4342b2ac24c9fd25a58425552cff6921/display",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-dd75db8ae2d7fabdd22e6ec2cebdc2ed4342b2ac24c9fd25a58425552cff6921/questions",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-dd75db8ae2d7fabdd22e6ec2cebdc2ed4342b2ac24c9fd25a58425552cff6921/approvals",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-dd75db8ae2d7fabdd22e6ec2cebdc2ed4342b2ac24c9fd25a58425552cff6921/display",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-dd75db8ae2d7fabdd22e6ec2cebdc2ed4342b2ac24c9fd25a58425552cff6921/turns",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-dd75db8ae2d7fabdd22e6ec2cebdc2ed4342b2ac24c9fd25a58425552cff6921",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-dd75db8ae2d7fabdd22e6ec2cebdc2ed4342b2ac24c9fd25a58425552cff6921/display",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-dd75db8ae2d7fabdd22e6ec2cebdc2ed4342b2ac24c9fd25a58425552cff6921/approvals",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-dd75db8ae2d7fabdd22e6ec2cebdc2ed4342b2ac24c9fd25a58425552cff6921/questions",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-dd75db8ae2d7fabdd22e6ec2cebdc2ed4342b2ac24c9fd25a58425552cff6921/approvals/5048f52b-b752-4f65-babb-ab665ee3517b",
+      "method": "POST"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-dd75db8ae2d7fabdd22e6ec2cebdc2ed4342b2ac24c9fd25a58425552cff6921/approvals",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-dd75db8ae2d7fabdd22e6ec2cebdc2ed4342b2ac24c9fd25a58425552cff6921/display",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-dd75db8ae2d7fabdd22e6ec2cebdc2ed4342b2ac24c9fd25a58425552cff6921/display",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-dd75db8ae2d7fabdd22e6ec2cebdc2ed4342b2ac24c9fd25a58425552cff6921/questions",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-dd75db8ae2d7fabdd22e6ec2cebdc2ed4342b2ac24c9fd25a58425552cff6921/approvals",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-dd75db8ae2d7fabdd22e6ec2cebdc2ed4342b2ac24c9fd25a58425552cff6921/display",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-dd75db8ae2d7fabdd22e6ec2cebdc2ed4342b2ac24c9fd25a58425552cff6921",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-dd75db8ae2d7fabdd22e6ec2cebdc2ed4342b2ac24c9fd25a58425552cff6921/approvals",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-dd75db8ae2d7fabdd22e6ec2cebdc2ed4342b2ac24c9fd25a58425552cff6921/diagnosis",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-dd75db8ae2d7fabdd22e6ec2cebdc2ed4342b2ac24c9fd25a58425552cff6921/display",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-dd75db8ae2d7fabdd22e6ec2cebdc2ed4342b2ac24c9fd25a58425552cff6921/events",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-dd75db8ae2d7fabdd22e6ec2cebdc2ed4342b2ac24c9fd25a58425552cff6921/turns",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-dd75db8ae2d7fabdd22e6ec2cebdc2ed4342b2ac24c9fd25a58425552cff6921",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-dd75db8ae2d7fabdd22e6ec2cebdc2ed4342b2ac24c9fd25a58425552cff6921/questions",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-dd75db8ae2d7fabdd22e6ec2cebdc2ed4342b2ac24c9fd25a58425552cff6921/diagnosis",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/models",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks",
+      "method": "POST"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/display",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/questions",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/models",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/turns",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/events",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/approvals",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/approvals",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/events",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/display",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/approvals",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/display",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/questions",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/display",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/approvals",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/display",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/turns",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/questions",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/display",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/display",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/approvals",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/questions",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/display",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/turns",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/display",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/questions",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/approvals",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/display",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/display",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/questions",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/display",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/turns",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/approvals",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/display",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/questions",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/display",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/display",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/approvals",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/turns",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/questions",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/display",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/display",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/approvals",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/events",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/approvals",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/questions",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/display",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/turns",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/display",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/questions",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/display",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/approvals",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/display",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/questions",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/display",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/turns",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/approvals",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/display",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/questions",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/display",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/display",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/approvals",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/questions",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/turns",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/diagnosis",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-f37a157bc485b6643753bb95ce5eba485b159969a99991d511a8a281bfed21b8/display",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/models",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks",
+      "method": "POST"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-3abd11380d652dfef5bb27621f4bc1d453576aa478c69e6a1134a06deae5c459/display",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-3abd11380d652dfef5bb27621f4bc1d453576aa478c69e6a1134a06deae5c459/questions",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/models",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-3abd11380d652dfef5bb27621f4bc1d453576aa478c69e6a1134a06deae5c459/turns",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-3abd11380d652dfef5bb27621f4bc1d453576aa478c69e6a1134a06deae5c459/events",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-3abd11380d652dfef5bb27621f4bc1d453576aa478c69e6a1134a06deae5c459/approvals",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-3abd11380d652dfef5bb27621f4bc1d453576aa478c69e6a1134a06deae5c459",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-3abd11380d652dfef5bb27621f4bc1d453576aa478c69e6a1134a06deae5c459",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-3abd11380d652dfef5bb27621f4bc1d453576aa478c69e6a1134a06deae5c459/approvals",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-3abd11380d652dfef5bb27621f4bc1d453576aa478c69e6a1134a06deae5c459/events",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-3abd11380d652dfef5bb27621f4bc1d453576aa478c69e6a1134a06deae5c459/cancel",
+      "method": "POST"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-3abd11380d652dfef5bb27621f4bc1d453576aa478c69e6a1134a06deae5c459/display",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-3abd11380d652dfef5bb27621f4bc1d453576aa478c69e6a1134a06deae5c459/approvals",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-3abd11380d652dfef5bb27621f4bc1d453576aa478c69e6a1134a06deae5c459/display",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-3abd11380d652dfef5bb27621f4bc1d453576aa478c69e6a1134a06deae5c459",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-3abd11380d652dfef5bb27621f4bc1d453576aa478c69e6a1134a06deae5c459/approvals",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-3abd11380d652dfef5bb27621f4bc1d453576aa478c69e6a1134a06deae5c459/diagnosis",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-3abd11380d652dfef5bb27621f4bc1d453576aa478c69e6a1134a06deae5c459/display",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-3abd11380d652dfef5bb27621f4bc1d453576aa478c69e6a1134a06deae5c459/events",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-3abd11380d652dfef5bb27621f4bc1d453576aa478c69e6a1134a06deae5c459/questions",
+      "method": "GET"
+    },
+    {
+      "path": "/",
+      "method": "GET"
+    },
+    {
+      "path": "/assets/index--fWLLBap.js",
+      "method": "GET"
+    },
+    {
+      "path": "/assets/index-DwiOgguL.css",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/browser-session",
+      "method": "POST"
+    },
+    {
+      "path": "/v1/info",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/workspaces",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-3abd11380d652dfef5bb27621f4bc1d453576aa478c69e6a1134a06deae5c459/events",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-3abd11380d652dfef5bb27621f4bc1d453576aa478c69e6a1134a06deae5c459/approvals",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-3abd11380d652dfef5bb27621f4bc1d453576aa478c69e6a1134a06deae5c459/diagnosis",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-3abd11380d652dfef5bb27621f4bc1d453576aa478c69e6a1134a06deae5c459/display",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-3abd11380d652dfef5bb27621f4bc1d453576aa478c69e6a1134a06deae5c459/questions",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/models",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-3abd11380d652dfef5bb27621f4bc1d453576aa478c69e6a1134a06deae5c459/turns",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-3abd11380d652dfef5bb27621f4bc1d453576aa478c69e6a1134a06deae5c459",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-3abd11380d652dfef5bb27621f4bc1d453576aa478c69e6a1134a06deae5c459",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-3abd11380d652dfef5bb27621f4bc1d453576aa478c69e6a1134a06deae5c459/approvals",
+      "method": "GET"
+    },
+    {
+      "path": "/v1/tasks/web-c9d77350d1b4cbcae8c2c9fde16b734d-3abd11380d652dfef5bb27621f4bc1d453576aa478c69e6a1134a06deae5c459/events",
+      "method": "GET"
+    }
+  ]
+}

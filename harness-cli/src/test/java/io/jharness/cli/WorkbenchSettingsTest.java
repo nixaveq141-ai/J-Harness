@@ -13,6 +13,101 @@ class WorkbenchSettingsTest {
     @TempDir Path temp;
 
     @Test
+    void missingMcpCredentialRejectsCaptureAndFrozenRuntimeBeforeAssembly() throws Exception {
+        var manager = manager(new MemoryVault());
+        manager.save(input(manager.read(), Map.of("default", "synthetic-model-key")));
+        var frozen = manager.capture("");
+        var change = input(manager.read(), Map.of());
+        change.put(
+                "extensions",
+                Map.of(
+                        "mcp",
+                        List.of(
+                                Map.of(
+                                        "id",
+                                        "docs",
+                                        "transport",
+                                        "http",
+                                        "url",
+                                        "http://127.0.0.1:1/mcp",
+                                        "tokenEnv",
+                                        "M1057_ABSENT_TOKEN"))));
+        manager.save(change);
+        assertEquals(
+                "MCP_CREDENTIAL_MISSING",
+                assertThrows(HarnessException.class, () -> manager.capture("")).code());
+        assertNotNull(manager.runtime(frozen));
+        var values = new LinkedHashMap<>(Values.object(frozen.get("resolved")));
+        values.put(
+                "ecosystem",
+                Map.of(
+                        "mcp",
+                        List.of(
+                                Map.of(
+                                        "id",
+                                        "docs",
+                                        "transport",
+                                        "http",
+                                        "url",
+                                        "http://127.0.0.1:1/mcp",
+                                        "tokenEnv",
+                                        "M1057_ABSENT_TOKEN"))));
+        var missing = new LinkedHashMap<>(frozen);
+        missing.put("resolved", values);
+        assertEquals(
+                "MCP_CREDENTIAL_MISSING",
+                assertThrows(HarnessException.class, () -> manager.runtime(missing)).code());
+    }
+
+    @Test
+    void explicitSkillRootsPersistDiscoverAndRejectTraversalWithoutNetwork() throws Exception {
+        var manager = manager(new MemoryVault());
+        Path directory = temp.resolve("skills/guide");
+        Files.createDirectories(directory);
+        Files.writeString(
+                directory.resolve("SKILL.md"),
+                "---\nname: guide\ndescription: Local guide\n---\nBody");
+        var candidate = input(manager.read(), Map.of("default", "synthetic-skill-key"));
+        candidate.put(
+                "extensions",
+                Map.of(
+                        "skillRoots",
+                        List.of(
+                                Map.of(
+                                        "id",
+                                        "project",
+                                        "kind",
+                                        "project",
+                                        "directory",
+                                        "skills"))));
+        manager.save(candidate);
+        var catalog = manager.skills(temp.toRealPath().toString());
+        assertEquals(1, ((List<?>) catalog.get("skills")).size());
+        assertEquals(
+                "guide", Values.object(((List<?>) catalog.get("skills")).getFirst()).get("id"));
+        var config = manager.runtime().config();
+        assertTrue(Values.object(config.values.get("ecosystem")).containsKey("skillRoots"));
+        for (String path : List.of("../outside", temp.toString(), "C:outside", "\\outside")) {
+            var invalid = input(manager.read(), Map.of());
+            invalid.put(
+                    "extensions",
+                    Map.of(
+                            "skillRoots",
+                            List.of(
+                                    Map.of(
+                                            "id",
+                                            "project",
+                                            "kind",
+                                            "project",
+                                            "directory",
+                                            path))));
+            assertThrows(HarnessException.class, () -> manager.save(invalid));
+        }
+        assertEquals(
+                1, ((List<?>) manager.skills(temp.toRealPath().toString()).get("skills")).size());
+    }
+
+    @Test
     void acceptedModelAndBudgetSnapshotSurvivesDefaultAndCapabilityChanges() throws Exception {
         var vault = new MemoryVault();
         var manager = manager(vault);

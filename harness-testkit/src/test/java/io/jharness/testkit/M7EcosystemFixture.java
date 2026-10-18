@@ -43,6 +43,7 @@ final class M7EcosystemFixture implements AutoCloseable {
                     @Override
                     public void start(PluginContext context) {
                         context.register(ToolRegistry.class, "default", tools);
+                        context.register(DataSanitizer.class, "default", clean);
                     }
 
                     @Override

@@ -23,6 +23,10 @@ public final class HarnessWebServer implements AutoCloseable {
 
         default void prepareTask() throws IOException {}
 
+        default Map<String, Object> skills(String workspace) throws IOException {
+            return Map.of("skills", List.of(), "snapshot", true);
+        }
+
         default Map<String, Object> capture(String modelId) throws IOException {
             prepareTask();
             if (!modelId.isEmpty())
@@ -626,6 +630,22 @@ public final class HarnessWebServer implements AutoCloseable {
         String method = exchange.getRequestMethod();
         var path = exchange.getRequestURI().getPath().split("/", -1);
         var query = query(exchange);
+        if (Arrays.equals(path, new String[] {"", "v1", "skills"})) {
+            if (!method.equals("GET")) throw fault(405, "METHOD_NOT_ALLOWED");
+            if (!query.keySet().equals(Set.of("profile"))) throw fault(400, "INVALID_QUERY");
+            synchronized (this) {
+                var profile = profiles.get(query.get("profile"));
+                if (settings == null || profile == null) throw fault(404, "NOT_FOUND");
+                try {
+                    respond(exchange, 200, settings.skills(profile.workspaceBinding()));
+                } catch (HarnessException ex) {
+                    throw fault(400, ex.code());
+                } catch (IOException | IllegalArgumentException ex) {
+                    throw fault(400, "SKILL_SCAN_FAILED");
+                }
+            }
+            return;
+        }
         if (Arrays.equals(path, new String[] {"", "v1", "settings"}) && query.isEmpty()) {
             synchronized (this) {
                 if (settings == null) throw fault(404, "NOT_FOUND");
@@ -1003,6 +1023,24 @@ public final class HarnessWebServer implements AutoCloseable {
                 response = summary(task);
             }
             respond(exchange, 200, response);
+        } else if (path.length == 5
+                && path[4].equals("tools")
+                && method.equals("GET")
+                && query.isEmpty()) {
+            var recorded =
+                    events(task).reversed().stream()
+                            .filter(e -> e.type().equals("extensions.ready"))
+                            .findFirst();
+            respond(
+                    exchange,
+                    200,
+                    Map.of(
+                            "recorded",
+                            recorded.isPresent(),
+                            "eventId",
+                            recorded.map(SessionEvent::eventId).orElse(""),
+                            "tools",
+                            recorded.map(e -> e.payload().get("tools")).orElse(List.of())));
         } else if (path.length == 5 && path[4].equals("events") && method.equals("GET")) {
             if (exchange.getRequestHeaders()
                     .getOrDefault("Accept", List.of())

@@ -26,8 +26,8 @@
 | Schedule / FR-23.5 | schedule/schedule 为持久一次/固定频率提醒，独立后台生命周期 | 延期；无定时仓库、后台触发服务或工具，不以 Web 任务/命令 timeout 替代。后续必须定义无人审批，默认不自动批准高风险操作 |
 | Subagent / FR-20 | subagent/tool-subagent 可配置前后台 provider；Java 为限定只读 Profile 与父单写者 | 支持基础委派，部分对齐：独立会话/预算/取消/费用/来源/并发配额；M7SubagentTest、M7-subagent-docker-results.json。写入型/递归/后台通用提供方延期 |
 | Teams / FR-20.4 | 上游实验协作 seam | 排除于本阶段主线；不将编码开发工具中的 agent 等同产品 Teams |
-| MCP / FR-19 | mcp/mcp-client 有服务器命名空间、生命周期和重连配置；Java 为有界同步 stdio/HTTP JSON+SSE 子集 | 支持基础连接/发现/Schema/审批/来源；M7McpTest、M7CliEcosystemTest。不支持 OAuth、自动重连/重放、GET 常驻流/续传等，断连 UNKNOWN |
-| Skills / FR-19 | skill/skill-filesystem 有多来源目录、YAML 自动发现和文件观察；Java 是可信宿主白名单与固定文件快照 | 支持受控加载/资源/脚本；M7SkillsTest、M7-skills-docker-results.json。无自动目录发现/监视或 Markdown 自行授权 |
+| MCP / FR-19 | mcp/mcp-client 有服务器命名空间、生命周期和重连配置；Java 为有界同步 stdio/HTTP JSON+SSE 子集 | 支持基础连接/发现/Schema/审批/来源及M10.5.7文本资源、单变量模板发现读取；M7McpTest、M7CliEcosystemTest、M1057ExtensionsTest及Chrome扩展35项。不支持 OAuth、自动重连/重放、GET 常驻流/续传等，断连 UNKNOWN |
+| Skills / FR-19 | skill/skill-filesystem 有多来源目录、YAML 自动发现和文件观察；Java 是可信宿主白名单与固定文件快照 | 支持受控加载/资源/脚本；M7SkillsTest、M7-skills-docker-results.json。M10.5.7新增显式允许项目/用户根的有界扫描、单行frontmatter目录和slash候选；无隐式根发现、目录监视或 Markdown 自行授权 |
 | 网页与搜索 / FR-26 | web/tool-web 可配置 web_search/fetch provider；Java 只按宿主固定来源别名抓取 | 部分支持：web_fetch 逐次审批、不跳转、来源 URL/SHA/不可信标记/1MiB/10秒上限；M7ClosureTest。通用搜索提供方延期，不能接受模型任意 URL |
 | LSP / FR-26.3 | 本轮 19 个入口不含 LSP，未逐项源码核验其实现 | 延期；未注册 LSP 工具，不声称已完成其上游源码审查；后续需要环境内路径、进程与诊断生命周期 |
 | 附件/图片 / FR-05.2、08.6 | attachment/attachment-local 提供持久文件/图片策略；Java 已有文本 Artifact 冷读取 | 部分支持文本产物；M2/M5 产物测试。内置 OpenAI-compatible 不传输图片，图片输入延期，不能以文本引用称作图像模型支持 |
@@ -76,3 +76,5 @@ M10.5.3收口（2026-10-17）：同会话多轮、独立受理/核对、有界�
 2026-10-18 M10.5.5已完成本地验收：公共作用域提问服务/ask_user、单选/多选/文字回答卡、显式回答/跳过、持久关联/幂等和脱敏草稿已交付。推荐不自动提交，回答不批准工具/计划；截止/取消/总时限与重启中断不伪造答案。最终Java371、客户端22、Chrome提问26/模型22/设置26/多轮15/历史19/诊断13/工作台28、启动器8及Windows原生7通过；287份Java/POM、同一最终JAR/UI见M10.5.5-results.json/validation.md。独立UI发现的草稿卸载/乱序和历史回归发现的同级key冲突已修复，原版严格历史测试通过。API/SDK1.11、JSONL1/Web目录4；原生worker未改，历史三平台凭据CI独立保留，不冒充新三平台全量。无付费请求、推送或参考目录修改，保留另一任务审查草稿。下一入口M10.5.6（未开始），M10.5整阶段及M11/M12未完成。
 
 2026-10-18 M10.5.6已完成本地验收：对话优先、安全Markdown/代码复制、工具与实际变更卡、临时流式显示、真实耗时/用量及结束摘要、注册本机根文件树/行号/版本预览、会话产物和大事件分页/下载已交付。临时文本完整脱敏并有界，停止显示/刷新不重放，重启不恢复临时字节；记录Diff与当前文件明确区分。最终Java388、客户端27、Chrome194（展示45/提问26/模型22/设置26/多轮15/历史19/诊断13/基础28）、启动器8、Windows原生7通过，独立UI终审通过；295份Java/POM及同一最终JAR/UI见M10.5.6-results.json和validation.md。API/SDK1.12、JSONL1/Web目录4；原生worker未改，历史三平台专项证据独立保留，不冒充新全量CI。无付费请求、推送或参考项目修改；另一任务审查草稿保留。下一入口M10.5.7（未开始），M10.5整阶段及M11/M12未完成。
+
+2026-10-18 M10.5.7已完成本地验收：MCP/Skills/只读子任务条目表单与高级JSON互通、显式项目/用户技能根有界扫描/frontmatter/快照查看及slash候选、MCP文本资源/单变量模板发现读取、持久实际工具清单已交付。脚本/子任务仍独立审批，缺MCP凭据受理前拒绝，连接装配异常保留UNKNOWN且禁止修改/重试。最终Java399、客户端29、Chrome229（扩展35+既有194）、启动器8、Windows原生7通过；297份Java/POM及最终同一JAR/UI见M10.5.7-results.json和validation.md。API/SDK1.13、JSONL1/Web目录4；原生worker未改，历史三平台凭据证据独立保留。无付费请求、推送或参考项目修改；保留原审查草稿。下一入口M10.5.8，整阶段及M11/M12未完成。

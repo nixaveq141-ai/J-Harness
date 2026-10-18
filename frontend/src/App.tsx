@@ -4,6 +4,7 @@ import { ContentPanel, type FileSelection } from './ContentPanel'
 import { Questions } from './Questions'
 import { ModelPicker } from './ModelPicker'
 import { TurnComposer } from './TurnComposer'
+import { SkillsPicker } from './SkillsPicker'
 import { useCallback, useEffect, useRef, useState, type FormEvent, type PointerEvent } from 'react'
 import { Api, ApiError, isTerminal, uncertain, mergeEvents, object, type Task, type Approval, type SessionEvent, type Page } from './api'
 import { Button } from './upstream/Button'
@@ -23,6 +24,7 @@ const labels: Record<string, string> = { ACCEPTED: '已接收', RUNNING: '进行
   FINISHED: '已结束', COMPLETED: '已完成', SUCCESS: '成功', FAILED: '失败', CANCELLED: '已取消',
   DENIED: '已拒绝', LIMIT_REACHED: '达到限制', UNKNOWN: '结果待核实', VERIFIED: '已离线核实', CREATED: '已创建' }
 const errorLabels: Record<string, string> = {
+  MCP_CREDENTIAL_MISSING: 'MCP 凭据环境变量缺失。请配置宿主环境并重启，或在设置中修正变量名。任务尚未受理。',
   UNAUTHORIZED: '本机会话已失效，请重新连接。',
   API_KEY_MISSING: '所选模型尚未配置 API Key，请打开设置补充密钥。',
   LOCAL_CLIENT_REQUIRED: '请求未通过本机同源检查，请使用服务输出的原始地址。',
@@ -314,6 +316,7 @@ export function App() {
             <div className="approval-actions"><Button variant="outline" disabled={!!busy} onClick={() => void decide(a, false)}>拒绝</Button><Button variant="primary" disabled={!!busy} onClick={() => void decide(a, true)}>{busy === a.approvalId ? '正在处理…' : '批准本次操作'}</Button></div></div>)}</section>}
           {!selected && <form className="composer" onSubmit={e => void submit(e)}><textarea aria-label="任务目标" placeholder="描述你的任务…" value={goal} maxLength={16384} onChange={e => setGoal(e.target.value)} rows={3} disabled={submitting}
             onKeyDown={e => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey) && !e.nativeEvent.isComposing) { e.preventDefault(); e.currentTarget.form?.requestSubmit() } }} />
+            {api && <SkillsPicker api={api} profile={profile} draft={goal} onChange={setGoal} disabled={submitting || !!pending} />}
             <div className="composer-toolbar">{profiles.length > 1 && <label className="profile-picker">执行工作区 <select aria-label="任务配置" value={profile} onChange={e => setProfile(e.target.value)}>{profiles.map(p => <option key={p} value={p}>{workspaceNames[p] ?? p}</option>)}</select></label>}<ModelPicker api={api} value={modelId} onChange={setModelId} disabled={submitting || !!pending} /><span className="composer-shortcut">Ctrl / ⌘ + Enter</span><Button type="submit" variant="primary" aria-label="创建任务" disabled={!goal.trim() || !profile || submitting || !!pending}><Icon name="arrow" /></Button></div></form>}
           {selected && api && active && <div className="turn-composer-slot" hidden={questionWaiting}><Button className={"turn-read-toggle"+(inputCollapsed?" collapsed":"")} aria-expanded={!inputCollapsed} onClick={()=>setInputCollapsed(v=>!v)}>{inputCollapsed?'展开输入区':'收起输入区（保留草稿）'}</Button><div className="turn-input-body" hidden={inputCollapsed}><TurnComposer key={selected} api={api} task={active} onUpdated={updateTask} onHistory={() => { autoScroll.current = true }} onGuard={setTurnGuard} /></div></div>}
           {selected && <footer className="activity-footer"><TextShimmer active={!!active && !isTerminal(active)}>{live}</TextShimmer>{active && active.cancelRequested && <span>已请求取消，正在等待执行事实</span>}

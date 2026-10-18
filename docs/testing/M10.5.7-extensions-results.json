@@ -1,0 +1,180 @@
+{
+  "status": "PASS",
+  "capturedAt": "2026-10-18T11:33:47.632Z",
+  "checks": [
+    {
+      "name": "skill catalog requires authentication",
+      "passed": true
+    },
+    {
+      "name": "skill catalog rejects unregistered profile and arbitrary path",
+      "passed": true
+    },
+    {
+      "name": "configuration editing does not connect MCP or request model",
+      "passed": true
+    },
+    {
+      "name": "forms persist MCP skills resources scripts roots and read-only profile",
+      "passed": true
+    },
+    {
+      "name": "saving configuration performs no execution",
+      "passed": true
+    },
+    {
+      "name": "invalid advanced JSON keeps corrective input and explains form state",
+      "passed": true
+    },
+    {
+      "name": "malformed JSON never reaches settings save",
+      "passed": true
+    },
+    {
+      "name": "server rejects traversal root before saving",
+      "passed": true
+    },
+    {
+      "name": "slash prefix offers matching scanned skills",
+      "passed": true
+    },
+    {
+      "name": "frontmatter snapshot is viewable without model request",
+      "passed": true
+    },
+    {
+      "name": "candidate only inserts draft",
+      "passed": true
+    },
+    {
+      "name": "explicit and user skills are available in catalog",
+      "passed": true
+    },
+    {
+      "name": "registered extension tools reach real SDK model request",
+      "passed": true
+    },
+    {
+      "name": "running task blocks settings mutation",
+      "passed": true
+    },
+    {
+      "name": "unauthenticated MCP service connects without false empty credential error",
+      "passed": true
+    },
+    {
+      "name": "skill script does not execute before approval",
+      "passed": true
+    },
+    {
+      "name": "skill scripts MCP tools and delegated roles keep explicit approvals",
+      "passed": true
+    },
+    {
+      "name": "approved script executes in configured workspace",
+      "passed": true
+    },
+    {
+      "name": "project user skill resource MCP resource and template calls actually complete",
+      "passed": true
+    },
+    {
+      "name": "MCP resource pagination and JSON SSE reads use real wire",
+      "passed": true
+    },
+    {
+      "name": "subagent uses independent read-only model request",
+      "passed": true
+    },
+    {
+      "name": "event and MCP resource text secrets are redacted",
+      "passed": true
+    },
+    {
+      "name": "actual persisted inventory matches assembled extension tools",
+      "passed": true
+    },
+    {
+      "name": "actual tools visible in browser",
+      "passed": true
+    },
+    {
+      "name": "extension controls fit mobile viewport",
+      "passed": true
+    },
+    {
+      "name": "skill roots survive host restart",
+      "passed": true
+    },
+    {
+      "name": "actual tool list survives host restart without reconnecting MCP",
+      "passed": true
+    },
+    {
+      "name": "form add and remove preserve remaining configured entry",
+      "passed": true
+    },
+    {
+      "name": "stdio form preserves argv boundaries and clears HTTP fields",
+      "passed": true
+    },
+    {
+      "name": "extension forms fit mobile viewport",
+      "passed": true
+    },
+    {
+      "name": "missing credential configuration saves without connecting service",
+      "passed": true
+    },
+    {
+      "name": "missing MCP credential rejects task before model or peer request",
+      "passed": true
+    },
+    {
+      "name": "disconnected assembly keeps uncertainty without model request or successful inventory",
+      "passed": true
+    },
+    {
+      "name": "unknown assembly blocks settings and never replays external tool",
+      "passed": true
+    },
+    {
+      "name": "no browser exceptions",
+      "passed": true
+    }
+  ],
+  "screenshots": [
+    {
+      "path": ".build-cache\\M10.5.7-forms-desktop.png",
+      "sha256": "4649cd76af736e9c146d14459fac2843727812011d7dc6aabdc7071f382687b5"
+    },
+    {
+      "path": ".build-cache\\M10.5.7-skills-desktop.png",
+      "sha256": "ec161494aa9504f2a7e3122cc2f716e92fcf58129152186749b348e123d1a023"
+    },
+    {
+      "path": ".build-cache\\M10.5.7-tools-mobile.png",
+      "sha256": "043bd79b743de71b8aae765e191036e47942d7452a0e7a615555bfc9a9fec552"
+    },
+    {
+      "path": ".build-cache\\M10.5.7-forms-mobile.png",
+      "sha256": "815ff8a6538e72ffe4d6418cca32d07b8c57ea4097444fb7c3809d09a4418f66"
+    }
+  ],
+  "browserVersion": "155.0.8059.82",
+  "browserChannel": "chrome",
+  "jarSha256": "4b717b2e518727d73c0228a18ccf9b5d1a2185908a935c66937fd8d54d7c5ed9",
+  "paidRequests": 0,
+  "modelRequests": 4,
+  "mcpMethods": [
+    "initialize",
+    "notifications/initialized",
+    "tools/list",
+    "resources/list",
+    "resources/list",
+    "resources/templates/list",
+    "resources/read",
+    "resources/read",
+    "tools/call"
+  ]
+}

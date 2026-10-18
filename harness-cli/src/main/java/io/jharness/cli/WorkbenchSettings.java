@@ -12,7 +12,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /** Host-owned nonsecret settings. A successful save affects only subsequent SDK construction. */
 final class WorkbenchSettings implements HarnessWebServer.Settings, DataSanitizer {
     private static final Set<String> EXTENSIONS =
-            Set.of("mcp", "skills", "subagents", "planning", "webSources");
+            Set.of("mcp", "skills", "skillRoots", "subagents", "planning", "webSources");
     private static final Set<String> MODEL_OPTIONS =
             Set.of(
                     "protocol",
@@ -288,6 +288,7 @@ final class WorkbenchSettings implements HarnessWebServer.Settings, DataSanitize
                         .orElseThrow(() -> error("UNKNOWN_MODEL"));
         if (key(model).isBlank()) throw error("API_KEY_MISSING");
         var resolved = configuration(state, model);
+        checkMcpCredentials(resolved);
         new CliConfig(resolved).costs();
         var snapshot =
                 Map.<String, Object>of(
@@ -310,6 +311,7 @@ final class WorkbenchSettings implements HarnessWebServer.Settings, DataSanitize
     synchronized RuntimeConfig runtime(Map<String, Object> snapshot) throws IOException {
         if (snapshot.isEmpty()) throw error("MODEL_SELECTION_REQUIRED");
         var values = new LinkedHashMap<>(Values.object(snapshot.get("resolved")));
+        checkMcpCredentials(values);
         var env = new HashMap<>(environment);
         String key = key(snapshot);
         if (key.isBlank()) throw error("API_KEY_MISSING");
@@ -340,6 +342,15 @@ final class WorkbenchSettings implements HarnessWebServer.Settings, DataSanitize
                 false,
                 "requestSent",
                 false);
+    }
+
+    private void checkMcpCredentials(Map<String, Object> config) {
+        var ecosystem = Values.object(config.getOrDefault("ecosystem", Map.of()));
+        for (var mcp : EcosystemConfig.entries(ecosystem, "mcp", 8)) {
+            if (mcp.get("tokenEnv") instanceof String name
+                    && environment.getOrDefault(name, "").isBlank())
+                throw error("MCP_CREDENTIAL_MISSING");
+        }
     }
 
     private Map<String, Object> configuration(
@@ -457,6 +468,45 @@ final class WorkbenchSettings implements HarnessWebServer.Settings, DataSanitize
             // Task admission still uses key(), so no failed lookup can silently select another key.
             return false;
         }
+    }
+
+    @Override
+    public synchronized Map<String, Object> skills(String workspace) throws IOException {
+        var config = Values.object(state.get("extensions"));
+        var entries = new ArrayList<Map<String, Object>>();
+        for (var entry : EcosystemConfig.catalog(config, Path.of(workspace)))
+            entries.add(entry.view());
+        var files = new io.jharness.workspace.LocalWorkspace(Path.of(workspace));
+        for (var skill : EcosystemConfig.entries(config, "skills", 8)) {
+            String id = EcosystemConfig.text(skill, "id", null);
+            var path = new ExecPath(EcosystemConfig.text(skill, "directory", null) + "/SKILL.md");
+            String before = files.versionOf(path), text = files.readText(path);
+            if (text.getBytes(StandardCharsets.UTF_8).length > 65536)
+                throw error("SKILL_FILE_LIMIT");
+            if (!before.equals(files.versionOf(path))) throw error("FILE_CONFLICT");
+            entries.add(
+                    Map.of(
+                            "id",
+                            id,
+                            "description",
+                            "显式配置的技能；资源/脚本按白名单加载",
+                            "root",
+                            "configured",
+                            "directory",
+                            EcosystemConfig.text(skill, "directory", null),
+                            "text",
+                            text,
+                            "sha256",
+                            Json.hash(text.getBytes(StandardCharsets.UTF_8)),
+                            "tool",
+                            "skill_" + id + "__load",
+                            "untrusted",
+                            true));
+        }
+        var result = Map.<String, Object>of("skills", entries, "snapshot", true);
+        if (Json.text(result).getBytes(StandardCharsets.UTF_8).length > 480 * 1024)
+            throw error("SKILL_TOTAL_LIMIT");
+        return result;
     }
 
     private String policy(Map<String, Object> config) {

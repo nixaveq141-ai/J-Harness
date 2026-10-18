@@ -42,7 +42,58 @@ public final class M7McpServer {
                                             "serverInfo",
                                             Map.of("name", "fixture", "version", "1"),
                                             "capabilities",
-                                            Map.of("tools", Map.of()))));
+                                            mode.equals("resources")
+                                                    ? Map.of("resources", Map.of())
+                                                    : Map.of("tools", Map.of()))));
+                } else if (method.equals("resources/list")) {
+                    send(
+                            Map.of(
+                                    "jsonrpc",
+                                    "2.0",
+                                    "id",
+                                    id,
+                                    "result",
+                                    Map.of(
+                                            "resources",
+                                            List.of(
+                                                    Map.of(
+                                                            "name",
+                                                            "note",
+                                                            "uri",
+                                                            "notes://one")))));
+                } else if (method.equals("resources/templates/list")) {
+                    send(
+                            Map.of(
+                                    "jsonrpc",
+                                    "2.0",
+                                    "id",
+                                    id,
+                                    "result",
+                                    Map.of(
+                                            "resourceTemplates",
+                                            List.of(
+                                                    Map.of(
+                                                            "name",
+                                                            "note",
+                                                            "uriTemplate",
+                                                            "notes://item/{id}")))));
+                } else if (method.equals("resources/read")) {
+                    var parameters = (Map<?, ?>) request.get("params");
+                    send(
+                            Map.of(
+                                    "jsonrpc",
+                                    "2.0",
+                                    "id",
+                                    id,
+                                    "result",
+                                    Map.of(
+                                            "contents",
+                                            List.of(
+                                                    Map.of(
+                                                            "uri",
+                                                            parameters.get("uri"),
+                                                            "text",
+                                                            "Untrusted mcp-secret-token")))));
                 } else if (method.equals("tools/list")) {
                     send(Map.of("jsonrpc", "2.0", "id", "server-ping", "method", "ping"));
                     var input =

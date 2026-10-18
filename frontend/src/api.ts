@@ -4,6 +4,7 @@ export interface Task {
   modelId?: string; modelName?: string; modelProtocol?: string
   name: string; pinned: boolean; archived: boolean; revision: string; createdAt: string
 }
+export interface SkillEntry { id: string; description: string; root: string; directory: string; text: string; sha256: string; tool: string }
 export interface SessionEvent {
   eventId: string; type: string; timestamp: string; callId?: string | null; turnId?:string|null; stepId?:string|null
   payload: Record<string, unknown>
@@ -167,6 +168,26 @@ export class Api {
   async turnStatus(id: string, requestId: string) { return turnReceipt(await this.json(`/v1/tasks/${identifier(id)}/turns?request=${identifier(requestId)}`), id) }
   async turnAction(id: string, hash: string, action: 'cancel' | 'start') { return turnReceipt(await this.json(`/v1/tasks/${identifier(id)}/turns/${identifier(hash)}/${action}`, {}), id) }
   async workspaces() { return workspaceData(await this.json('/v1/workspaces')) }
+  async skills(profile: string, signal?: AbortSignal): Promise<SkillEntry[]> {
+    const v = object(await this.json('/v1/skills?profile=' + identifier(profile), undefined, signal))
+    if (v.snapshot !== true || !Array.isArray(v.skills) || v.skills.length > 24) throw new ApiError('INVALID_RESPONSE')
+    const names = new Set<string>()
+    return v.skills.map(raw => {
+      const s = object(raw), id = text(s.id, 24), hash = text(s.sha256, 64)
+      if (!/^[A-Za-z0-9_-]+$/.test(id) || names.has(id) || !/^[a-f0-9]{64}$/.test(hash) || s.tool !== `skill_${id}__load` || s.untrusted !== true) throw new ApiError('INVALID_RESPONSE')
+      names.add(id)
+      return { id, description: text(s.description, 1024), root: text(s.root, 32), directory: text(s.directory, 1024), text: text(s.text, 65536), sha256: hash, tool: s.tool as string }
+    })
+  }
+  async tools(id: string) {
+    const v = object(await this.json('/v1/tasks/' + identifier(id) + '/tools'))
+    if (typeof v.recorded !== 'boolean' || !Array.isArray(v.tools) || v.tools.length > 256 || !v.recorded && v.tools.length) throw new ApiError('INVALID_RESPONSE')
+    const names = new Set<string>()
+    return { recorded: v.recorded, tools: v.tools.map(raw => { const tool = object(raw), name = text(tool.name, 64), sideEffect = text(tool.sideEffect, 32)
+      if (!/^[A-Za-z0-9_-]+$/.test(name) || names.has(name) || !['READ_ONLY','WORKSPACE_WRITE','SYSTEM_IMPACT'].includes(sideEffect)) throw new ApiError('INVALID_RESPONSE')
+      names.add(name); return { name, description: text(tool.description, 512), sideEffect }
+    }) }
+  }
   async registerWorkspace(path: string, name: string) { return workspaceData(await this.json('/v1/workspaces', { path, name })) }
   async taskPage(profile = '', view = 'active', after = '', signal?: AbortSignal) {
     const params = new URLSearchParams({ limit: '32', view, ...(profile ? { profile: identifier(profile) } : {}), ...(after ? { after: identifier(after) } : {}) })

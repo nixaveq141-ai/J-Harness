@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /** Embedded, single-session owner. Hosts supply trusted configuration and evidence evaluator. */
 public final class HarnessSdk implements AutoCloseable {
-    public static final String PROTOCOL_VERSION = "1.12";
+    public static final String PROTOCOL_VERSION = "1.13";
     private final PluginScope scope;
     private final SessionWriter writer;
     private final SessionReader reader;
@@ -231,6 +231,7 @@ public final class HarnessSdk implements AutoCloseable {
                         @Override
                         public void start(PluginContext context) {
                             context.register(ToolRegistry.class, "default", tools);
+                            context.register(DataSanitizer.class, "default", sanitizer);
                             context.register(SessionWriter.class, "default", writer);
                             context.register(SessionReader.class, "default", reader);
                             context.register(ModelDisplay.class, "default", display);
@@ -317,6 +318,30 @@ public final class HarnessSdk implements AutoCloseable {
                             List.of());
             assembly.start();
             if (tools instanceof FilteredToolRegistry filtered) filtered.validate(scope);
+            var inventory =
+                    tools.visibleTools(scope).stream()
+                            .map(
+                                    tool ->
+                                            Map.<String, Object>of(
+                                                    "name",
+                                                    tool.name(),
+                                                    "description",
+                                                    tool.description()
+                                                            .substring(
+                                                                    0,
+                                                                    Math.min(
+                                                                            512,
+                                                                            tool.description()
+                                                                                    .length())),
+                                                    "sideEffect",
+                                                    tool.sideEffectLevel().name()))
+                            .toList();
+            if (inventory.size() > 256 || BoundedJson.encode(inventory).length > 256 * 1024)
+                throw BoundedJson.error("TOOL_INVENTORY_LIMIT");
+            writer.append(
+                    SessionEvent.session(
+                            sessionId, "extensions.ready", Map.of("tools", inventory)));
+            writer.flush();
             container = assembly;
         } catch (RuntimeException ex) {
             try {

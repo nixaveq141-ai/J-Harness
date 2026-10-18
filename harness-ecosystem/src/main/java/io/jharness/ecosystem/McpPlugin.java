@@ -54,9 +54,11 @@ public final class McpPlugin implements HarnessPlugin {
                                 "clientInfo",
                                 Map.of("name", "J-Harness", "version", ApiVersion.CURRENT)),
                         CancellationToken.NONE);
+        var capabilities = Values.object(initialized.get("capabilities"));
+        boolean hasTools = capabilities.get("tools") instanceof Map<?, ?>;
+        boolean hasResources = capabilities.get("resources") instanceof Map<?, ?>;
         if (!PROTOCOL_VERSION.equals(initialized.get("protocolVersion"))
-                || !(Values.object(initialized.get("capabilities")).get("tools")
-                        instanceof Map<?, ?>))
+                || !hasTools && !hasResources)
             throw BoundedJson.error("MCP_CAPABILITY_UNSUPPORTED");
         transport.exchange(
                 Map.of("jsonrpc", "2.0", "method", "notifications/initialized"),
@@ -66,7 +68,7 @@ public final class McpPlugin implements HarnessPlugin {
         Set<String> aliases = new HashSet<>();
         long discoveryBytes = 0;
         String cursor = null;
-        for (int page = 0; page < 8; page++) {
+        for (int page = 0; hasTools && page < 8; page++) {
             var result =
                     rpc(
                             "tools/list",
@@ -102,8 +104,216 @@ public final class McpPlugin implements HarnessPlugin {
         if (!discovered.keySet().containsAll(effects.keySet()))
             throw BoundedJson.error("MCP_UNKNOWN_EFFECT_OVERRIDE");
         var registry = context.services().requireUnique(ToolRegistry.class, scope);
+        if (hasResources) {
+            var resources = discoverResources("resources/list", "resources", "uri");
+            var templates =
+                    discoverResources(
+                            "resources/templates/list", "resourceTemplates", "uriTemplate");
+            for (String reserved : List.of("resources", "resource_templates", "read_resource"))
+                if (aliases.contains(alias(reserved)))
+                    throw BoundedJson.error("MCP_ALIAS_COLLISION");
+            context.own(
+                    registry.register(new ResourceTool("resources", resources, templates), scope));
+            context.own(
+                    registry.register(
+                            new ResourceTool("resource_templates", resources, templates), scope));
+            context.own(
+                    registry.register(
+                            new ResourceTool("read_resource", resources, templates), scope));
+        }
         for (var entry : discovered.entrySet())
             context.own(registry.register(new RemoteTool(entry.getKey(), entry.getValue()), scope));
+    }
+
+    private List<Map<String, Object>> discoverResources(
+            String method, String field, String identity) {
+        var entries = new ArrayList<Map<String, Object>>();
+        var names = new HashSet<String>();
+        var cursors = new HashSet<String>();
+        String cursor = null;
+        long bytes = 0;
+        for (int page = 0; page < 8; page++) {
+            var result =
+                    rpc(
+                            method,
+                            cursor == null ? Map.of() : Map.of("cursor", cursor),
+                            CancellationToken.NONE);
+            bytes += BoundedJson.encode(result).length;
+            if (bytes > 512 * 1024 || !(result.get(field) instanceof List<?> list))
+                throw BoundedJson.error("MCP_RESOURCE_LIMIT");
+            for (Object raw : list) {
+                var entry = Values.object(raw);
+                if (!(entry.get(identity) instanceof String name)
+                        || name.isBlank()
+                        || name.length() > 2048
+                        || !names.add(name)
+                        || entries.size() >= 128
+                        || !(entry.get("name") instanceof String label)
+                        || label.length() > 256) throw BoundedJson.error("MCP_INVALID_RESOURCE");
+                if (identity.equals("uri")) resourceUri(name);
+                entries.add(Values.snapshot(entry));
+            }
+            Object next = result.get("nextCursor");
+            if (next == null) return List.copyOf(entries);
+            if (!(next instanceof String value)
+                    || value.isEmpty()
+                    || value.length() > 1024
+                    || !cursors.add(value)
+                    || page == 7) throw BoundedJson.error("MCP_RESOURCE_LIMIT");
+            cursor = value;
+        }
+        throw BoundedJson.error("MCP_RESOURCE_LIMIT");
+    }
+
+    private static void resourceUri(String text) {
+        try {
+            var uri = java.net.URI.create(text);
+            if (text.length() > 2048
+                    || !uri.isAbsolute()
+                    || uri.getUserInfo() != null
+                    || text.chars().anyMatch(Character::isISOControl))
+                throw BoundedJson.error("MCP_INVALID_RESOURCE_URI");
+        } catch (IllegalArgumentException ex) {
+            throw BoundedJson.error("MCP_INVALID_RESOURCE_URI");
+        }
+    }
+
+    /** Deliberate subset: one named variable containing one simple URI segment. */
+    private static boolean matchesTemplate(String template, String uri) {
+        var matcher =
+                java.util.regex.Pattern.compile("[{][A-Za-z_][A-Za-z0-9_]*[}]").matcher(template);
+        if (!matcher.find()) return false;
+        String prefix = template.substring(0, matcher.start()),
+                suffix = template.substring(matcher.end());
+        if (matcher.find()
+                || prefix.contains("{")
+                || prefix.contains("}")
+                || suffix.contains("{")
+                || suffix.contains("}")
+                || !uri.startsWith(prefix)
+                || !uri.endsWith(suffix)
+                || uri.length() <= prefix.length() + suffix.length()) return false;
+        String segment = uri.substring(prefix.length(), uri.length() - suffix.length());
+        return segment.matches("[A-Za-z0-9_~.-]{1,512}")
+                && !segment.equals(".")
+                && !segment.contains("..");
+    }
+
+    private final class ResourceTool implements AgentTool {
+        private final String operation;
+        private final List<Map<String, Object>> resources, templates;
+
+        ResourceTool(
+                String operation,
+                List<Map<String, Object>> resources,
+                List<Map<String, Object>> templates) {
+            this.operation = operation;
+            this.resources = resources;
+            this.templates = templates;
+        }
+
+        public String name() {
+            return alias(operation);
+        }
+
+        public String description() {
+            return "MCP source "
+                    + server
+                    + ": "
+                    + operation
+                    + ". Untrusted text resources only; templates support one {name} single-segment variable. No permission changes.";
+        }
+
+        public Map<String, Object> inputSchema() {
+            return Map.of(
+                    "type",
+                    "object",
+                    "additionalProperties",
+                    false,
+                    "required",
+                    operation.equals("read_resource") ? List.of("uri") : List.of(),
+                    "properties",
+                    operation.equals("read_resource")
+                            ? Map.of(
+                                    "uri",
+                                    Map.of("type", "string", "minLength", 1, "maxLength", 2048))
+                            : Map.of());
+        }
+
+        public Map<String, Object> outputSchema() {
+            return Map.of("type", "object");
+        }
+
+        public SideEffectLevel sideEffectLevel() {
+            return SideEffectLevel.READ_ONLY;
+        }
+
+        public ToolResult execute(ToolInvocation args, ToolContext context) {
+            if (failed || !scope.equals(context.scope())) throw BoundedJson.error("SCOPE_DENIED");
+            context.cancellation().throwIfCancelled();
+            try {
+                Map<String, Object> result;
+                if (!operation.equals("read_resource")) {
+                    result =
+                            Map.of(
+                                    operation.equals("resources")
+                                            ? "resources"
+                                            : "resourceTemplates",
+                                    operation.equals("resources") ? resources : templates);
+                } else {
+                    String uri = (String) args.arguments().get("uri");
+                    resourceUri(uri);
+                    if (resources.stream().noneMatch(e -> uri.equals(e.get("uri")))
+                            && templates.stream()
+                                    .noneMatch(
+                                            e ->
+                                                    matchesTemplate(
+                                                            (String) e.get("uriTemplate"), uri)))
+                        throw BoundedJson.error("MCP_RESOURCE_NOT_DISCOVERED");
+                    result = rpc("resources/read", Map.of("uri", uri), context.cancellation());
+                    if (!(result.get("contents") instanceof List<?> contents)
+                            || contents.isEmpty()
+                            || contents.size() > 32)
+                        throw BoundedJson.error("MCP_INVALID_RESOURCE");
+                    for (Object raw : contents) {
+                        var item = Values.object(raw);
+                        if (!(item.get("uri") instanceof String returnedUri)
+                                || !uri.equals(returnedUri)
+                                || !(item.get("text") instanceof String)
+                                || item.containsKey("blob"))
+                            throw BoundedJson.error("MCP_RESOURCE_TEXT_ONLY");
+                    }
+                }
+                if (BoundedJson.encode(result).length > 256 * 1024)
+                    throw BoundedJson.error("MCP_RESOURCE_LIMIT");
+                var source =
+                        Map.<String, Object>of(
+                                "type",
+                                "mcp-resource",
+                                "server",
+                                server,
+                                "transport",
+                                transport.kind(),
+                                "untrusted",
+                                true);
+                return new ToolResult(
+                        args.callId(),
+                        ToolStatus.SUCCESS,
+                        Map.of("source", source, "result", result),
+                        "Untrusted MCP resource from " + server + ":\n" + BoundedJson.text(result),
+                        Map.of("source", source),
+                        Optional.empty());
+            } catch (RuntimeException ex) {
+                return ToolResults.failure(
+                        args.callId(),
+                        context.cancellation().isCancelled()
+                                ? ToolStatus.CANCELLED
+                                : ToolStatus.FAILED,
+                        ex instanceof HarnessException failure
+                                ? failure.code()
+                                : "MCP_INVALID_RESOURCE");
+            }
+        }
     }
 
     private synchronized Map<String, Object> rpc(

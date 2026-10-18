@@ -51,7 +51,16 @@ final class EcosystemConfig {
     }
 
     static void validate(Map<String, Object> config) {
-        keys(config, "environment", "mcp", "skills", "subagents", "planning", "web", "webSources");
+        keys(
+                config,
+                "environment",
+                "mcp",
+                "skills",
+                "skillRoots",
+                "subagents",
+                "planning",
+                "web",
+                "webSources");
         var env = Values.object(config.getOrDefault("environment", Map.of()));
         keys(env, "kind", "dockerExecutable", "image", "workerJar");
         String kind = text(env, "kind", "local");
@@ -102,8 +111,26 @@ final class EcosystemConfig {
                     .forEach(v -> SideEffectLevel.valueOf((String) v));
         }
         ids.clear();
+        for (var root : entries(config, "skillRoots", 8)) {
+            keys(root, "id", "kind", "directory");
+            String id = text(root, "id", null), rootKind = text(root, "kind", null);
+            if (!id.matches("[A-Za-z0-9_-]{1,16}")
+                    || !ids.add(id)
+                    || !Set.of("project", "user").contains(rootKind)) throw invalid();
+            Path directory = Path.of(text(root, "directory", null));
+            if (!directory.normalize().equals(directory)
+                    || directory.isAbsolute() != rootKind.equals("user")
+                    || rootKind.equals("project")
+                            && (directory.getRoot() != null
+                                    || directory.toString().contains(":")
+                                    || directory.toString().startsWith("\\"))
+                    || directory.toString().replace('\\', '/').matches("(?:.*?/)?\\.\\.(?:/.*)?"))
+                throw invalid();
+        }
+        ids.clear();
         for (var skill : entries(config, "skills", 8)) {
             keys(skill, "id", "directory", "resources", "scripts");
+            SkillCatalog.checkName(text(skill, "id", null));
             if (!ids.add(text(skill, "id", null))) throw invalid();
             spec(skill);
         }
@@ -164,11 +191,14 @@ final class EcosystemConfig {
                                             Duration.ofSeconds(
                                                     number(script, "timeoutSeconds", 10, 60))));
                         });
-        return new SkillsPlugin.Spec(
-                text(map, "id", null),
-                new ExecPath(text(map, "directory", null)),
-                resources,
-                scripts);
+        var checked =
+                new SkillsPlugin.Spec(
+                        text(map, "id", null),
+                        new ExecPath(text(map, "directory", null)),
+                        resources,
+                        scripts);
+        SkillsPlugin.validatePaths(checked);
+        return checked;
     }
 
     static ExecutionEnvironment environment(
@@ -210,8 +240,12 @@ final class EcosystemConfig {
                                     String token =
                                             mcp.containsKey("tokenEnv")
                                                     ? environment.get(text(mcp, "tokenEnv", null))
-                                                    : "";
-                                    if (token == null) throw invalid();
+                                                    : null;
+                                    if (mcp.containsKey("tokenEnv")
+                                            && (token == null || token.isBlank()))
+                                        throw new HarnessException(
+                                                "MCP_CREDENTIAL_MISSING",
+                                                "Configured MCP credential is unavailable");
                                     return new HttpMcpTransport(
                                             URI.create(text(mcp, "url", null)),
                                             Duration.ofSeconds(
@@ -232,6 +266,13 @@ final class EcosystemConfig {
                             effects));
         }
         entries(config, "skills", 8).forEach(skill -> plugins.add(new SkillsPlugin(spec(skill))));
+        if (!entries(config, "skillRoots", 8).isEmpty()) {
+            try {
+                plugins.add(SkillCatalog.plugin(catalog(config, root)));
+            } catch (java.io.IOException ex) {
+                throw new HarnessException("SKILL_SCAN_FAILED", "Cannot read explicit skill roots");
+            }
+        }
         var children = new LinkedHashMap<String, SubagentPlugin.Profile>();
         Values.object(config.getOrDefault("subagents", Map.of()))
                 .forEach(
@@ -315,6 +356,26 @@ final class EcosystemConfig {
                 .forEach((k, v) -> sources.put(k, URI.create((String) v)));
         if (!sources.isEmpty()) plugins.add(new WebFetchPlugin(sources));
         return plugins;
+    }
+
+    static List<SkillCatalog.Entry> catalog(Map<String, Object> config, Path workspace)
+            throws java.io.IOException {
+        var roots = new ArrayList<SkillCatalog.Root>();
+        for (var item : entries(config, "skillRoots", 8)) {
+            Path directory = Path.of(text(item, "directory", null));
+            roots.add(
+                    new SkillCatalog.Root(
+                            text(item, "id", null),
+                            text(item, "kind", null).equals("project")
+                                    ? workspace.resolve(directory)
+                                    : directory));
+        }
+        return SkillCatalog.scan(
+                roots,
+                entries(config, "skills", 8).stream()
+                        .map(s -> text(s, "id", null))
+                        .collect(java.util.stream.Collectors.toSet()),
+                CancellationToken.NONE);
     }
 
     private record ParameterizedModel(LlmClient delegate, Map<String, Object> parameters)

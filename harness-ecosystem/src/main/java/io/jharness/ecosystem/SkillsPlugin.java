@@ -52,6 +52,13 @@ public final class SkillsPlugin implements HarnessPlugin {
         this.spec = Objects.requireNonNull(spec);
     }
 
+    /** Host configuration/preview uses the same relative path boundary as runtime snapshots. */
+    public static void validatePaths(Spec spec) {
+        safe(spec.directory());
+        spec.resources().values().forEach(SkillsPlugin::safe);
+        spec.scripts().values().forEach(script -> safe(script.path()));
+    }
+
     @Override
     public String id() {
         return "skill-" + spec.id();

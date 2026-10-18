@@ -40,3 +40,5 @@ UNKNOWN是正确的保守执行状态，不是单独一个应移除的缺陷。�
 - DSH `packages/session-query/session-query-sqlite/README.md`、`packages/sdk/README.md`；J-Harness `SessionSearchIndex.java`、CLI会话维护与M10-auto验收记录。
 
 核验方式：静态源码/文档交叉检查，参考目录监测集合1954份文件前后SHA一致、HEAD一致；精确范围见取证JSON，不宣称全仓所有文件已审查。没有运行产品测试或新增功能验收，没有改变M11/M12内容。
+
+2026-10-18 G06接续：M10.5.7已完成本地验收，扩展表单、显式技能目录/候选与MCP文本资源/单变量模板链路见[M10.5.7验收](../testing/M10.5.7-validation.md)。本表仍保留2026-10-17固定源码的差距快照，不重写上游比较或宣称完整协议兼容。
