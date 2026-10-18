@@ -225,3 +225,17 @@ button { background: transparent; border: 0; }
 .model-picker select { min-width: 0; max-width: 280px; color: inherit; background: var(--dsw-alias-bg-layer-3); border: 1px solid var(--dsw-alias-border-l3); border-radius: 6px; padding: 5px; text-overflow: ellipsis; }
 .turn-heading > span { overflow-wrap: anywhere; }
 @media (max-width: 760px) { .model-picker { width: 100%; }.model-picker select { flex: 1; max-width: 100%; }.turn-heading > span { width: 100%; } }
+
+.questions { margin: 24px 0; min-width: 0; }
+.question-card { padding: 18px; border: 1px solid var(--dsw-alias-border-l3); border-radius: 14px; margin-block: 12px; background: var(--dsw-alias-bg-base); overflow-wrap: anywhere; }
+.question-title, .question-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }.question-actions { justify-content: flex-end; }
+.question-card h3 { font-size: 16px; line-height: 1.6; margin: 14px 0; }.question-card .field-help { margin: 0 0 16px; }
+.question-card fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }.question-card legend { margin-bottom: 10px; font-size: 13px; }
+.question-option { display: flex; align-items: start; gap: 10px; padding: 12px 8px; border-radius: 8px; cursor: pointer; }.question-option:hover { background: var(--dsw-alias-bg-layer-3); }
+.question-option > input { margin-top: 4px; accent-color: var(--dsw-alias-state-business-primary); }.question-option > span { min-width: 0; }.question-option strong { font-weight: 550; }.question-option small { margin-left: 10px; color: var(--dsw-alias-label-secondary); }
+.question-option span > span { display: block; font-size: 12px; color: var(--dsw-alias-label-secondary); margin-top: 4px; }
+.question-text { display: grid; gap: 8px; margin-top: 14px; }.question-text textarea { width: 100%; resize: vertical; padding: 10px; border: 1px solid var(--dsw-alias-border-l3); border-radius: 8px; background: var(--dsw-alias-bg-layer-3); color: inherit; }
+.question-deadline, .question-notice { font-size: 12px; line-height: 1.7; }.question-closed summary { cursor: pointer; line-height: 1.7; }
+@media(max-width:760px) { .question-card { padding: 14px; }.question-option { padding: 12px 0; }.question-actions button { min-height: 44px; } }
+
+.turn-composer-slot:not([hidden]) { display: contents; }.turn-composer-slot[hidden] { display: none; }

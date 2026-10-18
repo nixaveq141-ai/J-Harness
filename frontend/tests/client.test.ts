@@ -159,3 +159,22 @@ test('configuration check rejects claims of implicit network verification', asyn
   const invalid = new Api(token, (async () => json({ valid: true, networkChecked: true, requestSent: true })) as typeof fetch)
   await assert.rejects(invalid.checkModel('b'), ApiError)
 })
+
+const questionFixture = { questionId: 'q1', sessionId: 'task_1', turnId: 'turn1', callId: 'call1', question: 'Choose', mode: 'single', options: [{ id: 'a', label: 'A', description: '', recommended: true }, { id: 'b', label: 'B', description: '', recommended: false }], allowText: true, state: 'PENDING', expiresAt: '2026-10-18T10:00:00Z' }
+test('question page validates exact session and bounded state', async () => {
+  const api = new Api(token, (async () => json({ questions: [questionFixture], total: 1, hasWaiting: true })) as typeof fetch)
+  assert.equal((await api.questions('task_1'))[0].state, 'PENDING')
+  const wrong = new Api(token, (async () => json({ questions: [{ ...questionFixture, sessionId: 'other' }], total: 1, hasWaiting: true })) as typeof fetch)
+  await assert.rejects(wrong.questions('task_1'), ApiError)
+})
+test('lost question answer is not reposted and reconciliation is GET only', async () => {
+  const calls: string[] = []
+  const api = new Api(token, (async (url, init) => { calls.push(init!.method + ' ' + url); throw Error('offline') }) as typeof fetch)
+  await assert.rejects(api.answerQuestion(questionFixture as import('../src/api').UserQuestion,'request1',['a'],'',false),ApiError)
+  await assert.rejects(api.questions('task_1'),ApiError)
+  assert.deepEqual(calls,['POST /v1/tasks/task_1/questions/q1/answer','GET /v1/tasks/task_1/questions?offset=0'])
+})
+test('draft saves carry revision and never use answer endpoint', async () => {
+  const api = new Api(token, (async (url, init) => { assert.equal(url,'/v1/tasks/task_1/questions/q1/draft'); const body = JSON.parse(String(init?.body)); assert.equal(body.revision,3); assert.equal(body.requestId,undefined); return json({ selected: ['a'], text: 'draft', revision: 4 }) }) as typeof fetch)
+  assert.equal((await api.questionDraft(questionFixture as import('../src/api').UserQuestion,['a'],'draft',3)).revision,4)
+})

@@ -51,10 +51,27 @@ export function turnSubmission(value: unknown): TurnSubmission {
   return { submissionId: text(v.submissionId,64), kind: v.kind as 'message' | 'supplement', state: text(v.state), turnId: text(v.turnId,64), status: text(v.status), sequence: v.sequence as number, preview: v.preview === undefined ? '' : text(v.preview, 200) }
 }
 function turnReceipt(value: unknown, expectedId: string) { const v = object(value), current = task(v.task); if (current.taskId !== expectedId) throw new ApiError('INVALID_RESPONSE'); return { task: current, submission: turnSubmission(v.submission) } }
+export interface UserQuestion {
+  questionId: string; sessionId: string; turnId: string; callId: string; question: string
+  mode: 'single' | 'multiple' | 'text'; options: { id: string; label: string; description: string; recommended: boolean }[]
+  allowText: boolean; state: string; expiresAt: string; requestId?: string
+  selected?: string[]; text?: string; draftRevision?: number; draft?: { selected: string[]; text: string }
+}
+export function userQuestion(value: unknown): UserQuestion {
+  const v = object(value)
+  if (!['single','multiple','text'].includes(String(v.mode)) || !['PENDING','SUBMITTED','ANSWERED','SKIPPED','TIMED_OUT','CANCELLED','INTERRUPTED'].includes(String(v.state)) || typeof v.allowText !== 'boolean' || !Array.isArray(v.options) || v.options.length>8) throw new ApiError('INVALID_RESPONSE')
+  const options = v.options.map(raw => { const o = object(raw); if (typeof o.recommended !== 'boolean') throw new ApiError('INVALID_RESPONSE'); return { id: identifier(o.id), label: text(o.label,128), description: text(o.description,512), recommended: o.recommended } })
+  const draft = v.draft === undefined ? {} : object(v.draft)
+  const answerList = (raw: unknown) => { if (!Array.isArray(raw) || raw.length>8) throw new ApiError('INVALID_RESPONSE'); return raw.map(identifier) }
+  if (v.draftRevision !== undefined && (!Number.isInteger(v.draftRevision) || (v.draftRevision as number)<0)) throw new ApiError('INVALID_RESPONSE')
+  return { draftRevision: v.draftRevision === undefined ? 0 : v.draftRevision as number, questionId: identifier(v.questionId), sessionId: identifier(v.sessionId), turnId: identifier(v.turnId), callId: text(v.callId,256), question: text(v.question,2048), mode: v.mode as UserQuestion['mode'], options, allowText: v.allowText, state: text(v.state), expiresAt: text(v.expiresAt),
+    ...(v.requestId === undefined ? {} : { requestId: identifier(v.requestId) }), ...(v.selected === undefined ? {} : { selected: answerList(v.selected) }), ...(v.text === undefined ? {} : { text: text(v.text,4096) }),
+    ...(draft.selected === undefined ? {} : { draft: { selected: answerList(draft.selected), text: text(draft.text,4096) } }) }
+}
 export class ApiError extends Error {
   constructor(public code: string, public status = 0) { super(code) }
 }
-const errors = new Set(['UNAUTHORIZED', 'LOCAL_CLIENT_REQUIRED', 'UNKNOWN_CURSOR', 'STREAM_LIMIT',
+const errors = new Set(['DRAFT_CONFLICT','QUESTION_ASSOCIATION_MISMATCH','QUESTION_NOT_FOUND','QUESTION_CLOSED','ANSWER_CONFLICT','INVALID_ANSWER','INVALID_QUESTION','UNAUTHORIZED', 'LOCAL_CLIENT_REQUIRED', 'UNKNOWN_CURSOR', 'STREAM_LIMIT',
   'STALE_APPROVAL', 'WORKSPACE_BUSY', 'TASK_LIMIT', 'ACTIVE_LIMIT', 'SUBMISSION_NOT_FOUND',
   'SUBMISSION_NOT_CONFIRMED', 'REQUEST_ID_CONFLICT', 'DIFF_NOT_RECORDED', 'RESPONSE_LIMIT', 'NOT_FOUND',
   'UNKNOWN_MODEL', 'MODEL_SELECTION_REQUIRED', 'QUEUE_LIMIT', 'QUEUE_PAUSED', 'QUEUE_ORDER_CONFLICT', 'SUBMISSION_ALREADY_STARTED', 'SESSION_ARCHIVED', 'SETTINGS_CONFLICT', 'INVALID_SETTINGS', 'SECRET_CONFIG', 'CREDENTIAL_STORE_UNAVAILABLE', 'API_KEY_MISSING', 'INVALID_CONFIG', 'COST_BUDGET_UNAVAILABLE', 'SESSION_CONFLICT', 'RECOVERY_REQUIRED', 'EXPORT_LIMIT', 'FORK_UNAVAILABLE', 'WORKSPACE_PATH_DENIED', 'WORKSPACE_OWNER_MISMATCH', 'WORKSPACE_EXISTS', 'WORKSPACE_LIMIT', 'SESSION_ALREADY_OWNED', 'SESSION_BUSY', 'INVALID_WORKSPACE_NAME', 'WEB_HISTORY_QUOTA'])
@@ -96,6 +113,23 @@ export function mergeEvents(old: SessionEvent[], incoming: SessionEvent[]): Sess
 export const isTerminal = (t: Task) => ['FINISHED', 'UNKNOWN', 'VERIFIED'].includes(t.phase)
 export const uncertain = (t: Task) => t.phase !== 'VERIFIED' && (t.phase === 'UNKNOWN' || t.status === 'UNKNOWN')
 export class Api {
+  async questions(id: string) { return (await this.questionPage(id)).questions }
+  async questionPage(id: string, offset = 0) {
+    if (!Number.isInteger(offset) || offset<0 || offset>64) throw new ApiError('INVALID_RESPONSE')
+    const v = object(await this.json('/v1/tasks/' + identifier(id) + '/questions?offset=' + offset))
+    if (!Array.isArray(v.questions) || v.questions.length>8) throw new ApiError('INVALID_RESPONSE')
+    const rows = v.questions.map(userQuestion); if (rows.some(q => q.sessionId !== id) || !Number.isInteger(v.total) || (v.total as number)<rows.length || (v.total as number)>64 || typeof v.hasWaiting !== 'boolean') throw new ApiError('INVALID_RESPONSE'); return { questions: rows, total: v.total as number, hasWaiting: v.hasWaiting }
+  }
+  async answerQuestion(q: UserQuestion, requestId: string, selected: string[], text: string, skip: boolean) {
+    const v = userQuestion(await this.json('/v1/tasks/' + identifier(q.sessionId) + '/questions/' + identifier(q.questionId) + '/answer', { questionId: q.questionId, sessionId: q.sessionId, turnId: q.turnId, callId: q.callId, requestId: identifier(requestId), selected, text, skip }))
+    if (v.questionId !== q.questionId || v.sessionId !== q.sessionId) throw new ApiError('INVALID_RESPONSE'); return v
+  }
+  async questionDraft(q: UserQuestion, selected: string[], text: string, revision: number) {
+    const v = object(await this.json('/v1/tasks/' + identifier(q.sessionId) + '/questions/' + identifier(q.questionId) + '/draft', { questionId: q.questionId, sessionId: q.sessionId, turnId: q.turnId, callId: q.callId, selected, text, revision }))
+    if (!Array.isArray(v.selected) || typeof v.text !== 'string' || v.text.length>4096 || !Number.isInteger(v.revision) || (v.revision as number)<1) throw new ApiError('INVALID_RESPONSE')
+    return { revision: v.revision as number }
+  }
+
   async turns(id: string, offset = 0) {
     const v = object(await this.json(`/v1/tasks/${identifier(id)}/turns?offset=${offset}`))
     if (!Array.isArray(v.submissions) || v.submissions.length > 32 || typeof v.more !== 'boolean' || !Number.isInteger(v.next) || !Number.isInteger(v.total)) throw new ApiError('INVALID_RESPONSE')

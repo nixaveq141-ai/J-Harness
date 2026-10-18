@@ -761,6 +761,8 @@ public final class HarnessWebServer implements AutoCloseable {
                 response = summary(task);
             }
             respond(exchange, 200, response);
+        } else if (path.length >= 5 && path[4].equals("questions")) {
+            questionRoute(exchange, task, path, method, query);
         } else if (path.length >= 5 && path[4].equals("turns")) {
             synchronized (this) {
                 turnRoute(exchange, task, path, method, query);
@@ -1050,6 +1052,111 @@ public final class HarnessWebServer implements AutoCloseable {
             }
             respond(exchange, 200, Map.of("accepted", true));
         } else throw fault(405, "METHOD_OR_QUERY_NOT_ALLOWED");
+    }
+
+    private void questionRoute(
+            HttpExchange exchange,
+            Task task,
+            String[] path,
+            String method,
+            Map<String, String> query)
+            throws IOException {
+        try {
+            HarnessSdk sdk;
+            synchronized (this) {
+                sdk = task.sdk;
+            }
+            UserQuestionService service = null;
+            if (sdk != null) {
+                try {
+                    service = sdk.questions();
+                } catch (HarnessException | IllegalStateException closedService) {
+                    /* Read durable facts below. */
+                }
+            }
+            if (path.length == 5 && method.equals("GET")) {
+                var rows =
+                        service == null
+                                ? io.jharness.ecosystem.UserQuestionsPlugin.project(events(task))
+                                : service.list();
+                if (!Set.of("offset").containsAll(query.keySet()))
+                    throw fault(400, "INVALID_QUERY");
+                int offset;
+                try {
+                    offset = Integer.parseInt(query.getOrDefault("offset", "0"));
+                } catch (NumberFormatException bad) {
+                    throw fault(400, "INVALID_QUERY");
+                }
+                if (offset < 0 || offset > rows.size()) throw fault(400, "INVALID_QUERY");
+                int end = rows.size() - offset, begin = Math.max(0, end - 8);
+                respond(
+                        exchange,
+                        200,
+                        Map.of(
+                                "questions",
+                                rows.subList(begin, end),
+                                "total",
+                                rows.size(),
+                                "offset",
+                                offset,
+                                "hasWaiting",
+                                rows.stream()
+                                        .anyMatch(
+                                                q ->
+                                                        Set.of("PENDING", "SUBMITTED")
+                                                                .contains(q.get("state")))));
+
+                return;
+            }
+            if (!query.isEmpty()) throw fault(400, "INVALID_QUERY");
+            if (path.length == 7
+                    && method.equals("POST")
+                    && Set.of("answer", "draft").contains(path[6])) {
+                var input =
+                        body(
+                                exchange,
+                                path[6].equals("draft")
+                                        ? Set.of(
+                                                "questionId",
+                                                "sessionId",
+                                                "turnId",
+                                                "callId",
+                                                "selected",
+                                                "text",
+                                                "revision")
+                                        : Set.of(
+                                                "questionId",
+                                                "sessionId",
+                                                "turnId",
+                                                "callId",
+                                                "requestId",
+                                                "selected",
+                                                "text",
+                                                "skip"));
+                if (!task.id.equals(input.get("sessionId"))
+                        || !path[5].equals(input.get("questionId")))
+                    throw fault(409, "QUESTION_ASSOCIATION_MISMATCH");
+                if (path[6].equals("draft")) {
+                    if (service == null) throw fault(409, "QUESTION_CLOSED");
+                    respond(exchange, 200, service.draft(input));
+                    return;
+                }
+                var receipt =
+                        service == null
+                                ? io.jharness.ecosystem.UserQuestionsPlugin.recorded(
+                                        events(task), input)
+                                : service.respond(input);
+                respond(exchange, "SUBMITTED".equals(receipt.get("state")) ? 202 : 200, receipt);
+                return;
+            }
+            throw fault(405, "METHOD_NOT_ALLOWED");
+        } catch (HarnessException ex) {
+            throw fault(
+                    Set.of("INVALID_ANSWER", "INVALID_QUESTION").contains(ex.code())
+                            ? 400
+                            : ex.code().equals("QUESTION_NOT_FOUND") ? 404 : 409,
+                    ex.code());
+        }
     }
 
     private synchronized Map<String, Object> submit(

@@ -82,8 +82,9 @@ public final class DefaultToolPipeline implements ToolPipeline {
                 var decision =
                         Objects.requireNonNull(
                                 effectivePolicy.evaluate(call, toolContext(context)));
-                if (decision == PolicyEngine.Decision.ASK || effect != SideEffectLevel.READ_ONLY)
-                    barrier.run();
+                if (decision == PolicyEngine.Decision.ASK
+                        || effect != SideEffectLevel.READ_ONLY
+                        || tool.requiresSerialExecution()) barrier.run();
                 context.cancellation().throwIfCancelled();
                 ApprovalService.ApprovalDecision approval;
                 if (decision == PolicyEngine.Decision.ASK) {
@@ -127,7 +128,8 @@ public final class DefaultToolPipeline implements ToolPipeline {
                 }
                 parallel =
                         effect == SideEffectLevel.READ_ONLY
-                                && decision == PolicyEngine.Decision.ALLOW;
+                                && decision == PolicyEngine.Decision.ALLOW
+                                && !tool.requiresSerialExecution();
                 event(context, call, "tool.intent", invocation(call));
                 CheckpointDecision checkpoint = context.checkpoints().beforeTopLevelTool(call);
                 if (effect != SideEffectLevel.READ_ONLY)

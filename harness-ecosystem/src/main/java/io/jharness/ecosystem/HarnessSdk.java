@@ -12,7 +12,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /** Embedded, single-session owner. Hosts supply trusted configuration and evidence evaluator. */
 public final class HarnessSdk implements AutoCloseable {
-    public static final String PROTOCOL_VERSION = "1.10";
+    public static final String PROTOCOL_VERSION = "1.11";
     private final PluginScope scope;
     private final SessionWriter writer;
     private final SessionReader reader;
@@ -262,6 +262,7 @@ public final class HarnessSdk implements AutoCloseable {
                                     new EnvironmentPlugin(environment, artifacts),
                                     new PolicyPlugin(policy, approvals),
                                     new ToolsPlugin(sanitizer),
+                                    new UserQuestionsPlugin(sanitizer),
                                     new ToolSchedulingPlugin(options.scheduling()),
                                     new ModelResiliencePlugin(options.resilience()),
                                     new AgentPlugin(services)));
@@ -372,6 +373,10 @@ public final class HarnessSdk implements AutoCloseable {
         loop.run(token);
         writer.flush();
         return snapshot();
+    }
+
+    public UserQuestionService questions() {
+        return registry.requireUnique(UserQuestionService.class, scope);
     }
 
     public void cancel() {

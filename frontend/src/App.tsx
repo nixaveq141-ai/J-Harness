@@ -1,3 +1,4 @@
+import { Questions } from './Questions'
 import { ModelPicker } from './ModelPicker'
 import { TurnComposer } from './TurnComposer'
 import { useCallback, useEffect, useRef, useState, type FormEvent, type PointerEvent } from 'react'
@@ -70,8 +71,10 @@ const tabs: [SegmentedTab<Inspector>, ...SegmentedTab<Inspector>[]] = [
 export function App() {
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [settingsGuard, setSettingsGuard] = useState(false), [sessionGuard, setSessionGuard] = useState(false)
+  const [questionWaiting,setQuestionWaiting] = useState(false)
+  const [questionGuard,setQuestionGuard] = useState(false)
   const [turnGuard, setTurnGuard] = useState(false)
-  const navigationGuard = settingsGuard || sessionGuard || turnGuard
+  const navigationGuard = settingsGuard || sessionGuard || turnGuard || questionGuard
   const [viewProfile, setViewProfile] = useState(''), [viewMode, setViewMode] = useState('active')
   const pageMoving = useRef(false)
   const [pageLoading, setPageLoading] = useState(false)
@@ -271,7 +274,7 @@ export function App() {
           {!api && <p className="muted nav-empty">连接本机服务后<br />查看任务记录。</p>}
         </nav>
         <div className="nav-expanded history-pages"><Button aria-label="上一页会话" disabled={navigationGuard || pageLoading || pageStack.length === 0} onClick={() => { if (pageMoving.current) return; pageMoving.current = true; setPageLoading(true); setPageCursor(pageStack.at(-1)!); setPageStack(old => old.slice(0, -1)) }}>上一页</Button><span>{pageStack.length + 1}</span><Button aria-label="下一页会话" disabled={navigationGuard || pageLoading || !morePages} onClick={() => { if (pageMoving.current) return; pageMoving.current = true; setPageLoading(true); setPageStack(old => [...old, pageCursor]); setPageCursor(nextPage) }}>下一页</Button></div>
-        <div className="nav-footer"><Button aria-label="工作台设置" title="工作台设置" disabled={!api || sessionGuard || turnGuard} onClick={() => { setSettingsOpen(true); setInspectorOpen(false); if (window.matchMedia('(max-width: 760px)').matches) setSideOpen(false) }} icon={<Icon name="panel" />}><span className="nav-expanded">设置</span></Button><Button onClick={() => setDark(v => !v)} aria-label={dark ? '切换浅色主题' : '切换深色主题'} icon={<Icon name="moon" />}><span className="nav-expanded">{dark ? '浅色主题' : '深色主题'}</span></Button>
+        <div className="nav-footer"><Button aria-label="工作台设置" title="工作台设置" disabled={!api || sessionGuard || turnGuard || questionGuard} onClick={() => { setSettingsOpen(true); setInspectorOpen(false); if (window.matchMedia('(max-width: 760px)').matches) setSideOpen(false) }} icon={<Icon name="panel" />}><span className="nav-expanded">设置</span></Button><Button onClick={() => setDark(v => !v)} aria-label={dark ? '切换浅色主题' : '切换深色主题'} icon={<Icon name="moon" />}><span className="nav-expanded">{dark ? '浅色主题' : '深色主题'}</span></Button>
           <div className="nav-expanded connection-state"><span className={`connection-dot ${api ? 'online' : ''}`} />{api ? '本机服务已连接' : '尚未连接'}</div>
           <a className="nav-expanded license-link" href="/ui-license.txt" target="_blank" rel="noreferrer">开源许可</a></div>
       </div>
@@ -293,6 +296,7 @@ export function App() {
               {api && active && isTerminal(active) && <div ref={diagnosisAnchor} tabIndex={-1}><DiagnosisPanel key={active.taskId} api={api} task={active} refresh={historyKey} /></div>}
               {events.length === 0 && <p className="muted timeline-empty">尚无事件记录。正在读取任务状态。</p>}
               {events.map(e => <EventRow key={e.eventId} event={e} onSelect={() => { setFocusedEvent(e); setTab('detail'); setInspectorOpen(true) }} />)}
+              {api && active && <Questions key={"questions-"+active.taskId} api={api} id={active.taskId} onGuard={setQuestionGuard} onWaiting={setQuestionWaiting} />}
               <div ref={listEnd} />
             </section>}
           {approvals.length > 0 && <section className="approval-region" aria-label="待处理审批">{approvals.map(a => <div className="approval-card" key={a.approvalId}>
@@ -302,7 +306,7 @@ export function App() {
           {!selected && <form className="composer" onSubmit={e => void submit(e)}><textarea aria-label="任务目标" placeholder="描述你的任务…" value={goal} maxLength={16384} onChange={e => setGoal(e.target.value)} rows={3} disabled={submitting}
             onKeyDown={e => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey) && !e.nativeEvent.isComposing) { e.preventDefault(); e.currentTarget.form?.requestSubmit() } }} />
             <div className="composer-toolbar">{profiles.length > 1 && <label className="profile-picker">执行工作区 <select aria-label="任务配置" value={profile} onChange={e => setProfile(e.target.value)}>{profiles.map(p => <option key={p} value={p}>{workspaceNames[p] ?? p}</option>)}</select></label>}<ModelPicker api={api} value={modelId} onChange={setModelId} disabled={submitting || !!pending} /><span className="composer-shortcut">Ctrl / ⌘ + Enter</span><Button type="submit" variant="primary" aria-label="创建任务" disabled={!goal.trim() || !profile || submitting || !!pending}><Icon name="arrow" /></Button></div></form>}
-          {selected && api && active && <TurnComposer key={selected} api={api} task={active} onUpdated={updateTask} onHistory={() => { autoScroll.current = true }} onGuard={setTurnGuard} />}
+          {selected && api && active && <div className="turn-composer-slot" hidden={questionWaiting}><TurnComposer key={selected} api={api} task={active} onUpdated={updateTask} onHistory={() => { autoScroll.current = true }} onGuard={setTurnGuard} /></div>}
           {selected && <footer className="activity-footer"><TextShimmer active={!!active && !isTerminal(active)}>{live}</TextShimmer>{active && active.cancelRequested && <span>已请求取消，正在等待执行事实</span>}
             <div>{hasProblems && <Button onClick={() => { diagnosisAnchor.current?.scrollIntoView({ block: 'start' }); diagnosisAnchor.current?.focus({ preventScroll: true }); autoScroll.current = false }}>执行诊断</Button>}<Button onClick={() => { setError(''); setHistoryKey(k => k + 1) }}>重载历史</Button>{active && !isTerminal(active) && <Button variant="outline" icon={<Icon name="stop" />} disabled={!!busy || active.cancelRequested} onClick={() => void cancel()}>取消任务</Button>}</div></footer>}
           <div className="workspace-note">工具操作沿用工作区权限与审批 · 执行结果以记录为准</div>
