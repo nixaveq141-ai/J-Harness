@@ -1,0 +1,15 @@
+{
+  "capturedAt": "2026-10-19T08:18:18.392206+00:00",
+  "firefox": {
+    "executableSha256": "9571c9a49d6d4de3e4c3b14e2e4bd6521e5b879f4ab6c95143e2098cb66e6618",
+    "status": "UNAVAILABLE",
+    "winerror": 14001,
+    "reason": "[WinError 14001] 应用程序无法启动，因为应用程序的并行配置不正确。有关详细信息，请参阅应用程序事件日志，或使用命令行 sxstrace.exe 工具。",
+    "privateHeadlessLaunch": {
+      "status": "FAILED",
+      "exitCode": 3221225477,
+      "log": ".dsh-tmp\\m1059-firefox-private-launch-failure.log",
+      "logSha256": "15912ae1e6ab8d3baf571ea3ebcbdfeed61bf65e034388fc9d9b0ac4d3f98e70"
+    }
+  }
+}

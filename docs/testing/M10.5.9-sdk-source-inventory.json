@@ -1,0 +1,33 @@
+{
+  "format": "jharness-sdk-source-inventory-1",
+  "externalRuntimeDependencyCount": 0,
+  "pythonImports": [
+    "__future__",
+    "collections",
+    "concurrent",
+    "json",
+    "os",
+    "queue",
+    "subprocess",
+    "threading",
+    "uuid"
+  ],
+  "typescriptImports": [
+    "node:child_process",
+    "node:crypto"
+  ],
+  "sourceSha256": {
+    "sdk/README.md": "34abc52cf47cdf19ab5da87154584ffe907953f19787a1da70d93e8ad9e9c29b",
+    "sdk/package.json": "609158e6c5fbc237939fa3ddf7faab80ab690bdc0c8d584414a885130103c4e8",
+    "sdk/typescript/package.json": "95a86e83482af67d15fc4247fb70451e34b50b9538b812d4084adb322259da24",
+    "sdk/typescript/src/index.ts": "c2f5f2e78676254ebfcd7687974f7fbd6bc62ee309c6dc9de01d8fbaa379b6c4",
+    "sdk/python/jharness_sdk.py": "5f9f20bbaf36b5ef672ba9583d03d2e5993874a15e74f2a3c4113fd8e754f368",
+    "sdk/examples/demo.json": "423624a776f212184ca221cd0c972b610b92c6ede1734c5f3e6adce83260a038",
+    "sdk/examples/loopback_provider.py": "dd3351436962813ef1dc3118b372a5021e5f5e195e9a10db445958023512798a",
+    "sdk/examples/run.ts": "82f6f0786d68bf725efd0e9e23dce618faa76e2bc659cf485a50a06f3b5da837",
+    "sdk/examples/run.py": "67f2d8e1141a0bc10e8c0312589e5451912ec35904df99208a1f597314e0c9b3"
+  },
+  "licenseSha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+  "protocolVersion": "1.0",
+  "bomSha256": "61b7e460d708e5e40dcc3137e772d3461184da988a4b5410c28be40d49b8b7e3"
+}

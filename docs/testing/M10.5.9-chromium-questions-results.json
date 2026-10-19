@@ -1,0 +1,134 @@
+{
+  "status": "PASS",
+  "capturedAt": "2026-10-19T09:05:17.844Z",
+  "checks": [
+    {
+      "name": "real SDK ask_user exposes preselected recommendation without submitting",
+      "passed": true
+    },
+    {
+      "name": "cross-session association is rejected",
+      "passed": true
+    },
+    {
+      "name": "invalid choice rejected without settling",
+      "passed": true
+    },
+    {
+      "name": "draft writes serialize while prior save is delayed",
+      "passed": true
+    },
+    {
+      "name": "refresh restores scoped choice and text draft",
+      "passed": true
+    },
+    {
+      "name": "answer does not approve queued write tool",
+      "passed": true
+    },
+    {
+      "name": "question history uses bounded explicit pages",
+      "passed": true
+    },
+    {
+      "name": "invalid question page offset is rejected",
+      "passed": true
+    },
+    {
+      "name": "single multi and free text answers reach next model requests",
+      "passed": true
+    },
+    {
+      "name": "double click submits one durable answer",
+      "passed": true
+    },
+    {
+      "name": "same request and answer is idempotent after SDK closes",
+      "passed": true
+    },
+    {
+      "name": "different answer after settlement conflicts",
+      "passed": true
+    },
+    {
+      "name": "skip keeps recommendation unsubmitted",
+      "passed": true
+    },
+    {
+      "name": "timeout records no selected answer and rejects late response",
+      "passed": true
+    },
+    {
+      "name": "draft sanitization and refresh do not store key in browser",
+      "passed": true
+    },
+    {
+      "name": "next request contains only redacted answer",
+      "passed": true
+    },
+    {
+      "name": "lost response reconciles with GET without repost",
+      "passed": true
+    },
+    {
+      "name": "cancel resolves wait and does not call model again",
+      "passed": true
+    },
+    {
+      "name": "question controls fit mobile viewport",
+      "passed": true
+    },
+    {
+      "name": "radio choices are keyboard focusable",
+      "passed": true
+    },
+    {
+      "name": "mobile skip action is reachable and executable",
+      "passed": true
+    },
+    {
+      "name": "pending question preserves already edited continuation draft",
+      "passed": true
+    },
+    {
+      "name": "host restart marks unfinished question interrupted without replay",
+      "passed": true
+    },
+    {
+      "name": "interrupted question rejects late answers",
+      "passed": true
+    },
+    {
+      "name": "all provider traffic is authenticated loopback",
+      "passed": true
+    },
+    {
+      "name": "no browser runtime exceptions",
+      "passed": true
+    }
+  ],
+  "screenshots": [
+    {
+      "path": ".build-cache/M10.5.9/browser/chromium/questions-M10.5.5-questions-desktop.png",
+      "sha256": "4543586dd1417929a49ae0e511cde21a2083bd995dcfc956f5ebf9558f75a735"
+    },
+    {
+      "path": ".build-cache/M10.5.9/browser/chromium/questions-M10.5.5-questions-mobile.png",
+      "sha256": "12fd6d8c6df9d98061ae99034d602dee7af40afe36cbb839549b8cb6c56d88f1"
+    },
+    {
+      "path": ".build-cache/M10.5.9/browser/chromium/questions-M10.5.5-questions-dark.png",
+      "sha256": "ea8f87058c2986a9e841f9f16db1cdb0a25e0e12ea6531a37fd6ff1d7aa61d84"
+    }
+  ],
+  "transportDiagnostics": [],
+  "paidRequests": 0,
+  "modelRequests": 18,
+  "jarSha256": "197ba3803566f8cc8cb4ed3ae0d85b604e0e09055205d0fc57104aca24fd179e",
+  "browser": "155.0.8059.82",
+  "hostStopped": true,
+  "browserEngine": "chromium",
+  "fixture": "questions",
+  "fixtureSourceSha256": "3431dbe7a83bbac1af3bbafc27f21013c03b5536c59ea0e15e19874a8b3477ef",
+  "logSha256": "e2e4b84f86d5fa189d191eaabcb6683457509faf4cea80d73b3408b95b0e49b3"
+}

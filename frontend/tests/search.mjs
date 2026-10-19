@@ -1,12 +1,13 @@
-import { chromium } from 'playwright'
+import { browserType as chromium, stoppedHostDiagnostic } from './runtime.mjs'
 import { createServer } from 'node:http'
 import { spawn } from 'node:child_process'
 import { mkdir, writeFile, readFile } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 import { createHash, randomUUID } from 'node:crypto'
 import assert from 'node:assert/strict'
+const stoppedOrigins=new Set(),transportDiagnostics=[]
 const root=resolve(import.meta.dirname,'../..'),out=join(root,'.build-cache'),workspace=join(out,'M10.5.8-search-'+Date.now()),other=workspace+'-other'
-const jar=join(root,'harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar'),java=join(process.env.JAVA_HOME,'bin/java.exe'),token='search_0123456789_ABCDEFGHIJKLMNOPQRSTUVWXYZ',secret='synthetic-search-'+randomUUID()
+const jar=join(root,'harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar'),java=join(process.env.JAVA_HOME,process.platform==='win32'?'bin/java.exe':'bin/java'),token='search_0123456789_ABCDEFGHIJKLMNOPQRSTUVWXYZ',secret='synthetic-search-'+randomUUID()
 const checks=[],screenshots=[],errors=[],wire=[]
 let host,base,output='',browser,context,page,result
 const wait=ms=>new Promise(r=>setTimeout(r,ms))
@@ -16,7 +17,7 @@ const model=createServer(async(req,res)=>{let raw='';for await(const c of req)ra
 await mkdir(workspace,{recursive:true});await mkdir(other,{recursive:true});await new Promise(r=>model.listen(0,'127.0.0.1',r))
 const config=join(workspace,'config.json');await writeFile(config,JSON.stringify({baseUrl:`http://127.0.0.1:${model.address().port}`,model:'search-fixture',maxSteps:2,durationSeconds:20,ecosystem:{web:{port:0}}}))
 async function start(){output='';base=undefined;host=spawn(java,['-Dfile.encoding=UTF-8','-jar',jar,'--workspace',workspace,'--config',config,'serve'],{cwd:root,env:{...process.env,JHARNESS_WEB_TOKEN:token,JHARNESS_API_KEY:secret},windowsHide:true,stdio:'pipe'});const receive=d=>{output+=d;base=output.match(/WEB (http:\/\/127\.0\.0\.1:\d+)/)?.[1]};host.stdout.on('data',receive);host.stderr.on('data',receive);await until(()=>base||host.exitCode!==null);assert.ok(base,output)}
-async function stop(){if(host?.exitCode===null){host.stdin.end(':quit\n');await until(()=>host.exitCode!==null);assert.equal(host.exitCode,0)}}
+async function stop(){if(host?.exitCode===null){stoppedOrigins.add(base);host.stdin.end(':quit\n');await until(()=>host.exitCode!==null);assert.equal(host.exitCode,0)}}
 async function api(path,data,auth=true,headers={}){const r=await context.request.fetch(base+path,{method:data===undefined?'GET':'POST',headers:{...(auth?{Authorization:'Bearer '+token}:{}),...(data===undefined?{}:{'Content-Type':'application/json'}),...headers},...(data===undefined?{}:{data})});return{status:r.status(),body:await r.json()}}
 const query=(patch={})=>({text:'alpha beta',mode:'tokens',profile:'',view:'active',sessionId:'',cursor:'',limit:20,rebuild:false,...patch})
 async function create(profile,goal,id){const r=await api('/v1/tasks',{profile,goal,requestId:id});assert.equal(r.status,202);const task=r.body;await until(async()=>(await api('/v1/tasks/'+task.taskId)).body.phase==='FINISHED');return(await api('/v1/tasks/'+task.taskId)).body}
@@ -24,7 +25,7 @@ async function archive(task){const r=await api('/v1/tasks/'+task.taskId+'/metada
 async function shot(name){const path=join(out,'M10.5.8-search-'+name+'.png');await page.screenshot({path,fullPage:true});screenshots.push({path:path.replace(root+'\\',''),sha256:createHash('sha256').update(await readFile(path)).digest('hex')})}
 try{
   await start();browser=await chromium.launch(process.env.JHARNESS_BROWSER_CHANNEL?{channel:process.env.JHARNESS_BROWSER_CHANNEL}:{})
-  context=await browser.newContext({viewport:{width:1440,height:960}});page=await context.newPage();page.on('pageerror',e=>errors.push(e.message))
+  context=await browser.newContext({viewport:{width:1440,height:960}});page=await context.newPage();page.on('pageerror',e=>{if(stoppedHostDiagnostic(e.message,stoppedOrigins))transportDiagnostics.push(e.message);else errors.push(e.message)})
   check('content search requires authentication',(await api('/v1/search',query(),false)).status===401)
   check('content search rejects cross-origin request',(await api('/v1/search',query(),true,{Origin:'https://evil.invalid'})).status===403)
   const registry=(await api('/v1/workspaces',{path:other,name:'Secondary search workspace'})).body
@@ -70,8 +71,8 @@ try{
   const count=wire.length;await stop();await start();await page.goto(base)
   check('restart rebuilds or reuses indices without model replay',(await api('/v1/search',query({view:'all'}))).body.total===38&&wire.length===count)
   check('all real requests use redacted authorized loopback context',wire.every(w=>w.authorized&&w.redacted))
-  check('no browser runtime exceptions',errors.length===0)
-  result={status:'PASS',capturedAt:new Date().toISOString(),checks,screenshots,browserVersion:browser.version(),browserChannel:process.env.JHARNESS_BROWSER_CHANNEL??'chromium',jarSha256:createHash('sha256').update(await readFile(jar)).digest('hex'),paidRequests:0,modelRequests:wire.length}
+  check('no unexpected browser runtime exceptions',errors.length===0)
+  result={status:'PASS',capturedAt:new Date().toISOString(),checks,screenshots,transportDiagnostics,browserEngine:process.env.JHARNESS_BROWSER_ENGINE??'chromium',browserVersion:browser.version(),browserChannel:process.env.JHARNESS_BROWSER_CHANNEL??process.env.JHARNESS_BROWSER_ENGINE??'chromium',jarSha256:createHash('sha256').update(await readFile(jar)).digest('hex'),paidRequests:0,modelRequests:wire.length}
 }catch(e){if(page){await page.screenshot({path:join(out,'M10.5.8-search-failure.png'),fullPage:true});await writeFile(join(out,'M10.5.8-search-failure.txt'),(String(e.stack)+'\n'+output+'\n'+await page.locator('body').innerText()).replaceAll(secret,'[REDACTED]').replaceAll(token,'[REDACTED]'))}throw e}
 finally{await stop().catch(()=>host?.kill());await browser?.close();model.closeAllConnections();await new Promise(r=>model.close(r))}
 await writeFile(join(out,'M10.5.8-search-results.json'),JSON.stringify(result,null,2))

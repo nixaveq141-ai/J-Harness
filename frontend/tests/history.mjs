@@ -1,4 +1,4 @@
-import { chromium } from 'playwright'
+import { browserType as chromium, stoppedHostDiagnostic } from './runtime.mjs'
 import { createServer } from 'node:http'
 import { spawn } from 'node:child_process'
 import { mkdir, writeFile, readFile } from 'node:fs/promises'
@@ -6,6 +6,7 @@ import { join, resolve } from 'node:path'
 import { createHash, randomUUID } from 'node:crypto'
 import assert from 'node:assert/strict'
 
+const stoppedOrigins=new Set(),transportDiagnostics=[]
 const root = resolve(import.meta.dirname, '../..'), out = join(root, '.build-cache'), run = `M10.5.2-history-${Date.now()}`
 const baseDir = join(out, run), primary = join(baseDir, 'primary'), secondary = join(baseDir, 'secondary'), config = join(primary, 'host-config.json')
 const jar = join(root, 'harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar'), java = join(process.env.JAVA_HOME, 'bin', process.platform === 'win32' ? 'java.exe' : 'java')
@@ -34,7 +35,7 @@ async function start() {
   host.stdout.on('data', d => { hostOutput += d; base = hostOutput.match(/WEB (http:\/\/127\.0\.0\.1:\d+)/)?.[1] }); host.stderr.on('data', d => { hostOutput += d })
   await until(() => base || host.exitCode !== null); assert.ok(base, 'History host failed: ' + hostOutput)
 }
-async function stop() { if (host && host.exitCode === null) { host.stdin.end(':quit\n'); await until(() => host.exitCode !== null); assert.equal(host.exitCode, 0) } }
+async function stop() { if (host && host.exitCode === null) { stoppedOrigins.add(base);host.stdin.end(':quit\n'); await until(() => host.exitCode !== null); assert.equal(host.exitCode, 0) } }
 async function api(path, body) {
   const r = await context.request.fetch(base + path, { method: body === undefined ? 'GET' : 'POST', headers: { Authorization: `Bearer ${token}`, ...(body === undefined ? {} : { 'Content-Type': 'application/json' }) }, ...(body === undefined ? {} : { data: body }), timeout: 30000 })
   return { status: r.status(), body: await r.json() }
@@ -51,7 +52,7 @@ async function shot(name) { const path = join(out, `M10.5.2-${name}.png`); await
 async function manage() { const panel = page.locator('.session-actions'); await panel.waitFor(); if (!(await panel.evaluate(e => e.open))) await panel.locator('summary').click(); return panel }
 try {
   await start(); browser = await chromium.launch(process.env.JHARNESS_BROWSER_CHANNEL ? { channel: process.env.JHARNESS_BROWSER_CHANNEL } : {})
-  context = await browser.newContext({ viewport: { width: 1440, height: 1000 }, acceptDownloads: true }); page = await context.newPage(); page.on('pageerror', e => errors.push(e.message))
+  context = await browser.newContext({ viewport: { width: 1440, height: 1000 }, acceptDownloads: true }); page = await context.newPage(); page.on('pageerror',e=>{if(stoppedHostDiagnostic(e.message,stoppedOrigins))transportDiagnostics.push(e.message);else errors.push(e.message)})
   await connected()
   await page.getByText('注册工作区', { exact: true }).click()
   await page.getByLabel('工作区名称', { exact: true }).fill('Beta project'); await page.getByLabel('工作区绝对目录', { exact: true }).fill(secondary); await page.getByRole('button', { name: '注册并选择', exact: true }).click()
@@ -65,6 +66,7 @@ try {
   check('actual SDK read is bound to selected root', JSON.stringify(betaEvents).includes('beta workspace source') && !JSON.stringify(betaEvents).includes('alpha workspace source'))
   let panel = await manage()
   await page.getByLabel('会话名称', { exact: true }).fill('Beta investigation')
+  await until(async () => await page.getByRole('button', { name: '新建任务', exact: true }).isDisabled())
   check('unsaved session name protects navigation', await page.getByRole('button', { name: '新建任务', exact: true }).isDisabled())
   await page.getByRole('button', { name: '保存名称', exact: true }).click(); await page.getByRole('heading', { name: 'Beta investigation', exact: true }).waitFor()
   await page.getByRole('button', { name: '置顶会话', exact: true }).click(); await page.getByRole('button', { name: '取消置顶', exact: true }).waitFor()
@@ -117,7 +119,7 @@ try {
   check('restart permits further tasks while retaining original session', (await api(`/v1/tasks/${betaTask}`)).body.name === 'Beta investigation')
   check('no browser exceptions or credential leaks', errors.length === 0 && !hostOutput.includes(key) && !JSON.stringify(await page.evaluate(() => ({ localStorage, sessionStorage }))).includes(key) && wire.every(w => w.authenticated))
   const version = browser.version(); await stop()
-  await writeFile(join(out, 'M10.5.2-history-results.json'), JSON.stringify({ status: 'PASS', capturedAt: new Date().toISOString(), browserVersion: version, checks, screenshots, completedCycles: ids.length, modelRequests: wire.length, paidRequests: 0, hostStopped: host.exitCode === 0, jarSha256: createHash('sha256').update(await readFile(jar)).digest('hex') }, null, 2))
+  await writeFile(join(out, 'M10.5.2-history-results.json'), JSON.stringify({ status: 'PASS', capturedAt: new Date().toISOString(), browserEngine:process.env.JHARNESS_BROWSER_ENGINE??'chromium',browserVersion: version, checks, screenshots,transportDiagnostics, completedCycles: ids.length, modelRequests: wire.length, paidRequests: 0, hostStopped: host.exitCode === 0, jarSha256: createHash('sha256').update(await readFile(jar)).digest('hex') }, null, 2))
 } catch (e) {
   if (page && !page.isClosed()) await page.screenshot({ path: join(out, 'M10.5.2-history-failure.png') })
   await writeFile(join(out, 'M10.5.2-history-failure.txt'), String(e.stack) + '\n' + hostOutput.replaceAll(key, '[REDACTED]').replaceAll(token, '[REDACTED]'))

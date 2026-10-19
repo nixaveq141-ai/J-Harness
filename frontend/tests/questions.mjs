@@ -1,4 +1,4 @@
-import { chromium } from 'playwright'
+import { browserType as chromium, stoppedHostDiagnostic } from './runtime.mjs'
 import { createServer } from 'node:http'
 import { spawn } from 'node:child_process'
 import { mkdir, writeFile, readFile } from 'node:fs/promises'
@@ -6,7 +6,7 @@ import { join, resolve } from 'node:path'
 import { createHash, randomUUID } from 'node:crypto'
 import assert from 'node:assert/strict'
 const root=resolve(import.meta.dirname,'../..'),out=join(root,'.build-cache'),workspace=join(out,'M10.5.5-questions-'+Date.now())
-const jar=join(root,'harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar'),java=join(process.env.JAVA_HOME,'bin/java.exe'),token='questions_fixture_0123456789_ABCDEFGHIJKLMNOPQRSTUVWXYZ',secret='synthetic-question-'+randomUUID()
+const jar=join(root,'harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar'),java=join(process.env.JAVA_HOME,process.platform==='win32'?'bin/java.exe':'bin/java'),token='questions_fixture_0123456789_ABCDEFGHIJKLMNOPQRSTUVWXYZ',secret='synthetic-question-'+randomUUID()
 const checks=[],wire=[],shots=[],errors=[],posts=[]
 let host,base,output='',browser,page,context,result,releaseQuestion
 const wait=ms=>new Promise(r=>setTimeout(r,ms))
@@ -34,7 +34,8 @@ await mkdir(workspace,{recursive:true});await writeFile(join(workspace,'note.txt
 const config=join(workspace,'config.json')
 await writeFile(config,JSON.stringify({baseUrl:'http://127.0.0.1:'+provider.address().port,model:'questions-fixture',apiKeyEnv:'JHARNESS_QUESTION_KEY',maxSteps:6,durationSeconds:240,requestTimeoutSeconds:30,ecosystem:{web:{port:0}}}))
 async function start(){base=undefined;output='';host=spawn(java,['-Dfile.encoding=UTF-8','-jar',jar,'--workspace',workspace,'--config',config,'--require-read','note.txt','serve'],{cwd:root,env:{...process.env,JHARNESS_WEB_TOKEN:token,JHARNESS_QUESTION_KEY:secret},stdio:['pipe','pipe','pipe'],windowsHide:true});host.stdout.on('data',d=>{output+=d;base=output.match(/WEB (http:[/][/]127[.]0[.]0[.]1:[0-9]+)/)?.[1]});host.stderr.on('data',d=>output+=d);await until(()=>base||host.exitCode!==null);assert.ok(base,output)}
-async function stop(){if(host&&host.exitCode===null&&host.signalCode===null){host.stdin.end(':quit\n');await until(()=>host.exitCode!==null);assert.equal(host.exitCode,0)}}
+const stoppedOrigins=new Set(),transportDiagnostics=[]
+async function stop(){if(host&&host.exitCode===null&&host.signalCode===null){stoppedOrigins.add(base);host.stdin.end(':quit\n');await until(()=>host.exitCode!==null);assert.equal(host.exitCode,0)}}
 async function api(path,body){const r=await context.request.fetch(base+path,{method:body===undefined?'GET':'POST',headers:{Authorization:'Bearer '+token,...(body===undefined?{}:{'Content-Type':'application/json'})},...(body===undefined?{}:{data:body})});return{status:r.status(),body:await r.json()}}
 async function create(goal){const r=await api('/v1/tasks',{profile:'default',goal,requestId:randomUUID()});assert.equal(r.status,202,JSON.stringify(r.body));const id=r.body.taskId;await page.evaluate(id=>sessionStorage.setItem('jh-selected',id),id);await page.reload();await page.locator('.connection-state').filter({hasText:'本机服务已连接'}).waitFor();return id}
 async function pending(id,number=1){let rows;await until(async()=>{rows=(await api('/v1/tasks/'+id+'/questions')).body.questions;return rows?.length>=number&&rows[number-1].state==='PENDING'});return rows[number-1]}
@@ -45,7 +46,7 @@ async function shot(name){const file=join(out,'M10.5.5-'+name+'.png');await page
 function body(q,id,selected,text='',skip=false){return {questionId:q.questionId,sessionId:q.sessionId,turnId:q.turnId,callId:q.callId,requestId:id,selected,text,skip}}
 async function answer(q,data){return api('/v1/tasks/'+q.sessionId+'/questions/'+q.questionId+'/answer',data)}
 try{
- await start();browser=await chromium.launch({channel:'chrome',headless:true});context=await browser.newContext({viewport:{width:1440,height:1000}});page=await context.newPage();page.on('pageerror',e=>errors.push(String(e)));page.on('request',r=>{if(r.method()==='POST'&&r.url().endsWith('/answer'))posts.push(r.postDataJSON())})
+ await start();browser=await chromium.launch(process.env.JHARNESS_BROWSER_CHANNEL?{channel:process.env.JHARNESS_BROWSER_CHANNEL}:{});context=await browser.newContext({viewport:{width:1440,height:1000}});page=await context.newPage();page.on('pageerror',e=>{if(stoppedHostDiagnostic(e.message,stoppedOrigins))transportDiagnostics.push(e.message);else errors.push(String(e))});page.on('request',r=>{if(r.method()==='POST'&&r.url().endsWith('/answer'))posts.push(r.postDataJSON())})
  await page.goto(base)
  const id=await create('flow');const q1=await pending(id);await card().waitFor();await card().getByRole('radio',{name:/First choice/}).waitFor()
  check('real SDK ask_user exposes preselected recommendation without submitting',await card().getByRole('radio',{name:/First choice/}).isChecked()&&wire.filter(w=>w.goal==='flow').length===1&&(await api('/v1/tasks/'+id+'/questions')).body.questions[0].state==='PENDING')
@@ -96,7 +97,8 @@ try{
  check('host restart marks unfinished question interrupted without replay',interrupted.state==='INTERRUPTED'&&wire.length===requestCount)
  check('interrupted question rejects late answers',(await answer(interrupted,body(interrupted,'interrupted',['a']))).status===409)
  check('all provider traffic is authenticated loopback',wire.every(w=>w.authorized))
+ if(errors.length)console.log('BROWSER_DIAGNOSTIC',JSON.stringify(errors).replaceAll(secret,'[REDACTED]').replaceAll(token,'[REDACTED]'))
  check('no browser runtime exceptions',errors.length===0)
- result={status:'PASS',capturedAt:new Date().toISOString(),checks,screenshots:shots,paidRequests:0,modelRequests:wire.length,jarSha256:createHash('sha256').update(await readFile(jar)).digest('hex'),browser:browser.version()}
+ result={status:'PASS',capturedAt:new Date().toISOString(),checks,screenshots:shots,transportDiagnostics,paidRequests:0,modelRequests:wire.length,jarSha256:createHash('sha256').update(await readFile(jar)).digest('hex'),browser:browser.version()}
 }finally{if(browser)await browser.close();await stop();await new Promise(r=>provider.close(r))}
 await writeFile(join(out,'M10.5.5-questions-results.json'),JSON.stringify({...result,hostStopped:host.exitCode===0},null,2))

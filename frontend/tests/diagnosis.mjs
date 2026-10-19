@@ -1,4 +1,4 @@
-import { chromium } from 'playwright'
+import { browserType as chromium } from './runtime.mjs'
 import { spawn } from 'node:child_process'
 import { readFile, writeFile, mkdir } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
@@ -70,8 +70,10 @@ try {
   await page.getByRole('button', { name: '切换深色主题', exact: true }).click(); await shot('dark')
   await page.setViewportSize({ width: 390, height: 844 }); await page.getByRole('button', { name: '执行诊断', exact: true }).click(); await shot('mobile')
   check('narrow dark diagnostic and guide do not overflow', await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth))
-  const guide = panel.locator('.verification-guide > summary'); await guide.focus(); await page.keyboard.press('Enter')
-  check('verification guide is keyboard accessible', !(await panel.locator('.verification-guide').evaluate(e => e.open)))
+  const guide = panel.locator('.verification-guide > summary'), beforeGuide = await panel.locator('.verification-guide').evaluate(e => e.open)
+  await guide.focus(); await page.keyboard.press('Enter')
+  await until(async () => (await panel.locator('.verification-guide').evaluate(e => e.open)) !== beforeGuide)
+  check('verification guide is keyboard accessible', (await panel.locator('.verification-guide').evaluate(e => e.open)) !== beforeGuide)
   await page.setViewportSize({ width: 1440, height: 960 })
   const expired = await newTask('write'); await page.getByRole('button', { name: '批准本次操作', exact: true }).waitFor(); await ended(expired)
   await panel.getByText('审批已过期，未获批准；迟到的批准不会生效。', { exact: true }).waitFor()
@@ -88,7 +90,7 @@ try {
   const runtime = JSON.parse(await readFile(runtimeFile, 'utf8'))
   await until(() => host.exitCode !== null)
   check('fixture closes with zero paid requests', runtime.paidRequests === 0 && host.exitCode === 0)
-  await writeFile(join(out, 'M10.5.1-diagnosis-results.json'), JSON.stringify({ status: 'PASS', capturedAt: new Date().toISOString(), checks, screenshots: shots, browserVersion: version, jarSha256: createHash('sha256').update(await readFile(jar)).digest('hex'), runtime, requests }, null, 2))
+  await writeFile(join(out, 'M10.5.1-diagnosis-results.json'), JSON.stringify({ status: 'PASS', capturedAt: new Date().toISOString(), checks, screenshots: shots, browserEngine:process.env.JHARNESS_BROWSER_ENGINE??'chromium',browserVersion: version, jarSha256: createHash('sha256').update(await readFile(jar)).digest('hex'), runtime, requests }, null, 2))
 } catch (e) {
   if (page && !page.isClosed()) await page.screenshot({ path: join(out, 'M10.5.1-diagnosis-failure.png') })
   await writeFile(join(out, 'M10.5.1-diagnosis-failure.txt'), String(e.stack) + '\n' + output)

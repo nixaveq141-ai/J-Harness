@@ -44,7 +44,10 @@ def main():
         raise ValueError("Sources changed after verification")
     source = {p.relative_to(ROOT).as_posix(): sha(p) for p in paths}
     java_cmd = str(Path(os.environ["JAVA_HOME"]) / "bin" / ("java.exe" if os.name == "nt" else "java"))
-    evidence = {"milestone": "M9", "capturedAt": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+    milestone = sys.argv[2] if len(sys.argv) > 2 else "M9"
+    if milestone not in {"M9", "M10.5.9"}:
+        raise ValueError("Unknown validation milestone")
+    evidence = {"milestone": milestone, "capturedAt": datetime.datetime.now(datetime.timezone.utc).isoformat(),
                 "buildResult": "SUCCESS", "platform": platform.platform(), "architecture": platform.machine(),
                 "runnerOs": os.environ.get("RUNNER_OS", "local"), "javaVersions": sorted(java),
                 "javaRuntime": subprocess.run([java_cmd, "-version"], capture_output=True, text=True).stderr,

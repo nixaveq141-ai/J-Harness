@@ -1,4 +1,4 @@
-import { chromium } from 'playwright'
+import { browserType as chromium } from './runtime.mjs'
 import { spawn } from 'node:child_process'
 import { readFile, writeFile, mkdir } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
@@ -135,15 +135,24 @@ try {
   await context.setOffline(true); await wait(2300); await context.setOffline(false)
   await page.getByRole('button', { name: '重载历史', exact: true }).click()
   check('offline recovery never creates a new task', createCount() === countBeforeOffline)
+  let cursorReads = 0
+  let rejectedStreams = 0
+  let reloadedHistory = false
+  const cursorTrace = []
   await page.route('**/v1/tasks/*/events?*', async route => {
-    if (route.request().headers().accept === 'text/event-stream') { await route.fulfill({ status: 400, contentType: 'application/json', body: JSON.stringify({ error: 'UNKNOWN_CURSOR' }) }) }
-    else await route.continue()
+    if (new URL(route.request().url()).pathname === `/v1/tasks/${cancelId}/events`) { cursorReads++; cursorTrace.push({at:Date.now(),accept:route.request().headers().accept}) }
+    if (route.request().headers().accept === 'text/event-stream' && reloadedHistory) { rejectedStreams++; await route.fulfill({ status: 400, contentType: 'application/json', body: JSON.stringify({ error: 'UNKNOWN_CURSOR' }) }) }
+    else { if (route.request().headers().accept !== 'text/event-stream') reloadedHistory = true; await route.continue() }
   })
+  const rejectedBeforeReload = rejectedStreams
   await page.getByRole('button', { name: '重载历史', exact: true }).click()
+  await until(() => rejectedStreams > rejectedBeforeReload)
   await page.getByText('续读已暂停', { exact: true }).waitFor()
-  const pausedReads = requests.filter(r => r.path.endsWith('/events')).length
+  // Observe intercepted requests for this session, avoiding delayed page events from old aborted reads.
+  const pausedReads = cursorReads
   await wait(2400)
-  check('invalid cursor pauses stream rather than silently replaying', requests.filter(r => r.path.endsWith('/events')).length === pausedReads && createCount() === countBeforeOffline)
+  if(cursorReads!==pausedReads||createCount()!==countBeforeOffline) console.log('CURSOR_DIAGNOSTIC',JSON.stringify({pausedReads,cursorReads,beforePosts:countBeforeOffline,afterPosts:createCount(),cursorTrace}))
+  check('invalid cursor pauses stream rather than silently replaying', cursorReads === pausedReads && createCount() === countBeforeOffline)
   await page.unroute('**/v1/tasks/*/events?*')
   await page.getByRole('button', { name: '重载历史', exact: true }).click()
   await page.getByRole('button', { name: '取消任务', exact: true }).click(); await ended(cancelId)
@@ -215,7 +224,7 @@ try {
   check('keyless runtime reports zero paid requests', runtime.paidRequests === 0 && runtime.writeExists)
   const sourceFiles = await import('node:child_process').then(({ execFileSync }) => execFileSync('git', ['ls-files', '--cached', '--others', '--exclude-standard', '--', 'frontend', 'harness-web', 'harness-testkit/src/test/java/io/jharness/testkit/M10BrowserHost.java', 'harness-testkit/src/test/java/io/jharness/testkit/M10WebTest.java'], { cwd: root }).toString().trim().split(/\r?\n/))
   const sourceSha256 = Object.fromEntries(await Promise.all([...new Set(sourceFiles)].filter(p => !p.startsWith('frontend/dist/') && !p.includes('node_modules')).sort().map(async p => [p, createHash('sha256').update(await readFile(join(root, p))).digest('hex')])))
-  const final = { status: 'PASS', capturedAt: new Date().toISOString(), testedOrigin: base, browserVersion, browserChannel: process.env.JHARNESS_BROWSER_CHANNEL ?? 'chromium', checks, runtime, sourceSha256,
+  const final = { status: 'PASS', capturedAt: new Date().toISOString(), testedOrigin: base, browserEngine:process.env.JHARNESS_BROWSER_ENGINE??'chromium', browserVersion, browserChannel: process.env.JHARNESS_BROWSER_CHANNEL ?? process.env.JHARNESS_BROWSER_ENGINE ?? 'chromium', checks, runtime, sourceSha256,
     requests: { taskSubmissions: createCount(), total: requests.length }, browserErrors: errors,
     screenshots: await Promise.all(screenshots.map(async p => ({ path: p.replace(root + '\\', '').replace(root + '/', ''), sha256: createHash('sha256').update(await readFile(p)).digest('hex') }))),
     jarSha256: createHash('sha256').update(await readFile(join(root, 'harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar'))).digest('hex') }

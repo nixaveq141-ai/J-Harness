@@ -1,0 +1,146 @@
+{
+  "date": "2026-10-19T09:06:02.651Z",
+  "platform": "win32",
+  "browser": "155.0.8059.82",
+  "checks": [
+    {
+      "name": "settings rejects unauthenticated operator",
+      "passed": true
+    },
+    {
+      "name": "settings rejects cross-origin mutation",
+      "passed": true
+    },
+    {
+      "name": "missing key rejected before task admission",
+      "passed": true
+    },
+    {
+      "name": "unsaved settings guard task navigation",
+      "passed": true
+    },
+    {
+      "name": "browser creates selects and persists model and plugin configuration",
+      "passed": true
+    },
+    {
+      "name": "responses and disk exclude key and credential target",
+      "passed": true
+    },
+    {
+      "name": "stale revision conflicts",
+      "passed": true
+    },
+    {
+      "name": "invalid endpoint rejected",
+      "passed": true
+    },
+    {
+      "name": "secret input cleared and browser storage empty of secret",
+      "passed": true
+    },
+    {
+      "name": "new task uses saved model URL and vault key",
+      "passed": true
+    },
+    {
+      "name": "new connection does not inherit provider specific thinking parameter",
+      "passed": true
+    },
+    {
+      "name": "configured plugin tools reach actual model request",
+      "passed": true
+    },
+    {
+      "name": "active task rejects settings changes",
+      "passed": true
+    },
+    {
+      "name": "configured plugins execute through SDK and durable events",
+      "passed": true
+    },
+    {
+      "name": "event output excludes raw API key",
+      "passed": true
+    },
+    {
+      "name": "browser permission selection persists a bounded mode",
+      "passed": true
+    },
+    {
+      "name": "selected permission reaches real SDK and blocks model write before body",
+      "passed": true
+    },
+    {
+      "name": "host stops without printing key",
+      "passed": true
+    },
+    {
+      "name": "restart restores connection and system credential",
+      "passed": true
+    },
+    {
+      "name": "restart retains read-only permission and old snapshot stays default",
+      "passed": true
+    },
+    {
+      "name": "mobile settings have no document overflow",
+      "passed": true
+    },
+    {
+      "name": "existing connection edited without key resubmission",
+      "passed": true
+    },
+    {
+      "name": "connection deletion persists and clears managed credential",
+      "passed": true
+    },
+    {
+      "name": "unavailable service explains recovery and disables vault input",
+      "passed": true
+    },
+    {
+      "name": "unavailable recovery copy fits mobile settings",
+      "passed": true
+    },
+    {
+      "name": "no unexpected browser runtime errors",
+      "passed": true
+    }
+  ],
+  "screenshots": [
+    {
+      "path": ".build-cache/M10.5.9/browser/chromium/settings-M10-settings-plugins.png",
+      "sha256": "71f971078c146ae728774f1da260185b81cd99f562f8def189409cca27c11700"
+    },
+    {
+      "path": ".build-cache/M10.5.9/browser/chromium/settings-M10-settings-models.png",
+      "sha256": "cc70d27d5ed84e456e92cf8fae525f94d48d214be3a403af96fac1abbd23428b"
+    },
+    {
+      "path": ".build-cache/M10.5.9/browser/chromium/settings-M10-settings-permissions.png",
+      "sha256": "492b91e3b5ceec6d6be89dcd7a53a09fb66e8b199e9be456e12c814416c0f907"
+    },
+    {
+      "path": ".build-cache/M10.5.9/browser/chromium/settings-M10-settings-dark.png",
+      "sha256": "47cba941564235f8ba4f48ddf3bda79082f9667df260600ac140926885185efa"
+    },
+    {
+      "path": ".build-cache/M10.5.9/browser/chromium/settings-M10-settings-mobile.png",
+      "sha256": "6df524f9f60edbeff80e6cd55d6fb10df01d11c97c12f44ec7b84cd18e30f5dc"
+    },
+    {
+      "path": ".build-cache/M10.5.9/browser/chromium/settings-M10-settings-unavailable-mobile.png",
+      "sha256": "68be8509ca4cc0c3435c050f525de5108771277646a6ae741ba6d995e1e246d2"
+    }
+  ],
+  "transportDiagnostics": [],
+  "modelRequests": 4,
+  "paidRequests": 0,
+  "jarSha256": "197ba3803566f8cc8cb4ed3ae0d85b604e0e09055205d0fc57104aca24fd179e",
+  "fixtureCredentialsCleaned": true,
+  "browserEngine": "chromium",
+  "fixture": "settings",
+  "fixtureSourceSha256": "8838a1ae95af6eebda3a7b29439ead17f050fe2cd628d6f1981a54c2a4496706",
+  "logSha256": "b5a5051e5e329237bbae165612299850fc5234813aae13dc840a751d855f847c"
+}

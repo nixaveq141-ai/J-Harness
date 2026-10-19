@@ -1,0 +1,81 @@
+{
+  "status": "PASS",
+  "capturedAt": "2026-10-19T09:09:06.698Z",
+  "browserEngine": "webkit",
+  "browserVersion": "26.5",
+  "checks": [
+    {
+      "name": "project read reaches first write approval without editing",
+      "passed": true
+    },
+    {
+      "name": "actual list and read tools precede edits",
+      "passed": true
+    },
+    {
+      "name": "every edit and command receives separate explicit approval",
+      "passed": true
+    },
+    {
+      "name": "implicit shell mode fails before command starts",
+      "passed": true
+    },
+    {
+      "name": "actual javac failure is recorded",
+      "passed": true
+    },
+    {
+      "name": "first fix really compiles but test really fails",
+      "passed": true
+    },
+    {
+      "name": "second version-checked fix builds and passes actual test",
+      "passed": true
+    },
+    {
+      "name": "compiled class and final source agree with recorded success",
+      "passed": true
+    },
+    {
+      "name": "model sees shell build and assertion errors before fixing",
+      "passed": true
+    },
+    {
+      "name": "fact report is available without submitting another task",
+      "passed": true
+    },
+    {
+      "name": "development conversation has no mobile horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "refresh reads existing build results without replay",
+      "passed": true
+    },
+    {
+      "name": "all model traffic is authorized redacted loopback",
+      "passed": true
+    },
+    {
+      "name": "no browser runtime exception",
+      "passed": true
+    }
+  ],
+  "screenshots": [
+    {
+      "path": ".build-cache/M10.5.9/browser/webkit/development-M10.5.9-development-desktop.png",
+      "sha256": "a33378d0b44d18e9dd8876cb5d4fab0f5b81c34bb1e8684b17187c7b2a6bd60d"
+    },
+    {
+      "path": ".build-cache/M10.5.9/browser/webkit/development-M10.5.9-development-mobile.png",
+      "sha256": "63a03c466b5fff7ebff43f1d45a180ce7c52ae0b59402c1d9b6f203edf31681b"
+    }
+  ],
+  "jarSha256": "197ba3803566f8cc8cb4ed3ae0d85b604e0e09055205d0fc57104aca24fd179e",
+  "factsSha256": "a45e4f49ba094b01eb96e1f1758c5d9477bce0fe798bfef8151ff69f70078e25",
+  "modelRequests": 12,
+  "paidRequests": 0,
+  "fixture": "development",
+  "fixtureSourceSha256": "4039a5d9e35a71c0079fefafc10f45999dc16cf140522b712ffe30adeca3d56b",
+  "logSha256": "51dca37e2b3882993cf4c54dfc11e45846442c6d8fd486e061b5d1fb5dcb7422"
+}

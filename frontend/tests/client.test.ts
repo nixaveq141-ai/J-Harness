@@ -3,6 +3,18 @@ import assert from 'node:assert/strict'
 import { Api, ApiError, mergeEvents, task, uncertain, type SessionEvent } from '../src/api.ts'
 
 const token = 'test_token_0123456789_ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+
+test('stopped-host event diagnostic is scoped to the deliberately stopped origin', async()=>{
+  const {stoppedHostDiagnostic}=await import('./runtime.mjs')
+  const origins=new Set(['http://127.0.0.1:9999'])
+  assert.equal(stoppedHostDiagnostic('Fetch API cannot load http://127.0.0.1:9999/v1/tasks/task_1/events?limit=100 due to access control checks.',origins),true)
+  assert.equal(stoppedHostDiagnostic('/127.0.0.1:9999/v1/tasks/task_1/approvals due to access control checks.',origins),true)
+  assert.equal(stoppedHostDiagnostic('Fetch API cannot load http: /127.0.0.1:9999/v1/tasks/task_1/approvals due to access control checks.',origins),true)
+})
+test('live-host CORS writes and JavaScript errors remain failures',async()=>{
+  const {stoppedHostDiagnostic}=await import('./runtime.mjs'),origins=new Set(['http://127.0.0.1:9999'])
+  for(const message of ['TypeError: fetch failed','Fetch API cannot load http://127.0.0.1:8888/v1/tasks/task_1/events?limit=100 due to access control checks.','Fetch API cannot load http://127.0.0.1:9999/v1/tasks due to access control checks.','/127.0.0.1:9999/v1/tasks/task_1/approvals/approve_1 due to access control checks.','/127.0.0.1:9999/v1/tasks/task_1/turns due to access control checks.','Fetch API cannot load https://evil.invalid/v1/tasks/task_1/events?limit=100 due to access control checks.'])assert.equal(stoppedHostDiagnostic(message,origins),false)
+})
 test('browser connection obtains an in-memory session without user input', async () => {
   const calls: { path: string; init: RequestInit }[] = []
   const api = await Api.connect((async (path, init) => {

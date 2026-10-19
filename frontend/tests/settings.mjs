@@ -1,4 +1,4 @@
-import { chromium } from 'playwright'
+import { browserType as chromium, stoppedHostDiagnostic } from './runtime.mjs'
 import { createServer } from 'node:http'
 import { spawn } from 'node:child_process'
 import { mkdir, writeFile, readFile, readdir } from 'node:fs/promises'
@@ -6,10 +6,11 @@ import { join, resolve, delimiter } from 'node:path'
 import { createHash, randomUUID } from 'node:crypto'
 import assert from 'node:assert/strict'
 
+const stoppedOrigins=new Set(),transportDiagnostics=[]
 const root = resolve(import.meta.dirname, '../..'), out = join(root, '.build-cache')
 const workspace = join(out, `M10-settings-${Date.now()}`), configFile = join(workspace, 'config.json')
 const jar = join(root, 'harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar')
-const java = join(process.env.JAVA_HOME, 'bin/java.exe')
+const java = join(process.env.JAVA_HOME, process.platform==='win32'?'bin/java.exe':'bin/java')
 const token = 'settings_browser_0123456789_ABCDEFGHIJKLMNOPQRSTUVWXYZ', secret = `synthetic-${randomUUID()}`
 const checks = [], wire = [], screenshots = [], pageErrors = []
 let host, hostOutput = '', base, browser, page, context, held, block = true, toolSent = false, permissionProbe = false, result
@@ -42,7 +43,7 @@ async function start() {
   await until(() => base || host.exitCode !== null)
   assert.ok(base, 'Host startup failed')
 }
-async function stop() { if (host && host.exitCode === null) { host.stdin.end(':quit\n'); await until(() => host.exitCode !== null); assert.equal(host.exitCode, 0) } }
+async function stop() { if (host && host.exitCode === null) { stoppedOrigins.add(base);host.stdin.end(':quit\n'); await until(() => host.exitCode !== null); assert.equal(host.exitCode, 0) } }
 async function api(path, body, auth = true, extra = {}) {
   const response = await context.request.fetch(base + path, { method: body === undefined ? 'GET' : 'POST', headers: { ...(auth ? { Authorization: `Bearer ${token}` } : {}), ...(body === undefined ? {} : { 'Content-Type': 'application/json' }), ...extra }, ...(body === undefined ? {} : { data: body }), timeout: 45000 })
   return { status: response.status(), body: await response.json() }
@@ -54,7 +55,7 @@ try {
   await start()
   browser = await chromium.launch(process.env.JHARNESS_BROWSER_CHANNEL ? { channel: process.env.JHARNESS_BROWSER_CHANNEL } : {})
   context = await browser.newContext({ viewport: { width: 1440, height: 960 } }); page = await context.newPage()
-  page.on('pageerror', e => pageErrors.push(e.message))
+  page.on('pageerror',e=>{if(stoppedHostDiagnostic(e.message,stoppedOrigins))transportDiagnostics.push(e.message);else pageErrors.push(e.message)})
   check('settings rejects unauthenticated operator', (await api('/v1/settings', undefined, false)).status === 401)
   check('settings rejects cross-origin mutation', (await api('/v1/settings', {}, true, { Origin: 'https://evil.invalid' })).status === 403)
   check('missing key rejected before task admission', (await api('/v1/tasks', { profile: 'default', goal: 'fixture', requestId: 'no-key' })).body.error === 'API_KEY_MISSING' && (await api('/v1/tasks')).body.tasks.length === 0)
@@ -64,6 +65,7 @@ try {
   await page.getByLabel('API URL', { exact: true }).fill(endpoint)
   await page.getByLabel('模型名称', { exact: true }).fill('settings-model')
   await page.getByLabel('API Key', { exact: true }).fill(secret)
+  await until(async () => await page.getByRole('button', { name: '新建任务', exact: true }).isDisabled() && await page.getByRole('button', { name: '返回任务', exact: true }).isDisabled())
   check('unsaved settings guard task navigation', await page.getByRole('button', { name: '新建任务', exact: true }).isDisabled() && await page.getByRole('button', { name: '返回任务', exact: true }).isDisabled())
   await page.getByRole('button', { name: '设为默认连接', exact: true }).click()
   await page.getByRole('tab', { name: '插件与扩展', exact: true }).click()
@@ -143,8 +145,8 @@ try {
   await shot('unavailable-mobile')
   check('unavailable recovery copy fits mobile settings', await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth))
   await page.unroute('**/v1/settings')
-  check('no browser runtime errors', pageErrors.length === 0)
-  result = { date: new Date().toISOString(), platform: process.platform, browser: browser.version(), checks, screenshots, modelRequests: wire.length, paidRequests: 0, jarSha256: createHash('sha256').update(await readFile(jar)).digest('hex') }
+  check('no unexpected browser runtime errors', pageErrors.length === 0)
+  result = { date: new Date().toISOString(), platform: process.platform, browser: browser.version(), checks, screenshots,transportDiagnostics, modelRequests: wire.length, paidRequests: 0, jarSha256: createHash('sha256').update(await readFile(jar)).digest('hex') }
 } finally {
   block = false; held?.()
   await stop().catch(() => { host?.kill() })

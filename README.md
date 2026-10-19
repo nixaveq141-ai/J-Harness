@@ -1,6 +1,6 @@
 # J-Harness
 
-后续开发已按用户要求插入 **M10.5工作台完善 → M11 Desktop → M12扩展**。M10.5包含九个切片，当前.1～.3已完成本地验收，.4～.9待开始，覆盖多轮交互、会话容量/管理、错误恢复、模型协议、提问、展示、扩展、检索/SDK及整阶段验证；详细顺序和验收见[M10.5计划](docs/requirements/M10.5-workbench-improvement-plan.md)。M10.5.1已实现执行诊断、只读核实交接和权限选择，已完成本地验收，见[本片记录](docs/testing/M10.5.1-validation.md)。
+后续开发已按用户要求插入 **M10.5工作台完善 → M11 Desktop → M12扩展**。M10.5包含九个切片，当前.1～.8已完成本地验收，.9整阶段验收实施中，覆盖多轮交互、会话容量/管理、错误恢复、模型协议、提问、展示、扩展、检索/SDK及整阶段验证；详细顺序和验收见[M10.5计划](docs/requirements/M10.5-workbench-improvement-plan.md)。M10.5.1已实现执行诊断、只读核实交接和权限选择，已完成本地验收，见[本片记录](docs/testing/M10.5.1-validation.md)。
 
 M10.5.2已支持工作区注册/切换、会话命名/置顶/分叉/导出/归档/恢复和分页，解除累计32条后不能新建的问题；使用见[会话管理](docs/examples/m10.5.2-history.md)。
 
@@ -213,3 +213,7 @@ M10.5.6已完成本地验收：对话/安全Markdown与代码复制、工具/变
 扩展配置与边界见[使用说明](docs/examples/m1057-extensions.md)、[契约](docs/development/M10.5.7-contracts.md)和[验收记录](docs/testing/M10.5.7-validation.md)。
 
 2026-10-18 M10.5.8已完成本地验收：授权跨会话/工作区正文检索、词语/短语/相关性/归档/稳定分页及来源定位、有界可替换派生索引、独立stdio JSON-RPC1.0与TS/Python客户端和示例已交付。超时/断线先对账，问题回答不批准工具，UNKNOWN不重放。最终Java410、客户端31、Chrome257（检索28+既有229）、SDK58、文档示例2、启动器8、Windows原生7通过；305份Java/POM与最终同一JAR/UI见M10.5.8-results.json及validation.md。API/SDK1.14、JSONL1/Web目录4；原生worker未改，旧三平台凭据证据独立保留。无付费请求、推送或参考项目修改；保留原审查草稿。下一入口M10.5.9，整阶段及M11/M12未完成。
+
+M10.5.9当前本地验证、三平台CI准备和保留门禁见[验收状态](docs/testing/M10.5.9-validation.md)。未获得新一轮推送/CI授权，不提前进入M11。
+
+2026-10-19 M10.5.9实施中、本机部分验收和CI准备完成：Java410/客户端33、Chrome155与WebKit26.5各271项共542、SDK58、示例2、启动器8及Windows原生7通过，候选真实安装/审批/取消/显式恢复5项通过；Maven18依赖OSV、前端6运行依赖SBOM/npm审计0发现、SDK零外部依赖源码清单及秘密模式门禁已核对。跨引擎夹具保持断言并修正异步等待，受控断网/停机的只读诊断单独留痕。Firefox原包14001，隔离清单副本仅版本探针成功，实际无头启动仍失败；不计通过。证据M10.5.9-results.json/validation.md为LOCAL_PARTIAL_CI_PENDING、m11Eligible=false；三平台/三引擎严格CI工作流已准备但未授权推送/未运行，不能收口或进入M11。下一步取得对应推送/CI授权后在当前版本真实Windows/Linux/macOS运行并解决失败。保留原审查草稿，参考目录未改，无付费模型请求。

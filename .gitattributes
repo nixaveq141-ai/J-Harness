@@ -19,3 +19,7 @@ frontend/** text eol=lf
 frontend/src/upstream/** -text
 frontend/LICENSE-DeepSeek-Harness.txt -text
 sdk/** text eol=lf
+scripts/*.mjs text eol=lf
+scripts/*.ps1 text eol=lf
+LICENSE text eol=lf
+NOTICE text eol=lf

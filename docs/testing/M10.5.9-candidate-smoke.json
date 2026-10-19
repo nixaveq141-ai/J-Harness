@@ -1,0 +1,14 @@
+{
+  "capturedAt": "2026-10-19T09:18:42.846056+00:00",
+  "zipSha256": "534a51c04c987be776d3cecc745ad9813555f57ceb3768d328670ef718d41c20",
+  "status": "PASS",
+  "checks": {
+    "installedManifest": true,
+    "launcherDoctorNoNetwork": true,
+    "approvedWriteAndReport": true,
+    "approvalEofDenies": true,
+    "cancelUnknownRefusesReplayAndExplicitRecovery": true
+  },
+  "modelRequests": 7,
+  "paidRequests": 0
+}

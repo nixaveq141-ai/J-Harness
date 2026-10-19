@@ -1,4 +1,4 @@
-name: Java 21 release validation
+name: M10.5.9 full workbench validation
 on:
   push:
     branches-ignore: [codex/m1054-native-validation]
@@ -13,7 +13,7 @@ jobs:
       matrix:
         os: [windows-latest, ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 25
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -35,7 +35,9 @@ jobs:
         run: |
           set -euo pipefail
           npm ci
-          npm test
+          mkdir -p ../.build-cache/M10.5.9
+          npm test > ../.build-cache/M10.5.9/client.log 2>&1 || { cat ../.build-cache/M10.5.9/client.log; exit 1; }
+          node node_modules/typescript/bin/tsc --noEmit --strict --target es2022 --module nodenext --moduleResolution nodenext --allowImportingTsExtensions --types node --typeRoots node_modules/@types ../sdk/typescript/src/index.ts ../sdk/examples/run.ts > ../.build-cache/M10.5.9/sdk-typecheck.log 2>&1
           npm audit --audit-level=low
           npm run build
       - name: Verify on Windows
@@ -48,53 +50,89 @@ jobs:
         if: runner.os != 'Windows'
         run: |
           sh ./mvnw -B -Prelease-audit clean verify org.cyclonedx:cyclonedx-maven-plugin:2.9.3:makeAggregateBom > verify.log 2>&1 || { tail -100 verify.log; exit 1; }
-      - name: Install browser on Linux
+      - name: Install browsers and credential service on Linux
         if: runner.os == 'Linux'
         working-directory: frontend
-        run: npx playwright install --with-deps chromium
-      - name: Install browser on Windows and macOS
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y dbus-x11 libsecret-1-0 gnome-keyring
+          npx playwright install --with-deps chromium firefox webkit
+      - name: Install browsers on Windows and macOS
         if: runner.os != 'Linux'
         working-directory: frontend
-        run: npx playwright install chromium
-      - name: Verify browser against packaged Java runtime
-        working-directory: frontend
-        run: npm run test:browser
-      - name: Verify Windows workbench launcher
-        if: runner.os == 'Windows'
-        run: python scripts/test-open-workbench.py
-      - name: Verify Windows workbench settings and system credentials
-        if: runner.os == 'Windows'
-        working-directory: frontend
-        run: npm run test:settings
+        run: npx playwright install chromium firefox webkit
+      - name: Prepare isolated macOS test keychain
+        if: runner.os == 'macOS'
+        shell: bash
+        run: |
+          set -euo pipefail
+          keychain="$RUNNER_TEMP/jharness-m1059.keychain-db"
+          password="$(python -c 'import secrets; print(secrets.token_hex(32))')"
+          security create-keychain -p "$password" "$keychain"
+          security set-keychain-settings -lut 3600 "$keychain"
+          security unlock-keychain -p "$password" "$keychain"
+          security default-keychain -d user -s "$keychain"
+          security list-keychains -d user -s "$keychain"
+      - name: Verify full SDK and three-browser matrix on Windows and macOS
+        if: runner.os != 'Linux'
+        run: python scripts/run-m1059-platform.py
+      - name: Verify Linux credential availability and full matrix
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          set -euo pipefail
+          env -u DBUS_SESSION_BUS_ADDRESS -u XDG_RUNTIME_DIR -u DISPLAY python scripts/test-native-credentials.py --case missing-service
+          dbus-run-session -- bash -eu -c '
+            python -c "import secrets; print(secrets.token_hex(32))" | gnome-keyring-daemon --unlock --components=secrets >/dev/null
+            python scripts/run-m1059-platform.py
+            dbus-send --session --print-reply --dest=org.freedesktop.secrets /org/freedesktop/secrets org.freedesktop.Secret.Service.Lock array:objpath:/org/freedesktop/secrets/collection/login >/dev/null
+            python scripts/test-native-credentials.py --case locked-service
+          '
       - name: Validate release gates and install candidate
         shell: bash
         run: |
           set -euo pipefail
           python scripts/test-release-tools.py
+          python scripts/test-sdk-inventory.py
+          python scripts/test-m1059-gates.py
+          python scripts/test-source-secrets.py
+          python scripts/scan-source-secrets.py
+          python scripts/sdk-inventory.py
           python scripts/frontend-sbom.py target/frontend-bom.json
           npm --prefix frontend audit --json > target/frontend-audit.json
-          python scripts/collect-release-evidence.py verify.log
+          python scripts/collect-release-evidence.py verify.log M10.5.9
           python scripts/prepare-legal.py
           git diff --exit-code -- third-party
           python scripts/scan-osv.py target/bom.json target/osv-results.json
           python scripts/build-candidate.py
           python scripts/smoke-candidate.py
+          python scripts/collect-m1059-evidence.py verify.log
+      - name: Delete isolated macOS test keychain
+        if: always() && runner.os == 'macOS'
+        shell: bash
+        run: security delete-keychain "$RUNNER_TEMP/jharness-m1059.keychain-db"
       - name: Upload test evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: test-results-${{ matrix.os }}
+          include-hidden-files: true
           path: |
             **/target/surefire-reports/
             verify.log
             target/bom.json
             target/frontend-bom.json
             target/frontend-audit.json
+            target/sdk-bom.json
+            target/sdk-source-inventory.json
+            target/source-secrets.json
             target/osv-results.json
             target/release-evidence.json
             target/candidate-smoke.json
             target/*candidate.zip
             target/candidate-sha256.txt
+            .build-cache/M10.5.9/
+            .build-cache/M10.5.4-native-*.json
             .build-cache/M10-browser-results.json
             .build-cache/M10-launcher-results.json
             .build-cache/M10-settings-browser-results.json

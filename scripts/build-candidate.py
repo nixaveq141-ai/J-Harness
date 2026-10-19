@@ -40,6 +40,23 @@ def main():
     for path in sorted((ROOT / "third-party").rglob("*")):
         if path.is_file():
             files[path.relative_to(ROOT).as_posix()] = path.read_bytes()
+    sdk_bom = json.loads((ROOT / "target/sdk-source-inventory.json").read_bytes())
+    if sdk_bom["bomSha256"] != digest((ROOT / "target/sdk-bom.json").read_bytes()):
+        raise ValueError("SDK BOM/source inventory mismatch")
+    if sdk_bom.get("externalRuntimeDependencyCount") != 0:
+        raise ValueError("Unexpected SDK dependency inventory")
+    for name, expected in sdk_bom["sourceSha256"].items():
+        if not name.startswith("sdk/") or ".." in Path(name).parts:
+            raise ValueError("Invalid SDK source path")
+        data = (ROOT / name).read_bytes()
+        if digest(data) != expected:
+            raise ValueError("SDK inventory/source mismatch")
+        files[name] = data
+    if sdk_bom["licenseSha256"] != digest((ROOT / "LICENSE").read_bytes()):
+        raise ValueError("SDK license/source mismatch")
+    files["sdk-bom.json"] = (ROOT / "target/sdk-bom.json").read_bytes()
+    files["sdk-source-inventory.json"] = (ROOT / "target/sdk-source-inventory.json").read_bytes()
+    files["frontend-bom.json"] = (ROOT / "target/frontend-bom.json").read_bytes()
     with zipfile.ZipFile(jar) as archive:
         for name, data in files.items():
             if name.startswith("third-party/") and archive.read("META-INF/jharness/" + name) != data:
@@ -61,10 +78,10 @@ if "%JAVA_HOME%"=="" (\r
 "%JAVA_HOME%\\bin\\java.exe" -jar "%~dp0lib\\jharness.jar" %*\r
 exit /b %ERRORLEVEL%\r
 '''
-    files["README.md"] = (ROOT / "docs/examples/m9-distribution.md").read_bytes()
+    files["README.md"] = (ROOT / "docs/examples/m1059-distribution.md").read_bytes()
     tracked = subprocess.check_output(["git", "ls-files", "-z"], cwd=ROOT).decode().split("\0")
     sources = {name: digest((ROOT / name).read_bytes()) for name in tracked if name and
-               (name.endswith((".java", "pom.xml")) or name.startswith(("scripts/", ".github/")))}
+               (name.endswith((".java", "pom.xml")) or name.startswith(("scripts/", ".github/", "sdk/", "frontend/src/")))}
     manifest = {"version": "0.1.0-SNAPSHOT", "candidateOnly": True,
                 "gitCommit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT).decode().strip(),
                 "workingTreeDirty": bool(subprocess.check_output(["git", "status", "--porcelain"], cwd=ROOT)),

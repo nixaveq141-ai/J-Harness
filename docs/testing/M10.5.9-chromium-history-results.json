@@ -1,0 +1,111 @@
+{
+  "status": "PASS",
+  "capturedAt": "2026-10-19T09:04:43.497Z",
+  "browserEngine": "chromium",
+  "browserVersion": "155.0.8059.82",
+  "checks": [
+    {
+      "name": "operator registers canonical workspace and selects it without model calls",
+      "passed": true
+    },
+    {
+      "name": "duplicate and metadata root registration are rejected",
+      "passed": true
+    },
+    {
+      "name": "actual SDK read is bound to selected root",
+      "passed": true
+    },
+    {
+      "name": "unsaved session name protects navigation",
+      "passed": true
+    },
+    {
+      "name": "rename and pin are persisted facts",
+      "passed": true
+    },
+    {
+      "name": "export is complete valid JSONL with original associations and no credential",
+      "passed": true
+    },
+    {
+      "name": "fork creates independent session without executing model",
+      "passed": true
+    },
+    {
+      "name": "archival preserves history and switches archived view",
+      "passed": true
+    },
+    {
+      "name": "restoration retains all original facts",
+      "passed": true
+    },
+    {
+      "name": "workspace switch changes next SDK root and filtered history",
+      "passed": true
+    },
+    {
+      "name": "model cannot escape root or read sibling sentinel",
+      "passed": true
+    },
+    {
+      "name": "65 completed production CLI tasks exceed hot limit and page without loss",
+      "passed": true
+    },
+    {
+      "name": "browser reads bounded next page",
+      "passed": true
+    },
+    {
+      "name": "narrow navigation and workspace controls have no document overflow",
+      "passed": true
+    },
+    {
+      "name": "workspace picker is keyboard focusable",
+      "passed": true
+    },
+    {
+      "name": "restart restores registry, labels and complete history without model request",
+      "passed": true
+    },
+    {
+      "name": "cold duplicate submission after restart returns original without execution",
+      "passed": true
+    },
+    {
+      "name": "restart permits further tasks while retaining original session",
+      "passed": true
+    },
+    {
+      "name": "no browser exceptions or credential leaks",
+      "passed": true
+    }
+  ],
+  "screenshots": [
+    {
+      "path": ".build-cache/M10.5.9/browser/chromium/history-M10.5.2-session-management.png",
+      "sha256": "fb651120dc78868f0e241c74fbf3a0bb8d8e69cdc8344a4c56f2fb8a56368b14"
+    },
+    {
+      "path": ".build-cache/M10.5.9/browser/chromium/history-M10.5.2-history-pages.png",
+      "sha256": "8e56427581bbaec454f835332e1bb44e557d53c91106d5304b2d96672970e69c"
+    },
+    {
+      "path": ".build-cache/M10.5.9/browser/chromium/history-M10.5.2-dark.png",
+      "sha256": "7c20f39da31930e5c8c1a1e34b1b1695acd38a134799b9af6e1255e478fa4522"
+    },
+    {
+      "path": ".build-cache/M10.5.9/browser/chromium/history-M10.5.2-mobile.png",
+      "sha256": "c93e2b389a9e970bc067cf4be3f160bf1fb74241407c404301639daab2f63eca"
+    }
+  ],
+  "transportDiagnostics": [],
+  "completedCycles": 65,
+  "modelRequests": 138,
+  "paidRequests": 0,
+  "hostStopped": true,
+  "jarSha256": "197ba3803566f8cc8cb4ed3ae0d85b604e0e09055205d0fc57104aca24fd179e",
+  "fixture": "history",
+  "fixtureSourceSha256": "989db69229688eb279ef80c98a8624710eec2725e47823cb7bab48bfab7eebca",
+  "logSha256": "aafc45bc57cd4bffc08ab864a42dd2e41a2f35fa064f8fce35a88d09365c866a"
+}

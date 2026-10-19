@@ -1,0 +1,148 @@
+{
+  "date": "2026-10-19T09:08:53.127Z",
+  "platform": "win32",
+  "browser": "26.5",
+  "checks": [
+    {
+      "name": "settings rejects unauthenticated operator",
+      "passed": true
+    },
+    {
+      "name": "settings rejects cross-origin mutation",
+      "passed": true
+    },
+    {
+      "name": "missing key rejected before task admission",
+      "passed": true
+    },
+    {
+      "name": "unsaved settings guard task navigation",
+      "passed": true
+    },
+    {
+      "name": "browser creates selects and persists model and plugin configuration",
+      "passed": true
+    },
+    {
+      "name": "responses and disk exclude key and credential target",
+      "passed": true
+    },
+    {
+      "name": "stale revision conflicts",
+      "passed": true
+    },
+    {
+      "name": "invalid endpoint rejected",
+      "passed": true
+    },
+    {
+      "name": "secret input cleared and browser storage empty of secret",
+      "passed": true
+    },
+    {
+      "name": "new task uses saved model URL and vault key",
+      "passed": true
+    },
+    {
+      "name": "new connection does not inherit provider specific thinking parameter",
+      "passed": true
+    },
+    {
+      "name": "configured plugin tools reach actual model request",
+      "passed": true
+    },
+    {
+      "name": "active task rejects settings changes",
+      "passed": true
+    },
+    {
+      "name": "configured plugins execute through SDK and durable events",
+      "passed": true
+    },
+    {
+      "name": "event output excludes raw API key",
+      "passed": true
+    },
+    {
+      "name": "browser permission selection persists a bounded mode",
+      "passed": true
+    },
+    {
+      "name": "selected permission reaches real SDK and blocks model write before body",
+      "passed": true
+    },
+    {
+      "name": "host stops without printing key",
+      "passed": true
+    },
+    {
+      "name": "restart restores connection and system credential",
+      "passed": true
+    },
+    {
+      "name": "restart retains read-only permission and old snapshot stays default",
+      "passed": true
+    },
+    {
+      "name": "mobile settings have no document overflow",
+      "passed": true
+    },
+    {
+      "name": "existing connection edited without key resubmission",
+      "passed": true
+    },
+    {
+      "name": "connection deletion persists and clears managed credential",
+      "passed": true
+    },
+    {
+      "name": "unavailable service explains recovery and disables vault input",
+      "passed": true
+    },
+    {
+      "name": "unavailable recovery copy fits mobile settings",
+      "passed": true
+    },
+    {
+      "name": "no unexpected browser runtime errors",
+      "passed": true
+    }
+  ],
+  "screenshots": [
+    {
+      "path": ".build-cache/M10.5.9/browser/webkit/settings-M10-settings-plugins.png",
+      "sha256": "eb8c8b6633b938baeb7226ca457c3fd087539ce6966fe0b8787b9e00c01ce52e"
+    },
+    {
+      "path": ".build-cache/M10.5.9/browser/webkit/settings-M10-settings-models.png",
+      "sha256": "e2f0853669c6679643202190371ea6ce30c16d7531ea4de6fb38b7dafd8b8c70"
+    },
+    {
+      "path": ".build-cache/M10.5.9/browser/webkit/settings-M10-settings-permissions.png",
+      "sha256": "4ad2be23bb8371be48036a8704813313818abcaefe00ca998e6807290931ddd3"
+    },
+    {
+      "path": ".build-cache/M10.5.9/browser/webkit/settings-M10-settings-dark.png",
+      "sha256": "3742f162df38eefe5650eaa3172f5a4e450da07e3386bb001a61dca1a477e55b"
+    },
+    {
+      "path": ".build-cache/M10.5.9/browser/webkit/settings-M10-settings-mobile.png",
+      "sha256": "b91deafa1b413393d310f4dad305b4b4e1bd5f73f9f9bdfc03dde2e9a52a7817"
+    },
+    {
+      "path": ".build-cache/M10.5.9/browser/webkit/settings-M10-settings-unavailable-mobile.png",
+      "sha256": "f6ecc1e3d0d6ea5fcb052699fef68962927b5188ba2f623b2cc0d27930508c22"
+    }
+  ],
+  "transportDiagnostics": [
+    "/127.0.0.1:50716/v1/tasks/web-2854cb2193857b4b9c8dcf54da3f624a-f0712deac066b23485b8cadab4923afb81b311bab970a6e80af0728da56c1294/turns?offset=0 due to access control checks."
+  ],
+  "modelRequests": 4,
+  "paidRequests": 0,
+  "jarSha256": "197ba3803566f8cc8cb4ed3ae0d85b604e0e09055205d0fc57104aca24fd179e",
+  "fixtureCredentialsCleaned": true,
+  "browserEngine": "webkit",
+  "fixture": "settings",
+  "fixtureSourceSha256": "8838a1ae95af6eebda3a7b29439ead17f050fe2cd628d6f1981a54c2a4496706",
+  "logSha256": "b5a5051e5e329237bbae165612299850fc5234813aae13dc840a751d855f847c"
+}

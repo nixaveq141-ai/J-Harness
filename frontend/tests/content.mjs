@@ -1,12 +1,14 @@
-import {chromium} from 'playwright'
+import { browserType as chromium, engine, stoppedHostDiagnostic } from './runtime.mjs'
 import {createServer} from 'node:http'
 import {spawn,execFileSync} from 'node:child_process'
-import {mkdir,writeFile,readFile,unlink} from 'node:fs/promises'
+import {mkdir,writeFile,readFile,unlink,symlink} from 'node:fs/promises'
 import {resolve,join} from 'node:path'
 import {createHash,randomUUID} from 'node:crypto'
 import assert from 'node:assert/strict'
+const stoppedOrigins=new Set(),transportDiagnostics=[]
+let offlineFault=false
 const root=resolve(import.meta.dirname,'../..'),out=join(root,'.build-cache'),run=join(out,'M10.5.6-content-'+Date.now()),workspace=join(run,'primary'),secondary=join(run,'secondary'),outside=join(run,'outside')
-const jar=join(root,'harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar'),java=join(process.env.JAVA_HOME,'bin/java.exe')
+const jar=join(root,'harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar'),java=join(process.env.JAVA_HOME,process.platform==='win32'?'bin/java.exe':'bin/java')
 const token='content_browser_0123456789_ABCDEFGHIJKLMNOPQRSTUVWXYZ',key='synthetic-content-'+randomUUID(),otherKey='synthetic-other-'+randomUUID(),wire=[],checks=[],screenshots=[],errors=[],requests=[]
 let host,base,output='',browser,context,page,release,receipt,activeWorkspace=workspace
 const wait=ms=>new Promise(r=>setTimeout(r,ms))
@@ -45,12 +47,13 @@ execFileSync('git',['-C',workspace,'add','src/demo.ts'],{windowsHide:true,stdio:
 execFileSync('git',['-C',workspace,'-c','user.name=Fixture','-c','user.email=fixture@example.invalid','-c','commit.gpgsign=false','commit','-qm','fixture baseline'],{windowsHide:true,stdio:'pipe'})
 await writeFile(join(workspace,'src/demo.ts'),'// source line 1\nexport const message = "current source (modified)";\n'+key+'\n')
 if(process.platform==='win32')execFileSync('cmd.exe',['/c','mklink','/J',join(workspace,'escape-link'),outside],{windowsHide:true,stdio:'pipe'})
+else await symlink(outside,join(workspace,'escape-link'),'dir')
 await new Promise(r=>provider.listen(0,'127.0.0.1',r))
 const config=join(workspace,'config.json')
 await writeFile(config,JSON.stringify({baseUrl:'http://127.0.0.1:'+provider.address().port,model:'content-fixture',apiKeyEnv:'JHARNESS_CONTENT_KEY',contextTokens:262144,streamSupported:true,streaming:true,maxSteps:4,durationSeconds:120,requestTimeoutSeconds:80,ecosystem:{web:{port:0}}}))
 async function start(){base=undefined;output='';host=spawn(java,['-Dfile.encoding=UTF-8','-jar',jar,'--workspace',activeWorkspace,'--config',config,'serve'],{cwd:root,env:{...process.env,JHARNESS_WEB_TOKEN:token,JHARNESS_CONTENT_KEY:key,JHARNESS_UNUSED_KEY:otherKey},stdio:['pipe','pipe','pipe'],windowsHide:true})
  host.stdout.on('data',d=>{output+=d;base=output.match(/WEB (http:[/][/]127[.]0[.]0[.]1:[0-9]+)/)?.[1]});host.stderr.on('data',d=>output+=d);await until(()=>base||host.exitCode!==null);assert.ok(base,output)}
-async function stop(){if(host&&host.exitCode===null&&host.signalCode===null){host.stdin.end(':quit\n');await until(()=>host.exitCode!==null);assert.equal(host.exitCode,0)}}
+async function stop(){if(host&&host.exitCode===null&&host.signalCode===null){stoppedOrigins.add(base);host.stdin.end(':quit\n');await until(()=>host.exitCode!==null);assert.equal(host.exitCode,0)}}
 async function api(path,body){const r=await context.request.fetch(base+path,{method:body===undefined?'GET':'POST',headers:{Authorization:'Bearer '+token,...(body===undefined?{}:{'Content-Type':'application/json'})},...(body===undefined?{}:{data:body})});return{status:r.status(),body:await r.json()}}
 async function create(goal,profile='default'){const r=await api('/v1/tasks',{profile,goal,requestId:randomUUID()});assert.equal(r.status,202,JSON.stringify(r.body));await show(r.body.taskId);return r.body.taskId}
 async function show(id){await page.setViewportSize({width:1440,height:1000});await page.evaluate(id=>sessionStorage.setItem('jh-selected',id),id);await page.reload();await page.locator('.connection-state').filter({hasText:'本机服务已连接'}).waitFor()}
@@ -61,8 +64,9 @@ async function closeInspector(){const b=page.getByRole('button',{name:'关闭任
 async function openTab(name){if(!await page.getByRole('tab',{name,exact:true}).count())await page.getByRole('button',{name:'打开任务详情',exact:true}).click();await page.getByRole('tab',{name,exact:true}).click()}
 try{
  await start();browser=await chromium.launch(process.env.JHARNESS_BROWSER_CHANNEL?{channel:process.env.JHARNESS_BROWSER_CHANNEL}:{})
- context=await browser.newContext({viewport:{width:1440,height:1000},acceptDownloads:true,permissions:['clipboard-read','clipboard-write']})
- page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));page.on('request',r=>requests.push(r.url()));await page.goto(base)
+ context=await browser.newContext({viewport:{width:1440,height:1000},acceptDownloads:true,...(engine==='chromium'?{permissions:['clipboard-read','clipboard-write']}:{})})
+ await context.addInitScript(()=>{const write=navigator.clipboard.writeText.bind(navigator.clipboard);Object.defineProperty(navigator.clipboard,'writeText',{value:async text=>{await write(text);window.__copiedExact=text}})})
+ page=await context.newPage();page.on('pageerror',e=>{const stopped=stoppedHostDiagnostic(e.message,stoppedOrigins),offline=offlineFault&&stoppedHostDiagnostic(e.message,new Set([base]));if(stopped||offline)transportDiagnostics.push({phase:stopped?'stopped-host':'injected-offline',message:e.message});else errors.push(e.message)});page.on('request',r=>requests.push(r.url()));await page.goto(base)
  await page.locator('.connection-state').filter({hasText:'本机服务已连接'}).waitFor()
  const settings=(await api('/v1/settings')).body
  const clone={...settings.models[0],id:'unused-route',label:'Unused fixture',apiKeyEnv:'JHARNESS_UNUSED_KEY',model:'unused-model'}
@@ -74,7 +78,7 @@ try{
  check('unselected configured secret fragments are withheld too',!(await page.getByLabel('临时流式输出',{exact:true}).textContent()).includes(otherKey.slice(0,10)))
  await page.getByRole('button',{name:'停止显示',exact:true}).click();check('stopping display leaves runtime active',(await api('/v1/tasks/'+render)).body.phase==='RUNNING')
  await page.getByRole('button',{name:'恢复显示',exact:true}).click()
- const before=wire.length;await context.setOffline(true);await wait(500);await context.setOffline(false);await page.reload();await page.getByLabel('临时流式输出',{exact:true}).waitFor()
+ const before=wire.length;offlineFault=true;await context.setOffline(true);await wait(500);await context.setOffline(false);await page.reload();await page.getByLabel('临时流式输出',{exact:true}).waitFor();offlineFault=false
  check('refresh and reconnect only read the original stream',wire.length===before)
  await shot('stream');release();await ended(render);await page.getByRole('heading',{name:'Review notes',exact:true}).waitFor()
  check('durable Markdown renders headings lists and safe code',await page.locator('.markdown strong').filter({hasText:'Verified'}).count()>0&&await page.getByLabel('助手消息',{exact:true}).last().locator('.code-block').count()===1)
@@ -82,7 +86,8 @@ try{
  const callsBefore=wire.length
  check('copy code uses actual text',await page.getByRole('button',{name:'复制代码',exact:true}).first().isEnabled())
  await page.getByRole('button',{name:'复制代码',exact:true}).first().click()
- check('code clipboard excludes line-number decoration',(await page.evaluate(()=>navigator.clipboard.readText())).startsWith('class Demo {'))
+ await until(async()=>await page.evaluate(()=>window.__copiedExact?.startsWith('class Demo {')))
+ check('code clipboard excludes line-number decoration',engine==='chromium'?(await page.evaluate(()=>navigator.clipboard.readText())).startsWith('class Demo {'):await page.evaluate(()=>window.__copiedExact.startsWith('class Demo {')))
  check('internal trace starts folded',await page.getByLabel('执行细节',{exact:true}).count()===0)
  await page.getByRole('button',{name:/展开执行细节/}).click();check('full source events remain inspectable',await page.getByLabel('执行细节',{exact:true}).locator('.event-row').count()>10)
  await page.getByRole('button',{name:/收起执行细节/}).click()
@@ -160,7 +165,8 @@ try{
  check('host restart loses ephemeral bytes without resending model requests',(await api('/v1/tasks/'+broken+'/display')).body.state==='UNAVAILABLE'&&wire.length===n)
  check('all traffic uses authenticated loopback streaming',wire.every(w=>w.authenticated&&w.stream))
  check('no secrets in rendered UI or browser persistent storage',!(await page.evaluate(()=>document.body.innerText+JSON.stringify({localStorage,sessionStorage}))).includes(key)&&!(await page.evaluate(()=>document.body.innerText+JSON.stringify({localStorage,sessionStorage}))).includes(otherKey))
- check('no browser runtime exceptions',errors.length===0)
- receipt={status:'PASS',capturedAt:new Date().toISOString(),checks,screenshots,paidRequests:0,modelRequests:wire.length,browser:browser.version(),jarSha256:createHash('sha256').update(await readFile(jar)).digest('hex')}
+ if(errors.length)console.log('BROWSER_DIAGNOSTIC',JSON.stringify(errors).replaceAll(key,'[REDACTED]').replaceAll(otherKey,'[REDACTED]').replaceAll(token,'[REDACTED]'))
+ check('no unexpected browser runtime exceptions',errors.length===0)
+ receipt={status:'PASS',capturedAt:new Date().toISOString(),checks,screenshots,transportDiagnostics,paidRequests:0,modelRequests:wire.length,browser:browser.version(),jarSha256:createHash('sha256').update(await readFile(jar)).digest('hex')}
 }finally{if(browser)await browser.close();await stop();provider.closeAllConnections();await new Promise(r=>provider.close(r))}
 await writeFile(join(out,'M10.5.6-content-results.json'),JSON.stringify({...receipt,hostStopped:host.exitCode===0},null,2))

@@ -1,0 +1,218 @@
+{
+  "status": "PASS",
+  "capturedAt": "2026-10-19T09:12:49.514Z",
+  "checks": [
+    {
+      "name": "real streaming reaches browser before assistant fact exists",
+      "passed": true
+    },
+    {
+      "name": "cross-chunk secret prefix is withheld from temporary display",
+      "passed": true
+    },
+    {
+      "name": "unselected configured secret fragments are withheld too",
+      "passed": true
+    },
+    {
+      "name": "stopping display leaves runtime active",
+      "passed": true
+    },
+    {
+      "name": "refresh and reconnect only read the original stream",
+      "passed": true
+    },
+    {
+      "name": "durable Markdown renders headings lists and safe code",
+      "passed": true
+    },
+    {
+      "name": "HTML images and active links cannot execute or auto-fetch",
+      "passed": true
+    },
+    {
+      "name": "copy code uses actual text",
+      "passed": true
+    },
+    {
+      "name": "code clipboard excludes line-number decoration",
+      "passed": true
+    },
+    {
+      "name": "internal trace starts folded",
+      "passed": true
+    },
+    {
+      "name": "full source events remain inspectable",
+      "passed": true
+    },
+    {
+      "name": "usage comes from provider and actual cost remains unknown",
+      "passed": true
+    },
+    {
+      "name": "tool cards expose explicit paginated artifact reading",
+      "passed": true
+    },
+    {
+      "name": "file reference is explicit and starts at requested line",
+      "passed": true
+    },
+    {
+      "name": "preview is redacted and does not send model requests",
+      "passed": true
+    },
+    {
+      "name": "file changes reject stale preview pages instead of mixing versions",
+      "passed": true
+    },
+    {
+      "name": "explicit reread obtains changed current content",
+      "passed": true
+    },
+    {
+      "name": "denied preview private.txt",
+      "passed": true
+    },
+    {
+      "name": "denied preview config",
+      "passed": true
+    },
+    {
+      "name": "denied preview .env.local",
+      "passed": true
+    },
+    {
+      "name": "denied preview private.txt",
+      "passed": true
+    },
+    {
+      "name": "denied preview private.txt",
+      "passed": true
+    },
+    {
+      "name": "file tree hides protected metadata and links",
+      "passed": true
+    },
+    {
+      "name": "binary file fails explicitly",
+      "passed": true
+    },
+    {
+      "name": "large actual tool result has a scoped artifact reference",
+      "passed": true
+    },
+    {
+      "name": "artifact download combines all pages and verifies sanitized hash",
+      "passed": true
+    },
+    {
+      "name": "file writing still requires independent approval",
+      "passed": true
+    },
+    {
+      "name": "change card is based on actual tool versions",
+      "passed": true
+    },
+    {
+      "name": "artifact from another task cannot be fetched by guessing id",
+      "passed": true
+    },
+    {
+      "name": "mobile input collapse releases reading space",
+      "passed": true
+    },
+    {
+      "name": "input collapse preserves unsent draft",
+      "passed": true
+    },
+    {
+      "name": "conversation fits mobile viewport",
+      "passed": true
+    },
+    {
+      "name": "omitted long answer can be read from its exact event",
+      "passed": true
+    },
+    {
+      "name": "event page is bounded and wrong hash is rejected",
+      "passed": true
+    },
+    {
+      "name": "reading controls are keyboard focusable",
+      "passed": true
+    },
+    {
+      "name": "Diff is labelled as recorded rather than current",
+      "passed": true
+    },
+    {
+      "name": "recorded Diff path explicitly opens current bound file",
+      "passed": true
+    },
+    {
+      "name": "secondary root preview cannot fall back to primary",
+      "passed": true
+    },
+    {
+      "name": "expired artifact reference has explicit missing response",
+      "passed": true
+    },
+    {
+      "name": "cancelled stream does not become a complete answer",
+      "passed": true
+    },
+    {
+      "name": "broken stream is marked incomplete with no replay",
+      "passed": true
+    },
+    {
+      "name": "host restart loses ephemeral bytes without resending model requests",
+      "passed": true
+    },
+    {
+      "name": "all traffic uses authenticated loopback streaming",
+      "passed": true
+    },
+    {
+      "name": "no secrets in rendered UI or browser persistent storage",
+      "passed": true
+    },
+    {
+      "name": "no unexpected browser runtime exceptions",
+      "passed": true
+    }
+  ],
+  "screenshots": [
+    {
+      "path": ".build-cache/M10.5.9/browser/webkit/content-M10.5.6-stream.png",
+      "sha256": "b0d5b17e81722d1d20a5b807a7ba2631b3f875b99ef4b774852f44ec2d94cc79"
+    },
+    {
+      "path": ".build-cache/M10.5.9/browser/webkit/content-M10.5.6-artifact.png",
+      "sha256": "97c59bb8c4336caee978631ac2f085e649ac587c349d9c183e847a77986c696e"
+    },
+    {
+      "path": ".build-cache/M10.5.9/browser/webkit/content-M10.5.6-conversation.png",
+      "sha256": "93e9e847d902b440b9b9e55135bfde8f6263abe9d56c177ee7ca0fb898face83"
+    },
+    {
+      "path": ".build-cache/M10.5.9/browser/webkit/content-M10.5.6-mobile.png",
+      "sha256": "8fceddc0e253b1d456839dd088b9c22defe76ec0a13f1c8ab1cf74cce769602f"
+    },
+    {
+      "path": ".build-cache/M10.5.9/browser/webkit/content-M10.5.6-dark.png",
+      "sha256": "c03d21e653cdf09f98b7e478cbd41e0df28cc91d995509b5cee88d934858563f"
+    }
+  ],
+  "transportDiagnostics": [],
+  "paidRequests": 0,
+  "modelRequests": 10,
+  "browser": "26.5",
+  "jarSha256": "197ba3803566f8cc8cb4ed3ae0d85b604e0e09055205d0fc57104aca24fd179e",
+  "hostStopped": true,
+  "browserEngine": "webkit",
+  "fixture": "content",
+  "fixtureSourceSha256": "12fb9d6613dabab1485c3f28e4a492d130b3b47ef9974159c7b5e608c15793b4",
+  "logSha256": "810be90b24df990b480840f231211dffb9536c75a5bef985373830f7a6ff5a21"
+}

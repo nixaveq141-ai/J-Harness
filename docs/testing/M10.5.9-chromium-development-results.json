@@ -1,0 +1,81 @@
+{
+  "status": "PASS",
+  "capturedAt": "2026-10-19T09:06:14.916Z",
+  "browserEngine": "chromium",
+  "browserVersion": "155.0.8059.82",
+  "checks": [
+    {
+      "name": "project read reaches first write approval without editing",
+      "passed": true
+    },
+    {
+      "name": "actual list and read tools precede edits",
+      "passed": true
+    },
+    {
+      "name": "every edit and command receives separate explicit approval",
+      "passed": true
+    },
+    {
+      "name": "implicit shell mode fails before command starts",
+      "passed": true
+    },
+    {
+      "name": "actual javac failure is recorded",
+      "passed": true
+    },
+    {
+      "name": "first fix really compiles but test really fails",
+      "passed": true
+    },
+    {
+      "name": "second version-checked fix builds and passes actual test",
+      "passed": true
+    },
+    {
+      "name": "compiled class and final source agree with recorded success",
+      "passed": true
+    },
+    {
+      "name": "model sees shell build and assertion errors before fixing",
+      "passed": true
+    },
+    {
+      "name": "fact report is available without submitting another task",
+      "passed": true
+    },
+    {
+      "name": "development conversation has no mobile horizontal overflow",
+      "passed": true
+    },
+    {
+      "name": "refresh reads existing build results without replay",
+      "passed": true
+    },
+    {
+      "name": "all model traffic is authorized redacted loopback",
+      "passed": true
+    },
+    {
+      "name": "no browser runtime exception",
+      "passed": true
+    }
+  ],
+  "screenshots": [
+    {
+      "path": ".build-cache/M10.5.9/browser/chromium/development-M10.5.9-development-desktop.png",
+      "sha256": "f07beab8270532dfb264d57ce09d7da06153ad623241ce5163f7c7577cbde199"
+    },
+    {
+      "path": ".build-cache/M10.5.9/browser/chromium/development-M10.5.9-development-mobile.png",
+      "sha256": "7ed3f761c33c1ca2b55b09c5b9d706aaf82d87052b7e9d9da43ff084ea60d085"
+    }
+  ],
+  "jarSha256": "197ba3803566f8cc8cb4ed3ae0d85b604e0e09055205d0fc57104aca24fd179e",
+  "factsSha256": "bde14c6a8f12e84a0674f3645ddad7844d6b19688fe192811c2e55ce1afea365",
+  "modelRequests": 12,
+  "paidRequests": 0,
+  "fixture": "development",
+  "fixtureSourceSha256": "4039a5d9e35a71c0079fefafc10f45999dc16cf140522b712ffe30adeca3d56b",
+  "logSha256": "51dca37e2b3882993cf4c54dfc11e45846442c6d8fd486e061b5d1fb5dcb7422"
+}

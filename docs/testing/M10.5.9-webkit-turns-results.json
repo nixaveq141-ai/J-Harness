@@ -1,0 +1,90 @@
+{
+  "status": "PASS",
+  "capturedAt": "2026-10-19T09:07:38.992Z",
+  "checks": [
+    {
+      "name": "completed session retains a continuation composer",
+      "passed": true
+    },
+    {
+      "name": "unsent draft protects navigation and never enters browser storage",
+      "passed": true
+    },
+    {
+      "name": "double click sends one independently admitted continuation",
+      "passed": true
+    },
+    {
+      "name": "lost response and refresh reconcile by GET without duplicate POST",
+      "passed": true
+    },
+    {
+      "name": "three actual SDK turns share original session and distinct loop turn identities",
+      "passed": true
+    },
+    {
+      "name": "prepared request history includes prior turns with secrets sanitized",
+      "passed": true
+    },
+    {
+      "name": "busy input queue supports cancellation and defers supplements",
+      "passed": true
+    },
+    {
+      "name": "background queue settlement preserves reading position in earlier history",
+      "passed": true
+    },
+    {
+      "name": "supplement applies at next full-turn boundary and cancelled text never applies",
+      "passed": true
+    },
+    {
+      "name": "two concurrent clients receive the same submission and one execution",
+      "passed": true
+    },
+    {
+      "name": "mobile continuation has no horizontal overflow and keyboard input is reachable",
+      "passed": true
+    },
+    {
+      "name": "restart does not replay active or queued messages and UNKNOWN blocks continuing",
+      "passed": true
+    },
+    {
+      "name": "offline verification leaves queued message paused until explicit operator action",
+      "passed": true
+    },
+    {
+      "name": "explicit start continues same session once after recovery",
+      "passed": true
+    },
+    {
+      "name": "no browser errors or credential leaks in persistent UI storage",
+      "passed": true
+    }
+  ],
+  "screenshots": [
+    {
+      "path": ".build-cache/M10.5.9/browser/webkit/turns-M10.5.3-turns-desktop.png",
+      "sha256": "62063aac4b3bc72258dc98160220428e0222374ce909bc48868f2d651645a9a6"
+    },
+    {
+      "path": ".build-cache/M10.5.9/browser/webkit/turns-M10.5.3-turns-dark.png",
+      "sha256": "28f0a9592a69e19732d54c1a2129d84353192e735d86bc14f3466752aa850195"
+    },
+    {
+      "path": ".build-cache/M10.5.9/browser/webkit/turns-M10.5.3-turns-mobile.png",
+      "sha256": "e736d845656c899ef223850ae2830bb8f4a236dd79772f467a5a7d9ac3e33b47"
+    }
+  ],
+  "transportDiagnostics": [],
+  "jarSha256": "197ba3803566f8cc8cb4ed3ae0d85b604e0e09055205d0fc57104aca24fd179e",
+  "browserEngine": "webkit",
+  "browserVersion": "26.5",
+  "paidRequests": 0,
+  "hostStopped": true,
+  "modelRequests": 15,
+  "fixture": "turns",
+  "fixtureSourceSha256": "bf4a4c4a37ac6a59f266a178902efcae80c4856a1186de618bcdc7421d048feb",
+  "logSha256": "4493ffe71f081bdd33fdfd415c0861c8388ad20f497c292f5005a4d434d15962"
+}

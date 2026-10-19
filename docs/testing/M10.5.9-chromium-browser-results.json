@@ -1,0 +1,244 @@
+{
+  "status": "PASS",
+  "capturedAt": "2026-10-19T09:11:50.804Z",
+  "testedOrigin": "http://127.0.0.1:53021",
+  "browserEngine": "chromium",
+  "browserVersion": "155.0.8059.82",
+  "browserChannel": "chrome",
+  "checks": [
+    {
+      "name": "invalid API credentials rejected while browser enters automatically",
+      "passed": true
+    },
+    {
+      "name": "sidebar resizing supports keyboard and bounded original geometry",
+      "passed": true
+    },
+    {
+      "name": "original hover and pointer-pressed feedback retained",
+      "passed": true
+    },
+    {
+      "name": "wrong approval association is rejected by actual Java API",
+      "passed": true
+    },
+    {
+      "name": "duplicate click creates exactly one actual task and approval writes real file",
+      "passed": true
+    },
+    {
+      "name": "downloaded report is based on actual recorded facts",
+      "passed": true
+    },
+    {
+      "name": "missing Diff is explicit without running Git",
+      "passed": true
+    },
+    {
+      "name": "in-flight query cannot mix changed keywords with an old cursor",
+      "passed": true
+    },
+    {
+      "name": "full sanitized session query reads real events",
+      "passed": true
+    },
+    {
+      "name": "refresh automatically reconnects and never resubmits task",
+      "passed": true
+    },
+    {
+      "name": "denial recorded by actual tool pipeline",
+      "passed": true
+    },
+    {
+      "name": "expired approval removed and cannot execute",
+      "passed": true
+    },
+    {
+      "name": "Diff displays actual recorded git result",
+      "passed": true
+    },
+    {
+      "name": "offline recovery never creates a new task",
+      "passed": true
+    },
+    {
+      "name": "invalid cursor pauses stream rather than silently replaying",
+      "passed": true
+    },
+    {
+      "name": "cancel routed through actual Java runtime",
+      "passed": true
+    },
+    {
+      "name": "UNKNOWN has explicit offline recovery guidance and no replay control",
+      "passed": true
+    },
+    {
+      "name": "lost submit response survives refresh and reconciles existing task with no POST replay",
+      "passed": true
+    },
+    {
+      "name": "model HTML is rendered as text",
+      "passed": true
+    },
+    {
+      "name": "configured secret is redacted from browser event text",
+      "passed": true
+    },
+    {
+      "name": "large payload omission is visible",
+      "passed": true
+    },
+    {
+      "name": "token absent from URL, storage, page text and downloaded report",
+      "passed": true
+    },
+    {
+      "name": "dark theme uses original theme tokens",
+      "passed": true
+    },
+    {
+      "name": "mobile tab indicator aligns with selected keyboard tab",
+      "passed": true
+    },
+    {
+      "name": "mobile has no viewport overflow and tabs support keyboard",
+      "passed": true
+    },
+    {
+      "name": "reduced motion disables original tab transition",
+      "passed": true
+    },
+    {
+      "name": "no uncaught browser exceptions",
+      "passed": true
+    },
+    {
+      "name": "keyless runtime reports zero paid requests",
+      "passed": true
+    }
+  ],
+  "runtime": {
+    "opened": 9,
+    "paidRequests": 0,
+    "modelRequests": 14,
+    "writeExists": true
+  },
+  "sourceSha256": {
+    "frontend/LICENSE-DeepSeek-Harness.txt": "ebb4f09972aee8608be255debaf78451a68e95c290f55c240dec2ecfa16ea6be",
+    "frontend/README.md": "280255d800a5db5987bb21ecc7277b2cb9008d36e08d9db16c0778eab55009a1",
+    "frontend/index.html": "d9cf6fca44ae3c18988d4ecbf18d923b17aca401d4a34ff5ab6ecd4584bdfade",
+    "frontend/package-lock.json": "5509cc45042a5c16d81f714f4d037acda9d152f15cb242dd7890972e673ec234",
+    "frontend/package.json": "cae79954e34501073acd3436943e693f137255adfc3d45c7cd168213dc061466",
+    "frontend/scripts/package-ui.mjs": "afccd19e81e479ec3ecca1bb8617d41c125373de7d72844908d6db15f7f5228d",
+    "frontend/src/App.tsx": "5aae69f007b0cabdcde9bf6adbedef2bf9743d1c7d8673dff01d6aaa9380e297",
+    "frontend/src/ContentPanel.tsx": "4de01bef1a58b989caf177550179ccccd478331ee2e817943d41b4eb6acfea46",
+    "frontend/src/ContentSearch.tsx": "ffa1e8cd61da8592dcf437aacb3e650eed99068ca5425bd9a7312c87ceef6fcd",
+    "frontend/src/Conversation.tsx": "556a77b955a8e5a830e5e59b3da2b1a3518cd7b8188b5b53faf3ecbeda3729f8",
+    "frontend/src/DiagnosisPanel.tsx": "bcb65af28933559cd2c0831fb011fdef7b3209a6a7eecf16be540a5793f794e4",
+    "frontend/src/ExtensionEditor.tsx": "b9b0bbdbe96bf21da8a8dd7431d47504a2700871ab3ce65bfe20291415d9875a",
+    "frontend/src/Markdown.tsx": "2599d075b7fc64ba5e0b1cc2ef5b605123c7695e75487a388f85ef0853d4b4a7",
+    "frontend/src/ModelPicker.tsx": "d54aeedad833e00d9073923fbab9cecc3c8f985ab8f0a060e2c0698434d4ef33",
+    "frontend/src/Questions.tsx": "0e92c32e022f62941e0dc21434e91576ec7a6efd81295f91a268d09a4bfdbe2e",
+    "frontend/src/SessionActions.tsx": "5c4928708452ed5668e08f34ef9f48821f9f68beaa13c4be67ed8b18c3a49ba9",
+    "frontend/src/Settings.tsx": "451446b5e980fd9641836d4c17140708285d1d9a0fb2b22a2971ece16237fb3e",
+    "frontend/src/SkillsPicker.tsx": "97479090df4d37d02d3525016879d0b419e60a4898148b2ae399e1b254f7112a",
+    "frontend/src/TurnComposer.tsx": "e8d3d71269232eaf383e54e4ef167f1391d8a82f70ac2e9028e9bf1a5ed2d4e4",
+    "frontend/src/WorkspacePicker.tsx": "7378503731b148f39a6f95019cf4c9a94f4fea4175d6649c1472b56189b896cb",
+    "frontend/src/api.ts": "4430c208e99c040346cbaf724bd878be1010787a77c014822bf9bf59c1dbab32",
+    "frontend/src/content.ts": "2ee08e9a52d71c050af01360cc1587685159f04b9e1d57b01dd47317cd97140b",
+    "frontend/src/main.tsx": "bf24c99d87b7e5861d68a6186cf6573ab119eedb57f30cc54599e5b35cf6b83b",
+    "frontend/src/style.css": "98682ce980371d82bdf5bd63472a36a75a15bb26cb09e9d69482265c4d8e6f96",
+    "frontend/src/upstream/AppFrame.module.css": "f0bce7eb34595a249c7865b5e0542cfae175a50804060af46344aba906e6789c",
+    "frontend/src/upstream/Button.module.css": "d5e324be7782f28b320ebac3e5b48e3a3f95a6c8d90656c086a3a933e0b2c7a5",
+    "frontend/src/upstream/Button.tsx": "514c31404c5c8fb21ad906e92631b9c554c08d23c77437009e3443cef3a94e9c",
+    "frontend/src/upstream/Input.module.css": "e24eb924cfefcc009e486b25cd8de6afaf4bfff5d9c0c3da17b5afb6441c8632",
+    "frontend/src/upstream/Input.tsx": "f418f7ea495f16c5c656e87f61c27d262f86f39e8bf14c33b8eeccfb41492b67",
+    "frontend/src/upstream/Pill.module.css": "8059dd46e4a5340c00e6758278b6afb4f480c4dd2d11c7b555d914e52bd06f82",
+    "frontend/src/upstream/Pill.tsx": "851727b4f745755f8553a92bc5881e54d0479ea680d1686533ba210cb943ca2f",
+    "frontend/src/upstream/SegmentedTabs.module.css": "022efca5f83f640c83afcf472ef64b2776b2b20bfa351adda347171ba5cc4c18",
+    "frontend/src/upstream/SegmentedTabs.tsx": "c069e4bf6d76170420cf27b160b3e7d8f9f36669ef53702182459d57ba3637fd",
+    "frontend/src/upstream/SidebarRoot.module.css": "6eaadd716ab135e0d08696f11e979449c14734b38b94ae65408601bdf5ff8393",
+    "frontend/src/upstream/Tag.module.css": "ac135f028674d5bce37a2617902c86d5934b299742536056a2abc5e99583764e",
+    "frontend/src/upstream/Tag.tsx": "2f4845c6b5c7d6f06304de6b972127692a909c775bae72c14799acfd2dc56289",
+    "frontend/src/upstream/TextShimmer.module.css": "2353d6d72be5150aee3b528e7ae081a941f508f4ee3aa17243d6b0cc3b4240c7",
+    "frontend/src/upstream/TextShimmer.tsx": "ffd8cc02a2f76b73c5f1f7a4338fb5df8985a1abe3473eea974a900236b48b50",
+    "frontend/src/upstream/columns.ts": "db5e8fda5eef38ee4760e97ec15b0271f7f20639af5d936bdc78a36dd5a75e88",
+    "frontend/src/upstream/theme/base.css": "803926ce39f5ea48b652021d06b6ca65c4acc7be2c5c4e19bd904ab1dabf0b67",
+    "frontend/src/upstream/theme/corner-shape.css": "d94f82e1332b6d37e8345aafe1b6b4129faed65891edd3861c00b88940ec4d3f",
+    "frontend/src/upstream/theme/design-platform.css": "809b20ae477324fdf5181a2d338655a19919cabbf1b0e60adc149908462c5a66",
+    "frontend/src/upstream/theme/focus.css": "f7398e7730415592ab1e81cec36f8c5e23065becd06c050f0129a6fa44d247e8",
+    "frontend/src/upstream/theme/scrollbar.css": "673450184fe82a679b5759a7f93ceab17895b9f12e1196f7efb281304afd8398",
+    "frontend/tests/browser.mjs": "3dc4058e600168227f859219037f73d744081a147cb461f0406ca2d1803f9248",
+    "frontend/tests/client.test.ts": "ee3f65fadd40fe970be214971b19c693972c9ca28fc18c0b2007e0367a3a7cc1",
+    "frontend/tests/content.mjs": "12fb9d6613dabab1485c3f28e4a492d130b3b47ef9974159c7b5e608c15793b4",
+    "frontend/tests/development.mjs": "4039a5d9e35a71c0079fefafc10f45999dc16cf140522b712ffe30adeca3d56b",
+    "frontend/tests/diagnosis.mjs": "c7f5fd635fa152943e8df07f5a3fc6b315bb727d90a567d82084305cde31d854",
+    "frontend/tests/extensions.mjs": "62ae8d01ab013af3779155c4d3d135051491f79ff65036b6ecabb147c6fab33b",
+    "frontend/tests/history.mjs": "989db69229688eb279ef80c98a8624710eec2725e47823cb7bab48bfab7eebca",
+    "frontend/tests/models.mjs": "9ddca72e6bc8eba0ec8ea4708cc80e01f5ff4b95ae59e23955759d4493f06853",
+    "frontend/tests/questions.mjs": "3431dbe7a83bbac1af3bbafc27f21013c03b5536c59ea0e15e19874a8b3477ef",
+    "frontend/tests/runtime.mjs": "5095f4c3c99d5404af8cce068b4d53f7740a6d0827d08763fe7322209f5fa820",
+    "frontend/tests/search.mjs": "1873a2b960469953bd56c4ffe51d9fba5723cae9d951c12c4e5e185d886a68c7",
+    "frontend/tests/settings.mjs": "8838a1ae95af6eebda3a7b29439ead17f050fe2cd628d6f1981a54c2a4496706",
+    "frontend/tests/turns.mjs": "bf4a4c4a37ac6a59f266a178902efcae80c4856a1186de618bcdc7421d048feb",
+    "frontend/tsconfig.json": "6cc9d82a7f6b66bd67aa2d4361ba35928eca652c3e6e18f67025314486a11399",
+    "frontend/upstream.json": "7e94fc53932cc2d8fb4c6eba247697a60765e8d8d1db1e319646107fa78a5775",
+    "frontend/vite.config.ts": "7a1630303a5358646c4910d5717cfaa1487589018f4ca52a4eaa9d114ce0db59",
+    "harness-testkit/src/test/java/io/jharness/testkit/M10BrowserHost.java": "33763de70779d3f2d70c25c5a8764a2568f2d8bc06ac6b45fcee00b6c00ca03e",
+    "harness-testkit/src/test/java/io/jharness/testkit/M10WebTest.java": "f06b8473a24ee5105c602928e23122df7ff797055fdd00da52905d4ba202bd9a",
+    "harness-web/pom.xml": "c12541f6e8fdeba8e7efdba22afe6f97104e900048afab78dc7af7960e45db7a",
+    "harness-web/src/main/java/io/jharness/web/DurableTaskCatalog.java": "0553129657da545c3f3d59e66a60c52436c5d0582ca073d449d283e52a8c8b08",
+    "harness-web/src/main/java/io/jharness/web/HarnessWebServer.java": "101664682f269750a8096f8621d63da5cb334c8008102da57622597093aaf51c",
+    "harness-web/src/main/java/io/jharness/web/TaskDiagnosis.java": "fdf080411b83b3cad615e6b48f8062bad94cf87d94afa0cdf007831ec8df9d69",
+    "harness-web/src/main/java/io/jharness/web/TurnQueue.java": "83543c2852520fe5ecaf0ed035e45e0c0ea7085da30effe0a7b03a2f58934f59",
+    "harness-web/src/main/java/io/jharness/web/UiResources.java": "a195f540b28a3258043a6bef57cdfebe7f32d0ba3e170a50bb1f9dc866c34e44",
+    "harness-web/src/main/java/io/jharness/web/WebJson.java": "38fdcc09db8948f4bba3c172e0d4bb77ab3f0eae33fcfbd534f1d77f60edc3ca",
+    "harness-web/src/main/java/io/jharness/web/WorkbenchContentSearch.java": "c5ad813e927e2372c82a2bae9a5b592f2e557977e9733ffba24cad3715810c13",
+    "harness-web/src/main/java/io/jharness/web/WorkspaceLease.java": "9afde3e0f89a847cca7d9e808cc656dc21432da407853197df236249a2b17240"
+  },
+  "requests": {
+    "taskSubmissions": 9,
+    "total": 305
+  },
+  "browserErrors": [],
+  "screenshots": [
+    {
+      "path": ".build-cache/M10.5.9/browser/chromium/browser-M10-connection.png",
+      "sha256": "cc84a400f0366e8b9f2a9175832aa8b0b8d99e8c00d7a606b34da58103957123"
+    },
+    {
+      "path": ".build-cache/M10.5.9/browser/chromium/browser-M10-welcome.png",
+      "sha256": "cc84a400f0366e8b9f2a9175832aa8b0b8d99e8c00d7a606b34da58103957123"
+    },
+    {
+      "path": ".build-cache/M10.5.9/browser/chromium/browser-M10-approval.png",
+      "sha256": "807df7132fc4e48cc4f340945867688e79f43ccc174dbc4b0437738894455038"
+    },
+    {
+      "path": ".build-cache/M10.5.9/browser/chromium/browser-M10-report.png",
+      "sha256": "a0644cb77b60120824922ea15511237742c8e81674db0046d064f4ec87017e68"
+    },
+    {
+      "path": ".build-cache/M10.5.9/browser/chromium/browser-M10-diff.png",
+      "sha256": "02739f0f4dcda6523f7d2fe058600862320803e5ac02d3f1c205d2bed6d95cb2"
+    },
+    {
+      "path": ".build-cache/M10.5.9/browser/chromium/browser-M10-unknown.png",
+      "sha256": "780308da1bbdf100fb2fcb73be63cf6576841b3c53abce64410bc99631351802"
+    },
+    {
+      "path": ".build-cache/M10.5.9/browser/chromium/browser-M10-dark.png",
+      "sha256": "841484e14b7485c109b09cd70e671a8cfe343ad8aa951b1331efec38dcded82b"
+    },
+    {
+      "path": ".build-cache/M10.5.9/browser/chromium/browser-M10-mobile.png",
+      "sha256": "2690ee2da2364498698e0071ff71094c2c11a3fce8a43e4ebf1a4b56dff7e08d"
+    }
+  ],
+  "jarSha256": "197ba3803566f8cc8cb4ed3ae0d85b604e0e09055205d0fc57104aca24fd179e",
+  "fixture": "browser",
+  "fixtureSourceSha256": "3dc4058e600168227f859219037f73d744081a147cb461f0406ca2d1803f9248",
+  "logSha256": "c0c405c256bf42aeb68fbaa72c14bfa3c02469bff7a3ea8578fe131bec776fcb"
+}

@@ -106,7 +106,7 @@ def main():
                 assert records[0]["format"] == "jharness-jsonl" and records[0]["version"] == 1
                 return records[1:]
 
-            assert "API 1.9" in run("--version")
+            assert "API 1.14" in run("--version")
             run("--help")
             assert json.loads(run("doctor"))["ready"]
             assert not received

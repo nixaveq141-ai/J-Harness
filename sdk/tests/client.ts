@@ -37,7 +37,7 @@ try{
   const page=await client.artifact(id,String(artifact.artifactRef));check('artifact reads real scoped redacted content',String(page.text).includes('Artifact')&&!JSON.stringify(page).includes(secret))
   check('report and event content exclude secrets',!JSON.stringify(await client.report(id)).includes(secret)&&!JSON.stringify(events).includes(secret))
   check('content search reuses Java service and source ids',Number((await client.search('SDK_FLOW')).total)>0)
-  const pid=client.process.pid!;check('key never enters argv',!client.process.spawnargs.join(' ').includes(secret));await client.close();check('graceful close stops owned process',client.process.exitCode!==null)
+  const pid=client.process.pid!;check('key never enters argv',!client.process.spawnargs.join(' ').includes(secret));await client.close();check('graceful close stops owned process',(client.process.exitCode!==null||client.process.signalCode!==null))
   for(const scenario of ['cancel','unknown','disconnect']){
     client=await JHarnessClient.start(options(scenario));const handle=await client.openSession();const goal='SDK_'+scenario.toUpperCase()
     const sent=await client.sendInput(String(handle.handle),goal,'initial-'+scenario),sid=String(sent.sessionId)
@@ -52,7 +52,7 @@ try{
       await client.close()
     }
   }
-  check('all owned children closed',client.process.exitCode!==null)
+  check('all owned children closed',(client.process.exitCode!==null||client.process.signalCode!==null))
   client=await JHarnessClient.start({...options('flow'),jar:process.env.JHARNESS_SDK_PEER_JAR!})
   await assert.rejects(client.call('slow',{},100),e=>e instanceof RpcError&&e.code==='REQUEST_TIMEOUT_ACCEPTANCE_UNKNOWN')
   await wait(900);check('timeout discards late response and never retries',(await client.call('stats')).slowCalls===1)

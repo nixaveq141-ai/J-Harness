@@ -1,4 +1,4 @@
-import { chromium } from 'playwright'
+import { browserType as chromium, stoppedHostDiagnostic } from './runtime.mjs'
 import { createServer } from 'node:http'
 import { spawn } from 'node:child_process'
 import { mkdir, writeFile, readFile } from 'node:fs/promises'
@@ -8,8 +8,9 @@ import assert from 'node:assert/strict'
 
 const root = resolve(import.meta.dirname, '../..'), out = join(root, '.build-cache'), workspace = join(out, `M10.5.3-turns-${Date.now()}`)
 const config = join(workspace, 'fixture.json'), jar = join(root, 'harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar')
-const java = join(process.env.JAVA_HOME, 'bin', 'java.exe'), token = 'turn_browser_0123456789_ABCDEFGHIJKLMNOPQRSTUVWXYZ', key = `synthetic-turn-${randomUUID()}`
+const java = join(process.env.JAVA_HOME, 'bin', process.platform==='win32'?'java.exe':'java'), token = 'turn_browser_0123456789_ABCDEFGHIJKLMNOPQRSTUVWXYZ', key = `synthetic-turn-${randomUUID()}`
 const checks = [], screenshots = [], wire = [], errors = [], holds = new Map()
+const stoppedOrigins = new Set(), transportDiagnostics = []
 let host, base, output = '', browser, context, page, id, submissionPosts = 0
 const wait = ms => new Promise(r => setTimeout(r, ms))
 async function until(test, timeout = 30000) { const start = Date.now(); while (Date.now()-start < timeout) { if (await test()) return; await wait(80) }; throw new Error('Turn fixture condition timed out') }
@@ -37,7 +38,7 @@ async function start() {
   host.stdout.on('data', d => { output += d; base = output.match(/WEB (http:\/\/127\.0\.0\.1:\d+)/)?.[1] }); host.stderr.on('data', d => { output += d })
   await until(() => base || host.exitCode !== null); assert.ok(base, 'Fixture host failed to start')
 }
-async function stop() { if (host && host.exitCode === null) { host.stdin.end(':quit\n'); await until(() => host.exitCode !== null); assert.equal(host.exitCode, 0) } }
+async function stop() { if (host && host.exitCode === null) { stoppedOrigins.add(base); host.stdin.end(':quit\n'); await until(() => host.exitCode !== null); assert.equal(host.exitCode, 0) } }
 async function api(path, body, client = context.request) {
   const r = await client.fetch(base+path, { method: body === undefined ? 'GET' : 'POST', headers: { Authorization: `Bearer ${token}`, ...(body === undefined ? {} : { 'Content-Type': 'application/json' }) }, ...(body === undefined ? {} : { data: body }) })
   return { status: r.status(), body: await r.json() }
@@ -67,13 +68,14 @@ async function maintain(args) {
 }
 try {
   await start(); browser = await chromium.launch(process.env.JHARNESS_BROWSER_CHANNEL ? { channel: process.env.JHARNESS_BROWSER_CHANNEL } : {})
-  context = await browser.newContext({ viewport: { width: 1440, height: 1100 } }); page = await context.newPage(); page.on('pageerror', e => errors.push(e.message))
+  context = await browser.newContext({ viewport: { width: 1440, height: 1100 } }); page = await context.newPage(); page.on('pageerror', e => {if(stoppedHostDiagnostic(e.message,stoppedOrigins))transportDiagnostics.push(e.message);else errors.push(e.message)})
   page.on('request', r => { if (r.method() === 'POST' && /\/turns$/.test(r.url())) submissionPosts++ })
   await connected(); await page.getByLabel('任务目标').fill('first input'); await page.getByRole('button', { name: '创建任务', exact: true }).click()
   await until(async () => id = await page.evaluate(() => sessionStorage.getItem('jh-selected'))); await settled(1)
   await page.getByLabel('后续消息', { exact: true }).waitFor()
   check('completed session retains a continuation composer', await page.getByRole('heading').first().isVisible())
   await page.getByLabel('后续消息', { exact: true }).fill(`private draft ${key}`)
+  await until(async () => await page.getByRole('button', { name: '新建任务', exact: true }).isDisabled() && await page.getByRole('button', { name: '工作台设置', exact: true }).isDisabled())
   check('unsent draft protects navigation and never enters browser storage', await page.getByRole('button', { name: '新建任务', exact: true }).isDisabled() && await page.getByRole('button', { name: '工作台设置', exact: true }).isDisabled() && !JSON.stringify(await page.evaluate(() => ({ ...localStorage, ...sessionStorage }))).includes(key))
   await page.getByRole('button', { name: '丢弃草稿', exact: true }).click()
   await send('second input', 'message', true); await settled(2)
@@ -123,10 +125,13 @@ try {
   check('offline verification leaves queued message paused until explicit operator action', wire.length === atExit && (await api(taskPath('/turns'))).body.submissions.at(-1).state === 'PAUSED')
   await page.getByRole('button', { name: '开始这条消息', exact: true }).click(); await settled(8)
   check('explicit start continues same session once after recovery', (await api(taskPath('/turns'))).body.submissions.at(-1).state === 'FINISHED' && wire.length === atExit+2 && (await api('/v1/tasks?view=all')).body.historyCount === 1)
-  check('no browser errors or credential leaks in persistent UI storage', errors.length === 0 && wire.every(w => w.authenticated) && !output.includes(key) && !JSON.stringify(await page.evaluate(() => ({...localStorage,...sessionStorage}))).includes(key))
+  const safety={errors:errors.map(e=>String(e).replaceAll(key,'[REDACTED]').replaceAll(token,'[REDACTED]')),authenticated:wire.every(w=>w.authenticated),outputRedacted:!output.includes(key),storageRedacted:!JSON.stringify(await page.evaluate(()=>({...localStorage,...sessionStorage}))).includes(key)}
+  if(safety.errors.length||!safety.authenticated||!safety.outputRedacted||!safety.storageRedacted)console.log('SAFETY_DIAGNOSTIC',JSON.stringify(safety))
+  check('no browser errors or credential leaks in persistent UI storage', safety.errors.length===0&&safety.authenticated&&safety.outputRedacted&&safety.storageRedacted)
   await stop()
-  await writeFile(join(out,'M10.5.3-turns-results.json'),JSON.stringify({ status:'PASS',capturedAt:new Date().toISOString(),checks,screenshots,jarSha256:createHash('sha256').update(await readFile(jar)).digest('hex'),browserVersion:browser.version(),paidRequests:0,hostStopped:host.exitCode===0,modelRequests:wire.length },null,2)+'\n')
+  await writeFile(join(out,'M10.5.3-turns-results.json'),JSON.stringify({ status:'PASS',capturedAt:new Date().toISOString(),checks,screenshots,transportDiagnostics,jarSha256:createHash('sha256').update(await readFile(jar)).digest('hex'),browserEngine:process.env.JHARNESS_BROWSER_ENGINE??'chromium',browserVersion:browser.version(),paidRequests:0,hostStopped:host.exitCode===0,modelRequests:wire.length },null,2)+'\n')
 } catch (e) {
+  console.log('BROWSER_DIAGNOSTIC',JSON.stringify(errors).replaceAll(key,'[REDACTED]').replaceAll(token,'[REDACTED]'))
   if (page && !page.isClosed()) await page.screenshot({ path:join(out,'M10.5.3-turns-failure.png'),fullPage:true })
   await writeFile(join(out,'M10.5.3-turns-failure.txt'),(String(e.stack)+'\n'+output).replaceAll(key,'[REDACTED]').replaceAll(token,'[REDACTED]')); throw e
 } finally { await stop().catch(()=>host?.kill()); await browser?.close(); provider.closeAllConnections(); await new Promise(r=>provider.close(r)) }

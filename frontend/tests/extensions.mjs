@@ -1,4 +1,4 @@
-import { chromium } from 'playwright'
+import { browserType as chromium, stoppedHostDiagnostic } from './runtime.mjs'
 import { createServer } from 'node:http'
 import { spawn } from 'node:child_process'
 import { mkdir, writeFile, readFile, access } from 'node:fs/promises'
@@ -6,9 +6,10 @@ import { join, resolve } from 'node:path'
 import { createHash, randomUUID } from 'node:crypto'
 import assert from 'node:assert/strict'
 
+const stoppedOrigins=new Set(),transportDiagnostics=[]
 const root = resolve(import.meta.dirname, '../..'), out = join(root, '.build-cache')
 const workspace = join(out, `M10.5.7-extensions-${Date.now()}`), userRoot = join(out, `M10.5.7-user-${Date.now()}`)
-const jar = join(root, 'harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar'), java = join(process.env.JAVA_HOME, 'bin/java.exe')
+const jar = join(root, 'harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar'), java = join(process.env.JAVA_HOME, process.platform==='win32'?'bin/java.exe':'bin/java')
 const token = 'extensions_0123456789_ABCDEFGHIJKLMNOPQRSTUVWXYZ', secret = `synthetic-${randomUUID()}`
 const checks = [], screenshots = [], wire = [], peerWire = [], errors = []
 let host, base, output = '', browser, page, context, hold, parentSent = false, childSent = false, result
@@ -70,14 +71,14 @@ async function start() {
   const receive = d => { output += d; base = output.match(/WEB (http:\/\/127\.0\.0\.1:\d+)/)?.[1] }
   host.stdout.on('data', receive); host.stderr.on('data', receive); await until(() => base || host.exitCode !== null); assert.ok(base, output)
 }
-async function stop() { if (host?.exitCode === null) { host.stdin.end(':quit\n'); await until(() => host.exitCode !== null); assert.equal(host.exitCode, 0) } }
+async function stop() { if (host?.exitCode === null) { stoppedOrigins.add(base);host.stdin.end(':quit\n'); await until(() => host.exitCode !== null); assert.equal(host.exitCode, 0) } }
 async function api(path, data, auth = true) { const res = await context.request.fetch(base + path, { method: data === undefined ? 'GET' : 'POST', headers: { ...(auth ? { Authorization: `Bearer ${token}` } : {}), ...(data === undefined ? {} : { 'Content-Type': 'application/json' }) }, ...(data === undefined ? {} : { data }) }); return { status: res.status(), body: await res.json() } }
 const saveBody = v => ({ revision: v.revision, models: v.models, selected: v.selected, extensions: v.extensions, policy: v.policy, apiKeys: {} })
 const group = name => page.locator('.extension-config').filter({ has: page.locator('summary', { hasText: new RegExp(`^${name}$`) }) })
 async function shot(name) { const path = join(out, `M10.5.7-${name}.png`); await page.screenshot({ path, fullPage: true }); screenshots.push({ path: path.replace(root + '\\', ''), sha256: createHash('sha256').update(await readFile(path)).digest('hex') }) }
 try {
   await start(); browser = await chromium.launch(process.env.JHARNESS_BROWSER_CHANNEL ? { channel: process.env.JHARNESS_BROWSER_CHANNEL } : {})
-  context = await browser.newContext({ viewport: { width: 1440, height: 960 } }); page = await context.newPage(); page.on('pageerror', e => errors.push(e.message))
+  context = await browser.newContext({ viewport: { width: 1440, height: 960 } }); page = await context.newPage(); page.on('pageerror',e=>{if(stoppedHostDiagnostic(e.message,stoppedOrigins))transportDiagnostics.push(e.message);else errors.push(e.message)})
   check('skill catalog requires authentication', (await api('/v1/skills?profile=default', undefined, false)).status === 401)
   check('skill catalog rejects unregistered profile and arbitrary path', (await api('/v1/skills?profile=missing')).status === 404 && (await api('/v1/skills?profile=default&path=outside')).status === 400)
   await page.goto(base); await page.getByRole('button', { name: '工作台设置', exact: true }).click(); await page.getByRole('tab', { name: '插件与扩展' }).click()
@@ -169,7 +170,7 @@ try {
   check('disconnected assembly keeps uncertainty without model request or successful inventory', wire.length === oldWire && (await api(`/v1/tasks/${unavailable.taskId}/tools`)).body.recorded === false)
   check('unknown assembly blocks settings and never replays external tool', (await api('/v1/settings', saveBody((await api('/v1/settings')).body))).body.error === 'WORKSPACE_BUSY' && peerWire.filter(w => w.method === 'tools/call').length === 1)
   check('no browser exceptions', errors.length === 0)
-  result = { status: 'PASS', capturedAt: new Date().toISOString(), checks, screenshots, browserVersion: browser.version(), browserChannel: process.env.JHARNESS_BROWSER_CHANNEL ?? 'chromium', jarSha256: createHash('sha256').update(await readFile(jar)).digest('hex'), paidRequests: 0, modelRequests: wire.length, mcpMethods: peerWire.map(w => w.method) }
+  result = { status: 'PASS', capturedAt: new Date().toISOString(), checks, screenshots,transportDiagnostics, browserEngine:process.env.JHARNESS_BROWSER_ENGINE??'chromium',browserVersion: browser.version(), browserChannel: process.env.JHARNESS_BROWSER_CHANNEL ?? process.env.JHARNESS_BROWSER_ENGINE ?? 'chromium', jarSha256: createHash('sha256').update(await readFile(jar)).digest('hex'), paidRequests: 0, modelRequests: wire.length, mcpMethods: peerWire.map(w => w.method) }
 } catch (e) {
   if (page) { await page.screenshot({ path: join(out, 'M10.5.7-failure.png'), fullPage: true }); await writeFile(join(out, 'M10.5.7-failure.txt'), (String(e.stack) + '\n' + output + '\n' + await page.locator('body').innerText()).replaceAll(secret, '[REDACTED]').replaceAll(token, '[REDACTED]')) }
   throw e
