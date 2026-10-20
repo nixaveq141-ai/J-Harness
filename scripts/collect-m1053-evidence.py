@@ -1,4 +1,10 @@
 """Capture M10.5.3 independently of historical M10 receipts."""
+
+# Historical acceptance is immutable; retained code is reference only.
+if __name__ == '__main__':
+    import sys
+    sys.stderr.write('HISTORICAL_EVIDENCE_FROZEN: this collector cannot regenerate historical acceptance. Use scripts/collect-m1059-evidence.py with fresh evidence and scripts/archive-m1059-local.py for a new archive.\n')
+    raise SystemExit(2)
 import datetime
 import hashlib
 import json

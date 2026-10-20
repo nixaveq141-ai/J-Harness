@@ -12,6 +12,8 @@ import time
 import urllib.error
 import urllib.request
 
+from evidence_io import atomic_write_json
+
 ROOT = Path(__file__).resolve().parents[1]
 TOKEN = 'launcher_test_0123456789_ABCDEFGHIJKLMNOPQRSTUVWXYZ'
 PS = ['powershell.exe', '-NoProfile', '-STA', '-ExecutionPolicy', 'Bypass', '-File', str(ROOT / 'scripts/open-workbench.ps1')]
@@ -69,6 +71,21 @@ def stop(p, url, output):
 
 
 def main():
+    output = ROOT / '.build-cache/M10-launcher-results.json'
+    report = {'status': 'INCOMPLETE', 'checks': [],
+              'capturedAt': datetime.datetime.now(datetime.timezone.utc).isoformat()}
+    atomic_write_json(output, report)
+    try:
+        if not __debug__:
+            raise RuntimeError('Launcher smoke requires Python assertions enabled; do not use -O')
+        exercise()
+    except BaseException as error:
+        report['failureType'] = type(error).__name__
+        atomic_write_json(output, report)
+        raise
+
+
+def exercise():
     if os.name != 'nt':
         raise SystemExit('This smoke requires Windows PowerShell 5.1 and Java21')
     checks = []
@@ -138,7 +155,7 @@ def main():
               'paidRequests': 0, 'modelEndpoint': 'unreachable loopback :9; no task submissions',
               'sourceSha256': {p: sha(p) for p in ['web-ui.cmd', 'scripts/open-workbench.ps1', 'scripts/test-open-workbench.py']},
               'jarSha256': sha('harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar')}
-    (ROOT / '.build-cache/M10-launcher-results.json').write_bytes((json.dumps(result, indent=2) + '\n').encode())
+    atomic_write_json(ROOT / '.build-cache/M10-launcher-results.json', result)
     print('PASS: ' + str(len(checks)) + ' real launcher checks; no browser/clipboard changes, paid calls or lingering host')
 
 

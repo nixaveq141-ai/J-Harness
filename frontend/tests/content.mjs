@@ -105,8 +105,8 @@ try{
  check('file changes reject stale preview pages instead of mixing versions')
  await page.getByRole('button',{name:'重新读取',exact:true}).click();await page.getByLabel('内容预览',{exact:true}).getByText(/changed outside the task/).waitFor()
  check('explicit reread obtains changed current content')
- for(const path of ['../outside/private.txt','.jharness/config','.env.local',outside+'/private.txt','escape-link/private.txt']){
-   const response=await api('/v1/tasks/'+render+'/file?path='+enc(path));check('denied preview '+path.split('/').at(-1),response.status===400)
+ for(const [label,path] of [['parent traversal','../outside/private.txt'],['protected metadata','.jharness/config'],['dotenv','.env.local'],['absolute outside',outside+'/private.txt'],['symlink escape','escape-link/private.txt']]){
+   const response=await api('/v1/tasks/'+render+'/file?path='+enc(path));check('denied preview '+label,response.status===400)
  }
  const listing=(await api('/v1/tasks/'+render+'/files')).body
  check('file tree hides protected metadata and links',!JSON.stringify(listing).includes('.env.local')&&!JSON.stringify(listing).includes('.jharness')&&!JSON.stringify(listing).includes('escape-link'))

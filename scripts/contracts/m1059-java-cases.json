@@ -1,0 +1,1263 @@
+{
+  "schemaVersion": 1,
+  "milestone": "M10.5.9",
+  "origin": "Case identities from the preserved local M10.5.9 report; this contract is not execution evidence.",
+  "suites": [
+    {
+      "module": "harness-api",
+      "name": "io.jharness.api.SessionEventTest",
+      "cases": [
+        "associationFieldsFollowLevelAndKnownType",
+        "cyclicPayloadIsRejectedByTheNestingBound",
+        "payloadIsDeepImmutableAndDetached"
+      ]
+    },
+    {
+      "module": "harness-cli",
+      "name": "io.jharness.cli.CliContractsTest",
+      "cases": [
+        "CnyUsageSettlementIsConservativeAndMissingUsageRetainsFullBound",
+        "configCannotPersistKnownSecretUnderOtherwiseAllowedModelField",
+        "configurationRejectsInlineSecretsWrongTypesAndUnavailableCostAccounting",
+        "futureFormatIsReadOnlyAndDamagedTailIsNeverAutoRepairedByCli",
+        "helpVersionAndMissingCancelHaveStableExitCodes",
+        "interruptedIntentRequiresOperatorVerificationAndVerifiedFactClearsOnlyThatCall",
+        "modelClaimsWithoutToolFactsNeverBecomeChangesOrTestEvidence",
+        "offlineDryRunDoesNotNeedApiKeyAndDoesNotCreatePlannedFiles",
+        "parserRejectsUnknownAndDuplicateFlagsButPreservesChineseAndSpaces"
+      ]
+    },
+    {
+      "module": "harness-cli",
+      "name": "io.jharness.cli.EvidenceCompletionTest",
+      "cases": [
+        "currentTurnCannotReusePriorTurnsReadEvidence",
+        "expectedFileMustStillHaveRecordedVersionAndVerificationAfterLastWrite",
+        "failedBuildThenLatestSuccessfulVerificationPassesAndSubsequentSystemCommandInvalidatesIt"
+      ]
+    },
+    {
+      "module": "harness-cli",
+      "name": "io.jharness.cli.M5CliTest",
+      "cases": [
+        "assistantCallsInterruptedBeforeToolRequestedCanBeReconciledWithoutExecution",
+        "explicitMigrationAndTailRepairReportBackupsAndBecomeRecoverable",
+        "futureAndMiddleDamageReturnReadOnlyExitCodeAndNeverAlterLog",
+        "invalidPagesTimesAndTraversalAreUsageErrors",
+        "queryExportForkAndColdArtifactCommandsWorkWithoutModelConfiguration",
+        "recoveryAndResumeRefuseUnknownBeforeLookingForApiKeyAndNeverAppend",
+        "unresolvedColdTerminalRequiresManualVerificationAndIsNeverRestarted",
+        "unresolvedModelRequestRequiresExplicitAbandonmentWithoutReplay"
+      ]
+    },
+    {
+      "module": "harness-cli",
+      "name": "io.jharness.cli.M6ConfigurationTest",
+      "cases": [
+        "capabilityFlagsAndCompactionLimitsAreStrictAndFallbackIsExplicit",
+        "conflictingRoutesPoliciesUnknownSelectionsAndInlineKeysAreRejected",
+        "profilesPresetsModelsAndBundlesResolveWithRecordedSelection"
+      ]
+    },
+    {
+      "module": "harness-cli",
+      "name": "io.jharness.cli.M8FilterConfigTest",
+      "cases": [
+        "badFilterIsRejectedBeforeModelOrEnvironmentAssembly",
+        "namedSettingsReplaceFilterAsOneValidatedObject"
+      ]
+    },
+    {
+      "module": "harness-cli",
+      "name": "io.jharness.cli.M8ResilienceConfigTest",
+      "cases": [
+        "profileReplacesWholeObjectAndDefaultIsDisabled",
+        "rejectsUnknownFieldsTypesAndBoundsBeforeAssembly"
+      ]
+    },
+    {
+      "module": "harness-cli",
+      "name": "io.jharness.cli.M8SchedulingConfigTest",
+      "cases": [
+        "invalidModesBoundsAndDisabledPluginAreRejectedBeforeAssembly",
+        "namedProfileCanEnableBoundedSchedulingAndDefaultRemainsSerial"
+      ]
+    },
+    {
+      "module": "harness-cli",
+      "name": "io.jharness.cli.M9DistributionDoctorTest",
+      "cases": [
+        "packagedRuntimeDoesNotRequireMavenInTargetWorkspace"
+      ]
+    },
+    {
+      "module": "harness-cli",
+      "name": "io.jharness.cli.StdioSdkServerTest",
+      "cases": [
+        "duplicateFieldsRejectRatherThanSelectingLastValue",
+        "exactVersionInitializationUnknownFieldsAndMethodsAreExecutionBarriers",
+        "truncatedOversizedAndInvalidUtf8FramesCloseWithoutInterpretingBytes"
+      ]
+    },
+    {
+      "module": "harness-cli",
+      "name": "io.jharness.cli.WorkbenchSettingsTest",
+      "cases": [
+        "acceptedModelAndBudgetSnapshotSurvivesDefaultAndCapabilityChanges",
+        "explicitSkillRootsPersistDiscoverAndRejectTraversalWithoutNetwork",
+        "extensionsAndIndependentModelPricesReachRuntime",
+        "invalidConfigurationCannotWriteCredentialsOrReplaceState",
+        "missingMcpCredentialRejectsCaptureAndFrozenRuntimeBeforeAssembly",
+        "permissionSelectionIsBoundedPersistentAndDoesNotRewriteRuntimeSnapshots",
+        "savedKeySurvivesNewHostWithoutEnteringDiskOrResponses",
+        "systemCredentialAdapterRoundTripAndCleanupOrExplicitUnsupported",
+        "unavailableNativeVaultPreservesSettingsAndBlocksAdmissionWithoutFallback",
+        "vaultFailureKeepsSettingsAndKeyRotationDeletesOnlyManagedOldKey"
+      ]
+    },
+    {
+      "module": "harness-cli",
+      "name": "io.jharness.cli.WorkbenchWorkspacesTest",
+      "cases": [
+        "registrationPersistsCanonicalRootsWithoutLoadingTargetConfig",
+        "relativeTraversalMetadataSecretsLinksAndWrongOwnerAreRejected",
+        "workspaceOwnedByAnotherHostCannotBeRegistered"
+      ]
+    },
+    {
+      "module": "harness-events",
+      "name": "io.jharness.events.DefaultEventBusTest",
+      "cases": [
+        "interceptorErrorsPropagateAndPointTypeIsPartOfIdentity",
+        "interceptorWrapsInOrderSupportsShortCircuitAndRevocation",
+        "notifyDoesNotBlockAndObserverFailureCannotChangeResult",
+        "recursivePublicationIsRejectedAndClosedBusIsNotUsable",
+        "removedNotificationDoesNotRunEvenIfAlreadyQueued",
+        "serialFailureShortCircuitsAndTimeoutIsExplicit",
+        "serialWaitsAndOrdersByPriorityThenRegistration"
+      ]
+    },
+    {
+      "module": "harness-llm",
+      "name": "io.jharness.llm.M6StreamingTest",
+      "cases": [
+        "cancellationAndTimeoutInterruptBodyWithoutASecondRequest",
+        "fragmentedUtf8MultiToolCallsAndUsageAssembleOnlyAfterDone",
+        "incompleteMalformedAndDuplicateStreamsNeverExposeFinalToolsOrRetry",
+        "routerLazilySelectsCapabilitiesAndClosesOnlyInstantiatedAdapters",
+        "streamLimitsAndSecretsSplitAcrossDeltasAreSafe"
+      ]
+    },
+    {
+      "module": "harness-llm",
+      "name": "io.jharness.llm.MultiProtocolTest",
+      "cases": [
+        "cancellationDuringBodyIsBoundedAndNeverReplayed(ModelProtocol)[1]",
+        "cancellationDuringBodyIsBoundedAndNeverReplayed(ModelProtocol)[2]",
+        "cancellationDuringBodyIsBoundedAndNeverReplayed(ModelProtocol)[3]",
+        "jsonToolWireAndUsage(ModelProtocol)[1]",
+        "jsonToolWireAndUsage(ModelProtocol)[2]",
+        "jsonToolWireAndUsage(ModelProtocol)[3]",
+        "limitsErrorsAndPreCancelledDoNotProduceResult(ModelProtocol)[1]",
+        "limitsErrorsAndPreCancelledDoNotProduceResult(ModelProtocol)[2]",
+        "limitsErrorsAndPreCancelledDoNotProduceResult(ModelProtocol)[3]",
+        "malformedArgumentsAndUnsupportedReasoningFailClosed",
+        "reasoningStateReplaysOnlyOriginalRouteAndRejectsUnsafeCiphertext",
+        "sseTextAndToolCompleteOnlyAtTerminal(ModelProtocol)[1]",
+        "sseTextAndToolCompleteOnlyAtTerminal(ModelProtocol)[2]",
+        "sseTextAndToolCompleteOnlyAtTerminal(ModelProtocol)[3]",
+        "truncatedSseNeverReleasesCalls(ModelProtocol)[1]",
+        "truncatedSseNeverReleasesCalls(ModelProtocol)[2]",
+        "truncatedSseNeverReleasesCalls(ModelProtocol)[3]"
+      ]
+    },
+    {
+      "module": "harness-llm",
+      "name": "io.jharness.llm.OpenAiCompatibleLlmClientTest",
+      "cases": [
+        "authenticationServerAndRateErrorsDoNotLeakBodiesAndAmbiguousErrorsAreNotRetried",
+        "cancellationAfterHeadersAndBodyTimeoutStopWaiting",
+        "cancellationBeforeSendingProducesNoHttpRequest",
+        "explicitRateLimitRetriesAreBoundedAndCanRecover",
+        "invalidMessageProtocolAndRoutesFailBeforeSending",
+        "malformedAndDuplicateAndIncompleteResponsesFailExplicitly",
+        "responseLimitRedirectAndUnsupportedCapabilitiesFailClosed",
+        "textRequestHasConfiguredModelHeaderAndPreparedEnvelopeWithoutSecret",
+        "toolArgumentsParseAndRoundTripAsJsonStringsWithLinkedResults"
+      ]
+    },
+    {
+      "module": "harness-plugin",
+      "name": "io.jharness.plugin.PluginContainerTest",
+      "cases": [
+        "closingAnUnusedContainerIsIdempotentAndItCannotRestart",
+        "configIsPluginSpecificAndImmutableAndLifecycleCanBeObserved",
+        "dependenciesStartBeforeDependentsAndStopInReverse",
+        "duplicateRegistrationIsDiagnosticAndRevocationIsIdempotent",
+        "exactScopesIsolateServicesEventsAndInterceptors",
+        "missingAndAmbiguousRequiredServicesRollbackStartup",
+        "missingDisabledCircularAndIncompatibleDependenciesFailBeforeAnyStart",
+        "partialStartupFailureRollsBackAllServicesSubscriptionsAndResources",
+        "startupFailureNamesTheFailedPluginAndKeepsCleanupFailures",
+        "stopFailureStillReleasesEveryContributionAndResource"
+      ]
+    },
+    {
+      "module": "harness-policy",
+      "name": "io.jharness.policy.PolicyApprovalTest",
+      "cases": [
+        "approvalPromptContainsFullCallAndSingleUserDecision",
+        "cancellationRevokesPromptAndTimeoutAndCloseDeny",
+        "trustedCommandIsExactAndShellOrSuffixNeedsApproval"
+      ]
+    },
+    {
+      "module": "harness-process",
+      "name": "io.jharness.process.LocalPlanPreviewerTest",
+      "cases": [
+        "fileWriteAndEditPreviewDiffWithoutMutationAndShellIsExplicitlyUnpreviewable",
+        "previewRejectsOutsideAndStaleVersions"
+      ]
+    },
+    {
+      "module": "harness-process",
+      "name": "io.jharness.process.LocalProcessRunnerTest",
+      "cases": [
+        "cancellationKillsObservedRealChildTreeAndPreservesHonestScope",
+        "concurrentCeilingAndCloseCancelActiveCommand",
+        "deniedTerminationReportsResidualAndUnknownRatherThanClaimingClean",
+        "exitCodesSeparateFailureAndConsumeBothStreamsWithExactArgumentBoundaries",
+        "explicitNativeShellExecutesBatchAndTreeLimitStopsSpawn",
+        "floodingBothStreamsIsBoundedAndTimeoutReleasesAdmissionSlot",
+        "invalidWorkingDirectoryAndBatchShellCannotSneakThroughArgv",
+        "noInheritedSecretEnvironmentAndApprovedValuesScrubbed",
+        "stdinIsClosedAndSuccessHasNoDetachedReader"
+      ]
+    },
+    {
+      "module": "harness-process",
+      "name": "io.jharness.process.LocalRunControlTest",
+      "cases": [
+        "invalidCredentialDoesNotCancelAndUnreachableIsDifferentFromExited",
+        "separateJvmCancelAuthenticatesAndExitStateIsDiscoverable"
+      ]
+    },
+    {
+      "module": "harness-process",
+      "name": "io.jharness.process.M6TerminalTest",
+      "cases": [
+        "backgroundTaskStatusLogStopAndTimeoutAreBounded",
+        "cancellationTraversalInvalidPagesAndCloseNeverStartOrLeakTasks",
+        "cancellingBlockedStdinStopsProcessAndReturnsUnknownWithinTheDeadline",
+        "realPtyAcceptsInputResizesAndPreservesItsWorkingDirectory",
+        "rollingLogsAndConcurrentTaskQuotaStayBounded"
+      ]
+    },
+    {
+      "module": "harness-process",
+      "name": "io.jharness.process.RunStatePermissionsTest",
+      "cases": [
+        "credentialsAreOwnerOnlyAndOrdinaryFoldersAreNotRepurposed"
+      ]
+    },
+    {
+      "module": "harness-session",
+      "name": "io.jharness.session.EventRequestJournalTest",
+      "cases": [
+        "allInputFactsAreSanitizedAndDurabilityDoesNotImproveByWrapping",
+        "anyRequestReconstructsFromItsPrefixEvenAfterLaterContextChanges",
+        "missingFutureOrWrongStepContextCannotBeUsed",
+        "toolResultsAndFinalEnvelopeReplayIntoMessagesWithoutAuthorityDuplication"
+      ]
+    },
+    {
+      "module": "harness-session",
+      "name": "io.jharness.session.InMemorySessionTest",
+      "cases": [
+        "checkpointPolicyRequiresDurabilityForSideEffectsAndMemoryPolicyIsExplicit",
+        "concurrentWriterOpenHasExactlyOneWinner",
+        "malformedProjectionDoesNotPretendToHaveCompleted",
+        "rejectWrongSessionDuplicatesAndFutureSchemaWithoutAppending",
+        "replayProjectionIsStableAndHasNoSeparateAuthoritativeHistory",
+        "writerIsExclusiveReadersSeeSnapshotsAndClosedWriterCannotReenter"
+      ]
+    },
+    {
+      "module": "harness-session",
+      "name": "io.jharness.session.JsonlSessionRepositoryTest",
+      "cases": [
+        "accumulatedNodeCapacityIsCheckedBeforeAppendSoTheExistingLogStaysReadable",
+        "duplicateWrongScopeAndUnsafeSessionNamesAreRejectedWithoutAppending",
+        "forceFailurePoisonsWriterAndReportsThroughIndependentDiagnosticChannel",
+        "forcedRecordsSurviveReopenAndAClosedWriterCannotAppend",
+        "futureHeaderIsMetadataReadableButNeverDecodedOrWritten",
+        "malformedMiddleLineNeverGetsSilentlyDiscardedByTailRepair",
+        "oversizedSparseLogIsRefusedBeforeAllocationAndArtifactsPersistWithScopeAndIntegrity",
+        "sameProcessAndSecondJvmCannotWriteWhileOwnerHoldsTheLock",
+        "structurallyDenseRecordIsRejectedBeforeObjectMaterializationAndNeverTailRepaired",
+        "tailDamageIsReportedAndRepairRequiresExclusiveWriterAndExplicitPolicy"
+      ]
+    },
+    {
+      "module": "harness-session",
+      "name": "io.jharness.session.M5SessionTest",
+      "cases": [
+        "catalogFiltersColdSessionsAndReportsDamageWithoutBuildingAnIndex",
+        "diskAndMemoryShareQueryForkAndRequestReconstructionContract",
+        "eventQueryHasInclusiveTimesExactToolStatusAndStablePagination",
+        "exportReopensAsColdRepositoryAndNeverOverwrites",
+        "forkCopiesColdArtifactsAndDetectsTamperingBeforePublication",
+        "maintenanceAndForkRefuseActiveWriterAndReleaseLocksAfterFailure",
+        "middleDamageAndFutureVersionsNeverChangeBytesOrCreateFork",
+        "migrationFailureBeforeAtomicPublishLeavesSourceUntouched",
+        "migrationPreservesEveryEventProjectionRequestAndOriginalBackup",
+        "recoveryCarriesUnknownAndUnresolvedRequestsAcrossForkAndReopen",
+        "tailRepairBacksUpTruncatedAndInvalidCompleteFinalRecords"
+      ]
+    },
+    {
+      "module": "harness-session",
+      "name": "io.jharness.session.TokenSessionSearchTest",
+      "cases": [
+        "excessiveIndexedBodyFailsWithoutChangingFactsOrPublishingPartialIndex",
+        "incrementalIndexCorruptionAndExplicitRebuildNeverAlterFacts",
+        "indexLocksCancellationTraversalAndResultCapacityAreEnforced",
+        "modelRequestsAndConfigurationAreExcludedFromContent",
+        "recomputedChecksumCannotForgeCacheTextOrLeakNewlyKnownSecrets",
+        "tokensAreAndWordsNotSubstringsAndPhraseKeepsOrderAndChinese"
+      ]
+    },
+    {
+      "module": "harness-testkit",
+      "name": "io.jharness.ecosystem.M7ChildEnvironmentTest",
+      "cases": [
+        "closingBorrowedViewRevokesReadsWithoutClosingParent"
+      ]
+    },
+    {
+      "module": "harness-testkit",
+      "name": "io.jharness.testkit.M0ServiceReplacementTest",
+      "cases": [
+        "baselinePluginPassesHarnessContract",
+        "replacementLoopAndToolRegistryPassTheSameHarnessContract"
+      ]
+    },
+    {
+      "module": "harness-testkit",
+      "name": "io.jharness.testkit.M1052HistoryTest",
+      "cases": [
+        "futureCatalogVersionIsRejectedWithoutChangingItsBytes",
+        "interruptedAdmissionIsRecoveredFromWorkspacePointerWithoutExecuting",
+        "legacyCatalogKeepsExactByteBackupAndMigrationFailureNeverExecutes",
+        "sixtyFiveTasksPageArchiveForkExportAndRestartWithoutLosingIdempotence",
+        "unknownAndRunningMaintenanceCannotReleaseBindings",
+        "workspaceOwnershipSurvivesCatalogSwitchAndRequiresOriginalOfflineVerification"
+      ]
+    },
+    {
+      "module": "harness-testkit",
+      "name": "io.jharness.testkit.M1053TurnsTest",
+      "cases": [
+        "busyQueueSupplementCancelAndConcurrentDuplicateAreSerialized",
+        "failedStartCheckpointRecoversOriginalTurnAsUnknownWithoutReplay",
+        "hostExitNeverExecutesAcceptedQueueOnRestart",
+        "lostOriginalCredentialPausesQueueBeforeExecutionAndCanBeRepaired",
+        "pausedModelSnapshotReachesFactoryAfterRestartDespiteChangedDefault",
+        "queueCapacityAndUnknownPreventUnsafeContinuation",
+        "restartLeavesAcceptedQueuePausedAndRequiresExplicitStart",
+        "threeTurnsRetainSessionPrefixAndIndependentIdempotence"
+      ]
+    },
+    {
+      "module": "harness-testkit",
+      "name": "io.jharness.testkit.M1055QuestionsTest",
+      "cases": [
+        "answerReceivedBeforeDeadlineSurvivesDelayedOwnerThreadSettlement",
+        "cancellationClosesWaitWithoutAnotherModelRequest",
+        "draftAndAnswerAreRedactedAndDuplicateConflictsAreBounded",
+        "explicitAnswerEntersNextPreparedRequestAndCannotAuthorizeWrite(String)[1]",
+        "explicitAnswerEntersNextPreparedRequestAndCannotAuthorizeWrite(String)[2]",
+        "explicitAnswerEntersNextPreparedRequestAndCannotAuthorizeWrite(String)[3]",
+        "interactiveQuestionCannotRunOnReadOnlyWorkerEvenIfAllowlisted",
+        "interruptedProjectionDoesNotResumeOrFabricateAnAnswer",
+        "invalidQuestionNeverCreatesPendingCard",
+        "maximumUnicodeAnswerIsPreservedInNextPreparedRequest",
+        "overallTaskBudgetStopsQuestionWaitWithoutInventingAnswer",
+        "skipDoesNotSubmitPreselectedRecommendedOption",
+        "timeoutIsExplicitUnansweredAndLateAnswerIsRejected"
+      ]
+    },
+    {
+      "module": "harness-testkit",
+      "name": "io.jharness.testkit.M1056ContentTest",
+      "cases": [
+        "artifactScopeIntegrityAndFullRedactionBeforePages",
+        "completeSanitizationPrecedesFilePagingAndUnicodeBoundary",
+        "directoriesAndExplicitReadsKeepPathMetadataAndBinaryBounds",
+        "explicitLineOffsetsAndStalePageAreBounded",
+        "linkTraversalCannotFallBackToSiblingRoot",
+        "policyCancellationAndRootChecksPrecedeInspection",
+        "previewDoesNotGrantModelVersionObservation",
+        "rawVersionChangesEvenWhenSanitizedContentIsIdentical",
+        "scopedInspectionNeverReadsAnotherExistingSessionArtifact",
+        "streamingSanitizersComposeWithFullSecretWindowsAndFailClosedByDefault"
+      ]
+    },
+    {
+      "module": "harness-testkit",
+      "name": "io.jharness.testkit.M1056DisplayTest",
+      "cases": [
+        "brokenStreamKeepsPartialDisplayButNeverAssistantFactOrRetry",
+        "cancellationStopsActiveWaitAndDoesNotCreateAnswer",
+        "liveSnapshotIsSanitizedScopedAndOnlyFinalResponseIsPersisted",
+        "temporaryDisplayHasHardBoundAndNewSdkDoesNotRecoverLostBytes"
+      ]
+    },
+    {
+      "module": "harness-testkit",
+      "name": "io.jharness.testkit.M1056WebContentTest",
+      "cases": [
+        "artifactMustHaveScopedPersistentReferenceAndValidHash",
+        "authenticatedPreviewUsesBoundRootAndAddsNoFacts",
+        "largeEventCanBeReadInBoundedPagesWithoutReplayingModel"
+      ]
+    },
+    {
+      "module": "harness-testkit",
+      "name": "io.jharness.testkit.M1057ExtensionsTest",
+      "cases": [
+        "duplicateDiscoveryAndCursorLoopsRollbackRegistrations",
+        "duplicateNamesConfiguredCollisionsCommandsAndMalformedFrontmatterAreRejected",
+        "explicitProjectAndUserRootsFrontmatterAndFrozenLoading",
+        "linkedSkillRootsCannotExposeSiblingFiles",
+        "resourceLimitsCorruptionDisconnectAndCancellationDoNotSucceed",
+        "resourceOnlyPeerListsTemplatesReadsThroughPipelineAndRevokes",
+        "rootTraversalMetadataLimitsAndCancelledScansAreRejected",
+        "stdioResourcesAndTemplatesUseRealChildProtocolAndCleanUp",
+        "unlistedMalformedUriAndUnsupportedTemplateNeverReachPeer"
+      ]
+    },
+    {
+      "module": "harness-testkit",
+      "name": "io.jharness.testkit.M105DiagnosisTest",
+      "cases": [
+        "distinguishesDenialCancellationNetworkAndBoundedHistory",
+        "expiredApprovalAndCancellationRaceUseRecordedOutcome",
+        "redactionPrecedesTruncationAndDoesNotExposeSecretPrefixes",
+        "shellValidationIsNotConfusedWithCommandStartOrMissingFacts",
+        "timeoutPartialCleanupAndClosedEnvironmentNeverClearUncertainty",
+        "unresolvedModelToolsAndTerminalsKeepExactRecoveryAssociations"
+      ]
+    },
+    {
+      "module": "harness-testkit",
+      "name": "io.jharness.testkit.M10WebTest",
+      "cases": [
+        "browserSessionIsAutomaticButRequiresExactBrowserOrigin",
+        "browserTrustAndStaticManifestKeepApiPrivate",
+        "diagnosisIsAuthenticatedReadOnlySanitizedAndCannotClearUnknown",
+        "reportSearchAndSubmissionLookupAreReadOnlyAndBounded",
+        "settingsRequireOperatorAuthAndUnknownBindingBlocksMutation"
+      ]
+    },
+    {
+      "module": "harness-testkit",
+      "name": "io.jharness.testkit.M1AgentLoopTest",
+      "cases": [
+        "cancellationDuringPrepareSendsNothingAndNoRequestWasCommitted",
+        "cancellationSettlesUnexecutedCallsAndNoSecondBodyRuns",
+        "capabilityDiscoveryRemovesToolDeclarationsAndContextLimitPreventsSending",
+        "duplicateCallIdsAndModelFailureEndTheTurnExplicitly",
+        "failedToolResultReachesModelAndARecordedSuccessfulRepairCanFinish",
+        "localHttpAdapterAndAlternateStorageRunTheSameRuntimeAndReplayContract",
+        "memoryStoreCannotSatisfyDurableModelCheckpointAndNothingIsSent",
+        "missingToolAndSchemaErrorsArePairedAndReturnedBeforeFinalEvidenceEvaluation",
+        "multipleCallsInOneResponseExecuteSeriallyAndPreserveIdentifiers",
+        "multistepTaskRunsReadEditTestInOrderAndEverySentRequestReplaysFromPrefix",
+        "pluginCompositionRewritesParametersAndSkipsReadOnlyApprovalAndRevokesEverything",
+        "pureModelSuccessClaimCannotOverrideMissingGoalEvidence",
+        "requestsRecordInterceptorAndPreparationChangesAndScrubInputAndOutputSecrets",
+        "stepAndTimeBudgetsTerminateWithoutClaimingCompletion",
+        "unknownSideEffectsStopTheTurnSettleOtherCallsAndPreventAutomaticNextTurn"
+      ]
+    },
+    {
+      "module": "harness-testkit",
+      "name": "io.jharness.testkit.M1ToolPipelineTest",
+      "cases": [
+        "askRejectionIsRecordedAndNeverExecutes",
+        "executionWrapperCannotChangeApprovedArgumentsOrStripCancellation",
+        "flushFailureWithSimulatedDurableWriterPreventsBodyEntry",
+        "invalidParametersMissingToolsAndWrongScopeNeverEnterBody",
+        "memoryWriterCannotAuthorizeSideEffectsEvenWithMemoryPolicy",
+        "readOnlyBypassAndParameterRewriteUseExtensionsWithoutModifyingPolicy",
+        "repeatedBodyEntryIsPreventedAndErrorsAreRedacted",
+        "revokedToolIsRecheckedAfterApproval",
+        "simulatedDurableIntentIsFlushedBeforeWriteBodyAndFailureRemainsUnknown",
+        "successRecordsApprovedIntentAndBodyOrderAndIgnoresModelSideEffectClaim",
+        "wrongCallIdInvalidOutputAndPostprocessorStatusChangesCannotReturnSuccess"
+      ]
+    },
+    {
+      "module": "harness-testkit",
+      "name": "io.jharness.testkit.M2WorkspaceIntegrationTest",
+      "cases": [
+        "actualFileReadEditLoopUsesDurableIntentAndEveryDiskRequestReconstructs",
+        "actualJsonlForceFailureBeforeWriteLeavesTargetUntouchedAndNeverReachesCommit",
+        "crashAfterPhysicalWriteButBeforeResultIsUncertainAndCannotAutomaticallyRunAgain",
+        "gitDiffUsesActualGitAndPluginStopRevokesFilesystemTools",
+        "oversizedDiffSpillsToPersistedReferenceAndCanBeReadBackAfterReopen",
+        "rejectedOutsideReadIsAnEventAndUserConcurrentChangesAreNotOverwritten"
+      ]
+    },
+    {
+      "module": "harness-testkit",
+      "name": "io.jharness.testkit.M3RuntimeIntegrationTest",
+      "cases": [
+        "actualCommandIntentForceFailureDoesNotStartProcess",
+        "actualMavenWrapperFailureReachesAgentThenFileRepairAndRebuildSucceed",
+        "cancellationDuringApprovalRecordsRevocationAndNeverCreatesIntent",
+        "configuredPricesRequireMatchingModelAndExplicitOutputCap",
+        "conservativeCostReservationStopsBeforeSecondTransmissionAndUnavailableAccountingFailsClosed",
+        "elapsedBudgetCancelsRealCommandAndReportsLimitInsteadOfCompletion",
+        "externalCancelTraversesRunEndpointAgentAndRealProcessAndRecordsCleanup",
+        "refusedDeletionAndResetNeverEnterBodyAndFullApprovalDecisionPersists",
+        "timedOutCommandRequiresVerificationBeforeAnotherModelRequestOrTurn"
+      ]
+    },
+    {
+      "module": "harness-testkit",
+      "name": "io.jharness.testkit.M4CliIntegrationTest",
+      "cases": [
+        "actualCliCrashAfterCommitRequiresVerificationAndColdResumeOnlyReadsExistingFile",
+        "disabledProviderAndDoctorFailureNeverSendModelRequest",
+        "modelDryRunPreviewsExplicitFileAndMarksShellUnpreviewableWithoutEnteringBodies",
+        "realCliSubprocessCancelsThroughAnotherCliEvenWithStdinStillOpen",
+        "replUsesSameSessionAndAcceptsTwoTurnsWithoutSpawningAnotherInputReaderPerTurn",
+        "replacingAgentFactoryPluginRunsThroughSameCliWithoutAnyModelRequest",
+        "stdinEofDefaultsToRefusalAndCannotCreateFileOrClaimCompletion",
+        "terminalApprovedFileAndCommandProduceEvidenceReportAndEverySentRequestReplays",
+        "terminalCancelAndSecretCallIdsAreHandledWithoutBlockingOrDisclosure",
+        "unknownCrashCallInspectionAndOperatorVerificationNeverReplayTheTool"
+      ]
+    },
+    {
+      "module": "harness-testkit",
+      "name": "io.jharness.testkit.M5RecoveryIntegrationTest",
+      "cases": [
+        "coldForkResumeKeepsRequestHistoryAndRejectsStaleFileVersion"
+      ]
+    },
+    {
+      "module": "harness-testkit",
+      "name": "io.jharness.testkit.M6CompactionTest",
+      "cases": [
+        "longCurrentTurnCompactsWholeToolGroupsAndKeepsSystemGoalAndLatestResults",
+        "pluginRecordsCompactionAndFinalRequestReplaysFromColdEventsAndRevokesOnStop",
+        "unresolvedCallsAndOversizedProtectedContextRefuseCompaction"
+      ]
+    },
+    {
+      "module": "harness-testkit",
+      "name": "io.jharness.testkit.M6RuntimeIntegrationTest",
+      "cases": [
+        "approvedBackgroundToolsPersistFinalStateAndColdTailArtifact",
+        "cliStreamsCompactsOneLongTurnAndEveryWireRequestReplaysExactly",
+        "hiddenToolsCannotBeInvokedByGuessingTheirNames",
+        "oneReplOwnsTheSameLiveTerminalAcrossTwoUserTurnsAndClosesIt",
+        "readOnlyConfigurationDeniesTerminalBeforeProcessCreation",
+        "truncatedToolArgumentsNeverReachApprovalIntentOrFileBody"
+      ]
+    },
+    {
+      "module": "harness-testkit",
+      "name": "io.jharness.testkit.M7CliEcosystemTest",
+      "cases": [
+        "cliAssemblesMcpSkillsReadonlyChildrenAndPlanningThroughSdkPipeline",
+        "ecosystemDryRunCannotStartModelsOrProcessesAndServeRequiresStrongEnvironmentToken"
+      ]
+    },
+    {
+      "module": "harness-testkit",
+      "name": "io.jharness.testkit.M7ClosureTest",
+      "cases": [
+        "fetchIsAllowlistedApprovedBoundedAndNeverFollowsRedirects",
+        "planningCannotClaimCompletionOrSkipApprovalAndChangesRevokeApproval",
+        "searchCompareAndLogicalArchiveAreUsableFromCli",
+        "searchIsIncrementalRebuildableAndDoesNotChangeFacts",
+        "todosAndPlansPersistSeparatelyWithExplicitApprovalAndRealEvidence",
+        "trustedConfigurationRejectsSecretsAndUnknownOrUnpinnedCapabilities"
+      ]
+    },
+    {
+      "module": "harness-testkit",
+      "name": "io.jharness.testkit.M7EnvironmentTest",
+      "cases": [
+        "containerFlagsOwnershipAndUnknownOutcomeAreConservative",
+        "independentWorkersPreserveReadVersionAcrossCalls",
+        "noObservedVersionCannotOverwriteAndPathsCannotEscape",
+        "transportLaunchesNativeProcessWithoutUncertainty",
+        "uncertainReadCannotRemoveParentsContainerThroughIsolatedView"
+      ]
+    },
+    {
+      "module": "harness-testkit",
+      "name": "io.jharness.testkit.M7McpTest",
+      "cases": [
+        "cancellationInterruptsOpenSseAndKeepsUnknownOutcome",
+        "disconnectWrongIdChangedListAndInvalidOutputRemainUnknownAndNeverReplay",
+        "explicitHostReadonlyOverrideDoesNotRequireApproval",
+        "failedIntentFlushNeverCallsExternalTool",
+        "httpDisconnectAndExpiryDoNotReplayOrReinitialize",
+        "paginatedDiscoveryFreezesAllToolsAndRepeatedCursorFailsClosed",
+        "remotePlainHttpAndEmbeddedCredentialsAreRejected",
+        "sdkMcpLoopPersistsSourcesAndReconstructsEveryRequest",
+        "stdioDiscoversButNeverTrustsReadonlyHintAndRevokesOnStop",
+        "streamableHttpSupportsJsonAndSseHeadersCredentialsAndSessionDelete",
+        "unsupportedSchemaRollsBackWholeScopeAndClosesPeer"
+      ]
+    },
+    {
+      "module": "harness-testkit",
+      "name": "io.jharness.testkit.M7SdkTest",
+      "cases": [
+        "coldPendingRequestBlocksAnotherSdkRun",
+        "embeddedLoopUsesScopedToolsAndEveryRequestReconstructsFromDurableEvents",
+        "sdkCannotBypassApprovalOrExecuteAfterCancellation",
+        "unknownEnvironmentCleanupRequiresExplicitOperatorFact"
+      ]
+    },
+    {
+      "module": "harness-testkit",
+      "name": "io.jharness.testkit.M7SkillsTest",
+      "cases": [
+        "manifestCannotGrantPermissionsAndResourcesAreAllowlistedImmutableSnapshots",
+        "oversizedSkillFailsBeforeRegistration",
+        "protectedOrEscapingResourcesRollbackStartup",
+        "scriptNeedsApprovalAndExactRevisionAndCannotExecuteChangedContent",
+        "sdkSkillLoopUsesRealScriptEvidenceAndEveryRequestReconstructs"
+      ]
+    },
+    {
+      "module": "harness-testkit",
+      "name": "io.jharness.testkit.M7SubagentTest",
+      "cases": [
+        "concurrencyQuotaAndTaskQuotaDoNotLaunchExtraModels",
+        "explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[10]",
+        "explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[1]",
+        "explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[2]",
+        "explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[3]",
+        "explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[4]",
+        "explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[5]",
+        "explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[6]",
+        "explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[7]",
+        "explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[8]",
+        "explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[9]",
+        "failedAssignmentPersistenceNeverConstructsChildModel",
+        "feeLimitedParentRequiresBoundedChildFees",
+        "independentChildCannotWriteAndParentCanEditAfterEvidenceWithFullOwnershipAndReplay",
+        "missingChildCompletionCriteriaCannotPromoteModelClaimToSuccess",
+        "parentCancellationAndUncooperativeChildStayUnknownUntilExplicitSettledAudit",
+        "parentPolicyExtensionsStillRestrictChildReads",
+        "profilesCannotGrantWriteToolsOrExceedParentBudget",
+        "rejectingDelegationNeverCreatesAChildOrModel",
+        "reusingParentModelIsRejectedWithoutClosingIt",
+        "separateReadObservationDoesNotAuthorizeParentOverwrite",
+        "sharedFeeCapIncludesParentAndChildRequests",
+        "twoReadOnlyChildrenRunConcurrentlyWithDistinctContextsAndLogs"
+      ]
+    },
+    {
+      "module": "harness-testkit",
+      "name": "io.jharness.testkit.M7WebTest",
+      "cases": [
+        "approvedExecutionIsDurableReconstructableAndIdempotentAcrossRestart",
+        "authenticationOriginAndBoundedStrictBodiesCannotConstructExecution",
+        "boundedSseUsesDurableCursorsAndKeepsApprovalRequestsAvailable",
+        "cancellationRevokesPendingApprovalAndDoesNotWrite",
+        "catalogCheckpointFailureCannotConstructSdkOrRetryAdmission",
+        "denialAndApprovalTimeoutNeverEnterWriteBody",
+        "diffEndpointReturnsActualRecordedGitResultWithSourceEvent",
+        "eventPagesRedactBearerAndOmitLargePayloadsWithoutLosingCursor",
+        "hostileHostHeaderIsRejectedEvenWithValidBearer",
+        "offlineWebVerificationRequiresOwnershipAndUnderlyingAuditWithoutReplay",
+        "sharedWorkspaceIsExclusiveAndSettledHistoryOutlivesHotSet",
+        "shutdownDuringUncooperativeFactoryRestoresUnknownWithoutReplaying",
+        "unknownModelRequestBlocksWorkspaceAndErrorDetailsAreNotExposed"
+      ]
+    },
+    {
+      "module": "harness-testkit",
+      "name": "io.jharness.testkit.M8FilterIntegrationTest",
+      "cases": [
+        "classicAndEcosystemCliUseIdenticalFiltersAndRecordTheConfiguration",
+        "parallelConfigurationCannotBypassClassicDryRun",
+        "sdkBindingFreezesNondefaultFilterWhileDefaultDescriptorsStayCompatible",
+        "workerProcessAcknowledgesAndAppliesHostFilterAndOldWorkerIsRejected"
+      ]
+    },
+    {
+      "module": "harness-testkit",
+      "name": "io.jharness.testkit.M8ResilienceTest",
+      "cases": [
+        "attemptAndFeeLimitsStopBeforeAnotherWireRequest",
+        "boundedWaitQueueCancelsAndRejectsOverflowWithoutBody",
+        "cancellationDuringBackoffAndCooperativeSendDeadlineStopAttempts",
+        "checkpointFailureNeverEntersTransport",
+        "classicAndEcosystemCliUseThePolicyAndObservedSingleAttemptWrappers",
+        "deadlineIncludesBackoffAndDoesNotSendAgain",
+        "disabledPolicyDoesNotAddRetriesAndLegacyAdapterStillOwnsItsBehavior",
+        "everyRetryHasItsOwnDurableReplayAndNoAdapterMultiplication",
+        "intervalIsEnforcedAndWaitingCancelsOnClose",
+        "rejectedFactOnlySettlesItsExactAttempt",
+        "rejectionFlushFailureStopsBeforeRetry",
+        "unknownTimeoutStreamAndSpoofedRateCodeNeverReplay",
+        "unloadRevokesRetainedExtensionAndReplacementService"
+      ]
+    },
+    {
+      "module": "harness-testkit",
+      "name": "io.jharness.testkit.M8SchedulingTest",
+      "cases": [
+        "boundedBodiesOverlapButJournalAndModelResultsRetainCallOrder",
+        "cancellationDrainsCooperativeWorkersAndNeverStartsFollowingWrite",
+        "denialNeverEntersBodyAndKnownReadFailureStillReturnsBothResults",
+        "failedCheckpointPreventsBodyAndLaterWrite",
+        "noncooperativeWorkerIsUnknownNoReplayOrSecondSettlement",
+        "preparedSettlementCannotInventSuccessAndClosedSchedulerRejectsOldReferences",
+        "serialIsDefaultAndTrustedSchedulerServiceCanBeReplacedAndRevoked",
+        "writesUnlistedReadsAndAskAreBarriersDespiteModelReadonlyClaims"
+      ]
+    },
+    {
+      "module": "harness-testkit",
+      "name": "io.jharness.testkit.TestkitTest",
+      "cases": [
+        "checkpointRecorderAndFailureInjectorExposeBoundaries",
+        "eventRecorderCapturesOrderAndPayloadAndCanBeRemoved",
+        "fakeLlmCapturesRequestsHonorsCancellationAndFailsWhenExhausted",
+        "temporaryProjectHasMavenFilesAndCleansOnlyItsOwnedDirectory",
+        "toolRegistryIsolationDuplicatesAndOldHandleCannotRemoveNewRegistration"
+      ]
+    },
+    {
+      "module": "harness-testkit",
+      "name": "io.jharness.web.WorkbenchContentSearchTest",
+      "cases": [
+        "excessiveScopeAndUnavailableProviderAreExplicitFailures",
+        "scopeArchivesRelevanceStablePaginationAndCursorBinding"
+      ]
+    },
+    {
+      "module": "harness-tools",
+      "name": "io.jharness.tools.JsonSchemaValidatorTest",
+      "cases": [
+        "alternativesEnumsAndNullMustMatchExactly",
+        "misplacedConstraintsAndConflictingBoundsFailClosedAndNumbersCompareSemantically",
+        "nestedRequiredPropertiesAndNumericAndArrayBoundsAreEnforced",
+        "unsupportedConstraintsAreRejectedInsteadOfIgnored"
+      ]
+    },
+    {
+      "module": "harness-workspace",
+      "name": "io.jharness.workspace.LocalWorkspaceTest",
+      "cases": [
+        "aRaceBeforeCommitIsDetectedAndTemporaryFileIsRemoved",
+        "binaryInvalidUtf8AndOversizedEditsAreRejected",
+        "cancellationAndIoFailureDoNotLeaveDelayedWritesOrDamagedOriginals",
+        "escapeLinkOrWindowsJunctionIsRejectedForReadsWritesAndSearchTraversal",
+        "gitignoreAndDefaultExcludedDirectoriesFilterSearchAndLimitIsReported",
+        "largeFilesArePagedAndLiteralGrepFindsBeyondFirstPageWithoutRegexWork",
+        "missingReadGuardAndExplicitOverwriteAreEnforcedAndNewParentsCanBeCreated",
+        "relativeReadsWritesAndDiffPreserveOtherFilesAndCrLfBom",
+        "replacedRootCannotRebindExistingOrIsolatedViewOutsideBoundary",
+        "staleReadVersionAndWrongMatchCountsNeverOverwriteUserChanges",
+        "thousandDirectoryEntriesMeetLocalTwoSecondTarget",
+        "traversalAbsoluteAdsDevicesAndProtectedMetadataAreDenied",
+        "unifiedDiffHandlesEmptyFilesAndMissingFinalNewlineAndNonGitWorkspace"
+      ]
+    },
+    {
+      "module": "harness-workspace",
+      "name": "io.jharness.workspace.M8SearchFilterTest",
+      "cases": [
+        "anchorsDirectoryGlobsAndDisabledLayersHaveExplicitSemantics",
+        "negationCannotExposeMetadataExternalPathsOrLinks",
+        "precedenceAppliesToListSearchGrepAndIndependentChildViews",
+        "ruleLimitsAndUnsupportedConfigurationFailWithoutTruncation"
+      ]
+    },
+    {
+      "module": "harness-workspace",
+      "name": "io.jharness.workspace.UnifiedPatchTest",
+      "cases": [
+        "deletionFuzzAndUnsupportedNewlineMarkersNeverMutate",
+        "exactMultiFileUpdateAndCreationPreserveUnrelatedFiles",
+        "secondCommitFailureReportsConfirmedChangesAndPendingPaths",
+        "staleVersionAndOutsidePathFailAllPreflightBeforeFirstWrite"
+      ]
+    }
+  ],
+  "requiredSourcePaths": [
+    ".github/workflows/ci.yml",
+    ".github/workflows/native-credentials.yml",
+    "LICENSE",
+    "NOTICE",
+    "docs/examples/m1059-distribution.md",
+    "frontend/package-lock.json",
+    "frontend/package.json",
+    "frontend/scripts/package-ui.mjs",
+    "frontend/src/App.tsx",
+    "frontend/src/ContentPanel.tsx",
+    "frontend/src/ContentSearch.tsx",
+    "frontend/src/Conversation.tsx",
+    "frontend/src/DiagnosisPanel.tsx",
+    "frontend/src/ExtensionEditor.tsx",
+    "frontend/src/Markdown.tsx",
+    "frontend/src/ModelPicker.tsx",
+    "frontend/src/Questions.tsx",
+    "frontend/src/SessionActions.tsx",
+    "frontend/src/Settings.tsx",
+    "frontend/src/SkillsPicker.tsx",
+    "frontend/src/TurnComposer.tsx",
+    "frontend/src/WorkspacePicker.tsx",
+    "frontend/src/api.ts",
+    "frontend/src/content.ts",
+    "frontend/src/main.tsx",
+    "frontend/src/style.css",
+    "frontend/src/upstream/AppFrame.module.css",
+    "frontend/src/upstream/Button.module.css",
+    "frontend/src/upstream/Button.tsx",
+    "frontend/src/upstream/Input.module.css",
+    "frontend/src/upstream/Input.tsx",
+    "frontend/src/upstream/Pill.module.css",
+    "frontend/src/upstream/Pill.tsx",
+    "frontend/src/upstream/SegmentedTabs.module.css",
+    "frontend/src/upstream/SegmentedTabs.tsx",
+    "frontend/src/upstream/SidebarRoot.module.css",
+    "frontend/src/upstream/Tag.module.css",
+    "frontend/src/upstream/Tag.tsx",
+    "frontend/src/upstream/TextShimmer.module.css",
+    "frontend/src/upstream/TextShimmer.tsx",
+    "frontend/src/upstream/columns.ts",
+    "frontend/src/upstream/theme/base.css",
+    "frontend/src/upstream/theme/corner-shape.css",
+    "frontend/src/upstream/theme/design-platform.css",
+    "frontend/src/upstream/theme/focus.css",
+    "frontend/src/upstream/theme/scrollbar.css",
+    "frontend/tests/browser.mjs",
+    "frontend/tests/client.test.ts",
+    "frontend/tests/content.mjs",
+    "frontend/tests/development.mjs",
+    "frontend/tests/diagnosis.mjs",
+    "frontend/tests/extensions.mjs",
+    "frontend/tests/history.mjs",
+    "frontend/tests/models.mjs",
+    "frontend/tests/questions.mjs",
+    "frontend/tests/runtime.mjs",
+    "frontend/tests/search.mjs",
+    "frontend/tests/settings.mjs",
+    "frontend/tests/turns.mjs",
+    "frontend/tsconfig.json",
+    "frontend/vite.config.ts",
+    "harness-agent/pom.xml",
+    "harness-agent/src/main/java/io/jharness/agent/AgentPlugin.java",
+    "harness-agent/src/main/java/io/jharness/agent/BoundedModelExecution.java",
+    "harness-agent/src/main/java/io/jharness/agent/ConfiguredTokenCostGuard.java",
+    "harness-agent/src/main/java/io/jharness/agent/ContextCompactionPlugin.java",
+    "harness-agent/src/main/java/io/jharness/agent/DefaultAgentLoop.java",
+    "harness-agent/src/main/java/io/jharness/agent/DefaultAgentLoopFactory.java",
+    "harness-agent/src/main/java/io/jharness/agent/DefaultPromptComposer.java",
+    "harness-agent/src/main/java/io/jharness/agent/ExtractiveContextCompactor.java",
+    "harness-agent/src/main/java/io/jharness/agent/ModelResiliencePlugin.java",
+    "harness-api/pom.xml",
+    "harness-api/src/main/java/io/jharness/api/AgentLoop.java",
+    "harness-api/src/main/java/io/jharness/api/AgentLoopDependencies.java",
+    "harness-api/src/main/java/io/jharness/api/AgentLoopFactory.java",
+    "harness-api/src/main/java/io/jharness/api/AgentRuntimeServices.java",
+    "harness-api/src/main/java/io/jharness/api/AgentTool.java",
+    "harness-api/src/main/java/io/jharness/api/ApiCostGuard.java",
+    "harness-api/src/main/java/io/jharness/api/ApiVersion.java",
+    "harness-api/src/main/java/io/jharness/api/ApprovalService.java",
+    "harness-api/src/main/java/io/jharness/api/ArtifactStore.java",
+    "harness-api/src/main/java/io/jharness/api/Budget.java",
+    "harness-api/src/main/java/io/jharness/api/CancellationToken.java",
+    "harness-api/src/main/java/io/jharness/api/ChatRequest.java",
+    "harness-api/src/main/java/io/jharness/api/ChatResponse.java",
+    "harness-api/src/main/java/io/jharness/api/CheckpointDecision.java",
+    "harness-api/src/main/java/io/jharness/api/CheckpointPolicy.java",
+    "harness-api/src/main/java/io/jharness/api/CommandRequest.java",
+    "harness-api/src/main/java/io/jharness/api/CompletionEvaluator.java",
+    "harness-api/src/main/java/io/jharness/api/ConfigView.java",
+    "harness-api/src/main/java/io/jharness/api/ContentInspection.java",
+    "harness-api/src/main/java/io/jharness/api/ContentSearchProvider.java",
+    "harness-api/src/main/java/io/jharness/api/ContextCompactor.java",
+    "harness-api/src/main/java/io/jharness/api/DataSanitizer.java",
+    "harness-api/src/main/java/io/jharness/api/EventBus.java",
+    "harness-api/src/main/java/io/jharness/api/EventLevel.java",
+    "harness-api/src/main/java/io/jharness/api/EventSupport.java",
+    "harness-api/src/main/java/io/jharness/api/ExecPath.java",
+    "harness-api/src/main/java/io/jharness/api/ExecutionEnvironment.java",
+    "harness-api/src/main/java/io/jharness/api/ExtensionPoint.java",
+    "harness-api/src/main/java/io/jharness/api/FileSystemView.java",
+    "harness-api/src/main/java/io/jharness/api/HarnessException.java",
+    "harness-api/src/main/java/io/jharness/api/HarnessPlugin.java",
+    "harness-api/src/main/java/io/jharness/api/Interceptor.java",
+    "harness-api/src/main/java/io/jharness/api/LlmClient.java",
+    "harness-api/src/main/java/io/jharness/api/ModelAttempt.java",
+    "harness-api/src/main/java/io/jharness/api/ModelCapabilities.java",
+    "harness-api/src/main/java/io/jharness/api/ModelDisplay.java",
+    "harness-api/src/main/java/io/jharness/api/ModelExecution.java",
+    "harness-api/src/main/java/io/jharness/api/ModelRejectedException.java",
+    "harness-api/src/main/java/io/jharness/api/ModelResilienceOptions.java",
+    "harness-api/src/main/java/io/jharness/api/ModelRouter.java",
+    "harness-api/src/main/java/io/jharness/api/NotificationListener.java",
+    "harness-api/src/main/java/io/jharness/api/PlanPreviewer.java",
+    "harness-api/src/main/java/io/jharness/api/PluginContext.java",
+    "harness-api/src/main/java/io/jharness/api/PluginDependency.java",
+    "harness-api/src/main/java/io/jharness/api/PluginScope.java",
+    "harness-api/src/main/java/io/jharness/api/PolicyEngine.java",
+    "harness-api/src/main/java/io/jharness/api/PolicyExtensionPoints.java",
+    "harness-api/src/main/java/io/jharness/api/PreparedRequest.java",
+    "harness-api/src/main/java/io/jharness/api/PreparedToolCall.java",
+    "harness-api/src/main/java/io/jharness/api/ProcessRunner.java",
+    "harness-api/src/main/java/io/jharness/api/PromptComposer.java",
+    "harness-api/src/main/java/io/jharness/api/Registration.java",
+    "harness-api/src/main/java/io/jharness/api/RequestJournal.java",
+    "harness-api/src/main/java/io/jharness/api/SecretRedactor.java",
+    "harness-api/src/main/java/io/jharness/api/SerialListener.java",
+    "harness-api/src/main/java/io/jharness/api/ServiceRegistry.java",
+    "harness-api/src/main/java/io/jharness/api/SessionEvent.java",
+    "harness-api/src/main/java/io/jharness/api/SessionProjection.java",
+    "harness-api/src/main/java/io/jharness/api/SessionProjector.java",
+    "harness-api/src/main/java/io/jharness/api/SessionQuery.java",
+    "harness-api/src/main/java/io/jharness/api/SessionReader.java",
+    "harness-api/src/main/java/io/jharness/api/SessionRepository.java",
+    "harness-api/src/main/java/io/jharness/api/SessionState.java",
+    "harness-api/src/main/java/io/jharness/api/SessionWriter.java",
+    "harness-api/src/main/java/io/jharness/api/SideEffectLevel.java",
+    "harness-api/src/main/java/io/jharness/api/StandardExtensionPoints.java",
+    "harness-api/src/main/java/io/jharness/api/StreamHandle.java",
+    "harness-api/src/main/java/io/jharness/api/TaskStatus.java",
+    "harness-api/src/main/java/io/jharness/api/TerminalSession.java",
+    "harness-api/src/main/java/io/jharness/api/ToolBatchExecution.java",
+    "harness-api/src/main/java/io/jharness/api/ToolContext.java",
+    "harness-api/src/main/java/io/jharness/api/ToolExecution.java",
+    "harness-api/src/main/java/io/jharness/api/ToolInvocation.java",
+    "harness-api/src/main/java/io/jharness/api/ToolPipeline.java",
+    "harness-api/src/main/java/io/jharness/api/ToolPipelineContext.java",
+    "harness-api/src/main/java/io/jharness/api/ToolRegistry.java",
+    "harness-api/src/main/java/io/jharness/api/ToolResult.java",
+    "harness-api/src/main/java/io/jharness/api/ToolResults.java",
+    "harness-api/src/main/java/io/jharness/api/ToolScheduler.java",
+    "harness-api/src/main/java/io/jharness/api/ToolSchedulingOptions.java",
+    "harness-api/src/main/java/io/jharness/api/ToolStatus.java",
+    "harness-api/src/main/java/io/jharness/api/UserQuestionService.java",
+    "harness-api/src/main/java/io/jharness/api/Values.java",
+    "harness-api/src/main/java/io/jharness/api/WorkspaceFiles.java",
+    "harness-api/src/main/java/io/jharness/api/WriteOwnership.java",
+    "harness-api/src/test/java/io/jharness/api/SessionEventTest.java",
+    "harness-cli/pom.xml",
+    "harness-cli/src/main/java/io/jharness/cli/Arguments.java",
+    "harness-cli/src/main/java/io/jharness/cli/CliApplication.java",
+    "harness-cli/src/main/java/io/jharness/cli/CliConfig.java",
+    "harness-cli/src/main/java/io/jharness/cli/ConfigurationSelection.java",
+    "harness-cli/src/main/java/io/jharness/cli/DryRunPipeline.java",
+    "harness-cli/src/main/java/io/jharness/cli/EcosystemCli.java",
+    "harness-cli/src/main/java/io/jharness/cli/EcosystemConfig.java",
+    "harness-cli/src/main/java/io/jharness/cli/EvidenceCompletion.java",
+    "harness-cli/src/main/java/io/jharness/cli/EvidenceReport.java",
+    "harness-cli/src/main/java/io/jharness/cli/Json.java",
+    "harness-cli/src/main/java/io/jharness/cli/Main.java",
+    "harness-cli/src/main/java/io/jharness/cli/Metadata.java",
+    "harness-cli/src/main/java/io/jharness/cli/NativeCredentials.java",
+    "harness-cli/src/main/java/io/jharness/cli/StdioSdkServer.java",
+    "harness-cli/src/main/java/io/jharness/cli/SystemCredentials.java",
+    "harness-cli/src/main/java/io/jharness/cli/TerminalInput.java",
+    "harness-cli/src/main/java/io/jharness/cli/WorkbenchSettings.java",
+    "harness-cli/src/main/java/io/jharness/cli/WorkbenchWorkspaces.java",
+    "harness-cli/src/test/java/io/jharness/cli/CliContractsTest.java",
+    "harness-cli/src/test/java/io/jharness/cli/CredentialStoreProbe.java",
+    "harness-cli/src/test/java/io/jharness/cli/EvidenceCompletionTest.java",
+    "harness-cli/src/test/java/io/jharness/cli/M5CliTest.java",
+    "harness-cli/src/test/java/io/jharness/cli/M6ConfigurationTest.java",
+    "harness-cli/src/test/java/io/jharness/cli/M8FilterConfigTest.java",
+    "harness-cli/src/test/java/io/jharness/cli/M8ResilienceConfigTest.java",
+    "harness-cli/src/test/java/io/jharness/cli/M8SchedulingConfigTest.java",
+    "harness-cli/src/test/java/io/jharness/cli/M9DistributionDoctorTest.java",
+    "harness-cli/src/test/java/io/jharness/cli/StdioSdkServerTest.java",
+    "harness-cli/src/test/java/io/jharness/cli/WorkbenchCredentialCleanup.java",
+    "harness-cli/src/test/java/io/jharness/cli/WorkbenchSettingsTest.java",
+    "harness-cli/src/test/java/io/jharness/cli/WorkbenchWorkspacesTest.java",
+    "harness-ecosystem/pom.xml",
+    "harness-ecosystem/src/main/java/io/jharness/ecosystem/BoundedJson.java",
+    "harness-ecosystem/src/main/java/io/jharness/ecosystem/CommandTransport.java",
+    "harness-ecosystem/src/main/java/io/jharness/ecosystem/ContentPages.java",
+    "harness-ecosystem/src/main/java/io/jharness/ecosystem/DockerExecutionEnvironment.java",
+    "harness-ecosystem/src/main/java/io/jharness/ecosystem/EnvironmentPlugin.java",
+    "harness-ecosystem/src/main/java/io/jharness/ecosystem/EnvironmentWorker.java",
+    "harness-ecosystem/src/main/java/io/jharness/ecosystem/HarnessSdk.java",
+    "harness-ecosystem/src/main/java/io/jharness/ecosystem/HttpMcpTransport.java",
+    "harness-ecosystem/src/main/java/io/jharness/ecosystem/LocalExecutionEnvironment.java",
+    "harness-ecosystem/src/main/java/io/jharness/ecosystem/McpIo.java",
+    "harness-ecosystem/src/main/java/io/jharness/ecosystem/McpPlugin.java",
+    "harness-ecosystem/src/main/java/io/jharness/ecosystem/McpTransport.java",
+    "harness-ecosystem/src/main/java/io/jharness/ecosystem/ModelDisplayBuffer.java",
+    "harness-ecosystem/src/main/java/io/jharness/ecosystem/NativeCommandTransport.java",
+    "harness-ecosystem/src/main/java/io/jharness/ecosystem/PlanningPlugin.java",
+    "harness-ecosystem/src/main/java/io/jharness/ecosystem/ReadOnlyChildEnvironment.java",
+    "harness-ecosystem/src/main/java/io/jharness/ecosystem/RemoteWorkspace.java",
+    "harness-ecosystem/src/main/java/io/jharness/ecosystem/SdkConfiguration.java",
+    "harness-ecosystem/src/main/java/io/jharness/ecosystem/SdkHost.java",
+    "harness-ecosystem/src/main/java/io/jharness/ecosystem/SdkOptions.java",
+    "harness-ecosystem/src/main/java/io/jharness/ecosystem/SharedFeeBudget.java",
+    "harness-ecosystem/src/main/java/io/jharness/ecosystem/SkillCatalog.java",
+    "harness-ecosystem/src/main/java/io/jharness/ecosystem/SkillsPlugin.java",
+    "harness-ecosystem/src/main/java/io/jharness/ecosystem/StdioMcpTransport.java",
+    "harness-ecosystem/src/main/java/io/jharness/ecosystem/SubagentPlugin.java",
+    "harness-ecosystem/src/main/java/io/jharness/ecosystem/SubagentService.java",
+    "harness-ecosystem/src/main/java/io/jharness/ecosystem/UserQuestionsPlugin.java",
+    "harness-ecosystem/src/main/java/io/jharness/ecosystem/WebFetchPlugin.java",
+    "harness-ecosystem/src/main/java/io/jharness/ecosystem/WorkspaceContentInspection.java",
+    "harness-events/pom.xml",
+    "harness-events/src/main/java/io/jharness/events/DefaultEventBus.java",
+    "harness-events/src/main/java/io/jharness/events/EventFailure.java",
+    "harness-events/src/test/java/io/jharness/events/DefaultEventBusTest.java",
+    "harness-llm/pom.xml",
+    "harness-llm/src/main/java/io/jharness/llm/LazyModelRouter.java",
+    "harness-llm/src/main/java/io/jharness/llm/LlmPlugin.java",
+    "harness-llm/src/main/java/io/jharness/llm/ModelProtocol.java",
+    "harness-llm/src/main/java/io/jharness/llm/ObservedLlmClient.java",
+    "harness-llm/src/main/java/io/jharness/llm/OpenAiCompatibleConfig.java",
+    "harness-llm/src/main/java/io/jharness/llm/OpenAiCompatibleLlmClient.java",
+    "harness-llm/src/main/java/io/jharness/llm/ProtocolCodec.java",
+    "harness-llm/src/main/java/io/jharness/llm/ProtocolStream.java",
+    "harness-llm/src/main/java/io/jharness/llm/RoutedLlmClient.java",
+    "harness-llm/src/main/java/io/jharness/llm/StreamingLlmClient.java",
+    "harness-llm/src/test/java/io/jharness/llm/M6StreamingTest.java",
+    "harness-llm/src/test/java/io/jharness/llm/MultiProtocolTest.java",
+    "harness-llm/src/test/java/io/jharness/llm/OpenAiCompatibleLlmClientTest.java",
+    "harness-plugin/pom.xml",
+    "harness-plugin/src/main/java/io/jharness/plugin/DefaultServiceRegistry.java",
+    "harness-plugin/src/main/java/io/jharness/plugin/FilteredToolRegistry.java",
+    "harness-plugin/src/main/java/io/jharness/plugin/PluginContainer.java",
+    "harness-plugin/src/main/java/io/jharness/plugin/ScopedToolRegistry.java",
+    "harness-plugin/src/main/java/io/jharness/plugin/ServiceRequirement.java",
+    "harness-plugin/src/test/java/io/jharness/plugin/PluginContainerTest.java",
+    "harness-policy/pom.xml",
+    "harness-policy/src/main/java/io/jharness/policy/DefaultPolicyEngine.java",
+    "harness-policy/src/main/java/io/jharness/policy/InteractiveApprovalService.java",
+    "harness-policy/src/main/java/io/jharness/policy/PolicyPlugin.java",
+    "harness-policy/src/test/java/io/jharness/policy/PolicyApprovalTest.java",
+    "harness-process/pom.xml",
+    "harness-process/src/main/java/io/jharness/process/CancelMain.java",
+    "harness-process/src/main/java/io/jharness/process/ControlledAgentRun.java",
+    "harness-process/src/main/java/io/jharness/process/LocalPlanPreviewer.java",
+    "harness-process/src/main/java/io/jharness/process/LocalProcessRunner.java",
+    "harness-process/src/main/java/io/jharness/process/LocalRunControl.java",
+    "harness-process/src/main/java/io/jharness/process/LocalTerminalSession.java",
+    "harness-process/src/main/java/io/jharness/process/ProcessLimits.java",
+    "harness-process/src/main/java/io/jharness/process/ProcessToolsPlugin.java",
+    "harness-process/src/main/java/io/jharness/process/TerminalToolsPlugin.java",
+    "harness-process/src/test/java/io/jharness/process/LocalPlanPreviewerTest.java",
+    "harness-process/src/test/java/io/jharness/process/LocalProcessRunnerTest.java",
+    "harness-process/src/test/java/io/jharness/process/LocalRunControlTest.java",
+    "harness-process/src/test/java/io/jharness/process/M6TerminalTest.java",
+    "harness-process/src/test/java/io/jharness/process/ProcessProbe.java",
+    "harness-process/src/test/java/io/jharness/process/RunStatePermissionsTest.java",
+    "harness-session/pom.xml",
+    "harness-session/src/main/java/io/jharness/session/DefaultCheckpointPolicy.java",
+    "harness-session/src/main/java/io/jharness/session/EventRequestJournal.java",
+    "harness-session/src/main/java/io/jharness/session/EventSessionProjection.java",
+    "harness-session/src/main/java/io/jharness/session/InMemorySessionRepository.java",
+    "harness-session/src/main/java/io/jharness/session/JsonlSessionPlugin.java",
+    "harness-session/src/main/java/io/jharness/session/JsonlSessionRepository.java",
+    "harness-session/src/main/java/io/jharness/session/LocalArtifactStore.java",
+    "harness-session/src/main/java/io/jharness/session/MemoryCheckpointPolicy.java",
+    "harness-session/src/main/java/io/jharness/session/SanitizingSessionWriter.java",
+    "harness-session/src/main/java/io/jharness/session/SessionCatalog.java",
+    "harness-session/src/main/java/io/jharness/session/SessionLifecycle.java",
+    "harness-session/src/main/java/io/jharness/session/SessionRecovery.java",
+    "harness-session/src/main/java/io/jharness/session/SessionSearchIndex.java",
+    "harness-session/src/main/java/io/jharness/session/TokenSessionSearch.java",
+    "harness-session/src/test/java/io/jharness/session/EventRequestJournalTest.java",
+    "harness-session/src/test/java/io/jharness/session/InMemorySessionTest.java",
+    "harness-session/src/test/java/io/jharness/session/JsonlSessionRepositoryTest.java",
+    "harness-session/src/test/java/io/jharness/session/M5SessionTest.java",
+    "harness-session/src/test/java/io/jharness/session/TokenSessionSearchTest.java",
+    "harness-session/src/test/java/io/jharness/session/WriterProbe.java",
+    "harness-testkit/pom.xml",
+    "harness-testkit/src/main/java/io/jharness/testkit/CheckpointRecorder.java",
+    "harness-testkit/src/main/java/io/jharness/testkit/EventRecorder.java",
+    "harness-testkit/src/main/java/io/jharness/testkit/FailingSessionWriter.java",
+    "harness-testkit/src/main/java/io/jharness/testkit/FakeLlm.java",
+    "harness-testkit/src/main/java/io/jharness/testkit/TemporaryProject.java",
+    "harness-testkit/src/test/java/io/jharness/ecosystem/M7ChildEnvironmentTest.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/CrashWriteProbe.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/M0ServiceReplacementTest.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/M1052HistoryTest.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/M1053TurnsTest.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/M1055QuestionsTest.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/M1056ContentTest.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/M1056DisplayTest.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/M1056WebContentTest.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/M1057ExtensionsTest.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/M105DiagnosisTest.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/M105ProcessFixture.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/M10BrowserHost.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/M10WebTest.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/M1AgentLoopTest.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/M1ToolPipelineTest.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/M2WorkspaceIntegrationTest.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/M3CommandFixture.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/M3RuntimeIntegrationTest.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/M4CliCrashProbe.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/M4CliIntegrationTest.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/M5RecoveryIntegrationTest.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/M6CompactionTest.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/M6RuntimeIntegrationTest.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/M7CliEcosystemTest.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/M7ClosureTest.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/M7DockerProbe.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/M7EcosystemFixture.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/M7EnvironmentTest.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/M7McpServer.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/M7McpTest.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/M7SdkTest.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/M7SkillsDockerProbe.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/M7SkillsTest.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/M7SubagentDockerProbe.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/M7SubagentTest.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/M7WebDockerProbe.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/M7WebTest.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/M8FilterDockerProbe.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/M8FilterIntegrationTest.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/M8ResilienceDockerProbe.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/M8ResilienceTest.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/M8SchedulingDockerProbe.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/M8SchedulingTest.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/SdkTransportPeer.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/TestkitTest.java",
+    "harness-testkit/src/test/java/io/jharness/web/WorkbenchContentSearchTest.java",
+    "harness-tools/pom.xml",
+    "harness-tools/src/main/java/io/jharness/tools/BoundedReadOnlyToolScheduler.java",
+    "harness-tools/src/main/java/io/jharness/tools/DefaultToolPipeline.java",
+    "harness-tools/src/main/java/io/jharness/tools/JsonSchemaValidator.java",
+    "harness-tools/src/main/java/io/jharness/tools/ToolSchedulingPlugin.java",
+    "harness-tools/src/main/java/io/jharness/tools/ToolsPlugin.java",
+    "harness-tools/src/test/java/io/jharness/tools/JsonSchemaValidatorTest.java",
+    "harness-web/pom.xml",
+    "harness-web/src/main/java/io/jharness/web/DurableTaskCatalog.java",
+    "harness-web/src/main/java/io/jharness/web/HarnessWebServer.java",
+    "harness-web/src/main/java/io/jharness/web/TaskDiagnosis.java",
+    "harness-web/src/main/java/io/jharness/web/TurnQueue.java",
+    "harness-web/src/main/java/io/jharness/web/UiResources.java",
+    "harness-web/src/main/java/io/jharness/web/WebJson.java",
+    "harness-web/src/main/java/io/jharness/web/WorkbenchContentSearch.java",
+    "harness-web/src/main/java/io/jharness/web/WorkspaceLease.java",
+    "harness-workspace/pom.xml",
+    "harness-workspace/src/main/java/io/jharness/workspace/LocalWorkspace.java",
+    "harness-workspace/src/main/java/io/jharness/workspace/UnifiedDiff.java",
+    "harness-workspace/src/main/java/io/jharness/workspace/UnifiedPatch.java",
+    "harness-workspace/src/main/java/io/jharness/workspace/WorkspaceSearchFilter.java",
+    "harness-workspace/src/main/java/io/jharness/workspace/WorkspaceToolsPlugin.java",
+    "harness-workspace/src/test/java/io/jharness/workspace/LocalWorkspaceTest.java",
+    "harness-workspace/src/test/java/io/jharness/workspace/M8SearchFilterTest.java",
+    "harness-workspace/src/test/java/io/jharness/workspace/UnifiedPatchTest.java",
+    "pom.xml",
+    "scripts/aggregate-m1059-ci.py",
+    "scripts/archive-m1059-local.py",
+    "scripts/build-candidate.py",
+    "scripts/collect-m10-auto-evidence.py",
+    "scripts/collect-m10-evidence.py",
+    "scripts/collect-m10-settings-evidence.py",
+    "scripts/collect-m1051-evidence.py",
+    "scripts/collect-m1052-evidence.py",
+    "scripts/collect-m1053-evidence.py",
+    "scripts/collect-m1054-evidence.py",
+    "scripts/collect-m1054-native-ci-evidence.py",
+    "scripts/collect-m1054-native-evidence.py",
+    "scripts/collect-m1055-evidence.py",
+    "scripts/collect-m1056-evidence.py",
+    "scripts/collect-m1057-evidence.py",
+    "scripts/collect-m1058-evidence.py",
+    "scripts/collect-m1059-evidence.py",
+    "scripts/collect-release-evidence.py",
+    "scripts/collect-test-evidence.ps1",
+    "scripts/finalize-workbench-matrix.mjs",
+    "scripts/frontend-sbom.py",
+    "scripts/jharness-cancel.ps1",
+    "scripts/live-evaluate.py",
+    "scripts/open-workbench.ps1",
+    "scripts/prepare-legal.py",
+    "scripts/prepare-test-browsers.py",
+    "scripts/probe-firefox.py",
+    "scripts/run-m1059-platform.py",
+    "scripts/run-workbench-matrix.mjs",
+    "scripts/scan-osv.py",
+    "scripts/scan-source-secrets.py",
+    "scripts/sdk-inventory.py",
+    "scripts/smoke-candidate.py",
+    "scripts/test-m1059-gates.py",
+    "scripts/test-native-credentials.py",
+    "scripts/test-open-workbench.py",
+    "scripts/test-release-tools.py",
+    "scripts/test-sdk-inventory.py",
+    "scripts/test-source-secrets.py",
+    "scripts/test-windows-credential-compat.py",
+    "scripts/verify-m8-closure.py",
+    "sdk/README.md",
+    "sdk/examples/demo.json",
+    "sdk/examples/loopback_provider.py",
+    "sdk/examples/run.py",
+    "sdk/examples/run.ts",
+    "sdk/package.json",
+    "sdk/python/jharness_sdk.py",
+    "sdk/tests/client.py",
+    "sdk/tests/client.ts",
+    "sdk/tests/examples.mjs",
+    "sdk/tests/run.mjs",
+    "sdk/typescript/package.json",
+    "sdk/typescript/src/index.ts",
+    "third-party/README.md",
+    "third-party/artifacts/com.fasterxml.jackson.core/jackson-annotations/2.21/META-INF/LICENSE",
+    "third-party/artifacts/com.fasterxml.jackson.core/jackson-annotations/2.21/META-INF/NOTICE",
+    "third-party/artifacts/com.fasterxml.jackson.core/jackson-core/2.21.7/META-INF/FastDoubleParser-LICENSE",
+    "third-party/artifacts/com.fasterxml.jackson.core/jackson-core/2.21.7/META-INF/FastDoubleParser-ThirdParty-LICENSE",
+    "third-party/artifacts/com.fasterxml.jackson.core/jackson-core/2.21.7/META-INF/LICENSE",
+    "third-party/artifacts/com.fasterxml.jackson.core/jackson-core/2.21.7/META-INF/NOTICE",
+    "third-party/artifacts/com.fasterxml.jackson.core/jackson-core/2.21.7/META-INF/Schubfach-LICENSE",
+    "third-party/artifacts/com.fasterxml.jackson.core/jackson-databind/2.21.7/META-INF/LICENSE",
+    "third-party/artifacts/com.fasterxml.jackson.core/jackson-databind/2.21.7/META-INF/NOTICE",
+    "third-party/artifacts/net.java.dev.jna/jna-platform/5.14.0/META-INF/LICENSE",
+    "third-party/artifacts/net.java.dev.jna/jna/5.14.0/META-INF/LICENSE",
+    "third-party/artifacts/org.apiguardian/apiguardian-api/1.1.2/META-INF/LICENSE",
+    "third-party/artifacts/org.junit.jupiter/junit-jupiter-api/5.12.2/META-INF/LICENSE-notice.md",
+    "third-party/artifacts/org.junit.jupiter/junit-jupiter-api/5.12.2/META-INF/LICENSE.md",
+    "third-party/artifacts/org.junit.jupiter/junit-jupiter-engine/5.12.2/META-INF/LICENSE-notice.md",
+    "third-party/artifacts/org.junit.jupiter/junit-jupiter-engine/5.12.2/META-INF/LICENSE.md",
+    "third-party/artifacts/org.junit.jupiter/junit-jupiter-params/5.12.2/META-INF/LICENSE-notice.md",
+    "third-party/artifacts/org.junit.jupiter/junit-jupiter-params/5.12.2/META-INF/LICENSE-univocity-parsers.md",
+    "third-party/artifacts/org.junit.jupiter/junit-jupiter-params/5.12.2/META-INF/LICENSE.md",
+    "third-party/artifacts/org.junit.jupiter/junit-jupiter/5.12.2/META-INF/LICENSE-notice.md",
+    "third-party/artifacts/org.junit.jupiter/junit-jupiter/5.12.2/META-INF/LICENSE.md",
+    "third-party/artifacts/org.junit.platform/junit-platform-commons/1.12.2/META-INF/LICENSE-notice.md",
+    "third-party/artifacts/org.junit.platform/junit-platform-commons/1.12.2/META-INF/LICENSE.md",
+    "third-party/artifacts/org.junit.platform/junit-platform-engine/1.12.2/META-INF/LICENSE-notice.md",
+    "third-party/artifacts/org.junit.platform/junit-platform-engine/1.12.2/META-INF/LICENSE.md",
+    "third-party/artifacts/org.opentest4j/opentest4j/1.3.0/META-INF/LICENSE",
+    "third-party/artifacts/org.slf4j/slf4j-api/2.0.13/META-INF/LICENSE.txt",
+    "third-party/artifacts/org.slf4j/slf4j-nop/2.0.13/META-INF/LICENSE.txt",
+    "third-party/inventory.json",
+    "third-party/upstream/annotations-LICENSE",
+    "third-party/upstream/kotlin-LICENSE",
+    "third-party/upstream/kotlin-NOTICE",
+    "third-party/upstream/pty4j-LICENSE",
+    "third-party/upstream/pty4j-NOTICE",
+    "third-party/upstream/sources.json",
+    "third-party/upstream/terminal-LICENSE",
+    "third-party/upstream/terminal-NOTICE",
+    "third-party/upstream/winpty-LICENSE",
+    "third-party/upstream/wrapper-NOTICE"
+  ]
+}

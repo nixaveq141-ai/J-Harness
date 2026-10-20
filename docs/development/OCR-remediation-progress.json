@@ -1,0 +1,23 @@
+{
+  "updatedAt": "2026-10-20",
+  "phase": "R0",
+  "status": "LOCAL_BASELINE_READY",
+  "details": "docs/development/OCR-R0-remediation-2026-10-20.md",
+  "productMilestone": "M10.5.9",
+  "productStatus": "LOCAL_PARTIAL_CI_PENDING",
+  "m11Eligible": false,
+  "tasks": {
+    "R0-01": {
+      "status": "BASELINE_VALIDATED_PIPELINE_PENDING",
+      "description": "当前门禁修复及离线反例已验证；完整同运行发布流水线待重新采集，不沿用历史PASS"
+    },
+    "R0-02": {
+      "status": "BASELINE_VALIDATED",
+      "description": "有界输入、字节快照及新目录原子归档已验证；历史JSON未改写"
+    },
+    "R0-03": {
+      "status": "BASELINE_VALIDATED_FOLLOWUPS_OPEN",
+      "description": "独立门禁负例与本地回归基线已建立；300条测试意见继续随R1～R6交付，最终WebKit content复验失败保留待定位"
+    }
+  }
+}

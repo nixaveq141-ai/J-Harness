@@ -14,6 +14,8 @@ jobs:
         os: [windows-latest, ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 60
+    env:
+      JHARNESS_EVIDENCE_RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}-${{ github.sha }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -36,20 +38,20 @@ jobs:
           set -euo pipefail
           npm ci
           mkdir -p ../.build-cache/M10.5.9
-          npm test > ../.build-cache/M10.5.9/client.log 2>&1 || { cat ../.build-cache/M10.5.9/client.log; exit 1; }
-          node node_modules/typescript/bin/tsc --noEmit --strict --target es2022 --module nodenext --moduleResolution nodenext --allowImportingTsExtensions --types node --typeRoots node_modules/@types ../sdk/typescript/src/index.ts ../sdk/examples/run.ts > ../.build-cache/M10.5.9/sdk-typecheck.log 2>&1
+          python ../scripts/evidence_run.py --name client --cwd . --log ../.build-cache/M10.5.9/client.log -- npm test
+          python ../scripts/evidence_run.py --name sdk-typecheck --cwd . --log ../.build-cache/M10.5.9/sdk-typecheck.log -- node node_modules/typescript/bin/tsc --ignoreConfig --noEmit --strict --target es2022 --module nodenext --moduleResolution nodenext --allowImportingTsExtensions --types node --typeRoots node_modules/@types ../sdk/typescript/src/index.ts ../sdk/examples/run.ts
           npm audit --audit-level=low
           npm run build
       - name: Verify on Windows
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          .\mvnw.cmd -B -Prelease-audit clean verify org.cyclonedx:cyclonedx-maven-plugin:2.9.3:makeAggregateBom *> verify.log
+          python scripts/evidence_run.py --name verify --log verify.log --output harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar -- mvnw.cmd -B -Prelease-audit clean verify org.cyclonedx:cyclonedx-maven-plugin:2.9.3:makeAggregateBom
           if ($LASTEXITCODE -ne 0) { Get-Content verify.log -Tail 100; exit $LASTEXITCODE }
       - name: Verify on POSIX
         if: runner.os != 'Windows'
         run: |
-          sh ./mvnw -B -Prelease-audit clean verify org.cyclonedx:cyclonedx-maven-plugin:2.9.3:makeAggregateBom > verify.log 2>&1 || { tail -100 verify.log; exit 1; }
+          python scripts/evidence_run.py --name verify --log verify.log --output harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar -- sh ./mvnw -B -Prelease-audit clean verify org.cyclonedx:cyclonedx-maven-plugin:2.9.3:makeAggregateBom
       - name: Install browsers and credential service on Linux
         if: runner.os == 'Linux'
         working-directory: frontend
@@ -94,6 +96,11 @@ jobs:
           set -euo pipefail
           python scripts/test-release-tools.py
           python scripts/test-sdk-inventory.py
+          python scripts/test-evidence-run.py
+          python scripts/test-evidence-io.py
+          python scripts/test-history-evidence.py
+          python scripts/test-smoke-evidence.py
+          node scripts/test-workbench-evidence.mjs
           python scripts/test-m1059-gates.py
           python scripts/test-source-secrets.py
           python scripts/scan-source-secrets.py
@@ -105,7 +112,7 @@ jobs:
           git diff --exit-code -- third-party
           python scripts/scan-osv.py target/bom.json target/osv-results.json
           python scripts/build-candidate.py
-          python scripts/smoke-candidate.py
+          python scripts/evidence_run.py --name smoke --log .build-cache/M10.5.9/smoke.log --output target/candidate-smoke.json -- python scripts/smoke-candidate.py
           python scripts/collect-m1059-evidence.py verify.log
       - name: Delete isolated macOS test keychain
         if: always() && runner.os == 'macOS'

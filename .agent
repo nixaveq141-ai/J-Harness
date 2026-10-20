@@ -4,6 +4,8 @@
 
 ## 当前接续状态
 
+- 2026-10-20按用户要求实施R0，当前证据门禁与本地回归基线已建立：同runId/命令退出码及日志输出哈希/构建输入前后快照、410确切Java cases/271浏览器cases契约、SDK/native/launcher/smoke固定检查集合、有界JSON/路径和新目录原子归档已落地；15个历史采集CLI冻结写入口，原验收JSON字节不改。门禁及相邻离线测试80项、Java410/64suites和前端33通过；content前次双引擎各45通过，最终Chrome45通过但WebKit运行时异常断言失败，矩阵保持FAILED，未放宽豁免，待R4/R6夹具定位。详见docs/development/OCR-R0-remediation-2026-10-20.md及OCR-remediation-progress.json；R0-03的300条回归意见按原计划随R1～R6继续，不宣称484条全部关闭。完整同运行发布流水线未重采，M10.5.9保持LOCAL_PARTIAL_CI_PENDING/m11Eligible=false；下一实施入口R1并保留本次夹具余项。仅本地提交，无推送/发布/付费调用，用户原有未提交接续保留；用户已确认自行清理原两份未跟踪扫描输出，不纳入提交。
+
 - 2026-10-20用户要求核实2457条OCR意见并分阶段规划，且明确授权多代理并行核实。以HEAD337c150和核实开始时实际文件快照为依据，原导出2426+31条稳定编号保留；已逐条完成静态裁决：采纳488/部分采纳1009/不采纳960，无整条待核实项，1497条采纳范围合并为R0～R6七阶段30工作包。报告docs/development/code-review-2026-10-20.md、逐条账本docs/development/ocr-verification-2026-10-20/、计划docs/requirements/OCR-remediation-plan-2026-10-20.md及统计docs/testing/OCR-verification-2026-10-20-results.json为本轮接续；node scripts/verify-ocr-review.mjs验证2457覆盖/去重/证据目标/计划映射/派生一致性通过。仅核实/计划交付，不实施产品修复、不宣称逐场景动态复现或全量产品测试通过。下一入口R0证据门禁及R1高影响回归/修复，保留UNKNOWN不重放、单写者和用户批准的同源直接进入；M10.5.9仍LOCAL_PARTIAL_CI_PENDING/m11Eligible=false。本条取代先前扫描预览快照的当前性；原有未提交接续内容及OCR输出保留，缓存不入提交。仅本地版本管理，不推送/发布/付费调用。
 
 - 2026-10-20按用户要求清理先前OCR代码审查记录：移除旧审查草稿、OCR会话及专用临时探针/日志，撤下原审查进行中状态。历史开发快照中提到的“保留审查草稿”已由本条清理操作取代；现有产品源码、开发验收记录、ChatGPT登录与模型配置保持。仅记录清理事实，不新增审查结论或产品测试通过声明。
