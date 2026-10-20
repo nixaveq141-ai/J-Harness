@@ -1,0 +1,24 @@
+{
+  "status": "REVIEW_COMPLETE_FIXES_NOT_STARTED",
+  "sessionId": "eed6a134-1d3b-4e89-adaa-a0e9b2ba1f19",
+  "baseline": "1637fc01d759f0b4d58d0630f58892fba0ce6619",
+  "reviewedFiles": 44,
+  "opinions": 37,
+  "counts": {
+    "accepted": 26,
+    "partial": 10,
+    "rejected": 1
+  },
+  "repairGroups": 9,
+  "productCodeChanged": false,
+  "fullProductSuiteRun": false,
+  "nativeMacOrLinuxRun": false,
+  "remoteCiRun": false,
+  "paidRequests": 0,
+  "m11Eligible": false,
+  "artifactHashes": {
+    "docs/development/ocr-r0-rereview-2026-10-20/opinions.json": "f9540360340d8a88d689a922e10b2651175df1c184a4d5ad880bb5232dbc8106",
+    "docs/development/ocr-r0-rereview-2026-10-20/verdicts.json": "4a029e282bd8b8d559d01e5c160d3071ae723fbe52aced31b1817218b8b06cb7",
+    "docs/development/ocr-r0-rereview-2026-10-20/probes.json": "9e2550e90f78d2163c448b419833915830e41bbdf9de261e48d02a5361cfe6d5"
+  }
+}

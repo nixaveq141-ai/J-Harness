@@ -1,0 +1,117 @@
+{
+  "reproducibleProbeSources": {
+    ".build-cache/r0-rereview-probes.py": "import ast, hashlib, importlib.util, io, json, os, struct, subprocess, sys, tempfile, tracemalloc, types, zipfile, zlib\r\nfrom pathlib import Path\r\nfrom unittest.mock import patch\r\nROOT=Path(__file__).resolve().parents[1]\r\nsys.path.insert(0,str(ROOT/'scripts'))\r\nimport evidence_checks as checks\r\nimport evidence_io as eio\r\nimport evidence_run as erun\r\nBASE=ROOT/'.build-cache/r0-rereview-probes';BASE.mkdir(exist_ok=True)\r\nresults={}\r\n\r\nclass ProbeRead(Exception):pass\r\nclass PrimaryFailure(Exception):pass\r\n\r\nwith tempfile.TemporaryDirectory(dir=BASE) as temp:\r\n    temp=Path(temp);assert temp.resolve().is_relative_to(BASE.resolve())\r\n    # Import bypass: stop at first attempted historical input read, never allow writes.\r\n    for name in ['scripts/collect-m1054-evidence.py','scripts/collect-m1058-evidence.py']:\r\n        source=(ROOT/name).read_text(encoding='utf-8-sig')\r\n        calls=[]\r\n        def stop_read(path,*args,**kwargs):\r\n            calls.append(str(path));raise ProbeRead('Stopped before historical input read')\r\n        with patch.object(Path,'read_text',stop_read),patch.object(Path,'read_bytes',stop_read),patch.object(Path,'write_text',side_effect=AssertionError('Historical write attempted')),patch.object(Path,'write_bytes',side_effect=AssertionError('Historical write attempted')):\r\n            try:exec(compile(source,name,'exec'),{'__name__':'legacy_probe','__file__':str(ROOT/name)})\r\n            except ProbeRead:results[name]={'freezeBypassedByImport':True,'interceptedInputRead':calls[0],'historicalWritesPerformed':False}\r\n            except SystemExit as exc:results[name]={'freezeBypassedByImport':False,'exitCode':exc.code}\r\n\r\n    path=temp/'utf16.xml'\r\n    xml='<?xml version=\"1.0\" encoding=\"UTF-16\"?><!DOCTYPE testsuite [<!ENTITY case \"entity-expanded\">]><testsuite name=\"fixture\" tests=\"1\" failures=\"0\" errors=\"0\" skipped=\"0\"><testcase name=\"&case;\"/></testsuite>'\r\n    path.write_bytes(xml.encode('utf-16'))\r\n    snap=checks.suite_snapshot(path,'harness-fixture')\r\n    results['utf16Dtd']={'accepted':True,'cases':snap['cases'],'unsafeExpansionBombAttempted':False}\r\n    class WholeRead:\r\n        calls=0\r\n        def read_bytes(self):self.calls+=1;return b' '*(16*1024*1024+1)\r\n    whole=WholeRead()\r\n    try:checks.suite_snapshot(whole,'fixture')\r\n    except ValueError as exc:results['xmlReadLimit']={'wholeReadBeforeRejection':whole.calls==1,'rejection':str(exc)}\r\n\r\n    archive=temp/'archive'\r\n    eio.publish_archive(archive,[('file.json',b'{}')],{'probe':True},manifest_name='../escaped.json')\r\n    results['manifestEscape']={'outsideStagingFileExists':(temp/'escaped.json').is_file(),'publishedArchiveLacksManifest':not (archive/'manifest.json').exists()}\r\n\r\n    # Malformed size declarations are truncated on return, but inflate before truncation.\r\n    raw=io.BytesIO()\r\n    with zipfile.ZipFile(raw,'w',zipfile.ZIP_DEFLATED) as z:z.writestr('payload',b'A'*(16*1024*1024))\r\n    forged=bytearray(raw.getvalue());central=forged.index(b'PK\\x01\\x02')\r\n    fh=list(struct.unpack(zipfile.structFileHeader,forged[:zipfile.sizeFileHeader]));fh[zipfile._FH_CRC]=zlib.crc32(b'A');fh[zipfile._FH_UNCOMPRESSED_SIZE]=1\r\n    forged[:zipfile.sizeFileHeader]=struct.pack(zipfile.structFileHeader,*fh)\r\n    cd=list(struct.unpack(zipfile.structCentralDir,forged[central:central+zipfile.sizeCentralDir]));cd[zipfile._CD_CRC]=zlib.crc32(b'A');cd[zipfile._CD_UNCOMPRESSED_SIZE]=1\r\n    forged[central:central+zipfile.sizeCentralDir]=struct.pack(zipfile.structCentralDir,*cd)\r\n    peaks=[]\r\n    for mode in ['whole','chunk']:\r\n        tracemalloc.start()\r\n        with zipfile.ZipFile(io.BytesIO(forged)) as z:\r\n            if mode=='whole':data=z.read('payload')\r\n            else:\r\n                with z.open('payload') as member:data=member.read(4096)\r\n        peaks.append(tracemalloc.get_traced_memory()[1]);tracemalloc.stop()\r\n        assert data==b'A'\r\n    results['zipDeclaredSize']={'declaredBytes':1,'actualReturnBytes':len(data),'deflatePayloadBytes':16*1024*1024,'wholeReadPeakBytes':peaks[0],'chunkReadPeakBytes':peaks[1],'meaning':'Return is truncated, but whole read allocates expanded data before truncation'}\r\n\r\n    # POSIX timeout race: no real process started or signalled.\r\n    work=temp/'work';work.mkdir();(work/'pom.xml').write_text('<project/>')\r\n    class Child:\r\n        pid=12345\r\n        waits=0\r\n        def wait(self,timeout):\r\n            self.waits+=1\r\n            if self.waits==1:raise subprocess.TimeoutExpired(['fixture'],timeout)\r\n            return 0\r\n    child=Child()\r\n    def disappeared(*args):raise ProcessLookupError('synthetic exited process group')\r\n    with patch.object(erun,'os',types.SimpleNamespace(name='posix',killpg=disappeared)),patch.object(erun,'signal',types.SimpleNamespace(SIGKILL=9)),patch.object(erun.subprocess,'Popen',return_value=child):\r\n        try:erun.run(['fixture'],name='race',log=work/'race.log',receipt=work/'race.json',run_id='probe-run',cwd=work,root=work,timeout=.01)\r\n        except Exception as exc:results['posixTimeoutRace']={'exception':type(exc).__name__,'waitCalls':child.waits,'realProcessStarted':False}\r\n\r\n    spec=importlib.util.spec_from_file_location('probe_smoke',ROOT/'scripts/smoke-candidate.py');smoke=importlib.util.module_from_spec(spec);spec.loader.exec_module(smoke)\r\n    class FakeServer:\r\n        def __init__(self,*args,**kwargs):pass\r\n        def serve_forever(self):pass\r\n        def shutdown(self):pass\r\n        def server_close(self):pass\r\n    class FakeThread:\r\n        def __init__(self,*args,**kwargs):pass\r\n        def start(self):pass\r\n        def is_alive(self):return True\r\n        def join(self,timeout):pass\r\n    with patch.object(smoke.http.server,'ThreadingHTTPServer',FakeServer),patch.object(smoke.threading,'Thread',FakeThread),patch.object(smoke.tempfile,'TemporaryDirectory',side_effect=PrimaryFailure('primary fixture failure')):\r\n        try:smoke.exercise({}, {}, {})\r\n        except Exception as exc:results['cleanupException']={'raised':type(exc).__name__,'chainedOriginal':type(exc.__context__).__name__,'realServerStarted':False}\r\n\r\nresults['python']=sys.version\r\n(BASE/'python-results.json').write_text(json.dumps(results,ensure_ascii=False,indent=2)+'\\n',encoding='utf-8')\r\nprint(json.dumps(results,ensure_ascii=False,indent=2))\r\n",
+    ".build-cache/r0-rereview-probes.mjs": "import fs from 'node:fs'\nimport {mkdtemp,mkdir,writeFile,readFile,rm,symlink} from 'node:fs/promises'\nimport {resolve,join,relative,posix} from 'node:path'\nimport {pathToFileURL} from 'node:url'\nimport {execFileSync} from 'node:child_process'\nimport {inputSnapshot,validateMatrix,fixtures,contracts,sha} from '../scripts/workbench-evidence.mjs'\nconst root=resolve(import.meta.dirname,'..'),base=join(root,'.build-cache/r0-rereview-probes'),results={}\nawait mkdir(base,{recursive:true});const temp=await mkdtemp(join(base,'node-'))\nif(relative(base,temp).startsWith('..'))throw Error('Unsafe probe directory')\ntry{\n const repo=join(temp,'repo');await mkdir(join(repo,'frontend/public'),{recursive:true})\n execFileSync('git',['init','--quiet'],{cwd:repo});await writeFile(join(repo,'frontend/public/.gitkeep'),'')\n try{await inputSnapshot(repo);results.emptySource={accepted:true}}catch(error){results.emptySource={accepted:false,error:error.message}}\n const contractDir=join(temp,'contract');await mkdir(contractDir)\n await writeFile(join(contractDir,'workbench-evidence.mjs'),await readFile(join(root,'scripts/workbench-evidence.mjs')))\n await writeFile(join(contractDir,'workbench-case-contract.json'),' {\"fixtures\":{\"browser\":[\"expected\"],\"browser\":[]}} ')\n const helper=await import(pathToFileURL(join(contractDir,'workbench-evidence.mjs')).href)\n results.duplicateContract={moduleAccepted:true,browserCases:helper.contracts.browser,fixtureKeys:Object.keys(helper.contracts)}\n const realCi=join(temp,'ci-real'),aliasCi=join(temp,'ci-alias');await mkdir(realCi);await symlink(realCi,aliasCi,process.platform==='win32'?'junction':'dir')\n const pythonCode=`import importlib.util,json,sys,tempfile\nfrom pathlib import Path\ntempfile.tempdir=sys.argv[3]\nspec=importlib.util.spec_from_file_location('test_gate',Path(sys.argv[2])/'scripts/test-m1059-gates.py')\nm=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)\ncase=m.CiGateTest();case.setUp();case.directory=Path(sys.argv[1])\ntry:\n try:\n  case.test_report_hash_uses_exact_parsed_bytes_even_if_file_changes()\n  print(json.dumps({'testPassed':True}))\n except Exception as error:\n  print(json.dumps({'testPassed':False,'exception':type(error).__name__,'linkedRoot':str(case.directory),'resolvedRoot':str(case.directory.resolve())}))\nfinally:case.doCleanups()\n`\n const python=process.env.JHARNESS_PYTHON??'C:/Users/Lenovo/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/python.exe'\n results.linkedTemporaryRoot=JSON.parse(execFileSync(python,['-c',pythonCode,aliasCi,root,base],{encoding:'utf8'}))\n results.posixScreenshot={}\n for(const fixture of ['search','settings','extensions']){\n   const source=await readFile(join(root,'frontend/tests',fixture+'.mjs'),'utf8')\n   const producerRoot='/home/runner/work/J-Harness/J-Harness',path=posix.join(producerRoot,'.build-cache/screenshot.png')\n   const recorded=path.replace(producerRoot+'\\\\',''),normalized=recorded.replaceAll('\\\\','/')\n   results.posixScreenshot[fixture]={producerHasWindowsOnlyReplace:/path\\.replace\\(root\\s*\\+\\s*'\\\\\\\\'/.test(source),recorded,runnerPrefixAccepted:normalized.startsWith('.build-cache/')}\n }\n const matrixRoot=join(temp,'matrix');await mkdir(join(matrixRoot,'scripts'),{recursive:true});execFileSync('git',['init','--quiet'],{cwd:matrixRoot})\n const put=async(name,bytes)=>{await mkdir(join(matrixRoot,name,'..'),{recursive:true});await writeFile(join(matrixRoot,name),bytes)}\n for(const name of ['finalize-workbench-matrix.mjs','workbench-evidence.mjs','workbench-case-contract.json'])await put('scripts/'+name,await readFile(join(root,'scripts',name)))\n for(const fixture of Object.keys(fixtures))await put('frontend/tests/'+fixture+'.mjs','synthetic fixture '+fixture)\n await put('harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar','synthetic-jar')\n const source=await inputSnapshot(matrixRoot),entries=[]\n for(const fixture of Object.keys(fixtures)){\n  const prefix='.build-cache/M10.5.9/browser/chromium/'+fixture\n  await put(prefix+'.log','synthetic log');await put(prefix+'-shot.png','synthetic screenshot')\n  const record={schemaVersion:1,status:'PASS',runId:'synthetic-schema-probe',command:{exitCode:0,signal:null,timedOut:false},browserEngine:'chromium',fixture,paidRequests:0,jarSha256:sha('synthetic-jar'),checks:contracts[fixture].map(name=>({name,passed:true})),screenshots:[{path:prefix+'-shot.png',sha256:sha('synthetic screenshot')}],capturedAt:'2020-01-01T00:00:00Z',fixtureSourceSha256:sha('synthetic fixture '+fixture),logSha256:sha('synthetic log'),inputSha256:source,...(fixture==='settings'?{fixtureCredentialsCleaned:true}:{})}\n  const bytes=JSON.stringify(record);await put(prefix+'.json',bytes);entries.push({engine:'chromium',fixture,checks:record.checks.length,path:prefix+'.json',sha256:sha(bytes)})\n }\n const matrixName='.build-cache/M10.5.9/browser/matrix.json',matrix={schemaVersion:1,status:'PASS',runId:'synthetic-schema-probe',engines:['chromium'],fixtures:Object.keys(fixtures),records:entries,paidRequests:0,capturedAt:'2020-01-01T00:00:00Z',failures:[]}\n await put(matrixName,JSON.stringify(matrix));await validateMatrix(matrixRoot)\n results.matrixProbe={syntheticOnly:true,completeSchemaAccepted:true,mutations:{}}\n for(const [name,mutate]of [\n  ['subset',m=>{m.fixtures.pop();m.records.pop()}],['duplicateEngine',m=>m.engines.push('chromium')],['duplicateRecord',m=>{m.records[1]={...m.records[0]}}],['wrongDigest',m=>{m.records[0].sha256='f'.repeat(64)}],['wrongPath',m=>{m.records[0].path='.build-cache/elsewhere.json'}]\n ]){\n  const changed=structuredClone(matrix);mutate(changed);await put(matrixName,JSON.stringify(changed))\n  try{await validateMatrix(matrixRoot);throw Error('Mutation wrongly accepted')}catch(error){if(error.message==='Mutation wrongly accepted')throw error;results.matrixProbe.mutations[name]=error.message}\n }\n const recordPath=entries[0].path,originalRecord=await readFile(join(matrixRoot,recordPath)),changed=JSON.parse(originalRecord);changed.runId='other-run';const bytes=JSON.stringify(changed)\n await put(recordPath,bytes);const wrongRun=structuredClone(matrix);wrongRun.records[0].sha256=sha(bytes);await put(matrixName,JSON.stringify(wrongRun))\n try{await validateMatrix(matrixRoot);throw Error('Mutation wrongly accepted')}catch(error){if(error.message==='Mutation wrongly accepted')throw error;results.matrixProbe.mutations.wrongRun=error.message}\n await put(recordPath,originalRecord);await put(matrixName,JSON.stringify(matrix));const beforeFinalize=await readFile(join(matrixRoot,matrixName))\n execFileSync(process.execPath,['scripts/finalize-workbench-matrix.mjs','chromium'],{cwd:matrixRoot})\n const afterFinalize=await readFile(join(matrixRoot,matrixName));results.finalizerOutput={syntheticOnly:true,passed:true,changesPinnedOutput:sha(beforeFinalize)!==sha(afterFinalize),recordCapturedAt:changed.capturedAt,matrixCapturedAt:JSON.parse(afterFinalize).capturedAt}\n const originalRead=fs.readFileSync,originalLog=console.log;let changedProgressRead=false\n const planPath=join(root,'docs/requirements/OCR-remediation-plan-2026-10-20.md'),before=await readFile(planPath)\n fs.readFileSync=function(path,...args){\n   const value=originalRead.call(this,path,...args)\n   if(String(path)===join(root,'docs/development/OCR-remediation-progress.json')){\n     const data=JSON.parse(value);data.tasks['R0-01'].description+=' STALE_PROBE_DESCRIPTION';changedProgressRead=true;return JSON.stringify(data)\n   }\n   return value\n }\n console.log=()=>{}\n try{await import(pathToFileURL(join(root,'scripts/verify-ocr-review.mjs')).href+'?rereview-probe');results.staleProgress={mutatedInMemoryOnly:changedProgressRead,readOnlyVerifierAccepted:true,planUnchanged:before.equals(await readFile(planPath))}}\n finally{fs.readFileSync=originalRead;console.log=originalLog}\n await writeFile(join(base,'node-results.json'),JSON.stringify(results,null,2)+'\\n')\n console.log(JSON.stringify(results,null,2))\n}finally{await rm(temp,{recursive:true,force:true})}\n"
+  },
+  "scope": "Local isolated data/schema/encoding/fault-injection probes only. Synthetic PASS is not product/CI acceptance. Historical read attempts were intercepted before file access/writes.",
+  "python": {
+    "scripts/collect-m1054-evidence.py": {
+      "freezeBypassedByImport": true,
+      "interceptedInputRead": "D:\\Documents\\my projects\\J-Harness\\.dsh-tmp\\m1054-final-verify.log",
+      "historicalWritesPerformed": false
+    },
+    "scripts/collect-m1058-evidence.py": {
+      "freezeBypassedByImport": true,
+      "interceptedInputRead": "D:\\Documents\\my projects\\J-Harness\\.dsh-tmp\\m1058-final-verify2.log",
+      "historicalWritesPerformed": false
+    },
+    "utf16Dtd": {
+      "accepted": true,
+      "cases": [
+        "entity-expanded"
+      ],
+      "unsafeExpansionBombAttempted": false
+    },
+    "xmlReadLimit": {
+      "wholeReadBeforeRejection": true,
+      "rejection": "Unsafe XML report"
+    },
+    "manifestEscape": {
+      "outsideStagingFileExists": true,
+      "publishedArchiveLacksManifest": true
+    },
+    "zipDeclaredSize": {
+      "declaredBytes": 1,
+      "actualReturnBytes": 1,
+      "deflatePayloadBytes": 16777216,
+      "wholeReadPeakBytes": 47660015,
+      "chunkReadPeakBytes": 71693,
+      "meaning": "Return is truncated, but whole read allocates expanded data before truncation"
+    },
+    "posixTimeoutRace": {
+      "exception": "ProcessLookupError",
+      "waitCalls": 1,
+      "realProcessStarted": false
+    },
+    "cleanupException": {
+      "raised": "RuntimeError",
+      "chainedOriginal": "PrimaryFailure",
+      "realServerStarted": false
+    },
+    "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]"
+  },
+  "node": {
+    "emptySource": {
+      "accepted": false,
+      "error": "Evidence file empty, oversized or not regular"
+    },
+    "duplicateContract": {
+      "moduleAccepted": true,
+      "browserCases": [],
+      "fixtureKeys": [
+        "browser"
+      ]
+    },
+    "linkedTemporaryRoot": {
+      "testPassed": false,
+      "exception": "KeyError",
+      "linkedRoot": "D:\\Documents\\my projects\\J-Harness\\.build-cache\\r0-rereview-probes\\node-uvmdui\\ci-alias",
+      "resolvedRoot": "D:\\Documents\\my projects\\J-Harness\\.build-cache\\r0-rereview-probes\\node-uvmdui\\ci-real"
+    },
+    "posixScreenshot": {
+      "search": {
+        "producerHasWindowsOnlyReplace": true,
+        "recorded": "/home/runner/work/J-Harness/J-Harness/.build-cache/screenshot.png",
+        "runnerPrefixAccepted": false
+      },
+      "settings": {
+        "producerHasWindowsOnlyReplace": true,
+        "recorded": "/home/runner/work/J-Harness/J-Harness/.build-cache/screenshot.png",
+        "runnerPrefixAccepted": false
+      },
+      "extensions": {
+        "producerHasWindowsOnlyReplace": true,
+        "recorded": "/home/runner/work/J-Harness/J-Harness/.build-cache/screenshot.png",
+        "runnerPrefixAccepted": false
+      }
+    },
+    "matrixProbe": {
+      "syntheticOnly": true,
+      "completeSchemaAccepted": true,
+      "mutations": {
+        "subset": "Incomplete fixture matrix",
+        "duplicateEngine": "Invalid engine matrix",
+        "duplicateRecord": "Duplicate matrix entry",
+        "wrongDigest": "Matrix record digest mismatch",
+        "wrongPath": "Wrong matrix entry path",
+        "wrongRun": "Wrong run identity"
+      }
+    },
+    "finalizerOutput": {
+      "syntheticOnly": true,
+      "passed": true,
+      "changesPinnedOutput": true,
+      "recordCapturedAt": "2020-01-01T00:00:00Z",
+      "matrixCapturedAt": "2026-10-20T14:48:01.844Z"
+    },
+    "staleProgress": {
+      "mutatedInMemoryOnly": true,
+      "readOnlyVerifierAccepted": true,
+      "planUnchanged": true
+    }
+  },
+  "probeScripts": {
+    ".build-cache/r0-rereview-probes.py": "6929ee10dadecb542053e1df392958fa7777214edaf001d56c5887ca9a859021",
+    ".build-cache/r0-rereview-probes.mjs": "fad2d9b4071d60896af07d075972c25684472a2dd20ed979dc9940a296d89fd4"
+  }
+}

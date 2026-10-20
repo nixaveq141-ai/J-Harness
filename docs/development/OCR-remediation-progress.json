@@ -1,23 +1,32 @@
 {
   "updatedAt": "2026-10-20",
   "phase": "R0",
-  "status": "LOCAL_BASELINE_READY",
+  "status": "LOCAL_BASELINE_WITH_CONFIRMED_GAPS",
   "details": "docs/development/OCR-R0-remediation-2026-10-20.md",
   "productMilestone": "M10.5.9",
   "productStatus": "LOCAL_PARTIAL_CI_PENDING",
   "m11Eligible": false,
+  "r0Rereview": {
+    "sessionId": "eed6a134-1d3b-4e89-adaa-a0e9b2ba1f19",
+    "status": "REVIEW_COMPLETE_FIXES_NOT_STARTED",
+    "opinions": 37,
+    "accepted": 26,
+    "partial": 10,
+    "rejected": 1,
+    "details": "docs/development/OCR-R0-rereview-2026-10-20.md"
+  },
   "tasks": {
     "R0-01": {
-      "status": "BASELINE_VALIDATED_PIPELINE_PENDING",
-      "description": "当前门禁修复及离线反例已验证；完整同运行发布流水线待重新采集，不沿用历史PASS"
+      "status": "BASELINE_GAPS_CONFIRMED",
+      "description": "前轮基线已交付；复审确认跨平台及来源链缺口，待按R0复审记录修复并重采完整流水线"
     },
     "R0-02": {
-      "status": "BASELINE_VALIDATED",
-      "description": "有界输入、字节快照及新目录原子归档已验证；历史JSON未改写"
+      "status": "BASELINE_GAPS_CONFIRMED",
+      "description": "前轮专项通过；复审确认XML读取、manifest名及其他边界缺口，待补负例和修复，历史JSON不改写"
     },
     "R0-03": {
-      "status": "BASELINE_VALIDATED_FOLLOWUPS_OPEN",
-      "description": "独立门禁负例与本地回归基线已建立；300条测试意见继续随R1～R6交付，最终WebKit content复验失败保留待定位"
+      "status": "BASELINE_FOLLOWUPS_OPEN",
+      "description": "复审确认路径别名/矩阵入口/清理等回归缺口；原300条随R1～R6交付，WebKit content失败仍待定位"
     }
   }
 }
