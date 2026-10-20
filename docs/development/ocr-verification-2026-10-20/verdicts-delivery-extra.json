@@ -1,0 +1,808 @@
+[
+  {
+    "id": "OCR-1941",
+    "status": "accepted",
+    "reason": "provider写入目标是must-not-write.txt，而断言读取note.txt，后者内容固定question evidence；不能发现实际写入目标被越权执行。保留approvals.length检查并直接断言目标不存在。",
+    "evidence": [
+      "frontend/tests/questions.mjs:64"
+    ],
+    "repairGroup": "fixture-question-boundaries",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1942",
+    "status": "accepted",
+    "reason": "skip后只检查SKIPPED，未检查posts里的skip/selected或持久selected为空，确弱于推荐项未提交的检查名称。补真实请求体与持久结果断言。",
+    "evidence": [
+      "frontend/tests/questions.mjs:77"
+    ],
+    "repairGroup": "fixture-question-boundaries",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1943",
+    "status": "accepted",
+    "reason": "radio键盘可聚焦检查实际仅!e.disabled，没有focus/Tab或activeElement；应执行真实键盘操作，不能把未禁用等同键盘可达。",
+    "evidence": [
+      "frontend/tests/questions.mjs:92"
+    ],
+    "repairGroup": "fixture-keyboard",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1944",
+    "status": "accepted",
+    "reason": "重启分支host.kill前没有像stop一样登记stoppedOrigins，受控旧主机只读诊断会被记unexpected errors。应只在这次受控停机前登记精确origin，保持其它异常失败。",
+    "evidence": [
+      "frontend/tests/questions.mjs:95",
+      "frontend/tests/runtime.mjs:14"
+    ],
+    "repairGroup": "fixture-controlled-shutdown",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1946",
+    "status": "rejected",
+    "reason": "子worker是仓库受信的TS/Python测试而非模型提供代码，完整继承环境是普通测试进程语义；夹具自行注入随机synthetic key并将工具命令环境交由生产白名单。未证明无关环境值被输出/泄漏，不泛化要求所有本机测试子进程最小环境。",
+    "evidence": [
+      "sdk/tests/run.mjs:35"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-1949",
+    "status": "rejected",
+    "reason": "wire.every鉴权和请求正文脱敏断言就在报告前，失败即抛错；provider配置固定127.0.0.1、不转发，常量是构造性结论不是发生付费的证据。没有证明断言被跳过的当前路径，不据未来删断言假设立漏洞。",
+    "evidence": [
+      "sdk/tests/run.mjs:48"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-1950",
+    "status": "rejected",
+    "reason": "secret由synthetic-sdk-加randomUUID生成，不是真实JHARNESS_API_KEY；故意写large.txt用于产物脱敏反例，.build-cache受Git忽略且保留失败证据是项目约定。原意见将合成密钥误当真实密钥并要求删除取证目录。",
+    "evidence": [
+      "sdk/tests/run.mjs:32"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-1951",
+    "status": "partial",
+    "reason": "JSON.parse最后一行是测试客户端明确输出契约，解析最后任意可解析JSON反而可能吞错。采纳run层明确校验两语言report.checks非空/通过以及wire非空，提高独立运行收据完整性；逐场景顺序已有客户端断言，非目前零调用已通过的事实。",
+    "evidence": [
+      "sdk/tests/run.mjs:45"
+    ],
+    "repairGroup": "sdk-fixture-contract",
+    "priority": "P3"
+  },
+  {
+    "id": "OCR-1953",
+    "status": "partial",
+    "reason": "首批first显式查无secret，next/归档all/重建响应没有统一扫描；采纳对各已读取分页/范围的响应统一敏感值断言，不认为已有source片段脱敏实现被证明泄漏。",
+    "evidence": [
+      "frontend/tests/search.mjs:50"
+    ],
+    "repairGroup": "fixture-search-redaction",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1954",
+    "status": "partial",
+    "reason": "mock只记录raw.includes(secret)，未记录raw是否含Web token；采纳把固定token纳入敏感集合并核对provider header只为synthetic provider key，不声称已观察到token透传。",
+    "evidence": [
+      "frontend/tests/search.mjs:1"
+    ],
+    "repairGroup": "fixture-search-redaction",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1957",
+    "status": "partial",
+    "reason": "工作区注册直接取body.workspaces.find，错误时fail-closed但只剩TypeError；采纳状态码/命名目标存在断言以保留真正拒绝原因，非假绿漏洞。",
+    "evidence": [
+      "frontend/tests/search.mjs:31"
+    ],
+    "repairGroup": "fixture-http-contract",
+    "priority": "P3"
+  },
+  {
+    "id": "OCR-1958",
+    "status": "accepted",
+    "reason": "XSS场景只fill <script>查询且立即等待加载标记不可见，可能还未进入/完成请求；innerHTML插script本来也不触发执行。需持久带img/onerror的命中正文、等待最终结果并检查DOM/文本/脚本未执行。",
+    "evidence": [
+      "frontend/tests/search.mjs:69"
+    ],
+    "repairGroup": "fixture-search-xss",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1959",
+    "status": "partial",
+    "reason": "损坏索引后只核rebuiltSessions及事实文件未变，未核该响应命中内容。采纳同会话boost结果/数量断言；在无并发检索步骤时直接损坏缓存是有意故障注入，不要求取消此反例或承诺当前已有竞态。",
+    "evidence": [
+      "frontend/tests/search.mjs:56"
+    ],
+    "repairGroup": "fixture-search-rebuild",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1963",
+    "status": "accepted",
+    "reason": "events do/while确无status、页数上限、游标重复集合；同next+more可在until内部无限await，外层until也不能超时。加每页状态/结构、前进/页数断言，使产品分页回归有界失败。",
+    "evidence": [
+      "frontend/tests/turns.mjs:52"
+    ],
+    "repairGroup": "fixture-pagination-bounds",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1964",
+    "status": "rejected",
+    "reason": "宿主close按显式有界取消/关闭流程退出，不应为等到80秒模型HTTP timeout才算正确；30秒退出夹具是合理门限。不能按模型requestTimeout直接推导合法关闭需要80秒，也不建议把异常停机等待加长掩盖生命周期回归。",
+    "evidence": [
+      "frontend/tests/turns.mjs:41"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-1965",
+    "status": "accepted",
+    "reason": "start确output清空，最终outputRedacted只覆盖最后宿主；maintain输出只局部text并仅失败时输出，没有成功输出脱敏断言。应各次宿主/维护命令结算扫描或汇总到独立有界安全缓冲，保持原秘密不输出。",
+    "evidence": [
+      "frontend/tests/turns.mjs:36"
+    ],
+    "repairGroup": "fixture-turn-output-redaction",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1966",
+    "status": "rejected",
+    "reason": "重复replaceAll是小规模测试诊断处理，未指出现有任一调用漏掉实际key/token；抽函数可随相关改动做，无需独立修复/测试阶段，不将重复本身当凭据外泄。",
+    "evidence": [
+      "frontend/tests/turns.mjs:136"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-1967",
+    "status": "rejected",
+    "reason": "slow-current与slow-exit各在本次运行创建一次，调用holds.has后才get；没有原意见所谓同goal上一轮条目使前提瞬间满足的当前执行路径。缺项会明确使测试失败，不是产品恢复被误计通过。",
+    "evidence": [
+      "frontend/tests/turns.mjs:118"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-1968",
+    "status": "rejected",
+    "reason": "send在当前流程仅对slow-current释放一次，slow-exit故意不回响应而由停服销毁；没有二次send/相同goal覆盖的执行步骤。以假想后续重复调用要求一次性容器，不作为现有缺陷。",
+    "evidence": [
+      "frontend/tests/turns.mjs:24"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-1969",
+    "status": "rejected",
+    "reason": "最后一次slow-exit明确被hold且stop后验证socket.destroyed，后续没有新模型请求；CLI verify-request本身核对事件是否仍pending，已结算事件会拒绝。缺id会失败，不会给已答请求静默作废确认。",
+    "evidence": [
+      "frontend/tests/turns.mjs:120"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-1970",
+    "status": "rejected",
+    "reason": "id来自本测试自有受信服务和已验证创建流程，不是对外用户输入；生产API/CLI另校验Session ID。假想改坏服务使测试读错本地夹具路径不构成生产文件边界缺陷，未证明当前id可由模型控制。",
+    "evidence": [
+      "frontend/tests/turns.mjs:119"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-1971",
+    "status": "rejected",
+    "reason": "reload发生在点击核对消息受理之前，未决third输入此时仍保留；原意见把后面的清空断言提前套用。一次dialog接受是本次带未决草稿刷新所需，未证明监听实际遗留并放行其它对话框。",
+    "evidence": [
+      "frontend/tests/turns.mjs:87"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-1972",
+    "status": "partial",
+    "reason": "此行名称说continuation composer但实际只看heading；采纳直接检查后续消息编辑器。后续fill/send已要求编辑器存在，不能把这一弱行推论成整个多轮套件完全未覆盖编辑器。",
+    "evidence": [
+      "frontend/tests/turns.mjs:76"
+    ],
+    "repairGroup": "fixture-turn-composer",
+    "priority": "P3"
+  },
+  {
+    "id": "OCR-2038",
+    "status": "partial",
+    "reason": "XML头计数未与testcase数逐suite核对是真实缺口；采纳共享当前收集器增加数量/必需case集合校验。不采纳len(suites)==len(modules)，模块有多suite且部分生产模块测试在testkit集中，强制每module一报告错误。旧阶段331常量不改作新验收。",
+    "evidence": [
+      "scripts/collect-m1052-evidence.py:39"
+    ],
+    "repairGroup": "evidence-java-case-counts",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-2039",
+    "status": "rejected",
+    "reason": "该M10.5.2历史collector按当时文件集采集并在JAR/UI步骤检查关键业务类与资源，不应为已结束快照追溯扩大必需输入；当前M10.5.9有独立完整inputs。未展示原记录缺文件实际通过，缺失必需输入的现行统一门禁另处理。",
+    "evidence": [
+      "scripts/collect-m1052-evidence.py:84"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-2044",
+    "status": "partial",
+    "reason": "workflow确显式构造DBus缺失与锁定，probe又验证unavailable/checks；不能将三场景说成仅布尔伪造。采纳在现行合并门禁复核不可用receipt的完整一致性，避免顶层标志与子字段矛盾，根因不是任意异常都算不可用。",
+    "evidence": [
+      "scripts/collect-m1054-native-evidence.py:55",
+      "scripts/test-native-credentials.py:24",
+      ".github/workflows/native-credentials.yml:69"
+    ],
+    "repairGroup": "native-receipt-consistency",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-2045",
+    "status": "rejected",
+    "reason": "缺证据FileNotFoundError已非零封闭退出，不会写PASS；docs/testing在仓库必有。统一错误文案/mkdir仅便利性，非当前门禁绕过，不逐一修改已结束的历史collector。",
+    "evidence": [
+      "scripts/collect-m1054-native-evidence.py:41"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-2061",
+    "status": "rejected",
+    "reason": "本专项明确只认证原生credentials增量，sourceCommit绑定280份Java/POM；本地UI/JAR一致性另为本地回归，不宣称CI全前端矩阵通过。将当前全树发布要求套此历史原生专项会扩大已批准认证范围。",
+    "evidence": [
+      "scripts/collect-m1054-native-ci-evidence.py:35"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-2062",
+    "status": "accepted",
+    "reason": "CI合并器只看expectedUnavailable/passed/exitCode，而producer本已要求credentialStore=unavailable且checks={cleanup:false}；合并器应重验这一一致性，不能盲信expectationMet，否则可接受内部矛盾receipt。不把同Java探针的三种真实环境说成伪造。",
+    "evidence": [
+      "scripts/collect-m1054-native-ci-evidence.py:72",
+      "scripts/test-native-credentials.py:24"
+    ],
+    "repairGroup": "native-receipt-consistency",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-2069",
+    "status": "rejected",
+    "reason": "此collector同时读settings/browser/launcher/diagnosis/history/turns，某些收据按当时契约无sourceSha256或无screenshots（launcher）。强制每份两字段非空会错误拒绝合法收据；应在现行按fixture定义必需字段，不能一刀切追溯修旧档。",
+    "evidence": [
+      "scripts/collect-m1053-evidence.py:61"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-2073",
+    "status": "partial",
+    "reason": "共享release collector确只以>=296及XML头计数，采纳按milestone检查实际testcase集合/计数，且旧296不充当M10.5.9完整认证。拒绝每模块至少一suite的建议，实际集中testkit；M10.5.9另有410精确门禁，原意见不能证明当前M11绕过。",
+    "evidence": [
+      "scripts/collect-release-evidence.py:38",
+      "scripts/collect-m1059-evidence.py:28"
+    ],
+    "repairGroup": "evidence-java-case-counts",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-2074",
+    "status": "partial",
+    "reason": "JAVA_HOME下标和-version未check返回码确可留下无效javaRuntime；采纳共享release收集器明确可执行文件/退出状态/版本非空，不能把环境缺失时非零异常说成假通过。",
+    "evidence": [
+      "scripts/collect-release-evidence.py:46"
+    ],
+    "repairGroup": "release-environment-diagnostics",
+    "priority": "P3"
+  },
+  {
+    "id": "OCR-2075",
+    "status": "partial",
+    "reason": "java.version缺value会把None并入集合后sorted与str冲突，完全缺版本也输出空list。采纳拒绝缺/空版本并给明确诊断，不默默过滤后制造完整元数据。",
+    "evidence": [
+      "scripts/collect-release-evidence.py:33"
+    ],
+    "repairGroup": "release-environment-diagnostics",
+    "priority": "P3"
+  },
+  {
+    "id": "OCR-2077",
+    "status": "rejected",
+    "reason": "GitHub CI同时提供RUN_ID/REPOSITORY，git在本仓库运行；不满足环境时KeyError/CalledProcessError已经非零拒绝。假想部分环境变量/不在Git仓库并不是PASS绕过，不为通用外部运行改共享约束。",
+    "evidence": [
+      "scripts/collect-release-evidence.py:57"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-2110",
+    "status": "rejected",
+    "reason": "这是M10.5.6历史collector，主清单已哈希fixture脚本并绑定同JAR/Java来源；当前M10.5.9 inputs覆盖scripts。没有证明原生探针被改后错用于最终结果，不追溯给旧阶段collector加新schema。",
+    "evidence": [
+      "scripts/collect-m1056-evidence.py:68"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-2115",
+    "status": "partial",
+    "reason": "生成器明确拒绝链接且要求SHA512/license，只支持受审npm registry lock条目；缺metadata应清晰拒绝而非建议跳过integrity掩盖来源。采纳缺version/integrity/resolved诊断和受支持来源说明，非必须支持git/file依赖。",
+    "evidence": [
+      "scripts/frontend-sbom.py:42"
+    ],
+    "repairGroup": "frontend-sbom-format",
+    "priority": "P3"
+  },
+  {
+    "id": "OCR-2116",
+    "status": "accepted",
+    "reason": "ref只由npm name@version生成，runtime按安装路径逐项输出，同版本双安装路径会重复bom-ref且边可不同。应按实例唯一ref或明确合并组件/边并校验ref唯一；当前6依赖没有重复不否定生成器处理合法lock的缺陷。",
+    "evidence": [
+      "scripts/frontend-sbom.py:26"
+    ],
+    "repairGroup": "frontend-sbom-graph",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-2117",
+    "status": "partial",
+    "reason": "edges无条件合并optionalDependencies与所有peers后resolve缺失即抛错，合法未安装optional会被错误拒绝。采纳区分必需/可选并核对实际安装边；原例vite是dev已被runtime过滤，不证明当前锁文件因此构建失败。",
+    "evidence": [
+      "scripts/frontend-sbom.py:51"
+    ],
+    "repairGroup": "frontend-sbom-graph",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-2118",
+    "status": "accepted",
+    "reason": "根只连接dependencies而runtime包含非dev optional，新增根optional后component可成为孤儿；将实际安装的根optional纳入根边并验证可达性。不能要求未安装可选组件必有条目。",
+    "evidence": [
+      "scripts/frontend-sbom.py:54"
+    ],
+    "repairGroup": "frontend-sbom-graph",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-2119",
+    "status": "accepted",
+    "reason": "license.id直接接受任意license字符串，表达式/SEE LICENSE文本会被错标为单SPDX标识。按已知ID、SPDX expression或name分类并校验BOM schema；保留原许可文本不猜归类。",
+    "evidence": [
+      "scripts/frontend-sbom.py:47"
+    ],
+    "repairGroup": "frontend-sbom-format",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-2147",
+    "status": "rejected",
+    "reason": "加载的是with_name固定存在.py源码，同仓库测试需要该模块；路径变更/文件缺失应测试收集失败，未校spec不是错加载后所有用例静默失效的证据。",
+    "evidence": [
+      "scripts/test-m1059-gates.py:6"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-2148",
+    "status": "accepted",
+    "reason": "当前负例仅assertRaises(ValueError)，aggregate多道门均同类型；fixture坏到其它门时会掩盖目标门被删。使用特定诊断/错误码匹配并保留正例，必要时mutation确认目标门确被覆盖。",
+    "evidence": [
+      "scripts/test-m1059-gates.py:24"
+    ],
+    "repairGroup": "ci-gate-negative-tests",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-2149",
+    "status": "accepted",
+    "reason": "聚合器有paid/dirty、Java各计数、UI/commit/case集合条件，现测试只覆盖4种拒绝；这些是M11实际准入不变量，补一字段一负例和跨OS差异反例有独立价值。",
+    "evidence": [
+      "scripts/test-m1059-gates.py:29"
+    ],
+    "repairGroup": "ci-gate-negative-tests",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-2150",
+    "status": "partial",
+    "reason": "manifest要求file属性字典严格等于{name:mozglue.dll}，当前各种路径都已拒绝。采纳低成本Windows路径/绝对路径边界反例以守护这个明确安全契约，不声称当前存在穿越。",
+    "evidence": [
+      "scripts/test-m1059-gates.py:36"
+    ],
+    "repairGroup": "browser-manifest-negative-tests",
+    "priority": "P3"
+  },
+  {
+    "id": "OCR-2151",
+    "status": "partial",
+    "reason": "缺assembly目前bytes.index会抛ValueError，fail-closed；采纳缺清单二进制负例及明确错误，不将异常与显式拒绝的诊断差异夸成现已放行。",
+    "evidence": [
+      "scripts/test-m1059-gates.py:34"
+    ],
+    "repairGroup": "browser-manifest-negative-tests",
+    "priority": "P3"
+  },
+  {
+    "id": "OCR-2157",
+    "status": "rejected",
+    "reason": "M10.5.8特定旧collector在tests目录只有文件时有效，目录新增会失败而非假通过；当前新collector已用p.is_file过滤递归。无需为了未来目录重组修历史采集脚本。",
+    "evidence": [
+      "scripts/collect-m1058-evidence.py:80"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-2158",
+    "status": "rejected",
+    "reason": "固定.py模块加载不需动态后缀猜测，scanner没有dataclass/相对import。假想今后改名或新增dataclass不是当前失败/静默未测，不添加推测性导入保护。",
+    "evidence": [
+      "scripts/test-source-secrets.py:5"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-2159",
+    "status": "partial",
+    "reason": "findings当前只返回pattern/line，不返回任何match值；原断言不会漏掉现行真实输出。采纳按接口约定校验所有元素只含这两键及预期数量，防今后增加泄密context，去掉不相干decode假想。",
+    "evidence": [
+      "scripts/test-source-secrets.py:10",
+      "scripts/scan-source-secrets.py:19"
+    ],
+    "repairGroup": "secret-scanner-output-contract",
+    "priority": "P3"
+  },
+  {
+    "id": "OCR-2160",
+    "status": "rejected",
+    "reason": "一个固定输入无命中是可理解的同一负例，任何误报均会失败；拆成两个test仅改善诊断，未增强关键断言，不独立立修复阶段。",
+    "evidence": [
+      "scripts/test-source-secrets.py:13"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-2170",
+    "status": "accepted",
+    "reason": "oracle的javac/java未传env，加载并初始化模型生成Calculator类；父进程含真实DEEPSEEK_API_KEY，stdout又原样进入independentOracle。隔离oracle环境且扫描/限制输出，不能只信模型代码子串黑名单。",
+    "evidence": [
+      "scripts/live-evaluate.py:41"
+    ],
+    "repairGroup": "paid-evaluation-isolation",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-2171",
+    "status": "partial",
+    "reason": "log不存在/只含头时budget为空即0，恢复分支亦0且把目录记recorded；无法证明没有付费调用。采纳缺失/损坏成本证据fail-closed待核实并预先保守保留。正常日志先有budget再请求，不能仅凭理论不一致声称18元历史已超支。",
+    "evidence": [
+      "scripts/live-evaluate.py:140"
+    ],
+    "repairGroup": "paid-evaluation-accounting",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-2172",
+    "status": "accepted",
+    "reason": "audit-only确直接用当前目录重跑并覆盖历史independentOracle，未核run.sourceSha256/cliJarSha256。应先比对快照，变化标STALE或保存新独立审计结果，保留原回执而非覆写。",
+    "evidence": [
+      "scripts/live-evaluate.py:168"
+    ],
+    "repairGroup": "paid-evaluation-evidence",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-2173",
+    "status": "rejected",
+    "reason": "利用前提是模型流式stdout与审批混流，但本脚本生成config未启用streaming；CliApplication只有streaming==true才原文打印模型流。当前APPROVAL由可信interact生成，未证明模型可伪造该行。未来若开启流式，应另做结构化提示关联，不能作为当前绕过结论。",
+    "evidence": [
+      "scripts/live-evaluate.py:117"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-2174",
+    "status": "accepted",
+    "reason": "classpath确把模型target/classes放在oracle_dir前，且默认包名EvaluationOracle可被同名模型编译类遮蔽。可信oracle先行、专用包/独立加载与CodeSource校验；不以只打印PASS作为可信性。",
+    "evidence": [
+      "scripts/live-evaluate.py:39"
+    ],
+    "repairGroup": "paid-evaluation-isolation",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-2175",
+    "status": "partial",
+    "reason": "allowed对edit_file优先取content而实际写newText，且Java Unicode词法/文件API足以绕过字符串黑名单，不能把它视隔离。采纳审核真实字段并将不可信编译执行移入最小权限环境；普通模型代码能写仓库外路径不代表生产工具权限已被绕过，是此付费辅助脚本执行边界不足。",
+    "evidence": [
+      "scripts/live-evaluate.py:52"
+    ],
+    "repairGroup": "paid-evaluation-isolation",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-2176",
+    "status": "accepted",
+    "reason": "calculator goal明确先读已有测试，但argv require-read仅pom/source；expect-file不会证明读取顺序。calculator分支加test必读并保留broken-project不改测试要求。",
+    "evidence": [
+      "scripts/live-evaluate.py:94"
+    ],
+    "repairGroup": "paid-evaluation-goal-evidence",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-2177",
+    "status": "partial",
+    "reason": "660秒异常路径在finally之后直接抛出，cli-output和成本收据不会落盘是真实取证缺口。采纳异常/取消也写有界脱敏输出并保守保留成本；duration600是总预算，不能机械相加90声称690都是合法运行或简单延长超时。",
+    "evidence": [
+      "scripts/live-evaluate.py:107"
+    ],
+    "repairGroup": "paid-evaluation-accounting",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-2183",
+    "status": "accepted",
+    "reason": "smoke-candidate无not __debug__防护，外部产物/进程结果断言全用assert，-O剥除后仍写PASS。入口拒绝优化模式或用显式require；优化模式负例不得产出PASS。",
+    "evidence": [
+      "scripts/smoke-candidate.py:92"
+    ],
+    "repairGroup": "python-assert-gates",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-2184",
+    "status": "accepted",
+    "reason": "ZIP名称做边界检查但manifest.files名称未经同等验证直接install/name读文件，也未要求manifest覆盖全部安装文件；可逃逸读并让启动器未被摘要约束。规范化所有manifest路径、拒绝越界/重复并验证完整集合。",
+    "evidence": [
+      "scripts/smoke-candidate.py:70"
+    ],
+    "repairGroup": "candidate-manifest-boundary",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-2185",
+    "status": "partial",
+    "reason": "固定本地CLI按Content-Length发请求，空replies表示意外请求，应让测试明确失败。采纳服务线程记录失败原因并受控500/长度错误响应；不为这个封闭测试服务实现任意chunked协议扩展。",
+    "evidence": [
+      "scripts/smoke-candidate.py:34"
+    ],
+    "repairGroup": "fixture-http-contract",
+    "priority": "P3"
+  },
+  {
+    "id": "OCR-2186",
+    "status": "partial",
+    "reason": "等待provider已收到请求后才读controls，控制文件短暂变化仍可能使read_text抛错；采纳有界重试/一致快照。status格式是自有生产协议，不应无依据改为宽松正则接受格式漂移。",
+    "evidence": [
+      "scripts/smoke-candidate.py:133"
+    ],
+    "repairGroup": "candidate-smoke-control-snapshot",
+    "priority": "P3"
+  },
+  {
+    "id": "OCR-2187",
+    "status": "partial",
+    "reason": "异常assert会把stdout/stderr原文包含在异常元组，若合成key回显会写日志；扫描范围也只含metadata。采纳失败诊断先脱敏及明确安装/工作区扫描范围，不承诺扫描整个宿主任意cwd发现所有秘密。",
+    "evidence": [
+      "scripts/smoke-candidate.py:1"
+    ],
+    "repairGroup": "candidate-smoke-redaction",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-2188",
+    "status": "rejected",
+    "reason": "未使用sys/time属低影响清理，与本轮正确性/安全修复无实质关系，可随真正修改顺手整理，不单列阶段。",
+    "evidence": [
+      "scripts/smoke-candidate.py:1"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-2189",
+    "status": "partial",
+    "reason": "archive.read_bytes在try前，缺包不写INCOMPLETE；output写失败亦无单独诊断。采纳统一入口失败收据及原子写/保留原始错误，不使用吞掉写入错误后返回成功的best-effort。",
+    "evidence": [
+      "scripts/smoke-candidate.py:171"
+    ],
+    "repairGroup": "candidate-smoke-receipt",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-2190",
+    "status": "partial",
+    "reason": "缺JAVA_HOME/JAR会封闭失败，不会验证成功；但应显式验证工具链路径并以当前构建输入摘要绑定artifact，mtime只是辅助不可作为唯一真实性。采纳与2191统一新运行身份，拒绝仅凭旧JAR一致hash就称过期已发生。",
+    "evidence": [
+      "scripts/test-windows-credential-compat.py:54"
+    ],
+    "repairGroup": "native-compat-receipt",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-2191",
+    "status": "accepted",
+    "reason": "成功末尾才覆盖固定windows-compat.json，若新run在javac/JVM前失败旧PASS仍在且同JAR collector可能复用。开始记录本run INCOMPLETE，成功原子发布并由collector核runId/退出状态。",
+    "evidence": [
+      "scripts/test-windows-credential-compat.py:66"
+    ],
+    "repairGroup": "native-compat-receipt",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-2192",
+    "status": "partial",
+    "reason": "parse stdout在returncode判定之前，JVM崩溃丢stderr且不更新旧报告；采纳先检查code/输出结构并写失败收据，stderr必须有界脱敏，不能原文尾部不加处理就写。",
+    "evidence": [
+      "scripts/test-windows-credential-compat.py:62"
+    ],
+    "repairGroup": "native-compat-receipt",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-2193",
+    "status": "accepted",
+    "reason": "target只在Java里随机生成，JVM被timeout强杀finally无法删除，Python既不知道target也无外层清理。Python生成专用target并传入，超时后只清理本次目标并报告结果；不触碰其它凭据。",
+    "evidence": [
+      "scripts/test-windows-credential-compat.py:61"
+    ],
+    "repairGroup": "native-compat-cleanup",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-2194",
+    "status": "partial",
+    "reason": "git show读取固定本地commit不会触发远端凭据，但浅克隆对象缺失会直接退出而不写本次失败收据。采纳明确历史对象存在检查和有界git退出诊断，不将本地show说成可能自动联网认证。",
+    "evidence": [
+      "scripts/test-windows-credential-compat.py:17"
+    ],
+    "repairGroup": "native-compat-receipt",
+    "priority": "P3"
+  },
+  {
+    "id": "OCR-2195",
+    "status": "rejected",
+    "reason": "被替换历史源码固定fdd326b，当前其中SystemCredentials是目标类/构造器名称；没有证明其它字符串/标识符语义被改坏。为未来任意历史版本设计Java重命名器没有必要，应继续固定精确受审输入。",
+    "evidence": [
+      "scripts/test-windows-credential-compat.py:18"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-2196",
+    "status": "accepted",
+    "reason": "独立公开loopback示例直接int/JSON/body.messages访问，非法输入会断连接并traceback；补Content-Length/对象/消息结构错误400/413，保留仅loopback不转发。",
+    "evidence": [
+      "sdk/examples/loopback_provider.py:7"
+    ],
+    "repairGroup": "sdk-loopback-provider-bounds",
+    "priority": "P3"
+  },
+  {
+    "id": "OCR-2197",
+    "status": "partial",
+    "reason": "handler确无socket读取超时，半发Content-Length可占线程；采纳每连接超时/长度上限与断流错误处理。BufferedReader.read(n)会等满或EOF，不是一般一次TCP分片必读少；HTTPServer.timeout仅影响serve等待而非socket读取，不能照原建议直接设置类timeout算修复。",
+    "evidence": [
+      "sdk/examples/loopback_provider.py:11"
+    ],
+    "repairGroup": "sdk-loopback-provider-bounds",
+    "priority": "P3"
+  },
+  {
+    "id": "OCR-2198",
+    "status": "partial",
+    "reason": "字段名sameJavaPomSources本就限定Java/POM，不应强说必须含所有resources才名副其实。采纳共享现行门禁的完整输入/JAR绑定，不追溯重标M8；probe确核最终JAR hash与时间，不是完全无关联。",
+    "evidence": [
+      "scripts/verify-m8-closure.py:70"
+    ],
+    "repairGroup": "evidence-build-input-binding",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-2199",
+    "status": "partial",
+    "reason": "写失败导致非零拒绝符合门禁fail-closed，但可区别VALIDATION_FAILED/PUBLISH_FAILED并原子发布避免半JSON。合并现行证据事务任务，旧M8收据不改。",
+    "evidence": [
+      "scripts/verify-m8-closure.py:114"
+    ],
+    "repairGroup": "evidence-publish-transaction",
+    "priority": "P3"
+  },
+  {
+    "id": "OCR-2200",
+    "status": "partial",
+    "reason": "sha与两次read_text确为独立读取；采纳一次bytes用于摘要和SUCCESS/FAILURE检查，减少读取并保证内容一致，不宣称现有静态本地证据已被攻击替换。",
+    "evidence": [
+      "scripts/verify-m8-closure.py:51"
+    ],
+    "repairGroup": "evidence-snapshot-read",
+    "priority": "P3"
+  },
+  {
+    "id": "OCR-2201",
+    "status": "partial",
+    "reason": "ET.ParseError/AttributeError确不在except中，仍非零失败但诊断风格不一致。采纳当前共享验证器明确输入结构错误处理，不为了旧文件字段None把异常当通过。",
+    "evidence": [
+      "scripts/verify-m8-closure.py:117"
+    ],
+    "repairGroup": "evidence-input-diagnostics",
+    "priority": "P3"
+  },
+  {
+    "id": "OCR-2202",
+    "status": "partial",
+    "reason": "fromisoformat接受naive且timestamp用本地时区，缺offset输入可错误判新鲜；采纳要求offset与冻结JAR元数据快照。现有capturedAt带Z/offset正常，不否认历史执行结果。",
+    "evidence": [
+      "scripts/verify-m8-closure.py:88"
+    ],
+    "repairGroup": "evidence-snapshot-time",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-2203",
+    "status": "rejected",
+    "reason": "--evidence-dir/--jar/--output是本机操作者显式CLI授权路径，可用于校验下载/其它位置JAR，JSON内部路径另local限制。命令行路径不等于不可信报告路径，强制全在ROOT会破坏正常离线审计用法；未声明只读仓库内参数。",
+    "evidence": [
+      "scripts/verify-m8-closure.py:109"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-2204",
+    "status": "accepted",
+    "reason": "test-open-workbench无__debug__门禁，-O会剥离认证/生命周期assert但仍写PASS；与smoke统一拒绝优化模式或显式require，验证-O不产通过收据。",
+    "evidence": [
+      "scripts/test-open-workbench.py:85"
+    ],
+    "repairGroup": "python-assert-gates",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-2205",
+    "status": "accepted",
+    "reason": "readiness超时分支关stdin后wait15若TimeoutExpired，未清理自有PowerShell/Java，可能残留占用锁/端口。补有界自有进程树清理并保留原超时诊断，不能按旧PID误杀无关实例。",
+    "evidence": [
+      "scripts/test-open-workbench.py:52"
+    ],
+    "repairGroup": "launcher-timeout-cleanup",
+    "priority": "P2"
+  }
+]

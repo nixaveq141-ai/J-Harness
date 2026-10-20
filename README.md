@@ -1,5 +1,7 @@
 # J-Harness
 
+2026-10-20：2457 条 OCR 意见的逐条核实与分阶段治理见[核实报告](docs/development/code-review-2026-10-20.md)和[修复计划](docs/requirements/OCR-remediation-plan-2026-10-20.md)。本轮只做核实/规划，产品修复未实施；M10.5.9及M11准入仍按实际验收证据判断。
+
 后续开发已按用户要求插入 **M10.5工作台完善 → M11 Desktop → M12扩展**。M10.5包含九个切片，当前.1～.8已完成本地验收，.9整阶段验收实施中，覆盖多轮交互、会话容量/管理、错误恢复、模型协议、提问、展示、扩展、检索/SDK及整阶段验证；详细顺序和验收见[M10.5计划](docs/requirements/M10.5-workbench-improvement-plan.md)。M10.5.1已实现执行诊断、只读核实交接和权限选择，已完成本地验收，见[本片记录](docs/testing/M10.5.1-validation.md)。
 
 M10.5.2已支持工作区注册/切换、会话命名/置顶/分叉/导出/归档/恢复和分页，解除累计32条后不能新建的问题；使用见[会话管理](docs/examples/m10.5.2-history.md)。

@@ -1,0 +1,5002 @@
+[
+  {
+    "id": "OCR-0050",
+    "status": "partial",
+    "reason": "Map.of确实拒绝第三方工具的null声明；应在注册/声明边界报带工具名的契约错误，不能静默补空schema改变工具输入语义。现有内建声明不构成已发生故障。",
+    "evidence": [
+      "harness-agent/src/main/java/io/jharness/agent/DefaultPromptComposer.java:32"
+    ],
+    "repairGroup": "spi-validation",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0051",
+    "status": "partial",
+    "reason": "声明使用Map.of，键序不保证；接受稳定序列化以便证据比较，provider缓存受影响未有测量证据，不按缓存故障立项。",
+    "evidence": [
+      "harness-agent/src/main/java/io/jharness/agent/DefaultPromptComposer.java:25"
+    ],
+    "repairGroup": "stable-wire",
+    "priority": "P3"
+  },
+  {
+    "id": "OCR-0052",
+    "status": "rejected",
+    "reason": "两层Values.snapshot用于构造边界不可变性；没有大配置性能测量，直接移除快照可能失去隔离，不列修复。",
+    "evidence": [
+      "harness-agent/src/main/java/io/jharness/agent/DefaultPromptComposer.java:16"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0054",
+    "status": "partial",
+    "reason": "actualCost强转未经校验确实存在；标准Loop先maximumCost再对同一prepared请求actualCost，不能推导正常路径绕过预算。补公共SPI输入校验及一致错误码，不宣称当前预算绕过。",
+    "evidence": [
+      "harness-agent/src/main/java/io/jharness/agent/ConfiguredTokenCostGuard.java:78"
+    ],
+    "repairGroup": "cost-contract",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0055",
+    "status": "rejected",
+    "reason": "currency为null确实在白名单contains拒绝，属于非法宿主配置的异常样式，未证明安全或正确性影响。",
+    "evidence": [
+      "harness-agent/src/main/java/io/jharness/agent/ConfiguredTokenCostGuard.java:38"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0059",
+    "status": "accepted",
+    "reason": "压缩时reader.events全读并把所有命中ID写进sourceEvents，长会话来源列表无界，需来源窗口/索引和写出上限，保留溯源与持久化前置。",
+    "evidence": [
+      "harness-agent/src/main/java/io/jharness/agent/ContextCompactionPlugin.java:67"
+    ],
+    "repairGroup": "compaction-bounds",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0060",
+    "status": "partial",
+    "reason": "sourceEvents收集全会话而非移除消息，关联粒度过宽；应明确来源集合语义并建立移除消息到事件的映射，不能据此认定恢复重放错误。",
+    "evidence": [
+      "harness-agent/src/main/java/io/jharness/agent/ContextCompactionPlugin.java:76"
+    ],
+    "repairGroup": "compaction-bounds",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0061",
+    "status": "rejected",
+    "reason": "requireUnique不支持同作用域按更高优先级覆盖；注册第二实现会歧义，不会实际由另一实现执行却记原类名。可替换须按装配契约替换原服务。",
+    "evidence": [
+      "harness-agent/src/main/java/io/jharness/agent/ContextCompactionPlugin.java:56"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0062",
+    "status": "partial",
+    "reason": "日志字符数只算messages，压缩判定同时算tools；接受统一测量并避免全量toString临时分配，现有字段不承担恢复权威。",
+    "evidence": [
+      "harness-agent/src/main/java/io/jharness/agent/ContextCompactionPlugin.java:62"
+    ],
+    "repairGroup": "compaction-bounds",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0063",
+    "status": "partial",
+    "reason": "插件直接EventSupport写摘要，writer包装不保证事件总线payload也脱敏。核对宿主sanitize/总线订阅链后在统一事件边界解决；不把自定义无脱敏宿主假设当默认持久泄露。",
+    "evidence": [
+      "harness-agent/src/main/java/io/jharness/agent/ContextCompactionPlugin.java:60"
+    ],
+    "repairGroup": "sanitize-boundaries",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0064",
+    "status": "rejected",
+    "reason": "M6契约明确context.compacted必须落盘flush后才请求；吞异常继续会违反durability，禁止采用best-effort建议。",
+    "evidence": [
+      "harness-agent/src/main/java/io/jharness/agent/ContextCompactionPlugin.java:45"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0070",
+    "status": "accepted",
+    "reason": "每删除一组即重建ChatRequest并对完整messages/tools做toString，长工具历史有重复遍历分配；用累计大小和一次构造，保持协议组不拆分。",
+    "evidence": [
+      "harness-agent/src/main/java/io/jharness/agent/ExtractiveContextCompactor.java:58"
+    ],
+    "repairGroup": "compaction-bounds",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0071",
+    "status": "accepted",
+    "reason": "代码仅保护groups最后一组；尾部普通user时最近assistant/tool组仍可被删除，违反M6最后协议组保护。补尾部user和文本assistant回归。",
+    "evidence": [
+      "harness-agent/src/main/java/io/jharness/agent/ExtractiveContextCompactor.java:42"
+    ],
+    "repairGroup": "compaction-protocol",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0072",
+    "status": "partial",
+    "reason": "再次压缩会截取旧摘要前60字符，确有递归信息损失；提取式摘要本来允许有损，不宜永久保护无界旧摘要，需明确有界递归压缩策略。",
+    "evidence": [
+      "harness-agent/src/main/java/io/jharness/agent/ExtractiveContextCompactor.java:44"
+    ],
+    "repairGroup": "compaction-protocol",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0073",
+    "status": "partial",
+    "reason": "工具摘录作为user消息有来源层级混淆；原文建议system反而提高权限不可采纳。保留角色/不可信引用边界并测试，不宣称能消除模型注入。",
+    "evidence": [
+      "harness-agent/src/main/java/io/jharness/agent/ExtractiveContextCompactor.java:60"
+    ],
+    "repairGroup": "compaction-protocol",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0074",
+    "status": "accepted",
+    "reason": "固定512摘录可占满1024预算使原本可容纳的受保护消息失败；需按受保护内容和工具声明剩余空间裁剪，保留真正超限拒绝。",
+    "evidence": [
+      "harness-agent/src/main/java/io/jharness/agent/ExtractiveContextCompactor.java:49"
+    ],
+    "repairGroup": "compaction-bounds",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0075",
+    "status": "partial",
+    "reason": "audit失败可覆盖catch中的原异常，确需保留首因和已发送/未发送事实；不能把发送前或重试必需审计一律吞掉继续请求，M8要求先落盘。",
+    "evidence": [
+      "harness-agent/src/main/java/io/jharness/agent/ModelResiliencePlugin.java:34"
+    ],
+    "repairGroup": "audit-failure",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0076",
+    "status": "rejected",
+    "reason": "requireUnique是作用域唯一服务契约，key不同并不意味着替换默认实现；改require(default)会静默忽略歧义。若需装配期诊断另作为优化，非运行语义缺陷。",
+    "evidence": [
+      "harness-agent/src/main/java/io/jharness/agent/ModelResiliencePlugin.java:58"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0077",
+    "status": "rejected",
+    "reason": "PluginContainer仅NEW时start并负责own撤销和close，不支持把关闭实例再启动；建议要求所有插件可重启缺乏契约依据。",
+    "evidence": [
+      "harness-agent/src/main/java/io/jharness/agent/ModelResiliencePlugin.java:30"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0092",
+    "status": "partial",
+    "reason": "等待审计在synchronized内做服务查找/I/O会延长监视器持有，接受缩小锁区间并保持等待计数原子；死锁尚无反向锁链证据。",
+    "evidence": [
+      "harness-agent/src/main/java/io/jharness/agent/BoundedModelExecution.java:44"
+    ],
+    "repairGroup": "audit-failure",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0093",
+    "status": "rejected",
+    "reason": "仅违规自定义HarnessException(null)触发，现有模型适配器均给出码；与基础异常code非空契约统一，不单列重试缺陷。",
+    "evidence": [
+      "harness-agent/src/main/java/io/jharness/agent/BoundedModelExecution.java:112"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0121",
+    "status": "accepted",
+    "reason": "异常结算每个未决call两次reader.events读取，确为重复全日志扫描；一次快照建立call索引即可，需保留UNKNOWN结算语义。",
+    "evidence": [
+      "harness-agent/src/main/java/io/jharness/agent/DefaultAgentLoop.java:337"
+    ],
+    "repairGroup": "session-read-bounds",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0122",
+    "status": "accepted",
+    "reason": "catch先按耗时改TIME_LIMIT会覆盖真实UNKNOWN/持久化失败码；需保留原始error及超时事实，测试超过期限后未知副作用仍不可重放。",
+    "evidence": [
+      "harness-agent/src/main/java/io/jharness/agent/DefaultAgentLoop.java:324"
+    ],
+    "repairGroup": "audit-failure",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0123",
+    "status": "partial",
+    "reason": "checkpoint.failed只publish且publish异常会覆盖首因；写盘失败时不能强制依赖同一损坏writer成功追加。保留原异常，持久诊断仅在可安全写入时补充。",
+    "evidence": [
+      "harness-agent/src/main/java/io/jharness/agent/DefaultAgentLoop.java:409"
+    ],
+    "repairGroup": "audit-failure",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0124",
+    "status": "rejected",
+    "reason": "model.requested后checkpoint/重建失败保留未决是M5/M8保守恢复契约；不能在持久化失败后伪造已拒绝或将checkpoint前移绕过请求事实落盘。可改善人工诊断，不自动清除。",
+    "evidence": [
+      "harness-agent/src/main/java/io/jharness/agent/DefaultAgentLoop.java:123"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0406",
+    "status": "rejected",
+    "reason": "Reply以clone拒绝null是构造边界非空防御；只是异常消息不足，不能据此列high缺陷或把非法null静默转换成功输出。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/CommandTransport.java:15"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0407",
+    "status": "rejected",
+    "reason": "DockerExecutionEnvironment对uncertain单独或OR拒绝，不会因exitCode=0忽略UNKNOWN；意见与源码判定相反。exitCode与uncertain可并存观察事实，不能强制抹去。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/CommandTransport.java:14"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0408",
+    "status": "rejected",
+    "reason": "Reply没有按数组内容作为身份的业务调用点，byte[]引用equals非现有去重缺陷；toString直接输出可能泄密，不接受为排障打印全文。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/CommandTransport.java:13"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0409",
+    "status": "partial",
+    "reason": "clone维护不可变边界不应删除；接受公共transport输出上限与实现契约，未证明现有有界NativeCommandTransport泄漏或GC故障。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/CommandTransport.java:20"
+    ],
+    "repairGroup": "transport-bounds",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0410",
+    "status": "accepted",
+    "reason": "CommandTransport只有一句注释，缺started/uncertain与超时取消关系；应明确实施契约并加替身违约回归，保持未知不重放。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/CommandTransport.java:7"
+    ],
+    "repairGroup": "transport-contract",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0417",
+    "status": "rejected",
+    "reason": "ContentPages内部三条调用链传入完整脱敏字符串和空串/规范version；null属于未支持SPI输入，意见假设的HTTP valueless映射未证实。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/ContentPages.java:13"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0418",
+    "status": "partial",
+    "reason": "每页sha(clean)确实全量编码散列；接受单次有界内容快照复用版本，不能仅按请求客户端offset无限缓存或放弃版本一致性验证。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/ContentPages.java:19"
+    ],
+    "repairGroup": "content-paging",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0419",
+    "status": "accepted",
+    "reason": "startLine用substring(0,offset).chars导致复制前缀，可无分配遍历或有界行索引，保持偏移语义。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/ContentPages.java:34"
+    ],
+    "repairGroup": "content-paging",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0420",
+    "status": "rejected",
+    "reason": "end>offset虽在当前16384规则下冗余，属于可读性防御条件，无正确性影响。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/ContentPages.java:23"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0421",
+    "status": "partial",
+    "reason": "偏移统一UTF16但JSON字段未直接说明单位，接受跨Python/JS接口文档及非BMP回归；源码拒绝落在low surrogate，意见声称高代理起始截断不成立。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/ContentPages.java:31"
+    ],
+    "repairGroup": "content-paging",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0422",
+    "status": "rejected",
+    "reason": "方法注释明确完整脱敏先于切片且三处调用均sanitize；对未来误用的推测不足以增加标志位接口，标志本身也不能证明脱敏。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/ContentPages.java:33"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0423",
+    "status": "accepted",
+    "reason": "encode先writeValueAsBytes后检查4MB，写出路径缺少有界流与对称约束；应限制序列化过程占用，深度循环保护沿用Values边界，不断言所有巨大图均可达。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/BoundedJson.java:29"
+    ],
+    "repairGroup": "transport-bounds",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0424",
+    "status": "partial",
+    "reason": "encode只限字节而decode还限100000token/64层，自产小字节多节点报文可能对端拒绝；统一对象协议限额。encode是通用Object方法而decode约定对象，null不可往返不必强求。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/BoundedJson.java:41"
+    ],
+    "repairGroup": "transport-bounds",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0425",
+    "status": "partial",
+    "reason": "StreamConstraintsException合并INVALID_JSON确实降低诊断粒度；可区分限额并保留安全cause，不能把解析错误建议为自动可重试。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/BoundedJson.java:46"
+    ],
+    "repairGroup": "transport-contract",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0426",
+    "status": "rejected",
+    "reason": "预扫描是绑定前节点上限门禁；在没有等效计数parser实现与性能证据前不能简单合并，4MB已有上限，不独立立项。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/BoundedJson.java:40"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0432",
+    "status": "rejected",
+    "reason": "两子插件stop当前为空，注册资源由同一context.own正确回滚；假设未来stop有资源不构成当前泄漏。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/EnvironmentPlugin.java:32"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0433",
+    "status": "partial",
+    "reason": "多次environment.processes调用可给可替换环境不同runner；捕获单实例利于一致装配，当前Docker无状态委托不构成实际不同管理器故障。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/EnvironmentPlugin.java:38"
+    ],
+    "repairGroup": "transport-contract",
+    "priority": "P3"
+  },
+  {
+    "id": "OCR-0434",
+    "status": "partial",
+    "reason": "terminal=unsupported分支仍调用terminal，公开provider若用抛异常表达不支持可启动失败；需统一descriptor与无终端契约。不接受忽略所有异常或默认注册虚假可用终端。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/EnvironmentPlugin.java:40"
+    ],
+    "repairGroup": "transport-contract",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0435",
+    "status": "rejected",
+    "reason": "意见自己确认容器仅NEW调用start；跨容器复用有资源插件实例不在保证内，不能以此要求插件重复start幂等。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/EnvironmentPlugin.java:30"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0436",
+    "status": "rejected",
+    "reason": "root/secrets非法null在下游构造边界拒绝，没有资源句柄被打开的证据；补参数名属于低价值风格调整，不入修复计划。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/LocalExecutionEnvironment.java:28"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0437",
+    "status": "accepted",
+    "reason": "LocalExecutionEnvironment.close的finally会覆盖terminal首个异常；合并suppressed并记录各资源清理结果，不能因末个异常丢失首因。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/LocalExecutionEnvironment.java:78"
+    ],
+    "repairGroup": "cleanup-evidence",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0438",
+    "status": "partial",
+    "reason": "LocalWorkspace独立对象关闭环境后仍可写，保留引用的公开files边界未撤销；需定义关闭后文件能力与在途操作边界，单在files()加检查无法撤销已取得引用。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/LocalExecutionEnvironment.java:77"
+    ],
+    "repairGroup": "scope-revocation",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0439",
+    "status": "rejected",
+    "reason": "System.getenv在JVM内稳定，两次白名单快照一致；意见未给出实际不同环境触发，属于消除重复调用偏好。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/LocalExecutionEnvironment.java:33"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0440",
+    "status": "accepted",
+    "reason": "dispatch对op及字段裸强转、number.intValue截断，非法请求变WORKER_IO；需严格类型/整数/范围校验与固定协议错误。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/EnvironmentWorker.java:44"
+    ],
+    "repairGroup": "transport-contract",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0441",
+    "status": "partial",
+    "reason": "两次version夹read不能证明读出字节与hash原子一致，ABA可返回不匹配文本；接受同一次读取派生版本，不宣称能解决不合作外部写者的所有丢更新问题。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/EnvironmentWorker.java:50"
+    ],
+    "repairGroup": "workspace-version",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0442",
+    "status": "partial",
+    "reason": "main把非法参数合并WORKER_IO不利诊断；应分类有界错误，不能原样输出未脱敏message/cause或stderr全文。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/EnvironmentWorker.java:31"
+    ],
+    "repairGroup": "transport-contract",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0443",
+    "status": "partial",
+    "reason": "响应encode在try之外，超限导致无结构响应；可在编码前后返回有界错误。EPIPE已断流不能保证再输出错误帧，应保持结果不确定而非重试。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/EnvironmentWorker.java:38"
+    ],
+    "repairGroup": "transport-bounds",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0444",
+    "status": "accepted",
+    "reason": "command模式与timeoutMs裸转换使小数截断，归并worker参数严格校验并在副作用进入前拒绝。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/EnvironmentWorker.java:131"
+    ],
+    "repairGroup": "transport-contract",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0445",
+    "status": "rejected",
+    "reason": "McpIo为包内帮助类，现有两transport构造均McpIo.bounded限制60秒非空；不存在给定超大/空duration入口，不独立立项。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/McpIo.java:35"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0446",
+    "status": "accepted",
+    "reason": "finally abort异常能覆盖MCP_OUTCOME_UNKNOWN，且只有interrupt无有界等待；需保留首因并明确工作线程退出/清理未知，不能改为确定未执行。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/McpIo.java:54"
+    ],
+    "repairGroup": "cleanup-evidence",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0447",
+    "status": "accepted",
+    "reason": "rejection把对端id=null塞进Map.of触发NPE，需明确支持/拒绝null id的结构化协议路径，不能把合法拒绝响应变传输崩溃。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/McpIo.java:73"
+    ],
+    "repairGroup": "mcp-protocol",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0448",
+    "status": "accepted",
+    "reason": "response只检jsonrpc/method/id，没有要求result/error互斥，畸形帧可提前闭合；需完整envelope验证和帧同步回归。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/McpIo.java:69"
+    ],
+    "repairGroup": "mcp-protocol",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0449",
+    "status": "partial",
+    "reason": "run在消费已完成future前检查取消可能过度UNKNOWN，接受确定结果与deadline规则；UNKNOWN本身阻止重放，意见声称必然重复执行不成立。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/McpIo.java:38"
+    ],
+    "repairGroup": "mcp-protocol",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0450",
+    "status": "partial",
+    "reason": "Error不会complete future，造成等到deadline才关闭；可在任务finally确保完成/退出事实，不能把OOME当普通可恢复错误吞掉继续服务。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/McpIo.java:31"
+    ],
+    "repairGroup": "cleanup-evidence",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0451",
+    "status": "partial",
+    "reason": "McpTransport只有有界注释，需明确每实例timeout及取消UNKNOWN契约；内建stdio/http已有60秒构造限额，无需强制破坏接口新增每调用Duration。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/McpTransport.java:6"
+    ],
+    "repairGroup": "transport-contract",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0452",
+    "status": "accepted",
+    "reason": "公开McpTransport未明确request/response所有权和非空，补不可变输入/快照输出契约及替身验证。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/McpTransport.java:10"
+    ],
+    "repairGroup": "transport-contract",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0453",
+    "status": "partial",
+    "reason": "kind进入元数据，应要求稳定非空无秘密标识；实际两个内建kind均常量，第三方恶意泄密尚无证据。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/McpTransport.java:8"
+    ],
+    "repairGroup": "transport-contract",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0454",
+    "status": "accepted",
+    "reason": "传输可能由作用域own及异常路径重复关闭，明确close幂等/关闭后exchange拒绝及清理失败语义，配内建正反例。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/McpTransport.java:13"
+    ],
+    "repairGroup": "transport-contract",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0455",
+    "status": "partial",
+    "reason": "worker可能写入后编码/退出非0，Docker路径只抛ENVIRONMENT_IO丢失明确不确定信号；核对管线started兜底后统一标识，不能称所有ENVIRONMENT_IO都自动重试。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/DockerExecutionEnvironment.java:117"
+    ],
+    "repairGroup": "docker-unknown",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0456",
+    "status": "partial",
+    "reason": "sideEffectUncertain=true仍保留原status，虽Loop另查该标志而不重放，公开ProcessRunner消费者可能只看status；应统一UNKNOWN同时保留原始退出事实。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/DockerExecutionEnvironment.java:226"
+    ],
+    "repairGroup": "docker-unknown",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0457",
+    "status": "accepted",
+    "reason": "不确定分支先close，清理失败会覆盖ENVIRONMENT_OPERATION_UNKNOWN/UNKNOWN结果；应分别保留操作未知与清理未知，禁止虚报removed。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/DockerExecutionEnvironment.java:203"
+    ],
+    "repairGroup": "docker-unknown",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0458",
+    "status": "accepted",
+    "reason": "close在rm未确认成功时closed=true，后续close不再尝试；需区分能力失效与清理待核实，允许明确清理操作而不恢复执行。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/DockerExecutionEnvironment.java:287"
+    ],
+    "repairGroup": "cleanup-evidence",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0459",
+    "status": "rejected",
+    "reason": "workspace是可信宿主显式授权根，此构造器不存在另一个允许根可比较；toRealPath选定根不是模型输入越界。不得凭宿主选择HOME推导突破已授权边界。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/DockerExecutionEnvironment.java:39"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0460",
+    "status": "accepted",
+    "reason": "启动失败补偿rm未检查Reply，可能遗留容器而只报启动失败；应带容器身份及清理未知事实，保留原异常及补偿异常。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/DockerExecutionEnvironment.java:80"
+    ],
+    "repairGroup": "cleanup-evidence",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0461",
+    "status": "partial",
+    "reason": "exec与close并发确能产生中断/非0，需一并审计活跃操作与关闭状态；根问题与455/457合并，不接受close后自动重发。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/DockerExecutionEnvironment.java:140"
+    ],
+    "repairGroup": "docker-unknown",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0462",
+    "status": "partial",
+    "reason": "节流return可丢临时流末尾，持久assistant.message仍完整且UI应切换最终消息；接受末帧flush/快照pending，不能称最终答复永久丢失。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/ModelDisplayBuffer.java:45"
+    ],
+    "repairGroup": "display-stream",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0463",
+    "status": "partial",
+    "reason": "ModelDisplayBuffer明确累积快照而LlmClient公开display约定不充分；应统一累积语义和回退规则，不能自动拼接不明delta造成重复。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/ModelDisplayBuffer.java:48"
+    ],
+    "repairGroup": "display-stream",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0464",
+    "status": "rejected",
+    "reason": "重试每次attempt仍执行prepare并经过BEFORE_MODEL reset，意见前提未成立；对失败请求关闭后的snapshot按sourceEvent保留原事实是预期。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/ModelDisplayBuffer.java:33"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0465",
+    "status": "partial",
+    "reason": "临时展示callback reader/sanitizer异常可终止模型流；允许失败时清空展示并留诊断，禁止展示未脱敏原文，需保留模型调用真实未知事实。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/ModelDisplayBuffer.java:49"
+    ],
+    "repairGroup": "display-stream",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0466",
+    "status": "accepted",
+    "reason": "snapshot持监视器全量reader.events轮询，与accept争锁；增量索引及锁外读取降低长会话阻塞，不能读失败时伪造PERSISTED。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/ModelDisplayBuffer.java:59"
+    ],
+    "repairGroup": "session-read-bounds",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0467",
+    "status": "rejected",
+    "reason": "成功assistant.message是持久响应事实，后续优先显示PERSISTED并不掩盖已知成功；给出的失败后同源成功路径未按reset链成立。真实多请求归属另以sourceEvent测试。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/ModelDisplayBuffer.java:65"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0468",
+    "status": "partial",
+    "reason": "sent.get失败丢弃已收集退出码/输出，接受保留观测数据及原因；stdin未完整发送是否可证明副作用结果须按协议判断，不能一律认定确定成功。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/NativeCommandTransport.java:45"
+    ],
+    "repairGroup": "transport-contract",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0469",
+    "status": "partial",
+    "reason": "IOException来源被抹平确实不利诊断；错误类型与副作用确定性是两维，输出越界不证明执行未发生，必须保留uncertain。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/NativeCommandTransport.java:0"
+    ],
+    "repairGroup": "transport-contract",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0470",
+    "status": "partial",
+    "reason": "输出future异常后仍等进程至deadline，需提早停止和有界收尾；输出越界后有副作用状态仍须UNKNOWN，不能按建议改确定失败可重试。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/NativeCommandTransport.java:38"
+    ],
+    "repairGroup": "transport-bounds",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0471",
+    "status": "partial",
+    "reason": "deadline在builder.start之后计算，启动耗时未纳入预算；提前校验Duration/计时并核验启动限制。不能只移动时间戳宣称已可中断操作系统阻塞start。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/NativeCommandTransport.java:37"
+    ],
+    "repairGroup": "transport-bounds",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0472",
+    "status": "accepted",
+    "reason": "destroyForcibly后无wait/join，返回时不能证明退出；应有界等待和资源残留事实，不声称强杀采样等于OS级隔离。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/NativeCommandTransport.java:40"
+    ],
+    "repairGroup": "cleanup-evidence",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0473",
+    "status": "rejected",
+    "reason": "10ms轮询是合作取消的有界等待策略，无性能测量证明故障；改waitFor仍需取消轮询，不为固定尾延迟独立立项。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/NativeCommandTransport.java:43"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0474",
+    "status": "accepted",
+    "reason": "binding仅移除顶层id，ReadOnlyChildEnvironment嵌套parent.id仍带Docker随机实例，重开合法相同绑定会误拒绝；稳定字段投影需递归明确。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/HarnessSdk.java:141"
+    ],
+    "repairGroup": "sdk-binding",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0475",
+    "status": "accepted",
+    "reason": "创建通过SanitizingSessionWriter保存binding，重开却拿原始binding比较，秘密与绑定字段重合时误拒绝；用稳定安全指纹/相同规范比较，不以脱敏合并值冒充身份。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/HarnessSdk.java:166"
+    ],
+    "repairGroup": "sdk-binding",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0476",
+    "status": "partial",
+    "reason": "重开未校验sdk协议支持范围，应拒绝未来/不兼容版本并允许明确兼容旧版；不能所有不等于1.14都拒绝破坏承诺兼容。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/HarnessSdk.java:165"
+    ],
+    "repairGroup": "sdk-binding",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0477",
+    "status": "partial",
+    "reason": "session.created与sdk.created分次持久化存在半初始化窗口，重开拒绝但非副作用重放；需显式初始化状态及安全诊断/恢复。不能把必须记录的事实全部推迟到有副作用插件装配后。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/HarnessSdk.java:168"
+    ],
+    "repairGroup": "sdk-init",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0478",
+    "status": "accepted",
+    "reason": "input验证晚于sdk.turn.configured写入，无效提交污染日志且占限额；纯参数验证应在任何新轮持久化前完成。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/HarnessSdk.java:374"
+    ],
+    "repairGroup": "sdk-init",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0479",
+    "status": "partial",
+    "reason": "sdk.input.applied先于其引用user.message写入，崩溃可悬空；需定义可恢复原子边界/校验顺序，不能简单换序后忽略另一方向丢响应幂等窗口。next-turn标签需对照Web消费契约。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/HarnessSdk.java:407"
+    ],
+    "repairGroup": "sdk-init",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0480",
+    "status": "partial",
+    "reason": "beginTurn在goal/input校验前重置费用，非法run会推进epoch；先校验可修复。SDK run串行且恢复门禁先检查，未证明非法并发可绕过费用，应加子任务延迟结算回归再定影响。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/HarnessSdk.java:371"
+    ],
+    "repairGroup": "cost-contract",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0481",
+    "status": "accepted",
+    "reason": "container.close与SUCCESS事件写入共用catch，落盘故障被误写成UNKNOWN且第二异常覆盖首因；应拆分资源事实/记录事实，关闭后不能简单复位允许任务再执行。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/HarnessSdk.java:517"
+    ],
+    "repairGroup": "cleanup-evidence",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0482",
+    "status": "accepted",
+    "reason": "input键齐但requestHash/kind=null可NPE，需在任何持久化前规范校验并给INVALID_SUBMISSION。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/HarnessSdk.java:404"
+    ],
+    "repairGroup": "sdk-init",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0483",
+    "status": "partial",
+    "reason": "verifyEnvironment先openWriter会创建不存在日志，且缺归档门禁；先只读存在性检查并在取得独占后再次确认，不能只做一次TOCTOU前检。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/HarnessSdk.java:491"
+    ],
+    "repairGroup": "sdk-init",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0484",
+    "status": "rejected",
+    "reason": "tools=null是root兼容构造显式不过滤语义，仍沿policy/approval，不等于开放未审批副作用；改变为空集破坏现有SDK默认能力。可补说明非权限绕过。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/SdkConfiguration.java:35"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0485",
+    "status": "partial",
+    "reason": "record默认toString包含prompt/parameters，接受公共配置诊断安全表示；当前调用点未证明直接日志泄露，secret参数不应作为支持配置推广。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/SdkConfiguration.java:7"
+    ],
+    "repairGroup": "sanitize-boundaries",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0486",
+    "status": "partial",
+    "reason": "宿主parameters/tools快照只限深度不限制大小，接受配置读取/工具声明入口统一数量与字节上限；可信root配置不按远程DoS定级。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/SdkConfiguration.java:35"
+    ],
+    "repairGroup": "transport-bounds",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0487",
+    "status": "accepted",
+    "reason": "与447同一null-id Map.of问题；归并修复但保留独立原意见编号，不照搬String/Number拒绝null而不处理协议兼容。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/HttpMcpTransport.java:0"
+    ],
+    "repairGroup": "mcp-protocol",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0488",
+    "status": "rejected",
+    "reason": "post(rejection)的rejection没有method，McpIo.expectsResponse=false，要求202空body后直接return，不会进入SSE解析再次递归；所谓无限递归调用链不成立。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/HttpMcpTransport.java:0"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0489",
+    "status": "partial",
+    "reason": "内层拒绝响应POST会临时覆盖active并finally清空，存在外层流登记窗口；应全活动流登记并检查disconnected。它是协议拒绝响应，不能称模型副作用工具被重放。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/HttpMcpTransport.java:0"
+    ],
+    "repairGroup": "cleanup-evidence",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0490",
+    "status": "rejected",
+    "reason": "初始化解析错误经McpIo.run异常finally执行abort，disconnected永久拒绝后续exchange；不会带坏session重新initialize。延后赋值可优化但非现有恢复错误。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/HttpMcpTransport.java:0"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0491",
+    "status": "accepted",
+    "reason": "exchange和close同监视器，close无法立即abort在途最长60秒IO；应先原子撤销/abort再有界清理，测试关闭对阻塞exchange响应。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/HttpMcpTransport.java:0"
+    ],
+    "repairGroup": "cleanup-evidence",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0492",
+    "status": "partial",
+    "reason": "http localhost只按文本放行，需要明确回环解析策略；仅增加一次DNS检查仍有解析竞态。可信宿主hosts被篡改属环境控制问题，不按已证凭据外泄处理。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/HttpMcpTransport.java:0"
+    ],
+    "repairGroup": "transport-contract",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0493",
+    "status": "rejected",
+    "reason": "close最终finally始终abort，失败必须报告清理未知不能吞掉远端非预期状态；try-with-resources原异常有suppressed机制，意见声称必然覆盖不成立。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/HttpMcpTransport.java:0"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0494",
+    "status": "partial",
+    "reason": "SdkHost公开record没有边界校验，可补协作服务非空与scope绑定诊断；当前唯一构造来自SDK，不能把未来手工伪造scope认定现有越权。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/SdkHost.java:16"
+    ],
+    "repairGroup": "sdk-init",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0495",
+    "status": "partial",
+    "reason": "plan_update可在EXECUTING/终态回DRAFT并清证据，接受显式编辑/新版本状态规则；工具审批仍独立，不能称重新批准计划自动授权执行。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/PlanningPlugin.java:180"
+    ],
+    "repairGroup": "planning-evidence",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0496",
+    "status": "partial",
+    "reason": "evidence只检查成功事件存在，未验证与具体步骤相关/发生于当前修订之后；接受关联语义。一个事件可合理支持多个待办，禁止一律一次消费，计划完成不代表外部目标真实达成。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/PlanningPlugin.java:63"
+    ],
+    "repairGroup": "planning-evidence",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0497",
+    "status": "partial",
+    "reason": "128计数包含REMOVED，确为生命周期ID上限；需先明确上限语义，若改活跃容量必须另限墓碑/历史投影，不能简单不计REMOVED后形成无界存储。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/PlanningPlugin.java:167"
+    ],
+    "repairGroup": "planning-evidence",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0498",
+    "status": "accepted",
+    "reason": "revision schema最大10000而成功写+1能达10001，此后不能匹配输入；需明确终止/新修订策略并验证边界，不回绕复用旧审批。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/PlanningPlugin.java:106"
+    ],
+    "repairGroup": "planning-evidence",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0499",
+    "status": "partial",
+    "reason": "execute锁内只检查一次active而stop无锁，停止后在途可能继续save；需明确在途撤销与关闭等待。跨会话重启同插件不是已支持路径，不据此认定现有串会话。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/PlanningPlugin.java:32"
+    ],
+    "repairGroup": "scope-revocation",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0500",
+    "status": "accepted",
+    "reason": "todos/plan重放全日志，evidence每ID再扫描列表；一次投影/索引并保持唯一写者与恢复可重建，归并长会话读取计划。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/PlanningPlugin.java:38"
+    ],
+    "repairGroup": "session-read-bounds",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0501",
+    "status": "rejected",
+    "reason": "SdkOptions.root明确null=不过滤，与484一致是兼容默认值，空集合=无工具有意区分，不能将null改空集当安全修复。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/SdkOptions.java:46"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0502",
+    "status": "rejected",
+    "reason": "SdkOptions包内且唯一完整调用已被SdkConfiguration.requireNonNull保护，便捷构造提供disabled；无可达null路径，不单列假想公共输入缺陷。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/SdkOptions.java:42"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0503",
+    "status": "rejected",
+    "reason": "Values.snapshot已在构造期拒绝非法null，改变异常消息不构成功能修复。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/SdkOptions.java:44"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0504",
+    "status": "partial",
+    "reason": "safe逐段已拒绝.git，./.git/config并不能绕过；真实a/./b与a/b缓存键别名成立。Windows尾点等最终由LocalWorkspace边界拒绝，不能按宿主Windows推导Linux容器保护失效。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/RemoteWorkspace.java:27"
+    ],
+    "repairGroup": "workspace-version",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0505",
+    "status": "partial",
+    "reason": "异常worker缺version会在ConcurrentHashMap.put NPE；接受返回schema验证与固定协议错误。内建workerchange正常返回非null版本，未证明正常无变更会null。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/RemoteWorkspace.java:64"
+    ],
+    "repairGroup": "transport-contract",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0506",
+    "status": "accepted",
+    "reason": "applyPatch仅发送observed合并值不回写结果版本，后续隐式guard沿用旧版本造成伪冲突；解析变更并更新/失效相应缓存。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/RemoteWorkspace.java:157"
+    ],
+    "repairGroup": "workspace-version",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0507",
+    "status": "partial",
+    "reason": "并行read结果后put可覆盖较新缓存，造成伪冲突；worker仍版本校验，静默覆盖推测不成立。需缓存CAS/串行化或显式版本调用方案。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/RemoteWorkspace.java:87"
+    ],
+    "repairGroup": "workspace-version",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0508",
+    "status": "accepted",
+    "reason": "RemoteWorkspace响应只以String error判失败，缺value/畸形error转为通用异常；对整个envelope严格验证并保留不确定副作用语义。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/RemoteWorkspace.java:48"
+    ],
+    "repairGroup": "transport-contract",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0509",
+    "status": "accepted",
+    "reason": "change裸转worker字段且未对返回path做safe校验；应校验路径与请求相符、版本/diff类型及限额，再建FileChange。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/RemoteWorkspace.java:169"
+    ],
+    "repairGroup": "transport-contract",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0510",
+    "status": "rejected",
+    "reason": "worker调用LocalWorkspace.write/edit，现有工作区对已存在文件缺观察/期望版本拒绝；意见假设worker忽略guard不成立，新建文件无旧版本是正常语义。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/RemoteWorkspace.java:128"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0511",
+    "status": "accepted",
+    "reason": "observed无数量限制且路径别名会新增键；设规范键和有界策略，淘汰后不得退化为无guard覆盖。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/RemoteWorkspace.java:19"
+    ],
+    "repairGroup": "workspace-version",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0512",
+    "status": "partial",
+    "reason": "patch合并整个observed造成多余版本负载，接受只传受影响规范路径并保留限制；null为非法宿主参数，版本元数据在同环境内传输并非已证泄密。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/RemoteWorkspace.java:158"
+    ],
+    "repairGroup": "workspace-version",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0513",
+    "status": "rejected",
+    "reason": "内建worker委托LocalWorkspace已有readPage/list/search/grep范围限制，不能用假设worker完全信任输入认定无界返回；协议入口校验另归440。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/RemoteWorkspace.java:86"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0514",
+    "status": "rejected",
+    "reason": "非法null在Map.of/stream构造边界拒绝，当前调用者经工具schema校验；仅提升错误消息不独立立项。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/RemoteWorkspace.java:112"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0515",
+    "status": "partial",
+    "reason": "嵌套parent随机id与474重复，需稳定投影；宿主选定image/filter写入子会话不是未经授权秘密外泄。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/ReadOnlyChildEnvironment.java:152"
+    ],
+    "repairGroup": "sdk-binding",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0516",
+    "status": "rejected",
+    "reason": "只读子环境所有变更始终PERMISSION_DENIED，取消后仍拒绝是安全且合理优先级；不存在写入放行，Subagent读取错误按父取消另结算，不因错误码偏好立项。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/ReadOnlyChildEnvironment.java:87"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0517",
+    "status": "partial",
+    "reason": "子环境CommandRequest重载落入接口UNSUPPORTED而非PERMISSION_DENIED，接受明确一致的只读能力错误；不会执行命令，非越权漏洞。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/ReadOnlyChildEnvironment.java:135"
+    ],
+    "repairGroup": "transport-contract",
+    "priority": "P3"
+  },
+  {
+    "id": "OCR-0518",
+    "status": "accepted",
+    "reason": "child入口仅采样关闭/取消，长读取转发原token，需组合子关闭/父取消/调用token并保留有界退出。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/ReadOnlyChildEnvironment.java:50"
+    ],
+    "repairGroup": "scope-revocation",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0519",
+    "status": "partial",
+    "reason": "本地校验与真实发送不确定混合导致过度UNKNOWN，需按发送阶段/副作用/完整响应分类；outputSchema失败不证明服务端未执行，禁止一律FAILED并保持连接重用。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/McpPlugin.java:462"
+    ],
+    "repairGroup": "mcp-protocol",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0520",
+    "status": "partial",
+    "reason": "非只读tools/call的RPC error不能普遍证明副作用未发生；需定义已拒绝/执行失败/未知类别并用执行后报错回归。对明确受理前错误可保留确定失败。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/McpPlugin.java:461"
+    ],
+    "repairGroup": "mcp-protocol",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0521",
+    "status": "accepted",
+    "reason": "tools/list name/nextCursor裸转可被对端畸形字段触发CCE；归并MCP发现schema和有界诊断。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/McpPlugin.java:83"
+    ],
+    "repairGroup": "mcp-protocol",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0522",
+    "status": "partial",
+    "reason": "content仅限条数，结构化内容/文本总量缺插件层限额；接受应用结果上限与上下文界限。已执行后超限不能一律确定FAILED允许重放。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/McpPlugin.java:415"
+    ],
+    "repairGroup": "transport-bounds",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0523",
+    "status": "partial",
+    "reason": "RemoteTool source缺untrusted而ResourceTool有；接受结构元数据一致和渲染约定，目前文本前缀已标不可信，非已证提权。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/McpPlugin.java:435"
+    ],
+    "repairGroup": "mcp-protocol",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0524",
+    "status": "partial",
+    "reason": "tasks接口上限契约未写清，但内建SubagentPlugin最多32总任务，不存在内建无界集合；补上限及截断/未知语义，是否分页不强制破接口。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/SubagentService.java:7"
+    ],
+    "repairGroup": "transport-contract",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0525",
+    "status": "partial",
+    "reason": "status自由Map缺状态/id错误契约，接受公共接口说明/返回验证；不能据第三方任意返回推导内建UNKNOWN重放。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/SubagentService.java:9"
+    ],
+    "repairGroup": "transport-contract",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0526",
+    "status": "partial",
+    "reason": "cancel应明确只投递取消、不证明终止及绑定父作用域；内建Service.check已作用域隔离，不存在仅taskId即可取消别父任务的实证。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/SubagentService.java:11"
+    ],
+    "repairGroup": "transport-contract",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0527",
+    "status": "rejected",
+    "reason": "预算是每父轮额度，run先SessionRecovery.ready门禁，未知模型请求阻止下一轮；已核实结束后新轮重置符合契约，不是跨轮总费用绕过。非法goal提前重置另以480处理。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/SharedFeeBudget.java:17"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0528",
+    "status": "rejected",
+    "reason": "delegate.requestRejected抛异常时Loop整次尝试失败且保留保守pending，不能finally清空假装正常继续；锁外回调风险可在成本契约重构考量，意见的自动无限重试前提不成立。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/SharedFeeBudget.java:53"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0529",
+    "status": "partial",
+    "reason": "可替换delegate在校验pending前调用确会产生副作用顺序问题；接口应规定纯计算/校验顺序并保留费用未知。不得无条件清pending或以新轮绕过未结算事实。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/SharedFeeBudget.java:65"
+    ],
+    "repairGroup": "cost-contract",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0530",
+    "status": "rejected",
+    "reason": "需先分配数GB参数才能触发int溢出，命令来自可信宿主且OS另拒绝；没有可达实际边界绕过，null也在构造拒绝，不列安全修复。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/StdioMcpTransport.java:23"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0531",
+    "status": "partial",
+    "reason": "进程启动后构造初始化失败缺异常清理，接受启动资源接管与失败补偿；仅OOM路径不能断言常态泄漏，不能捕获Error后继续运行。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/StdioMcpTransport.java:30"
+    ],
+    "repairGroup": "cleanup-evidence",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0532",
+    "status": "partial",
+    "reason": "null id问题与447/487重复；但id=null不等于通知，禁止按建议直接无应答，需要明确合法null或结构化协议错误。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/StdioMcpTransport.java:73"
+    ],
+    "repairGroup": "mcp-protocol",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0533",
+    "status": "partial",
+    "reason": "stdio清理只采样64子孙且未wait，接受有界收尾和partial残留证据；先杀父可能丢失后代枚举，遍历全部无界也不可采用，不承诺Job Object保证。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/StdioMcpTransport.java:94"
+    ],
+    "repairGroup": "cleanup-evidence",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0536",
+    "status": "accepted",
+    "reason": "list过滤条目对path裸转并仅catch HarnessException，第三方缺path/非String能抛NPE/CCE；按schema过滤/报协议错误。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/WorkspaceContentInspection.java:92"
+    ],
+    "repairGroup": "transport-contract",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0537",
+    "status": "partial",
+    "reason": "pathAllowed只是展示过滤非最终文件能力边界，内建LocalWorkspace/RemoteWorkspace已拒越界；接受列表路径类型和规范校验，不称当前任意文件读取。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/WorkspaceContentInspection.java:61"
+    ],
+    "repairGroup": "transport-contract",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0538",
+    "status": "rejected",
+    "reason": "webSources是可信宿主明确固定来源配置，允许内网/本地替身是现有范围；模型只选别名，不能变任意URL。新增禁私网会破坏已授权来源，不按不可信workspace假设立项。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/WebFetchPlugin.java:32"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0539",
+    "status": "partial",
+    "reason": "url直接输出含query，已知secret可被统一脱敏但未知预签名参数存在泄露面；输出来源别名/安全URL元数据并明确query秘密策略，不能一律禁止所有query破坏合法固定来源。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/WebFetchPlugin.java:177"
+    ],
+    "repairGroup": "sanitize-boundaries",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0540",
+    "status": "accepted",
+    "reason": "await取消/超时与pending完成之间有未移交response body窗口，finally只cancel未done future；需handedOff所有权和迟到body必关回归。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/WebFetchPlugin.java:153"
+    ],
+    "repairGroup": "cleanup-evidence",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0541",
+    "status": "partial",
+    "reason": "文本固定UTF8与声明charset不一致时会损坏正文；应明确支持UTF8并拒绝其他charset或有界解码支持，不默认容错替换伪造文本事实。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/WebFetchPlugin.java:186"
+    ],
+    "repairGroup": "web-encoding",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0542",
+    "status": "rejected",
+    "reason": "仓库DefaultToolPipeline实际调用JsonSchemaValidator，inputSchema不只是提示词；source枚举已在管线校验，意见“没有schema校验”与实现相反。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/WebFetchPlugin.java:138"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0543",
+    "status": "partial",
+    "reason": "factory在同步锁和computeIfAbsent执行，可重入修改map抛CME/阻塞关闭；明确factory契约并缩短锁范围，保证竞态失败实例关闭。",
+    "evidence": [
+      "harness-llm/src/main/java/io/jharness/llm/LazyModelRouter.java:30"
+    ],
+    "repairGroup": "model-routing",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0544",
+    "status": "partial",
+    "reason": "router清空关闭失败client引用会失去再次核实资源状态，接受清理失败明细与残留管理；不能假设所有close失败都可安全重试或Error可吞。",
+    "evidence": [
+      "harness-llm/src/main/java/io/jharness/llm/LazyModelRouter.java:35"
+    ],
+    "repairGroup": "cleanup-evidence",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0545",
+    "status": "partial",
+    "reason": "select(null)触发Map.copyOf.get NPE而非MODEL_ROUTE_NOT_FOUND，公共入口可统一参数拒绝；内建Web配置已预校验，不按外部可达服务崩溃定级。",
+    "evidence": [
+      "harness-llm/src/main/java/io/jharness/llm/LazyModelRouter.java:27"
+    ],
+    "repairGroup": "model-routing",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0546",
+    "status": "rejected",
+    "reason": "构造factories非法null/含null键值已快速拒绝，异常消息偏好不列功能修复。",
+    "evidence": [
+      "harness-llm/src/main/java/io/jharness/llm/LazyModelRouter.java:14"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0547",
+    "status": "accepted",
+    "reason": "脚本加载64KB而CommandRequest字符上限32768/非空，执行体内才拒导致UNKNOWN；加载注册前统一脚本可执行限额及空白校验。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/SkillsPlugin.java:317"
+    ],
+    "repairGroup": "skills-validation",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0548",
+    "status": "partial",
+    "reason": "单文件先全文读取后64KiB、总体全部加载后512KiB检查确有瞬时放大；边读累计/有界读取，metadata先检仍需读时限额防竞态。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/SkillsPlugin.java:96"
+    ],
+    "repairGroup": "skills-validation",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0549",
+    "status": "rejected",
+    "reason": "SkillsPlugin明确一次性started门禁，PluginContainer失败后回滚且不支持同实例重启；修改配置重新建实例即可，不能复位导致旧引用复活。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/SkillsPlugin.java:110"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0550",
+    "status": "accepted",
+    "reason": "frontmatter单引号字符同时starts/ends使substring(1,0)抛越界；长度>=2与配对校验，畸形目录应给受控诊断。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/SkillCatalog.java:166"
+    ],
+    "repairGroup": "skills-validation",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0551",
+    "status": "accepted",
+    "reason": "POSIX含反斜杠目录经LocalWorkspace转分隔后读取另一文件，前检属性与实际内容路径不一；发现时拒别名/控制字符并核对同对象。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/SkillCatalog.java:112"
+    ],
+    "repairGroup": "skills-validation",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0552",
+    "status": "rejected",
+    "reason": "严格protocol ID拒绝是有意fail-closed，增加合法值提示可随配置诊断改进，不单列已运行缺陷。",
+    "evidence": [
+      "harness-llm/src/main/java/io/jharness/llm/ModelProtocol.java:23"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0559",
+    "status": "partial",
+    "reason": "Observed finally append/reader/sanitizer失败覆盖delegate原异常成立；需保存双重事实和首因。成功但观测落盘失败不能假装全部持久完成，禁止一律忽略。",
+    "evidence": [
+      "harness-llm/src/main/java/io/jharness/llm/ObservedLlmClient.java:94"
+    ],
+    "repairGroup": "audit-failure",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0560",
+    "status": "partial",
+    "reason": "select返回未观测delegate会绕过wrapper，接受装饰器在路由选择后保留；需防重复包装/重复observed并核对标准SDK路由调用链。",
+    "evidence": [
+      "harness-llm/src/main/java/io/jharness/llm/ObservedLlmClient.java:34"
+    ],
+    "repairGroup": "model-routing",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0561",
+    "status": "partial",
+    "reason": "每完成请求全读日志取最新requested，接受请求ID显式关联/增量读取；标准Loop单请求、子会话独立，未证明当前并发串归属，不据假想并发确认。",
+    "evidence": [
+      "harness-llm/src/main/java/io/jharness/llm/ObservedLlmClient.java:83"
+    ],
+    "repairGroup": "session-read-bounds",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0562",
+    "status": "partial",
+    "reason": "Observed.stream透传不记录观测，需声明低层stream所有权与支持语义或包装终态；标准Loop通过complete已有observed，不宣称当前全部流无记录。",
+    "evidence": [
+      "harness-llm/src/main/java/io/jharness/llm/ObservedLlmClient.java:100"
+    ],
+    "repairGroup": "model-routing",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0567",
+    "status": "partial",
+    "reason": "ask先取消再看已提交answer，SUBMITTED与取消竞态可丢requestId/幂等关联；需明确暂存受理与最终持久解析优先级，保留取消真实事实。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/UserQuestionsPlugin.java:100"
+    ],
+    "repairGroup": "question-durability",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0568",
+    "status": "partial",
+    "reason": "respond只返回内存SUBMITTED，崩溃前未落盘有丢答案窗口；协议应要求GET最终核对并清晰呈现未持久，不可直接让HTTP线程写共享journal违反单写者。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/UserQuestionsPlugin.java:288"
+    ],
+    "repairGroup": "question-durability",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0569",
+    "status": "rejected",
+    "reason": "ask先save+flush再pending.put，内建reader同日志强一致，缺requested假设依赖不合规滞后/截断存储；可在投影畸形统一校验，不单列当前HTTP随机500。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/UserQuestionsPlugin.java:159"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0570",
+    "status": "accepted",
+    "reason": "recorded keySet相同但requestId缺类型/正则，validateAnswer Map.of可NPE；统一应答入口纯校验，在访问/写入之前失败。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/UserQuestionsPlugin.java:234"
+    ],
+    "repairGroup": "question-durability",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0571",
+    "status": "partial",
+    "reason": "project对冲突相同questionId last-wins且缺payload形状校验，接受历史事实冲突拒绝及版本兼容；“伪造日志无限提问”不是现有合法写入路径。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/UserQuestionsPlugin.java:372"
+    ],
+    "repairGroup": "question-durability",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0572",
+    "status": "partial",
+    "reason": "respond的string返回INVALID_QUESTION而余下INVALID_ANSWER不一致；合并应答校验错误码，不单独重构全部异常。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/UserQuestionsPlugin.java:252"
+    ],
+    "repairGroup": "question-durability",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0573",
+    "status": "accepted",
+    "reason": "respond持插件锁内list/reader/list三次全读，接受单次快照复用及缩小锁，保持回答幂等和单写者。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/UserQuestionsPlugin.java:254"
+    ],
+    "repairGroup": "session-read-bounds",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0574",
+    "status": "partial",
+    "reason": "answerHash为原答案无盐摘要，低熵敏感文字可离线猜测；需设计持久幂等与安全摘要方案。不能仅随机会话密钥不保存就破坏重启核对，也不能只删text失去冲突识别。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/UserQuestionsPlugin.java:385"
+    ],
+    "repairGroup": "sanitize-boundaries",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0575",
+    "status": "partial",
+    "reason": "读取历史options裸转可被畸形事件触发，归并571的投影schema及安全失败；不把任意篡改本地日志认定授权漏洞。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/UserQuestionsPlugin.java:305"
+    ],
+    "repairGroup": "question-durability",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0576",
+    "status": "partial",
+    "reason": "stop只active=false，ask退出后仍写resolved可能与writer关闭竞争；需撤销后有界等待单写者结算，不能直接清pending丢已接受答案。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/UserQuestionsPlugin.java:40"
+    ],
+    "repairGroup": "scope-revocation",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0577",
+    "status": "partial",
+    "reason": "URI scheme/hostname按标准不区分大小写而构造精确比较，合法大写配置误拒；规范化后验证，无网络或凭据回退。",
+    "evidence": [
+      "harness-llm/src/main/java/io/jharness/llm/OpenAiCompatibleConfig.java:48"
+    ],
+    "repairGroup": "model-config",
+    "priority": "P3"
+  },
+  {
+    "id": "OCR-0578",
+    "status": "accepted",
+    "reason": "key仅拒CR/LF未拒其余非法header字符，可能日志已记requested后发请求才异常；配置阶段校验可打印范围与长度，错误不回显密钥。",
+    "evidence": [
+      "harness-llm/src/main/java/io/jharness/llm/OpenAiCompatibleConfig.java:65"
+    ],
+    "repairGroup": "model-config",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0579",
+    "status": "rejected",
+    "reason": "适配器明确不支持images/parallelTools，降级false是保守能力事实，现有调用capabilities能看到结果；不能为未来能力扩展假设修改当前契约。",
+    "evidence": [
+      "harness-llm/src/main/java/io/jharness/llm/OpenAiCompatibleConfig.java:81"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0580",
+    "status": "partial",
+    "reason": "router.select非空契约未明确，Routed构造缺即时校验；在统一SPI边界快速失败，不以自定义违约推导默认模型失败。",
+    "evidence": [
+      "harness-llm/src/main/java/io/jharness/llm/RoutedLlmClient.java:11"
+    ],
+    "repairGroup": "model-routing",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0581",
+    "status": "accepted",
+    "reason": "LazyModelRouter共享client并由router关闭，select没有借用所有权说明；明确borrowed视图/close规则，防一包装器关闭其它任务共享资源。",
+    "evidence": [
+      "harness-llm/src/main/java/io/jharness/llm/RoutedLlmClient.java:22"
+    ],
+    "repairGroup": "model-routing",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0582",
+    "status": "accepted",
+    "reason": "RoutedLlmClient未转withDisplay，SDK展示观察被接口默认吞掉；冻结route后转发显示装饰并验证实际路由流式展示。",
+    "evidence": [
+      "harness-llm/src/main/java/io/jharness/llm/RoutedLlmClient.java:26"
+    ],
+    "repairGroup": "display-stream",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0583",
+    "status": "partial",
+    "reason": "wrapper.close关闭整个router需明确独占/共享所有权；不能同时再关selected造成双重释放，合并581。",
+    "evidence": [
+      "harness-llm/src/main/java/io/jharness/llm/RoutedLlmClient.java:52"
+    ],
+    "repairGroup": "model-routing",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0584",
+    "status": "rejected",
+    "reason": "SecretRedactor构造通过stream.toList建立自己的不可变列表，不保留传入可变列表；hold已同时计算，后续修改原列表不能改变redactor。null元素List.copyOf拒绝属显式非空边界。",
+    "evidence": [
+      "harness-llm/src/main/java/io/jharness/llm/StreamingLlmClient.java:18"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0585",
+    "status": "partial",
+    "reason": "Streaming.select返回原client确实绕过展示包装；保留装饰器路由语义并验证脱敏，不能假设任意直接router调用自动承担所有host sanitizer。",
+    "evidence": [
+      "harness-llm/src/main/java/io/jharness/llm/StreamingLlmClient.java:42"
+    ],
+    "repairGroup": "model-routing",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0586",
+    "status": "partial",
+    "reason": "stream直接透传为低层原始接口，需明确公开脱敏契约或安全包装；标准complete会经redactor，当前低层frame泄露到日志未证实。",
+    "evidence": [
+      "harness-llm/src/main/java/io/jharness/llm/StreamingLlmClient.java:85"
+    ],
+    "repairGroup": "display-stream",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0587",
+    "status": "accepted",
+    "reason": "safe.substring(length-hold)未防切中高代理，能给展示孤立UTF16；复用streamingText统一尾窗/非BMP边界。",
+    "evidence": [
+      "harness-llm/src/main/java/io/jharness/llm/StreamingLlmClient.java:69"
+    ],
+    "repairGroup": "display-stream",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0588",
+    "status": "accepted",
+    "reason": "display.accept未隔离异常，可让SSE订阅结束为MODEL_BAD_RESPONSE；仅展示降级应清空并诊断，不能影响主执行或输出未脱敏文本。",
+    "evidence": [
+      "harness-llm/src/main/java/io/jharness/llm/StreamingLlmClient.java:68"
+    ],
+    "repairGroup": "display-stream",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0589",
+    "status": "partial",
+    "reason": "finalResponse自定义null缺明确完整性错误，补SPI契约检查；累积最终全文回调是既有快照语义，不能改为delta破坏消费者。",
+    "evidence": [
+      "harness-llm/src/main/java/io/jharness/llm/StreamingLlmClient.java:71"
+    ],
+    "repairGroup": "display-stream",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0590",
+    "status": "accepted",
+    "reason": "completed仅验证ended已有索引不检查output总数，多余function_call可逃过逐项流校验；必须总数/索引集合一致后才释放终态。",
+    "evidence": [
+      "harness-llm/src/main/java/io/jharness/llm/ProtocolStream.java:65"
+    ],
+    "repairGroup": "model-stream-validation",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0591",
+    "status": "accepted",
+    "reason": "Anthropic每delta字符串拼接累计内容，极细分片放大复制；改有界StringBuilder并保持终态内容与预览一致。",
+    "evidence": [
+      "harness-llm/src/main/java/io/jharness/llm/ProtocolStream.java:166"
+    ],
+    "repairGroup": "model-stream-validation",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0592",
+    "status": "partial",
+    "reason": "缺sequence_number当前跳过单调校验，应按明确支持Responses协议要求补必填/兼容策略回归；不声称重复文本delta必然恶意重放，需区分内容重复与事件重复。",
+    "evidence": [
+      "harness-llm/src/main/java/io/jharness/llm/ProtocolStream.java:46"
+    ],
+    "repairGroup": "model-stream-validation",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0593",
+    "status": "rejected",
+    "reason": "ProtocolStream包内唯一finish调用在SseBody.onComplete，已处EOF边界；注释是跨层不变量，非需要再加eof标志的当前释放漏洞。",
+    "evidence": [
+      "harness-llm/src/main/java/io/jharness/llm/ProtocolStream.java:33"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0594",
+    "status": "accepted",
+    "reason": "retries=0的单次断言无法证明启用重试仍拒5xx/畸形重放；用启用重试负例及429正例对照。",
+    "evidence": [
+      "harness-llm/src/test/java/io/jharness/llm/OpenAiCompatibleLlmClientTest.java:138"
+    ],
+    "repairGroup": "test-no-replay",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0595",
+    "status": "partial",
+    "reason": "测试只查toString不覆盖cause链，接受秘密sentinel错误全链回归；未确认生产实际泄密，归为验证缺口。",
+    "evidence": [
+      "harness-llm/src/test/java/io/jharness/llm/OpenAiCompatibleLlmClientTest.java:161"
+    ],
+    "repairGroup": "test-no-replay",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0596",
+    "status": "accepted",
+    "reason": "wire仅断言arguments是String无法防参数丢失，补解析内容及callId关联，校验实际协议不复制实现。",
+    "evidence": [
+      "harness-llm/src/test/java/io/jharness/llm/OpenAiCompatibleLlmClientTest.java:100"
+    ],
+    "repairGroup": "test-no-replay",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0597",
+    "status": "rejected",
+    "reason": "text helper调用均受控常量，未出现含引号输入导致错误；可在新增Unicode/转义协议回归顺带改善，不独立修复fixture想象路径。",
+    "evidence": [
+      "harness-llm/src/test/java/io/jharness/llm/OpenAiCompatibleLlmClientTest.java:377"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0598",
+    "status": "partial",
+    "reason": "Server.close shutdownNow无await，接受有界线程退出检查防测试串扰；不能以未观察残留就宣称当前每轮泄漏。",
+    "evidence": [
+      "harness-llm/src/test/java/io/jharness/llm/OpenAiCompatibleLlmClientTest.java:427"
+    ],
+    "repairGroup": "test-fixture-cleanup",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0599",
+    "status": "partial",
+    "reason": "阻塞handler取消回归需确保关闭前释放latch及有界退出；重复countDown是幂等保护不应仅为清晰删finally兜底。",
+    "evidence": [
+      "harness-llm/src/test/java/io/jharness/llm/OpenAiCompatibleLlmClientTest.java:234"
+    ],
+    "repairGroup": "test-fixture-cleanup",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0600",
+    "status": "accepted",
+    "reason": "父等待InterruptedException先恢复中断再cancel/finish写FileChannel，会ClosedByInterrupt poison父writer；先安全结算后finally恢复中断，配真实JSONL回归。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/SubagentPlugin.java:232"
+    ],
+    "repairGroup": "subagent-writer",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0601",
+    "status": "partial",
+    "reason": "abort中断worker而finish可能写父journal，有关闭channel风险；需统一父单写者调度，不能无条件清掉中断伪造已退出或改为无限等待。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/SubagentPlugin.java:482"
+    ],
+    "repairGroup": "subagent-writer",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0602",
+    "status": "partial",
+    "reason": "cancel_requested持久写失败可能阻断sdk.cancel，但task.cancelled已CAS置位也被子token观察；仍需finally确保所有取消通道及清理，不宣称子一定继续不取消。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/SubagentPlugin.java:433"
+    ],
+    "repairGroup": "subagent-writer",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0603",
+    "status": "partial",
+    "reason": "shutdown无等待先finish UNKNOWN且逐任务异常可中断后续清理，接受有界收敛与逐个异常收集；未观察停止时UNKNOWN是正确保守状态，不能强记CANCELLED。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/SubagentPlugin.java:644"
+    ],
+    "repairGroup": "subagent-writer",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0604",
+    "status": "partial",
+    "reason": "verify先subagent.verified后tool.verified，中断后前置可能拒重复核实；需双事实可重入结算回归。通用sessions verify仍可结算父call，不称永久无修复路径。",
+    "evidence": [
+      "harness-ecosystem/src/main/java/io/jharness/ecosystem/SubagentPlugin.java:576"
+    ],
+    "repairGroup": "subagent-writer",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0605",
+    "status": "accepted",
+    "reason": "名称PreCancelled但方法只覆盖超限/401，补预取消不触wire的实际计数断言。",
+    "evidence": [
+      "harness-llm/src/test/java/io/jharness/llm/MultiProtocolTest.java:396"
+    ],
+    "repairGroup": "test-no-replay",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0606",
+    "status": "partial",
+    "reason": "取消fixture单线程handler阻塞时计数不能看到排队第二请求；多线程server或释放后核验总数，不能靠短sleep宣称绝不重放。",
+    "evidence": [
+      "harness-llm/src/test/java/io/jharness/llm/MultiProtocolTest.java:421"
+    ],
+    "repairGroup": "test-no-replay",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0607",
+    "status": "partial",
+    "reason": "Fixture先start后client构造且close无finally，构造/close异常可漏server；接受异常安全清理，当前受控构造均合法不宣称每用例都泄漏。",
+    "evidence": [
+      "harness-llm/src/test/java/io/jharness/llm/MultiProtocolTest.java:310"
+    ],
+    "repairGroup": "test-fixture-cleanup",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0608",
+    "status": "accepted",
+    "reason": "多协议wire只查protocol字段，补KEY不入正文/错误cause等路径，归并脱敏协议验证缺口。",
+    "evidence": [
+      "harness-llm/src/test/java/io/jharness/llm/MultiProtocolTest.java:352"
+    ],
+    "repairGroup": "test-no-replay",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0609",
+    "status": "accepted",
+    "reason": "event helper只data不覆盖event/type交叉验证；加匹配与冲突帧以及EOF完整性回归。",
+    "evidence": [
+      "harness-llm/src/test/java/io/jharness/llm/MultiProtocolTest.java:147"
+    ],
+    "repairGroup": "test-no-replay",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0610",
+    "status": "accepted",
+    "reason": "畸形参数仅assertThrows宽泛异常，补替换生效和精确MODEL_BAD_RESPONSE/参数校验码，防无关传输错误假通过。",
+    "evidence": [
+      "harness-llm/src/test/java/io/jharness/llm/MultiProtocolTest.java:509"
+    ],
+    "repairGroup": "test-no-replay",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0611",
+    "status": "accepted",
+    "reason": "Anthropic stop直接move成stop_sequences，String输入未归一化列表；在协议转换前校验并转换兼容参数。",
+    "evidence": [
+      "harness-llm/src/main/java/io/jharness/llm/ProtocolCodec.java:105"
+    ],
+    "repairGroup": "model-stream-validation",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0612",
+    "status": "partial",
+    "reason": "响应model只非空不用于provider_state绑定，配置别名与实际版本可能不同；需明确允许的模型身份策略并拒跨模型状态，不能简单等号拒所有合法provider别名。",
+    "evidence": [
+      "harness-llm/src/main/java/io/jharness/llm/ProtocolCodec.java:189"
+    ],
+    "repairGroup": "model-stream-validation",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0613",
+    "status": "accepted",
+    "reason": "summary校验type/text后仍保留原Map额外字段，provider_state白名单不完整；只重建受支持字段并验证保存/回放一致。",
+    "evidence": [
+      "harness-llm/src/main/java/io/jharness/llm/ProtocolCodec.java:286"
+    ],
+    "repairGroup": "model-stream-validation",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0614",
+    "status": "rejected",
+    "reason": "ProtocolCodec包内由OpenAiCompatibleLlmClient按同序一一映射消息，原意见也承认当前不变量成立；不存在独立公开encode传不同列表入口。",
+    "evidence": [
+      "harness-llm/src/main/java/io/jharness/llm/ProtocolCodec.java:49"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0615",
+    "status": "rejected",
+    "reason": "3参codec为包内测试便利构造，生产用4参绑定endpoint；测试中的空endpoint不构成跨真实服务回放漏洞。",
+    "evidence": [
+      "harness-llm/src/main/java/io/jharness/llm/ProtocolCodec.java:16"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0616",
+    "status": "rejected",
+    "reason": "生产入口已限制角色且codec包内，重复角色验证可选但给定developer/function路径不可达。",
+    "evidence": [
+      "harness-llm/src/main/java/io/jharness/llm/ProtocolCodec.java:111"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0617",
+    "status": "partial",
+    "reason": "转换要求parameters对象，应在公共声明契约明确无参工具使用{}，若支持省略则统一归一化；当前DefaultPromptComposer内建工具均有schema，不按正常全局故障定级。",
+    "evidence": [
+      "harness-llm/src/main/java/io/jharness/llm/ProtocolCodec.java:168"
+    ],
+    "repairGroup": "model-stream-validation",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0632",
+    "status": "partial",
+    "reason": "CancelMain空白state-dir变cwd，应先拒空参数给用法退出码；cancel仍严格runId/状态/token，不能凭cwd读同名文件认定任意取消。",
+    "evidence": [
+      "harness-process/src/main/java/io/jharness/process/CancelMain.java:10"
+    ],
+    "repairGroup": "run-control",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0633",
+    "status": "partial",
+    "reason": "Path.of非法NUL可未捕获退出1破约定码，入口应映射INVALID_STATE且不打印敏感堆栈；SecurityManager在JDK21不是支持部署前提。",
+    "evidence": [
+      "harness-process/src/main/java/io/jharness/process/CancelMain.java:14"
+    ],
+    "repairGroup": "run-control",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0642",
+    "status": "accepted",
+    "reason": "SseBody subscription非volatile且cancel无前置取消标志，晚onSubscribe可能继续request；需原子关闭/订阅竞态与关闭前发送边界验证。",
+    "evidence": [
+      "harness-llm/src/main/java/io/jharness/llm/OpenAiCompatibleLlmClient.java:493"
+    ],
+    "repairGroup": "model-stream-validation",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0643",
+    "status": "partial",
+    "reason": "流非200统一MODEL_HTTP_ERROR降低401/402/429诊断，接受一致错误映射；M8明确仅非流429重试，不纳入自动流重试建议。",
+    "evidence": [
+      "harness-llm/src/main/java/io/jharness/llm/OpenAiCompatibleLlmClient.java:239"
+    ],
+    "repairGroup": "model-config",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0644",
+    "status": "accepted",
+    "reason": "非流允许stop携tool_calls及tool_calls空调用，与流严格终态不同；统一finish/calls一致校验，畸形响应不得进入工具。",
+    "evidence": [
+      "harness-llm/src/main/java/io/jharness/llm/OpenAiCompatibleLlmClient.java:374"
+    ],
+    "repairGroup": "model-stream-validation",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0645",
+    "status": "partial",
+    "reason": "适配器响应id/name未redact，标准Loop再clean但公开client仍暴露；统一敏感标识拒绝或安全标识，不能无声重写callId造成关联碰撞。",
+    "evidence": [
+      "harness-llm/src/main/java/io/jharness/llm/OpenAiCompatibleLlmClient.java:390"
+    ],
+    "repairGroup": "sanitize-boundaries",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0646",
+    "status": "rejected",
+    "reason": "合法Chat无参函数应返回arguments为{}字符串，缺失/空串并非合法完整工具参数；严格拒不完整流符合契约，不接受自动补{}执行模型未给出的调用。",
+    "evidence": [
+      "harness-llm/src/main/java/io/jharness/llm/OpenAiCompatibleLlmClient.java:399"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0647",
+    "status": "partial",
+    "reason": "两协议预览尾窗substring未防代理对，接受统一streamingText；固定hold保护秘密，不是尾部永久丢失（最终响应仍完整）。",
+    "evidence": [
+      "harness-llm/src/main/java/io/jharness/llm/OpenAiCompatibleLlmClient.java:547"
+    ],
+    "repairGroup": "display-stream",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0648",
+    "status": "accepted",
+    "reason": "跨线程close取消future可抛裸CancellationException，统一有阶段信息CANCELLED/UNKNOWN，确保恢复不得据取消认定未发送。",
+    "evidence": [
+      "harness-llm/src/main/java/io/jharness/llm/OpenAiCompatibleLlmClient.java:166"
+    ],
+    "repairGroup": "model-stream-validation",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0662",
+    "status": "partial",
+    "reason": "公开ControlledAgentRun.started普通布尔，若并发run可双进入；默认CLI一次提交不构成已发生竞态。使用CAS并测试重复/关闭后run拒绝。",
+    "evidence": [
+      "harness-process/src/main/java/io/jharness/process/ControlledAgentRun.java:27"
+    ],
+    "repairGroup": "run-control",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0663",
+    "status": "partial",
+    "reason": "close状态EXITED先于run.ended，close异常覆盖主故障；需分离端点停止与运行结果事实并保留首因，失败时不能延迟必需取消/资源释放。",
+    "evidence": [
+      "harness-process/src/main/java/io/jharness/process/ControlledAgentRun.java:53"
+    ],
+    "repairGroup": "run-control",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0664",
+    "status": "accepted",
+    "reason": "close无本对象closed门禁，之后run仍追加开始/结束虽控制已退出；统一生命周期并发/幂等入口拒绝。",
+    "evidence": [
+      "harness-process/src/main/java/io/jharness/process/ControlledAgentRun.java:69"
+    ],
+    "repairGroup": "run-control",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0665",
+    "status": "partial",
+    "reason": "native.encoding非法可使ProcessLimits构造失败，接受显式配置诊断；不可静默UTF8回退后把真实native输出解码错误当成功。",
+    "evidence": [
+      "harness-process/src/main/java/io/jharness/process/ProcessLimits.java:15"
+    ],
+    "repairGroup": "model-config",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0666",
+    "status": "rejected",
+    "reason": "null outputEncoding非法构造边界已拒绝，NPE/IAE异常类型偏好不构成当前配置路径漏校验，尚无只捕IAE后错误继续的可达证据。",
+    "evidence": [
+      "harness-process/src/main/java/io/jharness/process/ProcessLimits.java:24"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0667",
+    "status": "rejected",
+    "reason": "native默认编码是明确本机子进程兼容选择，跨平台不同是预期；已有显式Charset构造器可指定UTF8，不能为record equals稳定强改默认。",
+    "evidence": [
+      "harness-process/src/main/java/io/jharness/process/ProcessLimits.java:38"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0668",
+    "status": "accepted",
+    "reason": "discover宽松36字符模式且不检查regular file，与cancel严格UUID不一致；统一ID及NOFOLLOW文件类型，保留有界列表。",
+    "evidence": [
+      "harness-process/src/main/java/io/jharness/process/LocalRunControl.java:158"
+    ],
+    "repairGroup": "run-control",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0669",
+    "status": "accepted",
+    "reason": "串行readUTF只有每次read超时，慢字节可长期占唯一取消监听；限制精确帧长度/绝对deadline及有界并发，防合法取消饥饿。",
+    "evidence": [
+      "harness-process/src/main/java/io/jharness/process/LocalRunControl.java:84"
+    ],
+    "repairGroup": "run-control",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0670",
+    "status": "partial",
+    "reason": "发送取消后读响应失败确不证明没生效，UNREACHABLE需明确未知交付语义/GET核对；取消本身幂等，不是工具副作用重放，不禁止安全重复取消。",
+    "evidence": [
+      "harness-process/src/main/java/io/jharness/process/LocalRunControl.java:89"
+    ],
+    "repairGroup": "run-control",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0671",
+    "status": "partial",
+    "reason": "close CAS后写EXITED失败不能再次完成状态落盘，可增加残留状态诊断/安全重试；不能仅PID存活推断原run退出（PID可复用），更不能删状态掩盖未知。",
+    "evidence": [
+      "harness-process/src/main/java/io/jharness/process/LocalRunControl.java:218"
+    ],
+    "repairGroup": "run-control",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0672",
+    "status": "partial",
+    "reason": "cancel已newInputStream NOFOLLOW拒文件链接，意见说完全无NOFOLLOW不实；父目录别名及陈旧端口身份仍需规范路径/进程startInstant核实，不能仅PID证明身份。",
+    "evidence": [
+      "harness-process/src/main/java/io/jharness/process/LocalRunControl.java:170"
+    ],
+    "repairGroup": "run-control",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0673",
+    "status": "partial",
+    "reason": "POSIX目录先默认创建再chmod有宽权限窗口，临时文件位于已ownerOnly目录，不能简单断言其它用户均可读取；采用创建时最小权限并验证继承/父根。",
+    "evidence": [
+      "harness-process/src/main/java/io/jharness/process/LocalRunControl.java:113"
+    ],
+    "repairGroup": "run-control",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0674",
+    "status": "accepted",
+    "reason": "预览测试无秘密sentinel，补diff/path及模型预览全对象脱敏回归，使用已知secret而非假设任意password文本自动识别。",
+    "evidence": [
+      "harness-process/src/test/java/io/jharness/process/LocalPlanPreviewerTest.java:20"
+    ],
+    "repairGroup": "test-preview",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0675",
+    "status": "accepted",
+    "reason": "shell预览只看executed字段，缺实际文件未改断言；加入副作用marker防“报告未执行但已执行”。",
+    "evidence": [
+      "harness-process/src/test/java/io/jharness/process/LocalPlanPreviewerTest.java:65"
+    ],
+    "repairGroup": "test-preview",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0676",
+    "status": "partial",
+    "reason": "绝对路径/链接边界可补直接preview入口回归，%2f是文件名而非URL编码，不要求对普通路径额外URL解码造成错误越界解释。",
+    "evidence": [
+      "harness-process/src/test/java/io/jharness/process/LocalPlanPreviewerTest.java:76"
+    ],
+    "repairGroup": "test-preview",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0677",
+    "status": "accepted",
+    "reason": "diff只+after不足验证删除行/上下文，补手写预期结构与截断；避免仅调用同一UnifiedDiff生成期望自我验证。",
+    "evidence": [
+      "harness-process/src/test/java/io/jharness/process/LocalPlanPreviewerTest.java:39"
+    ],
+    "repairGroup": "test-preview",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0678",
+    "status": "accepted",
+    "reason": "preview全用NONE无法证明取消检查，补预取消和处理中取消且文件不变。",
+    "evidence": [
+      "harness-process/src/test/java/io/jharness/process/LocalPlanPreviewerTest.java:82"
+    ],
+    "repairGroup": "test-preview",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0679",
+    "status": "rejected",
+    "reason": "缺reason使NPE本身仍令测试失败，不会假通过；中文原因文案断言的风格不独立立项，可新增结构码时顺带更新。",
+    "evidence": [
+      "harness-process/src/test/java/io/jharness/process/LocalPlanPreviewerTest.java:64"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0680",
+    "status": "partial",
+    "reason": "离线plan直接preview存在未经过schema的字段裸转，接受严格校验；模型管线实际校验schema，意见称全部模型不校验不成立。",
+    "evidence": [
+      "harness-process/src/main/java/io/jharness/process/LocalPlanPreviewer.java:34"
+    ],
+    "repairGroup": "preview-input",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0681",
+    "status": "partial",
+    "reason": "expectedVersion非String被忽略导致预览可信度下降，接受键存在即类型校验；preview不执行，不能称已绕过实际写入guard。",
+    "evidence": [
+      "harness-process/src/main/java/io/jharness/process/LocalPlanPreviewer.java:62"
+    ],
+    "repairGroup": "preview-input",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0682",
+    "status": "partial",
+    "reason": "preview整读/replace/diff后截断，接受统一有界读取与取消点；内建LocalWorkspace已1MiB，不能以任意违约FileSystemView推断默认无限大。",
+    "evidence": [
+      "harness-process/src/main/java/io/jharness/process/LocalPlanPreviewer.java:36"
+    ],
+    "repairGroup": "preview-input",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0683",
+    "status": "accepted",
+    "reason": "预览after按UTF16 char限而写按UTF8 bytes限，中文可预览通过实际拒；统一字节限与参数错误分类。",
+    "evidence": [
+      "harness-process/src/main/java/io/jharness/process/LocalPlanPreviewer.java:60"
+    ],
+    "repairGroup": "preview-input",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0684",
+    "status": "partial",
+    "reason": "version/read/version的ABA使预览内容/hash不一致，归并同次读取版本快照；不能宣称锁能约束不合作外部写者。",
+    "evidence": [
+      "harness-process/src/main/java/io/jharness/process/LocalPlanPreviewer.java:65"
+    ],
+    "repairGroup": "workspace-version",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0685",
+    "status": "partial",
+    "reason": "Preview IO丢cause可改善安全诊断，cause可能含路径/凭据须经统一脱敏，不直接原样回HTTP。",
+    "evidence": [
+      "harness-process/src/main/java/io/jharness/process/LocalPlanPreviewer.java:87"
+    ],
+    "repairGroup": "audit-failure",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0686",
+    "status": "accepted",
+    "reason": "命令已完成后artifact失败使管线只余UNKNOWN并丢原退出/残留事实；保留原ToolResult与独立artifact失败，不伪造制品成功。",
+    "evidence": [
+      "harness-process/src/main/java/io/jharness/process/ProcessToolsPlugin.java:155"
+    ],
+    "repairGroup": "cleanup-evidence",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0687",
+    "status": "partial",
+    "reason": "公开CommandTool直接调用字段强转无结构校验，但正常管线已有schema；与终端等入口统一参数失败阶段，禁止catch所有RuntimeException把已执行失败误报未执行。",
+    "evidence": [
+      "harness-process/src/main/java/io/jharness/process/ProcessToolsPlugin.java:119"
+    ],
+    "repairGroup": "preview-input",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0688",
+    "status": "rejected",
+    "reason": "CommandRequest构造明确mode非ARGV且argv.size!=1拒绝，ProcessToolsPlugin捕IAE返回INVALID_COMMAND；不存在只执行第一个而静默丢其它已批准参数。",
+    "evidence": [
+      "harness-process/src/main/java/io/jharness/process/ProcessToolsPlugin.java:95"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0689",
+    "status": "partial",
+    "reason": "model.toString非JSON且缺reason/limitations降低结构可读，接受统一有界结构化模型摘要，保留原结果事实及未信任输出边界。",
+    "evidence": [
+      "harness-process/src/main/java/io/jharness/process/ProcessToolsPlugin.java:177"
+    ],
+    "repairGroup": "tool-result-bounds",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0690",
+    "status": "rejected",
+    "reason": "固定INVALID_COMMAND避免把原始命令/路径参数漏入异常；需诊断时安全字段分类即可，不采纳原样回传ex.message。",
+    "evidence": [
+      "harness-process/src/main/java/io/jharness/process/ProcessToolsPlugin.java:181"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0691",
+    "status": "partial",
+    "reason": "复写已退出原状态到释放端口有复用竞态，接受受控监听/随机失效token夹具；其token仅测试随机值，不是产品真实账号秘密。",
+    "evidence": [
+      "harness-process/src/test/java/io/jharness/process/LocalRunControlTest.java:79"
+    ],
+    "repairGroup": "test-fixture-cleanup",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0692",
+    "status": "rejected",
+    "reason": "替换no-op时最终期望INVALID_STATE但实际UNREACHABLE会失败，不是假通过；预检可改善报错不单列功能修复。",
+    "evidence": [
+      "harness-process/src/test/java/io/jharness/process/LocalRunControlTest.java:89"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0693",
+    "status": "partial",
+    "reason": "子JVM先wait后读且无stderr泵、强杀未wait，接受有界双流排空及退出确认；REQUESTED是ASCII，默认charset在此不是实际乱码根因。",
+    "evidence": [
+      "harness-process/src/test/java/io/jharness/process/LocalRunControlTest.java:41"
+    ],
+    "repairGroup": "test-fixture-cleanup",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0694",
+    "status": "accepted",
+    "reason": "while(!started)无deadline，若fixture启动前失败会永久等待；等待future/信号必须有界并保留失败原因。",
+    "evidence": [
+      "harness-process/src/test/java/io/jharness/process/LocalProcessRunnerTest.java:162"
+    ],
+    "repairGroup": "test-fixture-cleanup",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0695",
+    "status": "partial",
+    "reason": "toString脱敏断言可被record实现更改弱化，补各输出字段直接sentinel检查；现有环境字段检验不是“恒真”漏洞，泄漏回归会改变输出。",
+    "evidence": [
+      "harness-process/src/test/java/io/jharness/process/LocalProcessRunnerTest.java:204"
+    ],
+    "repairGroup": "test-no-replay",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0696",
+    "status": "partial",
+    "reason": "1000ms同时验证JVM冷启动/截断/超时易受负载影响，拆准备和实际短期限用例，不能只放大产品默认超时掩盖行为。",
+    "evidence": [
+      "harness-process/src/test/java/io/jharness/process/LocalProcessRunnerTest.java:66"
+    ],
+    "repairGroup": "test-fixture-cleanup",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0697",
+    "status": "partial",
+    "reason": "finally读pid身份不完整会覆盖主失败，接受受控注册握手与残留明细；未写pid也可能确未启动，不可一律认定泄漏或无界等待。",
+    "evidence": [
+      "harness-process/src/test/java/io/jharness/process/LocalProcessRunnerTest.java:290"
+    ],
+    "repairGroup": "test-fixture-cleanup",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0698",
+    "status": "partial",
+    "reason": "runner.execute在try外，异常不执行清理；try-with-resources及抑制次级清理异常，退出未确认须显式失败。",
+    "evidence": [
+      "harness-process/src/test/java/io/jharness/process/LocalProcessRunnerTest.java:119"
+    ],
+    "repairGroup": "test-fixture-cleanup",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0699",
+    "status": "rejected",
+    "reason": "同时已断言trackedPids/cleanupStatus，No Job Object文案明确防夸大保证，不能仅因文案耦合删除诚实限制的回归。",
+    "evidence": [
+      "harness-process/src/test/java/io/jharness/process/LocalProcessRunnerTest.java:109"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0700",
+    "status": "accepted",
+    "reason": "terminal_start schema允许CommandRequest拒绝的shell多argv/NUL/总长，需在主体之前完成语义校验并与参数schema一致；现有schema子集未必支持oneOf，不能直接照搬。",
+    "evidence": [
+      "harness-process/src/main/java/io/jharness/process/TerminalToolsPlugin.java:74"
+    ],
+    "repairGroup": "preview-input",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0701",
+    "status": "accepted",
+    "reason": "终端execute未捕CommandRequest的IAE，纯参数拒绝被管线记UNKNOWN；前置构造/语义验证且保证未进入副作用时确定失败。",
+    "evidence": [
+      "harness-process/src/main/java/io/jharness/process/TerminalToolsPlugin.java:198"
+    ],
+    "repairGroup": "preview-input",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0702",
+    "status": "partial",
+    "reason": "terminal_log最多65536仍在value/modelContent/display重复，接受模型预览/制品引用与总量限额；当前有界文本不是无限泄漏。",
+    "evidence": [
+      "harness-process/src/main/java/io/jharness/process/TerminalToolsPlugin.java:195"
+    ],
+    "repairGroup": "tool-result-bounds",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0703",
+    "status": "partial",
+    "reason": "ProcessProbe tree启动后异常可留子进程；需有异常路径清理与身份记录，但正常父死后保留孩子是进程树测试目的，不应让fixture自行清理掩盖runner失败。",
+    "evidence": [
+      "harness-process/src/test/java/io/jharness/process/ProcessProbe.java:49"
+    ],
+    "repairGroup": "test-fixture-cleanup",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0704",
+    "status": "rejected",
+    "reason": "flood故意持续双流压力用于验证超时/强杀，改关闭管道即自行退出可能削弱清理用例；无当前失控证据，不单独修复测试设计。",
+    "evidence": [
+      "harness-process/src/test/java/io/jharness/process/ProcessProbe.java:37"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0705",
+    "status": "partial",
+    "reason": "Windows Unicode接收器依赖Framework64，当前支持平台AMD64已验收；补清晰前置条件诊断，不扩张至未支持32位/无.NET平台且不加skip。",
+    "evidence": [
+      "harness-process/src/test/java/io/jharness/process/ProcessProbe.java:87"
+    ],
+    "repairGroup": "test-fixture-cleanup",
+    "priority": "P3"
+  },
+  {
+    "id": "OCR-0706",
+    "status": "accepted",
+    "reason": "编译器合并输出后未消费，可能管道满超时且丢诊断；重定向有界日志并总是关闭/等待编译进程。",
+    "evidence": [
+      "harness-process/src/test/java/io/jharness/process/ProcessProbe.java:100"
+    ],
+    "repairGroup": "test-fixture-cleanup",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0707",
+    "status": "rejected",
+    "reason": "ProcessProbe只由固定测试参数启动，非法参数直接失败合理；增加参数提示非当前产品缺陷。",
+    "evidence": [
+      "harness-process/src/test/java/io/jharness/process/ProcessProbe.java:15"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0708",
+    "status": "partial",
+    "reason": "普通目录拒绝只assert IOException可能原因不对，补错误码/消息及目录未变；保留平台权限不支持也失败的严格门禁。",
+    "evidence": [
+      "harness-process/src/test/java/io/jharness/process/RunStatePermissionsTest.java:23"
+    ],
+    "repairGroup": "test-preview",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0709",
+    "status": "rejected",
+    "reason": "三平台安全验收明确0跳过，不支持链接/权限应环境失败显式记录，不能按建议Assumptions跳过制造通过。",
+    "evidence": [
+      "harness-process/src/test/java/io/jharness/process/RunStatePermissionsTest.java:49"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0710",
+    "status": "rejected",
+    "reason": "链接创建在try/finally之前，若createSymbolicLink/mklink失败不会进入该finally，声称delete覆盖创建异常不成立。",
+    "evidence": [
+      "harness-process/src/test/java/io/jharness/process/RunStatePermissionsTest.java:53"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0711",
+    "status": "rejected",
+    "reason": "无ACL文件系统非支持安全能力应失败；建议过滤继承ACE会放松owner-only门禁，且JDK AclEntryFlag没有建议中的INHERITED标志，不采纳。",
+    "evidence": [
+      "harness-process/src/test/java/io/jharness/process/RunStatePermissionsTest.java:63"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0712",
+    "status": "partial",
+    "reason": "当前测试只查文件终态权限，补目录/owner及创建最小权限回归；临时文件已在受限目录，暴露影响须结合673路径核实。",
+    "evidence": [
+      "harness-process/src/test/java/io/jharness/process/RunStatePermissionsTest.java:60"
+    ],
+    "repairGroup": "run-control",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0713",
+    "status": "partial",
+    "reason": "tasks.size32计历史条目，长期会话无法新开终端，需明确历史/活跃双限额与终态有界回收；不能直接移除丢日志/制品或只计活跃使历史无界。",
+    "evidence": [
+      "harness-process/src/main/java/io/jharness/process/LocalTerminalSession.java:53"
+    ],
+    "repairGroup": "terminal-capacity",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0714",
+    "status": "accepted",
+    "reason": "watcher无锁读RUNNING再写EXITED，与synchronized stop终态竞争；统一原子状态转换及单次drain/cleanup/persist，保留停止原因。",
+    "evidence": [
+      "harness-process/src/main/java/io/jharness/process/LocalTerminalSession.java:307"
+    ],
+    "repairGroup": "terminal-lifecycle",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0715",
+    "status": "partial",
+    "reason": "轮转先按原长度算remove再redact导致保留量/offset尺度变化；需要稳定脱敏输出流与绝对游标契约，不能只改dropped计数而留下跨chunk秘密边界。",
+    "evidence": [
+      "harness-process/src/main/java/io/jharness/process/LocalTerminalSession.java:264"
+    ],
+    "repairGroup": "terminal-log",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0716",
+    "status": "partial",
+    "reason": "write ExecutionException只报TERMINAL_INPUT_UNKNOWN而任务未失效，需禁止未核实同任务后续写并停止/诊断；标准Loop遇UNKNOWN不会自动重试，意见的自动重放说法不成立。",
+    "evidence": [
+      "harness-process/src/main/java/io/jharness/process/LocalTerminalSession.java:168"
+    ],
+    "repairGroup": "terminal-lifecycle",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0717",
+    "status": "partial",
+    "reason": "结束后persist/log不再保留尾窗，非完整秘密前缀可能输出；明确部分秘密政策并用受控半密钥终止回归。不能永久截掉所有正常终态尾部，需可识别前缀策略。",
+    "evidence": [
+      "harness-process/src/main/java/io/jharness/process/LocalTerminalSession.java:368"
+    ],
+    "repairGroup": "sanitize-boundaries",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0718",
+    "status": "accepted",
+    "reason": "LocalTerminalSession公开构造对Map.copyOf环境全注入，无LocalProcessRunner的键白名单；统一环境验证和实际快照对象，保持宿主白名单能力。",
+    "evidence": [
+      "harness-process/src/main/java/io/jharness/process/LocalTerminalSession.java:43"
+    ],
+    "repairGroup": "process-environment",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0719",
+    "status": "partial",
+    "reason": "task put早于begin，读接口可见未初始化reader；需完整发布或INITIALIZING态，不能简单先begin后put使快速watcher持久事实漏注册。",
+    "evidence": [
+      "harness-process/src/main/java/io/jharness/process/LocalTerminalSession.java:79"
+    ],
+    "repairGroup": "terminal-lifecycle",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0720",
+    "status": "accepted",
+    "reason": "秘密断言可因日志空串真空通过，先等待公开marker再检秘密及stop后产物/日志，去固定sleep依赖。",
+    "evidence": [
+      "harness-process/src/test/java/io/jharness/process/M6TerminalTest.java:88"
+    ],
+    "repairGroup": "test-terminal",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0721",
+    "status": "partial",
+    "reason": "应增加alive/outputDrained/state实测断言；partial表示采样保证非完整而非“发现残留”，与residual为空不矛盾，不删诚实限制门禁。",
+    "evidence": [
+      "harness-process/src/test/java/io/jharness/process/M6TerminalTest.java:96"
+    ],
+    "repairGroup": "test-terminal",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0722",
+    "status": "accepted",
+    "reason": "M6TerminalTest会话在断言后close，提前失败漏清理；try/finally及失败启动后任务为空，保留原断言。",
+    "evidence": [
+      "harness-process/src/test/java/io/jharness/process/M6TerminalTest.java:113"
+    ],
+    "repairGroup": "test-fixture-cleanup",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0723",
+    "status": "partial",
+    "reason": "stop后未确认flood退出即启动配额用例，新增退出/实际活跃数握手防时序误归因；残留时必须失败不能静默重试过门禁。",
+    "evidence": [
+      "harness-process/src/test/java/io/jharness/process/M6TerminalTest.java:165"
+    ],
+    "repairGroup": "test-terminal",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0724",
+    "status": "partial",
+    "reason": "长度上限断言是有效契约但覆盖不足，补offset/nextOffset/rotation/非空，不因实现现保证就称恒真无用删除。",
+    "evidence": [
+      "harness-process/src/test/java/io/jharness/process/M6TerminalTest.java:171"
+    ],
+    "repairGroup": "test-terminal",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0725",
+    "status": "accepted",
+    "reason": "固定100ms不能保证write已进入阻塞，可能入口CANCELLED；以inputSlot忙/进度握手触发取消，保留在途UNKNOWN断言。",
+    "evidence": [
+      "harness-process/src/test/java/io/jharness/process/M6TerminalTest.java:211"
+    ],
+    "repairGroup": "test-terminal",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0726",
+    "status": "accepted",
+    "reason": "cwd只比较末级目录不足证明选对根，使用canonical路径或根内marker输出，处理平台别名但不放宽路径边界。",
+    "evidence": [
+      "harness-process/src/test/java/io/jharness/process/M6TerminalTest.java:70"
+    ],
+    "repairGroup": "test-terminal",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0727",
+    "status": "partial",
+    "reason": "waitForExit失败只alive信息不足，附脱敏状态/残留及总deadline，是否状态STOPPED按具体用例不一刀切。",
+    "evidence": [
+      "harness-process/src/test/java/io/jharness/process/M6TerminalTest.java:40"
+    ],
+    "repairGroup": "test-terminal",
+    "priority": "P3"
+  },
+  {
+    "id": "OCR-0728",
+    "status": "accepted",
+    "reason": "runner保存快照却验证原environment，构造并发变动可使实际快照未验；校验this.environment并加受控可变Map回归。",
+    "evidence": [
+      "harness-process/src/main/java/io/jharness/process/LocalProcessRunner.java:42"
+    ],
+    "repairGroup": "process-environment",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0729",
+    "status": "accepted",
+    "reason": "runner close快照active与start/add非原子，关闭后可漏进程；统一启动接管及关闭撤销，启动后复核并有界清理。",
+    "evidence": [
+      "harness-process/src/main/java/io/jharness/process/LocalProcessRunner.java:114"
+    ],
+    "repairGroup": "terminal-lifecycle",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0730",
+    "status": "partial",
+    "reason": "读线程join超时后close无再次join，输出/标志未稳定就结算；需安全Collector快照、关闭后有界等待及尾部策略。未停止读者不得报告完整SUCCESS。",
+    "evidence": [
+      "harness-process/src/main/java/io/jharness/process/LocalProcessRunner.java:215"
+    ],
+    "repairGroup": "process-output",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0731",
+    "status": "accepted",
+    "reason": "tree.exceeded未参与observedClean，末次cleanup才超配额可将未跟踪后代排除而报干净；超限必须禁止已完整清理声明并保留UNKNOWN。",
+    "evidence": [
+      "harness-process/src/main/java/io/jharness/process/LocalProcessRunner.java:182"
+    ],
+    "repairGroup": "process-output",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0732",
+    "status": "rejected",
+    "reason": "ARGV所有命令仍SYSTEM_IMPACT审批；Shell黑名单防常见误用非沙箱，python/node/env也能执行任意程序，穷举解释器不构成安全边界且无法完备，不称绕过审批。",
+    "evidence": [
+      "harness-process/src/main/java/io/jharness/process/LocalProcessRunner.java:313"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0733",
+    "status": "accepted",
+    "reason": "cleanup catch InterruptedException无恢复标志，清理期间中断可丢；收尾后恢复或通过结果明确传递，避免带中断写journal毒化。",
+    "evidence": [
+      "harness-process/src/main/java/io/jharness/process/LocalProcessRunner.java:491"
+    ],
+    "repairGroup": "terminal-lifecycle",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0734",
+    "status": "rejected",
+    "reason": "MemoryCheckpointPolicy明确仅内存测试策略，可信宿主可替换服务本是SPI，不承诺抵御恶意Java插件；生产durability门禁另检查writer，不能以public可实例化认定已绕过。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/MemoryCheckpointPolicy.java:6"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0735",
+    "status": "rejected",
+    "reason": "工具管线对非只读强制DURABLE_FLUSH和writer能力，内存policy不能静默放行真实副作用；修改仅测试策略无运行漏洞依据。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/MemoryCheckpointPolicy.java:13"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0736",
+    "status": "partial",
+    "reason": "copyScope先root.resolve/exists再validate scope有存在性探测差异，接受输入校验前置；标准fork生成/验证session ID，不称已证公共HTTP任意路径探测。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/LocalArtifactStore.java:99"
+    ],
+    "repairGroup": "artifact-lifecycle",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0737",
+    "status": "accepted",
+    "reason": "copyScope就地写target，后续失败留部分制品且无补偿；用临时作用域完整校验后原子发布，并与会话fork事务协调。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/LocalArtifactStore.java:102"
+    ],
+    "repairGroup": "artifact-lifecycle",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0738",
+    "status": "partial",
+    "reason": "计数Files.size跟随不可信条目链接，后续read NOFOLLOW已拒内容读取；前置类型检查统一错误，不夸大为已读外部正文。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/LocalArtifactStore.java:107"
+    ],
+    "repairGroup": "artifact-lifecycle",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0739",
+    "status": "partial",
+    "reason": "新建scope前检与mkdir/打开存在父目录替换窗口，需绑定目录句柄/原子创建及NOFOLLOW访问；反复toRealPath只能缩窗不能证明完全消除外部并发替换。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/LocalArtifactStore.java:32"
+    ],
+    "repairGroup": "artifact-lifecycle",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0740",
+    "status": "partial",
+    "reason": "sanitizer返回形状未校验可引发NPE/CCE，接受统一DataSanitizer契约与输出验证；不允许sanitizer就地修改已不可变输入，不能为违规实现改成可变map。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/LocalArtifactStore.java:40"
+    ],
+    "repairGroup": "spi-validation",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0741",
+    "status": "accepted",
+    "reason": "put先sanitize整串再getBytes后4MB检查，需输入预界/有界编码及脱敏扩张上限，避免大工具结果峰值放大。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/LocalArtifactStore.java:42"
+    ],
+    "repairGroup": "tool-result-bounds",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0742",
+    "status": "partial",
+    "reason": "read每页整读4MB hash，接受同一内容版本安全快照复用；直接按字节offset会破现有UTF16分页及完整脱敏，需要保持协议单位和防篡改校验。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/LocalArtifactStore.java:67"
+    ],
+    "repairGroup": "content-paging",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0743",
+    "status": "accepted",
+    "reason": "copyScope先read整文件校验又第二遍读hash，合并一次NOFOLLOW有界读取验证后复制，保持内容摘要正确。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/LocalArtifactStore.java:111"
+    ],
+    "repairGroup": "artifact-lifecycle",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0744",
+    "status": "rejected",
+    "reason": "会话明确支持多轮，turn.ended后合法turn.started必须回RUNNING；终态全会话粘滞会破坏M10.5.3。投影不执行工具，也不等于结束轮被重放。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/EventSessionProjection.java:83"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0745",
+    "status": "partial",
+    "reason": "approval projection未配对可使畸形日志状态不准，接受事实关联校验；真正工具批准由ApprovalService/pipeline精确判定，不会因projection RUNNING自动执行风险工具。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/EventSessionProjection.java:46"
+    ],
+    "repairGroup": "session-fact-schema",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0746",
+    "status": "partial",
+    "reason": "UNKNOWN工具消息仍需保持assistant/tool协议配对，不能删消息造成孤立调用；明确未知文本和后续人工核实关联，恢复门禁已阻止直接重放。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/EventSessionProjection.java:58"
+    ],
+    "repairGroup": "session-fact-schema",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0747",
+    "status": "partial",
+    "reason": "tool.verified payload.toString非稳定结构，接受白名单安全结构输出；宿主writer/Loop clean已经脱敏，不能说所有核实payload必然泄密。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/EventSessionProjection.java:74"
+    ],
+    "repairGroup": "sanitize-boundaries",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0748",
+    "status": "accepted",
+    "reason": "context.injected无role payload会直接进入messages导致下一请求非法；明确注入消息与artifact引用事件schema并在边界拒绝畸形。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/EventSessionProjection.java:31"
+    ],
+    "repairGroup": "session-fact-schema",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0749",
+    "status": "partial",
+    "reason": "内存fork目标逐步公布，无原子发布策略，可在并发读取时见中间态；原意见主要靠将来限额/OOM，接受与文件fork一致发布契约而非OOM后可继续保证。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/InMemorySessionRepository.java:53"
+    ],
+    "repairGroup": "session-fact-schema",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0750",
+    "status": "partial",
+    "reason": "内存fork持仓库全局锁复制会阻塞其它会话，当前未限事件量加重；统一限额后缩锁，性能需要受控多会话数据验证。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/InMemorySessionRepository.java:43"
+    ],
+    "repairGroup": "session-read-bounds",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0751",
+    "status": "partial",
+    "reason": "内存未来schema抛FUTURE_VERSION而文件FUTURE_VERSION_READ_ONLY不一致；统一存储能力/错误契约，schema=0已在SessionEvent拒绝，不能以!=1推导当前0被接受。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/InMemorySessionRepository.java:107"
+    ],
+    "repairGroup": "session-fact-schema",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0752",
+    "status": "accepted",
+    "reason": "内存仓库事件无总上限，与项目有界要求不符；定义可配置但确定上限和文件实现兼容回归。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/InMemorySessionRepository.java:109"
+    ],
+    "repairGroup": "session-read-bounds",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0753",
+    "status": "rejected",
+    "reason": "只以ArrayList扩容OOM说明两集合事务问题；调换顺序又可在HashSet.add OOM时反向失配，不能为OOM保证提出无效顺序修复。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/InMemorySessionRepository.java:109"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0754",
+    "status": "accepted",
+    "reason": "reconstruct索引所有事件只为context查找，多次请求放大；一次线性校验同时只存必要context及已见ID，保留重复/跨会话门禁。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/EventRequestJournal.java:51"
+    ],
+    "repairGroup": "session-read-bounds",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0755",
+    "status": "partial",
+    "reason": "request.context可能先写后requested失败留孤立信封，需投影只采用已关联的请求上下文并可诊断；不得在writer失败后强写补偿或把checkpoint移走绕过先落盘。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/EventRequestJournal.java:36"
+    ],
+    "repairGroup": "session-fact-schema",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0756",
+    "status": "accepted",
+    "reason": "fromPayload只检查messages/tools，parameters/元素畸形泄漏INVALID_JSON而非事件错误；统一事件schema受控拒绝和字段诊断。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/EventRequestJournal.java:84"
+    ],
+    "repairGroup": "session-fact-schema",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0757",
+    "status": "partial",
+    "reason": "INVALID_EVENT目前安全拒绝但原因不精确，分schema/重复/跨会话诊断可采纳，不能因短路表达式风格单列重构。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/EventRequestJournal.java:56"
+    ],
+    "repairGroup": "session-fact-schema",
+    "priority": "P3"
+  },
+  {
+    "id": "OCR-0758",
+    "status": "partial",
+    "reason": "SanitizingSessionWriter只清payload，callId等自由标识可含已知secret；统一标识约束/安全映射并保证关联稳定，禁止逐事件随机脱敏破坏恢复。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/SanitizingSessionWriter.java:26"
+    ],
+    "repairGroup": "sanitize-boundaries",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0759",
+    "status": "rejected",
+    "reason": "按record重建有编译器检查新增字段，withPayload属于API便利重构，尚无丢字段实证不纳修复。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/SanitizingSessionWriter.java:18"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0760",
+    "status": "accepted",
+    "reason": "SessionCatalog archived=anyMatch，归档恢复后仍true；复用SessionLifecycle顺序状态机并覆盖archive→restore→query。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/SessionCatalog.java:74"
+    ],
+    "repairGroup": "archive-consistency",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0761",
+    "status": "accepted",
+    "reason": "Catalog仅catch HarnessException，损坏会话CCE等可中断全目录；逐会话隔离非致命解析失败，保留原诊断且不跳过当通过。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/SessionCatalog.java:77"
+    ],
+    "repairGroup": "session-fact-schema",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0762",
+    "status": "rejected",
+    "reason": "new SessionQuery实际执行参数校验，不是无用表达式；假设未来删掉代码不能证明当前无界返回。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/SessionCatalog.java:21"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0763",
+    "status": "partial",
+    "reason": "Catalog全日志/多遍扫描且恢复在便宜过滤前，接受有界元数据投影/增量索引；必须保持源事实权威且不复用陈旧状态。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/SessionCatalog.java:26"
+    ],
+    "repairGroup": "session-read-bounds",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0764",
+    "status": "accepted",
+    "reason": "与760同根因，保留独立意见编号合并统一归档投影修复。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/SessionLifecycle.java:32"
+    ],
+    "repairGroup": "archive-consistency",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0765",
+    "status": "partial",
+    "reason": "setArchived先openWriter创建缺失会话/锁，需先存在性只读核验并取锁后二次确认；不能只前检而引入竞态。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/SessionLifecycle.java:21"
+    ],
+    "repairGroup": "archive-consistency",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0766",
+    "status": "rejected",
+    "reason": "UNKNOWN前置门禁适用于可见性变化/确认，重复请求仍需反映当前未决事实；移动no-op到检查前会隐藏未知，不因幂等偏好绕过安全诊断。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/SessionLifecycle.java:28"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0767",
+    "status": "rejected",
+    "reason": "产品Web有loopback同源会话/业务鉴权，意见称任何端口访问无鉴权与HarnessWebServer相反；单操作者actor=operator是支持范围，不扩展多用户身份。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/SessionLifecycle.java:34"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0768",
+    "status": "partial",
+    "reason": "verified后陈旧snapshot可覆盖状态需要明确终端世代/顺序验证；不能永久粘VERIFIED掩盖后来真实新活动或新未知，测试覆盖两方向。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/SessionRecovery.java:73"
+    ],
+    "repairGroup": "session-fact-schema",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0769",
+    "status": "partial",
+    "reason": "assistant.message按step清所有请求不够尝试精确，畸形多pending历史应拒歧义；默认M8只重试已落盘HTTP429拒绝，给定未知后重试不是标准合法路径。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/SessionRecovery.java:29"
+    ],
+    "repairGroup": "session-fact-schema",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0770",
+    "status": "accepted",
+    "reason": "恢复对tool_call/task等字段裸String转型可畸形日志CCE；必须固定schema错误fail-closed，禁止跳过未知事实当ready。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/SessionRecovery.java:53"
+    ],
+    "repairGroup": "session-fact-schema",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0771",
+    "status": "partial",
+    "reason": "正常AgentLoop先assistant.tool_calls，审批中call被unsettledCalls门禁覆盖，不是默认恢复放行；但公共pipeline可独立产生tool.requested/approval.requested，需明确独立会话恢复契约并补中断审批诊断/废弃规则，不能据status永久禁用合法新轮或恢复旧批准。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/SessionRecovery.java:13"
+    ],
+    "repairGroup": "session-fact-schema",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0772",
+    "status": "partial",
+    "reason": "EventBus stub不检查publish缺口成立，加record两事实精确关联和单次发布；重复通知不等于执行重放，不按高危产品缺陷表述。",
+    "evidence": [
+      "harness-session/src/test/java/io/jharness/session/EventRequestJournalTest.java:12"
+    ],
+    "repairGroup": "test-session-facts",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0773",
+    "status": "accepted",
+    "reason": "size+末条不能识别中间消息替换，补完整预期协议消息与顺序，保留确定性比较。",
+    "evidence": [
+      "harness-session/src/test/java/io/jharness/session/EventRequestJournalTest.java:131"
+    ],
+    "repairGroup": "test-session-facts",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0774",
+    "status": "partial",
+    "reason": "fixture assistant无tool_calls而有tool结果不够真实，补关联负例；DENIED/FAILED结果应反馈模型而非一律禁止作为上下文，UNKNOWN另受恢复门禁。",
+    "evidence": [
+      "harness-session/src/test/java/io/jharness/session/EventRequestJournalTest.java:117"
+    ],
+    "repairGroup": "test-session-facts",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0775",
+    "status": "accepted",
+    "reason": "补nested request.context的messages/tools/parameters秘密sentinel，直接字段断言与全局无秘密互补。",
+    "evidence": [
+      "harness-session/src/test/java/io/jharness/session/EventRequestJournalTest.java:159"
+    ],
+    "repairGroup": "test-session-facts",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0776",
+    "status": "accepted",
+    "reason": "只测durable=false无法发现包装器硬编码false；加true委托及flush调用与失败传播回归。",
+    "evidence": [
+      "harness-session/src/test/java/io/jharness/session/EventRequestJournalTest.java:155"
+    ],
+    "repairGroup": "test-session-facts",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0777",
+    "status": "accepted",
+    "reason": "latch finally在ExecutorService.close之后，ready超时会关executor等worker而worker等latch死锁；先释放再有界关闭并finally关闭winner。",
+    "evidence": [
+      "harness-session/src/test/java/io/jharness/session/InMemorySessionTest.java:75"
+    ],
+    "repairGroup": "test-fixture-cleanup",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0778",
+    "status": "accepted",
+    "reason": "两次同实现投影等值只证明确定性，补手写完整messages/toolHistory/approval映射预期。",
+    "evidence": [
+      "harness-session/src/test/java/io/jharness/session/InMemorySessionTest.java:142"
+    ],
+    "repairGroup": "test-session-facts",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0779",
+    "status": "rejected",
+    "reason": "未有2秒真实负载失败证据，单纯延长到10秒不证明正确；先修777无限等待并加入确定握手，保留有限deadline。",
+    "evidence": [
+      "harness-session/src/test/java/io/jharness/session/InMemorySessionTest.java:70"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0780",
+    "status": "partial",
+    "reason": "WriterProbe在资源关闭前打印APPENDED可能与close失败同时出现；成功信号应在close确认后，当前父测试还核exit码，不能称单输出就假通过。",
+    "evidence": [
+      "harness-session/src/test/java/io/jharness/session/WriterProbe.java:15"
+    ],
+    "repairGroup": "test-fixture-cleanup",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0781",
+    "status": "rejected",
+    "reason": "测试子程序受控参数，漏参异常会让测试失败，不是产品退出码承诺；不以参数帮助信息单列修复。",
+    "evidence": [
+      "harness-session/src/test/java/io/jharness/session/WriterProbe.java:12"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0782",
+    "status": "rejected",
+    "reason": "父进程会检查具体错误码/退出23，统一HarnessException catch仍保留code可区分；给定“无法区分”不成立，Error不宜兜底伪装正常探针结果。",
+    "evidence": [
+      "harness-session/src/test/java/io/jharness/session/WriterProbe.java:16"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0783",
+    "status": "accepted",
+    "reason": "events变短但prefix匹配时内存裁剪未触发写回，磁盘保留被删payload；缩短/修复源必须更新缓存且rebuilt语义一致。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/SessionSearchIndex.java:118"
+    ],
+    "repairGroup": "search-index",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0784",
+    "status": "accepted",
+    "reason": "索引全量payload转文本/重复serialize后才96MB限，峰值远超缓存限；有界增量累计和流式原子写，缓存读同样先限。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/SessionSearchIndex.java:102"
+    ],
+    "repairGroup": "search-index",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0785",
+    "status": "accepted",
+    "reason": "缓存documents行Values.object/字段转换在损坏重建catch之外，畸形派生缓存使搜索失败；完整schema/hash验证后可丢弃重建，绝不改事实日志。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/SessionSearchIndex.java:92"
+    ],
+    "repairGroup": "search-index",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0786",
+    "status": "accepted",
+    "reason": "lowercase下标用于原串snippet在İ长度扩张错位，512边界也可断代理；保持原始索引映射/Unicode安全窗口回归。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/SessionSearchIndex.java:151"
+    ],
+    "repairGroup": "search-index",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0787",
+    "status": "rejected",
+    "reason": "严格祖先无链接是文件根契约，macOS测试通过toRealPath规范已修；不接受仅检查末级从而放松边界，说明支持路径即可。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/SessionSearchIndex.java:35"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0788",
+    "status": "accepted",
+    "reason": "fork先prepareArtifacts后编码/事件数门禁，10000+forked可失败留孤儿；先完整预算校验并协调临时产物/日志原子发布与补偿。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/JsonlSessionRepository.java:284"
+    ],
+    "repairGroup": "artifact-lifecycle",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0789",
+    "status": "partial",
+    "reason": "schema<1被SessionEvent构造拒绝后按损坏处理，并未真正放行；可区分不支持schema与尾损，不能把负版本视作合法历史需迁移或允许悄悄丢事实。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/JsonlSessionRepository.java:470"
+    ],
+    "repairGroup": "session-fact-schema",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0790",
+    "status": "accepted",
+    "reason": "forkTo只锁source不锁target、不拒已存在目标，ATOMIC_MOVE目标存在行为可平台替换；需目标独占与不覆盖发布，不能照建议加REPLACE_EXISTING覆盖旧事实。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/JsonlSessionRepository.java:246"
+    ],
+    "repairGroup": "fork-target-lock",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0791",
+    "status": "accepted",
+    "reason": "Instant.parse的DateTimeParseException不是IAE，parse未捕获会绕过尾损分类；明确时间字段错误及尾/中段规则，不让未知版本被截断。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/JsonlSessionRepository.java:477"
+    ],
+    "repairGroup": "session-fact-schema",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0792",
+    "status": "rejected",
+    "reason": "节点250000是与32MB/10000条并行的额外上限，writer相同累计门禁阻止写出自己不能读的合法前缀；先达节点上限不等于合法会话永久不可读。禁止将RECORD_LIMIT尾部静默修复删事实。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/JsonlSessionRepository.java:537"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-0793",
+    "status": "accepted",
+    "reason": "静态GATES对任意合法id computeIfAbsent不释放，未存在会话探测也累积；采用固定条带或正确引用计数，不能简单LRU淘汰活跃锁导致双写。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/JsonlSessionRepository.java:97"
+    ],
+    "repairGroup": "session-read-bounds",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0794",
+    "status": "partial",
+    "reason": "文件force未包含父目录落盘，不可宣称断电目录项保证；明确平台持久化层级，支持时目录fsync并实机验证，不能无条件FileChannel开目录声称Windows等价保证。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/JsonlSessionRepository.java:396"
+    ],
+    "repairGroup": "durability-scope",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0795",
+    "status": "accepted",
+    "reason": "尾修复后直接diagnostics.accept可抛异常覆盖已完成操作，使用隔离diagnose并保留实际修复事实。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/JsonlSessionRepository.java:147"
+    ],
+    "repairGroup": "audit-failure",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0799",
+    "status": "partial",
+    "reason": "累计节点测试accepted>0<20下界过宽，可加小payload对照/门槛公式及精确码；不硬编码实现内部12条当接口永久保证。",
+    "evidence": [
+      "harness-session/src/test/java/io/jharness/session/JsonlSessionRepositoryTest.java:31"
+    ],
+    "repairGroup": "test-session-facts",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0800",
+    "status": "partial",
+    "reason": "force失败后字节仍可读是持久性未知而非自动重放证据；补故障后重开实际可见性和禁止发送断言，不强制truncate假装操作未发生。",
+    "evidence": [
+      "harness-session/src/test/java/io/jharness/session/JsonlSessionRepositoryTest.java:230"
+    ],
+    "repairGroup": "test-session-facts",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0801",
+    "status": "accepted",
+    "reason": "拒绝重复/跨会话append仅查异常/list不能锁定字节未变；补前后bytes及event列表，验证校验在写前。",
+    "evidence": [
+      "harness-session/src/test/java/io/jharness/session/JsonlSessionRepositoryTest.java:259"
+    ],
+    "repairGroup": "test-session-facts",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0802",
+    "status": "partial",
+    "reason": "越界拒绝需同时核工作区外marker未变/无新文件与临时残留；已有../outside是POSIX式穿越，不必重复为同类输入堆测试。",
+    "evidence": [
+      "harness-session/src/test/java/io/jharness/session/JsonlSessionRepositoryTest.java:252"
+    ],
+    "repairGroup": "test-session-facts",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0803",
+    "status": "accepted",
+    "reason": "篡改异长不能独立证明SHA校验，使用等字节长度替换及相似scope s/s2隔离回归。",
+    "evidence": [
+      "harness-session/src/test/java/io/jharness/session/JsonlSessionRepositoryTest.java:294"
+    ],
+    "repairGroup": "test-session-facts",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0804",
+    "status": "partial",
+    "reason": "WriterProbe等待超时未finally杀进程可能持锁，统一有界双流/退出清理；Surefire类路径问题需实际证据，不随意替换已成功跨进程夹具。",
+    "evidence": [
+      "harness-session/src/test/java/io/jharness/session/JsonlSessionRepositoryTest.java:104"
+    ],
+    "repairGroup": "test-fixture-cleanup",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0816",
+    "status": "partial",
+    "reason": "TokenSessionSearch整体同步跨会话串行，内建文件锁按id已有隔离；缩锁/有界并发且验证sanitize线程安全，不直接删锁假设所有注入provider安全。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/TokenSessionSearch.java:76"
+    ],
+    "repairGroup": "search-index",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0817",
+    "status": "accepted",
+    "reason": "lowercase位置用于原文snippet同786，统一Unicode位置映射与代理边界回归。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/TokenSessionSearch.java:203"
+    ],
+    "repairGroup": "search-index",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0818",
+    "status": "partial",
+    "reason": "search null mode触Set.contains NPE，公共ContentSearch可结构化拒绝；Web入口已字符串校验，null token属宿主违规，不当远程崩溃。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/TokenSessionSearch.java:87"
+    ],
+    "repairGroup": "transport-contract",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0819",
+    "status": "partial",
+    "reason": "父目录替换窗口存在于路径式缓存读写；使用绑定目录能力/原子临时文件及NOFOLLOW，重新realpath只缩窗不彻底消竞态，派生缓存不可成为事实写入通道。",
+    "evidence": [
+      "harness-session/src/main/java/io/jharness/session/TokenSessionSearch.java:68"
+    ],
+    "repairGroup": "search-index",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0825",
+    "status": "accepted",
+    "reason": "traversal只异常类型，补精确路径拒绝码及无外部副作用，避免无关取消假通过。",
+    "evidence": [
+      "harness-session/src/test/java/io/jharness/session/TokenSessionSearchTest.java:137"
+    ],
+    "repairGroup": "test-session-facts",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0826",
+    "status": "accepted",
+    "reason": "测试名排除model.requested但未写该事件，补独特敏感检索词并断言不索引；保持正文白名单范围。",
+    "evidence": [
+      "harness-session/src/test/java/io/jharness/session/TokenSessionSearchTest.java:110"
+    ],
+    "repairGroup": "test-session-facts",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0827",
+    "status": "accepted",
+    "reason": "LeakNewlyKnownSecrets用例secret从起始已知，缺旧缓存明文到新secret配置重建的覆盖；两实例/同缓存测试无命中且安全重写。",
+    "evidence": [
+      "harness-session/src/test/java/io/jharness/session/TokenSessionSearchTest.java:86"
+    ],
+    "repairGroup": "test-session-facts",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0828",
+    "status": "accepted",
+    "reason": "同JVM锁只覆盖OverlappingFileLockException，补跨进程tryLock=null及释放后成功，证明OWNERS/文件锁回收。",
+    "evidence": [
+      "harness-session/src/test/java/io/jharness/session/TokenSessionSearchTest.java:128"
+    ],
+    "repairGroup": "test-session-facts",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0829",
+    "status": "accepted",
+    "reason": "坏日志fork使用不存在event且仅异常类型，改真实event和精确未来/中损码并检查临时文件无新残留。",
+    "evidence": [
+      "harness-session/src/test/java/io/jharness/session/M5SessionTest.java:183"
+    ],
+    "repairGroup": "test-session-facts",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0830",
+    "status": "partial",
+    "reason": "export冲突后需核无目标半成品和锁可重取；同JVM新实例仍受OS锁，跨进程对照更完整，不声称原复用实例看不到FileLock泄漏。",
+    "evidence": [
+      "harness-session/src/test/java/io/jharness/session/M5SessionTest.java:115"
+    ],
+    "repairGroup": "test-session-facts",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0831",
+    "status": "accepted",
+    "reason": "fork失败只repo.list看不到孤儿artifacts，补两目录前后快照及未公布target不可读，绑定737/788实际缺陷。",
+    "evidence": [
+      "harness-session/src/test/java/io/jharness/session/M5SessionTest.java:265"
+    ],
+    "repairGroup": "test-session-facts",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0832",
+    "status": "partial",
+    "reason": "本M5用例只状态不调恢复执行，补marker/调用计数验证未知不执行；其它M4/M9已有端到端，不因此称全仓无禁止重放测试。",
+    "evidence": [
+      "harness-session/src/test/java/io/jharness/session/M5SessionTest.java:292"
+    ],
+    "repairGroup": "test-no-replay",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-0833",
+    "status": "accepted",
+    "reason": "damage测试只size=3不能证明diagnostic/ready=false，补broken行固定错误及过滤不伪造匹配。",
+    "evidence": [
+      "harness-session/src/test/java/io/jharness/session/M5SessionTest.java:324"
+    ],
+    "repairGroup": "test-session-facts",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-0834",
+    "status": "accepted",
+    "reason": "单匹配分页不能覆盖跨页漏重，补多条完整拼接与边界，验证稳定顺序。",
+    "evidence": [
+      "harness-session/src/test/java/io/jharness/session/M5SessionTest.java:372"
+    ],
+    "repairGroup": "test-session-facts",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1059",
+    "status": "accepted",
+    "reason": "enum/oneOf/boolean负例只宽泛异常，补SCHEMA_MISMATCH与INVALID_SCHEMA区分，防声明错误伪装值不匹配。",
+    "evidence": [
+      "harness-tools/src/test/java/io/jharness/tools/JsonSchemaValidatorTest.java:78"
+    ],
+    "repairGroup": "test-tool-schema",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1060",
+    "status": "accepted",
+    "reason": "maximum/maxItems/minLength声明未有反例，补恰好边界/越界对照而非镜像实现测试。",
+    "evidence": [
+      "harness-tools/src/test/java/io/jharness/tools/JsonSchemaValidatorTest.java:57"
+    ],
+    "repairGroup": "test-tool-schema",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1061",
+    "status": "accepted",
+    "reason": "BMP字符串无法区分codepoint/UTF16，补3与5 emoji的maxLength回归。",
+    "evidence": [
+      "harness-tools/src/test/java/io/jharness/tools/JsonSchemaValidatorTest.java:52"
+    ],
+    "repairGroup": "test-tool-schema",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1062",
+    "status": "accepted",
+    "reason": "run先finished检查后entered CAS，finish可中间结算后主体继续进入；需单一原子状态机防结算后进入，并保持owner结算/UNKNOWN不重放。",
+    "evidence": [
+      "harness-tools/src/main/java/io/jharness/tools/DefaultToolPipeline.java:185"
+    ],
+    "repairGroup": "tool-settlement",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-1063",
+    "status": "partial",
+    "reason": "扩展在真实进入后可改状态掩盖未知，需要明确包装可修改范围和保守不确定性合并；可信Java插件不是恶意沙箱，不禁止合法结果拦截/降级或要求结果恒等。",
+    "evidence": [
+      "harness-tools/src/main/java/io/jharness/tools/DefaultToolPipeline.java:198"
+    ],
+    "repairGroup": "tool-settlement",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-1064",
+    "status": "partial",
+    "reason": "finish仅防伪SUCCESS，未保护已知UNKNOWN被调度器降级；保留未知粘滞与真实outcome，不可按建议entered非只读就全UNKNOWN（正常成功也entered）。",
+    "evidence": [
+      "harness-tools/src/main/java/io/jharness/tools/DefaultToolPipeline.java:242"
+    ],
+    "repairGroup": "tool-settlement",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-1065",
+    "status": "partial",
+    "reason": "finished CAS早于纯校验，错误callId/sanitize失败会占结算且无完成事实；前置纯校验、清晰SETTLING/SETTLED，审计失败保留未决。不能writer失败时强补假完成。",
+    "evidence": [
+      "harness-tools/src/main/java/io/jharness/tools/DefaultToolPipeline.java:237"
+    ],
+    "repairGroup": "tool-settlement",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-1066",
+    "status": "partial",
+    "reason": "脱敏可改变输出形状，需定义可见schema/红删状态并防SUCCESS违约；不能为了schema恢复秘密原值，保留操作已发生的真实事实。",
+    "evidence": [
+      "harness-tools/src/main/java/io/jharness/tools/DefaultToolPipeline.java:245"
+    ],
+    "repairGroup": "tool-settlement",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1067",
+    "status": "rejected",
+    "reason": "公共ToolPipeline Optional支持其它不可准备实现；默认总of包含preliminary失败用于结算，不是可删除的跨实现死代码。",
+    "evidence": [
+      "harness-tools/src/main/java/io/jharness/tools/DefaultToolPipeline.java:29"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-1068",
+    "status": "rejected",
+    "reason": "按scope重新requireUnique是撤销后旧引用防复活的明确机制，不能直接scheduler字段绕过；多key注册不是替换的正确方式，歧义拒绝符合契约。",
+    "evidence": [
+      "harness-tools/src/main/java/io/jharness/tools/ToolSchedulingPlugin.java:42"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-1069",
+    "status": "accepted",
+    "reason": "传入scheduler会context.own移交关闭所有权，需明确不可跨容器共享及借用方案，防意外关其它任务。",
+    "evidence": [
+      "harness-tools/src/main/java/io/jharness/tools/ToolSchedulingPlugin.java:30"
+    ],
+    "repairGroup": "transport-contract",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1070",
+    "status": "partial",
+    "reason": "程序直接validate NaN被decimal归INVALID_SCHEMA，需值与schema错误区分；JSON/Values边界已拒非有限数，不能当模型JSON可达漏洞。",
+    "evidence": [
+      "harness-tools/src/main/java/io/jharness/tools/JsonSchemaValidator.java:189"
+    ],
+    "repairGroup": "tool-schema",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1071",
+    "status": "partial",
+    "reason": "sameJson递归无自身深度/环检，公共直接Java调用可构造极深const/value；在schema/value统一JSON快照边界处理，正常工具Values已限深64。",
+    "evidence": [
+      "harness-tools/src/main/java/io/jharness/tools/JsonSchemaValidator.java:198"
+    ],
+    "repairGroup": "tool-schema",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1072",
+    "status": "accepted",
+    "reason": "嵌套非法schema经Values.object报INVALID_JSON非INVALID_SCHEMA；统一声明错误且保留失败前无执行。",
+    "evidence": [
+      "harness-tools/src/main/java/io/jharness/tools/JsonSchemaValidator.java:52"
+    ],
+    "repairGroup": "tool-schema",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1073",
+    "status": "partial",
+    "reason": "const/enum仅列表形状检查，接受声明JSON域/深度限制；合并1071而不重复一个栈溢出根因多立项。",
+    "evidence": [
+      "harness-tools/src/main/java/io/jharness/tools/JsonSchemaValidator.java:75"
+    ],
+    "repairGroup": "tool-schema",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1074",
+    "status": "partial",
+    "reason": "公共validate非String键/非JSON值报INVALID_JSON或IAE，需实例错误归SCHEMA_MISMATCH；正常管线Values已有JSON化，区分SPI健壮性。",
+    "evidence": [
+      "harness-tools/src/main/java/io/jharness/tools/JsonSchemaValidator.java:131"
+    ],
+    "repairGroup": "tool-schema",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1075",
+    "status": "partial",
+    "reason": "null工具schema会NPE，统一注册/声明校验并带工具名，不能用空schema默认放开未知输入。",
+    "evidence": [
+      "harness-tools/src/main/java/io/jharness/tools/JsonSchemaValidator.java:40"
+    ],
+    "repairGroup": "spi-validation",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1076",
+    "status": "partial",
+    "reason": "CANCELLED且sideEffectUncertain优先级落CANCELLED，先stopped再扫uncertain会影响错误码；应未知优先，同时现有journal保留标志/Loop复核，不宣称必然自动重放。",
+    "evidence": [
+      "harness-tools/src/main/java/io/jharness/tools/BoundedReadOnlyToolScheduler.java:175"
+    ],
+    "repairGroup": "tool-settlement",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-1077",
+    "status": "partial",
+    "reason": "宽限后用UNKNOWN owner finish在worker仍run是有意有界收尾，不应无限等或让worker写journal；需解决run/finish状态竞争并显式body仍活，保证后续batch拒绝直至退出。",
+    "evidence": [
+      "harness-tools/src/main/java/io/jharness/tools/BoundedReadOnlyToolScheduler.java:228"
+    ],
+    "repairGroup": "tool-settlement",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-1078",
+    "status": "accepted",
+    "reason": "drain部分finish后异常pending未移除，catch再次drain触REPEATED_SETTLEMENT阻断剩余结算；逐项标记并只结算一次，保留首因。",
+    "evidence": [
+      "harness-tools/src/main/java/io/jharness/tools/BoundedReadOnlyToolScheduler.java:248"
+    ],
+    "repairGroup": "tool-settlement",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-1079",
+    "status": "accepted",
+    "reason": "Run.context取消混合内部cancel/closed，drain把内部TIMEOUT误归CANCELLED；保留原取消源与最高影响原因，测试多项竞态。",
+    "evidence": [
+      "harness-tools/src/main/java/io/jharness/tools/BoundedReadOnlyToolScheduler.java:218"
+    ],
+    "repairGroup": "tool-settlement",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-1080",
+    "status": "partial",
+    "reason": "close与worker注册/start存在窗口，需关闭/注册原子协议并保证晚启动立即退出；有合作token仍不能证明不会进入主体。",
+    "evidence": [
+      "harness-tools/src/main/java/io/jharness/tools/BoundedReadOnlyToolScheduler.java:267"
+    ],
+    "repairGroup": "scope-revocation",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-1081",
+    "status": "accepted",
+    "reason": "prepare触barrier发现stopped后直接break，已prepare请求未finish留下悬挂；对已受理preliminary做单次确定结算，主体不进入。",
+    "evidence": [
+      "harness-tools/src/main/java/io/jharness/tools/BoundedReadOnlyToolScheduler.java:51"
+    ],
+    "repairGroup": "tool-settlement",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-1082",
+    "status": "accepted",
+    "reason": "异常catch内run.abort在try之外，重复审计失败覆盖首因且不drain；收集suppressed并尽可能结算，写失败不能伪造完整事实。",
+    "evidence": [
+      "harness-tools/src/main/java/io/jharness/tools/BoundedReadOnlyToolScheduler.java:90"
+    ],
+    "repairGroup": "audit-failure",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-1083",
+    "status": "accepted",
+    "reason": "done.countDown早于workers.remove，下一批可误报SCHEDULER_BUSY；注销先于完成信号，测试紧邻批次无人工sleep。",
+    "evidence": [
+      "harness-tools/src/main/java/io/jharness/tools/BoundedReadOnlyToolScheduler.java:207"
+    ],
+    "repairGroup": "tool-settlement",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1084",
+    "status": "rejected",
+    "reason": "8192统计token是明确额外资源门禁，预扫描保护绑定前节点数；不能以64KB已经限制为由删除节点限或只统计值，性能优化需等效有界parser证据。",
+    "evidence": [
+      "harness-web/src/main/java/io/jharness/web/WebJson.java:32"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-1085",
+    "status": "partial",
+    "reason": "WebJson写出后才由调用者限bytes，需有界输出流和状态文件读写对称schema；WorkspaceLease pending实际只有有限字段，24层请求嵌套租约例子未证实。",
+    "evidence": [
+      "harness-web/src/main/java/io/jharness/web/WebJson.java:25"
+    ],
+    "repairGroup": "transport-bounds",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-1086",
+    "status": "partial",
+    "reason": "256是总提交历史上限，长会话确会拒第257项；需区分8待执行与总历史策略/归档分页及幂等保留，不能只计pending导致无界hash记录。",
+    "evidence": [
+      "harness-web/src/main/java/io/jharness/web/TurnQueue.java:57"
+    ],
+    "repairGroup": "queue-history",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1087",
+    "status": "partial",
+    "reason": "Input非法kind/content null会NPE，接受catalog回放严格schema与错误隔离；标准HTTP已检，不能默认把内建受理当随机坏记录。",
+    "evidence": [
+      "harness-web/src/main/java/io/jharness/web/TurnQueue.java:21"
+    ],
+    "repairGroup": "web-fact-schema",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1088",
+    "status": "accepted",
+    "reason": "finished status/turnId/modelRoute显式null可进入view Map.of NPE；在回放赋值校验而非静默归空掩盖损坏。",
+    "evidence": [
+      "harness-web/src/main/java/io/jharness/web/TurnQueue.java:39"
+    ],
+    "repairGroup": "web-fact-schema",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1089",
+    "status": "partial",
+    "reason": "started置UNKNOWN仍保留content违注释的pending-only，应清执行文本并保留摘要/哈希关联；turns有业务鉴权，不采纳“无鉴权泄露”主张。",
+    "evidence": [
+      "harness-web/src/main/java/io/jharness/web/TurnQueue.java:73"
+    ],
+    "repairGroup": "queue-history",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1090",
+    "status": "rejected",
+    "reason": "verified是操作者明确外部核实并禁止重放，不等于成功，error已有EXTERNALLY_VERIFIED_NO_REPLAY；按建议保持UNRESOLVED会破恢复语义，原正文在session/journal仍保留。",
+    "evidence": [
+      "harness-web/src/main/java/io/jharness/web/TurnQueue.java:102"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-1091",
+    "status": "accepted",
+    "reason": "requestHash裸转畸形catalog可CCE，统一严格字段/关联/状态验证并按任务报告损坏。",
+    "evidence": [
+      "harness-web/src/main/java/io/jharness/web/TurnQueue.java:54"
+    ],
+    "repairGroup": "web-fact-schema",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1092",
+    "status": "accepted",
+    "reason": "ui-files仅readNBytes16384未探测超限，清单截断会缺后部入口；读取LIMIT+1且超限明确拒发布/诊断，构建端同步限额。",
+    "evidence": [
+      "harness-web/src/main/java/io/jharness/web/UiResources.java:19"
+    ],
+    "repairGroup": "ui-packaging",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1093",
+    "status": "partial",
+    "reason": "UiResources.serve对空path substring可抛500，先规范空请求目标/拒绝非斜杠；实际JDK HttpServer绝对form空path需原始HTTP回归确认。",
+    "evidence": [
+      "harness-web/src/main/java/io/jharness/web/UiResources.java:33"
+    ],
+    "repairGroup": "ui-packaging",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1094",
+    "status": "partial",
+    "reason": "历史row profile不在当前profiles时selected=null，需授权过滤/受控拒绝；不能把移除profile旧任务继续视可搜索授权，补重启配置删除场景。",
+    "evidence": [
+      "harness-web/src/main/java/io/jharness/web/WorkbenchContentSearch.java:94"
+    ],
+    "repairGroup": "search-index",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-1095",
+    "status": "partial",
+    "reason": "provider Hit缺非空验证可Map.copyOf NPE，统一返回schema/范围；未知turnId可规范空值但eventId等必填必须拒绝。",
+    "evidence": [
+      "harness-web/src/main/java/io/jharness/web/WorkbenchContentSearch.java:119"
+    ],
+    "repairGroup": "transport-contract",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1096",
+    "status": "accepted",
+    "reason": "provider timestamp到排序才Instant.parse反复解析且异常500；采集命中时校验/解析一次并给固定provider结果错误。",
+    "evidence": [
+      "harness-web/src/main/java/io/jharness/web/WorkbenchContentSearch.java:126"
+    ],
+    "repairGroup": "search-index",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1097",
+    "status": "accepted",
+    "reason": "同profile每row调用sessions.list导致重复最多256次目录扫描；每次查询按profile单次有界membership快照，保留授权核对。",
+    "evidence": [
+      "harness-web/src/main/java/io/jharness/web/WorkbenchContentSearch.java:98"
+    ],
+    "repairGroup": "session-read-bounds",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1098",
+    "status": "partial",
+    "reason": "整个search锁内外部provider扇出，慢provider阻塞所有请求；缩快照锁并限制总并发，不能仅ConcurrentHashMap后允许无界并行。",
+    "evidence": [
+      "harness-web/src/main/java/io/jharness/web/WorkbenchContentSearch.java:20"
+    ],
+    "repairGroup": "search-index",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1099",
+    "status": "partial",
+    "reason": "catalog append缺taskId输入校验，accepted可recent null键；标准生成ID安全但回放/迁移需严格模式，写前拒畸形。",
+    "evidence": [
+      "harness-web/src/main/java/io/jharness/web/DurableTaskCatalog.java:240"
+    ],
+    "repairGroup": "web-fact-schema",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1100",
+    "status": "partial",
+    "reason": "recent/count内部方法未统一锁，需核HarnessWebServer外层调用锁后明确封装线程安全；直接并发使用当前类确可改LinkedHashMap，不以此断言已串错任务数据。",
+    "evidence": [
+      "harness-web/src/main/java/io/jharness/web/DurableTaskCatalog.java:19"
+    ],
+    "repairGroup": "catalog-concurrency",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-1101",
+    "status": "partial",
+    "reason": "迁移续跑重sanitize后equals依赖秘密配置稳定，非幂等/新秘密可MIGRATION_CONFLICT；用身份/原始安全指纹和迁移进度，禁止按建议比较未脱敏正文输出或忽略内容冲突。",
+    "evidence": [
+      "harness-web/src/main/java/io/jharness/web/DurableTaskCatalog.java:66"
+    ],
+    "repairGroup": "catalog-migration",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1102",
+    "status": "partial",
+    "reason": "迁移只首hash/首accepted验证不足，应全组ID/hash一致及全局唯一；当前遇existing不一致会MIGRATION_CONFLICT，原说必然拼成串任务需回归证明。",
+    "evidence": [
+      "harness-web/src/main/java/io/jharness/web/DurableTaskCatalog.java:61"
+    ],
+    "repairGroup": "catalog-migration",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-1103",
+    "status": "partial",
+    "reason": "运行append类型/状态需白名单验证，但M10.5新metadata/turn事件合法，不能复用旧迁移三类型白名单；UNKNOWN是必须持久保留的事实，不能拒写掩盖它。",
+    "evidence": [
+      "harness-web/src/main/java/io/jharness/web/DurableTaskCatalog.java:255"
+    ],
+    "repairGroup": "web-fact-schema",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1104",
+    "status": "partial",
+    "reason": "新taskId含hash已有直接byHash路径，不会每非accepted全扫；仅legacy UUID/无效ID兜底扫描，接受legacy索引/格式快速拒绝的有界优化。",
+    "evidence": [
+      "harness-web/src/main/java/io/jharness/web/DurableTaskCatalog.java:218"
+    ],
+    "repairGroup": "session-read-bounds",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1105",
+    "status": "partial",
+    "reason": "空record计文件数与count非空不一致可能耗配额，需统一保留/修复策略并可诊断；不能跳过损坏记录当不存在或无授权删除运行数据。",
+    "evidence": [
+      "harness-web/src/main/java/io/jharness/web/DurableTaskCatalog.java:179"
+    ],
+    "repairGroup": "catalog-migration",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1106",
+    "status": "accepted",
+    "reason": "lease前size后readAllBytes可被并发放大，且read跟随终组件；改NOFOLLOW句柄有界读取并保留父目录保护，文件key复查不能替代句柄能力。",
+    "evidence": [
+      "harness-web/src/main/java/io/jharness/web/WorkspaceLease.java:24"
+    ],
+    "repairGroup": "workspace-lease",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-1107",
+    "status": "partial",
+    "reason": "accept未验证taskId/catalog身份即可持久化，需强schema和重读校验；当前调用生成字段不漏taskId，不能称正常准入必永久锁死，允许受控诊断但不手改运行文件。",
+    "evidence": [
+      "harness-web/src/main/java/io/jharness/web/WorkspaceLease.java:44"
+    ],
+    "repairGroup": "workspace-lease",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-1108",
+    "status": "partial",
+    "reason": "指针rename仅force文件缺目录项持久性保证，需文档明确断电范围及支持平台fsync策略；进程崩溃通常不同于断电，不混为必然失指针。",
+    "evidence": [
+      "harness-web/src/main/java/io/jharness/web/WorkspaceLease.java:77"
+    ],
+    "repairGroup": "durability-scope",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-1109",
+    "status": "rejected",
+    "reason": "close已完成后再次save第一步owner.flush，固定Jsonl writer.valid抛WRITER_CLOSED，不会继续写文件。此结论仅针对原意见的顺序调用；flush后到move之间并发close不由此证明安全，归入生命周期锁审计。",
+    "evidence": [
+      "harness-web/src/main/java/io/jharness/web/WorkspaceLease.java:88"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-1110",
+    "status": "rejected",
+    "reason": "WorkspaceLease包内clear由宿主确定task/catalog字符串调用，null属于违约，Objects.equals反而可能两个null匹配损坏pending；统一accept schema以1107解决。",
+    "evidence": [
+      "harness-web/src/main/java/io/jharness/web/WorkspaceLease.java:51"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-1111",
+    "status": "rejected",
+    "reason": "所有pending赋值已经Values.snapshot/object或Map.of不可变，返回引用不会被改；假想未来可变赋值不构成当前缺陷，重复快照徒增开销。",
+    "evidence": [
+      "harness-web/src/main/java/io/jharness/web/WorkspaceLease.java:37"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-1112",
+    "status": "partial",
+    "reason": "CRLF-only变化会全替换同文字，作为字节行尾变化不是假文件改动；应明确展示型diff的行尾语义/可应用范围并测试，不能归一化判相等丢真实变更。",
+    "evidence": [
+      "harness-workspace/src/main/java/io/jharness/workspace/UnifiedDiff.java:10"
+    ],
+    "repairGroup": "patch-format",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1113",
+    "status": "partial",
+    "reason": "公开UnifiedDiff无path转义，内建LocalWorkspace拒控制字符但空格/tab等头语义需明确；安全引用路径/格式边界，不宣称模型已能注入跨文件写入。",
+    "evidence": [
+      "harness-workspace/src/main/java/io/jharness/workspace/UnifiedDiff.java:12"
+    ],
+    "repairGroup": "patch-format",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1114",
+    "status": "rejected",
+    "reason": "before空串不等于文件不存在，after空串不等于删除；仅凭空文本改/dev/null会把清空已有文件误作删除，文件工具明确不支持删除。需未来明确change kind另立项。",
+    "evidence": [
+      "harness-workspace/src/main/java/io/jharness/workspace/UnifiedDiff.java:14"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-1115",
+    "status": "rejected",
+    "reason": "非法null已快速NPE拒绝，增加参数名属API消息偏好，无当前调用错误。",
+    "evidence": [
+      "harness-workspace/src/main/java/io/jharness/workspace/UnifiedDiff.java:9"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-1116",
+    "status": "accepted",
+    "reason": "effects先not_started再uncertain，冲突证据可被诊断断言未执行；未知优先并保留矛盾标记，诊断不授予恢复执行权限。",
+    "evidence": [
+      "harness-web/src/main/java/io/jharness/web/TaskDiagnosis.java:69"
+    ],
+    "repairGroup": "diagnosis-facts",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-1117",
+    "status": "partial",
+    "reason": "全事件sanitize并保留整requested/decisions payload仅用少字段有重复开销；字段投影/受限索引，日志总32MB不能按每事件8MB乘10000夸大实际输入。",
+    "evidence": [
+      "harness-web/src/main/java/io/jharness/web/TaskDiagnosis.java:36"
+    ],
+    "repairGroup": "diagnosis-facts",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1118",
+    "status": "accepted",
+    "reason": "diagnosis eventId裸写未像其它字段safeString，有自由ID的秘密/长串面；引用ID安全显示与原始定位分离，不能截断后作实际事件主键。",
+    "evidence": [
+      "harness-web/src/main/java/io/jharness/web/TaskDiagnosis.java:47"
+    ],
+    "repairGroup": "sanitize-boundaries",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-1119",
+    "status": "partial",
+    "reason": "category默认FAILED在信息缺失时过度确定，可增UNKNOWN/UNCLASSIFIED且按uncertain优先；该分类不是恢复状态，不据此断言工具会被重放。",
+    "evidence": [
+      "harness-web/src/main/java/io/jharness/web/TaskDiagnosis.java:139"
+    ],
+    "repairGroup": "diagnosis-facts",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1120",
+    "status": "accepted",
+    "reason": "value.mode覆盖未截断且空值可抹原args.mode，统一安全截断/非空优先规则并保留来源。",
+    "evidence": [
+      "harness-web/src/main/java/io/jharness/web/TaskDiagnosis.java:92"
+    ],
+    "repairGroup": "diagnosis-facts",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1121",
+    "status": "partial",
+    "reason": "turns先全ArrayList后limited64，可先limit减少中间分配；输入已10000事件限不称无界OOM，归并诊断有界投影。",
+    "evidence": [
+      "harness-web/src/main/java/io/jharness/web/TaskDiagnosis.java:115"
+    ],
+    "repairGroup": "diagnosis-facts",
+    "priority": "P3"
+  },
+  {
+    "id": "OCR-1122",
+    "status": "partial",
+    "reason": "直接Java raw Map null key可containsAll NPE；JSON入口字段名非null，统一public filter配置错误，不按远程JSON越界漏洞。",
+    "evidence": [
+      "harness-workspace/src/main/java/io/jharness/workspace/WorkspaceSearchFilter.java:19"
+    ],
+    "repairGroup": "transport-contract",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1123",
+    "status": "partial",
+    "reason": "gitignore子集/128条限是M8明确范围，unsupported拒绝是fail-closed不是意外全功能不兼容；可在配置预检给出具体不支持行与指导，不能静默跳过导致本应排除文件被检索。",
+    "evidence": [
+      "harness-workspace/src/main/java/io/jharness/workspace/WorkspaceSearchFilter.java:58"
+    ],
+    "repairGroup": "search-filter",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1124",
+    "status": "accepted",
+    "reason": "写入成功后compact制品失败丢原FileChange并变UNKNOWN；保留已提交变更/版本、独立制品失败及截断提示，不把持久事实已缺失一律标SUCCESS。",
+    "evidence": [
+      "harness-workspace/src/main/java/io/jharness/workspace/WorkspaceToolsPlugin.java:401"
+    ],
+    "repairGroup": "artifact-lifecycle",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-1125",
+    "status": "accepted",
+    "reason": "partial patch提前return绕compact，最多64份diff和toString可放大模型结果；在保留UNKNOWN/changes/pending事实下做有界摘要/制品降级。",
+    "evidence": [
+      "harness-workspace/src/main/java/io/jharness/workspace/WorkspaceToolsPlugin.java:353"
+    ],
+    "repairGroup": "tool-result-bounds",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-1126",
+    "status": "partial",
+    "reason": "公开WorkspaceFiles畸形changes导致已写后展示NPE丢原partial，返回schema先验/有界解析保留操作未知事实；不能缺数据仍声称成功。",
+    "evidence": [
+      "harness-workspace/src/main/java/io/jharness/workspace/WorkspaceToolsPlugin.java:334"
+    ],
+    "repairGroup": "transport-contract",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1127",
+    "status": "accepted",
+    "reason": "默认grep search前1000路径丢truncated，模型误以全覆盖；回传搜索范围截断及实际检查数，paths畸形明确协议错误。",
+    "evidence": [
+      "harness-workspace/src/main/java/io/jharness/workspace/WorkspaceToolsPlugin.java:263"
+    ],
+    "repairGroup": "search-filter",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1128",
+    "status": "partial",
+    "reason": "requireWorkspace在nonnull之前解引用确有多余后置校验，核心是文件能力装配不应强制拿无关terminal；null错误消息不独立立项。",
+    "evidence": [
+      "harness-workspace/src/main/java/io/jharness/workspace/WorkspaceToolsPlugin.java:44"
+    ],
+    "repairGroup": "transport-contract",
+    "priority": "P3"
+  },
+  {
+    "id": "OCR-1129",
+    "status": "partial",
+    "reason": "补丁拒绝应验证所有目标/外部marker未变；去a/b前缀后的../outside实际可逃root，意见称normalize后仍root内计算错误，不采纳该论证。",
+    "evidence": [
+      "harness-workspace/src/test/java/io/jharness/workspace/UnifiedPatchTest.java:44"
+    ],
+    "repairGroup": "test-workspace",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1130",
+    "status": "partial",
+    "reason": "多文件已有首个成功即整体partial/uncertain合理，失败文件未提交不消除整体副作用；新增提交后异常与临时清理回归，不把现UNKNOWN降确定未执行。",
+    "evidence": [
+      "harness-workspace/src/test/java/io/jharness/workspace/UnifiedPatchTest.java:74"
+    ],
+    "repairGroup": "test-workspace",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-1131",
+    "status": "accepted",
+    "reason": "负例只assertThrows且删除体仍含替换，需合法全删补丁触UNSUPPORTED_PATCH、冲突码及无新变化断言。",
+    "evidence": [
+      "harness-workspace/src/test/java/io/jharness/workspace/UnifiedPatchTest.java:86"
+    ],
+    "repairGroup": "test-workspace",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1132",
+    "status": "accepted",
+    "reason": "版本冲突只用隐式observed，补显式expectedVersions旧/新版本对照，证明公开参数真正生效。",
+    "evidence": [
+      "harness-workspace/src/test/java/io/jharness/workspace/UnifiedPatchTest.java:55"
+    ],
+    "repairGroup": "test-workspace",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1133",
+    "status": "partial",
+    "reason": "finally直接Files.delete可能盖主断言，使用安全有界清理及suppressed；不要吞残留当测试通过。",
+    "evidence": [
+      "harness-workspace/src/test/java/io/jharness/workspace/LocalWorkspaceTest.java:67"
+    ],
+    "repairGroup": "test-fixture-cleanup",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1134",
+    "status": "rejected",
+    "reason": "2秒目录列表是明确NFR验收，不能移出默认测试/只取最小值掩盖慢路径；若需基准分离另说明，当前无证据可放宽门禁。",
+    "evidence": [
+      "harness-workspace/src/test/java/io/jharness/workspace/LocalWorkspaceTest.java:428"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-1135",
+    "status": "partial",
+    "reason": "git可用且夹具非仓库是实际前置条件，应受控隔离并明确失败诊断；不加Assumptions跳过严格平台门禁，不依赖任意tmpdir不在repo。",
+    "evidence": [
+      "harness-workspace/src/test/java/io/jharness/workspace/LocalWorkspaceTest.java:0"
+    ],
+    "repairGroup": "test-workspace",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1136",
+    "status": "accepted",
+    "reason": "CANCELLED/IO失败只查原文未查临时残留，补目录快照和安全版本不变，验证资源清理。",
+    "evidence": [
+      "harness-workspace/src/test/java/io/jharness/workspace/LocalWorkspaceTest.java:318"
+    ],
+    "repairGroup": "test-workspace",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1137",
+    "status": "accepted",
+    "reason": "只limit+1 ASCII缺恰好1MiB和多字节计量，补UTF8边界及超大已有文件读取拒绝。",
+    "evidence": [
+      "harness-workspace/src/test/java/io/jharness/workspace/LocalWorkspaceTest.java:351"
+    ],
+    "repairGroup": "test-workspace",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1138",
+    "status": "partial",
+    "reason": "mklink子进程等待超时后缺销毁/流关闭，抽有界helper保留退出码/实际链接身份断言，不能绕过权限测试。",
+    "evidence": [
+      "harness-workspace/src/test/java/io/jharness/workspace/LocalWorkspaceTest.java:146"
+    ],
+    "repairGroup": "test-fixture-cleanup",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1139",
+    "status": "partial",
+    "reason": "M8 Windows mklink同1138资源接管缺口，合并独立原意见编号和跨用例清理。",
+    "evidence": [
+      "harness-workspace/src/test/java/io/jharness/workspace/M8SearchFilterTest.java:189"
+    ],
+    "repairGroup": "test-fixture-cleanup",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1140",
+    "status": "accepted",
+    "reason": "仅129/257/超总长缺等于界限接受，补末规则确生效且configuration不截断。",
+    "evidence": [
+      "harness-workspace/src/test/java/io/jharness/workspace/M8SearchFilterTest.java:147"
+    ],
+    "repairGroup": "test-workspace",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1141",
+    "status": "partial",
+    "reason": "parse按---判文件边界，内容删除行以--开头会被误拆；应按hunk计数消费避免合法内容歧义。示例额外foo在头部明示，不据此认定隐藏越权注入，最终各路径仍审批/guard。",
+    "evidence": [
+      "harness-workspace/src/main/java/io/jharness/workspace/UnifiedPatch.java:36"
+    ],
+    "repairGroup": "patch-format",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-1142",
+    "status": "rejected",
+    "reason": "exact unified subset可严格拒多余空白，空内容hunk行必须前缀，随意跳空行会改变补丁语义；不为扩展格式容忍度标缺陷。",
+    "evidence": [
+      "harness-workspace/src/main/java/io/jharness/workspace/UnifiedPatch.java:39"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-1143",
+    "status": "partial",
+    "reason": "a/b前缀剥离无显式strip策略，可将无git真实a/foo误映射foo；明确只支持git前缀并校验头配对或显式strip，不接受模糊自动猜。",
+    "evidence": [
+      "harness-workspace/src/main/java/io/jharness/workspace/UnifiedPatch.java:55"
+    ],
+    "repairGroup": "patch-format",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1144",
+    "status": "partial",
+    "reason": "支持create但标准git新增含new file mode会拒，接受受支持模式元数据解析/明确诊断；不能忽略执行位变更再宣称完整支持git补丁。",
+    "evidence": [
+      "harness-workspace/src/main/java/io/jharness/workspace/UnifiedPatch.java:22"
+    ],
+    "repairGroup": "patch-format",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1145",
+    "status": "rejected",
+    "reason": "UnifiedPatch包内唯一调用LocalWorkspace已严格create==MISSING保证before空；意见自己确认兜底，不是公开可绕过路径。",
+    "evidence": [
+      "harness-workspace/src/main/java/io/jharness/workspace/UnifiedPatch.java:67"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-1146",
+    "status": "partial",
+    "reason": "非Jsonl持久catalog restore不识别新metadata/turn事实，有替换存储兼容缺口；补统一catalog版本/能力约束，默认Jsonl路径不受此legacy分支影响。",
+    "evidence": [
+      "harness-web/src/main/java/io/jharness/web/HarnessWebServer.java:278"
+    ],
+    "repairGroup": "web-fact-schema",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1147",
+    "status": "accepted",
+    "reason": "worker finally在cleanup try之前做display.snapshot，异常跳过sdk.close/catalog/占用结算；将展示失败隔离于必需清理且finally保证通知，保留未知。",
+    "evidence": [
+      "harness-web/src/main/java/io/jharness/web/HarnessWebServer.java:1964"
+    ],
+    "repairGroup": "web-cleanup",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-1148",
+    "status": "partial",
+    "reason": "pauseInputs持久失败可跳notifyAll/剩余队列处理，需独立finally通知并记录broken/未决；不能简单空catch忽略丢失事实。",
+    "evidence": [
+      "harness-web/src/main/java/io/jharness/web/HarnessWebServer.java:2050"
+    ],
+    "repairGroup": "web-cleanup",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-1149",
+    "status": "rejected",
+    "reason": "用户明确取消手输token并授权同源自动进入；产品单操作者loopback信任本机进程，Origin防网页跨站非本机恶意进程隔离。重新要求bearer/nonce违已批准产品边界，不扩展多用户模型。",
+    "evidence": [
+      "harness-web/src/main/java/io/jharness/web/HarnessWebServer.java:592"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-1150",
+    "status": "accepted",
+    "reason": "部分route持全局锁body read/settings.save/注册IO，慢合法body可阻塞取消与worker清理；解析/有界I/O移锁外，状态变更锁内复检revision/占用。",
+    "evidence": [
+      "harness-web/src/main/java/io/jharness/web/HarnessWebServer.java:706"
+    ],
+    "repairGroup": "web-locking",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-1151",
+    "status": "partial",
+    "reason": "profiles LinkedHashMap写有锁但info遍历无锁可能CME，使用不可变快照；settings setter是否运行期并发需按构造装配约定，不凭非volatile认定已NPE。",
+    "evidence": [
+      "harness-web/src/main/java/io/jharness/web/HarnessWebServer.java:734"
+    ],
+    "repairGroup": "web-locking",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-1152",
+    "status": "accepted",
+    "reason": "锁内全catalog scan+会话reconcile/summary阻塞其它操作；有界元数据快照/派生索引与短锁，保持冷历史不计32热对象及实时授权核实。",
+    "evidence": [
+      "harness-web/src/main/java/io/jharness/web/HarnessWebServer.java:531"
+    ],
+    "repairGroup": "web-locking",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-1153",
+    "status": "rejected",
+    "reason": "当前eventPage源码WebJson.encode(...).length即byte[]长度，SSE frame也.getBytes后length；OCR把字节数组误当String，中文低估前提不成立。",
+    "evidence": [
+      "harness-web/src/main/java/io/jharness/web/HarnessWebServer.java:2206"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-1154",
+    "status": "accepted",
+    "reason": "相邻两次同一reader.events.isEmpty检查确重复全读，去重并在已取得独占后的实际快照使用，不丢并发安全。",
+    "evidence": [
+      "harness-web/src/main/java/io/jharness/web/HarnessWebServer.java:914"
+    ],
+    "repairGroup": "session-read-bounds",
+    "priority": "P3"
+  },
+  {
+    "id": "OCR-1155",
+    "status": "rejected",
+    "reason": "parse先task.turns.apply，孤立started已在apply input==null时抛IAE，不会执行后续selection解引用；回放schema可整体增强但给定NPE链不成立。",
+    "evidence": [
+      "harness-web/src/main/java/io/jharness/web/HarnessWebServer.java:329"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-1156",
+    "status": "accepted",
+    "reason": "POST只看decision未完成且complete结果未核对，worker超时移除前窗口可回accepted但实际拒绝；使用共同原子决策/截止时间并持久精确关联。",
+    "evidence": [
+      "harness-web/src/main/java/io/jharness/web/HarnessWebServer.java:1151"
+    ],
+    "repairGroup": "approval-race",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-1157",
+    "status": "partial",
+    "reason": "SSE预算return缺明确more终止提示，客户端应GET after对账而非推断流EOF全部结束；增加有界尾帧/续读说明，不因此自动重连重发工具。",
+    "evidence": [
+      "harness-web/src/main/java/io/jharness/web/HarnessWebServer.java:2248"
+    ],
+    "repairGroup": "web-stream-page",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1158",
+    "status": "accepted",
+    "reason": "Instant字符串变精度时字典序与时间序不同，创建整秒/小数混排可破游标；统一Instant排序及cursor边界，保留stable id次序。",
+    "evidence": [
+      "harness-web/src/main/java/io/jharness/web/HarnessWebServer.java:511"
+    ],
+    "repairGroup": "web-stream-page",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1159",
+    "status": "partial",
+    "reason": "close2秒后关catalog/lease但worker可能仍清理，需明确退场/未知记录与owner释放顺序；仅http.stop(1)不足证明退出，不能无限await不合作线程。",
+    "evidence": [
+      "harness-web/src/main/java/io/jharness/web/HarnessWebServer.java:2600"
+    ],
+    "repairGroup": "web-cleanup",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-1160",
+    "status": "partial",
+    "reason": "pendingPaths包含提交后UNKNOWN的失败路径，需区分未尝试/已知提交/需核实，禁止把pending解释为可重放；未知提交不能武断从列表删除当已知成功。",
+    "evidence": [
+      "harness-workspace/src/main/java/io/jharness/workspace/LocalWorkspace.java:153"
+    ],
+    "repairGroup": "workspace-version",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-1161",
+    "status": "partial",
+    "reason": "无末尾换行nextLine可重复，超EOF可能小于请求，需明确more/EOF并单调/哨兵协议；此readPage单位是行不同ContentPages UTF16，不能混改。",
+    "evidence": [
+      "harness-workspace/src/main/java/io/jharness/workspace/LocalWorkspace.java:380"
+    ],
+    "repairGroup": "content-paging",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1162",
+    "status": "accepted",
+    "reason": "readPage最终version check与observed.put不在同锁，读缓存可倒退；同快照派生版本与CAS/锁内更新并发回归。",
+    "evidence": [
+      "harness-workspace/src/main/java/io/jharness/workspace/LocalWorkspace.java:362"
+    ],
+    "repairGroup": "workspace-version",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1163",
+    "status": "partial",
+    "reason": "gitDiff继承HOME/PATH/global config可影响外部命令/helper/输出，需可信git定位及最小env/config禁外部diff；保留必要平台变量，不能仅--no-color当全隔离。",
+    "evidence": [
+      "harness-workspace/src/main/java/io/jharness/workspace/LocalWorkspace.java:815"
+    ],
+    "repairGroup": "process-environment",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-1164",
+    "status": "accepted",
+    "reason": "git stdout/stderr限读后停止排空可能写端阻塞到deadline，需超限快速终止/继续有界丢弃排空并精确限额结果，进程总时限仍保留。",
+    "evidence": [
+      "harness-workspace/src/main/java/io/jharness/workspace/LocalWorkspace.java:818"
+    ],
+    "repairGroup": "process-output",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-1165",
+    "status": "accepted",
+    "reason": "原子replace用默认temp权限会丢执行位/ACL等，写现有脚本可损坏可执行性；创建前复制可支持安全属性、明确不能保留则拒或报告，保留原子提交与边界保护。",
+    "evidence": [
+      "harness-workspace/src/main/java/io/jharness/workspace/LocalWorkspace.java:451"
+    ],
+    "repairGroup": "workspace-metadata",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-1166",
+    "status": "partial",
+    "reason": "search达到limit仍遍历可超时丢结果，应limit+1确认truncated后终止并保留有效结果；不能假定visitor false表示全局停止需核walk契约。",
+    "evidence": [
+      "harness-workspace/src/main/java/io/jharness/workspace/LocalWorkspace.java:694"
+    ],
+    "repairGroup": "search-filter",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1167",
+    "status": "partial",
+    "reason": "grep命中limit后仍扫其它路径，需外循环停止并准确标truncated，不为确认无更多命中无限遍历。",
+    "evidence": [
+      "harness-workspace/src/main/java/io/jharness/workspace/LocalWorkspace.java:718"
+    ],
+    "repairGroup": "search-filter",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-1168",
+    "status": "rejected",
+    "reason": "deny永抛而return满足Java编译控制流，未导致invalid path返回root；假设未来deny不抛不构成当前bug。",
+    "evidence": [
+      "harness-workspace/src/main/java/io/jharness/workspace/LocalWorkspace.java:172"
+    ],
+    "repairGroup": null,
+    "priority": null
+  },
+  {
+    "id": "OCR-1169",
+    "status": "accepted",
+    "reason": "write finally delete临时失败可覆盖FILE_CONFLICT/UNKNOWN_SIDE_EFFECT，保留主异常+suppressed及残留路径，不把清理失败当未写。",
+    "evidence": [
+      "harness-workspace/src/main/java/io/jharness/workspace/LocalWorkspace.java:475"
+    ],
+    "repairGroup": "audit-failure",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-1170",
+    "status": "accepted",
+    "reason": "恰末尾newline时先++line即truncated=true，实际无下一内容；窥读/EOF状态明确，覆盖尾换行/无尾换行/超EOF。",
+    "evidence": [
+      "harness-workspace/src/main/java/io/jharness/workspace/LocalWorkspace.java:351"
+    ],
+    "repairGroup": "content-paging",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-2354",
+    "status": "partial",
+    "reason": "三子模块Jackson当前均2.21.7无版本漂移，统一根属性/management可降低将来漏升级风险；不宣称当前NoSuchMethodError或漏洞。",
+    "evidence": [
+      "harness-llm/pom.xml:7"
+    ],
+    "repairGroup": "dependency-convergence",
+    "priority": "P3"
+  },
+  {
+    "id": "OCR-2358",
+    "status": "partial",
+    "reason": "与2354同源重复固定版本，接受集中约束及依赖收敛门禁；M9已有2.21.7实际构建/扫描证据，不重查发布存在性制造待办。",
+    "evidence": [
+      "harness-ecosystem/pom.xml:61"
+    ],
+    "repairGroup": "dependency-convergence",
+    "priority": "P3"
+  },
+  {
+    "id": "OCR-2364",
+    "status": "partial",
+    "reason": "第三处Jackson重复归同修复组；compile依赖本身正常，不因可传递即缺陷。",
+    "evidence": [
+      "harness-session/pom.xml:7"
+    ],
+    "repairGroup": "dependency-convergence",
+    "priority": "P3"
+  },
+  {
+    "id": "OCR-2365",
+    "status": "partial",
+    "reason": "pty4j仅一处版本不存在当前重复冲突；保留原生架构实机矩阵与缺支持诊断，三平台当前验收范围按历史证据，不新承诺所有CPU。",
+    "evidence": [
+      "harness-process/pom.xml:6"
+    ],
+    "repairGroup": "dependency-convergence",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-2366",
+    "status": "partial",
+    "reason": "库模块runtime传递slf4j-nop可抢外部宿主日志provider，绑定应移可执行宿主/测试层；pty4j实际API版本需锁闭包核实，不能据“若1.7”认定当前不兼容。",
+    "evidence": [
+      "harness-process/pom.xml:7"
+    ],
+    "repairGroup": "dependency-convergence",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-2367",
+    "status": "partial",
+    "reason": "Maven缺dist仍可打包且clean不删旧dist，README明确前置npm构建/根503；需要候选发布门禁校验前端输入/包内hash，不必强制所有纯后端构建依赖Node。",
+    "evidence": [
+      "harness-web/pom.xml:11"
+    ],
+    "repairGroup": "ui-packaging",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-2439",
+    "status": "accepted",
+    "reason": "非法JSON SSE缺DONE可被流不完整兜底，补非法帧后DONE与精确错误码，防校验分支被其它失败遮盖。",
+    "evidence": [
+      "harness-llm/src/test/java/io/jharness/llm/M6StreamingTest.java:190"
+    ],
+    "repairGroup": "test-no-replay",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-2440",
+    "status": "partial",
+    "reason": "中间display可能全空使秘密noneMatch真空通过，补长公开前缀marker及非空中帧/跨delta秘密回归；任意>=4前缀禁止会误杀正常文本，按既定秘密策略测试。",
+    "evidence": [
+      "harness-llm/src/test/java/io/jharness/llm/M6StreamingTest.java:258"
+    ],
+    "repairGroup": "test-terminal",
+    "priority": "P1"
+  },
+  {
+    "id": "OCR-2441",
+    "status": "partial",
+    "reason": "wire写同步ArrayList读无统一锁/快照，使用线程安全收集或latch发布；网络响应先后不替代共享Java对象同步，不能用假设未来clear当当前NoSuchElement故障。",
+    "evidence": [
+      "harness-llm/src/test/java/io/jharness/llm/M6StreamingTest.java:151"
+    ],
+    "repairGroup": "test-fixture-cleanup",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-2442",
+    "status": "partial",
+    "reason": "stream fixture handler写后sleep且stop0无等待，可遗留线程，接受显式executor有界回收/预期断连分类；daemon不是资源清理证明。",
+    "evidence": [
+      "harness-llm/src/test/java/io/jharness/llm/M6StreamingTest.java:85"
+    ],
+    "repairGroup": "test-fixture-cleanup",
+    "priority": "P2"
+  },
+  {
+    "id": "OCR-2443",
+    "status": "accepted",
+    "reason": "frames.allMatch空集可通过，必须先非空并核实际文本/工具调用仅终态释放，防流预览回归。",
+    "evidence": [
+      "harness-llm/src/test/java/io/jharness/llm/M6StreamingTest.java:145"
+    ],
+    "repairGroup": "test-no-replay",
+    "priority": "P2"
+  }
+]

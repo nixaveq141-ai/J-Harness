@@ -14,6 +14,9 @@ third-party/** -text
 docs/testing/M9-*.json -text
 docs/testing/M10-*.json -text
 docs/testing/M10.5.*.json -text
+# Review manifests hash exact JSON bytes and must survive cross-platform checkout.
+docs/development/ocr-verification-2026-10-20/*.json -text
+docs/testing/OCR-verification-2026-10-20-results.json -text
 # Frontend source has stable LF bytes; copied upstream files retain their original bytes.
 frontend/** text eol=lf
 frontend/src/upstream/** -text

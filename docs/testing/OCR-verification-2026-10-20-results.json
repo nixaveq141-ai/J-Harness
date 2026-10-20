@@ -1,0 +1,207 @@
+{
+  "status": "STATIC_REVIEW_COMPLETE_PLAN_ONLY",
+  "baseline": "337c150dca2bbfe193f8586dd79623797fbd8724",
+  "originalOpinions": 2457,
+  "opinionBearingFiles": 569,
+  "reportedScannedFiles": 658,
+  "scannedFilesEvidence": "User reported full scan with 7 retry files; original opinion exports count findings, not zero-finding file coverage.",
+  "verdictCounts": {
+    "partial": 1009,
+    "rejected": 960,
+    "accepted": 488
+  },
+  "admittedOpinions": 1497,
+  "workPackages": 30,
+  "phases": [
+    {
+      "id": "R0",
+      "title": "证据门禁与回归基线",
+      "dependsOn": [],
+      "exit": "先修会把失败、空数据或错制品判为通过的验证器；建立独立负例及本地基线。不得倒写历史结果。",
+      "status": "NOT_STARTED",
+      "opinions": 484,
+      "tasks": [
+        "R0-01",
+        "R0-02",
+        "R0-03"
+      ]
+    },
+    {
+      "id": "R1",
+      "title": "执行、取消、关闭与敏感信息",
+      "dependsOn": [
+        "R0"
+      ],
+      "exit": "先处理一次执行/结算、未知事实、清理顺序、脱敏及审批竞态。任何清理失败不得恢复执行资格。",
+      "status": "NOT_STARTED",
+      "opinions": 237,
+      "tasks": [
+        "R1-01",
+        "R1-02",
+        "R1-03",
+        "R1-04",
+        "R1-05",
+        "R1-06",
+        "R1-07"
+      ]
+    },
+    {
+      "id": "R2",
+      "title": "持久化、恢复与会话一致性",
+      "dependsOn": [
+        "R1"
+      ],
+      "exit": "修复fork目标占用、半初始化、版本和租约、问答幂等、迁移及归档投影；形成可恢复的事实边界。",
+      "status": "NOT_STARTED",
+      "opinions": 107,
+      "tasks": [
+        "R2-01",
+        "R2-02",
+        "R2-03",
+        "R2-04"
+      ]
+    },
+    {
+      "id": "R3",
+      "title": "模型、工具、扩展与配置协议",
+      "dependsOn": [
+        "R2"
+      ],
+      "exit": "统一输入/输出schema、支持协议、流终态、路由装饰、脚本发现与CLI/SDK契约，保留兼容策略。",
+      "status": "NOT_STARTED",
+      "opinions": 304,
+      "tasks": [
+        "R3-01",
+        "R3-02",
+        "R3-03",
+        "R3-04",
+        "R3-05"
+      ]
+    },
+    {
+      "id": "R4",
+      "title": "工作台交互与展示",
+      "dependsOn": [
+        "R3"
+      ],
+      "exit": "修复异步陈旧响应、受理/回答核对、密钥草稿及内容读取；真实浏览器验证键盘和错误流程。",
+      "status": "NOT_STARTED",
+      "opinions": 115,
+      "tasks": [
+        "R4-01",
+        "R4-02",
+        "R4-03",
+        "R4-04"
+      ]
+    },
+    {
+      "id": "R5",
+      "title": "有界处理、检索与长会话",
+      "dependsOn": [
+        "R4"
+      ],
+      "exit": "在保留前面事实语义下优化编码、缓存、压缩、分页和扫描；保持总历史/活跃容量双限额。",
+      "status": "NOT_STARTED",
+      "opinions": 64,
+      "tasks": [
+        "R5-01",
+        "R5-02",
+        "R5-03"
+      ]
+    },
+    {
+      "id": "R6",
+      "title": "打包、来源文档与整体验收",
+      "dependsOn": [
+        "R5"
+      ],
+      "exit": "集中依赖/制品校验、示例与接续说明；同一最终源码/JAR/UI重新全量验证，远端CI仍需单独授权。",
+      "status": "NOT_STARTED",
+      "opinions": 186,
+      "tasks": [
+        "R6-01",
+        "R6-02",
+        "R6-03",
+        "R6-04"
+      ]
+    }
+  ],
+  "originalSeverity": {
+    "high": 462,
+    "medium": 1484,
+    "low": 502,
+    "critical": 9
+  },
+  "criticalVerdicts": [
+    {
+      "id": "OCR-0045",
+      "status": "rejected",
+      "priority": null,
+      "taskId": null
+    },
+    {
+      "id": "OCR-0328",
+      "status": "rejected",
+      "priority": null,
+      "taskId": null
+    },
+    {
+      "id": "OCR-0504",
+      "status": "partial",
+      "priority": "P2",
+      "taskId": "R2-01"
+    },
+    {
+      "id": "OCR-0567",
+      "status": "partial",
+      "priority": "P1",
+      "taskId": "R2-04"
+    },
+    {
+      "id": "OCR-0590",
+      "status": "accepted",
+      "priority": "P1",
+      "taskId": "R3-02"
+    },
+    {
+      "id": "OCR-0790",
+      "status": "accepted",
+      "priority": "P1",
+      "taskId": "R2-01"
+    },
+    {
+      "id": "OCR-1033",
+      "status": "rejected",
+      "priority": null,
+      "taskId": null
+    },
+    {
+      "id": "OCR-1722",
+      "status": "rejected",
+      "priority": null,
+      "taskId": null
+    },
+    {
+      "id": "OCR-1927",
+      "status": "partial",
+      "priority": "P2",
+      "taskId": "R0-01"
+    }
+  ],
+  "methodology": "All original claims received individual static source/contract/test review. Accepted means supported scope; partial reason limits adoption. No claim that every scenario was dynamically reproduced.",
+  "productChangesImplemented": false,
+  "productFullSuiteRun": false,
+  "remotePushOrCIExecuted": false,
+  "m1059Closed": false,
+  "m11Eligible": false,
+  "inputs": {
+    "opinions.json": "211d56ff3dec4cde70d9628d848edd6b2a86846cf5165da7721bfc2705adad67",
+    "source-snapshot.json": "1c684aff7fd789b327cffea9cf8d5dea662758fcd40beb00069dc5721039f6e2",
+    "verdicts-core.json": "39fb7bbd312f19e2558be0869580b60cba2b2b27d11743a05029d32c616ba150",
+    "verdicts-docs.json": "974192048bb6ff6a71ab4b282561f39db7dc28c92cfe605e5b58563e25e63372",
+    "verdicts-application.json": "c72e947cc898eeb041e3fbfe139e391e764a210082e51529e53051a3db3e594f",
+    "verdicts-delivery.json": "135ded8e3dbca6cf45fdc3c37b6d66889cf81d2ebcf6fa9d5f64900fffb76aae",
+    "verdicts-delivery-extra.json": "38aac07d1524368b884d9e10639fa484fd9c92423f677a42cd2dde179fab9195",
+    "plan-structure.json": "9eb479e1550f235e15e2218afc81cff85221a6021cddec2ee829f37082583dbc"
+  }
+}
