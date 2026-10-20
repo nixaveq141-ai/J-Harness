@@ -1,0 +1,28 @@
+{
+  "include": [
+    "**/*Test.java",
+    "**/*Tests.java",
+    "**/src/test/**/*.java",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/__tests__/**"
+  ],
+  "exclude": [
+    ".git/**",
+    ".build-cache/**",
+    ".dsh-tmp/**",
+    ".jharness/**",
+    "**/node_modules/**",
+    "**/target/**",
+    "frontend/dist/**",
+    "frontend/test-results/**"
+  ],
+  "rules": [
+    {
+      "path": "**/*",
+      "rule": "审查 J-Harness 全仓库。报告可复现的正确性、安全、并发、资源生命周期、恢复、协议、兼容性与校验缺陷，给出触发条件和精确行号；发现用中文。重点检查：跨步骤的必需操作排序、UNKNOWN 状态不得被重放、敏感信息脱敏、环境变量白名单、插件作用域回滚、文件系统边界、无 OAuth 的产品 API 鉴权、有界数据处理。不要提纯风格改写，不要批评已明确延期的功能，不要把快照版本当缺陷，不要输出凭据值。只读项目文件，不得修改源码或调用付费服务。",
+      "merge_system_rule": true
+    }
+  ]
+}
