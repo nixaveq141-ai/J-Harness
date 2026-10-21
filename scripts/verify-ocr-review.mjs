@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
+import { validateProgress, stateDescription, implementationArtifacts } from './ocr-progress.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const dir = path.join(root, 'docs/development/ocr-verification-2026-10-20');
@@ -78,8 +79,9 @@ const rows = [...verdicts.values()].sort((a, b) => a.id.localeCompare(b.id)).map
 });
 const activeTasks = tasks.filter(task => task.opinionIds.length > 0);
 // Execution state is separate from the immutable review/assignment snapshot.
-const progress = JSON.parse(fs.readFileSync(path.join(root, 'docs/development/OCR-remediation-progress.json'), 'utf8'));
-for (const id of Object.keys(progress.tasks)) assert(taskById.has(id), `Unknown implementation task ${id}`);
+const progressPath = 'docs/development/OCR-remediation-progress.json';
+const progressBytes = fs.readFileSync(path.join(root, progressPath));
+const progress = validateProgress(JSON.parse(progressBytes), taskById.keys());
 for (const task of activeTasks) {
   task.priority = task.opinionIds.map(id => verdicts.get(id).priority).sort()[0];
 }
@@ -111,6 +113,22 @@ const result = {
   m11Eligible: false,
   inputs: Object.fromEntries(['opinions.json', 'source-snapshot.json', 'verdicts-core.json', 'verdicts-docs.json', 'verdicts-application.json', 'verdicts-delivery.json', ...(fs.existsSync(extraFile) ? ['verdicts-delivery-extra.json'] : []), 'plan-structure.json'].map(name => [name, hash(fs.readFileSync(path.join(dir, name)))])),
 };
+function renderImplementationPlan() {
+  const text = ['# OCR 意见分阶段修复计划', '', '分派基线：2026-10-20（Asia/Shanghai）。本文件保留开始修复前的意见分配；当前实施与验收进度见 [R0 修复记录](../development/OCR-R0-remediation-2026-10-20.md)。', '', `2457 条逐条静态核实：采纳 ${counts.accepted}、部分采纳 ${counts.partial}、不采纳 ${counts.rejected}；待取证 ${counts.unverified || 0}。${result.admittedOpinions} 条采纳范围合并为 ${activeTasks.length} 个工作包。部分采纳不代表整条原意见或原建议代码正确。`, '', '核实方法、证据边界和完整索引见 [审查报告](../development/code-review-2026-10-20.md)。机器可读完整映射见 [plan.json](../development/ocr-verification-2026-10-20/plan.json)；任何未分配采纳项都会被验证器拒绝。', '', '## 顺序与执行约束', '', 'R0 → R1 → R2 → R3 → R4 → R5 → R6。同阶段不同工作包可在契约边界明确后并行，跨模块改动必须整合验证；测试补强随相应产品修复交付，不能等到R6才检查。每个工作包先核当前Git/源码和已有契约，补命中原问题的反例，实施最小修复，再专项→适用全量→同制品证据→文档/本地提交。', '', 'R0中的测试任务跨越各阶段：先建立基线，再按计划分支持续补回归；不要求先把全部测试重写才修P1。阶段编号是本轮治理编号，不替代M10.5.9/M11/M12产品编号。各任务下方“未实施”描述的是原始分派基线，不能当作当前执行状态；当前状态以链接的实施记录为准。P0/P1是核实优先级而非已发生事故结论。', '', '不得自动重放UNKNOWN、吞必需持久化失败、通过跳过测试/放宽限额制造通过、把临时流当执行证据、复写历史验收JSON或改参考项目。共享Java插件是可信扩展，不扩张成抵御恶意进程内代码的沙箱承诺。用户已批准的同源直接进入保持。', ''];
+  for (const phase of structure.phases) {
+    text.push(`## ${phase.id} ${phase.title}`, '', `前置：${phase.dependsOn.join('、') || '本轮核实记录完成'}。退出条件：${phase.exit}`, '');
+    for (const task of activeTasks.filter(task => task.phase === phase.id)) {
+      const state = stateDescription(progress.tasks[task.id]);
+      text.push(`### ${task.id} ${task.title}`, '', `状态：${state}。优先级：${task.priority}。关联 ${task.opinionIds.length} 条意见。`, '', `改动：${task.change}`, '', `验收：${task.validation}`, '', `追溯：${task.opinionIds.join('、')}`, '');
+    }
+  }
+  text.push('## 最终收口与权限边界', '', '逐项修复后新源码必须重新核验最终JAR/包内UI、Java与客户端/SDK、真实浏览器、Windows原生与候选安装/审批/取消/显式恢复；依据实际变更更新依赖/秘密扫描和制品清单。三平台/三引擎严格CI仍按M10.5.9契约执行；尚未授权推送/执行时只记本地部分结果，不能收口或进入M11。已有本地Git提交授权继续适用，不含推送、远端发布或付费模型调用。', '', '不以意见采纳数、测试数或完成百分比代替需求验收。全部已完成/已修复标记必须有对应实测证据。');
+  return text.join('\n') + '\n';
+}
+const markdownPath = 'docs/requirements/OCR-remediation-plan-2026-10-20.md';
+const manifestPath = 'docs/development/OCR-implementation-artifacts.json';
+const markdown = renderImplementationPlan();
+const artifacts = implementationArtifacts({ progressPath, progressBytes, assignmentPath: 'docs/development/ocr-verification-2026-10-20/plan.json', assignmentBytes: Buffer.from(JSON.stringify(plan, null, 2) + '\n'), markdownPath, markdown, hash });
 if (process.argv.includes('--write')) {
   fs.writeFileSync(path.join(dir, 'review.json'), JSON.stringify({ ...result, verdicts: rows }, null, 2) + '\n');
   fs.writeFileSync(path.join(dir, 'plan.json'), JSON.stringify(plan, null, 2) + '\n');
@@ -124,21 +142,17 @@ if (process.argv.includes('--write')) {
     }
     fs.writeFileSync(path.join(dir, `ledger-${module}.md`), text.map(line => line.trimEnd()).join('\n').trimEnd() + '\n');
   }
-  const text = ['# OCR 意见分阶段修复计划', '', '分派基线：2026-10-20（Asia/Shanghai）。本文件保留开始修复前的意见分配；当前实施与验收进度见 [R0 修复记录](../development/OCR-R0-remediation-2026-10-20.md)。', '', `2457 条逐条静态核实：采纳 ${counts.accepted}、部分采纳 ${counts.partial}、不采纳 ${counts.rejected}；待取证 ${counts.unverified || 0}。${result.admittedOpinions} 条采纳范围合并为 ${activeTasks.length} 个工作包。部分采纳不代表整条原意见或原建议代码正确。`, '', '核实方法、证据边界和完整索引见 [审查报告](../development/code-review-2026-10-20.md)。机器可读完整映射见 [plan.json](../development/ocr-verification-2026-10-20/plan.json)；任何未分配采纳项都会被验证器拒绝。', '', '## 顺序与执行约束', '', 'R0 → R1 → R2 → R3 → R4 → R5 → R6。同阶段不同工作包可在契约边界明确后并行，跨模块改动必须整合验证；测试补强随相应产品修复交付，不能等到R6才检查。每个工作包先核当前Git/源码和已有契约，补命中原问题的反例，实施最小修复，再专项→适用全量→同制品证据→文档/本地提交。', '', 'R0中的测试任务跨越各阶段：先建立基线，再按计划分支持续补回归；不要求先把全部测试重写才修P1。阶段编号是本轮治理编号，不替代M10.5.9/M11/M12产品编号。各任务下方“未实施”描述的是原始分派基线，不能当作当前执行状态；当前状态以链接的实施记录为准。P0/P1是核实优先级而非已发生事故结论。', '', '不得自动重放UNKNOWN、吞必需持久化失败、通过跳过测试/放宽限额制造通过、把临时流当执行证据、复写历史验收JSON或改参考项目。共享Java插件是可信扩展，不扩张成抵御恶意进程内代码的沙箱承诺。用户已批准的同源直接进入保持。', ''];
-  for (const phase of structure.phases) {
-    text.push(`## ${phase.id} ${phase.title}`, '', `前置：${phase.dependsOn.join('、') || '本轮核实记录完成'}。退出条件：${phase.exit}`, '');
-    for (const task of activeTasks.filter(task => task.phase === phase.id)) {
-      const state = progress.tasks[task.id]?.description || '未实施';
-      text.push(`### ${task.id} ${task.title}`, '', `状态：${state}。优先级：${task.priority}。关联 ${task.opinionIds.length} 条意见。`, '', `改动：${task.change}`, '', `验收：${task.validation}`, '', `追溯：${task.opinionIds.join('、')}`, '');
-    }
-  }
-  text.push('## 最终收口与权限边界', '', '逐项修复后新源码必须重新核验最终JAR/包内UI、Java与客户端/SDK、真实浏览器、Windows原生与候选安装/审批/取消/显式恢复；依据实际变更更新依赖/秘密扫描和制品清单。三平台/三引擎严格CI仍按M10.5.9契约执行；尚未授权推送/执行时只记本地部分结果，不能收口或进入M11。已有本地Git提交授权继续适用，不含推送、远端发布或付费模型调用。', '', '不以意见采纳数、测试数或完成百分比代替需求验收。全部已完成/已修复标记必须有对应实测证据。');
-  fs.writeFileSync(path.join(root, 'docs/requirements/OCR-remediation-plan-2026-10-20.md'), text.join('\n') + '\n');
+  fs.writeFileSync(path.join(root, markdownPath), markdown);
+  fs.writeFileSync(path.join(root, manifestPath), JSON.stringify(artifacts, null, 2) + '\n');
 } else {
   const savedReview = read('review.json');
   assert(JSON.stringify(savedReview) === JSON.stringify({ ...result, verdicts: rows }), 'Generated review is stale; use --write');
   assert(JSON.stringify(read('plan.json')) === JSON.stringify(plan), 'Generated plan is stale; use --write');
   const savedResult = JSON.parse(fs.readFileSync(path.join(root, 'docs/testing/OCR-verification-2026-10-20-results.json'), 'utf8'));
   assert(JSON.stringify(savedResult) === JSON.stringify(result), 'Generated statistics are stale; use --write');
+  assert(fs.readFileSync(path.join(root, markdownPath), 'utf8') === markdown, 'Generated implementation plan is stale; use --write');
+  assert(fs.existsSync(path.join(root, manifestPath)), 'Implementation artifact manifest missing; use --write');
+  const savedArtifacts = JSON.parse(fs.readFileSync(path.join(root, manifestPath), 'utf8'));
+  assert(JSON.stringify(savedArtifacts) === JSON.stringify(artifacts), 'Generated implementation artifact manifest is stale; use --write');
 }
 console.log(JSON.stringify({ verdicts: rows.length, counts, workPackages: activeTasks.length, phaseOpinionCounts: Object.fromEntries(structure.phases.map(phase => [phase.id, rows.filter(row => row.phase === phase.id).length])) }));

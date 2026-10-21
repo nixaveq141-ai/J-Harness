@@ -1,10 +1,12 @@
 """Bind full Java verify, client tests and actual packaged browser checks to current sources."""
 
-# Historical acceptance is immutable; retained code is reference only.
+# Historical acceptance is immutable; retained code below is reference only.
+_FROZEN_MESSAGE = 'HISTORICAL_EVIDENCE_FROZEN: historical collector; retained implementation is reference only and cannot be invoked by CLI, import, or runpy. Preserve original M10 acceptance bytes. Reproduction requires its original recorded revision and isolated evidence copy; current M10.5.9 evidence cannot prove M10. For new M10.5.9 evidence only, use scripts/collect-m1059-evidence.py and scripts/archive-m1059-local.py.'
 if __name__ == '__main__':
     import sys
-    sys.stderr.write('HISTORICAL_EVIDENCE_FROZEN: this collector cannot regenerate historical acceptance. Use scripts/collect-m1059-evidence.py with fresh evidence and scripts/archive-m1059-local.py for a new archive.\n')
+    sys.stderr.write(_FROZEN_MESSAGE + '\n')
     raise SystemExit(2)
+raise RuntimeError(_FROZEN_MESSAGE)
 import datetime
 import hashlib
 import json

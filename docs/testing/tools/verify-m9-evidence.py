@@ -1,4 +1,7 @@
-"""Offline audit of downloaded Actions evidence. Run from any directory with the run ID.
+"""Frozen historical M9 verifier implementation, retained for reading only.
+
+The CLI/import/runpy entry points reject before executing the implementation below.
+The original invocation accepted a run ID from any working directory.
 
 Metadata: docs/testing/M9-ci-{run,jobs,artifacts}.json.
 Archives: .build-cache/M9-hosted-final/{windows,linux,macos}.zip.
@@ -7,11 +10,13 @@ The verifier rejects source changes, missing/failed jobs, artifact/report hashes
 wrong candidate commits, incomplete tests/scans and missing legal resources.
 No network requests or product-source/Git-index changes; verified evidence JSON is written."""
 
-# Historical acceptance is immutable; retained code is reference only.
+# Historical acceptance is immutable; retained code below is reference only.
+_FROZEN_MESSAGE = 'HISTORICAL_EVIDENCE_FROZEN: historical verifier; retained implementation is reference only and cannot be invoked by CLI, import, or runpy. Preserve original M9 acceptance bytes. Reproduction requires its original recorded revision and isolated evidence copy; current M10.5.9 evidence cannot prove M9. '
 if __name__ == '__main__':
     import sys
-    sys.stderr.write('HISTORICAL_EVIDENCE_FROZEN: this collector cannot regenerate historical acceptance. Use scripts/collect-m1059-evidence.py with fresh evidence and scripts/archive-m1059-local.py for a new archive.\n')
+    sys.stderr.write(_FROZEN_MESSAGE + '\n')
     raise SystemExit(2)
+raise RuntimeError(_FROZEN_MESSAGE)
 import datetime
 import hashlib
 import io

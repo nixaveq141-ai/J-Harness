@@ -36,22 +36,44 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          run_logged() {
+            local logfile="$1" code
+            shift
+            if "$@"; then return 0; else code=$?; fi
+            if [[ -f "$logfile" ]]; then tail -n 100 -- "$logfile" || true; fi
+            return "$code"
+          }
           npm ci
           mkdir -p ../.build-cache/M10.5.9
-          python ../scripts/evidence_run.py --name client --cwd . --log ../.build-cache/M10.5.9/client.log -- npm test
-          python ../scripts/evidence_run.py --name sdk-typecheck --cwd . --log ../.build-cache/M10.5.9/sdk-typecheck.log -- node node_modules/typescript/bin/tsc --ignoreConfig --noEmit --strict --target es2022 --module nodenext --moduleResolution nodenext --allowImportingTsExtensions --types node --typeRoots node_modules/@types ../sdk/typescript/src/index.ts ../sdk/examples/run.ts
+          run_logged ../.build-cache/M10.5.9/client.log python ../scripts/evidence_run.py --name client --cwd . --log ../.build-cache/M10.5.9/client.log -- npm test
+          run_logged ../.build-cache/M10.5.9/sdk-typecheck.log python ../scripts/evidence_run.py --name sdk-typecheck --cwd . --log ../.build-cache/M10.5.9/sdk-typecheck.log -- node node_modules/typescript/bin/tsc --ignoreConfig --noEmit --strict --target es2022 --module nodenext --moduleResolution nodenext --allowImportingTsExtensions --types node --typeRoots node_modules/@types ../sdk/typescript/src/index.ts ../sdk/examples/run.ts
           npm audit --audit-level=low
           npm run build
       - name: Verify on Windows
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
+          $PSNativeCommandUseErrorActionPreference = $false
           python scripts/evidence_run.py --name verify --log verify.log --output harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar -- mvnw.cmd -B -Prelease-audit clean verify org.cyclonedx:cyclonedx-maven-plugin:2.9.3:makeAggregateBom
-          if ($LASTEXITCODE -ne 0) { Get-Content verify.log -Tail 100; exit $LASTEXITCODE }
+          $verifyExit = $LASTEXITCODE
+          if ($verifyExit -ne 0) {
+            if (Test-Path -LiteralPath verify.log -PathType Leaf) {
+              try { Get-Content -LiteralPath verify.log -Tail 100 -ErrorAction Stop }
+              catch { Write-Warning 'Could not read the verify log tail.' }
+            }
+            exit $verifyExit
+          }
       - name: Verify on POSIX
         if: runner.os != 'Windows'
         run: |
-          python scripts/evidence_run.py --name verify --log verify.log --output harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar -- sh ./mvnw -B -Prelease-audit clean verify org.cyclonedx:cyclonedx-maven-plugin:2.9.3:makeAggregateBom
+          set -euo pipefail
+          if python scripts/evidence_run.py --name verify --log verify.log --output harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar -- sh ./mvnw -B -Prelease-audit clean verify org.cyclonedx:cyclonedx-maven-plugin:2.9.3:makeAggregateBom; then
+            :
+          else
+            verify_exit=$?
+            if [[ -f verify.log ]]; then tail -n 100 -- verify.log || true; fi
+            exit "$verify_exit"
+          fi
       - name: Install browsers and credential service on Linux
         if: runner.os == 'Linux'
         working-directory: frontend
@@ -96,12 +118,8 @@ jobs:
           set -euo pipefail
           python scripts/test-release-tools.py
           python scripts/test-sdk-inventory.py
-          python scripts/test-evidence-run.py
-          python scripts/test-evidence-io.py
-          python scripts/test-history-evidence.py
-          python scripts/test-smoke-evidence.py
-          node scripts/test-workbench-evidence.mjs
-          python scripts/test-m1059-gates.py
+          python scripts/run-r0-validation.py --run-id "${JHARNESS_EVIDENCE_RUN_ID}-r0" --output ".build-cache/R0/${JHARNESS_EVIDENCE_RUN_ID}-r0"
+          python scripts/run-r0-validation.py --verify ".build-cache/R0/${JHARNESS_EVIDENCE_RUN_ID}-r0/results.json"
           python scripts/test-source-secrets.py
           python scripts/scan-source-secrets.py
           python scripts/sdk-inventory.py
@@ -139,6 +157,7 @@ jobs:
             target/*candidate.zip
             target/candidate-sha256.txt
             .build-cache/M10.5.9/
+            .build-cache/R0/
             .build-cache/M10.5.4-native-*.json
             .build-cache/M10-browser-results.json
             .build-cache/M10-launcher-results.json

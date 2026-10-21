@@ -1,8 +1,7 @@
-import {spawn} from 'node:child_process'
 import {rm,mkdir,writeFile} from 'node:fs/promises'
 import {resolve,join} from 'node:path'
 import {randomUUID} from 'node:crypto'
-import {fixtures,sha,strictJson,requireThat,boundedRead,atomicJson,inputSnapshot,validateRecord,validateFrozen} from './workbench-evidence.mjs'
+import {fixtures,sha,strictJson,requireThat,boundedRead,atomicJson,inputSnapshot,validateRecord,validateFrozen,runFixtureCommand} from './workbench-evidence.mjs'
 const root=resolve(import.meta.dirname,'..'),cache=join(root,'.build-cache'),out=join(cache,'M10.5.9/browser')
 const engines=(process.env.JHARNESS_MATRIX_ENGINES??'chromium,firefox,webkit').split(',')
 const selected=(process.env.JHARNESS_MATRIX_FIXTURES??Object.keys(fixtures).join(',')).split(',')
@@ -21,17 +20,10 @@ try{
   await rm(join(cache,fixtures[fixture]),{force:true})
   const before=await inputSnapshot(root),env={...process.env,JHARNESS_BROWSER_ENGINE:engine}
   if(engine!=='chromium')delete env.JHARNESS_BROWSER_CHANNEL
-  const child=spawn(process.execPath,['frontend/tests/'+fixture+'.mjs'],{cwd:root,env,windowsHide:true,stdio:['ignore','pipe','pipe']})
-  let output=Buffer.alloc(0),timedOut=false,overflow=false
-  const append=d=>{if(output.length+d.length>8*1024*1024){overflow=true;child.kill('SIGKILL')}else output=Buffer.concat([output,d])}
-  child.stdout.on('data',append);child.stderr.on('data',append)
-  let hardTimer,boundTimer
-  const timer=setTimeout(()=>{timedOut=true;child.kill();hardTimer=setTimeout(()=>child.kill('SIGKILL'),2000)},300000)
-  let command
-  try{command=await new Promise((accept,reject)=>{child.once('error',reject);child.once('close',(exitCode,signal)=>accept({exitCode,signal,timedOut}));boundTimer=setTimeout(()=>reject(Error('Fixture process did not close after termination')),307000)})}
-  finally{clearTimeout(timer);clearTimeout(hardTimer);clearTimeout(boundTimer);await writeFile(log,output.length?output:Buffer.from('[no command output]\n'))}
+  const {output,command}=await runFixtureCommand([process.execPath,'frontend/tests/'+fixture+'.mjs'],{cwd:root,env})
+  await writeFile(log,output.length?output:Buffer.from('[no command output]\n'))
   try{
-   requireThat(command.exitCode===0&&command.signal===null&&!timedOut&&!overflow,'Fixture command failed, timed out or exceeded output limit')
+   requireThat(command.exitCode===0&&command.signal===null&&!command.timedOut&&!command.overflow,'Fixture command failed, timed out or exceeded output limit')
    const record=strictJson(await boundedRead(cache,fixtures[fixture],8*1024*1024));validateRecord(record,fixture,engine)
    requireThat(JSON.stringify(before)===JSON.stringify(await inputSnapshot(root)),'Inputs changed during fixture')
    for(const shot of record.screenshots){

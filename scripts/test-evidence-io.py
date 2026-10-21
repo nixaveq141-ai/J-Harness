@@ -35,7 +35,7 @@ class EvidenceIoTest(unittest.TestCase):
                 bounded_path(self.root, path, must_exist=False)
 
     def test_link_is_rejected_even_when_it_points_inside(self):
-        # A mock reparse attribute avoids privileges and tests the Windows branch.
+        # This assertion covers symlink rejection; junction/reparse have separate regressions.
         (self.root / 'target').write_text('{}')
         with patch.object(Path, 'is_symlink', return_value=True):
             with self.assertRaisesRegex(ValueError, 'Linked'):

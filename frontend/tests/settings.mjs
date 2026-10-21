@@ -2,7 +2,7 @@ import { browserType as chromium, stoppedHostDiagnostic } from './runtime.mjs'
 import { createServer } from 'node:http'
 import { spawn } from 'node:child_process'
 import { mkdir, writeFile, readFile, readdir } from 'node:fs/promises'
-import { join, resolve, delimiter } from 'node:path'
+import { join, resolve, delimiter, relative } from 'node:path'
 import { createHash, randomUUID } from 'node:crypto'
 import assert from 'node:assert/strict'
 
@@ -50,7 +50,7 @@ async function api(path, body, auth = true, extra = {}) {
 }
 const saveBody = v => ({ revision: v.revision, models: v.models, selected: v.selected, extensions: v.extensions, apiKeys: {} })
 async function connect() { await page.goto(base); await page.getByRole('button', { name: '工作台设置', exact: true }).click(); await page.getByText('模型连接', { exact: true }).waitFor() }
-async function shot(name) { await wait(300); const path = join(out, `M10-settings-${name}.png`); await page.screenshot({ path, fullPage: true }); screenshots.push({ path: path.replace(root + '\\', ''), sha256: createHash('sha256').update(await readFile(path)).digest('hex') }) }
+async function shot(name) { await wait(300); const path = join(out, `M10-settings-${name}.png`); await page.screenshot({ path, fullPage: true }); screenshots.push({ path: relative(root,path).replaceAll('\\','/'), sha256: createHash('sha256').update(await readFile(path)).digest('hex') }) }
 try {
   await start()
   browser = await chromium.launch(process.env.JHARNESS_BROWSER_CHANNEL ? { channel: process.env.JHARNESS_BROWSER_CHANNEL } : {})

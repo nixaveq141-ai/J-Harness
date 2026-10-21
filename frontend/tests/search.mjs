@@ -2,7 +2,7 @@ import { browserType as chromium, stoppedHostDiagnostic } from './runtime.mjs'
 import { createServer } from 'node:http'
 import { spawn } from 'node:child_process'
 import { mkdir, writeFile, readFile } from 'node:fs/promises'
-import { join, resolve } from 'node:path'
+import { join, resolve, relative } from 'node:path'
 import { createHash, randomUUID } from 'node:crypto'
 import assert from 'node:assert/strict'
 const stoppedOrigins=new Set(),transportDiagnostics=[]
@@ -22,7 +22,7 @@ async function api(path,data,auth=true,headers={}){const r=await context.request
 const query=(patch={})=>({text:'alpha beta',mode:'tokens',profile:'',view:'active',sessionId:'',cursor:'',limit:20,rebuild:false,...patch})
 async function create(profile,goal,id){const r=await api('/v1/tasks',{profile,goal,requestId:id});assert.equal(r.status,202);const task=r.body;await until(async()=>(await api('/v1/tasks/'+task.taskId)).body.phase==='FINISHED');return(await api('/v1/tasks/'+task.taskId)).body}
 async function archive(task){const r=await api('/v1/tasks/'+task.taskId+'/metadata',{revision:task.revision,name:task.name||'Archived source',pinned:false,archived:true});assert.equal(r.status,200);return r.body}
-async function shot(name){const path=join(out,'M10.5.8-search-'+name+'.png');await page.screenshot({path,fullPage:true});screenshots.push({path:path.replace(root+'\\',''),sha256:createHash('sha256').update(await readFile(path)).digest('hex')})}
+async function shot(name){const path=join(out,'M10.5.8-search-'+name+'.png');await page.screenshot({path,fullPage:true});screenshots.push({path:relative(root,path).replaceAll('\\','/'),sha256:createHash('sha256').update(await readFile(path)).digest('hex')})}
 try{
   await start();browser=await chromium.launch(process.env.JHARNESS_BROWSER_CHANNEL?{channel:process.env.JHARNESS_BROWSER_CHANNEL}:{})
   context=await browser.newContext({viewport:{width:1440,height:960}});page=await context.newPage();page.on('pageerror',e=>{if(stoppedHostDiagnostic(e.message,stoppedOrigins))transportDiagnostics.push(e.message);else errors.push(e.message)})

@@ -29,10 +29,57 @@ class HistoricalEvidenceTest(unittest.TestCase):
                     self.assertEqual(result.returncode, 2, result.stderr)
                     self.assertEqual(result.stdout, '')
                     self.assertIn('HISTORICAL_EVIDENCE_FROZEN:', result.stderr)
-                    self.assertIn('collect-m1059-evidence.py', result.stderr)
-                    self.assertIn('archive-m1059-local.py', result.stderr)
+                    expected_kind = 'verifier' if path.name.startswith('verify-') else 'collector'
+                    self.assertIn('historical ' + expected_kind, result.stderr)
+                    if path.name.startswith('verify-m8'):
+                        self.assertIn('M8', result.stderr)
+                        self.assertIn('cannot prove M8', result.stderr)
         self.assertEqual(evidence_fingerprints(), before,
                          'Historical evidence JSON content or membership changed')
+
+    def test_import_and_runpy_are_frozen_before_historical_io(self):
+        # The child blocks evidence reads and every write before executing historical code.
+        # A broken guard can therefore be demonstrated without rewriting old JSON.
+        for path in FROZEN:
+            for mode in ('import', 'runpy', 'runpy_main'):
+                code = r"""
+import importlib.util, json, os, pathlib, runpy, sys
+path, mode, root = sys.argv[1:]
+reads = []
+def audit(event, args):
+    if event == 'open':
+        name, flags = args[0], args[1]
+        if isinstance(name, (str, bytes, os.PathLike)):
+            value = os.fsdecode(name).replace('\\', '/')
+            if isinstance(flags, str) and any(c in flags for c in 'wax+'):
+                raise AssertionError('Historical write attempted: ' + value)
+            if '/docs/testing/' in value and not value.endswith(('.py', '.pyc')):
+                reads.append(value)
+                raise AssertionError('Historical evidence read attempted')
+    if event in ('os.rename','os.remove','os.mkdir','shutil.copyfile'):
+        raise AssertionError('Historical mutation attempted: ' + event)
+sys.addaudithook(audit)
+try:
+    if mode == 'import':
+        spec = importlib.util.spec_from_file_location('frozen_probe', path)
+        module = importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
+    else:
+        runpy.run_path(path, run_name='__main__' if mode == 'runpy_main' else '<run_path>')
+except BaseException as error:
+    print(json.dumps({'type':type(error).__name__, 'message':str(error), 'reads':reads}))
+else:
+    print(json.dumps({'type':'NO_ERROR', 'reads':reads}))
+"""
+                result = subprocess.run([sys.executable, '-B', '-c', code, str(path), mode, str(ROOT)],
+                                        cwd=ROOT, capture_output=True, text=True, timeout=10)
+                with self.subTest(script=path.name, mode=mode):
+                    self.assertEqual(result.returncode, 0, result.stderr)
+                    value = __import__('json').loads(result.stdout)
+                    expected = 'SystemExit' if mode == 'runpy_main' else 'RuntimeError'
+                    self.assertEqual(expected, value['type'], value)
+                    if mode != 'runpy_main':
+                        self.assertIn('HISTORICAL_EVIDENCE_FROZEN:', value['message'])
+                    self.assertEqual([], value['reads'])
 
     def test_no_current_workflow_invokes_frozen_clis(self):
         for workflow in (ROOT / '.github/workflows').glob('*'):

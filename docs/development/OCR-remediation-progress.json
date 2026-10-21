@@ -1,32 +1,34 @@
 {
-  "updatedAt": "2026-10-20",
+  "updatedAt": "2026-10-21",
   "phase": "R0",
-  "status": "LOCAL_BASELINE_WITH_CONFIRMED_GAPS",
+  "status": "LOCAL_VALIDATED_CI_PENDING",
   "details": "docs/development/OCR-R0-remediation-2026-10-20.md",
   "productMilestone": "M10.5.9",
   "productStatus": "LOCAL_PARTIAL_CI_PENDING",
   "m11Eligible": false,
   "r0Rereview": {
     "sessionId": "eed6a134-1d3b-4e89-adaa-a0e9b2ba1f19",
-    "status": "REVIEW_COMPLETE_FIXES_NOT_STARTED",
+    "status": "ADOPTED_SCOPE_LOCAL_VALIDATED_CI_PENDING",
     "opinions": 37,
     "accepted": 26,
     "partial": 10,
     "rejected": 1,
-    "details": "docs/development/OCR-R0-rereview-2026-10-20.md"
+    "details": "docs/development/OCR-R0-rereview-fixes-2026-10-21.md",
+    "implementedAdoptedScopes": 36,
+    "results": "docs/testing/OCR-R0-rereview-fixes-2026-10-21-results.json"
   },
   "tasks": {
     "R0-01": {
-      "status": "BASELINE_GAPS_CONFIRMED",
-      "description": "前轮基线已交付；复审确认跨平台及来源链缺口，待按R0复审记录修复并重采完整流水线"
+      "status": "BASELINE_VALIDATED_PIPELINE_PENDING",
+      "description": "复审采纳范围已修复且本地验证；新回执覆盖130门禁/33客户端/410Java；完整发布流水线和三平台三引擎CI仍待运行"
     },
     "R0-02": {
-      "status": "BASELINE_GAPS_CONFIRMED",
-      "description": "前轮专项通过；复审确认XML读取、manifest名及其他边界缺口，待补负例和修复，历史JSON不改写"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "description": "复审的XML单次有界解析、归档manifest名、读取与资源边界已修复并补正反例；历史验收JSON不改写，仍要求稳定独占目录"
     },
     "R0-03": {
-      "status": "BASELINE_FOLLOWUPS_OPEN",
-      "description": "复审确认路径别名/矩阵入口/清理等回归缺口；原300条随R1～R6交付，WebKit content失败仍待定位"
+      "status": "BASELINE_VALIDATED_FOLLOWUPS_OPEN",
+      "description": "本次36条采纳范围已实施；选定四fixture的Chrome/WebKit各134通过；原300条回归意见仍按R1～R6交付，不宣称484条全部关闭"
     }
   }
 }

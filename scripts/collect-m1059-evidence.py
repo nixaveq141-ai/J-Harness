@@ -1,23 +1,21 @@
 """Validate one current platform; a local pass never grants the cross-platform M11 gate."""
 import datetime
 import hashlib
-import json
 import os
 from pathlib import Path
 import platform
 import re
 import subprocess
 import sys
-import xml.etree.ElementTree as ET
 import zipfile
-from evidence_io import bounded_path, read_json_snapshot, atomic_write_json
+from evidence_io import bounded_path, read_json_snapshot, atomic_write_json, stream_sha256
 from evidence_run import inputs, valid_run_id, validate as validate_command
-from evidence_checks import suite_snapshot, sdk_checks, native_checks, names, CONTRACT
+from evidence_checks import suite_snapshot, sdk_checks, native_checks, names, CONTRACT, firefox_unavailable, firefox_executable
 
 ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/'.build-cache/M10.5.9'
 EXPECTED={'browser':28,'diagnosis':13,'history':19,'turns':15,'models':22,'questions':26,'content':45,'extensions':35,'search':28,'settings':26,'development':14}
-def sha(p):return hashlib.sha256(p.read_bytes()).hexdigest()
+def sha(p):return stream_sha256(p)
 SNAPSHOTS={}
 def load(p):
     snapshot=read_json_snapshot(ROOT,p.relative_to(ROOT).as_posix())
@@ -43,7 +41,9 @@ def collect(log):
         'examples':(OUT/'examples.log',ROOT/'.build-cache/M10.5.8-examples-results.json'),
         'browser':(OUT/'browser.log',OUT/'browser/matrix.json'),
         'smoke':(OUT/'smoke.log',ROOT/'target/candidate-smoke.json')}
-    if sys.platform=='win32':command_specs['launcher']=(OUT/'launcher.log',ROOT/'.build-cache/M10-launcher-results.json')
+    if sys.platform=='win32':
+        command_specs['launcher']=(OUT/'launcher.log',ROOT/'.build-cache/M10-launcher-results.json')
+        command_specs['firefox-probe']=(OUT/'firefox-probe.log',OUT/'availability.json')
     expected_commands={
         'verify':(['mvnw.cmd'] if sys.platform=='win32' else ['sh','./mvnw'])+['-B','-Prelease-audit','clean','verify','org.cyclonedx:cyclonedx-maven-plugin:2.9.3:makeAggregateBom'],
         'client':['npm','test'],
@@ -52,7 +52,8 @@ def collect(log):
         'sdk':['node','sdk/tests/run.mjs'],'examples':['node','sdk/tests/examples.mjs'],
         'browser':['node','scripts/run-workbench-matrix.mjs'],
         'smoke':['python','scripts/smoke-candidate.py'],
-        'launcher':[sys.executable,'scripts/test-open-workbench.py']}
+        'launcher':[sys.executable,'scripts/test-open-workbench.py'],
+        'firefox-probe':[sys.executable,'scripts/probe-firefox.py']}
     for name,(command_log,output) in command_specs.items():
         receipt_path=OUT/'commands'/str(name+'.json');receipt=load(receipt_path)
         output_hashes={output.relative_to(ROOT).as_posix():sha(output)} if output else None
@@ -80,7 +81,8 @@ def collect(log):
     availability=None
     if 'firefox' not in engines:
         availability=load(OUT/'availability.json')
-        require(sys.platform=='win32' and availability['firefox']['status']=='UNAVAILABLE' and type(availability['firefox']['winerror']) is int and availability['firefox']['winerror']==14001,'Missing explicit Windows Firefox availability evidence')
+        require(sys.platform=='win32','Firefox partial exception is Windows-only')
+        firefox_unavailable(availability,run_id=run_id,executable=firefox_executable(ROOT),script_sha256=sha(ROOT/'scripts/probe-firefox.py'))
     runtime=load(OUT/'browser-runtime.json')
     require(runtime['scriptSha256']==sha(ROOT/'scripts/prepare-test-browsers.py'),'Browser preparation source drift')
     if runtime['status']=='PRIVATE_ASSEMBLY_MANIFEST':
@@ -89,13 +91,13 @@ def collect(log):
         require(runtime['originalFilesUnchanged'] is True and bool(runtime['originalFilesSha256']) and all(sha(bounded_path(private,p))==h for p,h in runtime['originalFilesSha256'].items()),'Browser binary changed')
         require(sha(private/'mozglue.manifest')==runtime['privateManifestSha256'],'Private manifest changed')
     seen=set();records={}
+    contract=load(ROOT/'scripts/workbench-case-contract.json')
+    expected_cases=contract.get('fixtures',contract)
     for entry in matrix['records']:
         key=(entry['engine'],entry['fixture']);require(key not in seen,'Duplicate browser evidence');seen.add(key)
         path=bounded_path(ROOT,entry['path']);r=load(path);require(SNAPSHOTS[entry['path']].sha256==entry['sha256'],'Browser record drift')
         require(r['jarSha256']==jar_sha and len(r['checks'])==EXPECTED[key[1]],'Wrong JAR or missing checks')
         require(all(isinstance(c,dict) and c.get('passed') is True for c in r['checks']),'Failed browser check')
-        contract=load(ROOT/'scripts/workbench-case-contract.json')
-        expected_cases=contract.get('fixtures',contract)
         names([c.get('name') for c in r['checks']],expected_cases[key[1]],'Wrong browser case identities')
         require(r['browserEngine']==key[0] and r.get('browserVersion',r.get('browser')),'Unknown browser version')
         require(r['fixtureSourceSha256']==sha(ROOT/'frontend/tests'/str(key[1]+'.mjs')),'Fixture source drift')

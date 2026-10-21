@@ -2,7 +2,7 @@ import { browserType as chromium, stoppedHostDiagnostic } from './runtime.mjs'
 import { createServer } from 'node:http'
 import { spawn } from 'node:child_process'
 import { mkdir, writeFile, readFile, access } from 'node:fs/promises'
-import { join, resolve } from 'node:path'
+import { join, resolve, relative } from 'node:path'
 import { createHash, randomUUID } from 'node:crypto'
 import assert from 'node:assert/strict'
 
@@ -75,7 +75,7 @@ async function stop() { if (host?.exitCode === null) { stoppedOrigins.add(base);
 async function api(path, data, auth = true) { const res = await context.request.fetch(base + path, { method: data === undefined ? 'GET' : 'POST', headers: { ...(auth ? { Authorization: `Bearer ${token}` } : {}), ...(data === undefined ? {} : { 'Content-Type': 'application/json' }) }, ...(data === undefined ? {} : { data }) }); return { status: res.status(), body: await res.json() } }
 const saveBody = v => ({ revision: v.revision, models: v.models, selected: v.selected, extensions: v.extensions, policy: v.policy, apiKeys: {} })
 const group = name => page.locator('.extension-config').filter({ has: page.locator('summary', { hasText: new RegExp(`^${name}$`) }) })
-async function shot(name) { const path = join(out, `M10.5.7-${name}.png`); await page.screenshot({ path, fullPage: true }); screenshots.push({ path: path.replace(root + '\\', ''), sha256: createHash('sha256').update(await readFile(path)).digest('hex') }) }
+async function shot(name) { const path = join(out, `M10.5.7-${name}.png`); await page.screenshot({ path, fullPage: true }); screenshots.push({ path: relative(root,path).replaceAll('\\','/'), sha256: createHash('sha256').update(await readFile(path)).digest('hex') }) }
 try {
   await start(); browser = await chromium.launch(process.env.JHARNESS_BROWSER_CHANNEL ? { channel: process.env.JHARNESS_BROWSER_CHANNEL } : {})
   context = await browser.newContext({ viewport: { width: 1440, height: 960 } }); page = await context.newPage(); page.on('pageerror',e=>{if(stoppedHostDiagnostic(e.message,stoppedOrigins))transportDiagnostics.push(e.message);else errors.push(e.message)})

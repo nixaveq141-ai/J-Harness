@@ -105,8 +105,10 @@ try{
  check('file changes reject stale preview pages instead of mixing versions')
  await page.getByRole('button',{name:'重新读取',exact:true}).click();await page.getByLabel('内容预览',{exact:true}).getByText(/changed outside the task/).waitFor()
  check('explicit reread obtains changed current content')
- for(const [label,path] of [['parent traversal','../outside/private.txt'],['protected metadata','.jharness/config'],['dotenv','.env.local'],['absolute outside',outside+'/private.txt'],['symlink escape','escape-link/private.txt']]){
-   const response=await api('/v1/tasks/'+render+'/file?path='+enc(path));check('denied preview '+label,response.status===400)
+ // Policy blocks parent traversal; protected metadata (including this fixture's
+ // absolute .build-cache path) and the workspace link resolver report PATH_DENIED.
+ for(const [label,path,code] of [['parent traversal','../outside/private.txt','INSPECTION_DENIED'],['protected metadata','.jharness/config','PATH_DENIED'],['dotenv','.env.local','PATH_DENIED'],['absolute outside',outside+'/private.txt','PATH_DENIED'],['symlink escape','escape-link/private.txt','PATH_DENIED']]){
+   const response=await api('/v1/tasks/'+render+'/file?path='+enc(path));check('denied preview '+label,response.status===400&&response.body.error===code)
  }
  const listing=(await api('/v1/tasks/'+render+'/files')).body
  check('file tree hides protected metadata and links',!JSON.stringify(listing).includes('.env.local')&&!JSON.stringify(listing).includes('.jharness')&&!JSON.stringify(listing).includes('escape-link'))

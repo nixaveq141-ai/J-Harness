@@ -11,10 +11,12 @@ from pathlib import Path
 import shutil
 import signal
 import subprocess
-import sys
-from evidence_io import bounded_path, atomic_write_json as atomic_json
+import time
+from evidence_io import bounded_path, atomic_write_json as atomic_json, stream_sha256
 
 ROOT = Path(__file__).resolve().parents[1]
+IS_WINDOWS = os.name == 'nt'
+MAX_LOG_BYTES = 128 * 1024 * 1024  # monitored every 250ms; not an OS disk quota
 FOLDERS = ('frontend/src', 'frontend/tests', 'frontend/scripts', 'frontend/public', 'sdk', 'scripts',
            '.github/workflows', '.mvn', 'third-party')
 FILES = ('pom.xml', 'mvnw', 'mvnw.cmd', 'frontend/package.json',
@@ -48,12 +50,38 @@ def inputs(root=ROOT):
     return {p.relative_to(root).as_posix(): digest(p.read_bytes()) for p in sorted(paths)}
 
 
-def run(command, *, name, log, receipt, run_id, cwd=ROOT, root=ROOT, env=None, timeout=1800, outputs=()):
+def terminate_and_reap(process, report):
+    """A vanished group is already stopped; always attempt direct-child reaping."""
+    errors = []
+    try:
+        if IS_WINDOWS:
+            tree = subprocess.run(['taskkill', '/PID', str(process.pid), '/T', '/F'],
+                                  capture_output=True, timeout=15, check=False)
+            report['treeCleanupExitCode'] = tree.returncode
+        else:
+            try:
+                os.killpg(process.pid, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
+    except Exception as error:
+        errors.append(type(error).__name__)
+    finally:
+        try:
+            if IS_WINDOWS and process.poll() is None:
+                process.kill()
+            process.wait(timeout=15)
+        except Exception as error:
+            errors.append(type(error).__name__)
+    if errors:
+        report['cleanupFailures'] = errors
+
+
+def run(command, *, name, log, receipt, run_id, cwd=ROOT, root=ROOT, env=None, timeout=1800, outputs=(), max_log_bytes=MAX_LOG_BYTES):
     if not valid_run_id(run_id):
         raise ValueError('JHARNESS_EVIDENCE_RUN_ID must be 1-128 safe letters, digits, dots, underscores or hyphens')
     report = dict(schemaVersion=1, status='INCOMPLETE', runId=run_id, name=name,
                   command=command, startedAt=dt.datetime.now(dt.timezone.utc).isoformat(),
-                  exitCode=None, cwd=cwd.resolve().relative_to(root.resolve()).as_posix())
+                  exitCode=None, cwd=cwd.resolve().relative_to(root.resolve()).as_posix(), logByteBudget=max_log_bytes)
     bounded_path(root, receipt.relative_to(root).as_posix(), must_exist=False)
     atomic_json(receipt, report)  # Supersede a stale success even if launch fails.
     process = None
@@ -66,34 +94,36 @@ def run(command, *, name, log, receipt, run_id, cwd=ROOT, root=ROOT, env=None, t
             output.unlink(missing_ok=True)
         log.parent.mkdir(parents=True, exist_ok=True)
         executable = shutil.which(command[0]) or command[0]
+        if type(max_log_bytes) is not int or max_log_bytes <= 0:
+            raise ValueError('Invalid command log byte budget')
         with log.open('wb') as stream:
             process = subprocess.Popen([executable, *command[1:]], cwd=cwd, env=env,
                                        stdout=stream, stderr=subprocess.STDOUT,
-                                       start_new_session=os.name != 'nt')
-            try:
-                report['exitCode'] = process.wait(timeout=timeout)
-            except subprocess.TimeoutExpired:
-                report['timedOut'] = True
-                if os.name == 'nt':
-                    try:
-                        tree = subprocess.run(['taskkill', '/PID', str(process.pid), '/T', '/F'],
-                                              capture_output=True, timeout=15, check=False)
-                        report['treeCleanupExitCode'] = tree.returncode
-                    finally:
-                        # Reap our direct child even when the platform tree command is unavailable.
-                        if process.poll() is None:
-                            process.kill()
-                else:
-                    os.killpg(process.pid, signal.SIGKILL)
-                process.wait(timeout=15)
-                raise ValueError('Evidence command timed out: ' + name)
-        report['logSha256'] = digest(log.read_bytes())
+                                       start_new_session=not IS_WINDOWS)
+            deadline = time.monotonic() + timeout
+            while True:
+                try:
+                    report['exitCode'] = process.wait(timeout=max(.001, min(.25, deadline - time.monotonic())))
+                    break
+                except subprocess.TimeoutExpired:
+                    if log.stat().st_size > max_log_bytes:
+                        report['logBudgetExceeded'] = True
+                        terminate_and_reap(process, report)
+                        raise ValueError('Evidence command log exceeds byte budget: ' + name)
+                    if time.monotonic() >= deadline:
+                        report['timedOut'] = True
+                        terminate_and_reap(process, report)
+                        raise ValueError('Evidence command timed out: ' + name)
+        if log.stat().st_size > max_log_bytes:
+            report['logBudgetExceeded'] = True
+            raise ValueError('Evidence command log exceeds byte budget: ' + name)
+        report['logSha256'] = stream_sha256(log, max_bytes=max_log_bytes)
         report['sourceAfterSha256'] = inputs(root)
         if report['exitCode'] != 0:
             raise ValueError('Evidence command failed: ' + name)
         if report['sourceSha256'] != report['sourceAfterSha256']:
             raise ValueError('Build inputs changed during command: ' + name)
-        report['outputs'] = {p.relative_to(root).as_posix(): digest(p.read_bytes()) for p in outputs}
+        report['outputs'] = {p.relative_to(root).as_posix(): stream_sha256(p) for p in outputs}
         report['status'] = 'PASS'
         return report
     finally:
@@ -113,7 +143,7 @@ def validate(report, *, name, log, run_id, source, command=None, outputs=None, c
         raise ValueError('Wrong command working directory: ' + name)
     if not source or report.get('sourceSha256') != source or report.get('sourceAfterSha256') != source:
         raise ValueError('Command source drift: ' + name)
-    if report.get('logSha256') != digest(log.read_bytes()):
+    if report.get('logSha256') != stream_sha256(log, max_bytes=MAX_LOG_BYTES):
         raise ValueError('Command log drift: ' + name)
     if outputs is not None and report.get('outputs') != outputs:
         raise ValueError('Command output drift: ' + name)

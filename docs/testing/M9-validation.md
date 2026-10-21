@@ -1,5 +1,7 @@
 # M9 发布验证记录
 
+2026-10-21 历史入口说明：本页是当时验收快照。页内历史证据收集器/核验器现已冻结，CLI、导入及 runpy 均拒绝执行；命令仅供追溯。复现需使用记录中的原始版本与隔离副本，不得覆写历史 JSON。当前 M10.5.9 工具只收集新阶段证据，不能替代本页阶段证明。
+
 日期：2026-10-16。状态：**M9约定范围验收完成**。同一源码提交`ed02da0e01125d94a3c07f8862afe6c63b8f62d2`在真实Windows/Linux/macOS CI中全部通过。正式Release未创建；本阶段完成的是可追溯候选与发布兼容验证。契约见[M9-contracts.md](../development/M9-contracts.md)，平台及AC/NFR适用范围见[M9-platform-matrix.md](M9-platform-matrix.md)。
 
 [最终CI运行](https://github.com/nixaveq141-ai/J-Harness/actions/runs/38858529628)，完整结构化收口结果[M9-ci-results.json](M9-ci-results.json)。最终文档提交只归档证据，源码及候选提交标识保持上述值。

@@ -1,8 +1,10 @@
 # J-Harness 项目接续说明
 
-最后更新：2026-10-20（Asia/Shanghai）。根目录 AGENTS.md 引用本文件。开始实现前阅读，并以当前源码、Git 与验收记录核实日期快照。
+最后更新：2026-10-21（Asia/Shanghai）。根目录 AGENTS.md 引用本文件。开始实现前阅读，并以当前源码、Git 与验收记录核实日期快照。
 
 ## 当前接续状态
+
+- 2026-10-21按用户要求实施R0复审采纳范围：37条中26采纳+10部分采纳共36条已按边界修复并本地验证，012固定两SDK语言保持不改。历史导入冻结、XML/ZIP/流式读取、manifest名、进度独立哈希、矩阵/只读finalizer、清理与Firefox本轮回执及workflow失败诊断均已补正反例；实际HTTP确认父级穿越INSPECTION_DENIED、另四夹具PATH_DENIED，未修改产品策略迎合统一码建议。新同runId回执130门禁+33客户端+410Java/64suites通过并独立复核11组，Chrome/WebKit四fixture各134共268通过；相邻11项及秘密扫描0发现。详见docs/development/OCR-R0-rereview-fixes-2026-10-21.md及新results.json；首轮reporter URI失败记录保留，原静态审查/历史验收JSON不改写。36条是采纳范围本地完成，不等于原484条关闭；原300条回归仍随R1～R6。完整发布smoke、真实三平台三引擎CI未运行，M10.5.9保持LOCAL_PARTIAL_CI_PENDING/m11Eligible=false，下一入口R1及完整CI授权实测。仅本地提交，不推送/发布/付费调用；用户已有.agent扫描快照及background-R0.md保持未提交，扫描原导出仍在忽略缓存。
 
 - 2026-10-20核实用户新R0审查会话eed6a134-1d3b-4e89-adaa-a0e9b2ba1f19，原导出44文件/37意见已逐条核对：采纳26、部分采纳10、不作为当前缺陷采纳1，合并9组后续修复。隔离探针确认POSIX截图路径不兼容、历史导入冻结绕过、UTF-16 DTD扫描缺口、manifest名越界、路径别名测试KeyError、finalizer输出hash漂移等；ZIP返回值会截断但截断前内存分配风险成立。详见docs/development/OCR-R0-rereview-2026-10-20.md及逐条账本/探针记录。本次只核实并更新计划，未实施这些代码修复、未跑真实跨平台/浏览器/全量产品或远端CI，历史验收JSON不改写；R0仍有明确待修缺口，优先R0跨平台/历史冻结/读取边界，不能按已完整收口跳过。原484条意见与本次37条不叠加成完成数；M10.5.9保持LOCAL_PARTIAL_CI_PENDING/m11Eligible=false。用户原有.agent扫描快照及.opencodereview/background-R0.md保持未提交，原始导出留忽略缓存。
 

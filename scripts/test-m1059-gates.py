@@ -2,6 +2,8 @@ import copy
 import hashlib
 import importlib.util
 import json
+import os
+import subprocess
 from pathlib import Path
 import tempfile
 import unittest
@@ -120,8 +122,25 @@ class CiGateTest(unittest.TestCase):
                 target.write_text('{"changed":true}',encoding='utf-8')
             return value
         with patch.object(gate,'load_json',side_effect=replace_after_parse):result=gate.aggregate(self.directory)
-        self.assertEqual(hashlib.sha256(original).hexdigest(),result['runnerReports'][str(target)])
-        self.assertNotEqual(hashlib.sha256(target.read_bytes()).hexdigest(),result['runnerReports'][str(target)])
+        self.assertEqual(hashlib.sha256(original).hexdigest(),result['runnerReports'][str(target.resolve())])
+        self.assertNotEqual(hashlib.sha256(target.read_bytes()).hexdigest(),result['runnerReports'][str(target.resolve())])
+
+    def test_report_hash_under_aliased_temporary_root(self):
+        with tempfile.TemporaryDirectory() as container:
+            alias = Path(container) / 'alias'
+            if os.name == 'nt':
+                subprocess.run(['cmd.exe', '/c', 'mklink', '/J', str(alias), str(self.directory.resolve())],
+                               check=True, capture_output=True)
+            else:
+                alias.symlink_to(self.directory.resolve(), target_is_directory=True)
+            original = self.directory
+            try:
+                self.directory = alias
+                self.test_report_hash_uses_exact_parsed_bytes_even_if_file_changes()
+            finally:
+                self.directory = original
+                if os.name == 'nt': alias.rmdir()
+                else: alias.unlink()
 
 
 class BrowserManifestTest(unittest.TestCase):

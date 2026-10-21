@@ -1,41 +1,43 @@
 """Collect actual clean-verify reports and hash the tested inputs for each runner."""
 import datetime
-import hashlib
-import json
+import argparse
 import os
 from pathlib import Path
 import platform
 import subprocess
-import sys
-import xml.etree.ElementTree as ET
-from evidence_io import atomic_write_json, read_json_snapshot
+from evidence_io import atomic_write_json, read_json_snapshot, bounded_path, stream_sha256
 from evidence_run import inputs, validate
-from evidence_checks import suite_snapshot
+from evidence_checks import suite_details, xml_document_snapshot
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
 def sha(path):
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+    return stream_sha256(path)
 
 
-def main():
-    log = ROOT / sys.argv[1]
+def main(argv=None):
     output = ROOT / 'target/release-evidence.json'
     atomic_write_json(output, dict(status='INCOMPLETE', buildResult='INCOMPLETE'))
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('log', help='Repository-relative verification log')
+    parser.add_argument('milestone', nargs='?', default='M10.5.9', choices=['M10.5.9'])
+    args = parser.parse_args(argv)
+    log = bounded_path(ROOT, args.log)
     source = inputs(ROOT)
     receipt = read_json_snapshot(ROOT, '.build-cache/M10.5.9/commands/verify.json')
     validate(receipt.data, name='verify', log=log, run_id=os.environ.get('JHARNESS_EVIDENCE_RUN_ID'), source=source, cwd='.')
     suites = []
     java = set()
     ns = {"m": "http://maven.apache.org/POM/4.0.0"}
-    modules = [e.text for e in ET.parse(ROOT / "pom.xml").findall("m:modules/m:module", ns)]
+    _, pom = xml_document_snapshot(ROOT / 'pom.xml')
+    modules = [e.text for e in pom.findall("m:modules/m:module", ns)]
     for module in modules:
-        for path in sorted((ROOT / module / "target/surefire-reports").glob("TEST-*.xml")):
+        module_path = bounded_path(ROOT, module)
+        for path in sorted((module_path / "target/surefire-reports").glob("TEST-*.xml")):
             if path.stat().st_mtime > log.stat().st_mtime:
                 raise ValueError("Reports newer than verify log")
-            suite = ET.parse(path).getroot()
-            entry = suite_snapshot(path, module)
+            entry, suite = suite_details(path, module)
             suites.append(entry)
             java.update(e.get("value") for e in suite.findall("properties/property") if e.get("name") == "java.version")
     totals = {k: sum(s[k] for s in suites) for k in ("tests", "failures", "errors", "skipped")}
@@ -47,9 +49,7 @@ def main():
     if any(p.stat().st_mtime > log.stat().st_mtime for p in paths):
         raise ValueError("Sources changed after verification")
     java_cmd = str(Path(os.environ["JAVA_HOME"]) / "bin" / ("java.exe" if os.name == "nt" else "java"))
-    milestone = sys.argv[2] if len(sys.argv) > 2 else "M10.5.9"
-    if milestone != 'M10.5.9':
-        raise ValueError('Historical milestones are frozen; collect current M10.5.9 evidence')
+    milestone = args.milestone
     runtime = subprocess.run([java_cmd, '-version'], capture_output=True, text=True, timeout=15, check=True)
     if not java or any(not isinstance(v, str) or not v.strip() for v in java):
         raise ValueError('Missing Java version evidence')
@@ -59,7 +59,7 @@ def main():
                 "javaRuntime": runtime.stderr,
                 "commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT).decode().strip(),
                 "workingTreeDirty": bool(subprocess.check_output(["git", "status", "--porcelain"], cwd=ROOT)),
-                "verificationLog": sys.argv[1],
+                "verificationLog": args.log,
                 "ciRunUrl": ("https://github.com/" + os.environ["GITHUB_REPOSITORY"] + "/actions/runs/" + os.environ["GITHUB_RUN_ID"]) if os.environ.get("GITHUB_RUN_ID") else None,
                 "logSha256": sha(log), "totals": totals, "suites": suites, "sourceSha256": source,
                 "jarSha256": sha(ROOT / "harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar")}
