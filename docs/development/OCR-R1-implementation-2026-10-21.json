@@ -1,0 +1,1749 @@
+{
+  "schemaVersion": 1,
+  "phase": "R1",
+  "status": "IMPLEMENTATION_IN_PROGRESS",
+  "opinions": [
+    {
+      "id": "OCR-0063",
+      "task": "R1-04",
+      "owner": "core",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0075",
+      "task": "R1-02",
+      "owner": "core",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0088",
+      "task": "R1-06",
+      "owner": "process",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0092",
+      "task": "R1-02",
+      "owner": "core",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0094",
+      "task": "R1-04",
+      "owner": "core",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0117",
+      "task": "R1-04",
+      "owner": "core",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0122",
+      "task": "R1-02",
+      "owner": "core",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0123",
+      "task": "R1-02",
+      "owner": "core",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0135",
+      "task": "R1-04",
+      "owner": "core",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0148",
+      "task": "R1-04",
+      "owner": "core",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0149",
+      "task": "R1-02",
+      "owner": "core",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0150",
+      "task": "R1-01",
+      "owner": "core",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0157",
+      "task": "R1-06",
+      "owner": "core",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0160",
+      "task": "R1-06",
+      "owner": "core",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0172",
+      "task": "R1-01",
+      "owner": "core",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0183",
+      "task": "R1-05",
+      "owner": "application",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0209",
+      "task": "R1-04",
+      "owner": "core",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0211",
+      "task": "R1-04",
+      "owner": "core",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0212",
+      "task": "R1-04",
+      "owner": "core",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0213",
+      "task": "R1-04",
+      "owner": "core",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0227",
+      "task": "R1-04",
+      "owner": "core",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0230",
+      "task": "R1-01",
+      "owner": "core",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0237",
+      "task": "R1-01",
+      "owner": "core",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0240",
+      "task": "R1-01",
+      "owner": "core",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0241",
+      "task": "R1-01",
+      "owner": "core",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0242",
+      "task": "R1-01",
+      "owner": "core",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0262",
+      "task": "R1-04",
+      "owner": "core",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0264",
+      "task": "R1-01",
+      "owner": "core",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0265",
+      "task": "R1-01",
+      "owner": "core",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0267",
+      "task": "R1-06",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0268",
+      "task": "R1-06",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0269",
+      "task": "R1-06",
+      "owner": "application",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0270",
+      "task": "R1-06",
+      "owner": "application",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0271",
+      "task": "R1-06",
+      "owner": "application",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0272",
+      "task": "R1-06",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0273",
+      "task": "R1-06",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0285",
+      "task": "R1-06",
+      "owner": "application",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0299",
+      "task": "R1-06",
+      "owner": "application",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0308",
+      "task": "R1-02",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0309",
+      "task": "R1-02",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0311",
+      "task": "R1-04",
+      "owner": "application",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0312",
+      "task": "R1-02",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0315",
+      "task": "R1-04",
+      "owner": "application",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0329",
+      "task": "R1-04",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0331",
+      "task": "R1-04",
+      "owner": "application",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0332",
+      "task": "R1-04",
+      "owner": "application",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0333",
+      "task": "R1-04",
+      "owner": "application",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0335",
+      "task": "R1-04",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0336",
+      "task": "R1-04",
+      "owner": "application",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0347",
+      "task": "R1-04",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0350",
+      "task": "R1-04",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0352",
+      "task": "R1-04",
+      "owner": "application",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0353",
+      "task": "R1-04",
+      "owner": "application",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0354",
+      "task": "R1-04",
+      "owner": "application",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0356",
+      "task": "R1-04",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0358",
+      "task": "R1-06",
+      "owner": "application",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0359",
+      "task": "R1-06",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0360",
+      "task": "R1-06",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0371",
+      "task": "R1-04",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0377",
+      "task": "R1-04",
+      "owner": "application",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0378",
+      "task": "R1-04",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0380",
+      "task": "R1-04",
+      "owner": "application",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0390",
+      "task": "R1-04",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0397",
+      "task": "R1-04",
+      "owner": "application",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0398",
+      "task": "R1-04",
+      "owner": "application",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0399",
+      "task": "R1-04",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0400",
+      "task": "R1-04",
+      "owner": "application",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0428",
+      "task": "R1-04",
+      "owner": "application",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0429",
+      "task": "R1-04",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0430",
+      "task": "R1-04",
+      "owner": "application",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0431",
+      "task": "R1-04",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0437",
+      "task": "R1-02",
+      "owner": "process",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0438",
+      "task": "R1-02",
+      "owner": "process",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0446",
+      "task": "R1-02",
+      "owner": "process",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0450",
+      "task": "R1-02",
+      "owner": "process",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0455",
+      "task": "R1-03",
+      "owner": "process",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0456",
+      "task": "R1-03",
+      "owner": "process",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0457",
+      "task": "R1-03",
+      "owner": "process",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0458",
+      "task": "R1-02",
+      "owner": "process",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0460",
+      "task": "R1-02",
+      "owner": "process",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0461",
+      "task": "R1-03",
+      "owner": "process",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0472",
+      "task": "R1-02",
+      "owner": "process",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0481",
+      "task": "R1-02",
+      "owner": "process",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0485",
+      "task": "R1-04",
+      "owner": "process",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0489",
+      "task": "R1-02",
+      "owner": "process",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0491",
+      "task": "R1-02",
+      "owner": "process",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0499",
+      "task": "R1-02",
+      "owner": "process",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0518",
+      "task": "R1-02",
+      "owner": "process",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0531",
+      "task": "R1-02",
+      "owner": "process",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0533",
+      "task": "R1-02",
+      "owner": "process",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0535",
+      "task": "R1-04",
+      "owner": "core",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0539",
+      "task": "R1-04",
+      "owner": "process",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0540",
+      "task": "R1-02",
+      "owner": "process",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0544",
+      "task": "R1-02",
+      "owner": "core",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0553",
+      "task": "R1-02",
+      "owner": "core",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0554",
+      "task": "R1-02",
+      "owner": "core",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0555",
+      "task": "R1-02",
+      "owner": "core",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0556",
+      "task": "R1-02",
+      "owner": "core",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0557",
+      "task": "R1-02",
+      "owner": "core",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0559",
+      "task": "R1-02",
+      "owner": "core",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0565",
+      "task": "R1-02",
+      "owner": "core",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0566",
+      "task": "R1-02",
+      "owner": "core",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0574",
+      "task": "R1-04",
+      "owner": "process",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0576",
+      "task": "R1-02",
+      "owner": "process",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0600",
+      "task": "R1-03",
+      "owner": "process",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0601",
+      "task": "R1-03",
+      "owner": "process",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0602",
+      "task": "R1-03",
+      "owner": "process",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0603",
+      "task": "R1-03",
+      "owner": "process",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0604",
+      "task": "R1-03",
+      "owner": "process",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0622",
+      "task": "R1-02",
+      "owner": "core",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0623",
+      "task": "R1-02",
+      "owner": "core",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0628",
+      "task": "R1-05",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0629",
+      "task": "R1-05",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0630",
+      "task": "R1-05",
+      "owner": "application",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0631",
+      "task": "R1-05",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0632",
+      "task": "R1-03",
+      "owner": "process",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0633",
+      "task": "R1-03",
+      "owner": "process",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0634",
+      "task": "R1-02",
+      "owner": "core",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0635",
+      "task": "R1-02",
+      "owner": "core",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0636",
+      "task": "R1-02",
+      "owner": "core",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0638",
+      "task": "R1-02",
+      "owner": "core",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0639",
+      "task": "R1-02",
+      "owner": "core",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0640",
+      "task": "R1-02",
+      "owner": "application",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0645",
+      "task": "R1-04",
+      "owner": "core",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0649",
+      "task": "R1-05",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0650",
+      "task": "R1-05",
+      "owner": "application",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0651",
+      "task": "R1-05",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0652",
+      "task": "R1-05",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0653",
+      "task": "R1-05",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0654",
+      "task": "R1-05",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0655",
+      "task": "R1-05",
+      "owner": "application",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0656",
+      "task": "R1-05",
+      "owner": "application",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0659",
+      "task": "R1-02",
+      "owner": "core",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0660",
+      "task": "R1-02",
+      "owner": "core",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0661",
+      "task": "R1-02",
+      "owner": "core",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0662",
+      "task": "R1-03",
+      "owner": "process",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0663",
+      "task": "R1-03",
+      "owner": "process",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0664",
+      "task": "R1-03",
+      "owner": "process",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0668",
+      "task": "R1-03",
+      "owner": "process",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0669",
+      "task": "R1-03",
+      "owner": "process",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0670",
+      "task": "R1-03",
+      "owner": "process",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0671",
+      "task": "R1-03",
+      "owner": "process",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0672",
+      "task": "R1-03",
+      "owner": "process",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0673",
+      "task": "R1-03",
+      "owner": "process",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0685",
+      "task": "R1-02",
+      "owner": "process",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0686",
+      "task": "R1-02",
+      "owner": "process",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0712",
+      "task": "R1-03",
+      "owner": "process",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0714",
+      "task": "R1-03",
+      "owner": "process",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0715",
+      "task": "R1-03",
+      "owner": "process",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0716",
+      "task": "R1-03",
+      "owner": "process",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0717",
+      "task": "R1-04",
+      "owner": "process",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0718",
+      "task": "R1-04",
+      "owner": "process",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0719",
+      "task": "R1-03",
+      "owner": "process",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0728",
+      "task": "R1-04",
+      "owner": "process",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0729",
+      "task": "R1-03",
+      "owner": "process",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0730",
+      "task": "R1-03",
+      "owner": "process",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0731",
+      "task": "R1-03",
+      "owner": "process",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0733",
+      "task": "R1-03",
+      "owner": "process",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0747",
+      "task": "R1-04",
+      "owner": "core",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0758",
+      "task": "R1-04",
+      "owner": "core",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0795",
+      "task": "R1-02",
+      "owner": "core",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0798",
+      "task": "R1-02",
+      "owner": "core",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0821",
+      "task": "R1-06",
+      "owner": "core",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0835",
+      "task": "R1-02",
+      "owner": "core",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0836",
+      "task": "R1-02",
+      "owner": "core",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0837",
+      "task": "R1-02",
+      "owner": "core",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0838",
+      "task": "R1-02",
+      "owner": "core",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0854",
+      "task": "R1-04",
+      "owner": "application",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0855",
+      "task": "R1-04",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0856",
+      "task": "R1-05",
+      "owner": "application",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0859",
+      "task": "R1-04",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0861",
+      "task": "R1-04",
+      "owner": "application",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0862",
+      "task": "R1-04",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0863",
+      "task": "R1-04",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0867",
+      "task": "R1-04",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0875",
+      "task": "R1-04",
+      "owner": "application",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0887",
+      "task": "R1-04",
+      "owner": "process",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0889",
+      "task": "R1-02",
+      "owner": "process",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0891",
+      "task": "R1-04",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0892",
+      "task": "R1-04",
+      "owner": "application",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0900",
+      "task": "R1-04",
+      "owner": "process",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0910",
+      "task": "R1-05",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0912",
+      "task": "R1-01",
+      "owner": "core",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0914",
+      "task": "R1-04",
+      "owner": "core",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0915",
+      "task": "R1-01",
+      "owner": "core",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0916",
+      "task": "R1-01",
+      "owner": "core",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0917",
+      "task": "R1-01",
+      "owner": "core",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0925",
+      "task": "R1-01",
+      "owner": "core",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0927",
+      "task": "R1-06",
+      "owner": "core",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0928",
+      "task": "R1-06",
+      "owner": "core",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0931",
+      "task": "R1-04",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0935",
+      "task": "R1-01",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0945",
+      "task": "R1-04",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0981",
+      "task": "R1-06",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0982",
+      "task": "R1-06",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-0998",
+      "task": "R1-01",
+      "owner": "process",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-1020",
+      "task": "R1-04",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-1030",
+      "task": "R1-04",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-1039",
+      "task": "R1-04",
+      "owner": "process",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-1047",
+      "task": "R1-04",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-1051",
+      "task": "R1-01",
+      "owner": "core",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-1054",
+      "task": "R1-01",
+      "owner": "core",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-1055",
+      "task": "R1-01",
+      "owner": "core",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-1062",
+      "task": "R1-01",
+      "owner": "core",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-1063",
+      "task": "R1-01",
+      "owner": "core",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-1064",
+      "task": "R1-01",
+      "owner": "core",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-1065",
+      "task": "R1-01",
+      "owner": "core",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-1066",
+      "task": "R1-01",
+      "owner": "core",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-1076",
+      "task": "R1-01",
+      "owner": "core",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-1077",
+      "task": "R1-01",
+      "owner": "core",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-1078",
+      "task": "R1-01",
+      "owner": "core",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-1079",
+      "task": "R1-01",
+      "owner": "core",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-1080",
+      "task": "R1-02",
+      "owner": "core",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-1081",
+      "task": "R1-01",
+      "owner": "core",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-1082",
+      "task": "R1-02",
+      "owner": "core",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-1083",
+      "task": "R1-01",
+      "owner": "core",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-1118",
+      "task": "R1-04",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-1147",
+      "task": "R1-05",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-1148",
+      "task": "R1-05",
+      "owner": "application",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-1150",
+      "task": "R1-05",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-1151",
+      "task": "R1-05",
+      "owner": "application",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-1152",
+      "task": "R1-05",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-1156",
+      "task": "R1-05",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-1159",
+      "task": "R1-05",
+      "owner": "application",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-1163",
+      "task": "R1-04",
+      "owner": "process",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-1164",
+      "task": "R1-03",
+      "owner": "process",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-1169",
+      "task": "R1-02",
+      "owner": "process",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-2170",
+      "task": "R1-07",
+      "owner": "root",
+      "originalVerdict": "accepted",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "彻底阻断付费/编译/生成代码执行和审批入口；最小环境不作为沙箱。",
+      "files": [
+        "scripts/live-evaluate.py",
+        "scripts/test-r1-live-evidence.py"
+      ],
+      "tests": [
+        "r0_test_r1_live_evidence.HistoricalLiveEvidenceTest.test_direct_execution_and_oracle_are_disabled_before_any_process_launch",
+        "r0_test_r1_live_evidence.HistoricalLiveEvidenceTest.test_generated_environment_reader_unicode_and_oracle_shadow_are_never_approved"
+      ],
+      "limitations": [
+        "实施为阻断历史执行入口，并未交付新的生成代码沙箱或付费评估能力"
+      ]
+    },
+    {
+      "id": "OCR-2171",
+      "task": "R1-07",
+      "owner": "root",
+      "originalVerdict": "partial",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "缺失/半截/损坏成本为UNKNOWN，保留已知预留，不记零或授予新额度。",
+      "files": [
+        "scripts/live-evaluate.py",
+        "scripts/test-r1-live-evidence.py"
+      ],
+      "tests": [
+        "r0_test_r1_live_evidence.HistoricalLiveEvidenceTest.test_missing_empty_header_only_partial_and_missing_budget_cost_remain_unknown",
+        "r0_test_r1_live_evidence.HistoricalLiveEvidenceTest.test_nonfinite_negative_and_boolean_costs_do_not_release_allowance"
+      ],
+      "limitations": [
+        "实施为阻断历史执行入口，并未交付新的生成代码沙箱或付费评估能力"
+      ]
+    },
+    {
+      "id": "OCR-2172",
+      "task": "R1-07",
+      "owner": "root",
+      "originalVerdict": "accepted",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "audit-only只读核文件/JAR并报STALE/INCOMPLETE，不加载类或重写旧oracle。",
+      "files": [
+        "scripts/live-evaluate.py",
+        "scripts/test-r1-live-evidence.py"
+      ],
+      "tests": [
+        "r0_test_r1_live_evidence.HistoricalLiveEvidenceTest.test_audit_is_read_only_and_matching_files_never_become_acceptance",
+        "r0_test_r1_live_evidence.HistoricalLiveEvidenceTest.test_source_or_jar_drift_is_stale_without_rewriting_original_oracle"
+      ],
+      "limitations": [
+        "实施为阻断历史执行入口，并未交付新的生成代码沙箱或付费评估能力"
+      ]
+    },
+    {
+      "id": "OCR-2174",
+      "task": "R1-07",
+      "owner": "root",
+      "originalVerdict": "accepted",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "生成与可信oracle均不加载，不能以同名类和打印PASS伪造新的验收。",
+      "files": [
+        "scripts/live-evaluate.py",
+        "scripts/test-r1-live-evidence.py"
+      ],
+      "tests": [
+        "r0_test_r1_live_evidence.HistoricalLiveEvidenceTest.test_generated_environment_reader_unicode_and_oracle_shadow_are_never_approved",
+        "r0_test_r1_live_evidence.HistoricalLiveEvidenceTest.test_direct_execution_and_oracle_are_disabled_before_any_process_launch"
+      ],
+      "limitations": [
+        "实施为阻断历史执行入口，并未交付新的生成代码沙箱或付费评估能力"
+      ]
+    },
+    {
+      "id": "OCR-2175",
+      "task": "R1-07",
+      "owner": "root",
+      "originalVerdict": "partial",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "所有写/命令审批拒绝；Unicode/额外content诱饵不能重新启用不可信执行。",
+      "files": [
+        "scripts/live-evaluate.py",
+        "scripts/test-r1-live-evidence.py"
+      ],
+      "tests": [
+        "r0_test_r1_live_evidence.HistoricalLiveEvidenceTest.test_generated_environment_reader_unicode_and_oracle_shadow_are_never_approved",
+        "r0_test_r1_live_evidence.HistoricalLiveEvidenceTest.test_cli_old_opt_in_flags_cannot_enable_execution_or_require_a_key"
+      ],
+      "limitations": [
+        "实施为阻断历史执行入口，并未交付新的生成代码沙箱或付费评估能力"
+      ]
+    },
+    {
+      "id": "OCR-2176",
+      "task": "R1-07",
+      "owner": "root",
+      "originalVerdict": "accepted",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "calculator历史必读契约显式包含现有测试，broken-project不包含；执行入口保持关闭。",
+      "files": [
+        "scripts/live-evaluate.py",
+        "scripts/test-r1-live-evidence.py"
+      ],
+      "tests": [
+        "r0_test_r1_live_evidence.HistoricalLiveEvidenceTest.test_historical_goal_requires_reading_existing_calculator_test"
+      ],
+      "limitations": [
+        "实施为阻断历史执行入口，并未交付新的生成代码沙箱或付费评估能力"
+      ]
+    },
+    {
+      "id": "OCR-2177",
+      "task": "R1-07",
+      "owner": "root",
+      "originalVerdict": "partial",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "不再启动/取消付费run；中断历史检查保留UNKNOWN/此前已知预留，不覆写旧输出。",
+      "files": [
+        "scripts/live-evaluate.py",
+        "scripts/test-r1-live-evidence.py"
+      ],
+      "tests": [
+        "r0_test_r1_live_evidence.HistoricalLiveEvidenceTest.test_cancellation_and_malformed_tail_retain_known_reservations",
+        "r0_test_r1_live_evidence.HistoricalLiveEvidenceTest.test_missing_empty_header_only_partial_and_missing_budget_cost_remain_unknown"
+      ],
+      "limitations": [
+        "实施为阻断历史执行入口，并未交付新的生成代码沙箱或付费评估能力"
+      ]
+    },
+    {
+      "id": "OCR-2193",
+      "task": "R1-04",
+      "owner": "application",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-2432",
+      "task": "R1-04",
+      "owner": "application",
+      "originalVerdict": "partial",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "OCR-2434",
+      "task": "R1-04",
+      "owner": "core",
+      "originalVerdict": "accepted",
+      "status": "IN_PROGRESS"
+    }
+  ]
+}

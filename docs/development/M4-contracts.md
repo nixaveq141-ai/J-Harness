@@ -1,5 +1,7 @@
 # M4 CLI、诊断、审批与报告契约
 
+2026-10-21 R1 接续：历史 `scripts/live-evaluate.py` 的付费与生成代码执行入口已阻断，旧累计账本保持原字节；其 `--audit-only` 只输出有界只读检查，不重跑 oracle、不覆盖历史验收、不把缺失成本当零。本页真实模型验收段落为历史契约，不能授权新的调用或把宿主编译执行描述为沙箱。
+
 日期：2026-10-14。公共 API 1.4，JSONL 物理格式和事件 schemaVersion 仍为 1。harness-cli 负责静态装配与入口；Agent Loop 继续只依赖公共 API，并通过 AgentLoopFactory 服务解析实现。
 
 ## 入口与配置

@@ -1,8 +1,8 @@
 {
   "updatedAt": "2026-10-21",
-  "phase": "R0",
-  "status": "LOCAL_VALIDATED_CI_PENDING",
-  "details": "docs/development/OCR-R0-remediation-2026-10-20.md",
+  "phase": "R1",
+  "status": "IMPLEMENTATION_IN_PROGRESS",
+  "details": "docs/development/OCR-R1-remediation-2026-10-21.md",
   "productMilestone": "M10.5.9",
   "productStatus": "LOCAL_PARTIAL_CI_PENDING",
   "m11Eligible": false,
@@ -29,6 +29,34 @@
     "R0-03": {
       "status": "BASELINE_VALIDATED_FOLLOWUPS_OPEN",
       "description": "本次36条采纳范围已实施；选定四fixture的Chrome/WebKit各134通过；原300条回归意见仍按R1～R6交付，不宣称484条全部关闭"
+    },
+    "R1-01": {
+      "status": "IN_PROGRESS",
+      "description": "按原逐条裁决实施与补故障/竞态回归；本地组内验证进行中，尚未统一验收"
+    },
+    "R1-02": {
+      "status": "IN_PROGRESS",
+      "description": "按原逐条裁决实施与补故障/竞态回归；本地组内验证进行中，尚未统一验收"
+    },
+    "R1-03": {
+      "status": "IN_PROGRESS",
+      "description": "按原逐条裁决实施与补故障/竞态回归；本地组内验证进行中，尚未统一验收"
+    },
+    "R1-04": {
+      "status": "IN_PROGRESS",
+      "description": "按原逐条裁决实施与补故障/竞态回归；本地组内验证进行中，尚未统一验收"
+    },
+    "R1-05": {
+      "status": "IN_PROGRESS",
+      "description": "按原逐条裁决实施与补故障/竞态回归；本地组内验证进行中，尚未统一验收"
+    },
+    "R1-06": {
+      "status": "IN_PROGRESS",
+      "description": "按原逐条裁决实施与补故障/竞态回归；本地组内验证进行中，尚未统一验收"
+    },
+    "R1-07": {
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "description": "历史付费/生成代码执行入口已阻断；有界只读历史检查不改账本；11项合成本地回归通过，保留未知费用，不发起模型调用"
     }
   }
 }
