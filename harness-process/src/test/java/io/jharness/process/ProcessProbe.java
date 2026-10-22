@@ -13,6 +13,14 @@ public final class ProcessProbe {
         System.setOut(new PrintStream(System.out, true, StandardCharsets.UTF_8));
         System.setErr(new PrintStream(System.err, true, StandardCharsets.UTF_8));
         switch (args[0]) {
+            case "cancel-invalid-path" ->
+                    CancelMain.main(
+                            new String[] {
+                                "--state-dir",
+                                "private-path\0value",
+                                "--run",
+                                UUID.randomUUID().toString()
+                            });
             case "echo" -> {
                 System.out.print(args[1]);
                 System.err.print("diagnostic");
@@ -23,6 +31,18 @@ public final class ProcessProbe {
                 System.out.println(System.getenv("JHARNESS_APPROVED_VALUE"));
             }
             case "stdin" -> System.out.println(System.in.read());
+            case "terminal-prefix" -> {
+                System.out.print("ordinary terminal tail\n");
+                System.out.print("very-pr");
+            }
+            case "terminal-log" -> {
+                for (int i = 0; i < 25000; i++) {
+                    System.out.print("line very-pr");
+                    System.out.flush();
+                    System.out.print("ivate-value end\n");
+                }
+                System.out.print("ordinary final tail");
+            }
             case "block" -> {
                 if (args.length > 1) {
                     var self = ProcessHandle.current();

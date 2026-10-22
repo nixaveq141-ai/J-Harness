@@ -85,7 +85,7 @@ public final class LocalPlanPreviewer implements PlanPreviewer {
                             "advisory",
                             true));
         } catch (IOException ex) {
-            throw new HarnessException("PREVIEW_IO", "Preview read failed");
+            throw new HarnessException("PREVIEW_IO", "Preview read failed", ex);
         }
     }
 }

@@ -3,7 +3,11 @@ package io.jharness.testkit;
 import io.jharness.api.*;
 import java.util.*;
 
-/** A recording policy for call-order assertions, not a physical persistence guarantee. */
+/**
+ * A recording policy for serial call-order assertions, not a physical persistence guarantee.
+ * Delegate hooks run under the recorder monitor: fixtures must not wait for another thread that
+ * needs the recorder snapshot, and should use separate latches for blocking boundaries.
+ */
 public final class CheckpointRecorder implements CheckpointPolicy {
     private final CheckpointPolicy delegate;
     private final List<String> boundaries = new ArrayList<>();

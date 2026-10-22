@@ -26,7 +26,7 @@ class M8FilterIntegrationTest {
     void classicAndEcosystemCliUseIdenticalFiltersAndRecordTheConfiguration() throws Exception {
         for (boolean ecology : List.of(false, true)) {
             Path workspace = Files.createDirectories(root.resolve(ecology ? "eco" : "classic"));
-            Files.writeString(workspace.resolve("input.txt"), "evidence");
+            Files.writeString(workspace.resolve("input.txt"), "evidence fixture-key");
             Files.writeString(workspace.resolve("hidden.txt"), "not discovered");
             try (var server =
                     new M4CliIntegrationTest.ScriptedServer(
@@ -77,6 +77,18 @@ class M8FilterIntegrationTest {
                         new JsonlSessionRepository(workspace.resolve(".jharness/sessions"))
                                 .openReader("s")
                                 .events();
+                assertFalse(events.toString().contains("fixture-key"));
+                assertFalse(
+                        Files.readString(workspace.resolve(".jharness/sessions/s.jsonl"))
+                                .contains("fixture-key"));
+                assertFalse(output.toString(StandardCharsets.UTF_8).contains("fixture-key"));
+                assertTrue(
+                        events.stream()
+                                .filter(
+                                        e ->
+                                                e.type().equals("tool.completed")
+                                                        && "read".equals(e.callId()))
+                                .anyMatch(e -> e.payload().toString().contains("[REDACTED]")));
                 var search =
                         events.stream()
                                 .filter(

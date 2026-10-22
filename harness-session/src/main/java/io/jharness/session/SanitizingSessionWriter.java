@@ -15,7 +15,26 @@ public final class SanitizingSessionWriter implements SessionWriter {
 
     @Override
     public String append(SessionEvent event) {
-        return delegate.append(
+        return appendPrepared(event).eventId();
+    }
+
+    @Override
+    public SessionEvent appendPrepared(SessionEvent event) {
+        for (String id :
+                new String[] {
+                    event.eventId(),
+                    event.sessionId(),
+                    event.type(),
+                    event.turnId(),
+                    event.stepId(),
+                    event.callId()
+                })
+            if (id != null
+                    && !id.equals(
+                            sanitizer.sanitize(java.util.Map.of("identity", id)).get("identity")))
+                throw new HarnessException(
+                        "UNSAFE_EVENT_IDENTITY", "Event identifiers cannot contain known secrets");
+        return delegate.appendPrepared(
                 new SessionEvent(
                         event.eventId(),
                         event.sessionId(),

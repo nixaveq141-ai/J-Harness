@@ -45,5 +45,9 @@ class M9DistributionDoctorTest {
         assertTrue(json.contains("\"mavenExecutableFound\":false"));
         assertTrue(json.contains("\"ready\":true"));
         assertFalse(json.contains("local-fixture-only"));
+        assertFalse(errors.toString(StandardCharsets.UTF_8).contains("local-fixture-only"));
+        var structured = io.jharness.api.Values.object(Json.parse(json));
+        assertFalse(structured.containsKey("apiKey"));
+        assertFalse(structured.containsKey("token"));
     }
 }

@@ -232,18 +232,29 @@ class M1057ExtensionsTest {
                     List.of(
                             "notes://missing",
                             "../outside",
-                            "https://user:secret@host/path",
+                            "https://user:mcp-secret-token@host/path",
+                            "https://user:public-password@host/path",
                             "notes://item/a/b",
                             "notes://item/..",
                             "notes://item/%2foutside",
-                            "notes://search?q=value"))
-                assertNotEquals(
-                        ToolStatus.SUCCESS,
+                            "notes://search?q=value")) {
+                var result =
                         fixture.execute(
-                                        "mcp_notes__read_resource",
-                                        Map.of("uri", uri),
-                                        ApprovalService.rejectAll())
-                                .status());
+                                "mcp_notes__read_resource",
+                                Map.of("uri", uri),
+                                ApprovalService.rejectAll());
+                assertNotEquals(ToolStatus.SUCCESS, result.status());
+                assertFalse(result.toString().contains("mcp-secret-token"));
+                if (uri.contains("mcp-secret-token"))
+                    assertEquals("SECRET_ARGUMENT", result.error().orElseThrow().code());
+                else if (uri.startsWith("https://user:"))
+                    assertEquals("MCP_INVALID_RESOURCE_URI", result.error().orElseThrow().code());
+            }
+            assertFalse(fixture.history().toString().contains("mcp-secret-token"));
+            fixture.writer.flush();
+            assertFalse(
+                    Files.readString(base.resolve("sessions/s.jsonl"))
+                            .contains("mcp-secret-token"));
             assertFalse(peer.calls.contains("resources/read"));
             assertEquals(
                     "SCHEMA_MISMATCH",
@@ -299,6 +310,38 @@ class M1057ExtensionsTest {
                 assertTrue(fixture.tools.visibleTools(M7EcosystemFixture.SCOPE).isEmpty());
                 assertTrue(peer.closed);
             }
+        }
+    }
+
+    @Test
+    void partialMcpRegistrationFailureRevokesEarlierSuccessfulRegistration() throws Exception {
+        var real = new io.jharness.plugin.ScopedToolRegistry();
+        var attempts = new java.util.concurrent.atomic.AtomicInteger();
+        ToolRegistry registry =
+                new ToolRegistry() {
+                    public Registration register(AgentTool tool, PluginScope scope) {
+                        if (tool.name().startsWith("mcp_notes__")
+                                && attempts.incrementAndGet() == 2)
+                            throw new HarnessException("REGISTER_FAILED", "fixture");
+                        return real.register(tool, scope);
+                    }
+
+                    public Optional<AgentTool> resolve(String name, PluginScope scope) {
+                        return real.resolve(name, scope);
+                    }
+
+                    public List<AgentTool> visibleTools(PluginScope scope) {
+                        return real.visibleTools(scope);
+                    }
+                };
+        var peer = new Peer();
+        try (var fixture =
+                new M7EcosystemFixture(
+                        base, new McpPlugin("notes", () -> peer, Map.of()), registry)) {
+            assertThrows(HarnessException.class, fixture::start);
+            assertEquals(2, attempts.get());
+            assertTrue(real.visibleTools(M7EcosystemFixture.SCOPE).isEmpty());
+            assertTrue(peer.closed);
         }
     }
 

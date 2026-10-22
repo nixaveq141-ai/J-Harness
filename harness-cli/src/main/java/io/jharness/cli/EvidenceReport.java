@@ -113,9 +113,7 @@ public final class EvidenceReport {
                                 "terminals",
                                 terminals),
                         "modelExplanation",
-                        narration.length() > 16384
-                                ? narration.substring(0, 16384) + "[TRUNCATED]"
-                                : narration,
+                        safeNarration(narration, sanitizer),
                         "unresolvedProblems",
                         status.equals("COMPLETED")
                                 ? List.of(
@@ -135,6 +133,13 @@ public final class EvidenceReport {
                                 cost,
                                 "billing",
                                 "provider usage at configured worst-case rates, or retained reservation; not an invoice")));
+    }
+
+    private static String safeNarration(String narration, DataSanitizer sanitizer) {
+        String clean = (String) sanitizer.sanitize(Map.of("text", narration)).get("text");
+        if (clean.length() <= 16384) return clean;
+        int end = Character.isHighSurrogate(clean.charAt(16383)) ? 16383 : 16384;
+        return clean.substring(0, end) + "[TRUNCATED]";
     }
 
     private static Map<String, Object> reference(SessionEvent event, Map<String, Object> data) {

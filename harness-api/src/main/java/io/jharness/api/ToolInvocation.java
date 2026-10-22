@@ -13,4 +13,13 @@ public record ToolInvocation(
         arguments = Values.snapshot(arguments);
         java.util.Objects.requireNonNull(sideEffectLevel);
     }
+
+    @Override
+    public String toString() {
+        return "ToolInvocation[arguments="
+                + arguments.size()
+                + ", sideEffectLevel="
+                + sideEffectLevel
+                + "]";
+    }
 }

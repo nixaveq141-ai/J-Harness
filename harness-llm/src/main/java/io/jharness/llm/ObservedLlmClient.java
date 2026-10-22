@@ -52,6 +52,11 @@ public final class ObservedLlmClient implements LlmClient, ModelRouter {
     }
 
     @Override
+    public boolean supportsSingleAttempt() {
+        return delegate.supportsSingleAttempt();
+    }
+
+    @Override
     public ChatResponse completeSingleAttempt(ChatRequest request, CancellationToken cancellation) {
         return complete(request, cancellation, true);
     }
@@ -61,6 +66,7 @@ public final class ObservedLlmClient implements LlmClient, ModelRouter {
         long start = System.nanoTime();
         ChatResponse response = null;
         String outcome = "SUCCESS";
+        RuntimeException primary = null;
         try {
             response =
                     single
@@ -68,31 +74,39 @@ public final class ObservedLlmClient implements LlmClient, ModelRouter {
                             : delegate.complete(request, cancellation);
             return response;
         } catch (RuntimeException ex) {
+            primary = ex;
             outcome =
                     ex instanceof ModelRejectedException
                             ? "MODEL_RATE_LIMIT"
                             : ex instanceof HarnessException h ? h.code() : "MODEL_FAILED";
             throw ex;
         } finally {
-            Map<String, Object> metrics = new LinkedHashMap<>();
-            metrics.put("elapsedMs", (System.nanoTime() - start) / 1000000);
-            metrics.put("outcome", outcome);
-            metrics.put("requestCount", 1);
-            metrics.put("model", request.parameters().getOrDefault("model", "unknown"));
-            metrics.put("stream", Boolean.TRUE.equals(request.parameters().get("stream")));
-            var events = reader.events();
-            events.stream()
-                    .filter(e -> e.type().equals("model.requested"))
-                    .reduce((a, b) -> b)
-                    .ifPresent(e -> metrics.put("sourceEvent", e.eventId()));
-            if (response != null) {
-                Map<String, Object> usage = new LinkedHashMap<>();
-                for (String key : List.of("prompt_tokens", "completion_tokens", "total_tokens"))
-                    if (response.usage().get(key) instanceof Number number) usage.put(key, number);
-                metrics.put("usage", usage);
+            try {
+                Map<String, Object> metrics = new LinkedHashMap<>();
+                metrics.put("elapsedMs", (System.nanoTime() - start) / 1000000);
+                metrics.put("outcome", outcome);
+                metrics.put("requestCount", 1);
+                metrics.put("model", request.parameters().getOrDefault("model", "unknown"));
+                metrics.put("stream", Boolean.TRUE.equals(request.parameters().get("stream")));
+                var events = reader.events();
+                events.stream()
+                        .filter(e -> e.type().equals("model.requested"))
+                        .reduce((a, b) -> b)
+                        .ifPresent(e -> metrics.put("sourceEvent", e.eventId()));
+                if (response != null) {
+                    Map<String, Object> usage = new LinkedHashMap<>();
+                    for (String key : List.of("prompt_tokens", "completion_tokens", "total_tokens"))
+                        if (response.usage().get(key) instanceof Number number)
+                            usage.put(key, number);
+                    metrics.put("usage", usage);
+                }
+                writer.append(
+                        SessionEvent.session(
+                                session, "model.observed", sanitizer.sanitize(metrics)));
+            } catch (RuntimeException observation) {
+                if (primary != null) primary.addSuppressed(observation);
+                else throw observation;
             }
-            writer.append(
-                    SessionEvent.session(session, "model.observed", sanitizer.sanitize(metrics)));
         }
     }
 

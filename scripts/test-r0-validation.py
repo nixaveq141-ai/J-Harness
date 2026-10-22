@@ -106,9 +106,12 @@ class RegressionReportTest(FixtureBase):
         self.destination=self.root/'.build-cache/R0/synthetic';self.destination.mkdir(parents=True)
         self.relative='.build-cache/R0/synthetic/results.json'
         self.java=dict(module='harness-fixture',name='example.Suite',cases=['case'],tests=1,failures=0,errors=0,skipped=0,sha256='b'*64)
-        java_contract={'suites':[{k:self.java[k] for k in ('module','name','cases')}]}
+        java_contract={'schemaVersion':1,'suites':[{k:self.java[k] for k in ('module','name','cases')}]}
         (self.contract_path.parent/'m1059-java-cases.json').write_text(json.dumps(java_contract))
         patch('evidence_checks.suite_snapshot',return_value=self.java).start()
+        xml = self.root / 'harness-fixture/target/surefire-reports/TEST-example.Suite.xml'
+        xml.parent.mkdir(parents=True)
+        xml.write_bytes(b'<synthetic/>')
 
     def write_report(self,with_product=False):
         report=dict(schemaVersion=1,status='LOCAL_REGRESSION_PASS',m11Eligible=False,runId='synthetic',
@@ -148,6 +151,10 @@ class RegressionReportTest(FixtureBase):
                 self.write_report(flag)
                 result=gate.verify_report(self.relative)
                 self.assertEqual(count,len(result['commands']))
+        extra = self.root / 'harness-fixture/target/surefire-reports/TEST-example.Uncontracted.xml'
+        extra.write_bytes(b'<synthetic/>')
+        with self.assertRaisesRegex(ValueError, 'Unexpected or missing Java suite output'):
+            gate.verify_report(self.relative)
 
     def test_with_product_bool_missing_product_or_java_and_extra_group_reject(self):
         for flag,change,reason in [

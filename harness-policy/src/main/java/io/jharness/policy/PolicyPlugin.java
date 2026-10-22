@@ -25,8 +25,8 @@ public final class PolicyPlugin implements HarnessPlugin {
     @Override
     public void start(PluginContext context) {
         context.register(PolicyEngine.class, "default", policy);
-        context.register(ApprovalService.class, "default", approvals);
         if (approvals instanceof AutoCloseable resource) context.own(resource);
+        context.register(ApprovalService.class, "default", approvals);
     }
 
     @Override

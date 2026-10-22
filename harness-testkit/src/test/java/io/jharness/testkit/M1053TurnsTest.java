@@ -269,7 +269,8 @@ class M1053TurnsTest {
                                     i ->
                                             i.get("state").equals("FINISHED")
                                                     && !i.get("turnId").equals("")));
-            SessionLifecycle.setArchived(sessions, id, true, new SecretRedactor());
+            SessionLifecycle.setArchived(
+                    sessions, id, true, new SecretRedactor(List.of("synthetic-secret")));
             assertEquals(
                     409,
                     req(
@@ -283,7 +284,8 @@ class M1053TurnsTest {
                                             "kind",
                                             "message"))
                             .statusCode());
-            SessionLifecycle.setArchived(sessions, id, false, new SecretRedactor());
+            SessionLifecycle.setArchived(
+                    sessions, id, false, new SecretRedactor(List.of("synthetic-secret")));
             turn(host, id, "restored", "after restore", "message");
             settled(host, id, 4);
         }
@@ -395,7 +397,7 @@ class M1053TurnsTest {
             // Persist admission without start to model a crash after durable acceptance.
         }
         Path file;
-        try (var files = Files.walk(root.resolve("catalog"))) {
+        try (var files = Files.walk(root)) {
             file =
                     files.filter(
                                     p ->
@@ -588,14 +590,14 @@ class M1053TurnsTest {
                 id,
                 "workspace",
                 "fixture failed before second SDK construction; no executor running; original resources inspected",
-                new SecretRedactor());
+                new SecretRedactor(List.of("synthetic-secret")));
         try (var host = host()) {
             assertEquals("VERIFIED", inputs(host, id).getFirst().get("state"));
             assertEquals(1, opens.get());
             turn(host, id, "after-verification", "operator explicitly continues", "message");
             settled(host, id, 2);
         }
-        try (var files = Files.walk(root.resolve("catalog"))) {
+        try (var files = Files.walk(root)) {
             for (var path : files.filter(p -> p.toString().endsWith(".jsonl")).toList())
                 assertFalse(Files.readString(path).contains("synthetic-secret"));
         }

@@ -37,13 +37,16 @@ public final class NativeCommandTransport implements CommandTransport {
             long deadline = System.nanoTime() + timeout.toNanos();
             while (child.isAlive() || !out.isDone() || !err.isDone() || !sent.isDone()) {
                 if (cancellation.isCancelled() || System.nanoTime() > deadline) {
-                    child.destroyForcibly();
+                    ProcessCleanup.stop(child);
                     return new Reply(-1, new byte[0], new byte[0], true, true);
                 }
                 Thread.sleep(10);
             }
             sent.get();
-            return new Reply(child.exitValue(), out.get(), err.get(), true, false);
+            byte[] stdout = out.get(), stderr = err.get();
+            int exitCode = child.exitValue();
+            boolean observedClean = ProcessCleanup.stop(child);
+            return new Reply(exitCode, stdout, stderr, true, !observedClean);
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
             return new Reply(-1, new byte[0], new byte[0], process != null, process != null);
@@ -51,14 +54,7 @@ public final class NativeCommandTransport implements CommandTransport {
             return new Reply(-1, new byte[0], new byte[0], process != null, process != null);
         } finally {
             if (process != null) {
-                process.destroyForcibly();
-                try {
-                    process.getInputStream().close();
-                    process.getErrorStream().close();
-                    process.getOutputStream().close();
-                } catch (IOException ignored) {
-                    /* bounded caller receives uncertainty */
-                }
+                ProcessCleanup.stop(process);
             }
         }
     }

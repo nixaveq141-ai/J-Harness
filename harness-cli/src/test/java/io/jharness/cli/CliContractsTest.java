@@ -210,7 +210,8 @@ class CliContractsTest {
     @Test
     void configCannotPersistKnownSecretUnderOtherwiseAllowedModelField() {
         var app = new CliApplication(Map.of("TEST_API_KEY", "fixture-private-value"));
-        var sink = new PrintStream(new ByteArrayOutputStream());
+        var bytes = new ByteArrayOutputStream();
+        var sink = new PrintStream(bytes);
         assertEquals(
                 5,
                 app.execute(
@@ -225,6 +226,11 @@ class CliContractsTest {
                         new ByteArrayInputStream(new byte[0]),
                         sink,
                         sink));
+        assertTrue(
+                bytes.toString(java.nio.charset.StandardCharsets.UTF_8).contains("SECRET_CONFIG"));
+        assertFalse(
+                bytes.toString(java.nio.charset.StandardCharsets.UTF_8)
+                        .contains("fixture-private-value"));
         assertFalse(Files.exists(root.resolve(".jharness/config.json")));
     }
 

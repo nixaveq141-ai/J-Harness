@@ -212,6 +212,13 @@ class M7McpTest {
                                     new io.jharness.session.DefaultCheckpointPolicy(),
                                     CancellationToken.NONE));
             assertNotEquals(ToolStatus.SUCCESS, result.status());
+            assertEquals("CHECKPOINT_FAILED", result.error().orElseThrow().code());
+            assertTrue(
+                    fixture.history().stream()
+                            .anyMatch(
+                                    event ->
+                                            event.type().equals("tool.intent")
+                                                    && "failed-checkpoint".equals(event.callId())));
             assertFalse(Files.exists(peer.resolve("marker.txt")));
             assertEquals(
                     0,

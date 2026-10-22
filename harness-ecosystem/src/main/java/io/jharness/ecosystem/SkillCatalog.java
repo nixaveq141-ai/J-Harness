@@ -73,8 +73,23 @@ public final class SkillCatalog {
 
     public static List<Entry> scan(List<Root> roots, Set<String> reserved, CancellationToken token)
             throws IOException {
-        long deadline = System.nanoTime() + java.time.Duration.ofSeconds(5).toNanos();
-        CancellationToken bounded = () -> token.isCancelled() || System.nanoTime() >= deadline;
+        return scan(roots, reserved, token, java.time.Duration.ofSeconds(5));
+    }
+
+    static List<Entry> scan(
+            List<Root> roots,
+            Set<String> reserved,
+            CancellationToken token,
+            java.time.Duration timeout)
+            throws IOException {
+        long deadline = System.nanoTime() + timeout.toNanos();
+        CancellationToken bounded =
+                () -> {
+                    token.throwIfCancelled();
+                    if (System.nanoTime() >= deadline)
+                        throw BoundedJson.error("SKILL_SCAN_TIMEOUT");
+                    return false;
+                };
         if (roots.size() > 8) throw BoundedJson.error("SKILL_ROOT_LIMIT");
         var entries = new ArrayList<Entry>();
         var names = new HashSet<>(reserved);

@@ -17,6 +17,8 @@ from evidence_run import inputs, run, valid_run_id, validate as validate_command
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACT = ROOT / 'scripts/contracts/r0-validation-cases.json'
+JAVA_ARTIFACT = None  # R1's full verify additionally binds its freshly built executable JAR.
+JAVA_FIRST = False  # R1 builds before gates that inspect the current packaged runtime.
 
 
 def require(ok, message):
@@ -173,6 +175,29 @@ def python_child(relative, output):
         atomic_write_json(output, report)
 
 
+def collect_java(output, run_id, report):
+    java_contract = read_json_snapshot(ROOT, 'scripts/contracts/m1059-java-cases.json').data
+    xml_paths = tuple(ROOT / s['module'] / 'target/surefire-reports' / ('TEST-' + s['name'] + '.xml') for s in java_contract['suites'])
+    command = java_command()
+    receipt = output / 'java.receipt.json'; log = output / 'java.log'
+    outputs = xml_paths + ((JAVA_ARTIFACT,) if JAVA_ARTIFACT is not None else ())
+    run(command, name='java', log=log, receipt=receipt, run_id=run_id, outputs=outputs)
+    require(set(ROOT.glob('harness-*/target/surefire-reports/TEST-*.xml')) == set(xml_paths),
+            'Unexpected or missing Java suite output')
+    from evidence_checks import suite_snapshot, validate_java_suites
+    suites = [suite_snapshot(p, p.relative_to(ROOT).parts[0]) for p in xml_paths]
+    validate_java_suites(suites, java_contract)
+    cases_path = output / 'java.cases.json'
+    atomic_write_json(cases_path, dict(schemaVersion=1, status='PASS', suites=suites))
+    report['commands'].append(dict(name='java', command=command, cwd='.', tests=sum(s['tests'] for s in suites),
+        receipt=receipt.relative_to(ROOT).as_posix(), receiptSha256=stream_sha256(receipt),
+        log=log.relative_to(ROOT).as_posix(), logSha256=stream_sha256(log),
+        cases=cases_path.relative_to(ROOT).as_posix(), casesSha256=stream_sha256(cases_path)))
+    if JAVA_ARTIFACT is not None:
+        report['commands'][-1]['artifact'] = dict(path=JAVA_ARTIFACT.relative_to(ROOT).as_posix(),
+                                                sha256=stream_sha256(JAVA_ARTIFACT))
+
+
 def collect(output, run_id, *, with_product=False):
     require(valid_run_id(run_id), 'Invalid validation run identity')
     require(type(with_product) is bool, 'Invalid withProduct flag')
@@ -187,6 +212,10 @@ def collect(output, run_id, *, with_product=False):
     atomic_write_json(report_path, report)
     try:
         contract = validate_contract(read_json_snapshot(ROOT, CONTRACT.relative_to(ROOT).as_posix()).data)
+        if with_product and JAVA_FIRST:
+            collect_java(output, run_id, report)
+            atomic_write_json(report_path, report)
+            print('PASS java', report['commands'][-1]['tests'], flush=True)
         for group in contract['groups']:
             if group['role'] == 'product' and not with_product:
                 continue
@@ -204,23 +233,8 @@ def collect(output, run_id, *, with_product=False):
                 cases=cases_path.relative_to(ROOT).as_posix(), casesSha256=stream_sha256(cases_path)))
             atomic_write_json(report_path, report)
             print('PASS', name, count, flush=True)
-        if with_product:
-            java_contract = read_json_snapshot(ROOT, 'scripts/contracts/m1059-java-cases.json').data
-            xml_paths = tuple(ROOT / s['module'] / 'target/surefire-reports' / ('TEST-' + s['name'] + '.xml') for s in java_contract['suites'])
-            command = java_command()
-            receipt = output / 'java.receipt.json'; log = output / 'java.log'
-            run(command, name='java', log=log, receipt=receipt, run_id=run_id, outputs=xml_paths)
-            from evidence_checks import suite_snapshot
-            suites = [suite_snapshot(p, p.relative_to(ROOT).parts[0]) for p in xml_paths]
-            actual = {(s['module'], s['name']): set(s['cases']) for s in suites}
-            expected = {(s['module'], s['name']): set(s['cases']) for s in java_contract['suites']}
-            require(actual == expected and all(s[k] == 0 for s in suites for k in ('failures', 'errors', 'skipped')), 'Java case contract mismatch')
-            cases_path = output / 'java.cases.json'
-            atomic_write_json(cases_path, dict(schemaVersion=1, status='PASS', suites=suites))
-            report['commands'].append(dict(name='java', command=command, cwd='.', tests=sum(s['tests'] for s in suites),
-                receipt=receipt.relative_to(ROOT).as_posix(), receiptSha256=stream_sha256(receipt),
-                log=log.relative_to(ROOT).as_posix(), logSha256=stream_sha256(log),
-                cases=cases_path.relative_to(ROOT).as_posix(), casesSha256=stream_sha256(cases_path)))
+        if with_product and not JAVA_FIRST:
+            collect_java(output, run_id, report)
         require(report['commands'] and inputs(ROOT) == source, 'Incomplete or changed validation source')
         report['status'] = 'LOCAL_REGRESSION_PASS'
         return report
@@ -268,13 +282,18 @@ def verify_report(relative):
         if name == 'java':
             data = strict_json_loads(case_bytes(outcome))
             java_contract = read_json_snapshot(ROOT, 'scripts/contracts/m1059-java-cases.json').data
-            from evidence_checks import suite_snapshot
+            expected_xml = {ROOT / s['module'] / 'target/surefire-reports' / ('TEST-' + s['name'] + '.xml') for s in java_contract['suites']}
+            require(set(ROOT.glob('harness-*/target/surefire-reports/TEST-*.xml')) == expected_xml,
+                    'Unexpected or missing Java suite output')
+            from evidence_checks import suite_snapshot, validate_java_suites
             actual = [suite_snapshot(ROOT / s['module'] / 'target/surefire-reports' / ('TEST-' + s['name'] + '.xml'), s['module']) for s in java_contract['suites']]
             require(type(data.get('schemaVersion')) is int and data['schemaVersion'] == 1 and data.get('status') == 'PASS' and data.get('suites') == actual, 'Java regression output drift')
-            require({(s['module'], s['name']): set(s['cases']) for s in actual} == {(s['module'], s['name']): set(s['cases']) for s in java_contract['suites']}, 'Java regression case identity mismatch')
-            require(all(s[k] == 0 for s in actual for k in ('failures', 'errors', 'skipped')), 'Java regression did not pass')
-            count = sum(s['tests'] for s in actual)
+            count = validate_java_suites(actual, java_contract)
             outputs = {f"{s['module']}/target/surefire-reports/TEST-{s['name']}.xml": s['sha256'] for s in actual}
+            if JAVA_ARTIFACT is not None:
+                artifact = dict(path=JAVA_ARTIFACT.relative_to(ROOT).as_posix(), sha256=stream_sha256(JAVA_ARTIFACT))
+                require(entry.get('artifact') == artifact, 'Java build artifact drift')
+                outputs[artifact['path']] = artifact['sha256']
         else:
             raw = case_bytes(outcome)
             group = groups[name]

@@ -37,8 +37,24 @@ public final class UserQuestionsPlugin implements HarnessPlugin, UserQuestionSer
         active = true;
     }
 
-    public void stop() {
+    public synchronized void stop() {
         active = false;
+        notifyAll();
+        long deadline = System.nanoTime() + java.util.concurrent.TimeUnit.SECONDS.toNanos(2);
+        boolean interrupted = Thread.interrupted();
+        while (!pending.isEmpty() && System.nanoTime() < deadline) {
+            try {
+                wait(
+                        Math.max(
+                                1,
+                                java.util.concurrent.TimeUnit.NANOSECONDS.toMillis(
+                                        deadline - System.nanoTime())));
+            } catch (InterruptedException ex) {
+                interrupted = true;
+            }
+        }
+        if (interrupted) Thread.currentThread().interrupt();
+        if (!pending.isEmpty()) throw error("QUESTION_SETTLEMENT_PENDING");
     }
 
     private static final class Pending {
@@ -90,20 +106,21 @@ public final class UserQuestionsPlugin implements HarnessPlugin, UserQuestionSer
         view.put("expiresAt", Instant.now().plusSeconds(timeout).toString());
         var wait = new Pending(Values.snapshot(view), System.nanoTime() + timeout * 1_000_000_000L);
         // Publication follows durable request. No HTTP thread writes to the session.
-        save("question.requested", started, view);
         synchronized (this) {
+            if (!active) throw error("QUESTION_SCOPE_CLOSED");
+            save("question.requested", started, view);
             pending.put(id, wait);
         }
         Map<String, Object> resolution;
         try {
             while (true) {
-                if (!active || context.cancellation().isCancelled()) {
-                    resolution = Map.of("state", "CANCELLED");
-                    break;
-                }
                 synchronized (this) {
                     if (wait.answer != null) {
                         resolution = wait.answer;
+                        break;
+                    }
+                    if (!active || context.cancellation().isCancelled()) {
+                        resolution = Map.of("state", "CANCELLED");
                         break;
                     }
                     if (System.nanoTime() >= wait.deadline) {
@@ -123,13 +140,20 @@ public final class UserQuestionsPlugin implements HarnessPlugin, UserQuestionSer
             fact.putAll(resolution);
             synchronized (this) {
                 if (!wait.fingerprint.isEmpty()) fact.put("answerHash", wait.fingerprint);
+                if (!wait.fingerprint.isEmpty()) fact.put("answerFingerprintVersion", 2);
             }
-            save("question.resolved", started, fact);
+            boolean interrupted = Thread.interrupted();
+            try {
+                save("question.resolved", started, fact);
+            } finally {
+                if (interrupted) Thread.currentThread().interrupt();
+            }
             if ("CANCELLED".equals(fact.get("state"))) throw error("CANCELLED");
             return Values.snapshot(fact);
         } finally {
             synchronized (this) {
                 pending.remove(id);
+                notifyAll();
             }
         }
     }
@@ -151,6 +175,7 @@ public final class UserQuestionsPlugin implements HarnessPlugin, UserQuestionSer
     }
 
     public synchronized List<Map<String, Object>> list() {
+        if (!active) throw error("QUESTION_SCOPE_CLOSED");
         var rows = new LinkedHashMap<String, Map<String, Object>>();
         for (var view : project(reader.events())) rows.put((String) view.get("questionId"), view);
         for (var entry : pending.entrySet()) {
@@ -212,6 +237,11 @@ public final class UserQuestionsPlugin implements HarnessPlugin, UserQuestionSer
 
     public static Map<String, Object> recorded(
             List<SessionEvent> events, Map<String, Object> input) {
+        return recorded(events, input, new SecretRedactor());
+    }
+
+    public static Map<String, Object> recorded(
+            List<SessionEvent> events, Map<String, Object> input, DataSanitizer sanitizer) {
         if (!input.keySet()
                 .equals(
                         Set.of(
@@ -233,7 +263,11 @@ public final class UserQuestionsPlugin implements HarnessPlugin, UserQuestionSer
                 throw error("QUESTION_ASSOCIATION_MISMATCH");
         validateAnswer(input, row);
         if (Objects.equals(input.get("requestId"), row.get("requestId"))
-                && fingerprint(input).equals(row.get("answerHash"))) return row;
+                && (row.get("answerFingerprintVersion") instanceof Number version
+                                && version.intValue() == 2
+                        ? fingerprint(input).equals(row.get("answerHash"))
+                                && sameText(input, row, sanitizer)
+                        : legacyFingerprint(input).equals(row.get("answerHash")))) return row;
         throw error(row.containsKey("requestId") ? "ANSWER_CONFLICT" : "QUESTION_CLOSED");
     }
 
@@ -262,13 +296,15 @@ public final class UserQuestionsPlugin implements HarnessPlugin, UserQuestionSer
         var answer = validateAnswer(input, row);
         String hash = fingerprint(input);
         if (row.containsKey("requestId")) {
-            if (requestId.equals(row.get("requestId")) && hash.equals(row.get("answerHash")))
-                return row;
+            if (requestId.equals(row.get("requestId"))
+                    && hash.equals(row.get("answerHash"))
+                    && sameText(input, row, sanitizer)) return row;
             var p = pending.get(id);
             if (p != null
                     && p.answer != null
                     && requestId.equals(p.answer.get("requestId"))
-                    && hash.equals(p.fingerprint)) return row;
+                    && hash.equals(p.fingerprint)
+                    && sameText(input, p.answer, sanitizer)) return row;
             throw error("ANSWER_CONFLICT");
         }
         var wait = pending.get(id);
@@ -383,6 +419,18 @@ public final class UserQuestionsPlugin implements HarnessPlugin, UserQuestionSer
     }
 
     private static String fingerprint(Map<String, Object> input) {
+        var fields = new TreeMap<>(input);
+        fields.remove("text");
+        return legacyFingerprint(fields);
+    }
+
+    private static boolean sameText(
+            Map<String, Object> input, Map<String, Object> row, DataSanitizer sanitizer) {
+        return Objects.equals(
+                sanitizer.sanitize(Map.of("text", input.get("text"))).get("text"), row.get("text"));
+    }
+
+    private static String legacyFingerprint(Map<String, Object> input) {
         try {
             return HexFormat.of()
                     .formatHex(

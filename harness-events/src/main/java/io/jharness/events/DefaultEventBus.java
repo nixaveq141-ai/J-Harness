@@ -15,16 +15,23 @@ public final class DefaultEventBus implements EventBus, AutoCloseable {
     private final AtomicLong sequence = new AtomicLong();
     private final ThreadLocal<Boolean> callback = ThreadLocal.withInitial(() -> false);
     private final ExecutorService notificationWorker =
-            Executors.newSingleThreadExecutor(
+            new ThreadPoolExecutor(
+                    1,
+                    1,
+                    0L,
+                    TimeUnit.MILLISECONDS,
+                    new ArrayBlockingQueue<>(256),
                     r -> {
-                        Thread thread = new Thread(r, "harness-notify");
-                        thread.setDaemon(true);
-                        return thread;
-                    });
+                        Thread t = new Thread(r, "harness-notify");
+                        t.setDaemon(true);
+                        return t;
+                    },
+                    new ThreadPoolExecutor.AbortPolicy());
     private final ExecutorService serialWorker = Executors.newVirtualThreadPerTaskExecutor();
     private final Consumer<EventFailure> diagnostics;
     private final Object serialLock = new Object();
     private volatile boolean closed;
+    private volatile boolean serialUnconfirmed;
 
     public DefaultEventBus() {
         this(
@@ -115,27 +122,31 @@ public final class DefaultEventBus implements EventBus, AutoCloseable {
         Objects.requireNonNull(event);
         List<NotifyEntry> snapshot =
                 notifications.stream().filter(e -> matches(e.type, event)).toList();
-        notificationWorker.execute(
-                () -> {
-                    callback.set(true);
-                    try {
-                        for (NotifyEntry entry : snapshot) {
-                            if (!entry.active.get()) continue;
-                            try {
-                                entry.listener.accept(event);
-                            } catch (Exception ex) {
-                                report(
-                                        new EventFailure(
-                                                "NOTIFY_FAILED",
-                                                event.eventId(),
-                                                event.type(),
-                                                ex));
+        try {
+            notificationWorker.execute(
+                    () -> {
+                        callback.set(true);
+                        try {
+                            for (NotifyEntry entry : snapshot) {
+                                if (!entry.active.get()) continue;
+                                try {
+                                    entry.listener.accept(event);
+                                } catch (Exception ex) {
+                                    report(
+                                            new EventFailure(
+                                                    "NOTIFY_FAILED",
+                                                    event.eventId(),
+                                                    event.type(),
+                                                    ex));
+                                }
                             }
+                        } finally {
+                            callback.remove();
                         }
-                    } finally {
-                        callback.remove();
-                    }
-                });
+                    });
+        } catch (RejectedExecutionException saturated) {
+            report(new EventFailure("NOTIFY_QUEUE_FULL", event.eventId(), event.type(), saturated));
+        }
     }
 
     @Override
@@ -145,6 +156,9 @@ public final class DefaultEventBus implements EventBus, AutoCloseable {
         Objects.requireNonNull(event);
         synchronized (serialLock) {
             ensureOpen();
+            if (serialUnconfirmed)
+                throw new HarnessException(
+                        "SERIAL_UNCONFIRMED", "Earlier callback termination is unconfirmed");
             List<SerialEntry> snapshot =
                     serials.stream()
                             .filter(e -> matches(e.type, event))
@@ -154,26 +168,34 @@ public final class DefaultEventBus implements EventBus, AutoCloseable {
                             .toList();
             for (SerialEntry entry : snapshot) {
                 if (!entry.active.get()) continue;
-                Future<?> task =
-                        serialWorker.submit(
-                                () -> {
-                                    callback.set(true);
-                                    try {
-                                        if (entry.active.get()) entry.listener.accept(event);
-                                    } catch (Exception ex) {
-                                        throw new CompletionException(ex);
-                                    } finally {
-                                        callback.remove();
-                                    }
-                                });
+                CountDownLatch exited = new CountDownLatch(1);
+                Future<?> task;
+                synchronized (this) {
+                    ensureOpen();
+                    task =
+                            serialWorker.submit(
+                                    () -> {
+                                        callback.set(true);
+                                        try {
+                                            if (entry.active.get()) entry.listener.accept(event);
+                                        } catch (Exception ex) {
+                                            throw new CompletionException(ex);
+                                        } finally {
+                                            callback.remove();
+                                            exited.countDown();
+                                        }
+                                    });
+                }
                 try {
                     task.get(entry.timeout.toNanos(), TimeUnit.NANOSECONDS);
                 } catch (TimeoutException ex) {
                     task.cancel(true);
+                    confirmSerialExit(exited);
                     throw new HarnessException(
                             "SERIAL_TIMEOUT", "Serial listener timed out: " + event.type(), ex);
                 } catch (InterruptedException ex) {
                     task.cancel(true);
+                    confirmSerialExit(exited);
                     Thread.currentThread().interrupt();
                     throw new HarnessException("CANCELLED", "Serial dispatch interrupted", ex);
                 } catch (ExecutionException ex) {
@@ -233,7 +255,18 @@ public final class DefaultEventBus implements EventBus, AutoCloseable {
     public void awaitNotifications(Duration timeout) {
         ensureOpen();
         rejectRecursive();
-        Future<?> barrier = notificationWorker.submit(() -> {});
+        if (timeout == null || timeout.isNegative() || timeout.isZero())
+            throw new IllegalArgumentException("timeout");
+        Future<?> barrier;
+        synchronized (this) {
+            ensureOpen();
+            try {
+                barrier = notificationWorker.submit(() -> {});
+            } catch (RejectedExecutionException ex) {
+                throw new HarnessException(
+                        "NOTIFY_QUEUE_FULL", "Notification queue is saturated", ex);
+            }
+        }
         try {
             barrier.get(timeout.toNanos(), TimeUnit.NANOSECONDS);
         } catch (InterruptedException ex) {
@@ -246,18 +279,41 @@ public final class DefaultEventBus implements EventBus, AutoCloseable {
         }
     }
 
+    private void confirmSerialExit(CountDownLatch exited) {
+        try {
+            if (!exited.await(100, TimeUnit.MILLISECONDS)) serialUnconfirmed = true;
+        } catch (InterruptedException interrupted) {
+            serialUnconfirmed = true;
+            Thread.currentThread().interrupt();
+        }
+    }
+
     @Override
-    public synchronized void close() {
-        if (closed) return;
-        closed = true;
-        notifications.forEach(e -> e.active.set(false));
-        serials.forEach(e -> e.active.set(false));
-        interceptors.forEach(e -> e.active.set(false));
-        notifications.clear();
-        serials.clear();
-        interceptors.clear();
-        notificationWorker.shutdownNow();
-        serialWorker.shutdownNow();
+    public void close() {
+        synchronized (this) {
+            if (closed) return;
+            closed = true;
+            notifications.forEach(e -> e.active.set(false));
+            serials.forEach(e -> e.active.set(false));
+            interceptors.forEach(e -> e.active.set(false));
+            notifications.clear();
+            serials.clear();
+            interceptors.clear();
+            notificationWorker.shutdownNow();
+            serialWorker.shutdownNow();
+        }
+        try {
+            boolean notificationsDone =
+                    notificationWorker.awaitTermination(200, TimeUnit.MILLISECONDS);
+            boolean serialDone = serialWorker.awaitTermination(200, TimeUnit.MILLISECONDS);
+            if (!notificationsDone || !serialDone)
+                report(new EventFailure("BUS_WORKERS_UNCONFIRMED", "lifecycle", "bus.close", null));
+        } catch (InterruptedException interrupted) {
+            Thread.currentThread().interrupt();
+            report(
+                    new EventFailure(
+                            "BUS_WORKERS_UNCONFIRMED", "lifecycle", "bus.close", interrupted));
+        }
     }
 
     private static final class NotifyEntry {

@@ -28,7 +28,7 @@ class CiGateTest(unittest.TestCase):
                          commit='1'*40, paidRequests=0, workingTreeDirty=False, remoteExecution=True, m11Eligible=False,
                          jarSha256='b'*64, sourceSha256={p:'c'*64 for p in contract['requiredSourcePaths']},
                          uiSha256={p:'d'*64 for p in ['index.html','ui-license.txt','assets/index.js','assets/index.css']},
-                         suites=self.suites, java=dict(tests=410,failures=0,errors=0,skipped=0),
+                         suites=self.suites, java=dict(tests=sum(len(s['cases']) for s in self.suites),failures=0,errors=0,skipped=0),
                          browserChecks=813,sdkChecks=58,frontendClientChecks=33)
 
     def write_reports(self, change=None):

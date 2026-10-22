@@ -35,6 +35,8 @@ public final class DefaultAgentLoop implements AgentLoop {
         Set<String> callIds = new HashSet<>();
         List<ToolInvocation> unresolved = new ArrayList<>();
         BigDecimal[] reservedCost = {BigDecimal.ZERO};
+        String originalError = null;
+        boolean deadlineExceeded = false;
         for (SessionEvent event : runtime.reader().events())
             if (event.callId() != null) callIds.add(event.callId());
         append("turn.started", EventLevel.TURN, turnId, null, null, Map.of());
@@ -76,6 +78,10 @@ public final class DefaultAgentLoop implements AgentLoop {
                         execution.execute(
                                 (singleSend, attemptCancellation) -> {
                                     attemptCancellation.throwIfCancelled();
+                                    if (singleSend && !core.llm().supportsSingleAttempt())
+                                        throw new HarnessException(
+                                                "SINGLE_ATTEMPT_UNSUPPORTED",
+                                                "Adapter has no single-send contract");
                                     ChatRequest attemptRequest =
                                             clean(core.llm().prepare(modelRequest).request());
                                     estimateContext(
@@ -283,15 +289,12 @@ public final class DefaultAgentLoop implements AgentLoop {
                                     "INVALID_SCHEDULER_RESULT",
                                     "Results must retain original call order");
                         unresolved.remove(call);
-                        if (result.status() == ToolStatus.UNKNOWN)
+                        if (ToolBatchExecution.unknownOutcome(result))
                             throw new HarnessException(
                                     "UNKNOWN_SIDE_EFFECT",
                                     "Manual verification required; no automatic retry");
                         if (result.status() == ToolStatus.CANCELLED)
                             throw new HarnessException("CANCELLED", "Tool cancelled");
-                        if (Boolean.TRUE.equals(result.value().get("sideEffectUncertain")))
-                            throw new HarnessException(
-                                    "UNKNOWN_SIDE_EFFECT", "Partial effects require verification");
                         if (result.status() == ToolStatus.TIMEOUT)
                             throw new HarnessException("TIMEOUT", "Tool batch timed out");
                         if (ToolBatchExecution.stops(result))
@@ -321,7 +324,9 @@ public final class DefaultAgentLoop implements AgentLoop {
             }
         } catch (RuntimeException ex) {
             String code = ex instanceof HarnessException h ? h.code() : "RUNTIME_FAILED";
-            if (System.nanoTime() - start >= duration) {
+            originalError = code;
+            deadlineExceeded = System.nanoTime() - start >= duration;
+            if (System.nanoTime() - start >= duration && code.equals("CANCELLED")) {
                 terminal = TaskStatus.LIMIT_REACHED;
                 reason = "TIME_LIMIT";
             } else if (code.equals("COST_LIMIT")) {
@@ -387,6 +392,8 @@ public final class DefaultAgentLoop implements AgentLoop {
                                 reservedCost[0].toPlainString(),
                                 "currency",
                                 core.budget().currency()));
+        if (originalError != null) finalState.put("originalError", originalError);
+        finalState.put("deadlineExceeded", deadlineExceeded);
         if (core.budget().currency().equals("USD"))
             finalState.put("reservedApiCostUsd", reservedCost[0].toPlainString());
         append(
@@ -406,12 +413,16 @@ public final class DefaultAgentLoop implements AgentLoop {
         try {
             EventSupport.checkpoint(core.session(), decision);
         } catch (RuntimeException ex) {
-            core.events()
-                    .publish(
-                            SessionEvent.session(
-                                    runtime.scope().sessionId(),
-                                    "checkpoint.failed",
-                                    Map.of("code", "CHECKPOINT_FAILED")));
+            try {
+                core.events()
+                        .publish(
+                                SessionEvent.session(
+                                        runtime.scope().sessionId(),
+                                        "checkpoint.failed",
+                                        Map.of("code", "CHECKPOINT_FAILED")));
+            } catch (RuntimeException notification) {
+                ex.addSuppressed(notification);
+            }
             throw ex;
         }
     }
@@ -450,6 +461,13 @@ public final class DefaultAgentLoop implements AgentLoop {
     }
 
     private ChatResponse clean(ChatResponse response) {
+        for (ToolInvocation call : response.toolCalls())
+            if (!Map.of("id", call.callId(), "name", call.tool())
+                    .equals(
+                            runtime.sanitizer()
+                                    .sanitize(Map.of("id", call.callId(), "name", call.tool()))))
+                throw new HarnessException(
+                        "UNSAFE_TOOL_IDENTITY", "Model tool identifiers contain sensitive text");
         Map<String, Object> text = runtime.sanitizer().sanitize(Map.of("text", response.text()));
         if (!response.providerState()
                 .equals(runtime.sanitizer().sanitize(response.providerState())))

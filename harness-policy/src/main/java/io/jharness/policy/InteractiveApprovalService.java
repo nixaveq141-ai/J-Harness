@@ -12,7 +12,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public final class InteractiveApprovalService implements ApprovalService, AutoCloseable {
     public record Prompt(String id, ToolInvocation call, String target, String impact) {}
 
-    private record Pending(Prompt prompt, CompletableFuture<ApprovalDecision> answer) {}
+    private record Pending(
+            Prompt prompt,
+            CompletableFuture<ApprovalDecision> answer,
+            CancellationToken cancellation,
+            long deadline) {}
 
     private final ConcurrentMap<String, Pending> pending = new ConcurrentHashMap<>();
     private final Duration timeout;
@@ -31,9 +35,16 @@ public final class InteractiveApprovalService implements ApprovalService, AutoCl
     }
 
     public boolean answer(String promptId, boolean approved, String reason, String actor) {
+        if (promptId == null || promptId.isBlank()) return false;
         Pending value = pending.get(promptId);
-        return value != null
-                && value.answer().complete(new ApprovalDecision(approved, reason, actor));
+        if (value == null) return false;
+        synchronized (value) {
+            if (closed.get()
+                    || value.cancellation().isCancelled()
+                    || System.nanoTime() - value.deadline() >= 0
+                    || value.answer().isDone()) return false;
+            return value.answer().complete(new ApprovalDecision(approved, reason, actor));
+        }
     }
 
     @Override
@@ -50,11 +61,20 @@ public final class InteractiveApprovalService implements ApprovalService, AutoCl
                                         .getOrDefault(
                                                 "path", call.arguments().getOrDefault("cwd", "."))),
                         call.sideEffectLevel().name()
-                                + (call.tool().equals("execute_command")
+                                + (call.sideEffectLevel() == SideEffectLevel.SYSTEM_IMPACT
                                         ? ": arbitrary commands may change files, spawn processes or use network; cannot preview"
                                         : ": workspace mutation"));
-        Pending value = new Pending(prompt, new CompletableFuture<>());
-        pending.put(id, value);
+        Pending value =
+                new Pending(
+                        prompt,
+                        new CompletableFuture<>(),
+                        context.cancellation(),
+                        System.nanoTime() + timeout.toNanos());
+        synchronized (this) {
+            if (closed.get())
+                return new ApprovalDecision(false, "Approval interface closed", "system");
+            pending.put(id, value);
+        }
         long start = System.nanoTime();
         try {
             while (true) {
@@ -64,7 +84,16 @@ public final class InteractiveApprovalService implements ApprovalService, AutoCl
                 if (System.nanoTime() - start >= timeout.toNanos())
                     return new ApprovalDecision(false, "Approval timed out", "system");
                 try {
-                    return value.answer().get(20, TimeUnit.MILLISECONDS);
+                    var decision = value.answer().get(20, TimeUnit.MILLISECONDS);
+                    synchronized (value) {
+                        context.cancellation().throwIfCancelled();
+                        if (closed.get())
+                            return new ApprovalDecision(
+                                    false, "Approval interface closed", "system");
+                        if (System.nanoTime() - value.deadline() >= 0)
+                            return new ApprovalDecision(false, "Approval timed out", "system");
+                        return decision;
+                    }
                 } catch (TimeoutException ex) {
                     /* bounded cancellation polling */
                 } catch (InterruptedException ex) {
@@ -80,7 +109,17 @@ public final class InteractiveApprovalService implements ApprovalService, AutoCl
     }
 
     @Override
-    public void close() {
+    public synchronized void close() {
         closed.set(true);
+        pending.forEach(
+                (id, value) -> {
+                    synchronized (value) {
+                        value.answer()
+                                .complete(
+                                        new ApprovalDecision(
+                                                false, "Approval interface closed", "system"));
+                        pending.remove(id, value);
+                    }
+                });
     }
 }

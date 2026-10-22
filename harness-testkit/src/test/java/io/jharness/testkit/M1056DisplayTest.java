@@ -51,6 +51,12 @@ class M1056DisplayTest {
                                     "Visible prefix " + "-".repeat(64) + SECRET.substring(0, 8),
                                     List.of(),
                                     Map.of()));
+                    try {
+                        Thread.sleep(65);
+                    } catch (InterruptedException ex) {
+                        Thread.currentThread().interrupt();
+                        throw new HarnessException("CANCELLED", "cancelled");
+                    }
                     sink.accept(new ChatResponse(text, List.of(), Map.of()));
                     frames.countDown();
                     try {
@@ -109,6 +115,7 @@ class M1056DisplayTest {
             assertEquals("display", live.get("sessionId"));
             assertTrue(live.get("text").toString().startsWith("Visible prefix"));
             assertFalse(live.toString().contains(SECRET));
+            assertTrue(live.get("text").toString().contains("[REDACTED]"));
             assertTrue(
                     sdk.snapshot().events().stream()
                             .noneMatch(e -> e.type().equals("assistant.message")));
@@ -138,6 +145,14 @@ class M1056DisplayTest {
             assertEquals(
                     1, events.stream().filter(e -> e.type().equals("assistant.message")).count());
             assertFalse(events.toString().contains(SECRET));
+            var assistant =
+                    events.stream()
+                            .filter(e -> e.type().equals("assistant.message"))
+                            .findFirst()
+                            .orElseThrow();
+            assertEquals(
+                    "Visible prefix " + "-".repeat(64) + "[REDACTED] tail",
+                    assistant.payload().get("content"));
             assertNotNull(sdk.content());
         }
     }
@@ -153,6 +168,8 @@ class M1056DisplayTest {
             provider.release.countDown();
             run.get(3, TimeUnit.SECONDS);
             assertEquals("INTERRUPTED", sdk.display().snapshot().get("state"));
+            assertFalse(sdk.display().snapshot().get("text").toString().isBlank());
+            assertFalse(sdk.display().snapshot().toString().contains(SECRET));
             assertEquals(1, provider.calls.get());
             assertTrue(
                     sdk.snapshot().events().stream()
@@ -172,6 +189,8 @@ class M1056DisplayTest {
             run.get(3, TimeUnit.SECONDS);
             assertEquals(1, provider.calls.get());
             assertEquals("INTERRUPTED", sdk.display().snapshot().get("state"));
+            assertFalse(sdk.display().snapshot().get("text").toString().isBlank());
+            assertFalse(sdk.display().snapshot().toString().contains(SECRET));
             assertTrue(
                     sdk.snapshot().events().stream()
                             .noneMatch(e -> e.type().equals("assistant.message")));

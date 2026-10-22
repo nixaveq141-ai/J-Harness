@@ -131,6 +131,7 @@ public final class SubagentPlugin implements HarnessPlugin {
         final long deadline;
         final AtomicBoolean cancelled = new AtomicBoolean(), finished = new AtomicBoolean();
         final CompletableFuture<Map<String, Object>> outcome = new CompletableFuture<>();
+        final CompletableFuture<ChildCompletion> completed = new CompletableFuture<>();
         volatile String state = "RUNNING";
         volatile Thread worker;
         volatile HarnessSdk sdk;
@@ -183,14 +184,19 @@ public final class SubagentPlugin implements HarnessPlugin {
         }
     }
 
+    private record ChildCompletion(String state, String reason, HarnessSdk.Snapshot snapshot) {}
+
+    private Map<String, Object> settle(Task task, ChildCompletion done) {
+        return finish(task, done.state(), done.reason(), done.snapshot());
+    }
+
     private ToolResult delegate(ToolInvocation call, ToolContext context) {
         Task task;
         synchronized (tasks) {
             if (tasks.size() >= maximumTasks)
-                return ToolResults.failure(call.callId(), ToolStatus.FAILED, "SUBAGENT_TASK_LIMIT");
+                return rejectedDelegation(call.callId(), "SUBAGENT_TASK_LIMIT");
             if (!slots.tryAcquire())
-                return ToolResults.failure(
-                        call.callId(), ToolStatus.FAILED, "SUBAGENT_CONCURRENCY_LIMIT");
+                return rejectedDelegation(call.callId(), "SUBAGENT_CONCURRENCY_LIMIT");
             task = new Task(call);
             tasks.put(task.id, task);
         }
@@ -217,27 +223,45 @@ public final class SubagentPlugin implements HarnessPlugin {
                         || System.nanoTime() >= task.deadline) {
                     cancel(task);
                     try {
-                        return result(call.callId(), task.outcome.get(2, TimeUnit.SECONDS));
+                        return result(
+                                call.callId(),
+                                settle(task, task.completed.get(2, TimeUnit.SECONDS)));
                     } catch (TimeoutException ex) {
                         abort(task);
                         return result(
                                 call.callId(), finish(task, "UNKNOWN", "CHILD_DID_NOT_STOP", null));
                     }
                 }
-                var outcome = task.outcome.get(20, TimeUnit.MILLISECONDS);
+                var outcome = settle(task, task.completed.get(20, TimeUnit.MILLISECONDS));
                 observeParentCancellation(task, context.cancellation());
                 return result(call.callId(), outcome);
             } catch (TimeoutException ignored) {
                 /* parent cancellation includes its monotonic deadline */
             } catch (InterruptedException ex) {
-                Thread.currentThread().interrupt();
-                cancel(task);
-                return result(call.callId(), finish(task, "UNKNOWN", "PARENT_INTERRUPTED", null));
+                // FileChannel writers must see a cleared interrupt during required settlement.
+                try {
+                    cancel(task);
+                    abort(task);
+                    return result(
+                            call.callId(), finish(task, "UNKNOWN", "PARENT_INTERRUPTED", null));
+                } finally {
+                    Thread.currentThread().interrupt();
+                }
             } catch (ExecutionException ex) {
                 cancel(task);
                 throw BoundedJson.error("SUBAGENT_RESULT_UNCERTAIN");
             }
         }
+    }
+
+    private static ToolResult rejectedDelegation(String callId, String code) {
+        return new ToolResult(
+                callId,
+                ToolStatus.FAILED,
+                Map.of("sideEffectUncertain", false, "executionRejected", true),
+                code,
+                Map.of(),
+                Optional.of(new ToolResult.ErrorInfo(code, code)));
     }
 
     private void runChild(Task task, CancellationToken parentCancellation) {
@@ -325,9 +349,9 @@ public final class SubagentPlugin implements HarnessPlugin {
                     state = "UNKNOWN";
                     reason = "CHILD_RECOVERY_REQUIRED";
                 }
-                finish(task, state, reason, snapshot);
+                task.completed.complete(new ChildCompletion(state, reason, snapshot));
             } catch (RuntimeException ex) {
-                task.outcome.completeExceptionally(ex);
+                task.completed.completeExceptionally(ex);
             }
             slots.release();
         }
@@ -430,9 +454,12 @@ public final class SubagentPlugin implements HarnessPlugin {
 
     private void cancel(Task task) {
         if (task.outcome.isDone()) return;
-        if (task.cancelled.compareAndSet(false, true))
-            event("subagent.cancel_requested", task.metadata());
-        if (task.sdk != null) task.sdk.cancel();
+        try {
+            if (task.cancelled.compareAndSet(false, true))
+                event("subagent.cancel_requested", task.metadata());
+        } finally {
+            if (task.sdk != null) task.sdk.cancel();
+        }
     }
 
     private LlmClient ownedModel(Task task, LlmClient model) {
@@ -524,7 +551,17 @@ public final class SubagentPlugin implements HarnessPlugin {
                         repository.openWriter(parentSessionId, WriteOwnership.EXCLUSIVE),
                         sanitizer)) {
             var events = repository.openReader(parentSessionId).events();
-            if (!SessionRecovery.inspect(events).uncertainCalls().contains("subagent:" + taskId))
+            boolean verified =
+                    events.stream()
+                            .anyMatch(
+                                    event ->
+                                            event.type().equals("subagent.verified")
+                                                    && taskId.equals(
+                                                            event.payload().get("taskId")));
+            if (!verified
+                    && !SessionRecovery.inspect(events)
+                            .uncertainCalls()
+                            .contains("subagent:" + taskId))
                 throw BoundedJson.error("SUBAGENT_NOT_UNCERTAIN");
             var assignment =
                     events.stream()
@@ -560,19 +597,20 @@ public final class SubagentPlugin implements HarnessPlugin {
                                                                                         "parentEventId"))))
                     throw BoundedJson.error("CHILD_ORIGIN_MISMATCH");
                 if (childWriter != null) childWriter.flush();
-                parent.append(
-                        SessionEvent.session(
-                                parentSessionId,
-                                "subagent.verified",
-                                Map.of(
-                                        "taskId",
-                                        taskId,
-                                        "childSessionId",
-                                        child,
-                                        "reason",
-                                        reason,
-                                        "actor",
-                                        "operator")));
+                if (!verified)
+                    parent.append(
+                            SessionEvent.session(
+                                    parentSessionId,
+                                    "subagent.verified",
+                                    Map.of(
+                                            "taskId",
+                                            taskId,
+                                            "childSessionId",
+                                            child,
+                                            "reason",
+                                            reason,
+                                            "actor",
+                                            "operator")));
                 String callId = (String) assignment.payload().get("parentCallId");
                 if (new EventSessionProjection(events).uncertainCalls().contains(callId)) {
                     var source =
@@ -641,18 +679,41 @@ public final class SubagentPlugin implements HarnessPlugin {
         synchronized (tasks) {
             pending = tasks.values().stream().filter(task -> !task.finished.get()).toList();
         }
-        pending.forEach(this::cancel);
-        for (var task : pending)
-            if (!task.finished.get()) finish(task, "UNKNOWN", "PARENT_CLOSED", null);
-        synchronized (tasks) {
-            tasks.values().stream()
-                    .filter(
-                            task ->
-                                    "UNKNOWN".equals(task.state)
-                                            && task.worker != null
-                                            && task.worker.isAlive())
-                    .forEach(this::abort);
+        RuntimeException primary = null;
+        boolean interrupted = Thread.interrupted();
+        long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(2);
+        for (var task : pending) {
+            try {
+                cancel(task);
+            } catch (RuntimeException ex) {
+                if (primary == null) primary = ex;
+                else primary.addSuppressed(ex);
+            }
+            abort(task);
         }
+        for (var task : pending) {
+            try {
+                if (task.worker != null) {
+                    long remaining = deadline - System.nanoTime();
+                    if (remaining > 0)
+                        task.worker.join(Math.max(1, TimeUnit.NANOSECONDS.toMillis(remaining)));
+                }
+            } catch (InterruptedException ex) {
+                interrupted = true;
+            }
+            try {
+                if (!task.finished.get()) {
+                    if (task.completed.isDone() && !task.completed.isCompletedExceptionally())
+                        settle(task, task.completed.join());
+                    else finish(task, "UNKNOWN", "PARENT_CLOSED", null);
+                }
+            } catch (RuntimeException ex) {
+                if (primary == null) primary = ex;
+                else primary.addSuppressed(ex);
+            }
+        }
+        if (interrupted) Thread.currentThread().interrupt();
+        if (primary != null) throw primary;
     }
 
     private final class DelegationTool implements AgentTool {

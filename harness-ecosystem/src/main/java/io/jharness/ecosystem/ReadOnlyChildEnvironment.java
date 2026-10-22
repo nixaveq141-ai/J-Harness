@@ -29,6 +29,11 @@ final class ReadOnlyChildEnvironment implements ExecutionEnvironment {
                             throw BoundedJson.error("CANCELLED");
                     }
 
+                    private CancellationToken combined(CancellationToken token) {
+                        return () ->
+                                token.isCancelled() || closed.get() || cancelled.getAsBoolean();
+                    }
+
                     @Override
                     public ExecPath root() {
                         return base.root();
@@ -51,7 +56,7 @@ final class ReadOnlyChildEnvironment implements ExecutionEnvironment {
                             ExecPath path, int start, int end, CancellationToken token)
                             throws IOException {
                         check();
-                        return base.readPage(path, start, end, token);
+                        return base.readPage(path, start, end, combined(token));
                     }
 
                     @Override
@@ -59,14 +64,14 @@ final class ReadOnlyChildEnvironment implements ExecutionEnvironment {
                             ExecPath path, int depth, int limit, CancellationToken token)
                             throws IOException {
                         check();
-                        return base.list(path, depth, limit, token);
+                        return base.list(path, depth, limit, combined(token));
                     }
 
                     @Override
                     public Map<String, Object> search(
                             String glob, int limit, CancellationToken token) throws IOException {
                         check();
-                        return base.search(glob, limit, token);
+                        return base.search(glob, limit, combined(token));
                     }
 
                     @Override
@@ -74,7 +79,7 @@ final class ReadOnlyChildEnvironment implements ExecutionEnvironment {
                             String text, List<ExecPath> paths, int limit, CancellationToken token)
                             throws IOException {
                         check();
-                        return base.grep(text, paths, limit, token);
+                        return base.grep(text, paths, limit, combined(token));
                     }
 
                     @Override

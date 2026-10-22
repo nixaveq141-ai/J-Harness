@@ -8,6 +8,7 @@ import java.util.function.Supplier;
 public final class LazyModelRouter implements ModelRouter {
     private final Map<String, Supplier<LlmClient>> factories;
     private final Map<String, LlmClient> clients = new LinkedHashMap<>();
+    private final Map<String, String> closeFailures = new LinkedHashMap<>();
     private boolean closed;
 
     public LazyModelRouter(Map<String, Supplier<LlmClient>> factories) {
@@ -30,19 +31,27 @@ public final class LazyModelRouter implements ModelRouter {
         return clients.computeIfAbsent(route, ignored -> Objects.requireNonNull(factory.get()));
     }
 
+    /** Safe residual-resource metadata; failed close is never retried implicitly. */
+    public synchronized Map<String, String> unconfirmedClosures() {
+        return Map.copyOf(closeFailures);
+    }
+
     @Override
     public synchronized void close() {
         if (closed) return;
         closed = true;
-        RuntimeException failure = null;
-        for (LlmClient client : clients.values())
+        Throwable failure = null;
+        for (var entry : clients.entrySet())
             try {
-                client.close();
-            } catch (RuntimeException ex) {
+                entry.getValue().close();
+            } catch (RuntimeException | Error ex) {
+                closeFailures.put(entry.getKey(), ex.getClass().getName());
                 if (failure == null) failure = ex;
                 else failure.addSuppressed(ex);
             }
-        clients.clear();
-        if (failure != null) throw failure;
+        // Failed clients remain referenced for owner diagnostics; close is not retried blindly.
+        clients.keySet().removeIf(route -> !closeFailures.containsKey(route));
+        if (failure instanceof RuntimeException runtime) throw runtime;
+        if (failure instanceof Error error) throw error;
     }
 }

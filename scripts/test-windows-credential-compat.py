@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 import subprocess
 import sys
+import uuid
 
 if os.name != 'nt':
     raise SystemExit('Windows required; other platforms are not counted as a pass')
@@ -21,7 +22,13 @@ probe = '''package io.jharness.cli;
 import java.util.*;
 public final class WindowsCredentialCompatibilityProbe {
   public static void main(String[] args) throws Exception {
-    String target = "J-Harness/native-compat/" + UUID.randomUUID();
+    String target = args[0];
+    if (!target.matches("J-Harness/native-compat/[a-f0-9-]{36}")) throw new IllegalArgumentException();
+    if (args.length == 2 && args[1].equals("cleanup")) {
+      var vault = new SystemCredentials(); vault.delete(target);
+      if (!vault.read(target).isEmpty()) throw new IllegalStateException("Cleanup incomplete");
+      System.out.println(Json.text(Map.of("cleanup", true))); return;
+    }
     String first = "synthetic-compat-" + UUID.randomUUID();
     String second = "synthetic-compat-rotation-" + UUID.randomUUID();
     var old = new LegacyWindowsCredentials();
@@ -56,13 +63,31 @@ bin_dir = Path(os.environ['JAVA_HOME']) / 'bin'
 subprocess.run([str(bin_dir / 'javac.exe'), '-cp', str(jar), '-d', str(classes),
                 str(source / 'LegacyWindowsCredentials.java'), str(source / 'WindowsCredentialCompatibilityProbe.java')],
                cwd=root, check=True, timeout=30)
-result = subprocess.run([str(bin_dir / 'java.exe'), '-cp', os.pathsep.join([str(classes), str(jar)]),
-                         'io.jharness.cli.WindowsCredentialCompatibilityProbe'],
-                        capture_output=True, text=True, cwd=root, timeout=120)
-report = json.loads(result.stdout)
+target = 'J-Harness/native-compat/' + str(uuid.uuid4())
+command = [str(bin_dir / 'java.exe'), '-cp', os.pathsep.join([str(classes), str(jar)]),
+           'io.jharness.cli.WindowsCredentialCompatibilityProbe', target]
+report = dict(passed=False)
+exit_code = 1
+try:
+    result = subprocess.run(command, capture_output=True, text=True, cwd=root, timeout=120)
+    exit_code = result.returncode
+    report = json.loads(result.stdout)
+except (subprocess.TimeoutExpired, ValueError):
+    report['failureCode'] = 'COMPATIBILITY_UNCERTAIN'
+finally:
+    try:
+        cleanup = subprocess.run(command + ['cleanup'], capture_output=True, text=True,
+                                 cwd=root, timeout=30)
+        cleaned = cleanup.returncode == 0 and json.loads(cleanup.stdout).get('cleanup') is True
+    except (subprocess.TimeoutExpired, ValueError):
+        cleaned = False
+    report['parentCleanup'] = cleaned
+    if not cleaned:
+        report['passed'] = False
+        report['cleanupFailureCode'] = 'CLEANUP_FAILED'
 report.update(legacyCommit='fdd326b', legacySourceSha256=hashlib.sha256(legacy).hexdigest(),
               currentJarSha256=hashlib.sha256(jar.read_bytes()).hexdigest(),
-              fixtureSha256=hashlib.sha256(probe.encode()).hexdigest(), exitCode=result.returncode)
-(root / '.build-cache/M10.5.4-windows-compat.json').write_bytes((json.dumps(report, indent=2) + '\n').encode())
+              fixtureSha256=hashlib.sha256(probe.encode()).hexdigest(), exitCode=exit_code)
+(root / '.build-cache/R1/windows-compat.json').write_bytes((json.dumps(report, indent=2) + '\n').encode())
 print(json.dumps(report))
-sys.exit(0 if result.returncode == 0 and report.get('passed') else 1)
+sys.exit(0 if exit_code == 0 and report.get('passed') and report.get('parentCleanup') else 1)

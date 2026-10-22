@@ -12,18 +12,36 @@ public final class NativeCredentials {
     private NativeCredentials() {}
 
     public static void main(String[] args) {
+        String os = System.getProperty("os.name");
+        int exit =
+                execute(
+                        System.in,
+                        System.out,
+                        () ->
+                                os.startsWith("Windows")
+                                        ? new WindowsVault()
+                                        : os.startsWith("Mac")
+                                                ? new Keychain()
+                                                : new SecretService());
+        if (exit != 0) System.exit(exit);
+    }
+
+    static int execute(
+            java.io.InputStream source,
+            java.io.PrintStream output,
+            java.util.function.Supplier<Vault> factory) {
+        byte[] input = new byte[0];
+        int exit = 0;
+        boolean mutationStarted = false;
         try {
-            byte[] input = System.in.readNBytes(65537);
+            input = source.readNBytes(65537);
             if (input.length > 65536) throw new IllegalArgumentException();
             Object parsed = Json.parse(new String(input, StandardCharsets.UTF_8));
             if (!(parsed instanceof List<?> operations) || operations.size() > 32)
                 throw new IllegalArgumentException();
+            validateOperations(operations);
             String result = "";
-            String os = System.getProperty("os.name");
-            try (Vault vault =
-                    os.startsWith("Windows")
-                            ? new WindowsVault()
-                            : os.startsWith("Mac") ? new Keychain() : new SecretService()) {
+            try (Vault vault = factory.get()) {
                 for (var raw : operations) {
                     var op = Values.object(raw);
                     String action = (String) op.get("action");
@@ -37,18 +55,40 @@ public final class NativeCredentials {
                             || value == null
                             || value.length() > 1024
                             || value.indexOf('\0') >= 0) throw new IllegalArgumentException();
+                    mutationStarted |= action.equals("write") || action.equals("delete");
                     result = vault.run(action, target, value);
                 }
             }
-            System.out.print(
+            output.print(
                     Base64.getEncoder().encodeToString(result.getBytes(StandardCharsets.UTF_8)));
         } catch (Throwable failure) {
             // Native/service errors may contain secret material. Never print them.
-            System.exit(7);
+            exit = mutationStarted ? 8 : failure instanceof IllegalArgumentException ? 6 : 7;
+        } finally {
+            Arrays.fill(input, (byte) 0);
+        }
+        return exit;
+    }
+
+    static void validateOperations(List<?> operations) {
+        if (operations.size() > 32)
+            throw new IllegalArgumentException("Credential operation limit");
+        for (Object raw : operations) {
+            var op = Values.object(raw);
+            if (!(op.get("action") instanceof String action)
+                    || !Set.of("read", "write", "delete", "probe").contains(action)
+                    || !(op.get("target") instanceof String target)
+                    || !target.startsWith("J-Harness/")
+                    || target.length() > 512
+                    || target.indexOf('\0') >= 0
+                    || !(op.get("value") instanceof String value)
+                    || value.getBytes(StandardCharsets.UTF_8).length > 1024
+                    || value.indexOf('\0') >= 0)
+                throw new IllegalArgumentException("Invalid credential operation");
         }
     }
 
-    private interface Vault extends AutoCloseable {
+    interface Vault extends AutoCloseable {
         String run(String action, String target, String value);
 
         @Override
@@ -98,8 +138,16 @@ public final class NativeCredentials {
         void CredFree(Pointer pointer);
     }
 
-    private static final class WindowsVault implements Vault {
-        private final WindowsApi api = Native.load("Advapi32", WindowsApi.class);
+    static final class WindowsVault implements Vault {
+        private final WindowsApi api;
+
+        WindowsVault() {
+            this(Native.load("Advapi32", WindowsApi.class));
+        }
+
+        WindowsVault(WindowsApi api) {
+            this.api = Objects.requireNonNull(api);
+        }
 
         private void check(boolean success) {
             if (!success) throw new IllegalStateException("Native vault unavailable");
@@ -108,7 +156,14 @@ public final class NativeCredentials {
         @Override
         public String run(String action, String target, String value) {
             var name = new WString(target);
-            if (action.equals("probe")) return "available";
+            if (action.equals("probe")) {
+                var probe = new PointerByReference();
+                if (api.CredReadW(name, 1, 0, probe)) {
+                    if (probe.getValue() == null) throw new IllegalStateException();
+                    api.CredFree(probe.getValue());
+                } else if (Native.getLastError() != 1168) check(false);
+                return "available";
+            }
             if (action.equals("delete")) {
                 if (!api.CredDeleteW(name, 1, 0) && Native.getLastError() != 1168) check(false);
                 return "";
@@ -140,10 +195,12 @@ public final class NativeCredentials {
                 check(false);
             }
             try {
+                if (result.getValue() == null) throw new IllegalStateException();
                 var credential = new WindowsCredential(result.getValue());
                 if (credential.size < 0 || credential.size > 1024)
                     throw new IllegalStateException();
                 if (credential.size == 0) return "";
+                if (credential.blob == null) throw new IllegalStateException();
                 return new String(
                         credential.blob.getByteArray(0, credential.size), StandardCharsets.UTF_8);
             } finally {
@@ -204,6 +261,8 @@ public final class NativeCredentials {
                     if (found == -25300) return "";
                     if (length.getValue() < 0 || length.getValue() > 1024)
                         throw new IllegalStateException();
+                    if (length.getValue() == 0) return "";
+                    if (data.getValue() == null) throw new IllegalStateException();
                     return new String(
                             data.getValue().getByteArray(0, length.getValue()),
                             StandardCharsets.UTF_8);

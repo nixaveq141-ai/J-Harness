@@ -7,7 +7,7 @@ import java.net.http.*;
 import java.nio.charset.*;
 import java.time.Duration;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
 /** Bounded Streamable HTTP POST JSON/SSE; redirects, reconnects and replay are disabled. */
@@ -16,9 +16,11 @@ public final class HttpMcpTransport implements McpTransport {
     private final Duration timeout;
     private final Supplier<String> bearerToken;
     private final HttpClient client;
-    private final AtomicReference<InputStream> active = new AtomicReference<>();
+    private final Set<InputStream> active = ConcurrentHashMap.newKeySet();
     private String session;
-    private boolean closed;
+    private final java.util.concurrent.atomic.AtomicBoolean closed =
+            new java.util.concurrent.atomic.AtomicBoolean();
+    private volatile boolean inFlight;
     private volatile boolean disconnected;
 
     public HttpMcpTransport(URI endpoint, Duration timeout, Supplier<String> bearerToken) {
@@ -49,9 +51,15 @@ public final class HttpMcpTransport implements McpTransport {
     @Override
     public synchronized Map<String, Object> exchange(
             Map<String, Object> message, CancellationToken cancellation) {
-        if (closed || disconnected) throw BoundedJson.error("MCP_CLOSED");
-        byte[] bytes = BoundedJson.encode(message);
-        return McpIo.run(() -> post(message, bytes), timeout, cancellation, this::abort);
+        if (closed.get() || disconnected) throw BoundedJson.error("MCP_CLOSED");
+        inFlight = true;
+        try {
+            if (closed.get() || disconnected) throw BoundedJson.error("MCP_CLOSED");
+            byte[] bytes = BoundedJson.encode(message);
+            return McpIo.run(() -> post(message, bytes), timeout, cancellation, this::abort);
+        } finally {
+            inFlight = false;
+        }
     }
 
     private HttpRequest.Builder request() {
@@ -81,8 +89,10 @@ public final class HttpMcpTransport implements McpTransport {
                                 .POST(HttpRequest.BodyPublishers.ofByteArray(bytes))
                                 .build(),
                         HttpResponse.BodyHandlers.ofInputStream());
-        try (var input = new BufferedInputStream(response.body())) {
-            active.set(input);
+        var input = new BufferedInputStream(response.body());
+        try (input) {
+            active.add(input);
+            if (closed.get() || disconnected) throw BoundedJson.error("MCP_CLOSED");
             if (!McpIo.expectsResponse(message)) {
                 if (response.statusCode() != 202 || input.read() != -1)
                     throw BoundedJson.error("MCP_PROTOCOL_ERROR");
@@ -137,7 +147,7 @@ public final class HttpMcpTransport implements McpTransport {
                         var rejection = McpIo.rejection(incoming);
                         // A client response is a separate POST, never an execution capability.
                         post(rejection, BoundedJson.encode(rejection));
-                        active.set(input);
+                        if (closed.get() || disconnected) throw BoundedJson.error("MCP_CLOSED");
                     } else McpIo.notification(incoming);
                 } else if (line.startsWith("data:")) {
                     String part = line.substring(5);
@@ -148,40 +158,47 @@ public final class HttpMcpTransport implements McpTransport {
             }
             throw BoundedJson.error("MCP_MESSAGE_LIMIT");
         } finally {
-            active.set(null);
+            active.remove(input);
         }
     }
 
     private void abort() {
         disconnected = true;
-        var input = active.getAndSet(null);
-        if (input != null)
+        for (var input : active) {
             try {
                 input.close();
             } catch (IOException ignored) {
-                /* bounded disconnect */
+                /* revoked connection */
             }
+            active.remove(input);
+        }
         client.shutdownNow();
     }
 
     @Override
-    public synchronized void close() {
-        if (closed) return;
-        closed = true;
+    public void close() {
+        if (!closed.compareAndSet(false, true)) return;
+        // Revocation never waits for exchange's monitor; an active operation is aborted
+        // immediately.
+        if (inFlight || disconnected) {
+            abort();
+            return;
+        }
         try {
-            if (session != null && !disconnected)
+            if (session != null)
                 McpIo.run(
                         () -> {
                             var response =
                                     client.send(
                                             request().DELETE().build(),
                                             HttpResponse.BodyHandlers.ofInputStream());
-                            try (var input = response.body()) {
-                                active.set(input);
+                            var input = response.body();
+                            active.add(input);
+                            try (input) {
                                 if (!Set.of(200, 204, 405).contains(response.statusCode()))
                                     throw BoundedJson.error("MCP_CLOSE_FAILED");
                             } finally {
-                                active.set(null);
+                                active.remove(input);
                             }
                             return true;
                         },

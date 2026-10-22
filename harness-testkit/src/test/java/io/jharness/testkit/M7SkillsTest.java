@@ -154,6 +154,8 @@ class M7SkillsTest {
                             "skill_demo__run_check", arguments, M7EcosystemFixture.approve());
             assertEquals(ToolStatus.FAILED, rejected.status());
             assertEquals("SKILL_REVISION_CHANGED", rejected.error().orElseThrow().code());
+            assertEquals(Boolean.FALSE, rejected.value().get("sideEffectUncertain"));
+            assertEquals(Boolean.TRUE, rejected.value().get("executionRejected"));
             assertFalse(Files.exists(directory.resolve("marker.txt")));
         }
     }

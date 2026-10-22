@@ -50,7 +50,7 @@ final class EcosystemCli {
                                                                         "JHARNESS_API_KEY"))
                                                 || e.getKey()
                                                         .matches(
-                                                                "(?i).*(_API_KEY|_TOKEN|_SECRET|_PASSWORD)$")
+                                                                "(?i).*(API_KEY|ACCESS_KEY_ID|SECRET_ACCESS_KEY|ACCESS_KEY|PRIVATE_KEY|CREDENTIALS|TOKEN|SECRET|PASSWORD|PASS)$")
                                                 || e.getKey()
                                                         .equals(
                                                                 EcosystemConfig.text(
@@ -266,6 +266,15 @@ final class EcosystemCli {
                 CliApplication.interact(
                         task, approvals, control, metadata.directory("runs"), input, out);
                 task.get();
+            } catch (Exception failure) {
+                try {
+                    sdk.cancel();
+                } catch (RuntimeException cleanup) {
+                    failure.addSuppressed(cleanup);
+                }
+                task.cancel(true);
+                worker.shutdownNow();
+                throw failure;
             } finally {
                 try {
                     Runtime.getRuntime().removeShutdownHook(hook);

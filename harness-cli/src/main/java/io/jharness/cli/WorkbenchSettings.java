@@ -7,7 +7,6 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /** Host-owned nonsecret settings. A successful save affects only subsequent SDK construction. */
 final class WorkbenchSettings implements HarnessWebServer.Settings, DataSanitizer {
@@ -29,7 +28,10 @@ final class WorkbenchSettings implements HarnessWebServer.Settings, DataSanitize
     private final SystemCredentials vault;
     private final Path file;
     private final String namespace;
-    private final List<String> secrets = new CopyOnWriteArrayList<>();
+    private final Set<String> secrets = new LinkedHashSet<>();
+    private volatile SecretRedactor redactor = new SecretRedactor(List.of());
+    private final Set<String> pendingCleanup = new LinkedHashSet<>();
+    private final Path cleanupFile;
     private final Map<String, String> credentialCache = new HashMap<>();
     private Map<String, Object> state;
     private boolean credentialCleanupPending;
@@ -45,6 +47,7 @@ final class WorkbenchSettings implements HarnessWebServer.Settings, DataSanitize
         this.metadata = metadata;
         this.vault = vault;
         file = metadata.directory("settings").resolve("workbench.json");
+        cleanupFile = file.resolveSibling("credential-cleanup.json");
         namespace =
                 "J-Harness/"
                         + Json.hash(
@@ -53,9 +56,10 @@ final class WorkbenchSettings implements HarnessWebServer.Settings, DataSanitize
                 (k, v) -> {
                     if (v != null
                             && !v.isBlank()
-                            && (k.matches("(?i).*(_API_KEY|_TOKEN|_SECRET|_PASSWORD)$")
+                            && (k.matches(
+                                            "(?i).*(API_KEY|ACCESS_KEY_ID|SECRET_ACCESS_KEY|ACCESS_KEY|PRIVATE_KEY|CREDENTIALS|TOKEN|SECRET|PASSWORD|PASS)$")
                                     || k.equals(base.string("apiKeyEnv", "JHARNESS_API_KEY"))))
-                        secrets.add(v);
+                        registerSecret(v);
                 });
         var extensions = new LinkedHashMap<String, Object>();
         Values.object(base.values.getOrDefault("ecosystem", Map.of()))
@@ -109,16 +113,27 @@ final class WorkbenchSettings implements HarnessWebServer.Settings, DataSanitize
         registerReferences(state);
         // Register all saved credentials before any data can be exposed by Web or SDK.
         for (var m : models(state)) keyAvailable(m);
+        if (Files.exists(cleanupFile, LinkOption.NOFOLLOW_LINKS)) {
+            var saved = Json.read(cleanupFile, 32768);
+            if (!(saved.get("refs") instanceof List<?> refs) || refs.size() > 128)
+                throw error("CREDENTIAL_CLEANUP_INVALID");
+            for (var ref : refs) {
+                if (!(ref instanceof String value) || !value.matches("[a-f0-9]{64}"))
+                    throw error("CREDENTIAL_CLEANUP_INVALID");
+                pendingCleanup.add(value);
+            }
+            cleanupCredentials();
+        }
     }
 
     @Override
     public String streamingText(String cumulative) {
-        return new SecretRedactor(List.copyOf(secrets)).streamingText(cumulative);
+        return redactor.streamingText(cumulative);
     }
 
     @Override
     public Map<String, Object> sanitize(Map<String, Object> value) {
-        return new SecretRedactor(List.copyOf(secrets)).sanitize(value);
+        return redactor.sanitize(value);
     }
 
     private String revision() {
@@ -195,7 +210,7 @@ final class WorkbenchSettings implements HarnessWebServer.Settings, DataSanitize
                         || secret.getBytes(StandardCharsets.UTF_8).length > 1024
                         || secret.chars().anyMatch(c -> c < 33 || c > 126))
                     throw error("INVALID_SETTINGS");
-                secrets.add(secret);
+                registerSecret(secret);
                 ref = Json.hash((id + ":" + secret).getBytes(StandardCharsets.UTF_8));
                 writes.put(ref, secret);
             }
@@ -222,28 +237,49 @@ final class WorkbenchSettings implements HarnessWebServer.Settings, DataSanitize
         if (bytes.length > 32768) throw error("INVALID_SETTINGS");
         var credentialWrites = new LinkedHashMap<String, String>();
         writes.forEach((ref, secret) -> credentialWrites.put(namespace + "/" + ref, secret));
-        vault.update(credentialWrites, List.of());
-        credentialCache.putAll(writes);
-        // Recheck metadata and refuse linked/nonregular targets. Atomic replacement is mandatory.
-        metadata.directory("settings");
-        if (Files.exists(file, LinkOption.NOFOLLOW_LINKS)
-                && !Files.isRegularFile(file, LinkOption.NOFOLLOW_LINKS))
-            throw error("CONFIG_PATH_DENIED");
-        Path temp = Files.createTempFile(file.getParent(), "settings-", ".tmp");
+        // Persist intent before touching the vault. Only newly introduced references may be
+        // compensated.
+        var live = models(state).stream().map(m -> (String) m.get("credentialRef")).toList();
+        writes.keySet().stream().filter(ref -> !live.contains(ref)).forEach(pendingCleanup::add);
+        var intendedRefs =
+                models(candidate).stream().map(m -> (String) m.get("credentialRef")).toList();
+        live.stream()
+                .filter(ref -> !ref.isEmpty() && !intendedRefs.contains(ref))
+                .forEach(pendingCleanup::add);
+        persistCleanup();
         try {
-            try (var channel = java.nio.channels.FileChannel.open(temp, StandardOpenOption.WRITE)) {
-                var buffer = java.nio.ByteBuffer.wrap(bytes);
-                while (buffer.hasRemaining()) channel.write(buffer);
-                channel.force(true);
+            vault.update(credentialWrites, List.of());
+            // Recheck metadata and refuse linked/nonregular targets. Atomic replacement is
+            // mandatory.
+            metadata.directory("settings");
+            if (Files.exists(file, LinkOption.NOFOLLOW_LINKS)
+                    && !Files.isRegularFile(file, LinkOption.NOFOLLOW_LINKS))
+                throw error("CONFIG_PATH_DENIED");
+            Path temp = Files.createTempFile(file.getParent(), "settings-", ".tmp");
+            try {
+                try (var channel =
+                        java.nio.channels.FileChannel.open(temp, StandardOpenOption.WRITE)) {
+                    var buffer = java.nio.ByteBuffer.wrap(bytes);
+                    while (buffer.hasRemaining()) channel.write(buffer);
+                    channel.force(true);
+                }
+                Files.move(
+                        temp,
+                        file,
+                        StandardCopyOption.ATOMIC_MOVE,
+                        StandardCopyOption.REPLACE_EXISTING);
+            } finally {
+                Files.deleteIfExists(temp);
             }
-            Files.move(
-                    temp,
-                    file,
-                    StandardCopyOption.ATOMIC_MOVE,
-                    StandardCopyOption.REPLACE_EXISTING);
-        } finally {
-            Files.deleteIfExists(temp);
+        } catch (IOException | RuntimeException failure) {
+            try {
+                cleanupCredentials();
+            } catch (IOException | RuntimeException cleanup) {
+                failure.addSuppressed(cleanup);
+            }
+            throw failure;
         }
+        credentialCache.putAll(writes);
         var priorRefs =
                 models(state).stream()
                         .map(m -> (String) m.get("credentialRef"))
@@ -253,13 +289,41 @@ final class WorkbenchSettings implements HarnessWebServer.Settings, DataSanitize
                 models(candidate).stream().map(m -> (String) m.get("credentialRef")).toList();
         state = candidate;
         var obsolete = priorRefs.stream().filter(ref -> !nextRefs.contains(ref)).toList();
-        try {
-            vault.update(Map.of(), obsolete.stream().map(ref -> namespace + "/" + ref).toList());
-            obsolete.forEach(credentialCache::remove);
-        } catch (IOException | HarnessException ex) {
-            credentialCleanupPending = true;
-        }
+        pendingCleanup.addAll(obsolete);
+        cleanupCredentials();
         return read();
+    }
+
+    private synchronized void registerSecret(String secret) {
+        if (secrets.add(secret)) redactor = new SecretRedactor(List.copyOf(secrets));
+    }
+
+    private void persistCleanup() throws IOException {
+        if (pendingCleanup.size() > 128) throw error("CREDENTIAL_CLEANUP_LIMIT");
+        metadata.directory("settings");
+        Json.write(
+                cleanupFile,
+                Json.text(Map.of("refs", List.copyOf(pendingCleanup)))
+                        .getBytes(StandardCharsets.UTF_8));
+        credentialCleanupPending = !pendingCleanup.isEmpty();
+    }
+
+    private void cleanupCredentials() throws IOException {
+        var live = models(state).stream().map(m -> (String) m.get("credentialRef")).toList();
+        pendingCleanup.removeAll(live);
+        persistCleanup();
+        for (String ref : List.copyOf(pendingCleanup)) {
+            try {
+                vault.delete(namespace + "/" + ref);
+                credentialCache.remove(ref);
+                pendingCleanup.remove(ref);
+                persistCleanup();
+            } catch (IOException | HarnessException unavailable) {
+                credentialCleanupPending = true;
+                return;
+            }
+        }
+        credentialCleanupPending = false;
     }
 
     record RuntimeConfig(CliConfig config, Map<String, String> environment) {}
@@ -456,7 +520,7 @@ final class WorkbenchSettings implements HarnessWebServer.Settings, DataSanitize
                 credentialCache.put(ref, vault.read(namespace + "/" + ref));
             secret = credentialCache.get(ref);
         }
-        if (!secret.isEmpty() && !secrets.contains(secret)) secrets.add(secret);
+        if (!secret.isEmpty() && !secrets.contains(secret)) registerSecret(secret);
         return secret;
     }
 
@@ -525,7 +589,8 @@ final class WorkbenchSettings implements HarnessWebServer.Settings, DataSanitize
 
     private void register(String name) {
         String secret = environment.get(name);
-        if (secret != null && !secret.isBlank() && !secrets.contains(secret)) secrets.add(secret);
+        if (secret != null && !secret.isBlank() && !secrets.contains(secret))
+            registerSecret(secret);
     }
 
     private static List<Map<String, Object>> models(Map<String, Object> value) {

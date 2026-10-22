@@ -323,6 +323,11 @@ class PluginContainerTest {
     @Test
     void configIsPluginSpecificAndImmutableAndLifecycleCanBeObserved() {
         DefaultServiceRegistry registry = new DefaultServiceRegistry();
+        var source = new LinkedHashMap<String, Object>();
+        source.put("model", "fake");
+        var snapshot = new ConfigView(source);
+        source.put("model", "mutated");
+        source.put("extra", "late");
         List<String> facts = new java.util.concurrent.CopyOnWriteArrayList<>();
         HarnessPlugin p =
                 plugin(
@@ -330,6 +335,7 @@ class PluginContainerTest {
                         List.of(),
                         c -> {
                             assertEquals(Optional.of("fake"), c.config().get("model"));
+                            assertTrue(c.config().get("extra").isEmpty());
                             assertThrows(
                                     UnsupportedOperationException.class,
                                     () -> c.config().values().clear());
@@ -341,7 +347,7 @@ class PluginContainerTest {
                         registry,
                         List.of(p),
                         Set.of("p"),
-                        Map.of("p", new ConfigView(Map.of("model", "fake"))),
+                        Map.of("p", snapshot),
                         List.of())) {
             container.events().notify("*", e -> facts.add(e.type()));
             container.start();

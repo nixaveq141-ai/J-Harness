@@ -7,4 +7,9 @@ public interface PreparedToolCall {
     ToolResult run();
 
     ToolResult finish(ToolResult result);
+
+    /** Owner-thread abandonment: settle accepted preparation without entering its body. */
+    default ToolResult abandon(String callId, String reason) {
+        return finish(ToolResults.failure(callId, ToolStatus.CANCELLED, reason));
+    }
 }

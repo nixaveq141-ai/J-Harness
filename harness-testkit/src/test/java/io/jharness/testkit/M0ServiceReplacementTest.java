@@ -10,7 +10,10 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.Test;
 
-/** Same contract exercises baseline and replacement plugins without changing harness code. */
+/**
+ * M0 metadata/service-replacement contract: both fake loops compose a projection and call a model,
+ * but deliberately never dispatch a tool. Body execution is covered by M1 pipeline tests.
+ */
 class M0ServiceReplacementTest {
     private static final PluginScope SCOPE = new PluginScope("session", "agent");
 
@@ -26,6 +29,9 @@ class M0ServiceReplacementTest {
 
     private static void verifyContract(boolean replacement) {
         DefaultServiceRegistry services = new DefaultServiceRegistry();
+        var otherScope = new PluginScope("other-session", "agent");
+        var otherModel = new FakeLlm(List.of());
+        services.register(LlmClient.class, "default", otherModel, otherScope);
         FakeLlm llm = new FakeLlm(List.of(new ChatResponse("done", List.of(), Map.of())));
         AtomicInteger calls = new AtomicInteger();
         AtomicInteger toolExecutions = new AtomicInteger();
@@ -101,6 +107,8 @@ class M0ServiceReplacementTest {
             runHarness(services, container.events());
             assertEquals(replacement ? 10 : 1, calls.get());
             assertEquals(1, llm.requests().size());
+            assertSame(otherModel, services.require(LlmClient.class, "default", otherScope));
+            assertEquals("hello", llm.requests().getFirst().messages().getFirst().get("content"));
             assertEquals(1, tools.visibleTools(SCOPE).size());
             assertEquals(
                     0, toolExecutions.get()); // M0 contract does not execute real side effects.
@@ -113,6 +121,10 @@ class M0ServiceReplacementTest {
                     assertThrows(HarnessException.class, () -> tools.require("echo", SCOPE))
                             .code());
             assertTrue(services.find(AgentLoopFactory.class, "default", SCOPE).isEmpty());
+            assertTrue(services.find(ToolRegistry.class, "default", SCOPE).isEmpty());
+            assertTrue(services.find(LlmClient.class, "default", SCOPE).isEmpty());
+            assertTrue(services.find(SessionRepository.class, "default", SCOPE).isEmpty());
+            assertSame(otherModel, services.require(LlmClient.class, "default", otherScope));
         }
     }
 
@@ -122,6 +134,11 @@ class M0ServiceReplacementTest {
         try (SessionWriter writer =
                 sessions.openWriter(SCOPE.sessionId(), WriteOwnership.EXCLUSIVE)) {
             writer.append(SessionEvent.session(SCOPE.sessionId(), "session.created", Map.of()));
+            writer.append(
+                    SessionEvent.session(
+                            SCOPE.sessionId(),
+                            "user.message",
+                            Map.of("content", "hello", "role", "user")));
             SessionProjection projection =
                     new EventSessionProjection(sessions.openReader(SCOPE.sessionId()).events());
             AgentLoopDependencies dependencies =
@@ -130,11 +147,7 @@ class M0ServiceReplacementTest {
                             services.requireUnique(ToolRegistry.class, SCOPE),
                             writer,
                             projection,
-                            ignored ->
-                                    new ChatRequest(
-                                            List.of(Map.of("role", "user", "content", "hello")),
-                                            List.of(),
-                                            Map.of()),
+                            observed -> new ChatRequest(observed.messages(), List.of(), Map.of()),
                             events,
                             (call, context) -> PolicyEngine.Decision.DENY,
                             CancellationToken.NONE,

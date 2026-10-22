@@ -16,7 +16,7 @@ class M1ToolPipelineTest {
     @Test
     void simulatedDurableIntentIsFlushedBeforeWriteBodyAndFailureRemainsUnknown() {
         try (Fixture f = new Fixture()) {
-            AtomicBoolean flushed = new AtomicBoolean();
+            var flushedPrefix = new AtomicReference<List<SessionEvent>>();
             SessionWriter simulated =
                     new SessionWriter() {
                         @Override
@@ -31,7 +31,7 @@ class M1ToolPipelineTest {
 
                         @Override
                         public void flush() {
-                            flushed.set(true);
+                            flushedPrefix.set(List.copyOf(f.events()));
                         }
 
                         @Override
@@ -41,8 +41,12 @@ class M1ToolPipelineTest {
                     tool(
                             SideEffectLevel.WORKSPACE_WRITE,
                             call -> {
-                                assertTrue(flushed.get());
-                                assertTrue(f.types().contains("tool.intent"));
+                                assertNotNull(flushedPrefix.get());
+                                assertEquals("tool.intent", flushedPrefix.get().getLast().type());
+                                assertEquals(call.callId(), flushedPrefix.get().getLast().callId());
+                                assertFalse(
+                                        flushedPrefix.get().stream()
+                                                .anyMatch(e -> e.type().equals("tool.started")));
                                 throw new HarnessException(
                                         "TIMEOUT", "a private-sentinel in an exception");
                             }),
@@ -132,6 +136,23 @@ class M1ToolPipelineTest {
                             .orElseThrow()
                             .code());
             assertEquals(0, bodies.get());
+            var missing =
+                    f.pipeline.execute(
+                            new ToolInvocation(
+                                    "missing",
+                                    "never-registered",
+                                    Map.of("text", "x"),
+                                    SideEffectLevel.READ_ONLY),
+                            f.context(
+                                    f.writer,
+                                    allow(),
+                                    ApprovalService.rejectAll(),
+                                    CancellationToken.NONE));
+            assertEquals("UNKNOWN_TOOL", missing.error().orElseThrow().code());
+            assertEquals(
+                    ToolStatus.SUCCESS,
+                    f.run(Map.of("text", "valid"), allow(), ApprovalService.rejectAll()).status());
+            assertEquals(1, bodies.get());
         }
     }
 
@@ -206,15 +227,21 @@ class M1ToolPipelineTest {
                         return next.proceed(wrapped);
                     },
                     0);
-            f.run(
-                    Map.of("text", "original"),
-                    base,
-                    (call, c) -> {
-                        asks.incrementAndGet();
-                        return new ApprovalService.ApprovalDecision(false, "no", "user");
-                    });
+            ToolResult result =
+                    f.run(
+                            Map.of("text", "original"),
+                            base,
+                            (call, c) -> {
+                                asks.incrementAndGet();
+                                return new ApprovalService.ApprovalDecision(false, "no", "user");
+                            });
             assertEquals("rewritten", parameter.get());
             assertEquals(0, asks.get());
+            assertEquals(ToolStatus.SUCCESS, result.status());
+            assertEquals(
+                    ToolResults.event(result).get("value"),
+                    f.events().getLast().payload().get("value"));
+            assertEquals("SUCCESS", f.events().getLast().payload().get("status"));
         }
     }
 
@@ -241,6 +268,8 @@ class M1ToolPipelineTest {
     @Test
     void flushFailureWithSimulatedDurableWriterPreventsBodyEntry() {
         try (Fixture f = new Fixture()) {
+            var observed = new java.util.concurrent.CopyOnWriteArrayList<SessionEvent>();
+            f.bus.notify("checkpoint.failed", observed::add);
             AtomicBoolean body = new AtomicBoolean();
             f.tools.register(
                     tool(
@@ -280,6 +309,10 @@ class M1ToolPipelineTest {
                                     CancellationToken.NONE));
             assertEquals("CHECKPOINT_FAILED", result.error().orElseThrow().code());
             assertFalse(body.get());
+            assertFalse(f.types().contains("tool.started"));
+            f.bus.awaitNotifications(java.time.Duration.ofSeconds(2));
+            assertEquals(1, observed.size());
+            assertEquals("CHECKPOINT_FAILED", observed.getFirst().payload().get("code"));
         }
     }
 

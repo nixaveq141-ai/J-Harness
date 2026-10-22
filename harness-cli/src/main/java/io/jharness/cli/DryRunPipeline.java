@@ -33,9 +33,10 @@ final class DryRunPipeline implements ToolPipeline {
         var policy =
                 context.events()
                         .invoke(PolicyExtensionPoints.EVALUATE, context.policy(), value -> value);
+        var decision =
+                policy.evaluate(call, new ToolContext(context.scope(), context.cancellation()));
         Map<String, Object> plan =
-                policy.evaluate(call, new ToolContext(context.scope(), context.cancellation()))
-                                == PolicyEngine.Decision.DENY
+                decision == null || decision == PolicyEngine.Decision.DENY
                         ? Map.of(
                                 "previewable",
                                 false,

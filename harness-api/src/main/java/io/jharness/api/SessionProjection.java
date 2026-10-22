@@ -18,7 +18,12 @@ public interface SessionProjection {
                         || event.payload().get("value") instanceof Map<?, ?> value
                                 && Boolean.TRUE.equals(value.get("sideEffectUncertain")))
                     pending.add(event.callId());
-                else pending.remove(event.callId());
+                else if ("SUCCESS".equals(event.payload().get("status"))
+                        || event.payload().get("value") instanceof Map<?, ?> value
+                                && Boolean.FALSE.equals(value.get("sideEffectUncertain"))
+                        || Boolean.FALSE.equals(event.payload().get("bodyEntered"))
+                        || "READ_ONLY".equals(event.payload().get("sideEffectLevel")))
+                    pending.remove(event.callId());
             }
             if (event.type().equals("tool.verified")) pending.remove(event.callId());
         }

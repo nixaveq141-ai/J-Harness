@@ -9,6 +9,8 @@ public final class PlanningPlugin implements HarnessPlugin {
     private SessionReader reader;
     private SessionWriter writer;
     private volatile boolean active;
+    private final java.util.concurrent.locks.ReentrantLock operation =
+            new java.util.concurrent.locks.ReentrantLock();
 
     public String id() {
         return "planning";
@@ -18,7 +20,7 @@ public final class PlanningPlugin implements HarnessPlugin {
         return "1.7";
     }
 
-    public void start(PluginContext context) {
+    public synchronized void start(PluginContext context) {
         scope = context.scope();
         reader = context.services().requireUnique(SessionReader.class, scope);
         writer = context.services().requireUnique(SessionWriter.class, scope);
@@ -31,6 +33,15 @@ public final class PlanningPlugin implements HarnessPlugin {
 
     public void stop() {
         active = false;
+        boolean acquired;
+        try {
+            acquired = operation.tryLock(2, java.util.concurrent.TimeUnit.SECONDS);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+            throw BoundedJson.error("PLAN_SETTLEMENT_PENDING");
+        }
+        if (!acquired) throw BoundedJson.error("PLAN_SETTLEMENT_PENDING");
+        operation.unlock();
     }
 
     private Map<String, Object> todos() {
@@ -50,6 +61,7 @@ public final class PlanningPlugin implements HarnessPlugin {
     }
 
     private void save(String type, Map<String, Object> state) {
+        if (!active) throw BoundedJson.error("PLUGIN_CLOSED");
         writer.append(SessionEvent.session(scope.sessionId(), type, state));
         writer.flush();
     }
@@ -151,7 +163,9 @@ public final class PlanningPlugin implements HarnessPlugin {
         }
 
         public ToolResult execute(ToolInvocation call, ToolContext context) {
-            synchronized (PlanningPlugin.this) {
+            operation.lock();
+            boolean mutationAttempted = false;
+            try {
                 if (!active || !scope.equals(context.scope()))
                     throw BoundedJson.error("SCOPE_DENIED");
                 context.cancellation().throwIfCancelled();
@@ -172,6 +186,7 @@ public final class PlanningPlugin implements HarnessPlugin {
                         evidence((List<?>) args.get("evidence"), 1);
                     result = new LinkedHashMap<>(args);
                     result.put("revision", ((Number) args.get("revision")).intValue() + 1);
+                    mutationAttempted = true;
                     save("todo.changed", result);
                 } else {
                     var current = plan();
@@ -200,6 +215,7 @@ public final class PlanningPlugin implements HarnessPlugin {
                         result.put("evidence", args.get("evidence"));
                     }
                     result.put("revision", ((Number) args.get("revision")).intValue() + 1);
+                    mutationAttempted = true;
                     save("plan.changed", result);
                 }
                 return new ToolResult(
@@ -209,6 +225,19 @@ public final class PlanningPlugin implements HarnessPlugin {
                         BoundedJson.text(result),
                         result,
                         Optional.empty());
+            } catch (HarnessException rejection) {
+                // Validation failures before the append boundary are known non-executions.
+                // A failed append/flush may already have committed and remains uncertain.
+                if (mutationAttempted) throw rejection;
+                return new ToolResult(
+                        call.callId(),
+                        ToolStatus.FAILED,
+                        Map.of("sideEffectUncertain", false, "executionRejected", true),
+                        rejection.code(),
+                        Map.of(),
+                        Optional.of(new ToolResult.ErrorInfo(rejection.code(), rejection.code())));
+            } finally {
+                operation.unlock();
             }
         }
     }

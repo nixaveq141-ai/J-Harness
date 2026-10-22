@@ -95,6 +95,7 @@ class M6ConfigurationTest {
                                 new Arguments(
                                         new String[] {"--profile", "p", "--model-route", "a"}))
                         .string("model", ""));
+        String inlineSecret = "synthetic-inline-route-secret";
         assertThrows(
                 HarnessException.class,
                 () ->
@@ -109,17 +110,24 @@ class M6ConfigurationTest {
                 () ->
                         ConfigurationSelection.resolve(
                                 source, new Arguments(new String[] {"--profile", "missing"})));
-        assertThrows(
-                HarnessException.class,
-                () ->
-                        ConfigurationSelection.resolve(
-                                new CliConfig(
-                                        Map.of(
-                                                "models",
+        var inlineRejected =
+                assertThrows(
+                        HarnessException.class,
+                        () ->
+                                ConfigurationSelection.resolve(
+                                        new CliConfig(
                                                 Map.of(
-                                                        "bad",
-                                                        Map.of("model", "x", "apiKey", "inline")))),
-                                new Arguments(new String[] {"--model-route", "bad"})));
+                                                        "models",
+                                                        Map.of(
+                                                                "bad",
+                                                                Map.of(
+                                                                        "model",
+                                                                        "x",
+                                                                        "apiKey",
+                                                                        inlineSecret)))),
+                                        new Arguments(new String[] {"--model-route", "bad"})));
+        assertEquals("INVALID_CONFIG", inlineRejected.code());
+        assertFalse(inlineRejected.toString().contains(inlineSecret));
     }
 
     @Test

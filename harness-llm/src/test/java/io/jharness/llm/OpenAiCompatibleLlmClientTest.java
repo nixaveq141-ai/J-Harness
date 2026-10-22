@@ -19,6 +19,24 @@ class OpenAiCompatibleLlmClientTest {
     private static final ObjectMapper JSON = new ObjectMapper();
 
     @Test
+    void sensitiveToolIdentityIsRejectedRatherThanRenamedIntoCollision() throws Exception {
+        for (String response :
+                List.of(
+                        toolResponse("{}", false).replace("c1", KEY),
+                        toolResponse("{}", false).replace("read", KEY))) {
+            try (Server server = new Server(exchange -> reply(exchange, 200, response));
+                    var client = server.client(Duration.ofSeconds(3), 4096, 0)) {
+                var failure =
+                        assertThrows(
+                                HarnessException.class,
+                                () -> client.complete(request(), CancellationToken.NONE));
+                assertEquals("UNSAFE_TOOL_IDENTITY", failure.code());
+                assertFalse(failure.getMessage().contains(KEY));
+            }
+        }
+    }
+
+    @Test
     void textRequestHasConfiguredModelHeaderAndPreparedEnvelopeWithoutSecret() throws Exception {
         try (Server server = new Server(exchange -> reply(exchange, 200, text("hello")))) {
             try (OpenAiCompatibleLlmClient client = server.client(Duration.ofSeconds(3), 4096, 0)) {

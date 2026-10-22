@@ -240,6 +240,129 @@ class M1055QuestionsTest {
     }
 
     @Test
+    void answeringQuestionDoesNotAuthorizeGenuineWorkspaceWrite() throws Exception {
+        var calls =
+                List.of(
+                        new ToolInvocation(
+                                "question-call",
+                                "ask_user",
+                                spec("text", 5),
+                                SideEffectLevel.SYSTEM_IMPACT),
+                        new ToolInvocation(
+                                "write-call",
+                                "write_file",
+                                Map.of("path", "denied.txt", "content", "not allowed"),
+                                SideEffectLevel.WORKSPACE_WRITE));
+        var model =
+                new FakeLlm(
+                        List.of(
+                                new ChatResponse("", calls, Map.of()),
+                                new ChatResponse("Done", List.of(), Map.of())),
+                        8192);
+        try (var sdk = open("genuine-write", model);
+                var worker = Executors.newSingleThreadExecutor()) {
+            var run = worker.submit(() -> sdk.run("ask then write", CancellationToken.NONE));
+            var q = pending(sdk);
+            sdk.questions().respond(answer(q, "answer-real", List.of(), "I answered only", false));
+            run.get(4, TimeUnit.SECONDS);
+            assertFalse(Files.exists(root.resolve("workspace/denied.txt")));
+            assertTrue(
+                    sdk.snapshot().events().stream()
+                            .anyMatch(
+                                    e ->
+                                            e.type().equals("approval.decided")
+                                                    && "write-call".equals(e.callId())
+                                                    && Boolean.FALSE.equals(
+                                                            e.payload().get("approved"))));
+        }
+    }
+
+    @Test
+    void persistedAnswerFingerprintOmitsRawSensitiveTextAndSurvivesRestartComparison()
+            throws Exception {
+        var model = model(spec("text", 5), false);
+        Map<String, Object> input;
+        try (var sdk = open("fingerprint", model);
+                var executor = Executors.newSingleThreadExecutor()) {
+            var running = executor.submit(() -> sdk.run("ask", CancellationToken.NONE));
+            input = answer(pending(sdk), "sensitive-answer", List.of(), SECRET, false);
+            sdk.questions().respond(input);
+            running.get(4, TimeUnit.SECONDS);
+        }
+        var events =
+                new JsonlSessionRepository(root.resolve("sessions"))
+                        .openReader("fingerprint")
+                        .events();
+        var resolved =
+                events.stream()
+                        .filter(event -> event.type().equals("question.resolved"))
+                        .findFirst()
+                        .orElseThrow();
+        var nonSensitive = new TreeMap<>(input);
+        nonSensitive.remove("text");
+        String expected =
+                HexFormat.of()
+                        .formatHex(
+                                java.security.MessageDigest.getInstance("SHA-256")
+                                        .digest(
+                                                new com.fasterxml.jackson.databind.ObjectMapper()
+                                                        .writeValueAsBytes(nonSensitive)));
+        assertEquals(expected, resolved.payload().get("answerHash"));
+        assertEquals(2, ((Number) resolved.payload().get("answerFingerprintVersion")).intValue());
+        assertEquals(
+                "ANSWERED",
+                UserQuestionsPlugin.recorded(events, input, new SecretRedactor(List.of(SECRET)))
+                        .get("state"));
+        // Persisted v2 compares sanitized text, deliberately not an oracle for the raw secret.
+        var equivalent = new LinkedHashMap<>(input);
+        equivalent.put("text", "[REDACTED]");
+        assertEquals(
+                "ANSWERED",
+                UserQuestionsPlugin.recorded(
+                                events, equivalent, new SecretRedactor(List.of(SECRET)))
+                        .get("state"));
+        var changed = new LinkedHashMap<>(input);
+        changed.put("text", "different public answer");
+        assertEquals(
+                "ANSWER_CONFLICT",
+                assertThrows(
+                                HarnessException.class,
+                                () ->
+                                        UserQuestionsPlugin.recorded(
+                                                events,
+                                                changed,
+                                                new SecretRedactor(List.of(SECRET))))
+                        .code());
+        assertFalse(events.toString().contains(SECRET));
+    }
+
+    @Test
+    void stopWaitsForOwnerSettlementAndKeepsAnAlreadyAcceptedAnswer() throws Exception {
+        try (var sdk = open("stop-answer", model(spec("text", 5), false));
+                var executor = Executors.newSingleThreadExecutor()) {
+            var running = executor.submit(() -> sdk.run("ask", CancellationToken.NONE));
+            var service = sdk.questions();
+            var input = answer(pending(sdk), "accepted", List.of(), "accepted before stop", false);
+            service.respond(input);
+            ((UserQuestionsPlugin) service).stop();
+            running.get(4, TimeUnit.SECONDS);
+            var resolved =
+                    sdk.snapshot().events().stream()
+                            .filter(event -> event.type().equals("question.resolved"))
+                            .toList();
+            assertEquals(1, resolved.size());
+            assertEquals("ANSWERED", resolved.getFirst().payload().get("state"));
+            assertEquals("accepted before stop", resolved.getFirst().payload().get("text"));
+            assertEquals(TaskStatus.COMPLETED, sdk.snapshot().status());
+            assertEquals(
+                    2,
+                    running.get().events().stream()
+                            .filter(event -> event.type().equals("model.requested"))
+                            .count());
+        }
+    }
+
+    @Test
     void draftAndAnswerAreRedactedAndDuplicateConflictsAreBounded() throws Exception {
         var model = model(spec("text", 5), false);
         try (var sdk = open("private", model);
@@ -253,6 +376,7 @@ class M1055QuestionsTest {
             draft.put("revision", 0);
             var saved = sdk.questions().draft(draft);
             assertEquals(1L, saved.get("revision"));
+            assertFalse(saved.toString().contains(SECRET));
             assertEquals(
                     "DRAFT_CONFLICT",
                     assertThrows(HarnessException.class, () -> sdk.questions().draft(draft))
@@ -282,6 +406,15 @@ class M1055QuestionsTest {
                     sdk.snapshot().events().stream()
                             .filter(e -> e.type().equals("question.resolved"))
                             .count());
+        }
+        // Scan after closing the writer so Windows lock files can be inspected as bytes too.
+        try (var persisted = Files.walk(root)) {
+            for (var path : persisted.filter(Files::isRegularFile).toList())
+                assertFalse(
+                        new String(
+                                        Files.readAllBytes(path),
+                                        java.nio.charset.StandardCharsets.UTF_8)
+                                .contains(SECRET));
         }
     }
 

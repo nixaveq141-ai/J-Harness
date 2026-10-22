@@ -15,6 +15,7 @@ public final class DockerExecutionEnvironment implements ExecutionEnvironment {
     private final RemoteWorkspace files;
     private final WorkspaceSearchFilter searchFilter;
     private volatile boolean closed;
+    private volatile boolean removed;
 
     public DockerExecutionEnvironment(
             String docker, String image, Path workspace, Path workerJar, CommandTransport transport)
@@ -77,15 +78,19 @@ public final class DockerExecutionEnvironment implements ExecutionEnvironment {
                 transport.call(
                         command, new byte[0], Duration.ofSeconds(15), CancellationToken.NONE);
         if (reply.exitCode() != 0 || reply.uncertain()) {
-            if (reply.started())
-                transport.call(
-                        List.of(docker, "rm", "--force", name),
-                        new byte[0],
-                        Duration.ofSeconds(5),
-                        CancellationToken.NONE);
-            throw BoundedJson.error(
-                    reply.started() ? "CONTAINER_START_FAILED" : "DOCKER_UNAVAILABLE");
+            HarnessException failure =
+                    BoundedJson.error(
+                            reply.started() ? "CONTAINER_START_FAILED" : "DOCKER_UNAVAILABLE");
+            if (reply.started()) {
+                try {
+                    removeContainer();
+                } catch (RuntimeException cleanup) {
+                    failure.addSuppressed(cleanup);
+                }
+            }
+            throw failure;
         }
+
         files =
                 new RemoteWorkspace(
                         (request, cancellation) -> {
@@ -107,15 +112,40 @@ public final class DockerExecutionEnvironment implements ExecutionEnvironment {
                                                     "/workspace"),
                                             BoundedJson.encode(wire),
                                             Duration.ofSeconds(15),
-                                            cancellation);
-                            if (answer.uncertain()) {
-                                if (!Set.of("write", "edit", "patch").contains(request.get("op")))
-                                    throw BoundedJson.error("ENVIRONMENT_READ_INTERRUPTED");
-                                close();
-                                throw BoundedJson.error("ENVIRONMENT_OPERATION_UNKNOWN");
+                                            () -> closed || cancellation.isCancelled());
+                            boolean mutating =
+                                    Set.of("write", "edit", "patch").contains(request.get("op"));
+                            if (answer.uncertain() || answer.exitCode() != 0 || closed) {
+                                if (!mutating || !answer.started())
+                                    throw BoundedJson.error(
+                                            answer.uncertain()
+                                                    ? "ENVIRONMENT_READ_INTERRUPTED"
+                                                    : "ENVIRONMENT_IO");
+                                var unknown = BoundedJson.error("ENVIRONMENT_OPERATION_UNKNOWN");
+                                try {
+                                    close();
+                                } catch (RuntimeException cleanup) {
+                                    unknown.addSuppressed(cleanup);
+                                }
+                                throw unknown;
                             }
-                            if (answer.exitCode() != 0) throw BoundedJson.error("ENVIRONMENT_IO");
-                            var response = BoundedJson.decode(answer.stdout());
+                            Map<String, Object> response;
+                            try {
+                                response = BoundedJson.decode(answer.stdout());
+                            } catch (RuntimeException invalid) {
+                                if (!mutating) throw invalid;
+                                var unknown =
+                                        new HarnessException(
+                                                "ENVIRONMENT_OPERATION_UNKNOWN",
+                                                "Worker response unavailable",
+                                                invalid);
+                                try {
+                                    close();
+                                } catch (RuntimeException cleanup) {
+                                    unknown.addSuppressed(cleanup);
+                                }
+                                throw unknown;
+                            }
                             if (!searchFilter.equals(WorkspaceSearchFilter.defaults())
                                     && !searchFilter
                                             .configuration()
@@ -199,9 +229,9 @@ public final class DockerExecutionEnvironment implements ExecutionEnvironment {
                                         "/workspace"),
                                 BoundedJson.encode(payload),
                                 request.timeout().plusSeconds(5),
-                                cancellation);
-                if (reply.uncertain()) {
-                    close();
+                                () -> closed || cancellation.isCancelled());
+                if (reply.uncertain() || reply.exitCode() != 0 && reply.started() || closed) {
+                    String cleanup = cleanupForUnknown();
                     return new ToolResult(
                             request.callId(),
                             ToolStatus.UNKNOWN,
@@ -211,30 +241,50 @@ public final class DockerExecutionEnvironment implements ExecutionEnvironment {
                                     "sideEffectUncertain",
                                     true,
                                     "cleanupStatus",
-                                    "container_removed"),
+                                    cleanup),
                             "Container command outcome unknown",
-                            Map.of("cleanupStatus", "container_removed"),
+                            Map.of("cleanupStatus", cleanup),
                             Optional.empty());
                 }
                 if (reply.exitCode() != 0) throw BoundedJson.error("ENVIRONMENT_IO");
-                var envelope = BoundedJson.decode(reply.stdout());
-                if (envelope.get("error") instanceof String code) throw BoundedJson.error(code);
-                var result = Values.object(envelope.get("value"));
-                var value = new LinkedHashMap<>(Values.object(result.get("value")));
-                value.put("environmentId", id());
-                ToolStatus status = ToolStatus.valueOf((String) result.get("status"));
-                if (Boolean.TRUE.equals(value.get("sideEffectUncertain"))
-                        || status == ToolStatus.UNKNOWN) {
-                    close();
-                    value.put("containerCleanup", "removed");
+                try {
+                    var envelope = BoundedJson.decode(reply.stdout());
+                    if (envelope.get("error") instanceof String code) throw BoundedJson.error(code);
+                    var result = Values.object(envelope.get("value"));
+                    var value = new LinkedHashMap<>(Values.object(result.get("value")));
+                    value.put("environmentId", id());
+                    ToolStatus status = ToolStatus.valueOf((String) result.get("status"));
+                    if (Boolean.TRUE.equals(value.get("sideEffectUncertain"))
+                            || status == ToolStatus.UNKNOWN) {
+                        status = ToolStatus.UNKNOWN;
+                        value.put("sideEffectUncertain", true);
+                        value.put("containerCleanup", cleanupForUnknown());
+                    }
+                    return new ToolResult(
+                            request.callId(),
+                            status,
+                            value,
+                            (String) result.get("modelContent"),
+                            Values.object(result.get("display")),
+                            Optional.empty());
+                } catch (RuntimeException unavailable) {
+                    String cleanup = cleanupForUnknown();
+                    return new ToolResult(
+                            request.callId(),
+                            ToolStatus.UNKNOWN,
+                            Map.of(
+                                    "environment",
+                                    id(),
+                                    "sideEffectUncertain",
+                                    true,
+                                    "controlExitCode",
+                                    reply.exitCode(),
+                                    "cleanupStatus",
+                                    cleanup),
+                            "Container command response unavailable; execution outcome unknown",
+                            Map.of("cleanupStatus", cleanup),
+                            Optional.empty());
                 }
-                return new ToolResult(
-                        request.callId(),
-                        status,
-                        value,
-                        (String) result.get("modelContent"),
-                        Values.object(result.get("display")),
-                        Optional.empty());
             }
         };
     }
@@ -275,17 +325,31 @@ public final class DockerExecutionEnvironment implements ExecutionEnvironment {
         return Map.copyOf(result);
     }
 
-    @Override
-    public synchronized void close() {
-        if (closed) return;
+    private String cleanupForUnknown() {
+        try {
+            close();
+            return "container_removed";
+        } catch (RuntimeException cleanup) {
+            return "container_cleanup_unknown";
+        }
+    }
+
+    private void removeContainer() {
         var reply =
                 transport.call(
                         List.of(docker, "rm", "--force", name),
                         new byte[0],
                         Duration.ofSeconds(5),
                         CancellationToken.NONE);
-        closed = true;
         if (reply.exitCode() != 0 || reply.uncertain())
-            throw BoundedJson.error("CONTAINER_CLEANUP_UNKNOWN");
+            throw new HarnessException(
+                    "CONTAINER_CLEANUP_UNKNOWN", "Container cleanup unknown: " + name);
+        removed = true;
+    }
+
+    @Override
+    public synchronized void close() {
+        closed = true; // capabilities revoked even when removal fails; close may retry removal only
+        if (!removed) removeContainer();
     }
 }

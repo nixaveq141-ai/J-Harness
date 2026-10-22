@@ -43,6 +43,11 @@ public final class FakeLlm implements LlmClient {
     }
 
     @Override
+    public ChatResponse completeSingleAttempt(ChatRequest request, CancellationToken cancellation) {
+        return complete(request, cancellation);
+    }
+
+    @Override
     public StreamHandle stream(ChatRequest request, CancellationToken cancellation) {
         throw new HarnessException("UNSUPPORTED", "Fake LLM does not support streaming");
     }

@@ -123,7 +123,19 @@ class M3RuntimeIntegrationTest {
             FakeLlm llm = new FakeLlm(List.of(reply(call), reply()));
             f.loop(llm, new Budget(5, Duration.ofSeconds(10)), ApiCostGuard.unavailable(), APPROVE)
                     .run(CancellationToken.NONE);
-            assertEquals("UNKNOWN_SIDE_EFFECT", f.events().getLast().payload().get("reason"));
+            assertEquals("TIMEOUT", f.events().getLast().payload().get("reason"));
+            var completion =
+                    f.events().stream()
+                            .filter(
+                                    event ->
+                                            event.type().equals("tool.completed")
+                                                    && "timed".equals(event.callId()))
+                            .findFirst()
+                            .orElseThrow();
+            assertEquals("TIMEOUT", completion.payload().get("status"));
+            assertEquals(
+                    Boolean.TRUE,
+                    Values.object(completion.payload().get("value")).get("sideEffectUncertain"));
             assertEquals(1, llm.requests().size());
             f.loop(llm, new Budget(5, Duration.ofSeconds(10)), ApiCostGuard.unavailable(), APPROVE)
                     .run(CancellationToken.NONE);
@@ -170,6 +182,7 @@ class M3RuntimeIntegrationTest {
                                 .anyMatch(
                                         e ->
                                                 e.type().equals("approval.decided")
+                                                        && call.callId().equals(e.callId())
                                                         && Boolean.FALSE.equals(
                                                                 e.payload().get("approved"))));
             }

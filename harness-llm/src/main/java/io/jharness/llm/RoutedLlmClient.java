@@ -39,6 +39,11 @@ public final class RoutedLlmClient implements LlmClient, ModelRouter {
     }
 
     @Override
+    public boolean supportsSingleAttempt() {
+        return selected.supportsSingleAttempt();
+    }
+
+    @Override
     public ChatResponse completeSingleAttempt(ChatRequest request, CancellationToken cancellation) {
         return selected.completeSingleAttempt(request, cancellation);
     }

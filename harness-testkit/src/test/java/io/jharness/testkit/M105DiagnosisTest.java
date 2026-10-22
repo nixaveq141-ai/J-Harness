@@ -23,6 +23,34 @@ class M105DiagnosisTest {
         assertFalse(diagnosis.toString().contains("synthetic-long-secret"));
     }
 
+    @Test
+    void freeEventAndCallIdentifiersAreSanitizedAndBoundedForDisplay() {
+        String id = "synthetic-id-private";
+        var event =
+                new SessionEvent(
+                        id,
+                        "session",
+                        "tool.completed",
+                        Instant.now(),
+                        1,
+                        EventLevel.TOOL,
+                        "turn",
+                        "step",
+                        id,
+                        Map.of("status", "FAILED", "error", Map.of("code", "fixture")));
+        var row =
+                Values.object(
+                        ((List<?>)
+                                        TaskDiagnosis.inspect(
+                                                        List.of(event),
+                                                        new SecretRedactor(List.of(id)))
+                                                .get("issues"))
+                                .getFirst());
+        assertFalse(row.toString().contains(id));
+        assertEquals("[REDACTED]", row.get("eventId"));
+        assertEquals("[REDACTED]", row.get("callId"));
+    }
+
     private static SessionEvent tool(String type, String call, Map<String, Object> payload) {
         return new SessionEvent(
                 UUID.randomUUID().toString(),

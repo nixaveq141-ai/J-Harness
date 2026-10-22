@@ -307,8 +307,15 @@ public final class SkillsPlugin implements HarnessPlugin {
             var script = scripts.get(name);
             if (!arguments().equals(args.arguments())) throw BoundedJson.error("APPROVAL_MISMATCH");
             if (!script.version().equals(environment.files().versionOf(script.path())))
-                return ToolResults.failure(
-                        args.callId(), ToolStatus.FAILED, "SKILL_REVISION_CHANGED");
+                return new ToolResult(
+                        args.callId(),
+                        ToolStatus.FAILED,
+                        Map.of("sideEffectUncertain", false, "executionRejected", true),
+                        "SKILL_REVISION_CHANGED",
+                        Map.of(),
+                        Optional.of(
+                                new ToolResult.ErrorInfo(
+                                        "SKILL_REVISION_CHANGED", "SKILL_REVISION_CHANGED")));
             var configured = spec.scripts().get(name);
             var result =
                     environment

@@ -144,6 +144,8 @@ public final class WebFetchPlugin implements HarnessPlugin {
                             .build();
             CompletableFuture<HttpResponse<InputStream>> pending = null;
             Future<byte[]> reading = null;
+            var abandoned = new java.util.concurrent.atomic.AtomicBoolean();
+            var received = new AtomicReference<InputStream>();
             try {
                 context.cancellation().throwIfCancelled();
                 long deadline = System.nanoTime() + Duration.ofSeconds(10).toNanos();
@@ -152,7 +154,8 @@ public final class WebFetchPlugin implements HarnessPlugin {
                 // headers.
                 pending.thenAccept(
                         response -> {
-                            if (closed || context.cancellation().isCancelled())
+                            received.set(response.body());
+                            if (abandoned.get() || closed || context.cancellation().isCancelled())
                                 try {
                                     response.body().close();
                                 } catch (IOException ignored) {
@@ -175,7 +178,19 @@ public final class WebFetchPlugin implements HarnessPlugin {
                 var value =
                         Map.<String, Object>of(
                                 "url",
-                                uri.toString(),
+                                new URI(
+                                                uri.getScheme(),
+                                                null,
+                                                uri.getHost(),
+                                                uri.getPort(),
+                                                uri.getPath(),
+                                                null,
+                                                null)
+                                        .toString(),
+                                "source",
+                                call.arguments().get("source"),
+                                "queryOmitted",
+                                uri.getRawQuery() != null,
                                 "untrusted",
                                 true,
                                 "sha256",
@@ -198,8 +213,15 @@ public final class WebFetchPlugin implements HarnessPlugin {
             } catch (Exception ex) {
                 throw BoundedJson.error("WEB_FETCH_FAILED");
             } finally {
+                abandoned.set(true);
                 if (pending != null && !pending.isDone()) pending.cancel(true);
                 var input = active.getAndSet(null);
+                var late = received.get();
+                try {
+                    if (late != null && late != input) late.close();
+                } catch (IOException ignored) {
+                }
+
                 try {
                     if (input != null) input.close();
                 } catch (IOException ignored) {

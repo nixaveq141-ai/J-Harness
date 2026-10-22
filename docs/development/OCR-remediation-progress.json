@@ -1,7 +1,7 @@
 {
   "updatedAt": "2026-10-21",
   "phase": "R1",
-  "status": "IMPLEMENTATION_IN_PROGRESS",
+  "status": "LOCAL_VALIDATED_CI_PENDING",
   "details": "docs/development/OCR-R1-remediation-2026-10-21.md",
   "productMilestone": "M10.5.9",
   "productStatus": "LOCAL_PARTIAL_CI_PENDING",
@@ -31,32 +31,42 @@
       "description": "本次36条采纳范围已实施；选定四fixture的Chrome/WebKit各134通过；原300条回归意见仍按R1～R6交付，不宣称484条全部关闭"
     },
     "R1-01": {
-      "status": "IN_PROGRESS",
-      "description": "按原逐条裁决实施与补故障/竞态回归；本地组内验证进行中，尚未统一验收"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "description": "原采纳范围已实施；30条本地验证。同runId新JAR回执通过，限制和对应用例逐条见R1实施台账；不代表远端CI/原生POSIX/Firefox或完整发布验收。"
     },
     "R1-02": {
-      "status": "IN_PROGRESS",
-      "description": "按原逐条裁决实施与补故障/竞态回归；本地组内验证进行中，尚未统一验收"
+      "status": "LOCAL_VALIDATED_PIPELINE_PENDING",
+      "description": "原采纳范围已实施；52条本地验证、4条精确故障窗口仍局部验证。同runId新JAR回执通过，限制和对应用例逐条见R1实施台账；不代表远端CI/原生POSIX/Firefox或完整发布验收。"
     },
     "R1-03": {
-      "status": "IN_PROGRESS",
-      "description": "按原逐条裁决实施与补故障/竞态回归；本地组内验证进行中，尚未统一验收"
+      "status": "LOCAL_VALIDATED_PIPELINE_PENDING",
+      "description": "原采纳范围已实施；26条本地验证、4条精确故障窗口仍局部验证。同runId新JAR回执通过，限制和对应用例逐条见R1实施台账；不代表远端CI/原生POSIX/Firefox或完整发布验收。"
     },
     "R1-04": {
-      "status": "IN_PROGRESS",
-      "description": "按原逐条裁决实施与补故障/竞态回归；本地组内验证进行中，尚未统一验收"
+      "status": "LOCAL_VALIDATED_PIPELINE_PENDING",
+      "description": "原采纳范围已实施；66条本地验证、6条精确故障窗口仍局部验证。同runId新JAR回执通过，限制和对应用例逐条见R1实施台账；不代表远端CI/原生POSIX/Firefox或完整发布验收。"
     },
     "R1-05": {
-      "status": "IN_PROGRESS",
-      "description": "按原逐条裁决实施与补故障/竞态回归；本地组内验证进行中，尚未统一验收"
+      "status": "LOCAL_VALIDATED_PIPELINE_PENDING",
+      "description": "原采纳范围已实施；19条本地验证、3条精确故障窗口仍局部验证。同runId新JAR回执通过，限制和对应用例逐条见R1实施台账；不代表远端CI/原生POSIX/Firefox或完整发布验收。"
     },
     "R1-06": {
-      "status": "IN_PROGRESS",
-      "description": "按原逐条裁决实施与补故障/竞态回归；本地组内验证进行中，尚未统一验收"
+      "status": "LOCAL_VALIDATED_PIPELINE_PENDING",
+      "description": "原采纳范围已实施；19条本地验证、1条精确故障窗口仍局部验证。同runId新JAR回执通过，限制和对应用例逐条见R1实施台账；不代表远端CI/原生POSIX/Firefox或完整发布验收。"
     },
     "R1-07": {
       "status": "IMPLEMENTED_LOCAL_VALIDATED",
-      "description": "历史付费/生成代码执行入口已阻断；有界只读历史检查不改账本；11项合成本地回归通过，保留未知费用，不发起模型调用"
+      "description": "原采纳范围已实施；7条本地验证。同runId新JAR回执通过，限制和对应用例逐条见R1实施台账；不代表远端CI/原生POSIX/Firefox或完整发布验收。"
     }
+  },
+  "r1": {
+    "status": "LOCAL_IMPLEMENTATION_VALIDATED_WITH_LIMITS_CI_PENDING",
+    "adoptedScopes": 237,
+    "originalAccepted": 113,
+    "originalPartial": 124,
+    "locallyValidatedScopes": 219,
+    "limitedVerificationScopes": 18,
+    "implementationLedger": "docs/development/OCR-R1-implementation-2026-10-21.json",
+    "results": "docs/testing/OCR-R1-2026-10-21-results.json"
   }
 }

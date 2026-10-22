@@ -7,12 +7,18 @@ public final class SecretRedactor implements DataSanitizer {
     private static final Set<String> KEYS =
             Set.of(
                     "apikey",
-                    "api_key",
+                    "xapikey",
                     "authorization",
                     "password",
                     "secret",
-                    "access_token",
-                    "refresh_token");
+                    "accesstoken",
+                    "refreshtoken",
+                    "clientsecret",
+                    "cookie",
+                    "setcookie",
+                    "token",
+                    "credential",
+                    "privatekey");
     private final List<String> secrets;
 
     public SecretRedactor(List<String> secrets) {
@@ -35,23 +41,68 @@ public final class SecretRedactor implements DataSanitizer {
 
     @Override
     public String streamingText(String cumulative) {
-        String clean = text(cumulative);
-        int hold = secrets.stream().mapToInt(String::length).max().orElse(0),
-                end = Math.max(0, clean.length() - hold);
-        if (end > 0 && Character.isHighSurrogate(clean.charAt(end - 1))) end--;
-        return clean.substring(0, end);
+        return streamingUpdate(cumulative).text();
+    }
+
+    public ModelDisplay.Update streamingUpdate(String cumulative) {
+        Objects.requireNonNull(cumulative);
+        boolean truncated = cumulative.length() > 65536;
+        if (cumulative.length() > 65536) cumulative = cumulative.substring(0, 65536);
+        int end = cumulative.length();
+        // Hold only a suffix that could become a known secret on a later delta.
+        for (String secret : secrets) {
+            int max = Math.min(secret.length() - 1, cumulative.length());
+            for (int size = max; size > 0; size--) {
+                if (cumulative.regionMatches(cumulative.length() - size, secret, 0, size)) {
+                    end = Math.min(end, cumulative.length() - size);
+                    break;
+                }
+            }
+        }
+        // A known complete secret spanning the cut must be withheld in its entirety.
+        boolean adjusted;
+        do {
+            adjusted = false;
+            for (String secret : secrets) {
+                for (int at = cumulative.indexOf(secret);
+                        at >= 0 && at < end;
+                        at = cumulative.indexOf(secret, at + 1)) {
+                    if (at + secret.length() > end) {
+                        end = at;
+                        adjusted = true;
+                        break;
+                    }
+                }
+            }
+        } while (adjusted);
+        if (end > 0 && Character.isHighSurrogate(cumulative.charAt(end - 1))) end--;
+        String clean = text(cumulative.substring(0, end));
+        truncated |= clean.length() > 65536;
+        int cut = Math.min(65536, clean.length());
+        int marker = clean.lastIndexOf("[REDACTED]", Math.max(0, cut - 1));
+        if (marker >= 0 && marker < cut && marker + "[REDACTED]".length() > cut) cut = marker;
+        if (cut > 0 && Character.isHighSurrogate(clean.charAt(cut - 1))) cut--;
+        return new ModelDisplay.Update(clean.substring(0, cut), truncated);
     }
 
     @Override
     public Map<String, Object> sanitize(Map<String, Object> data) {
         Map<String, Object> result = new LinkedHashMap<>();
         data.forEach(
-                (key, value) ->
-                        result.put(
-                                key,
-                                KEYS.contains(key.toLowerCase(Locale.ROOT))
-                                        ? "[REDACTED]"
-                                        : clean(value)));
+                (key, value) -> {
+                    String safeKey = text(key);
+                    if (result.containsKey(safeKey))
+                        throw new HarnessException(
+                                "REDACTION_KEY_COLLISION", "Redacted keys are ambiguous");
+                    result.put(
+                            safeKey,
+                            KEYS.contains(
+                                            key.toLowerCase(Locale.ROOT)
+                                                    .replace("-", "")
+                                                    .replace("_", ""))
+                                    ? "[REDACTED]"
+                                    : clean(value));
+                });
         return Values.snapshot(result);
     }
 

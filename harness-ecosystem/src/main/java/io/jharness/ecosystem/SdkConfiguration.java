@@ -10,6 +10,15 @@ public record SdkConfiguration(
         Map<String, Object> parameters,
         io.jharness.api.ToolSchedulingOptions scheduling,
         io.jharness.api.ModelResilienceOptions resilience) {
+    @Override
+    public String toString() {
+        return "SdkConfiguration[promptCharacters="
+                + prompt.length()
+                + ", tools="
+                + (tools == null ? "host-default" : tools.size())
+                + ", parameters=omitted]";
+    }
+
     public SdkConfiguration(
             String prompt,
             Set<String> tools,

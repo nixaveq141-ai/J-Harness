@@ -86,7 +86,12 @@ class M7CliEcosystemTest {
             var output = new ByteArrayOutputStream();
             try (var out = new PrintStream(output, true, StandardCharsets.UTF_8)) {
                 int exit =
-                        new CliApplication(Map.of("FIXTURE_API_KEY", "fixture-only"))
+                        new CliApplication(
+                                        Map.of(
+                                                "FIXTURE_API_KEY",
+                                                "fixture-only",
+                                                "MCP_TOKEN",
+                                                "mcp-secret-token"))
                                 .execute(
                                         new String[] {
                                             "run",
@@ -115,10 +120,13 @@ class M7CliEcosystemTest {
                             "mcp_peer__echo",
                             "todo_list",
                             "plan_view")) assertTrue(declared.contains(name), name);
-            String childTools = M4CliIntegrationTest.json(server.requests.get(1).get("tools"));
-            assertFalse(childTools.contains("delegate_task"));
-            assertFalse(childTools.contains("write_file"));
-            assertFalse(childTools.contains("mcp_peer"));
+            var childTools =
+                    ((List<?>) server.requests.get(1).get("tools"))
+                            .stream()
+                                    .map(Values::object)
+                                    .map(t -> Values.object(t.get("function")).get("name"))
+                                    .collect(java.util.stream.Collectors.toSet());
+            assertEquals(Set.of("read_file"), childTools);
             assertTrue(
                     M4CliIntegrationTest.json(server.requests.getFirst().get("messages"))
                             .contains("Project-local guidance fixture"));
@@ -148,6 +156,16 @@ class M7CliEcosystemTest {
             }
             try (var reports = Files.list(root.resolve(".jharness/reports"))) {
                 assertEquals(2, reports.count());
+            }
+            for (String secret : List.of("fixture-only", "mcp-secret-token")) {
+                assertFalse(output.toString(StandardCharsets.UTF_8).contains(secret));
+                assertFalse(server.requests.toString().contains(secret));
+                try (var files = Files.walk(root.resolve(".jharness"))) {
+                    for (var file : files.filter(Files::isRegularFile).toList())
+                        assertFalse(
+                                Files.readString(file).contains(secret),
+                                file.getFileName().toString());
+                }
             }
         }
     }

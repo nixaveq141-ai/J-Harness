@@ -585,6 +585,20 @@ class M7WebTest {
             long start = System.nanoTime();
             server.close();
             assertTrue(System.nanoTime() - start < Duration.ofSeconds(4).toNanos());
+            assertThrows(HarnessException.class, () -> server(profile, Duration.ofSeconds(1)));
+            release.countDown();
+            long cleanupDeadline = System.nanoTime() + Duration.ofSeconds(5).toNanos();
+            boolean ownerReleased = false;
+            while (System.nanoTime() < cleanupDeadline) {
+                try (var writer = catalog.openWriter("web-catalog", WriteOwnership.EXCLUSIVE)) {
+                    writer.flush();
+                    ownerReleased = true;
+                    break;
+                } catch (HarnessException busy) {
+                    Thread.sleep(10);
+                }
+            }
+            assertTrue(ownerReleased);
             try (var restored = server(profile, Duration.ofSeconds(1))) {
                 assertEquals(id, submit(restored, "interrupted"));
                 assertEquals(

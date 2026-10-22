@@ -10,7 +10,7 @@ import sys
 import zipfile
 from evidence_io import bounded_path, read_json_snapshot, atomic_write_json, stream_sha256
 from evidence_run import inputs, valid_run_id, validate as validate_command
-from evidence_checks import suite_snapshot, sdk_checks, native_checks, names, CONTRACT, firefox_unavailable, firefox_executable
+from evidence_checks import suite_snapshot, sdk_checks, native_checks, names, CONTRACT, firefox_unavailable, firefox_executable, validate_java_suites
 
 ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/'.build-cache/M10.5.9'
@@ -63,10 +63,8 @@ def collect(log):
     for p in sorted(ROOT.glob('harness-*/target/surefire-reports/TEST-*.xml')):
         suites.append(suite_snapshot(p,p.relative_to(ROOT).parts[0]))
     totals={k:sum(s[k] for s in suites) for k in ['tests','failures','errors','skipped']}
-    require(totals==dict(tests=410,failures=0,errors=0,skipped=0),'Incomplete Java verification')
     java_contract=load(ROOT/'scripts/contracts/m1059-java-cases.json')
-    expected_suites={(s['module'],s['name']):set(s['cases']) for s in java_contract['suites']}
-    require(len(suites)==len(expected_suites) and {(s['module'],s['name']):set(s['cases']) for s in suites}==expected_suites,'Wrong Java case identities')
+    validate_java_suites(suites,java_contract)
     client=(OUT/'client.log').read_text(encoding='utf-8',errors='replace')
     require(all(re.search(p,client) for p in [r'pass\s+33\b',r'fail\s+0\b',r'skipped\s+0\b']),'Frontend client failure')
     java=[ROOT/'pom.xml']+sorted(ROOT.glob('harness-*/pom.xml'))+sorted(ROOT.glob('harness-*/src/**/*.java'))

@@ -15,4 +15,9 @@ public record ConfigView(Map<String, Object> values) {
     public Optional<Object> get(String key) {
         return Optional.ofNullable(values.get(key));
     }
+
+    @Override
+    public String toString() {
+        return "ConfigView[values=" + values.size() + "]";
+    }
 }

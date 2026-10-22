@@ -14,8 +14,8 @@ import java.util.concurrent.*;
 public final class LocalTerminalSession implements TerminalSession {
     private final LocalWorkspace workspace;
     private final Map<String, String> environment;
-    private final SecretRedactor redactor;
     private final int hold;
+    private final List<String> secrets;
     private final Map<String, Task> tasks = new ConcurrentHashMap<>();
     private volatile boolean closed;
     private final ArtifactStore artifacts;
@@ -40,8 +40,12 @@ public final class LocalTerminalSession implements TerminalSession {
         this.artifacts = artifacts;
         this.session = session;
         this.workspace = Objects.requireNonNull(workspace);
-        this.environment = Map.copyOf(environment);
-        redactor = new SecretRedactor(secrets);
+        this.environment = LocalProcessRunner.validatedEnvironment(environment);
+        this.secrets =
+                secrets.stream()
+                        .filter(s -> s != null && !s.isEmpty())
+                        .sorted(Comparator.comparingInt(String::length).reversed())
+                        .toList();
         hold = secrets.stream().filter(Objects::nonNull).mapToInt(String::length).max().orElse(0);
     }
 
@@ -76,10 +80,10 @@ public final class LocalTerminalSession implements TerminalSession {
             }
             String id = UUID.randomUUID().toString();
             Task task = new Task(id, process, pty, request.timeout().toNanos(), request.callId());
-            tasks.put(id, task);
             task.begin();
+            tasks.put(id, task);
             return task.view();
-        } catch (IOException | LinkageError ex) {
+        } catch (IOException | LinkageError | IllegalArgumentException ex) {
             throw error(pty ? "PTY_UNAVAILABLE" : "PROCESS_IO");
         }
     }
@@ -100,9 +104,7 @@ public final class LocalTerminalSession implements TerminalSession {
         if (offset < 0 || limit < 1 || limit > 65536) throw error("INVALID_TERMINAL_PAGE");
         Task task = task(id);
         synchronized (task) {
-            String clean = redactor.text(task.output.toString());
-            if (task.process.isAlive())
-                clean = clean.substring(0, Math.max(0, clean.length() - hold));
+            String clean = task.output.toString();
             long first = task.dropped;
             if (offset < first) throw error("TERMINAL_LOG_ROTATED");
             int start = (int) Math.min(clean.length(), offset - first);
@@ -128,7 +130,8 @@ public final class LocalTerminalSession implements TerminalSession {
         cancellation.throwIfCancelled();
         if (text.length() > 65536 || text.indexOf('\0') >= 0) throw error("INVALID_TERMINAL_INPUT");
         Task task = task(id);
-        if (!task.process.isAlive()) throw error("TERMINAL_EXITED");
+        if (!task.state.equals("RUNNING") || !task.process.isAlive())
+            throw error("TERMINAL_EXITED");
         if (!task.inputSlot.tryAcquire()) throw error("TERMINAL_INPUT_BUSY");
         CompletableFuture<Void> sent = new CompletableFuture<>();
         Thread.ofVirtual()
@@ -166,6 +169,7 @@ public final class LocalTerminalSession implements TerminalSession {
             Thread.currentThread().interrupt();
             throw error("TERMINAL_INPUT_UNKNOWN");
         } catch (ExecutionException ex) {
+            task.stop("STOPPED");
             throw error("TERMINAL_INPUT_UNKNOWN");
         }
     }
@@ -229,6 +233,7 @@ public final class LocalTerminalSession implements TerminalSession {
         final long timeout, start = System.nanoTime();
         final String startedAt = Instant.now().toString();
         final StringBuilder output = new StringBuilder();
+        final StringBuilder pendingOutput = new StringBuilder();
         final Map<Long, ProcessHandle> observed = new ConcurrentHashMap<>();
         volatile String state = "RUNNING";
         volatile boolean outputFailed;
@@ -259,23 +264,15 @@ public final class LocalTerminalSession implements TerminalSession {
                                             int read;
                                             while ((read = input.read(buffer)) >= 0)
                                                 synchronized (this) {
-                                                    output.append(buffer, 0, read);
-                                                    if (output.length() > 256 * 1024 + hold) {
-                                                        int remove =
-                                                                output.length() - 256 * 1024 - hold;
-                                                        // Never expose a partial secret created by
-                                                        // a rotation boundary.
-                                                        String clean =
-                                                                redactor.text(output.toString());
-                                                        output.setLength(0);
-                                                        output.append(clean);
-                                                        remove = Math.min(remove, output.length());
-                                                        output.delete(0, remove);
-                                                        dropped += remove;
-                                                    }
+                                                    pendingOutput.append(buffer, 0, read);
+                                                    publishOutput(false);
                                                 }
                                         } catch (IOException ex) {
                                             outputFailed = process.isAlive();
+                                        } finally {
+                                            synchronized (this) {
+                                                publishOutput(true);
+                                            }
                                         }
                                     });
             watcher =
@@ -304,8 +301,12 @@ public final class LocalTerminalSession implements TerminalSession {
                                                 }
                                                 Thread.sleep(20);
                                             }
-                                            if (state.equals("RUNNING")) {
-                                                state = "EXITED";
+                                            boolean finish;
+                                            synchronized (this) {
+                                                finish = state.equals("RUNNING");
+                                                if (finish) state = "EXITED";
+                                            }
+                                            if (finish) {
                                                 drain();
                                                 cleanup();
                                                 persist();
@@ -315,6 +316,42 @@ public final class LocalTerminalSession implements TerminalSession {
                                             stop("STOPPED");
                                         }
                                     });
+        }
+
+        /** Publish an immutable sanitized prefix; offsets never count unresolved raw bytes. */
+        void publishOutput(boolean ended) {
+            int at = 0;
+            int boundary =
+                    ended ? pendingOutput.length() : Math.max(0, pendingOutput.length() - hold);
+            while (at < boundary) {
+                String matched = null;
+                for (String secret : secrets) {
+                    if (pendingOutput.indexOf(secret, at) == at) {
+                        matched = secret;
+                        break;
+                    }
+                }
+                if (matched != null) {
+                    output.append("[REDACTED]");
+                    at += matched.length();
+                    continue;
+                }
+                if (ended) {
+                    String tail = pendingOutput.substring(at);
+                    if (secrets.stream().anyMatch(secret -> secret.startsWith(tail))) break;
+                } else if (at + 1 == pendingOutput.length()
+                        && Character.isHighSurrogate(pendingOutput.charAt(at))) break;
+                output.append(pendingOutput.charAt(at++));
+            }
+            pendingOutput.delete(0, at);
+            if (ended) pendingOutput.setLength(0);
+            int remove = Math.max(0, output.length() - 256 * 1024);
+            if (remove > 0) {
+                if (remove < output.length() && Character.isLowSurrogate(output.charAt(remove)))
+                    remove++;
+                output.delete(0, remove);
+                dropped += remove;
+            }
         }
 
         void cleanup() {
@@ -366,9 +403,13 @@ public final class LocalTerminalSession implements TerminalSession {
         }
 
         synchronized void persist() {
+            if (reader != null && reader.isAlive()) {
+                outputFailed = true;
+                return;
+            }
             if (artifact != null || artifacts == null) return;
             try {
-                artifact = artifacts.put(session, redactor.text(output.toString()));
+                artifact = artifacts.put(session, output.toString());
             } catch (IOException | RuntimeException ex) {
                 outputFailed = true;
             }

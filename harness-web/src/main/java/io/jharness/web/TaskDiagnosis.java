@@ -28,7 +28,7 @@ public final class TaskDiagnosis {
                 var resolved = object(p.get("resolved"));
                 var selection = object(p.get("selection"));
                 var c = new LinkedHashMap<String, Object>();
-                c.put("eventId", e.eventId());
+                c.put("eventId", safeString(e.eventId(), sanitizer));
                 copy(selection, c, "settingsRevision", "modelRoute", "resolvedSha256");
                 copy(resolved, c, "policy", "durationSeconds", "requestTimeoutSeconds");
                 configuration = c;
@@ -44,7 +44,7 @@ public final class TaskDiagnosis {
             var error = object(p.get("error"));
             String code = string(tool ? error.get("code") : p.get("reason"));
             var row = new LinkedHashMap<String, Object>();
-            row.put("eventId", e.eventId());
+            row.put("eventId", safeString(e.eventId(), sanitizer));
             row.put("turnId", safeString(e.turnId(), sanitizer));
             row.put("stepId", safeString(e.stepId(), sanitizer));
             row.put("callId", safeString(e.callId(), sanitizer));

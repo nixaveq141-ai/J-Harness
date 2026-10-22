@@ -119,6 +119,7 @@ final class EcosystemConfig {
                     || !Set.of("project", "user").contains(rootKind)) throw invalid();
             Path directory = Path.of(text(root, "directory", null));
             if (!directory.normalize().equals(directory)
+                    || directory.toString().replace('\\', '/').startsWith("//")
                     || directory.isAbsolute() != rootKind.equals("user")
                     || rootKind.equals("project")
                             && (directory.getRoot() != null
@@ -378,10 +379,14 @@ final class EcosystemConfig {
                 CancellationToken.NONE);
     }
 
-    private record ParameterizedModel(LlmClient delegate, Map<String, Object> parameters)
+    record ParameterizedModel(LlmClient delegate, Map<String, Object> parameters)
             implements LlmClient {
         public ModelCapabilities capabilities() {
             return delegate.capabilities();
+        }
+
+        public boolean supportsSingleAttempt() {
+            return delegate.supportsSingleAttempt();
         }
 
         public PreparedRequest prepare(ChatRequest request) {
@@ -392,11 +397,22 @@ final class EcosystemConfig {
         }
 
         public ChatResponse complete(ChatRequest request, CancellationToken token) {
-            return delegate.complete(request, token);
+            return delegate.complete(bounded(request), token);
+        }
+
+        private ChatRequest bounded(ChatRequest request) {
+            var bounded = new LinkedHashMap<>(parameters);
+            bounded.put("stream", false);
+            bounded.remove("stream_options");
+            return new ChatRequest(request.messages(), request.tools(), bounded);
+        }
+
+        public ChatResponse completeSingleAttempt(ChatRequest request, CancellationToken token) {
+            return delegate.completeSingleAttempt(bounded(request), token);
         }
 
         public StreamHandle stream(ChatRequest request, CancellationToken token) {
-            return delegate.stream(request, token);
+            return delegate.stream(bounded(request), token);
         }
 
         public void close() {

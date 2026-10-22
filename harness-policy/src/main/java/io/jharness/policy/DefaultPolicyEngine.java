@@ -45,6 +45,12 @@ public final class DefaultPolicyEngine implements PolicyEngine {
         Object path =
                 call.arguments().getOrDefault("path", call.arguments().getOrDefault("cwd", "."));
         if (path instanceof String text && forbiddenPath(text)) return Decision.DENY;
+        if (call.tool().equals("grep") && call.arguments().containsKey("paths")) {
+            Object paths = call.arguments().get("paths");
+            if (!(paths instanceof List<?> entries)
+                    || entries.stream().anyMatch(p -> !(p instanceof String s) || forbiddenPath(s)))
+                return Decision.DENY;
+        }
         if (call.tool().equals("execute_command")) {
             if (commands.stream().anyMatch(t -> t.matches(call.arguments()))) return Decision.ALLOW;
             return Decision.ASK;
@@ -61,9 +67,10 @@ public final class DefaultPolicyEngine implements PolicyEngine {
                 .anyMatch(
                         part ->
                                 part.equals("..")
-                                        || part.equalsIgnoreCase(".git")
-                                        || part.equalsIgnoreCase(".jharness")
-                                        || part.equalsIgnoreCase(".env")
+                                        || part.replaceAll("[. ]+$", "").equalsIgnoreCase(".git")
+                                        || part.replaceAll("[. ]+$", "")
+                                                .equalsIgnoreCase(".jharness")
+                                        || part.replaceAll("[. ]+$", "").equalsIgnoreCase(".env")
                                         || part.toLowerCase(Locale.ROOT).startsWith(".env."));
     }
 }

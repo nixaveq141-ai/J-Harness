@@ -118,8 +118,8 @@ jobs:
           set -euo pipefail
           python scripts/test-release-tools.py
           python scripts/test-sdk-inventory.py
-          python scripts/run-r0-validation.py --run-id "${JHARNESS_EVIDENCE_RUN_ID}-r0" --output ".build-cache/R0/${JHARNESS_EVIDENCE_RUN_ID}-r0"
-          python scripts/run-r0-validation.py --verify ".build-cache/R0/${JHARNESS_EVIDENCE_RUN_ID}-r0/results.json"
+          python scripts/run-r1-validation.py --run-id "${JHARNESS_EVIDENCE_RUN_ID}-r1" --output ".build-cache/R1/${JHARNESS_EVIDENCE_RUN_ID}-r1"
+          python scripts/run-r1-validation.py --verify ".build-cache/R1/${JHARNESS_EVIDENCE_RUN_ID}-r1/results.json"
           python scripts/test-source-secrets.py
           python scripts/scan-source-secrets.py
           python scripts/sdk-inventory.py
@@ -158,6 +158,7 @@ jobs:
             target/candidate-sha256.txt
             .build-cache/M10.5.9/
             .build-cache/R0/
+            .build-cache/R1/
             .build-cache/M10.5.4-native-*.json
             .build-cache/M10-browser-results.json
             .build-cache/M10-launcher-results.json

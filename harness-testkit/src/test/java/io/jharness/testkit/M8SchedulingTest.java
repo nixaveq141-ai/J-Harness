@@ -256,6 +256,8 @@ class M8SchedulingTest {
             assertEquals(TaskStatus.COMPLETED, f.sdk.run("read", CancellationToken.NONE).status());
             assertEquals(2, peak.get());
             assertTrue(actualOrder.indexOf("b") < actualOrder.indexOf("a"));
+            assertEquals(Set.of("a", "b", "c", "d"), new HashSet<>(actualOrder));
+            assertEquals(4, actualOrder.size());
             assertEquals(
                     List.of("a", "b", "c", "d"),
                     f.events().stream()
@@ -437,12 +439,16 @@ class M8SchedulingTest {
     void noncooperativeWorkerIsUnknownNoReplayOrSecondSettlement() throws Exception {
         var release = new CountDownLatch(1);
         var exited = new CountDownLatch(1);
+        var entered = new CountDownLatch(1);
+        var worker = new AtomicReference<Thread>();
         var writes = new AtomicInteger();
         var read =
                 tool(
                         "probe",
                         SideEffectLevel.READ_ONLY,
                         (call, context) -> {
+                            worker.set(Thread.currentThread());
+                            entered.countDown();
                             try {
                                 while (release.getCount() != 0) {
                                     try {
@@ -473,6 +479,7 @@ class M8SchedulingTest {
                         call("a", "probe"),
                         call("w", "write_probe"))) {
             var snapshot = f.sdk.run("unknown", CancellationToken.NONE);
+            assertEquals(0, entered.getCount());
             assertEquals(TaskStatus.FAILED, snapshot.status());
             assertEquals(List.of("a"), new EventSessionProjection(f.events()).uncertainCalls());
             assertEquals(0, writes.get());
@@ -481,7 +488,8 @@ class M8SchedulingTest {
                     f.events().stream().filter(e -> e.type().equals("tool.completed")).count();
             release.countDown();
             assertTrue(exited.await(2, TimeUnit.SECONDS));
-            Thread.sleep(50);
+            worker.get().join(2000);
+            assertFalse(worker.get().isAlive());
             assertEquals(
                     completed,
                     f.events().stream().filter(e -> e.type().equals("tool.completed")).count());
@@ -556,8 +564,9 @@ class M8SchedulingTest {
                                     HarnessException.class,
                                     () -> prepared.finish(success(call("fake", "probe"))))
                             .code());
-            assertEquals(ToolStatus.FAILED, prepared.run().status());
-            assertEquals(0, bodies.get());
+            var actual = prepared.run();
+            assertEquals(ToolStatus.SUCCESS, prepared.finish(actual).status());
+            assertEquals(1, bodies.get());
             var scheduler = new BoundedReadOnlyToolScheduler(parallel("probe"));
             scheduler.close();
             assertEquals(
@@ -659,11 +668,20 @@ class M8SchedulingTest {
                             ApprovalService.rejectAll(),
                             new DefaultCheckpointPolicy(),
                             CancellationToken.NONE);
-            assertThrows(HarnessException.class, () -> batch.execute(List.of(), wrong, f.pipeline));
+            assertEquals(
+                    "SCOPE_DENIED",
+                    assertThrows(
+                                    HarnessException.class,
+                                    () -> batch.execute(List.of(), wrong, f.pipeline))
+                            .code());
             f.container.stop();
             assertTrue(closed.get());
-            assertThrows(
-                    HarnessException.class, () -> batch.execute(List.of(), context, f.pipeline));
+            assertEquals(
+                    "CONTEXT_CLOSED",
+                    assertThrows(
+                                    HarnessException.class,
+                                    () -> batch.execute(List.of(), context, f.pipeline))
+                            .code());
         }
     }
 }

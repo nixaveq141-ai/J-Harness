@@ -288,7 +288,10 @@ class M7SubagentTest {
             reconstruct(childEvents, child);
             assertTrue(SessionRecovery.inspect(result.events()).ready());
         }
-        assertTrue(capture.tools.visibleTools(PARENT).isEmpty());
+        assertEquals(
+                "CONTEXT_CLOSED",
+                assertThrows(HarnessException.class, () -> capture.tools.visibleTools(PARENT))
+                        .code());
         assertThrows(HarnessException.class, () -> capture.service.tasks());
     }
 
@@ -400,6 +403,74 @@ class M7SubagentTest {
     }
 
     @Test
+    void interruptedParentSettlesWithRealWriterAndLateChildNeverWritesParentJournal()
+            throws Exception {
+        prepare();
+        var child = new BlockingModel(true);
+        var capture = new Capture();
+        var plugin = new SubagentPlugin(Map.of("inspect", profile(() -> child)), 1, 2);
+        try (var sdk =
+                sdk(
+                        new FakeLlm(List.of(), 32768),
+                        plugin,
+                        M7EcosystemFixture.approve(),
+                        parentBudget(),
+                        ApiCostGuard.unavailable(),
+                        notComplete(),
+                        List.of(capture))) {
+            assertEquals(TaskStatus.CREATED, sdk.snapshot().status());
+            var outcome = new CompletableFuture<ToolResult>();
+            var failure = new CompletableFuture<Throwable>();
+            var interrupted = new AtomicBoolean();
+            var parent =
+                    Thread.ofVirtual()
+                            .start(
+                                    () -> {
+                                        try {
+                                            outcome.complete(
+                                                    capture.delegate(
+                                                            "wait", CancellationToken.NONE));
+                                            interrupted.set(Thread.interrupted());
+                                            capture.writer.append(
+                                                    SessionEvent.session(
+                                                            "parent",
+                                                            "fixture.writer-still-healthy",
+                                                            Map.of()));
+                                            capture.writer.flush();
+                                            failure.complete(null);
+                                        } catch (Throwable ex) {
+                                            failure.complete(ex);
+                                        }
+                                    });
+            assertTrue(child.entered.await(3, TimeUnit.SECONDS));
+            parent.interrupt();
+            assertNull(failure.get(4, TimeUnit.SECONDS));
+            assertTrue(interrupted.get());
+            assertEquals(ToolStatus.UNKNOWN, outcome.get().status());
+            assertTrue(
+                    repository.openReader("parent").events().stream()
+                            .anyMatch(
+                                    event -> event.type().equals("fixture.writer-still-healthy")));
+            long completed =
+                    repository.openReader("parent").events().stream()
+                            .filter(event -> event.type().equals("subagent.completed"))
+                            .count();
+            child.release.countDown();
+            long until = System.nanoTime() + Duration.ofSeconds(3).toNanos();
+            while (child.closed.get() == 0 && System.nanoTime() < until) Thread.sleep(10);
+            assertEquals(
+                    completed,
+                    repository.openReader("parent").events().stream()
+                            .filter(event -> event.type().equals("subagent.completed"))
+                            .count());
+            parent.join(1000);
+            assertFalse(parent.isAlive());
+        } finally {
+            child.release.countDown();
+        }
+    }
+
+    @Test
     void concurrencyQuotaAndTaskQuotaDoNotLaunchExtraModels() throws Exception {
         prepare();
         var child = new BlockingModel(false);
@@ -433,6 +504,8 @@ class M7SubagentTest {
             var overflow = capture.delegate("second", CancellationToken.NONE);
             assertEquals(ToolStatus.FAILED, overflow.status());
             assertEquals("SUBAGENT_CONCURRENCY_LIMIT", overflow.error().orElseThrow().code());
+            assertEquals(Boolean.FALSE, overflow.value().get("sideEffectUncertain"));
+            assertEquals(Boolean.TRUE, overflow.value().get("executionRejected"));
             assertEquals(1, factories.get());
             assertEquals(1, capture.service.tasks().size());
             assertEquals("RUNNING", capture.service.tasks().getFirst().get("state"));

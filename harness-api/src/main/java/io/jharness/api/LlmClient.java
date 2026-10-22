@@ -9,11 +9,30 @@ public interface LlmClient extends AutoCloseable {
         return this;
     }
 
+    default LlmClient withDisplayUpdates(java.util.function.Consumer<ModelDisplay.Update> display) {
+        return withDisplay(text -> display.accept(new ModelDisplay.Update(text, false)));
+    }
+
     ModelCapabilities capabilities();
 
     PreparedRequest prepare(ChatRequest request);
 
     ChatResponse complete(ChatRequest request, CancellationToken cancellation);
+
+    /** Query before journaling; existing explicit overrides retain their single-send contract. */
+    default boolean supportsSingleAttempt() {
+        try {
+            return getClass()
+                            .getMethod(
+                                    "completeSingleAttempt",
+                                    ChatRequest.class,
+                                    CancellationToken.class)
+                            .getDeclaringClass()
+                    != LlmClient.class;
+        } catch (ReflectiveOperationException error) {
+            return false;
+        }
+    }
 
     /** Opt-in single-send contract; legacy clients fail closed before sending. */
     default ChatResponse completeSingleAttempt(

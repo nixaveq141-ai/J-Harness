@@ -331,6 +331,11 @@ public final class OpenAiCompatibleLlmClient implements LlmClient {
                 for (Object item : (List<?>) message.get("tool_calls")) {
                     Map<String, Object> call = Values.object(item);
                     String id = requiredText(call, "id");
+                    Map<String, Object> functionIdentity = Values.object(call.get("function"));
+                    String identityName = requiredText(functionIdentity, "name");
+                    if (!id.equals(redactor.text(id))
+                            || !identityName.equals(redactor.text(identityName)))
+                        throw error("UNSAFE_TOOL_IDENTITY");
                     Map<String, Object> function = Values.object(call.get("function"));
                     if (!used.add(id)) throw error("DUPLICATE_CALL_ID");
                     pending.add(id);
@@ -388,6 +393,11 @@ public final class OpenAiCompatibleLlmClient implements LlmClient {
                     Map<String, Object> call = Values.object(item);
                     if (!"function".equals(call.get("type"))) throw error("MODEL_BAD_RESPONSE");
                     String id = requiredText(call, "id");
+                    Map<String, Object> functionIdentity = Values.object(call.get("function"));
+                    String identityName = requiredText(functionIdentity, "name");
+                    if (!id.equals(redactor.text(id))
+                            || !identityName.equals(redactor.text(identityName)))
+                        throw error("UNSAFE_TOOL_IDENTITY");
                     if (!ids.add(id)) throw error("DUPLICATE_CALL_ID");
                     Map<String, Object> function = Values.object(call.get("function"));
                     calls.add(

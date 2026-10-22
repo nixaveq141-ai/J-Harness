@@ -577,8 +577,21 @@ class M4CliIntegrationTest {
                             "s",
                             "--require-read",
                             "a.txt");
-            assertEquals(0, result.code);
+            // Sensitive provider identities are rejected before acceptance, rather than
+            // silently redacted into potentially colliding correlation identifiers.
+            assertEquals(2, result.code);
+            assertEquals(1, server.requests.size());
+            assertTrue(events().stream().noneMatch(e -> e.type().equals("tool.started")));
+            assertTrue(
+                    new io.jharness.session.EventSessionProjection(events())
+                            .uncertainCalls()
+                            .isEmpty());
             assertFalse(result.stdout.contains("fixture-private-key"));
+            assertFalse(result.stderr.contains("fixture-private-key"));
+            try (var reports = Files.walk(root.resolve(".jharness/reports"))) {
+                for (var report : reports.filter(Files::isRegularFile).toList())
+                    assertFalse(Files.readString(report).contains("fixture-private-key"));
+            }
             assertFalse(
                     Files.readString(root.resolve(".jharness/sessions/s.jsonl"))
                             .contains("fixture-private-key"));

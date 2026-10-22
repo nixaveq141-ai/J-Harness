@@ -107,3 +107,29 @@ def suite_details(path, module):
 
 def suite_snapshot(path, module):
     return suite_details(path, module)[0]
+
+
+def validate_java_suites(suites, contract):
+    """Use the reviewed case set as the gate as new regressions expand the suite."""
+    require(isinstance(contract, dict) and type(contract.get('schemaVersion')) is int
+            and contract['schemaVersion'] == 1, 'Invalid Java case contract')
+    expected = contract.get('suites')
+    require(isinstance(expected, list) and bool(expected), 'Empty Java case contract')
+    def identities(rows, label):
+        result = {}
+        require(isinstance(rows, list) and bool(rows), 'Empty ' + label)
+        for row in rows:
+            require(isinstance(row, dict), 'Invalid ' + label)
+            key = (row.get('module'), row.get('name'))
+            require(all(isinstance(k, str) and bool(k.strip()) for k in key) and key not in result,
+                    'Duplicate or invalid ' + label)
+            cases = row.get('cases')
+            require(isinstance(cases, list) and bool(cases) and all(isinstance(c, str) and c.strip() for c in cases)
+                    and len(set(cases)) == len(cases), 'Empty or duplicate ' + label + ' cases')
+            result[key] = set(cases)
+        return result
+    require(identities(suites, 'Java suites') == identities(expected, 'Java contract'), 'Wrong Java case identities')
+    require(all(type(s.get('tests')) is int and s['tests'] == len(s['cases'])
+                and all(type(s.get(k)) is int and s[k] == 0 for k in ('failures', 'errors', 'skipped'))
+                for s in suites), 'Incomplete or failing Java evidence')
+    return sum(len(s['cases']) for s in suites)

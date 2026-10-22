@@ -1,1596 +1,3876 @@
 {
   "schemaVersion": 1,
   "phase": "R1",
-  "status": "IMPLEMENTATION_IN_PROGRESS",
+  "status": "LOCAL_SCOPE_IMPLEMENTED_VALIDATION_LIMITED_CI_PENDING",
   "opinions": [
     {
       "id": "OCR-0063",
       "task": "R1-04",
       "owner": "core",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "appendPrepared返回真实持久脱敏事件，再广播相同事实",
+      "files": [
+        "harness-agent/src/main/java/io/jharness/agent/ContextCompactionPlugin.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/R1CoreLifecycleTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.R1CoreLifecycleTest#observerReceivesExactlyPersistedSanitizedPayloadAndUnsafeIdentityRejects"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0075",
       "task": "R1-02",
       "owner": "core",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "模型失败及停止审计双重故障保留首因；429重试必需审计失败保留原拒绝且禁止第二次发送，首次发送前审计失败拒绝发送",
+      "files": [
+        "harness-agent/src/main/java/io/jharness/agent/ModelResiliencePlugin.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/R1CoreLifecycleTest.java",
+        "harness-agent/src/main/java/io/jharness/agent/BoundedModelExecution.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.R1CoreLifecycleTest#modelFailureKeepsPrimaryWhenStopAuditAlsoFails",
+        "io.jharness.testkit.R1CoreLifecycleTest#retryAuditFailurePreservesRejectionAndPreventsSecondSend",
+        "io.jharness.testkit.R1CoreLifecycleTest#requiredAttemptAuditFailurePreventsAnySend"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0088",
       "task": "R1-06",
       "owner": "process",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "SkillCatalog在扫描deadline处专门映射SKILL_SCAN_TIMEOUT，保留真实用户取消CANCELLED，不扩大CancellationToken API。",
+      "files": [
+        "harness-api/src/main/java/io/jharness/api/CancellationToken.java"
+      ],
+      "tests": [
+        "io.jharness.ecosystem.R1EnvironmentLifecycleTest#skillScanDeadlineIsDistinctFromUserCancellation"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0092",
       "task": "R1-02",
       "owner": "core",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "计数锁内原子，审计I/O锁外，不阻活动请求退出",
+      "files": [
+        "harness-agent/src/main/java/io/jharness/agent/BoundedModelExecution.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/R1CoreLifecycleTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.R1CoreLifecycleTest#waitingAuditDoesNotHoldMonitorNeededByActiveRequestExit"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0094",
       "task": "R1-04",
       "owner": "core",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "配置/命令/调用/失败摘要不含原文；异常消息按调用边界脱敏规范",
+      "files": [
+        "harness-api/src/main/java/io/jharness/api/ConfigView.java",
+        "harness-api/src/test/java/io/jharness/api/R1CoreApiTest.java"
+      ],
+      "tests": [
+        "io.jharness.api.R1CoreApiTest#metadataToStringOmitsRawInputs"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0117",
       "task": "R1-04",
       "owner": "core",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "配置/命令/调用/失败摘要不含原文；异常消息按调用边界脱敏规范",
+      "files": [
+        "harness-api/src/main/java/io/jharness/api/CommandRequest.java",
+        "harness-api/src/test/java/io/jharness/api/R1CoreApiTest.java"
+      ],
+      "tests": [
+        "io.jharness.api.R1CoreApiTest#metadataToStringOmitsRawInputs"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0122",
       "task": "R1-02",
       "owner": "core",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "原始UNKNOWN优先，单独记录deadlineExceeded事实",
+      "files": [
+        "harness-agent/src/main/java/io/jharness/agent/DefaultAgentLoop.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/M1AgentLoopTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M1AgentLoopTest#expiredDeadlineDoesNotReplaceUnknownExecutionFact"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0123",
       "task": "R1-02",
       "owner": "core",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "checkpoint首因不被通知失败覆盖，未进入主体且无started",
+      "files": [
+        "harness-agent/src/main/java/io/jharness/agent/DefaultAgentLoop.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/M1ToolPipelineTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M1ToolPipelineTest#flushFailureWithSimulatedDurableWriterPreventsBodyEntry"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0135",
       "task": "R1-04",
       "owner": "core",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "HarnessException约定公开消息安全、内部cause不序列化；工具异常边界只输出稳定错误码，CLI集成扫描stdout和实际会话产物",
+      "files": [
+        "harness-api/src/main/java/io/jharness/api/HarnessException.java",
+        "harness-api/src/test/java/io/jharness/api/R1CoreApiTest.java",
+        "harness-tools/src/main/java/io/jharness/tools/DefaultToolPipeline.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/M1ToolPipelineTest.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/M8ResilienceTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M1ToolPipelineTest#simulatedDurableIntentIsFlushedBeforeWriteBodyAndFailureRemainsUnknown",
+        "io.jharness.testkit.M8ResilienceTest#classicAndEcosystemCliUseThePolicyAndObservedSingleAttemptWrappers"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。",
+        "异常构造器不持有秘密集合，未宣称任意HarnessException.getMessage/toString已自动脱敏；保障适用本次已审计调用边界。"
+      ]
     },
     {
       "id": "OCR-0148",
       "task": "R1-04",
       "owner": "core",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "appendPrepared返回真实持久脱敏事件，再广播相同事实",
+      "files": [
+        "harness-api/src/main/java/io/jharness/api/EventSupport.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/R1CoreLifecycleTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.R1CoreLifecycleTest#observerReceivesExactlyPersistedSanitizedPayloadAndUnsafeIdentityRejects"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0149",
       "task": "R1-02",
       "owner": "core",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "区分持久成功与通知失败，不自动重试已发生副作用",
+      "files": [
+        "harness-api/src/main/java/io/jharness/api/EventSupport.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/R1CoreLifecycleTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.R1CoreLifecycleTest#persistedEventFailureIsDistinguishedFromNotificationFailure"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0150",
       "task": "R1-01",
       "owner": "core",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "拒绝空checkpoint，durable语义不降级",
+      "files": [
+        "harness-api/src/main/java/io/jharness/api/EventSupport.java",
+        "harness-api/src/test/java/io/jharness/api/R1CoreApiTest.java"
+      ],
+      "tests": [
+        "io.jharness.api.R1CoreApiTest#checkpointRejectsNullBeforeFlush"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0157",
       "task": "R1-06",
       "owner": "core",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "singleAttempt能力在commit前检查，FakeLlm明确支持，未知适配器仍默认拒绝",
+      "files": [
+        "harness-api/src/main/java/io/jharness/api/LlmClient.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/M8ResilienceTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M8ResilienceTest#disabledPolicyDoesNotAddRetriesAndLegacyAdapterStillOwnsItsBehavior"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0160",
       "task": "R1-06",
       "owner": "core",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "有界安全429结构诊断，不改固定退避原契约",
+      "files": [
+        "harness-api/src/main/java/io/jharness/api/ModelRejectedException.java",
+        "harness-api/src/test/java/io/jharness/api/R1CoreApiTest.java"
+      ],
+      "tests": [
+        "io.jharness.api.R1CoreApiTest#rejectionMetadataIsBoundedAndHasNoRawProviderInput"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0172",
       "task": "R1-01",
       "owner": "core",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "停止屏障为已准备调用单次结算，主体不进入",
+      "files": [
+        "harness-api/src/main/java/io/jharness/api/PreparedToolCall.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/R1CoreLifecycleTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.R1CoreLifecycleTest#stoppedBarrierSettlesAlreadyPreparedCallWithoutEnteringItsBody"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0183",
       "task": "R1-05",
       "owner": "application",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "PolicyEngine文档与preview入口null决策fail closed，preview提供者不进入。",
+      "files": [
+        "harness-api/src/main/java/io/jharness/api/PolicyEngine.java",
+        "harness-cli/src/test/java/io/jharness/cli/R1PreviewPolicyTest.java"
+      ],
+      "tests": [
+        "io.jharness.cli.R1PreviewPolicyTest#nullablePolicyCannotEnterPreviewEvenWhenProviderIsInstalled"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0209",
       "task": "R1-04",
       "owner": "core",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "归一化敏感键别名与嵌套处理，已知secret键碰撞拒绝",
+      "files": [
+        "harness-api/src/main/java/io/jharness/api/SecretRedactor.java",
+        "harness-api/src/test/java/io/jharness/api/R1CoreApiTest.java"
+      ],
+      "tests": [
+        "io.jharness.api.R1CoreApiTest#sanitizerAliasesAndKeyCollisionsAreFailClosed"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0211",
       "task": "R1-04",
       "owner": "core",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "归一化敏感键别名与嵌套处理，已知secret键碰撞拒绝",
+      "files": [
+        "harness-api/src/main/java/io/jharness/api/SecretRedactor.java",
+        "harness-api/src/test/java/io/jharness/api/R1CoreApiTest.java"
+      ],
+      "tests": [
+        "io.jharness.api.R1CoreApiTest#sanitizerAliasesAndKeyCollisionsAreFailClosed"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0212",
       "task": "R1-04",
       "owner": "core",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "保留潜在秘密后缀，完整秘密跨切口时整体保留，避免切裂占位符",
+      "files": [
+        "harness-api/src/main/java/io/jharness/api/SecretRedactor.java",
+        "harness-api/src/test/java/io/jharness/api/R1CoreApiTest.java"
+      ],
+      "tests": [
+        "io.jharness.api.R1CoreApiTest#streamingNeverSplitsReplacementAndRetainsOnlyPotentialSecretSuffix"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0213",
       "task": "R1-04",
       "owner": "core",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "累计显示输入硬上限，不引入跨会话共享缓存",
+      "files": [
+        "harness-api/src/main/java/io/jharness/api/SecretRedactor.java",
+        "harness-api/src/test/java/io/jharness/api/R1CoreApiTest.java",
+        "harness-api/src/main/java/io/jharness/api/ModelDisplay.java",
+        "harness-api/src/main/java/io/jharness/api/LlmClient.java",
+        "harness-llm/src/main/java/io/jharness/llm/StreamingLlmClient.java",
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/ModelDisplayBuffer.java"
+      ],
+      "tests": [
+        "io.jharness.api.R1CoreApiTest#repeatedStreamingFramesRemainBoundedAndNeverExposeCrossBoundarySecret",
+        "io.jharness.testkit.M1056DisplayTest#temporaryDisplayHasHardBoundAndNewSdkDoesNotRecoverLostBytes"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0227",
       "task": "R1-04",
       "owner": "core",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "配置/命令/调用/失败摘要不含原文；异常消息按调用边界脱敏规范",
+      "files": [
+        "harness-api/src/main/java/io/jharness/api/ToolInvocation.java",
+        "harness-api/src/test/java/io/jharness/api/R1CoreApiTest.java"
+      ],
+      "tests": [
+        "io.jharness.api.R1CoreApiTest#metadataToStringOmitsRawInputs"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0230",
       "task": "R1-01",
       "owner": "core",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "主体未知粘滞，已知取消保留原因与partial事实并阻断续跑",
+      "files": [
+        "harness-api/src/main/java/io/jharness/api/SessionProjection.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/R1CoreLifecycleTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.R1CoreLifecycleTest#wrapperCannotTurnFailedWriteIntoKnownSuccess",
+        "io.jharness.testkit.R1CoreLifecycleTest#knownCancellationAndTimeoutPreserveReasonButBlockContinuationForPartialEffects",
+        "io.jharness.testkit.R1CoreLifecycleTest#residualProcessOrUnknownNeverDowngradesToKnownCancellation",
+        "io.jharness.testkit.R1CoreLifecycleTest#conflictCodeWithoutProviderProofStillRequiresVerification"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0237",
       "task": "R1-01",
       "owner": "core",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "构造约束状态与诊断schema，错误码比较避免null NPE",
+      "files": [
+        "harness-api/src/main/java/io/jharness/api/ToolBatchExecution.java",
+        "harness-api/src/test/java/io/jharness/api/R1CoreApiTest.java"
+      ],
+      "tests": [
+        "io.jharness.api.R1CoreApiTest#errorInfoAndSuccessHaveConsistentSchema"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0240",
       "task": "R1-01",
       "owner": "core",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "串行停止记录原因与剩余数量，不补造未执行结果",
+      "files": [
+        "harness-api/src/main/java/io/jharness/api/ToolBatchExecution.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/R1CoreLifecycleTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.R1CoreLifecycleTest#knownCancellationAndTimeoutPreserveReasonButBlockContinuationForPartialEffects"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0241",
       "task": "R1-01",
       "owner": "core",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "构造约束状态与诊断schema，错误码比较避免null NPE",
+      "files": [
+        "harness-api/src/main/java/io/jharness/api/ToolResult.java",
+        "harness-api/src/test/java/io/jharness/api/R1CoreApiTest.java"
+      ],
+      "tests": [
+        "io.jharness.api.R1CoreApiTest#errorInfoAndSuccessHaveConsistentSchema"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0242",
       "task": "R1-01",
       "owner": "core",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "构造约束状态与诊断schema，错误码比较避免null NPE",
+      "files": [
+        "harness-api/src/main/java/io/jharness/api/ToolResult.java",
+        "harness-api/src/test/java/io/jharness/api/R1CoreApiTest.java"
+      ],
+      "tests": [
+        "io.jharness.api.R1CoreApiTest#errorInfoAndSuccessHaveConsistentSchema"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0262",
       "task": "R1-04",
       "owner": "core",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "归一化敏感键别名与嵌套处理，已知secret键碰撞拒绝",
+      "files": [
+        "harness-api/src/test/java/io/jharness/api/SessionEventTest.java",
+        "harness-api/src/test/java/io/jharness/api/R1CoreApiTest.java"
+      ],
+      "tests": [
+        "io.jharness.api.R1CoreApiTest#sanitizerAliasesAndKeyCollisionsAreFailClosed"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0264",
       "task": "R1-01",
       "owner": "core",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "构造约束状态与诊断schema，错误码比较避免null NPE",
+      "files": [
+        "harness-api/src/main/java/io/jharness/api/ToolResults.java",
+        "harness-api/src/test/java/io/jharness/api/R1CoreApiTest.java"
+      ],
+      "tests": [
+        "io.jharness.api.R1CoreApiTest#errorInfoAndSuccessHaveConsistentSchema"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0265",
       "task": "R1-01",
       "owner": "core",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "自定义sanitizer结构损坏安全失败，不降级原文",
+      "files": [
+        "harness-api/src/main/java/io/jharness/api/ToolResults.java",
+        "harness-api/src/test/java/io/jharness/api/R1CoreApiTest.java"
+      ],
+      "tests": [
+        "io.jharness.api.R1CoreApiTest#sanitizationShapeFailureHasStableCode"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0267",
       "task": "R1-06",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "verify-argv在CLI参数期验证非空字符串数组，非法结构返回CLI_USAGE。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/EvidenceCompletion.java",
+        "harness-cli/src/test/java/io/jharness/cli/R1ApplicationEvidenceTest.java"
+      ],
+      "tests": [
+        "io.jharness.cli.R1ApplicationEvidenceTest#invalidVerificationCriteriaAreUsageErrors"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0268",
       "task": "R1-06",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "exitCode校验数值类型及整数值，null/字符串/小数返回未验证。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/EvidenceCompletion.java",
+        "harness-cli/src/test/java/io/jharness/cli/R1ApplicationEvidenceTest.java"
+      ],
+      "tests": [
+        "io.jharness.cli.R1ApplicationEvidenceTest#nullableForeignExitCodeIsNegativeEvidence"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0269",
       "task": "R1-06",
       "owner": "application",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "DENIED且未入body的写不推进lastWrite，UNKNOWN实际入body保守阻断验证。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/EvidenceCompletion.java",
+        "harness-cli/src/test/java/io/jharness/cli/R1ApplicationEvidenceTest.java"
+      ],
+      "tests": [
+        "io.jharness.cli.R1ApplicationEvidenceTest#deniedWriteDoesNotInvalidateButUnknownWriteDoes"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0270",
       "task": "R1-06",
       "owner": "application",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "最新实际执行匹配命令决定验证，未入body拒绝不覆盖已有成功验证。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/EvidenceCompletion.java",
+        "harness-cli/src/test/java/io/jharness/cli/R1ApplicationEvidenceTest.java"
+      ],
+      "tests": [
+        "io.jharness.cli.R1ApplicationEvidenceTest#deniedUnenteredCommandCannotReplaceExecutedVerification"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0271",
       "task": "R1-06",
       "owner": "application",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "CLI与事件读取路径两端规范化，先拒绝绝对与父穿越。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/EvidenceCompletion.java",
+        "harness-cli/src/test/java/io/jharness/cli/R1ApplicationEvidenceTest.java"
+      ],
+      "tests": [
+        "io.jharness.cli.R1ApplicationEvidenceTest#criteriaRejectAbsoluteAndParentTraversal",
+        "io.jharness.cli.R1ApplicationEvidenceTest#readEvidenceNormalizesBothSidesAndRejectsUnknown"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0272",
       "task": "R1-06",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "变更afterVersion严格schema校验，不以强转崩溃代替未验证结果。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/EvidenceCompletion.java",
+        "harness-cli/src/test/java/io/jharness/cli/R1ApplicationEvidenceTest.java"
+      ],
+      "tests": [
+        "io.jharness.cli.R1ApplicationEvidenceTest#malformedAfterVersionIsNegativeWithoutCrashing"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0273",
       "task": "R1-06",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "changes类型/成员校验，损坏事实返回EVIDENCE_INVALID。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/EvidenceCompletion.java",
+        "harness-cli/src/test/java/io/jharness/cli/R1ApplicationEvidenceTest.java"
+      ],
+      "tests": [
+        "io.jharness.cli.R1ApplicationEvidenceTest#malformedChangesAreNegativeWithoutCrashing"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0285",
       "task": "R1-06",
       "owner": "application",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "发送前对实际Unicode消息/工具输入保守估算并限制输入ceil，配置拒maxOutput>context。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/CliConfig.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/R1CoreLifecycleTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.R1CoreLifecycleTest#costGuardChecksActualUnicodeToolAndMessageInputBeforeSending"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0299",
       "task": "R1-06",
       "owner": "application",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "ParameterizedModel对prepare与completeSingleAttempt均合并冻结参数后透传delegate。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/EcosystemConfig.java",
+        "harness-cli/src/test/java/io/jharness/cli/R1CliLifecycleTest.java"
+      ],
+      "tests": [
+        "io.jharness.cli.R1CliLifecycleTest#parameterizedModelDelegatesSingleAttemptCapabilityAndStreamingWithoutRetry"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0308",
       "task": "R1-02",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "Runtime.close委托closeAll逐个尝试资源并保留首异常与suppressed。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/CliApplication.java",
+        "harness-cli/src/test/java/io/jharness/cli/R1ApplicationNativeTest.java"
+      ],
+      "tests": [
+        "io.jharness.cli.R1ApplicationNativeTest#resourceCloseFailureCannotSkipOtherResourcesAndPreservesSuppressed"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0309",
       "task": "R1-02",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "shutdown取消或等待失败仍停止终端；双故障保留原异常并附加终端清理失败。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/CliApplication.java",
+        "harness-cli/src/test/java/io/jharness/cli/R1CliLifecycleTest.java"
+      ],
+      "tests": [
+        "io.jharness.cli.R1CliLifecycleTest#shutdownStopsTerminalEvenWhenCancellationOrTaskFails"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0311",
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "LOCAL_PARTIAL",
+      "implementation": "三个CLI装配入口统一扩展AWS等明确凭据环境变量别名。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/CliApplication.java",
+        "harness-cli/src/test/java/io/jharness/cli/R1ApplicationNativeTest.java"
+      ],
+      "tests": [
+        "io.jharness.cli.R1ApplicationNativeTest#credentialsAliasesAreRedactedInWorkbenchAndFailedInputsRemainRegistered"
+      ],
+      "limitations": [
+        "新增用例直接覆盖Workbench装配，其他两入口目前静态核对同规则。"
+      ]
     },
     {
       "id": "OCR-0312",
       "task": "R1-02",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "interact/get异常先sdk.cancel、task.cancel及worker.shutdownNow再退出。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/EcosystemCli.java",
+        "harness-cli/src/test/java/io/jharness/cli/R1CliLifecycleTest.java"
+      ],
+      "tests": [
+        "io.jharness.cli.R1CliLifecycleTest#interactionFailureCancelsRunAndPreservesPrimaryAndCleanupFailures"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0315",
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "LOCAL_PARTIAL",
+      "implementation": "生态MCP配置拒绝userinfo/fragment，沿用已知敏感配置键和凭据引用契约。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/EcosystemCli.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/M7ClosureTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M7ClosureTest#trustedConfigurationRejectsSecretsAndUnknownOrUnpinnedCapabilities"
+      ],
+      "limitations": [
+        "未添加sk前缀猜测；该测试是否专门触达userinfo需另核。"
+      ]
     },
     {
       "id": "OCR-0329",
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "worker及父进程发送前按UTF8字节不超过1024校验。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/NativeCredentials.java",
+        "harness-cli/src/test/java/io/jharness/cli/R1ApplicationNativeTest.java"
+      ],
+      "tests": [
+        "io.jharness.cli.R1ApplicationNativeTest#utf8ByteLimitIsValidatedBeforeNativeOperation"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0331",
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "worker stdin byte数组finally清零，原生写入bytes与Memory也清零。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/NativeCredentials.java",
+        "harness-cli/src/test/java/io/jharness/cli/R1NativeWorkerTest.java"
+      ],
+      "tests": [
+        "io.jharness.cli.R1NativeWorkerTest#workerClearsReadBufferOnSuccessAndNativeLinkFailureWithoutDiagnostics"
+      ],
+      "limitations": [
+        "String及JSON值不可擦除；仅缩短可擦除byte数组驻留。"
+      ]
     },
     {
       "id": "OCR-0332",
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "Windows支持性检查通过隔离worker只读CredReadW探测，不存在条目视为可用。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/NativeCredentials.java",
+        "harness-cli/src/test/java/io/jharness/cli/R1NativeWorkerTest.java"
+      ],
+      "tests": [
+        "io.jharness.cli.R1NativeWorkerTest#workerClearsReadBufferOnSuccessAndNativeLinkFailureWithoutDiagnostics",
+        "io.jharness.cli.R1NativeWorkerTest#corruptWindowsBlobIsBoundedAndFreedAndProbeNeverMutates"
+      ],
+      "limitations": [
+        "新增故障注入覆盖本机合成worker/native接口，不等于macOS/Linux真实原生验收。"
+      ]
     },
     {
       "id": "OCR-0333",
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "原生读取对非空结构指针、blob及大小关联先校验并fail closed。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/NativeCredentials.java",
+        "harness-cli/src/test/java/io/jharness/cli/R1NativeWorkerTest.java"
+      ],
+      "tests": [
+        "io.jharness.cli.R1NativeWorkerTest#corruptWindowsBlobIsBoundedAndFreedAndProbeNeverMutates"
+      ],
+      "limitations": [
+        "新增故障注入覆盖本机合成worker/native接口，不等于macOS/Linux真实原生验收。"
+      ]
     },
     {
       "id": "OCR-0335",
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "原生probe失败安全分类已统一新旧超时、UNKNOWN、无效及不可用固定码，清理结果独立保留。",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/CredentialStoreProbe.java",
+        "harness-cli/src/test/java/io/jharness/cli/R1ApplicationNativeTest.java"
+      ],
+      "tests": [
+        "io.jharness.cli.R1ApplicationNativeTest#nativeProbeReportsOnlyFixedSafeFailureCategories"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0336",
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "重复delete之后再次read确认条目不存在。",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/CredentialStoreProbe.java"
+      ],
+      "tests": [
+        "r1-native#deleteMissing",
+        "r1-native#cleanup"
+      ],
+      "limitations": [
+        "Windows真实原生专项须由同runId补充回执验证；不代表macOS/Linux。"
+      ]
     },
     {
       "id": "OCR-0347",
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "SECRET_CONFIG负例保留stdout/stderr并断安全code、哨兵不存在及无新配置文件。",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/CliContractsTest.java"
+      ],
+      "tests": [
+        "io.jharness.cli.CliContractsTest#configCannotPersistKnownSecretUnderOtherwiseAllowedModelField"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0350",
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "Windows支持性检查通过隔离worker只读CredReadW探测，不存在条目视为可用。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/SystemCredentials.java",
+        "harness-cli/src/test/java/io/jharness/cli/R1NativeWorkerTest.java"
+      ],
+      "tests": [
+        "io.jharness.cli.R1NativeWorkerTest#workerClearsReadBufferOnSuccessAndNativeLinkFailureWithoutDiagnostics"
+      ],
+      "limitations": [
+        "新增故障注入覆盖本机合成worker/native接口，不等于macOS/Linux真实原生验收。"
+      ]
     },
     {
       "id": "OCR-0352",
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "父进程发送前拒绝重叠write/delete、重复delete及超过32项批次。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/SystemCredentials.java",
+        "harness-cli/src/test/java/io/jharness/cli/R1ApplicationNativeTest.java"
+      ],
+      "tests": [
+        "io.jharness.cli.R1ApplicationNativeTest#conflictingAndOversizedBatchesNeverReachVault"
+      ],
+      "limitations": [
+        "批次不是原子事务；部分写入通过UNKNOWN分类，未自动分片。"
+      ]
     },
     {
       "id": "OCR-0353",
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "父进程发送前拒绝重叠write/delete、重复delete及超过32项批次。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/SystemCredentials.java",
+        "harness-cli/src/test/java/io/jharness/cli/R1ApplicationNativeTest.java"
+      ],
+      "tests": [
+        "io.jharness.cli.R1ApplicationNativeTest#conflictingAndOversizedBatchesNeverReachVault"
+      ],
+      "limitations": [
+        "批次不是原子事务；部分写入通过UNKNOWN分类，未自动分片。"
+      ]
     },
     {
       "id": "OCR-0354",
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "worker退出6/7/8与父等待超时/中断区分无效、不可用及更新UNKNOWN，不回显原生stderr。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/SystemCredentials.java",
+        "harness-cli/src/test/java/io/jharness/cli/R1NativeWorkerTest.java"
+      ],
+      "tests": [
+        "io.jharness.cli.R1NativeWorkerTest#invalidBatchNeverLoadsNativeAndMutatingFailureIsUnknown",
+        "io.jharness.cli.R1NativeWorkerTest#parentClassifiesReadTimeoutAndUnknownMutationWithoutRawException"
+      ],
+      "limitations": [
+        "新增故障注入覆盖本机合成worker/native接口，不等于macOS/Linux真实原生验收。"
+      ]
     },
     {
       "id": "OCR-0356",
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "worker退出6/7/8与父等待超时/中断区分无效、不可用及更新UNKNOWN，不回显原生stderr。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/SystemCredentials.java",
+        "harness-cli/src/test/java/io/jharness/cli/R1NativeWorkerTest.java"
+      ],
+      "tests": [
+        "io.jharness.cli.R1NativeWorkerTest#invalidBatchNeverLoadsNativeAndMutatingFailureIsUnknown",
+        "io.jharness.cli.R1NativeWorkerTest#parentClassifiesReadTimeoutAndUnknownMutationWithoutRawException"
+      ],
+      "limitations": [
+        "新增故障注入覆盖本机合成worker/native接口，不等于macOS/Linux真实原生验收。"
+      ]
     },
     {
       "id": "OCR-0358",
       "task": "R1-06",
       "owner": "application",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "LOCAL_PARTIAL",
+      "implementation": "read证据同轮SUCCESS正例及UNKNOWN/FAILED负例，路径与reason精确检查。",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/EvidenceCompletionTest.java",
+        "harness-cli/src/test/java/io/jharness/cli/R1ApplicationEvidenceTest.java"
+      ],
+      "tests": [
+        "io.jharness.cli.R1ApplicationEvidenceTest#readEvidenceNormalizesBothSidesAndRejectsUnknown"
+      ],
+      "limitations": [
+        "当前新例未单独构造缺status read/write；实现按非SUCCESS拒绝。"
+      ]
     },
     {
       "id": "OCR-0359",
       "task": "R1-06",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "read证据同轮SUCCESS正例及UNKNOWN/FAILED负例，路径与reason精确检查。",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/EvidenceCompletionTest.java",
+        "harness-cli/src/test/java/io/jharness/cli/R1ApplicationEvidenceTest.java"
+      ],
+      "tests": [
+        "io.jharness.cli.R1ApplicationEvidenceTest#readEvidenceNormalizesBothSidesAndRejectsUnknown"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0360",
       "task": "R1-06",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "最近失败覆盖早先成功，SUCCESS非零exit仍失败，最后成功正例。",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/EvidenceCompletionTest.java",
+        "harness-cli/src/test/java/io/jharness/cli/R1ApplicationEvidenceTest.java"
+      ],
+      "tests": [
+        "io.jharness.cli.R1ApplicationEvidenceTest#latestExecutedVerificationMustPass"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0371",
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "doctor新增stderr哨兵及结构化顶层无apiKey/token字段检查。",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/M9DistributionDoctorTest.java"
+      ],
+      "tests": [
+        "io.jharness.cli.M9DistributionDoctorTest#packagedRuntimeDoesNotRequireMavenInTargetWorkspace"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0377",
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "设置先持久化待清理引用意图，写vault后原子提交设置，失败仅补偿非live新引用。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/WorkbenchSettings.java",
+        "harness-cli/src/test/java/io/jharness/cli/R1WorkbenchTransactionTest.java"
+      ],
+      "tests": [
+        "io.jharness.cli.R1WorkbenchTransactionTest#failedFileCommitCompensatesOnlyNewCredentialAndRedactsFailedInput",
+        "io.jharness.cli.R1WorkbenchTransactionTest#failedRotationPreservesDiskAndOriginalCredentialAcrossRestart"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0378",
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "待清理引用存入独立账本，重开重试并删除成功后复位pending。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/WorkbenchSettings.java",
+        "harness-cli/src/test/java/io/jharness/cli/R1WorkbenchTransactionTest.java"
+      ],
+      "tests": [
+        "io.jharness.cli.R1WorkbenchTransactionTest#obsoleteCredentialCleanupSurvivesRestartAndResetsPending"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0380",
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "LOCAL_PARTIAL",
+      "implementation": "secret集合去重，仅变化时发布不可变redactor；失败提交的秘密保持已登记以脱敏错误。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/WorkbenchSettings.java",
+        "harness-cli/src/test/java/io/jharness/cli/R1WorkbenchTransactionTest.java"
+      ],
+      "tests": [
+        "io.jharness.cli.R1WorkbenchTransactionTest#failedFileCommitCompensatesOnlyNewCredentialAndRedactsFailedInput"
+      ],
+      "limitations": [
+        "暂无重复save下redactor实例重建次数或增长上界的专门测试。"
+      ]
     },
     {
       "id": "OCR-0390",
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "内联key负例断INVALID_CONFIG并检查安全异常不含哨兵。",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/M6ConfigurationTest.java"
+      ],
+      "tests": [
+        "io.jharness.cli.M6ConfigurationTest#conflictingRoutesPoliciesUnknownSelectionsAndInlineKeysAreRejected"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0397",
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "清理工具校验参数、真实fixture根与settings文件，缺文件不输出CLEAN。",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/WorkbenchCredentialCleanup.java",
+        "harness-cli/src/test/java/io/jharness/cli/R1CredentialCleanupTest.java"
+      ],
+      "tests": [
+        "io.jharness.cli.R1CredentialCleanupTest#invalidArgumentsAndAbsentFixtureCannotClaimClean"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0398",
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "清理前验证真实路径，受控fixture元数据junction/link拒绝且同级设置文件保持不变。",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/WorkbenchCredentialCleanup.java",
+        "harness-cli/src/test/java/io/jharness/cli/R1CredentialCleanupTest.java"
+      ],
+      "tests": [
+        "io.jharness.cli.R1CredentialCleanupTest#linkedMetadataCannotReadOrDeleteSiblingFixtureCredentials"
+      ],
+      "limitations": [
+        "平台原生vault不参与该逃逸拒绝负例。"
+      ]
     },
     {
       "id": "OCR-0399",
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "清理读取有界models数组及严格空串/64小写hex引用，异常schema与未知ref拒绝。",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/WorkbenchCredentialCleanup.java",
+        "harness-cli/src/test/java/io/jharness/cli/R1CredentialCleanupTest.java"
+      ],
+      "tests": [
+        "io.jharness.cli.R1CredentialCleanupTest#malformedModelsAndUnknownReferencesAreRejectedBeforeVaultAccess"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0400",
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "清理读取有界models数组及严格空串/64小写hex引用，异常schema与未知ref拒绝。",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/WorkbenchCredentialCleanup.java",
+        "harness-cli/src/test/java/io/jharness/cli/R1CredentialCleanupTest.java"
+      ],
+      "tests": [
+        "io.jharness.cli.R1CredentialCleanupTest#malformedModelsAndUnknownReferencesAreRejectedBeforeVaultAccess"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0428",
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "负保存前成功持久旧设置，检查旧磁盘/runtime/vault仍一致。",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/WorkbenchSettingsTest.java",
+        "harness-cli/src/test/java/io/jharness/cli/R1WorkbenchTransactionTest.java"
+      ],
+      "tests": [
+        "io.jharness.cli.R1WorkbenchTransactionTest#invalidSaveLeavesExistingDiskRuntimeAndVaultUntouched"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0429",
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "成功旧密钥后故障轮换，重开manager校验旧磁盘与旧key仍可用。",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/WorkbenchSettingsTest.java",
+        "harness-cli/src/test/java/io/jharness/cli/R1WorkbenchTransactionTest.java"
+      ],
+      "tests": [
+        "io.jharness.cli.R1WorkbenchTransactionTest#failedRotationPreservesDiskAndOriginalCredentialAcrossRestart"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0430",
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "原生设置回归保留显式unsupported、唯一fixture目标和finally清理检查。",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/WorkbenchSettingsTest.java"
+      ],
+      "tests": [
+        "io.jharness.cli.WorkbenchSettingsTest#systemCredentialAdapterRoundTripAndCleanupOrExplicitUnsupported"
+      ],
+      "limitations": [
+        "没有新三平台原生验收；真实native测试不能被合成MemoryVault成功替代。"
+      ]
     },
     {
       "id": "OCR-0431",
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "显式user root接受绝对本机路径并拒绝相对/UNC，生态入口补UNC字符串检查。",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/WorkbenchSettingsTest.java"
+      ],
+      "tests": [
+        "io.jharness.cli.WorkbenchSettingsTest#explicitUserSkillRootAcceptsLocalAbsoluteAndRejectsRelativeOrUnc"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0437",
       "task": "R1-02",
       "owner": "process",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "LOCAL_PARTIAL",
+      "implementation": "关闭先撤销能力；terminal失败后仍关闭process，保留首因并suppressed后续异常。",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/LocalExecutionEnvironment.java"
+      ],
+      "tests": [
+        "io.jharness.ecosystem.R1EnvironmentLifecycleTest#closedLocalEnvironmentRevokesAlreadyBorrowedFiles"
+      ],
+      "limitations": [
+        "终端和进程同时关闭失败的双故障仅源码控制流复核，现测试验证真实借用能力关闭边界。"
+      ]
     },
     {
       "id": "OCR-0438",
       "task": "R1-02",
       "owner": "process",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "LocalWorkspace共享revoke状态覆盖已借用及isolated视图；操作到下一检查点停止。",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/LocalExecutionEnvironment.java"
+      ],
+      "tests": [
+        "io.jharness.ecosystem.R1EnvironmentLifecycleTest#closedLocalEnvironmentRevokesAlreadyBorrowedFiles"
+      ],
+      "limitations": [
+        "不是抢占式OS撤销，已跨过最后检查点的原子提交可能完成。"
+      ]
     },
     {
       "id": "OCR-0446",
       "task": "R1-02",
       "owner": "process",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "McpIo完整交付Throwable，fatal继续传播；abort异常附原异常，有界join并记录清理未知，中断结算后恢复。",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/McpIo.java"
+      ],
+      "tests": [
+        "io.jharness.ecosystem.R1EnvironmentLifecycleTest#mcpAbortFailureCannotReplaceTheUnknownExecutionCode",
+        "io.jharness.ecosystem.R1EnvironmentLifecycleTest#fatalMcpFailureCompletesImmediatelyAndStillAborts"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0450",
       "task": "R1-02",
       "owner": "process",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "McpIo完整交付Throwable，fatal继续传播；abort异常附原异常，有界join并记录清理未知，中断结算后恢复。",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/McpIo.java"
+      ],
+      "tests": [
+        "io.jharness.ecosystem.R1EnvironmentLifecycleTest#mcpAbortFailureCannotReplaceTheUnknownExecutionCode",
+        "io.jharness.ecosystem.R1EnvironmentLifecycleTest#fatalMcpFailureCompletesImmediatelyAndStillAborts"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0455",
       "task": "R1-03",
       "owner": "process",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "容器变更非零/编码失败/并发关闭保操作未知；命令畸形回执保UNKNOWN，清理失败独立记录，不伪称removed，不重发。",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/DockerExecutionEnvironment.java"
+      ],
+      "tests": [
+        "io.jharness.ecosystem.R1EnvironmentLifecycleTest#nonzeroMutationAndFailedRemovalKeepBothUnknownFacts",
+        "io.jharness.ecosystem.R1EnvironmentLifecycleTest#uncertainCommandNeverReportsRemovedWhenRemovalFailed",
+        "io.jharness.ecosystem.R1EnvironmentLifecycleTest#workerUncertaintyNormalizesPublicStatusButKeepsExitEvidence",
+        "io.jharness.ecosystem.R1EnvironmentLifecycleTest#malformedWorkerCommandResponseRemainsUnknownAfterSuccessfulControlExit"
+      ],
+      "limitations": [
+        "fake transport为故障契约证明；真实Docker最终JAR探针由root统一执行。"
+      ]
     },
     {
       "id": "OCR-0456",
       "task": "R1-03",
       "owner": "process",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "容器变更非零/编码失败/并发关闭保操作未知；命令畸形回执保UNKNOWN，清理失败独立记录，不伪称removed，不重发。",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/DockerExecutionEnvironment.java"
+      ],
+      "tests": [
+        "io.jharness.ecosystem.R1EnvironmentLifecycleTest#nonzeroMutationAndFailedRemovalKeepBothUnknownFacts",
+        "io.jharness.ecosystem.R1EnvironmentLifecycleTest#uncertainCommandNeverReportsRemovedWhenRemovalFailed",
+        "io.jharness.ecosystem.R1EnvironmentLifecycleTest#workerUncertaintyNormalizesPublicStatusButKeepsExitEvidence",
+        "io.jharness.ecosystem.R1EnvironmentLifecycleTest#malformedWorkerCommandResponseRemainsUnknownAfterSuccessfulControlExit"
+      ],
+      "limitations": [
+        "fake transport为故障契约证明；真实Docker最终JAR探针由root统一执行。"
+      ]
     },
     {
       "id": "OCR-0457",
       "task": "R1-03",
       "owner": "process",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "容器变更非零/编码失败/并发关闭保操作未知；命令畸形回执保UNKNOWN，清理失败独立记录，不伪称removed，不重发。",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/DockerExecutionEnvironment.java"
+      ],
+      "tests": [
+        "io.jharness.ecosystem.R1EnvironmentLifecycleTest#nonzeroMutationAndFailedRemovalKeepBothUnknownFacts",
+        "io.jharness.ecosystem.R1EnvironmentLifecycleTest#uncertainCommandNeverReportsRemovedWhenRemovalFailed",
+        "io.jharness.ecosystem.R1EnvironmentLifecycleTest#workerUncertaintyNormalizesPublicStatusButKeepsExitEvidence",
+        "io.jharness.ecosystem.R1EnvironmentLifecycleTest#malformedWorkerCommandResponseRemainsUnknownAfterSuccessfulControlExit"
+      ],
+      "limitations": [
+        "fake transport为故障契约证明；真实Docker最终JAR探针由root统一执行。"
+      ]
     },
     {
       "id": "OCR-0458",
       "task": "R1-02",
       "owner": "process",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "能力关闭与容器已移除分开记录，rm失败可重试close但不恢复执行。",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/DockerExecutionEnvironment.java"
+      ],
+      "tests": [
+        "io.jharness.ecosystem.R1EnvironmentLifecycleTest#dockerRemovalCanBeRetriedWithoutRestoringCapabilities"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0460",
       "task": "R1-02",
       "owner": "process",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "启动失败补偿检查实际rm回执，保留CONTAINER_START_FAILED和suppressed清理未知及容器身份。",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/DockerExecutionEnvironment.java"
+      ],
+      "tests": [
+        "io.jharness.ecosystem.R1EnvironmentLifecycleTest#failedContainerStartRetainsFailedCompensation"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0461",
       "task": "R1-03",
       "owner": "process",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "容器变更非零/编码失败/并发关闭保操作未知；命令畸形回执保UNKNOWN，清理失败独立记录，不伪称removed，不重发。",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/DockerExecutionEnvironment.java"
+      ],
+      "tests": [
+        "io.jharness.ecosystem.R1EnvironmentLifecycleTest#nonzeroMutationAndFailedRemovalKeepBothUnknownFacts",
+        "io.jharness.ecosystem.R1EnvironmentLifecycleTest#uncertainCommandNeverReportsRemovedWhenRemovalFailed",
+        "io.jharness.ecosystem.R1EnvironmentLifecycleTest#workerUncertaintyNormalizesPublicStatusButKeepsExitEvidence",
+        "io.jharness.ecosystem.R1EnvironmentLifecycleTest#malformedWorkerCommandResponseRemainsUnknownAfterSuccessfulControlExit"
+      ],
+      "limitations": [
+        "fake transport为故障契约证明；真实Docker最终JAR探针由root统一执行。"
+      ]
     },
     {
       "id": "OCR-0472",
       "task": "R1-02",
       "owner": "process",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "native控制进程使用统一有界ProcessCleanup，成功回执也受观察清理结果约束，超时/取消保持uncertain。",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/NativeCommandTransport.java"
+      ],
+      "tests": [
+        "io.jharness.ecosystem.R1EnvironmentLifecycleTest#nativeTransportReturnsOnlyAfterCancelledChildExitAndPreservesUnknownDelivery"
+      ],
+      "limitations": [
+        "ProcessHandle采样不保证捕获脱离且从未观察的后代，不等价Job Object。"
+      ]
     },
     {
       "id": "OCR-0481",
       "task": "R1-02",
       "owner": "process",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "SDK分离container关闭事实与environment.closed写入，逐资源关闭，记录失败保留首因并禁止重新运行。",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/HarnessSdk.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/R1SdkLifecycleTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.R1SdkLifecycleTest#successfulEnvironmentCloseIsNotReclassifiedWhenItsJournalAppendFails"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0485",
       "task": "R1-04",
       "owner": "process",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "SdkConfiguration安全toString只输出长度/工具数/参数名，不打印prompt和参数值。",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/SdkConfiguration.java"
+      ],
+      "tests": [
+        "io.jharness.ecosystem.R1EnvironmentLifecycleTest#sdkConfigurationNeverPrintsPromptOrParameterValues"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0489",
       "task": "R1-02",
       "owner": "process",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "HTTP所有活动response body登记并检查撤销状态，close独立于exchange锁取消待响应请求并关闭活动流。",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/HttpMcpTransport.java"
+      ],
+      "tests": [
+        "io.jharness.ecosystem.R1EnvironmentLifecycleTest#httpCloseAbortsTheInFlightBodyWithoutWaitingForExchangeMonitor",
+        "io.jharness.testkit.M7McpTest#cancellationInterruptsOpenSseAndKeepsUnknownOutcome"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0491",
       "task": "R1-02",
       "owner": "process",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "HTTP所有活动response body登记并检查撤销状态，close独立于exchange锁取消待响应请求并关闭活动流。",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/HttpMcpTransport.java"
+      ],
+      "tests": [
+        "io.jharness.ecosystem.R1EnvironmentLifecycleTest#httpCloseAbortsTheInFlightBodyWithoutWaitingForExchangeMonitor",
+        "io.jharness.testkit.M7McpTest#cancellationInterruptsOpenSseAndKeepsUnknownOutcome"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0499",
       "task": "R1-02",
       "owner": "process",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "Planning stop先撤销，再等待owner锁；最终save前复核active，关闭前不再新增持久变更。",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/PlanningPlugin.java"
+      ],
+      "tests": [
+        "io.jharness.ecosystem.R1EnvironmentLifecycleTest#planningStopRevokesBeforeBlockedPreparationCanSaveAndWaitsForOwnerExit",
+        "io.jharness.testkit.M7ClosureTest#planningCannotClaimCompletionOrSkipApprovalAndChangesRevokeApproval"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0518",
       "task": "R1-02",
       "owner": "process",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "子视图向长读取转发组合token，包含调用token、父取消及子关闭，借用方不关闭父环境。",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/ReadOnlyChildEnvironment.java"
+      ],
+      "tests": [
+        "io.jharness.ecosystem.R1EnvironmentLifecycleTest#childRevocationReachesAnAlreadyRunningBorrowedReadToken"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0531",
       "task": "R1-02",
       "owner": "process",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "LOCAL_PARTIAL",
+      "implementation": "stdio构造启动后失败补偿，有界后代采样/强杀/等待/流关闭，清理不完整明确MCP_CLEANUP_UNKNOWN。",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/StdioMcpTransport.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M1057ExtensionsTest#stdioResourcesAndTemplatesUseRealChildProtocolAndCleanUp",
+        "io.jharness.testkit.M7McpTest#stdioDiscoversButNeverTrustsReadonlyHintAndRevokesOnStop"
+      ],
+      "limitations": [
+        "构造器分配失败补偿为静态路径复核；不制造OOM，不吞Error继续。后代采样不是OS隔离。"
+      ]
     },
     {
       "id": "OCR-0533",
       "task": "R1-02",
       "owner": "process",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "LOCAL_PARTIAL",
+      "implementation": "stdio构造启动后失败补偿，有界后代采样/强杀/等待/流关闭，清理不完整明确MCP_CLEANUP_UNKNOWN。",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/StdioMcpTransport.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M1057ExtensionsTest#stdioResourcesAndTemplatesUseRealChildProtocolAndCleanUp",
+        "io.jharness.testkit.M7McpTest#stdioDiscoversButNeverTrustsReadonlyHintAndRevokesOnStop"
+      ],
+      "limitations": [
+        "构造器分配失败补偿为静态路径复核；不制造OOM，不吞Error继续。后代采样不是OS隔离。"
+      ]
     },
     {
       "id": "OCR-0535",
       "task": "R1-04",
       "owner": "core",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "EventFailure摘要仅包含稳定code与cause类型，省略cause.message以及自由事件标识",
+      "files": [
+        "harness-events/src/main/java/io/jharness/events/EventFailure.java",
+        "harness-events/src/test/java/io/jharness/events/R1EventSafetyTest.java"
+      ],
+      "tests": [
+        "io.jharness.events.R1EventSafetyTest#failureSummaryOmitsCauseMessageAndFreeFormEventIdentity"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0539",
       "task": "R1-04",
       "owner": "process",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "web_fetch返回安全去query URL与来源别名/queryOmitted；固定来源合法query请求仍发送。",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/WebFetchPlugin.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M7ClosureTest#fetchIsAllowlistedApprovedBoundedAndNeverFollowsRedirects"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0540",
       "task": "R1-02",
       "owner": "process",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "LOCAL_PARTIAL",
+      "implementation": "WebFetch以abandoned与received双向交接response body；finally回收已到/迟到body，取消pending和reading。",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/WebFetchPlugin.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M7ClosureTest#fetchIsAllowlistedApprovedBoundedAndNeverFollowsRedirects"
+      ],
+      "limitations": [
+        "覆盖真实HTTP取消与常规资源回收，精确纳秒迟到headers窗口未构造独立调度器探针。"
+      ]
     },
     {
       "id": "OCR-0544",
       "task": "R1-02",
       "owner": "core",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "关闭失败保留route证据，不自动重试非幂等关闭",
+      "files": [
+        "harness-llm/src/main/java/io/jharness/llm/LazyModelRouter.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/R1CoreLifecycleTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.R1CoreLifecycleTest#routerCloseRetainsFailedRouteEvidenceWithoutRetryingResource"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0553",
       "task": "R1-02",
       "owner": "core",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "不合作serial污染后拒绝再次派发，协调提交和关闭",
+      "files": [
+        "harness-events/src/main/java/io/jharness/events/DefaultEventBus.java",
+        "harness-events/src/test/java/io/jharness/events/R1EventSafetyTest.java"
+      ],
+      "tests": [
+        "io.jharness.events.R1EventSafetyTest#uncooperativeSerialTimeoutBlocksLaterDispatchUntilClose"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0554",
       "task": "R1-02",
       "owner": "core",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "关闭竞态映射BUS_CLOSED且校验正timeout",
+      "files": [
+        "harness-events/src/main/java/io/jharness/events/DefaultEventBus.java",
+        "harness-events/src/test/java/io/jharness/events/R1EventSafetyTest.java"
+      ],
+      "tests": [
+        "io.jharness.events.R1EventSafetyTest#barriersRejectNonpositiveTimeoutAndClosedBusWithStableCode"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0555",
       "task": "R1-02",
       "owner": "core",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "不合作serial污染后拒绝再次派发，协调提交和关闭",
+      "files": [
+        "harness-events/src/main/java/io/jharness/events/DefaultEventBus.java",
+        "harness-events/src/test/java/io/jharness/events/R1EventSafetyTest.java"
+      ],
+      "tests": [
+        "io.jharness.events.R1EventSafetyTest#uncooperativeSerialTimeoutBlocksLaterDispatchUntilClose"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0556",
       "task": "R1-02",
       "owner": "core",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "有界关闭与残留诊断，不承诺撤销后排队通知必达",
+      "files": [
+        "harness-events/src/main/java/io/jharness/events/DefaultEventBus.java",
+        "harness-events/src/test/java/io/jharness/events/R1EventSafetyTest.java"
+      ],
+      "tests": [
+        "io.jharness.events.R1EventSafetyTest#closeReportsWorkerThatDidNotCooperateAndReturnsBeforeItsRelease"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0557",
       "task": "R1-02",
       "owner": "core",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "有界通知队列和独立饱和诊断，不否定已持久事实",
+      "files": [
+        "harness-events/src/main/java/io/jharness/events/DefaultEventBus.java",
+        "harness-events/src/test/java/io/jharness/events/R1EventSafetyTest.java"
+      ],
+      "tests": [
+        "io.jharness.events.R1EventSafetyTest#notificationSaturationIsBoundedAndDiagnosedWithoutRejectingPersistedFact"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0559",
       "task": "R1-02",
       "owner": "core",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "保留模型首因与观测secondary，成功观测失败也明确失败",
+      "files": [
+        "harness-llm/src/main/java/io/jharness/llm/ObservedLlmClient.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/R1CoreLifecycleTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.R1CoreLifecycleTest#modelObservationFailurePreservesOriginalRejectionAndSecondaryCause"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0565",
       "task": "R1-02",
       "owner": "core",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "started/exited闩锁证明实际任务超时，非取消未开始任务",
+      "files": [
+        "harness-events/src/test/java/io/jharness/events/DefaultEventBusTest.java",
+        "harness-events/src/test/java/io/jharness/events/R1EventSafetyTest.java"
+      ],
+      "tests": [
+        "io.jharness.events.R1EventSafetyTest#uncooperativeSerialTimeoutBlocksLaterDispatchUntilClose"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0566",
       "task": "R1-02",
       "owner": "core",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "递归cause链明确RECURSIVE_EVENT并整体有界",
+      "files": [
+        "harness-events/src/test/java/io/jharness/events/DefaultEventBusTest.java",
+        "harness-events/src/test/java/io/jharness/events/R1EventSafetyTest.java"
+      ],
+      "tests": [
+        "io.jharness.events.R1EventSafetyTest#recursiveSerialFailurePreservesExplicitRecursiveCause"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0574",
       "task": "R1-04",
       "owner": "process",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "v2只摘要非敏感字段，以相同sanitizer比较持久脱敏text；旧记录只读兼容，不迁移旧摘要。",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/UserQuestionsPlugin.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M1055QuestionsTest#persistedAnswerFingerprintOmitsRawSensitiveTextAndSurvivesRestartComparison",
+        "io.jharness.testkit.M1055QuestionsTest#draftAndAnswerAreRedactedAndDuplicateConflictsAreBounded"
+      ],
+      "limitations": [
+        "脱敏等价文本不可区分原文，不承诺秘密原文精确幂等。"
+      ]
     },
     {
       "id": "OCR-0576",
       "task": "R1-02",
       "owner": "process",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "问题stop撤销受理并有界等待owner写resolved，保留已接受答案，不清pending假装结束。",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/UserQuestionsPlugin.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M1055QuestionsTest#stopWaitsForOwnerSettlementAndKeepsAnAlreadyAcceptedAnswer"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0600",
       "task": "R1-03",
       "owner": "process",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "子worker只交付completion不写父journal；父中断先安全取消/结算再恢复标志，迟到子结果不追加父事实。",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/SubagentPlugin.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M7SubagentTest#interruptedParentSettlesWithRealWriterAndLateChildNeverWritesParentJournal"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0601",
       "task": "R1-03",
       "owner": "process",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "子worker只交付completion不写父journal；父中断先安全取消/结算再恢复标志，迟到子结果不追加父事实。",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/SubagentPlugin.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M7SubagentTest#interruptedParentSettlesWithRealWriterAndLateChildNeverWritesParentJournal"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0602",
       "task": "R1-03",
       "owner": "process",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "LOCAL_PARTIAL",
+      "implementation": "cancel_requested落盘失败仍通过finally触发sdk.cancel，CAS token传播不依赖事件成功。",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/SubagentPlugin.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M7SubagentTest#explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[10]",
+        "io.jharness.testkit.M7SubagentTest#explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[1]",
+        "io.jharness.testkit.M7SubagentTest#explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[2]",
+        "io.jharness.testkit.M7SubagentTest#explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[3]",
+        "io.jharness.testkit.M7SubagentTest#explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[4]",
+        "io.jharness.testkit.M7SubagentTest#explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[5]",
+        "io.jharness.testkit.M7SubagentTest#explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[6]",
+        "io.jharness.testkit.M7SubagentTest#explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[7]",
+        "io.jharness.testkit.M7SubagentTest#explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[8]",
+        "io.jharness.testkit.M7SubagentTest#explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[9]"
+      ],
+      "limitations": [
+        "cancel_requested单点落盘失败的finally保底为静态控制流复核。"
+      ]
     },
     {
       "id": "OCR-0603",
       "task": "R1-03",
       "owner": "process",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "shutdown逐任务捕获异常并有界等待子completion，未观察停止保持UNKNOWN，所有取消与清理继续。",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/SubagentPlugin.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M7SubagentTest#parentCancellationAndUncooperativeChildStayUnknownUntilExplicitSettledAudit"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0604",
       "task": "R1-03",
       "owner": "process",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "LOCAL_PARTIAL",
+      "implementation": "验证识别已有subagent.verified，允许重入补tool.verified，仍要求子journal已结算与双写者空闲。",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/SubagentPlugin.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M7SubagentTest#parentCancellationAndUncooperativeChildStayUnknownUntilExplicitSettledAudit"
+      ],
+      "limitations": [
+        "两个verify事实中间中断的重入条件静态核对；既有真实恢复用例覆盖正常verify。"
+      ]
     },
     {
       "id": "OCR-0622",
       "task": "R1-02",
       "owner": "core",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "工具视图绑定scope，晚注册资源关闭，不冒称Java恶意沙箱",
+      "files": [
+        "harness-plugin/src/main/java/io/jharness/plugin/ScopedToolRegistry.java",
+        "harness-plugin/src/test/java/io/jharness/plugin/R1PluginRollbackTest.java"
+      ],
+      "tests": [
+        "io.jharness.plugin.R1PluginRollbackTest#closedContextImmediatelyClosesLateOwnedResourceAndRejectsWrongScope"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0623",
       "task": "R1-02",
       "owner": "core",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "tool.name元数据回调在注册表锁外快照",
+      "files": [
+        "harness-plugin/src/main/java/io/jharness/plugin/ScopedToolRegistry.java",
+        "harness-plugin/src/test/java/io/jharness/plugin/R1PluginRollbackTest.java"
+      ],
+      "tests": [
+        "io.jharness.plugin.R1PluginRollbackTest#toolMetadataCallbackDoesNotHoldRegistryMonitor"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0628",
       "task": "R1-05",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "InteractiveApprovalService统一锁内仲裁并在get后重查closed/cancel/deadline。",
+      "files": [
+        "harness-policy/src/main/java/io/jharness/policy/InteractiveApprovalService.java",
+        "harness-policy/src/test/java/io/jharness/policy/R1ApplicationPolicyTest.java"
+      ],
+      "tests": [
+        "io.jharness.policy.R1ApplicationPolicyTest#closingImmediatelyRevokesPromptsAndCannotAcceptNewAnswers",
+        "io.jharness.policy.R1ApplicationPolicyTest#expiredPromptHasPreciseReasonAndIsWithdrawn"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0629",
       "task": "R1-05",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "answer锁内检查待决状态/截止并拒绝null/blank id，complete结果精确返回。",
+      "files": [
+        "harness-policy/src/main/java/io/jharness/policy/InteractiveApprovalService.java",
+        "harness-policy/src/test/java/io/jharness/policy/R1ApplicationPolicyTest.java"
+      ],
+      "tests": [
+        "io.jharness.policy.R1ApplicationPolicyTest#nullAndBlankAnswerAreSimplyRejected",
+        "io.jharness.policy.R1ApplicationPolicyTest#concurrentAnswersHaveExactlyOneWinnerAndKeepItsDecision"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0630",
       "task": "R1-05",
       "owner": "application",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "close即时拒绝并清空所有pending，关闭后拒绝新回答。",
+      "files": [
+        "harness-policy/src/main/java/io/jharness/policy/InteractiveApprovalService.java",
+        "harness-policy/src/test/java/io/jharness/policy/R1ApplicationPolicyTest.java"
+      ],
+      "tests": [
+        "io.jharness.policy.R1ApplicationPolicyTest#closingImmediatelyRevokesPromptsAndCannotAcceptNewAnswers"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0631",
       "task": "R1-05",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "任意SYSTEM_IMPACT提示明确任意命令风险，回归断副作用级别和实际目标。",
+      "files": [
+        "harness-policy/src/main/java/io/jharness/policy/InteractiveApprovalService.java",
+        "harness-policy/src/test/java/io/jharness/policy/PolicyApprovalTest.java",
+        "harness-policy/src/test/java/io/jharness/policy/R1ApplicationPolicyTest.java"
+      ],
+      "tests": [
+        "io.jharness.policy.PolicyApprovalTest#approvalPromptContainsFullCallAndSingleUserDecision",
+        "io.jharness.policy.R1ApplicationPolicyTest#closingImmediatelyRevokesPromptsAndCannotAcceptNewAnswers"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0632",
       "task": "R1-03",
       "owner": "process",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "CancelMain拒绝空白目录，非法Path映射INVALID_STATE退出5且不回显堆栈/原路径。",
+      "files": [
+        "harness-process/src/main/java/io/jharness/process/CancelMain.java"
+      ],
+      "tests": [
+        "io.jharness.process.R1ProcessSafetyTest#cancelEntrypointRejectsBlankAndInvalidPathsWithTheDocumentedCode"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0633",
       "task": "R1-03",
       "owner": "process",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "CancelMain拒绝空白目录，非法Path映射INVALID_STATE退出5且不回显堆栈/原路径。",
+      "files": [
+        "harness-process/src/main/java/io/jharness/process/CancelMain.java"
+      ],
+      "tests": [
+        "io.jharness.process.R1ProcessSafetyTest#cancelEntrypointRejectsBlankAndInvalidPathsWithTheDocumentedCode"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0634",
       "task": "R1-02",
       "owner": "core",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "可清理Error和观察故障不阻回滚，保留原错误",
+      "files": [
+        "harness-plugin/src/main/java/io/jharness/plugin/PluginContainer.java",
+        "harness-plugin/src/test/java/io/jharness/plugin/R1PluginRollbackTest.java"
+      ],
+      "tests": [
+        "io.jharness.plugin.R1PluginRollbackTest#startErrorRollsBackRegistrationAndOwnedResourcesPreservingOriginal"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0635",
       "task": "R1-02",
       "owner": "core",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "可清理Error和观察故障不阻回滚，保留原错误",
+      "files": [
+        "harness-plugin/src/main/java/io/jharness/plugin/PluginContainer.java",
+        "harness-plugin/src/test/java/io/jharness/plugin/R1PluginRollbackTest.java"
+      ],
+      "tests": [
+        "io.jharness.plugin.R1PluginRollbackTest#startErrorRollsBackRegistrationAndOwnedResourcesPreservingOriginal",
+        "io.jharness.plugin.R1PluginRollbackTest#brokenLifecycleObservationCannotSkipRollbackOrReplaceStartupFailure"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0636",
       "task": "R1-02",
       "owner": "core",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "明确STOP_FAILED和残留证据，资源尽力清理不盲重试",
+      "files": [
+        "harness-plugin/src/main/java/io/jharness/plugin/PluginContainer.java",
+        "harness-plugin/src/test/java/io/jharness/plugin/R1PluginRollbackTest.java"
+      ],
+      "tests": [
+        "io.jharness.plugin.R1PluginRollbackTest#failedStopAndResourceCloseRetainBothFailuresAndDoNotRetry"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0638",
       "task": "R1-02",
       "owner": "core",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "明确STOP_FAILED和残留证据，资源尽力清理不盲重试",
+      "files": [
+        "harness-plugin/src/main/java/io/jharness/plugin/PluginContainer.java",
+        "harness-plugin/src/test/java/io/jharness/plugin/R1PluginRollbackTest.java"
+      ],
+      "tests": [
+        "io.jharness.plugin.R1PluginRollbackTest#failedStopAndResourceCloseRetainBothFailuresAndDoNotRetry",
+        "io.jharness.plugin.R1PluginRollbackTest#brokenLifecycleObservationCannotSkipRollbackOrReplaceStartupFailure"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0639",
       "task": "R1-02",
       "owner": "core",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "锁内封存锁外逆序关闭，晚注册资源立即关闭",
+      "files": [
+        "harness-plugin/src/main/java/io/jharness/plugin/PluginContainer.java",
+        "harness-plugin/src/test/java/io/jharness/plugin/R1PluginRollbackTest.java"
+      ],
+      "tests": [
+        "io.jharness.plugin.R1PluginRollbackTest#resourceCloseRunsOutsideContextMonitor"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0640",
       "task": "R1-02",
       "owner": "application",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "PolicyPlugin资源own先于register，逆序close先撤销注册再关闭审批。",
+      "files": [
+        "harness-policy/src/main/java/io/jharness/policy/PolicyPlugin.java",
+        "harness-cli/src/test/java/io/jharness/cli/R1CliLifecycleTest.java"
+      ],
+      "tests": [
+        "io.jharness.cli.R1CliLifecycleTest#policyPluginRevokesApprovalRegistrationBeforeClosingAndStillRevokesPolicyOnFailure"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0645",
       "task": "R1-04",
       "owner": "core",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "公开适配器拒绝敏感id/name，正常多工具关联保持，不静默改名碰撞",
+      "files": [
+        "harness-llm/src/main/java/io/jharness/llm/OpenAiCompatibleLlmClient.java",
+        "harness-llm/src/test/java/io/jharness/llm/OpenAiCompatibleLlmClientTest.java"
+      ],
+      "tests": [
+        "io.jharness.llm.OpenAiCompatibleLlmClientTest#sensitiveToolIdentityIsRejectedRatherThanRenamedIntoCollision",
+        "io.jharness.llm.OpenAiCompatibleLlmClientTest#toolArgumentsParseAndRoundTripAsJsonStringsWithLinkedResults"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0649",
       "task": "R1-05",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "用户拒绝明确断actor/reason，避免仅approved=false把超时当用户选择。",
+      "files": [
+        "harness-policy/src/test/java/io/jharness/policy/PolicyApprovalTest.java"
+      ],
+      "tests": [
+        "io.jharness.policy.PolicyApprovalTest#approvalPromptContainsFullCallAndSingleUserDecision"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0650",
       "task": "R1-05",
       "owner": "application",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "任意SYSTEM_IMPACT提示明确任意命令风险，回归断副作用级别和实际目标。",
+      "files": [
+        "harness-policy/src/test/java/io/jharness/policy/PolicyApprovalTest.java",
+        "harness-policy/src/test/java/io/jharness/policy/R1ApplicationPolicyTest.java"
+      ],
+      "tests": [
+        "io.jharness.policy.PolicyApprovalTest#approvalPromptContainsFullCallAndSingleUserDecision",
+        "io.jharness.policy.R1ApplicationPolicyTest#closingImmediatelyRevokesPromptsAndCannotAcceptNewAnswers"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0651",
       "task": "R1-05",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "LOCAL_PARTIAL",
+      "implementation": "新增超时与close精确reason/actor和prompts清空断言。",
+      "files": [
+        "harness-policy/src/test/java/io/jharness/policy/PolicyApprovalTest.java",
+        "harness-policy/src/test/java/io/jharness/policy/R1ApplicationPolicyTest.java"
+      ],
+      "tests": [
+        "io.jharness.policy.R1ApplicationPolicyTest#expiredPromptHasPreciseReasonAndIsWithdrawn",
+        "io.jharness.policy.R1ApplicationPolicyTest#closingImmediatelyRevokesPromptsAndCannotAcceptNewAnswers"
+      ],
+      "limitations": [
+        "cancel分支仍主要断CANCELLED与拒绝stale answer，尚缺取消后prompts空的专门断言。"
+      ]
     },
     {
       "id": "OCR-0652",
       "task": "R1-05",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "awaitPrompt单次快照取first且使用单调时钟有界等待。",
+      "files": [
+        "harness-policy/src/test/java/io/jharness/policy/PolicyApprovalTest.java"
+      ],
+      "tests": [
+        "io.jharness.policy.PolicyApprovalTest#approvalPromptContainsFullCallAndSingleUserDecision"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0653",
       "task": "R1-05",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "策略明确拒绝绝对/父穿越与Windows元数据尾点空格别名。",
+      "files": [
+        "harness-policy/src/test/java/io/jharness/policy/PolicyApprovalTest.java",
+        "harness-policy/src/test/java/io/jharness/policy/R1ApplicationPolicyTest.java"
+      ],
+      "tests": [
+        "io.jharness.policy.R1ApplicationPolicyTest#windowsMetadataAliasesAndParentPathsAreDenied"
+      ],
+      "limitations": [
+        "词法边界与文件系统真实路径边界保持分层，不盲目URL decode。"
+      ]
     },
     {
       "id": "OCR-0654",
       "task": "R1-05",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "双answer与close同时屏障竞争，最多一回答成功且撤销后不再接受回答，结果actor精确关联。",
+      "files": [
+        "harness-policy/src/test/java/io/jharness/policy/PolicyApprovalTest.java",
+        "harness-policy/src/test/java/io/jharness/policy/R1ApplicationPolicyTest.java"
+      ],
+      "tests": [
+        "io.jharness.policy.R1ApplicationPolicyTest#concurrentAnswersHaveExactlyOneWinnerAndKeepItsDecision",
+        "io.jharness.policy.R1ApplicationPolicyTest#concurrentAnswersAndCloseNeverLeaveAnApprovedPromptAfterRevocation"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0655",
       "task": "R1-05",
       "owner": "application",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "grep工具逐个检查paths数组，合法路径对照保持ALLOW。",
+      "files": [
+        "harness-policy/src/main/java/io/jharness/policy/DefaultPolicyEngine.java",
+        "harness-policy/src/test/java/io/jharness/policy/R1ApplicationPolicyTest.java"
+      ],
+      "tests": [
+        "io.jharness.policy.R1ApplicationPolicyTest#grepChecksEveryDeclaredPathRatherThanOnlyCwd"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0656",
       "task": "R1-05",
       "owner": "application",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "策略明确拒绝绝对/父穿越与Windows元数据尾点空格别名。",
+      "files": [
+        "harness-policy/src/main/java/io/jharness/policy/DefaultPolicyEngine.java",
+        "harness-policy/src/test/java/io/jharness/policy/R1ApplicationPolicyTest.java"
+      ],
+      "tests": [
+        "io.jharness.policy.R1ApplicationPolicyTest#windowsMetadataAliasesAndParentPathsAreDenied"
+      ],
+      "limitations": [
+        "词法边界与文件系统真实路径边界保持分层，不盲目URL decode。"
+      ]
     },
     {
       "id": "OCR-0659",
       "task": "R1-02",
       "owner": "core",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "核对stop和owned close两条具体错误链",
+      "files": [
+        "harness-plugin/src/test/java/io/jharness/plugin/PluginContainerTest.java"
+      ],
+      "tests": [
+        "io.jharness.plugin.PluginContainerTest#startupFailureNamesTheFailedPluginAndKeepsCleanupFailures"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0660",
       "task": "R1-02",
       "owner": "core",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "同context真实错scope发布并断SCOPE_DENIED",
+      "files": [
+        "harness-plugin/src/test/java/io/jharness/plugin/PluginContainerTest.java"
+      ],
+      "tests": [
+        "io.jharness.plugin.PluginContainerTest#exactScopesIsolateServicesEventsAndInterceptors"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0661",
       "task": "R1-02",
       "owner": "core",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "可变配置源防御快照且插件配置隔离",
+      "files": [
+        "harness-plugin/src/test/java/io/jharness/plugin/PluginContainerTest.java"
+      ],
+      "tests": [
+        "io.jharness.plugin.PluginContainerTest#configIsPluginSpecificAndImmutableAndLifecycleCanBeObserved"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0662",
       "task": "R1-03",
       "owner": "process",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "ControlledAgentRun同步单owner门禁，close撤销新run；在途close只请求取消，owner结算后端点EXITED。",
+      "files": [
+        "harness-process/src/main/java/io/jharness/process/ControlledAgentRun.java"
+      ],
+      "tests": [
+        "io.jharness.process.R1ProcessSafetyTest#controlledRunHasOneOwnerAndCloseRequestsCancellationBeforeEndpointExit",
+        "io.jharness.process.R1ProcessSafetyTest#closedControlledRunRejectsItsFirstSubmission"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0663",
       "task": "R1-03",
       "owner": "process",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "run.ended持久结算先于EXITED；原执行失败保首因，结束写与控制关闭错误suppressed，资源释放不延迟。",
+      "files": [
+        "harness-process/src/main/java/io/jharness/process/ControlledAgentRun.java"
+      ],
+      "tests": [
+        "io.jharness.process.R1ProcessSafetyTest#controlledRunRetainsExecutionFailureWhenEndedEventAndStateCloseBothFail"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0664",
       "task": "R1-03",
       "owner": "process",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "ControlledAgentRun同步单owner门禁，close撤销新run；在途close只请求取消，owner结算后端点EXITED。",
+      "files": [
+        "harness-process/src/main/java/io/jharness/process/ControlledAgentRun.java"
+      ],
+      "tests": [
+        "io.jharness.process.R1ProcessSafetyTest#controlledRunHasOneOwnerAndCloseRequestsCancellationBeforeEndpointExit",
+        "io.jharness.process.R1ProcessSafetyTest#closedControlledRunRejectsItsFirstSubmission"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0668",
       "task": "R1-03",
       "owner": "process",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "discover仅严格UUID的NOFOLLOW常规文件，排除目录及伪名称。",
+      "files": [
+        "harness-process/src/main/java/io/jharness/process/LocalRunControl.java"
+      ],
+      "tests": [
+        "io.jharness.process.R1ProcessSafetyTest#discoveryOnlyReturnsRegularFilesWithStrictUuidNames"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0669",
       "task": "R1-03",
       "owner": "process",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "取消帧精确有界长度，读取总绝对deadline；慢半帧连接不能无限占串行listener。",
+      "files": [
+        "harness-process/src/main/java/io/jharness/process/LocalRunControl.java"
+      ],
+      "tests": [
+        "io.jharness.process.R1ProcessSafetyTest#aSlowPartialControlFrameCannotStarveAValidCancellation"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0670",
       "task": "R1-03",
       "owner": "process",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "发完取消帧但读取响应失败返回OUTCOME_UNKNOWN(退出4)，明确交付未知；取消保持幂等。",
+      "files": [
+        "harness-process/src/main/java/io/jharness/process/LocalRunControl.java"
+      ],
+      "tests": [
+        "io.jharness.process.R1ProcessSafetyTest#cancelledFrameWithLostAcknowledgementHasUnknownDeliveryOutcome",
+        "io.jharness.process.LocalRunControlTest#separateJvmCancelAuthenticatesAndExitStateIsDiscoverable"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0671",
       "task": "R1-03",
       "owner": "process",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "控制端点关闭与EXITED落盘分开；状态写失败后close可安全重试，保留中断事实。",
+      "files": [
+        "harness-process/src/main/java/io/jharness/process/LocalRunControl.java"
+      ],
+      "tests": [
+        "io.jharness.process.R1ProcessSafetyTest#failedExitedCheckpointCanBeRetriedWithoutReopeningTheListener",
+        "io.jharness.process.R1ProcessSafetyTest#interruptedCloseStillWritesExitedStateAndRestoresTheInterrupt"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0672",
       "task": "R1-03",
       "owner": "process",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "控制状态目录要求规范路径且各段拒link；当前进程身份核对PID及startInstant，不向陈旧身份端口发送。",
+      "files": [
+        "harness-process/src/main/java/io/jharness/process/LocalRunControl.java"
+      ],
+      "tests": [
+        "io.jharness.process.R1ProcessSafetyTest#staleProcessIdentityIsRejectedBeforeSendingCancellation"
+      ],
+      "limitations": [
+        "不是任意恶意宿主路径竞态消除或OS级权限隔离。"
+      ]
     },
     {
       "id": "OCR-0673",
       "task": "R1-03",
       "owner": "process",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "状态目录/文件创建时owner-only属性，保留终态owner ACL/POSIX权限核对。",
+      "files": [
+        "harness-process/src/main/java/io/jharness/process/LocalRunControl.java"
+      ],
+      "tests": [
+        "io.jharness.process.RunStatePermissionsTest#credentialsAreOwnerOnlyAndOrdinaryFoldersAreNotRepurposed"
+      ],
+      "limitations": [
+        "本轮Windows ACL实际验证，POSIX创建属性代码未冒充本轮原生Linux/macOS运行。"
+      ]
     },
     {
       "id": "OCR-0685",
       "task": "R1-02",
       "owner": "process",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "预览IO异常保留cause；面向模型/HTTP仍经统一脱敏边界。",
+      "files": [
+        "harness-process/src/main/java/io/jharness/process/LocalPlanPreviewer.java"
+      ],
+      "tests": [
+        "io.jharness.process.LocalPlanPreviewerTest#previewRejectsOutsideAndStaleVersions"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0686",
       "task": "R1-02",
       "owner": "process",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "artifact失败附独立stdout/stderrArtifactStatus，保持实际原命令状态、退出证据及原输出。",
+      "files": [
+        "harness-process/src/main/java/io/jharness/process/ProcessToolsPlugin.java"
+      ],
+      "tests": [
+        "io.jharness.process.R1ProcessSafetyTest#artifactFailureRetainsTheCommandStatusAndExitEvidence"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0712",
       "task": "R1-03",
       "owner": "process",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "状态目录/文件创建时owner-only属性，保留终态owner ACL/POSIX权限核对。",
+      "files": [
+        "harness-process/src/test/java/io/jharness/process/RunStatePermissionsTest.java"
+      ],
+      "tests": [
+        "io.jharness.process.RunStatePermissionsTest#credentialsAreOwnerOnlyAndOrdinaryFoldersAreNotRepurposed"
+      ],
+      "limitations": [
+        "本轮Windows ACL实际验证，POSIX创建属性代码未冒充本轮原生Linux/macOS运行。"
+      ]
     },
     {
       "id": "OCR-0714",
       "task": "R1-03",
       "owner": "process",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "终端完整begin后发布Task，watcher与stop用统一状态锁确保停止原因不被EXITED覆盖，输出drain/persist有界。",
+      "files": [
+        "harness-process/src/main/java/io/jharness/process/LocalTerminalSession.java"
+      ],
+      "tests": [
+        "io.jharness.process.M6TerminalTest#backgroundTaskStatusLogStopAndTimeoutAreBounded",
+        "io.jharness.process.M6TerminalTest#cancellationTraversalInvalidPagesAndCloseNeverStartOrLeakTasks"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0715",
       "task": "R1-03",
       "owner": "process",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "终端按完整脱敏token流形成稳定输出后轮转，firstOffset/nextOffset按同一脱敏字符空间计数，跨chunk秘密不泄漏。",
+      "files": [
+        "harness-process/src/main/java/io/jharness/process/LocalTerminalSession.java"
+      ],
+      "tests": [
+        "io.jharness.process.R1ProcessSafetyTest#terminalSecretChunksRotateWithStableSanitizedOffsetsAndKeepNormalFinalTail"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0716",
       "task": "R1-03",
       "owner": "process",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "LOCAL_PARTIAL",
+      "implementation": "终端stdin future失败撤销任务并停止，后续write拒绝，不把未知输入标成确定未发送。",
+      "files": [
+        "harness-process/src/main/java/io/jharness/process/LocalTerminalSession.java"
+      ],
+      "tests": [
+        "io.jharness.process.M6TerminalTest#cancellingBlockedStdinStopsProcessAndReturnsUnknownWithinTheDeadline"
+      ],
+      "limitations": [
+        "既有测试覆盖阻塞输入取消；ExecutionException精确故障分支静态复核。"
+      ]
     },
     {
       "id": "OCR-0717",
       "task": "R1-04",
       "owner": "process",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "EOF只抑制已知secret前缀，保留正常尾部；分页与artifact共用已脱敏输出。",
+      "files": [
+        "harness-process/src/main/java/io/jharness/process/LocalTerminalSession.java"
+      ],
+      "tests": [
+        "io.jharness.process.R1ProcessSafetyTest#terminalSuppressesKnownSecretPrefixAtEofWithoutDroppingOrdinaryTail"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0718",
       "task": "R1-04",
       "owner": "process",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "公开terminal/runner复用有效环境Map.copyOf快照校验；显式宿主授权变量仍支持，不隐式继承主机全部变量。",
+      "files": [
+        "harness-process/src/main/java/io/jharness/process/LocalTerminalSession.java"
+      ],
+      "tests": [
+        "io.jharness.process.R1ProcessSafetyTest#environmentValidationUsesTheEffectiveSnapshot",
+        "io.jharness.process.R1ProcessSafetyTest#publicTerminalRejectsInvalidEnvironmentBeforeStartingAnything"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0719",
       "task": "R1-03",
       "owner": "process",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "终端完整begin后发布Task，watcher与stop用统一状态锁确保停止原因不被EXITED覆盖，输出drain/persist有界。",
+      "files": [
+        "harness-process/src/main/java/io/jharness/process/LocalTerminalSession.java"
+      ],
+      "tests": [
+        "io.jharness.process.M6TerminalTest#backgroundTaskStatusLogStopAndTimeoutAreBounded",
+        "io.jharness.process.M6TerminalTest#cancellationTraversalInvalidPagesAndCloseNeverStartOrLeakTasks"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0728",
       "task": "R1-04",
       "owner": "process",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "公开terminal/runner复用有效环境Map.copyOf快照校验；显式宿主授权变量仍支持，不隐式继承主机全部变量。",
+      "files": [
+        "harness-process/src/main/java/io/jharness/process/LocalProcessRunner.java"
+      ],
+      "tests": [
+        "io.jharness.process.R1ProcessSafetyTest#environmentValidationUsesTheEffectiveSnapshot",
+        "io.jharness.process.R1ProcessSafetyTest#publicTerminalRejectsInvalidEnvironmentBeforeStartingAnything"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0729",
       "task": "R1-03",
       "owner": "process",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "runner start/active接管与close撤销在同一生命周期锁，关闭后拒绝新工作，清理已接管进程。",
+      "files": [
+        "harness-process/src/main/java/io/jharness/process/LocalProcessRunner.java"
+      ],
+      "tests": [
+        "io.jharness.process.R1ProcessSafetyTest#runnerCloseTakesOwnershipOfAnInFlightNativeProcessAndRejectsNewWork"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0730",
       "task": "R1-03",
       "owner": "process",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "close管道后再次join，Collector同步快照；未停读取者禁止SUCCESS并标输出不完整。",
+      "files": [
+        "harness-process/src/main/java/io/jharness/process/LocalProcessRunner.java"
+      ],
+      "tests": [
+        "io.jharness.process.LocalProcessRunnerTest#stdinIsClosedAndSuccessHasNoDetachedReader",
+        "io.jharness.process.LocalProcessRunnerTest#floodingBothStreamsIsBoundedAndTimeoutReleasesAdmissionSlot"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0731",
       "task": "R1-03",
       "owner": "process",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "tree exceeded参与observedClean，追踪配额越界不声称全观察集合清理已完整。",
+      "files": [
+        "harness-process/src/main/java/io/jharness/process/LocalProcessRunner.java"
+      ],
+      "tests": [
+        "io.jharness.process.LocalProcessRunnerTest#explicitNativeShellExecutesBatchAndTreeLimitStopsSpawn"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0733",
       "task": "R1-03",
       "owner": "process",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "LOCAL_PARTIAL",
+      "implementation": "tree cleanup/join累计中断标志，清理完成后恢复，不丢中断。",
+      "files": [
+        "harness-process/src/main/java/io/jharness/process/LocalProcessRunner.java"
+      ],
+      "tests": [
+        "io.jharness.process.LocalProcessRunnerTest#cancellationKillsObservedRealChildTreeAndPreservesHonestScope"
+      ],
+      "limitations": [
+        "清理sleep精确中断窗口未新增专门调度器注入；控制端点中断持久化另有真实回归。"
+      ]
     },
     {
       "id": "OCR-0747",
       "task": "R1-04",
       "owner": "core",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "核实投影白名单稳定结构，不拼原payload.toString",
+      "files": [
+        "harness-session/src/main/java/io/jharness/session/EventSessionProjection.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/R1CoreLifecycleTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.R1CoreLifecycleTest#operatorVerificationProjectionOmitsUnrecognizedPayloadFields"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0758",
       "task": "R1-04",
       "owner": "core",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "事件标识含已知秘密即拒绝，不随机改写关联",
+      "files": [
+        "harness-session/src/main/java/io/jharness/session/SanitizingSessionWriter.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/R1CoreLifecycleTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.R1CoreLifecycleTest#observerReceivesExactlyPersistedSanitizedPayloadAndUnsafeIdentityRejects"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0795",
       "task": "R1-02",
       "owner": "core",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "尾修复诊断回调隔离，成功操作事实不被覆盖",
+      "files": [
+        "harness-session/src/main/java/io/jharness/session/JsonlSessionRepository.java",
+        "harness-session/src/test/java/io/jharness/session/JsonlSessionRepositoryTest.java"
+      ],
+      "tests": [
+        "io.jharness.session.JsonlSessionRepositoryTest#successfulTailRepairIsNotOverriddenByBrokenDiagnosticSink"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0798",
       "task": "R1-02",
       "owner": "core",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "主体前检查已flush intent前缀，明确串行模拟测试替身边界",
+      "files": [
+        "harness-testkit/src/main/java/io/jharness/testkit/CheckpointRecorder.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/M1ToolPipelineTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M1ToolPipelineTest#simulatedDurableIntentIsFlushedBeforeWriteBodyAndFailureRemainsUnknown"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。",
+        "CheckpointRecorder为串行测试替身，不承诺并发重入delegate。"
+      ]
     },
     {
       "id": "OCR-0821",
       "task": "R1-06",
       "owner": "core",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "singleAttempt能力在commit前检查，FakeLlm明确支持，未知适配器仍默认拒绝",
+      "files": [
+        "harness-testkit/src/main/java/io/jharness/testkit/FakeLlm.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/M8ResilienceTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M8ResilienceTest#disabledPolicyDoesNotAddRetriesAndLegacyAdapterStillOwnsItsBehavior"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0835",
       "task": "R1-02",
       "owner": "core",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "补双scope/服务撤销/真实projection请求，明确元数据枚举不执行主体",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M0ServiceReplacementTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M0ServiceReplacementTest#baselinePluginPassesHarnessContract",
+        "io.jharness.testkit.M0ServiceReplacementTest#replacementLoopAndToolRegistryPassTheSameHarnessContract"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0836",
       "task": "R1-02",
       "owner": "core",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "补双scope/服务撤销/真实projection请求，明确元数据枚举不执行主体",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M0ServiceReplacementTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M0ServiceReplacementTest#baselinePluginPassesHarnessContract",
+        "io.jharness.testkit.M0ServiceReplacementTest#replacementLoopAndToolRegistryPassTheSameHarnessContract"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0837",
       "task": "R1-02",
       "owner": "core",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "补双scope/服务撤销/真实projection请求，明确元数据枚举不执行主体",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M0ServiceReplacementTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M0ServiceReplacementTest#baselinePluginPassesHarnessContract",
+        "io.jharness.testkit.M0ServiceReplacementTest#replacementLoopAndToolRegistryPassTheSameHarnessContract"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0838",
       "task": "R1-02",
       "owner": "core",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "补双scope/服务撤销/真实projection请求，明确元数据枚举不执行主体",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M0ServiceReplacementTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M0ServiceReplacementTest#baselinePluginPassesHarnessContract",
+        "io.jharness.testkit.M0ServiceReplacementTest#replacementLoopAndToolRegistryPassTheSameHarnessContract"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0854",
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "LOCAL_PARTIAL",
+      "implementation": "离线verifyTask与archive操作使用与host一致的known-secret sanitizer。",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M1053TurnsTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M1053TurnsTest#failedStartCheckpointRecoversOriginalTurnAsUnknownWithoutReplay"
+      ],
+      "limitations": [
+        "尚未额外注入独立维护事件秘密，当前主要是原fixture秘密与输出扫描。"
+      ]
     },
     {
       "id": "OCR-0855",
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "LOCAL_PARTIAL",
+      "implementation": "fixture扫描范围从catalog扩为root全部本例JSONL。",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M1053TurnsTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M1053TurnsTest#failedStartCheckpointRecoversOriginalTurnAsUnknownWithoutReplay"
+      ],
+      "limitations": [
+        "当前只扫描JSONL，未覆盖任意artifact内容和stdout；仍需明确本例实际产物。"
+      ]
     },
     {
       "id": "OCR-0856",
       "task": "R1-05",
       "owner": "application",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "新增真实WORKSPACE_WRITE工具请求，回答问题后仍须独立审批且拒绝后文件不存在。",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M1055QuestionsTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M1055QuestionsTest#answeringQuestionDoesNotAuthorizeGenuineWorkspaceWrite"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0859",
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "draft返回保存结果无哨兵，关闭writer后扫描本例root所有普通文件。",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M1055QuestionsTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M1055QuestionsTest#draftAndAnswerAreRedactedAndDuplicateConflictsAreBounded"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0861",
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "第二完整秘密帧间隔65ms越过50ms节流，快照明确包含REDACTED且无secret。",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M1056DisplayTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M1056DisplayTest#liveSnapshotIsSanitizedScopedAndOnlyFinalResponseIsPersisted"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0862",
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "断流中断快照非空且无秘密，仍无assistant.message且模型仅调用一次。",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M1056DisplayTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M1056DisplayTest#brokenStreamKeepsPartialDisplayButNeverAssistantFactOrRetry"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0863",
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "LOCAL_PARTIAL",
+      "implementation": "完成后唯一assistant.message内容精确等于完整脱敏最终文本。",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M1056DisplayTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M1056DisplayTest#liveSnapshotIsSanitizedScopedAndOnlyFinalResponseIsPersisted"
+      ],
+      "limitations": [
+        "当前短回复未生成artifact引用，因此未新增artifact内容断言。"
+      ]
     },
     {
       "id": "OCR-0867",
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "链式streamingText结果保存后同时检查两个秘密哨兵均不存在。",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M1056ContentTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M1056ContentTest#streamingSanitizersComposeWithFullSecretWindowsAndFailClosedByDefault"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0875",
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "diagnosis自由eventId/callId分别安全脱敏及Unicode有界显示，原定位事实不改写。",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M105DiagnosisTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M105DiagnosisTest#freeEventAndCallIdentifiersAreSanitizedAndBoundedForDisplay"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0887",
       "task": "R1-04",
       "owner": "process",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "敏感userinfo URI拒绝精确错误码；ToolResult/history/原始JSONL全检查已知秘密不泄漏。",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M1057ExtensionsTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M1057ExtensionsTest#unlistedMalformedUriAndUnsupportedTemplateNeverReachPeer"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0889",
       "task": "R1-02",
       "owner": "process",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "新增第二工具注册失败，证明第一条已注册后失败时完整撤销贡献与peer。",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M1057ExtensionsTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M1057ExtensionsTest#partialMcpRegistrationFailureRevokesEarlierSuccessfulRegistration"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0891",
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "实际HTTP diagnosis响应同时断token和fixture goal秘密不存在。",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M10WebTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M10WebTest#diagnosisIsAuthenticatedReadOnlySanitizedAndCannotClearUnknown"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0892",
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "HTTP settings桩返回安全字段及哨兵脱敏后结果，并检查实际HTTP响应。",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M10WebTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M10WebTest#settingsRequireOperatorAuthAndUnknownBindingBlocksMutation"
+      ],
+      "limitations": [
+        "路由桩不是实际vault生命周期，真实事务另由R1WorkbenchTransactionTest覆盖。"
+      ]
     },
     {
       "id": "OCR-0900",
       "task": "R1-04",
       "owner": "process",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "保留outside边界负例并断言拒绝事件，新增真正可达秘密read验证result/event/原始JSONL脱敏。",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M2WorkspaceIntegrationTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M2WorkspaceIntegrationTest#rejectedOutsideReadIsAnEventAndUserConcurrentChangesAreNotOverwritten",
+        "io.jharness.testkit.M2WorkspaceIntegrationTest#reachableReadActuallyRedactsTheToolResultAndDurableJournal"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0910",
       "task": "R1-05",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "循环中审批事件按当前callId筛选后断拒绝，前轮事件不可借用。",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M3RuntimeIntegrationTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M3RuntimeIntegrationTest#refusedDeletionAndResetNeverEnterBodyAndFullApprovalDecisionPersists"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0912",
       "task": "R1-01",
       "owner": "core",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "主体前检查已flush intent前缀，明确串行模拟测试替身边界",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M1ToolPipelineTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M1ToolPipelineTest#simulatedDurableIntentIsFlushedBeforeWriteBodyAndFailureRemainsUnknown"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0914",
       "task": "R1-04",
       "owner": "core",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "真实value/display/content哨兵均在完成事实脱敏",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M1ToolPipelineTest.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/R1CoreLifecycleTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.R1CoreLifecycleTest#actualResultValueDisplayAndModelContentAreRedactedBeforeCompletion"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0915",
       "task": "R1-01",
       "owner": "core",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "独立未知名与错scope均拒绝，主体不进入",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M1ToolPipelineTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M1ToolPipelineTest#invalidParametersMissingToolsAndWrongScopeNeverEnterBody"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0916",
       "task": "R1-01",
       "owner": "core",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "参数改写断SUCCESS与真实completed事实",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M1ToolPipelineTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M1ToolPipelineTest#readOnlyBypassAndParameterRewriteUseExtensionsWithoutModifyingPolicy"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0917",
       "task": "R1-01",
       "owner": "core",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "checkpoint首因不被通知失败覆盖，未进入主体且无started",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M1ToolPipelineTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M1ToolPipelineTest#flushFailureWithSimulatedDurableWriterPreventsBodyEntry"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0925",
       "task": "R1-01",
       "owner": "core",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "重复callId断FAILED与无后续主体/模型请求",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M1AgentLoopTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M1AgentLoopTest#duplicateCallIdsAndModelFailureEndTheTurnExplicitly"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0927",
       "task": "R1-06",
       "owner": "core",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "非空tools计入预算，验证真缩减/保护组/义务索引和冷重建请求",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M6CompactionTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M6CompactionTest#longCurrentTurnCompactsWholeToolGroupsAndKeepsSystemGoalAndLatestResults",
+        "io.jharness.testkit.M6CompactionTest#pluginRecordsCompactionAndFinalRequestReplaysFromColdEventsAndRevokesOnStop"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0928",
       "task": "R1-06",
       "owner": "core",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "非空tools计入预算，验证真缩减/保护组/义务索引和冷重建请求",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M6CompactionTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M6CompactionTest#longCurrentTurnCompactsWholeToolGroupsAndKeepsSystemGoalAndLatestResults",
+        "io.jharness.testkit.M6CompactionTest#pluginRecordsCompactionAndFinalRequestReplaysFromColdEventsAndRevokesOnStop"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-0931",
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "CLI生态集成检查stdout/stderr、请求与本例持久输出无已知秘密。",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M7CliEcosystemTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M7CliEcosystemTest#cliAssemblesMcpSkillsReadonlyChildrenAndPlanningThroughSdkPipeline"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0935",
       "task": "R1-01",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "子任务实际function.name解析为集合并精确等于read_file白名单。",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M7CliEcosystemTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M7CliEcosystemTest#cliAssemblesMcpSkillsReadonlyChildrenAndPlanningThroughSdkPipeline"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0945",
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "敏感callId拒绝执行后检查stderr及delivery JSON/MD无秘密且无tool.started/未决。",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M4CliIntegrationTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M4CliIntegrationTest#terminalCancelAndSecretCallIdsAreHandledWithoutBlockingOrDisclosure"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0981",
       "task": "R1-06",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "先创建PENDING todo并断成功，再提交伪完成事件断EVIDENCE_REQUIRED。",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M7ClosureTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M7ClosureTest#planningCannotClaimCompletionOrSkipApprovalAndChangesRevokeApproval"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0982",
       "task": "R1-06",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "plan setup每步断成功与APPROVED，再修改revision核DRAFT撤销。",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M7ClosureTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M7ClosureTest#planningCannotClaimCompletionOrSkipApprovalAndChangesRevokeApproval"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-0998",
       "task": "R1-01",
       "owner": "process",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "MCP durable intent失败注入断言flush命中与CHECKPOINT_FAILED，无tools/call及无副作用。",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M7McpTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M7McpTest#failedIntentFlushNeverCallsExternalTool"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-1020",
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "Docker探针全分页和每次HTTP响应、完整进程输出及捕获请求检查已知秘密。",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M7WebDockerProbe.java"
+      ],
+      "tests": [
+        "r1-web-docker#local",
+        "r1-web-docker#docker",
+        "r1-web-docker#cleanup"
+      ],
+      "limitations": [
+        "固定缓存镜像及本机Docker专项；不代表三平台CI。"
+      ]
     },
     {
       "id": "OCR-1030",
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "真实provider抛固定敏感错误，检查HTTP响应/JSONL不含秘密明文。",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M7WebTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M7WebTest#unknownModelRequestBlocksWorkspaceAndErrorDetailsAreNotExposed"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-1039",
       "task": "R1-04",
       "owner": "process",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "工具真实读取已知秘密fixture-key，校验tool.completed脱敏且事件/CLI输出/原始JSONL均无原值。",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M8FilterIntegrationTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M8FilterIntegrationTest#classicAndEcosystemCliUseIdenticalFiltersAndRecordTheConfiguration"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-1047",
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "搜索provider注入known-secret sanitizer与秘密事件，检索所有结果片段无哨兵。",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/web/WorkbenchContentSearchTest.java"
+      ],
+      "tests": [
+        "io.jharness.web.WorkbenchContentSearchTest#scopeArchivesRelevanceStablePaginationAndCursorBinding"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-1051",
       "task": "R1-01",
       "owner": "core",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "先断实际主体ID完整，再比较执行屏障顺序",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M8SchedulingTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M8SchedulingTest#writesUnlistedReadsAndAskAreBarriersDespiteModelReadonlyClaims"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-1054",
       "task": "R1-01",
       "owner": "core",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "闩锁证明主体开始退出，宽限后UNKNOWN且无重放或第二次结算",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M8SchedulingTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M8SchedulingTest#noncooperativeWorkerIsUnknownNoReplayOrSecondSettlement"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-1055",
       "task": "R1-01",
       "owner": "core",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "关闭与错scope断具体码且主体未入",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M8SchedulingTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M8SchedulingTest#preparedSettlementCannotInventSuccessAndClosedSchedulerRejectsOldReferences"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-1062",
       "task": "R1-01",
       "owner": "core",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "单一原子状态机，纯校验先于结算权消费",
+      "files": [
+        "harness-tools/src/main/java/io/jharness/tools/DefaultToolPipeline.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/R1CoreLifecycleTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.R1CoreLifecycleTest#settlementBeforeWrapperEntryPreventsBodyAndRecordsSingleCompletion",
+        "io.jharness.testkit.R1CoreLifecycleTest#wrongSettlementIdentityDoesNotConsumeValidCompletion"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-1063",
       "task": "R1-01",
       "owner": "core",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "真实主体失败/未知保守合并，包装不可伪造已知成功",
+      "files": [
+        "harness-tools/src/main/java/io/jharness/tools/DefaultToolPipeline.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/R1CoreLifecycleTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.R1CoreLifecycleTest#wrapperCannotTurnFailedWriteIntoKnownSuccess",
+        "io.jharness.testkit.R1CoreLifecycleTest#conflictCodeWithoutProviderProofStillRequiresVerification"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-1064",
       "task": "R1-01",
       "owner": "core",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "UNKNOWN粘滞与活动主体结算，不可由调度器降级",
+      "files": [
+        "harness-tools/src/main/java/io/jharness/tools/DefaultToolPipeline.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/R1CoreLifecycleTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.R1CoreLifecycleTest#residualProcessOrUnknownNeverDowngradesToKnownCancellation",
+        "io.jharness.testkit.R1CoreLifecycleTest#settlementBeforeWrapperEntryPreventsBodyAndRecordsSingleCompletion",
+        "io.jharness.testkit.R1CoreLifecycleTest#conflictCodeWithoutProviderProofStillRequiresVerification"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-1065",
       "task": "R1-01",
       "owner": "core",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "单一原子状态机，纯校验先于结算权消费",
+      "files": [
+        "harness-tools/src/main/java/io/jharness/tools/DefaultToolPipeline.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/R1CoreLifecycleTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.R1CoreLifecycleTest#settlementBeforeWrapperEntryPreventsBodyAndRecordsSingleCompletion",
+        "io.jharness.testkit.R1CoreLifecycleTest#wrongSettlementIdentityDoesNotConsumeValidCompletion"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-1066",
       "task": "R1-01",
       "owner": "core",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "脱敏后的可见schema再验，已执行写不伪报SUCCESS",
+      "files": [
+        "harness-tools/src/main/java/io/jharness/tools/DefaultToolPipeline.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/R1CoreLifecycleTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.R1CoreLifecycleTest#redactionCannotReportSuccessWithInvalidVisibleSchema"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-1076",
       "task": "R1-01",
       "owner": "core",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "统一未知优先级和原取消源，干净取消保留原因与不确定标志",
+      "files": [
+        "harness-tools/src/main/java/io/jharness/tools/BoundedReadOnlyToolScheduler.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/R1CoreLifecycleTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.R1CoreLifecycleTest#knownCancellationAndTimeoutPreserveReasonButBlockContinuationForPartialEffects",
+        "io.jharness.testkit.R1CoreLifecycleTest#residualProcessOrUnknownNeverDowngradesToKnownCancellation"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-1077",
       "task": "R1-01",
       "owner": "core",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "闩锁证明主体开始退出，宽限后UNKNOWN且无重放或第二次结算",
+      "files": [
+        "harness-tools/src/main/java/io/jharness/tools/BoundedReadOnlyToolScheduler.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/M8SchedulingTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M8SchedulingTest#noncooperativeWorkerIsUnknownNoReplayOrSecondSettlement"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-1078",
       "task": "R1-01",
       "owner": "core",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "逐项pending移除与单次结算，保留首因并继续剩余清理",
+      "files": [
+        "harness-tools/src/main/java/io/jharness/tools/BoundedReadOnlyToolScheduler.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/R1CoreLifecycleTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.R1CoreLifecycleTest#drainDoesNotRepeatFailedSettlementAndStillSettlesRemainingPreparedCall"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-1079",
       "task": "R1-01",
       "owner": "core",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "统一未知优先级和原取消源，干净取消保留原因与不确定标志",
+      "files": [
+        "harness-tools/src/main/java/io/jharness/tools/BoundedReadOnlyToolScheduler.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/R1CoreLifecycleTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.R1CoreLifecycleTest#knownCancellationAndTimeoutPreserveReasonButBlockContinuationForPartialEffects",
+        "io.jharness.testkit.R1CoreLifecycleTest#residualProcessOrUnknownNeverDowngradesToKnownCancellation"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-1080",
       "task": "R1-02",
       "owner": "core",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "关闭与注册/启动原子协议，晚注册主体不能入",
+      "files": [
+        "harness-tools/src/main/java/io/jharness/tools/BoundedReadOnlyToolScheduler.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/R1CoreLifecycleTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.R1CoreLifecycleTest#schedulerCloseBeforeWorkerRegistrationPreventsLateBodyEntry"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-1081",
       "task": "R1-01",
       "owner": "core",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "停止屏障为已准备调用单次结算，主体不进入",
+      "files": [
+        "harness-tools/src/main/java/io/jharness/tools/BoundedReadOnlyToolScheduler.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/R1CoreLifecycleTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.R1CoreLifecycleTest#stoppedBarrierSettlesAlreadyPreparedCallWithoutEnteringItsBody"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-1082",
       "task": "R1-02",
       "owner": "core",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "逐项pending移除与单次结算，保留首因并继续剩余清理",
+      "files": [
+        "harness-tools/src/main/java/io/jharness/tools/BoundedReadOnlyToolScheduler.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/R1CoreLifecycleTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.R1CoreLifecycleTest#drainDoesNotRepeatFailedSettlementAndStillSettlesRemainingPreparedCall"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-1083",
       "task": "R1-01",
       "owner": "core",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "注销worker先于done信号，紧邻批次无人工sleep",
+      "files": [
+        "harness-tools/src/main/java/io/jharness/tools/BoundedReadOnlyToolScheduler.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/M8SchedulingTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M8SchedulingTest#boundedBodiesOverlapButJournalAndModelResultsRetainCallOrder"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     },
     {
       "id": "OCR-1118",
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "diagnosis自由eventId/callId分别安全脱敏及Unicode有界显示，原定位事实不改写。",
+      "files": [
+        "harness-web/src/main/java/io/jharness/web/TaskDiagnosis.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/M105DiagnosisTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M105DiagnosisTest#freeEventAndCallIdentifiersAreSanitizedAndBoundedForDisplay"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-1147",
       "task": "R1-05",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "展示snapshot读取失败仍实际关闭SDK并最终保留UNKNOWN与workspace占用，不影响必须清理。",
+      "files": [
+        "harness-web/src/main/java/io/jharness/web/HarnessWebServer.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/R1WebOwnershipTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.R1WebOwnershipTest#displaySnapshotFailureStillClosesSdkAndPreservesUnknownOwnership"
+      ],
+      "limitations": [
+        "负例通过SessionReader在ModelDisplayBuffer.snapshot调用栈定点注入读取失败。"
+      ]
     },
     {
       "id": "OCR-1148",
       "task": "R1-05",
       "owner": "application",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "queue pause持久化失败仍唤醒实际server monitor等待者并标UNKNOWN/broken，拒绝后续任务。",
+      "files": [
+        "harness-web/src/main/java/io/jharness/web/HarnessWebServer.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/R1WebOwnershipTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.R1WebOwnershipTest#failedQueuePauseNotifiesWaitersAndCannotReleaseUncertainTask"
+      ],
+      "limitations": [
+        "负例通过JsonlSessionRepository真实DurabilityBarrier在pauseInputs调用栈定点注入IO失败。"
+      ]
     },
     {
       "id": "OCR-1150",
       "task": "R1-05",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "settings/注册body与settings save移出server monitor，短锁预留mutation后复检占用。",
+      "files": [
+        "harness-web/src/main/java/io/jharness/web/HarnessWebServer.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/R1WebOwnershipTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.R1WebOwnershipTest#slowSettingsBodyCannotOwnServerLockOrBlockUnrelatedRequests",
+        "io.jharness.testkit.R1WebOwnershipTest#slowSettingsSaveReleasesServerMonitorAndReservesAdmission"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-1151",
       "task": "R1-05",
       "owner": "application",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "profiles使用ConcurrentHashMap与短锁快照，真实HTTP并发注册和info读取返回完整唯一profile列表。",
+      "files": [
+        "harness-web/src/main/java/io/jharness/web/HarnessWebServer.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/R1WebOwnershipTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.R1WebOwnershipTest#concurrentProfileRegistrationAndInfoReadReturnCompleteSafeSnapshots"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-1152",
       "task": "R1-05",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "LOCAL_PARTIAL",
+      "implementation": "历史分页短锁复制hot/allowed后锁外scanSnapshot/reconcile/summary，scan不改热cache。",
+      "files": [
+        "harness-web/src/main/java/io/jharness/web/HarnessWebServer.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/R1WebOwnershipTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.R1WebOwnershipTest#slowHistoryReconciliationCannotBlockUnrelatedRequestsOrOwnServerMonitor"
+      ],
+      "limitations": [
+        "仍按上限10000扫描磁盘目录，没有宣称建立持久派生索引。"
+      ]
     },
     {
       "id": "OCR-1156",
       "task": "R1-05",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "LOCAL_PARTIAL",
+      "implementation": "Web审批POST锁内核截止/closed/cancelled并检查future.complete实际结果。",
+      "files": [
+        "harness-web/src/main/java/io/jharness/web/HarnessWebServer.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/M7WebTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M7WebTest#denialAndApprovalTimeoutNeverEnterWriteBody",
+        "io.jharness.testkit.M7WebTest#cancellationRevokesPendingApprovalAndDoesNotWrite"
+      ],
+      "limitations": [
+        "尚无超时边界POST/owner同屏障竞态专项测试。"
+      ]
     },
     {
       "id": "OCR-1159",
       "task": "R1-05",
       "owner": "application",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "close有界等待后非合作worker继续持catalog/lease，最后worker收尾后才释放owner。",
+      "files": [
+        "harness-web/src/main/java/io/jharness/web/HarnessWebServer.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/R1WebOwnershipTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.R1WebOwnershipTest#closeRetainsCatalogOwnershipUntilUncooperativeWorkerActuallyLeaves"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-1163",
       "task": "R1-04",
       "owner": "process",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "git绝对可信定位，最小环境、禁system/global配置和外部diff/fsmonitor/color/textconv，保留平台必要变量。",
+      "files": [
+        "harness-workspace/src/main/java/io/jharness/workspace/LocalWorkspace.java"
+      ],
+      "tests": [
+        "io.jharness.workspace.R1WorkspaceSafetyTest#localGitConfigurationCannotRunExternalDiffOrFsmonitor"
+      ],
+      "limitations": [
+        "可信git路径在当前Windows实际验证，不声称任意恶意宿主环境可形成沙箱。"
+      ]
     },
     {
       "id": "OCR-1164",
       "task": "R1-03",
       "owner": "process",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "git stdout/stderr并发有界读取，达到预算快速终止并OUTPUT_LIMIT，不等待默认deadline才失败。",
+      "files": [
+        "harness-workspace/src/main/java/io/jharness/workspace/LocalWorkspace.java"
+      ],
+      "tests": [
+        "io.jharness.workspace.R1WorkspaceSafetyTest#oversizedGitOutputTerminatesAtTheOutputBudget"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-1169",
       "task": "R1-02",
       "owner": "process",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "临时文件finally清理异常附原失败，已提交后读回异常保持UNKNOWN_SIDE_EFFECT。",
+      "files": [
+        "harness-workspace/src/main/java/io/jharness/workspace/LocalWorkspace.java"
+      ],
+      "tests": [
+        "io.jharness.workspace.R1WorkspaceSafetyTest#temporaryCleanupFailureCannotReplaceTheOriginalConflict"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-2170",
@@ -1729,21 +4009,95 @@
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "Windows兼容脚本由Python生成专用target传Java，finally独立清理并报告清理结果。",
+      "files": [
+        "scripts/test-windows-credential-compat.py"
+      ],
+      "tests": [
+        "r1-windows-compat#parentCleanup",
+        "r1-windows-compat#cleanup"
+      ],
+      "limitations": [
+        "Windows专用兼容性专项，超时分支故障覆盖另由脚本测试限定。"
+      ]
     },
     {
       "id": "OCR-2432",
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "partial",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "公共EvidenceReport先sanitize再Unicode安全截断。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/EvidenceReport.java",
+        "harness-cli/src/test/java/io/jharness/cli/R1ApplicationNativeTest.java"
+      ],
+      "tests": [
+        "io.jharness.cli.R1ApplicationNativeTest#reportRedactsBeforeTruncationWithoutLeakingKnownSecretPrefix"
+      ],
+      "limitations": []
     },
     {
       "id": "OCR-2434",
       "task": "R1-04",
       "owner": "core",
       "originalVerdict": "accepted",
-      "status": "IN_PROGRESS"
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "implementation": "核对stdout/stderr与实际JSONL报告无固定秘密",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M8ResilienceTest.java"
+      ],
+      "tests": [
+        "io.jharness.testkit.M8ResilienceTest#classicAndEcosystemCliUseThePolicyAndObservedSingleAttemptWrappers"
+      ],
+      "limitations": [
+        "本轮为本机Windows合成与真实本地集成回归；不代表三平台CI或任意可信Java插件的恶意隔离。"
+      ]
     }
-  ]
+  ],
+  "updatedAt": "2026-10-21T12:22:11.082719+00:00",
+  "validation": {
+    "rawResults": ".build-cache/R1/final-f/results.json",
+    "supplementalResults": ".build-cache/R1/final-f-supplemental/results.json",
+    "summary": "docs/testing/OCR-R1-2026-10-21-results.json",
+    "scope": "Source review plus exact linked passing local regressions. LOCAL_PARTIAL retains explicit unexercised fault windows; no remote CI, native POSIX, Firefox or paid evaluation pass is claimed.",
+    "neighborResults": ".build-cache/R1/final-f-neighbors/results.json",
+    "browserResults": ".build-cache/R1/final-f-browser-verified.json"
+  },
+  "counts": {
+    "total": 237,
+    "byStatus": {
+      "IMPLEMENTED_LOCAL_VALIDATED": 219,
+      "LOCAL_PARTIAL": 18
+    },
+    "byTask": {
+      "R1-01": {
+        "IMPLEMENTED_LOCAL_VALIDATED": 30
+      },
+      "R1-02": {
+        "IMPLEMENTED_LOCAL_VALIDATED": 52,
+        "LOCAL_PARTIAL": 4
+      },
+      "R1-03": {
+        "IMPLEMENTED_LOCAL_VALIDATED": 26,
+        "LOCAL_PARTIAL": 4
+      },
+      "R1-04": {
+        "IMPLEMENTED_LOCAL_VALIDATED": 66,
+        "LOCAL_PARTIAL": 6
+      },
+      "R1-05": {
+        "IMPLEMENTED_LOCAL_VALIDATED": 19,
+        "LOCAL_PARTIAL": 3
+      },
+      "R1-06": {
+        "IMPLEMENTED_LOCAL_VALIDATED": 19,
+        "LOCAL_PARTIAL": 1
+      },
+      "R1-07": {
+        "IMPLEMENTED_LOCAL_VALIDATED": 7
+      }
+    }
+  }
 }

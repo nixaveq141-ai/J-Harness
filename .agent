@@ -4,7 +4,7 @@
 
 ## 当前接续状态
 
-- 2026-10-21用户要求实施R1，按7个工作包237条原采纳范围分组推进，逐项状态单独记录于docs/development/OCR-R1-implementation-2026-10-21.json，开发与验证见OCR-R1-remediation-2026-10-21.md。当前实施中，不以组内结果标全阶段完成；历史付费脚本已采用阻断执行+只读检查方案，11项合成回归通过，不执行生成Java/模型请求、不改旧账本和M4验收JSON。原R0静态核实及历史证据保留，产品仍LOCAL_PARTIAL_CI_PENDING/m11Eligible=false；其余执行/关闭/脱敏/审批/费用的故障与竞态负例进行中。原有.agent扫描快照与background-R0.md仍保留，不纳入提交。
+- 2026-10-21按用户要求落实R1七工作包237条原采纳范围（113采纳/124部分采纳）；逐项台账219条本地验证、18条LOCAL_PARTIAL（精确故障窗口有限，未冒称全动态复现）。同F运行clean verify的543Java/81suites（保留原410）、165门禁/33客户端、Chrome/WebKit各271共542、SDK58/示例2/启动器8及Windows原生7/兼容4+父清理、真实Docker子任务与Web专项通过；主/补充/浏览器回执同源码新JAR独立复核。151份暂存源码字节与执行字节相同，失败日志及D临时目录占用后无残留核实保留；历史审查/验收JSON不改。开发报告OCR-R1-remediation-2026-10-21.md、实施台账与OCR-R1-2026-10-21-results.json已更新。18条定点补验及R2～R6仍明确保留；M10.5.9保持LOCAL_PARTIAL_CI_PENDING/m11Eligible=false，远端CI/原生POSIX/Firefox/完整发布smoke未运行。仅本地提交，无推送/发布/付费请求；用户原有.agent扫描段/background-R0.md及忽略缓存保持。
 
 - 2026-10-21按用户要求实施R0复审采纳范围：37条中26采纳+10部分采纳共36条已按边界修复并本地验证，012固定两SDK语言保持不改。历史导入冻结、XML/ZIP/流式读取、manifest名、进度独立哈希、矩阵/只读finalizer、清理与Firefox本轮回执及workflow失败诊断均已补正反例；实际HTTP确认父级穿越INSPECTION_DENIED、另四夹具PATH_DENIED，未修改产品策略迎合统一码建议。新同runId回执130门禁+33客户端+410Java/64suites通过并独立复核11组，Chrome/WebKit四fixture各134共268通过；相邻11项及秘密扫描0发现。详见docs/development/OCR-R0-rereview-fixes-2026-10-21.md及新results.json；首轮reporter URI失败记录保留，原静态审查/历史验收JSON不改写。36条是采纳范围本地完成，不等于原484条关闭；原300条回归仍随R1～R6。完整发布smoke、真实三平台三引擎CI未运行，M10.5.9保持LOCAL_PARTIAL_CI_PENDING/m11Eligible=false，下一入口R1及完整CI授权实测。仅本地提交，不推送/发布/付费调用；用户已有.agent扫描快照及background-R0.md保持未提交，扫描原导出仍在忽略缓存。
 

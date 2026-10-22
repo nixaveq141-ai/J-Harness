@@ -19,6 +19,22 @@ import java.util.function.Function;
 
 /** CLI composition root; only public AgentLoopFactory is used to run an agent. */
 public final class CliApplication {
+    static void closeAll(AutoCloseable... resources) {
+        Throwable failure = null;
+        for (var resource : resources) {
+            try {
+                resource.close();
+            } catch (Throwable ex) {
+                if (failure == null) failure = ex;
+                else if (failure != ex) failure.addSuppressed(ex);
+            }
+        }
+        if (failure instanceof RuntimeException ex) throw ex;
+        if (failure instanceof Error ex) throw ex;
+        if (failure != null)
+            throw new HarnessException("CLOSE_FAILED", "Required resource cleanup failed", failure);
+    }
+
     private final Map<String, String> environment;
     private final Function<AgentRuntimeServices, HarnessPlugin> agentPlugin;
 
@@ -208,7 +224,8 @@ public final class CliApplication {
         Set<String> secrets = new LinkedHashSet<>();
         environment.forEach(
                 (name, value) -> {
-                    if (name.matches("(?i).*(_API_KEY|_TOKEN|_SECRET|_PASSWORD)$")
+                    if (name.matches(
+                                    "(?i).*(API_KEY|ACCESS_KEY_ID|SECRET_ACCESS_KEY|ACCESS_KEY|PRIVATE_KEY|CREDENTIALS|TOKEN|SECRET|PASSWORD|PASS)$")
                             && !value.isBlank()) secrets.add(value);
                 });
         String configured = environment.get(config.string("apiKeyEnv", "JHARNESS_API_KEY"));
@@ -1029,11 +1046,13 @@ public final class CliApplication {
                             new Thread(
                                     () -> {
                                         try {
-                                            LocalRunControl.cancel(
-                                                    control.stateFile().getParent(),
-                                                    control.runId());
-                                            task.get(6, TimeUnit.SECONDS);
-                                            terminal.stopAll();
+                                            stopForShutdown(
+                                                    () ->
+                                                            LocalRunControl.cancel(
+                                                                    control.stateFile().getParent(),
+                                                                    control.runId()),
+                                                    task,
+                                                    terminal);
                                         } catch (Exception ignored) {
                                             /* log remains truthful on forced shutdown */
                                         }
@@ -1041,14 +1060,19 @@ public final class CliApplication {
                                     "cli-shutdown");
                     Runtime.getRuntime().addShutdownHook(hook);
                     try {
-                        interact(
+                        awaitInteraction(
                                 task,
-                                runtime.approvals,
-                                control,
-                                metadata.directory("runs"),
-                                input,
-                                out);
-                        task.get();
+                                () ->
+                                        interact(
+                                                task,
+                                                runtime.approvals,
+                                                control,
+                                                metadata.directory("runs"),
+                                                input,
+                                                out),
+                                () ->
+                                        LocalRunControl.cancel(
+                                                control.stateFile().getParent(), control.runId()));
                     } finally {
                         try {
                             Runtime.getRuntime().removeShutdownHook(hook);
@@ -1194,6 +1218,45 @@ public final class CliApplication {
                 secrets(config));
     }
 
+    @FunctionalInterface
+    interface Interaction {
+        void run() throws Exception;
+    }
+
+    static void stopForShutdown(Runnable cancel, Future<?> task, TerminalSession terminal)
+            throws Exception {
+        Throwable primary = null;
+        try {
+            cancel.run();
+            task.get(6, TimeUnit.SECONDS);
+        } catch (Exception | Error failure) {
+            primary = failure;
+            throw failure;
+        } finally {
+            try {
+                terminal.stopAll();
+            } catch (RuntimeException | Error cleanup) {
+                if (primary == null) throw cleanup;
+                if (cleanup != primary) primary.addSuppressed(cleanup);
+            }
+        }
+    }
+
+    static void awaitInteraction(Future<?> task, Interaction interaction, Runnable cancel)
+            throws Exception {
+        try {
+            interaction.run();
+            task.get();
+        } catch (Exception | Error failure) {
+            try {
+                cancel.run();
+            } catch (Exception | Error cleanup) {
+                if (cleanup != failure) failure.addSuppressed(cleanup);
+            }
+            throw failure;
+        }
+    }
+
     static void interact(
             Future<?> task,
             InteractiveApprovalService approvals,
@@ -1262,7 +1325,7 @@ public final class CliApplication {
                             SideEffectLevel.SYSTEM_IMPACT);
             var decision = policy.evaluate(call, new ToolContext(scope, CancellationToken.NONE));
             plans.add(
-                    decision == PolicyEngine.Decision.DENY
+                    decision == null || decision == PolicyEngine.Decision.DENY
                             ? Map.of("executed", false, "reason", "PERMISSION_DENIED")
                             : preview.preview(call, CancellationToken.NONE));
         }
@@ -1502,13 +1565,7 @@ public final class CliApplication {
 
         @Override
         public void close() {
-            try {
-                container.close();
-            } finally {
-                approvals.close();
-                process.close();
-                model.close();
-            }
+            closeAll(container, approvals, process, model);
         }
     }
 

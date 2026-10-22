@@ -99,6 +99,8 @@ public final class CliConfig {
         requestTimeout();
         contextTokens();
         maxOutputTokens();
+        if (maxOutputTokens() > contextTokens())
+            throw new HarnessException("INVALID_CONFIG", "Output limit exceeds context capacity");
         currency();
         enabled();
         if (scheduling().maxConcurrency() > 1 && !enabled().contains("tool-scheduling"))

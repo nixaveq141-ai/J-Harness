@@ -153,8 +153,14 @@ public final class ProcessToolsPlugin implements HarnessPlugin {
                                         ? text
                                         : text.substring(0, 1024) + "[MODEL PREVIEW TRUNCATED]");
                         if (text.length() > 1024) {
-                            ArtifactStore.Artifact artifact =
-                                    artifacts.put(scope.sessionId(), text);
+                            ArtifactStore.Artifact artifact;
+                            try {
+                                artifact = artifacts.put(scope.sessionId(), text);
+                            } catch (java.io.IOException | RuntimeException failure) {
+                                value.put(key + "ArtifactStatus", "FAILED");
+                                model.put(key + "ArtifactStatus", "FAILED");
+                                continue;
+                            }
                             Map<String, Object> reference =
                                     Map.of(
                                             "id",

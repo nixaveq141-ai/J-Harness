@@ -108,6 +108,43 @@ class WorkbenchSettingsTest {
     }
 
     @Test
+    void explicitUserSkillRootAcceptsLocalAbsoluteAndRejectsRelativeOrUnc() throws Exception {
+        var manager = manager(new MemoryVault());
+        Path skill = temp.resolve("user-skills/guide");
+        Files.createDirectories(skill);
+        Files.writeString(
+                skill.resolve("SKILL.md"),
+                "---\nname: user-guide\ndescription: User guide\n---\nUser body");
+        var candidate = input(manager.read(), Map.of("default", "synthetic-user-root-key"));
+        candidate.put(
+                "extensions",
+                Map.of(
+                        "skillRoots",
+                        List.of(
+                                Map.of(
+                                        "id",
+                                        "user",
+                                        "kind",
+                                        "user",
+                                        "directory",
+                                        skill.getParent().toRealPath().toString()))));
+        manager.save(candidate);
+        assertEquals(
+                1, ((List<?>) manager.skills(temp.toRealPath().toString()).get("skills")).size());
+        for (String directory : List.of("user-skills", "\\\\server\\share\\skills")) {
+            var invalid = input(manager.read(), Map.of());
+            invalid.put(
+                    "extensions",
+                    Map.of(
+                            "skillRoots",
+                            List.of(Map.of("id", "user", "kind", "user", "directory", directory))));
+            assertThrows(HarnessException.class, () -> manager.save(invalid));
+        }
+        assertEquals(
+                1, ((List<?>) manager.skills(temp.toRealPath().toString()).get("skills")).size());
+    }
+
+    @Test
     void acceptedModelAndBudgetSnapshotSurvivesDefaultAndCapabilityChanges() throws Exception {
         var vault = new MemoryVault();
         var manager = manager(vault);

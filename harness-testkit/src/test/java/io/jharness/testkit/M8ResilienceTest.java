@@ -607,6 +607,14 @@ class M8ResilienceTest {
                         1, events.stream().filter(e -> e.type().equals("tool.completed")).count());
                 assertTrue(SessionRecovery.inspect(events).ready());
                 assertFalse(events.toString().contains("fixture-secret"));
+                assertFalse(output.toString(StandardCharsets.UTF_8).contains("fixture-secret"));
+                try (var files = Files.walk(workspace.resolve(".jharness"))) {
+                    for (Path path : files.filter(Files::isRegularFile).toList())
+                        assertFalse(
+                                new String(Files.readAllBytes(path), StandardCharsets.UTF_8)
+                                        .contains("fixture-secret"),
+                                path.toString());
+                }
             }
         }
     }

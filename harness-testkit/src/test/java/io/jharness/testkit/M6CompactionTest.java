@@ -48,10 +48,29 @@ class M6CompactionTest {
 
     @Test
     void longCurrentTurnCompactsWholeToolGroupsAndKeepsSystemGoalAndLatestResults() {
-        var original = new ChatRequest(messages(), List.of(), Map.of());
+        var original =
+                new ChatRequest(
+                        messages(),
+                        List.of(
+                                Map.of(
+                                        "type",
+                                        "function",
+                                        "function",
+                                        Map.of(
+                                                "name",
+                                                "read_file",
+                                                "description",
+                                                "read a file",
+                                                "parameters",
+                                                Map.of("type", "object")))),
+                        Map.of());
         var compacted = new ExtractiveContextCompactor().compact(original, 2000);
         assertFalse(compacted.removedMessageIndices().isEmpty());
-        assertTrue(compacted.request().messages().toString().length() < 2000);
+        assertTrue(
+                compacted.request().messages().toString().length()
+                                + compacted.request().tools().toString().length()
+                        <= 2000);
+        assertEquals(original.tools(), compacted.request().tools());
         assertEquals(original.messages().getFirst(), compacted.request().messages().getFirst());
         assertTrue(
                 compacted
@@ -121,6 +140,27 @@ class M6CompactionTest {
                             .events()
                             .invoke(StandardExtensionPoints.BEFORE_MODEL, original, value -> value);
             assertEquals("context.compacted", repo.openReader("s").events().getFirst().type());
+            assertTrue(
+                    original.messages().toString().length() + original.tools().toString().length()
+                            > 2000);
+            assertNotEquals(original.messages(), result.messages());
+            var removed =
+                    (List<?>)
+                            repo.openReader("s")
+                                    .events()
+                                    .getFirst()
+                                    .payload()
+                                    .get("removedMessageIndices");
+            assertFalse(removed.isEmpty());
+            for (Object index : removed)
+                assertFalse(
+                        result.messages()
+                                .contains(original.messages().get(((Number) index).intValue())));
+            assertEquals(
+                    original.messages().size() - removed.size() + 1,
+                    result.messages().size()); // One extractive summary is inserted.
+            assertEquals(original.messages().getFirst(), result.messages().getFirst());
+            assertEquals(original.messages().getLast(), result.messages().getLast());
             var journal = new EventRequestJournal();
             String requested = journal.record(result, "s", "t", "step", writer, container.events());
             assertEquals(result, journal.reconstruct(repo.openReader("s").events(), requested));

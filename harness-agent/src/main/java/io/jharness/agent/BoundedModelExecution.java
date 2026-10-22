@@ -38,25 +38,37 @@ public final class BoundedModelExecution implements ModelExecution, AutoCloseabl
                                         >= options.totalTimeoutMillis() * 1000000L;
         boolean acquired = false;
         try {
+            boolean queued;
             synchronized (this) {
-                if (active) {
+                queued = active;
+                if (queued) {
                     if (waiters >= options.maxWaiters()) throw error("MODEL_RATE_QUEUE_FULL");
+                    waiters++;
+                } else {
+                    check(bounded, cancellation, start);
+                    active = true;
+                    acquired = true;
+                }
+            }
+            if (queued) {
+                try {
                     audit.accept(
                             "model.rate.waiting",
                             Map.of("reason", "CONCURRENCY", "maxWaiters", options.maxWaiters()));
-                    waiters++;
-                    try {
+                    synchronized (this) {
                         while (active) {
                             check(bounded, cancellation, start);
                             pause();
                         }
-                    } finally {
+                        check(bounded, cancellation, start);
+                        active = true;
+                        acquired = true;
+                    }
+                } finally {
+                    synchronized (this) {
                         waiters--;
                     }
                 }
-                check(bounded, cancellation, start);
-                active = true;
-                acquired = true;
             }
             for (int index = 0; ; index++) {
                 if (started
@@ -90,15 +102,22 @@ public final class BoundedModelExecution implements ModelExecution, AutoCloseabl
                     if (index + 1 >= options.maxAttempts()) throw error("MODEL_RATE_LIMIT");
                     long backoff =
                             Math.min(10000L, ((long) options.backoffMillis()) << index) * 1000000L;
-                    audit.accept(
-                            "model.retry.scheduled",
-                            Map.of(
-                                    "reason",
-                                    "HTTP_429",
-                                    "nextAttempt",
-                                    index + 2,
-                                    "backoffMillis",
-                                    backoff / 1000000L));
+                    try {
+                        audit.accept(
+                                "model.retry.scheduled",
+                                Map.of(
+                                        "reason",
+                                        "HTTP_429",
+                                        "nextAttempt",
+                                        index + 2,
+                                        "backoffMillis",
+                                        backoff / 1000000L));
+                    } catch (RuntimeException auditFailure) {
+                        // A retry needs its durable audit. Do not send again, and retain
+                        // the provider's rejection as the primary observed outcome.
+                        rejected.addSuppressed(auditFailure);
+                        throw rejected;
+                    }
                     long waiting = System.nanoTime();
                     while (System.nanoTime() - waiting < backoff) {
                         check(bounded, cancellation, start);
@@ -116,7 +135,11 @@ public final class BoundedModelExecution implements ModelExecution, AutoCloseabl
                     ex = mapped;
                 }
             }
-            audit.accept("model.execution.stopped", Map.of("reason", ex.code()));
+            try {
+                audit.accept("model.execution.stopped", Map.of("reason", ex.code()));
+            } catch (RuntimeException auditFailure) {
+                ex.addSuppressed(auditFailure);
+            }
             throw ex;
         } finally {
             if (acquired)

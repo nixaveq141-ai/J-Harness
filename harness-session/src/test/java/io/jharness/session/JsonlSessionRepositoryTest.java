@@ -69,6 +69,29 @@ class JsonlSessionRepositoryTest {
     @TempDir Path root;
 
     @Test
+    void successfulTailRepairIsNotOverriddenByBrokenDiagnosticSink() throws Exception {
+        var repository = new JsonlSessionRepository(root);
+        try (var writer = repository.openWriter("s", WriteOwnership.EXCLUSIVE)) {
+            writer.append(SessionEvent.session("s", "session.created", Map.of()));
+        }
+        byte[] valid = Files.readAllBytes(root.resolve("s.jsonl"));
+        Files.writeString(root.resolve("s.jsonl"), "{\"half\":", StandardOpenOption.APPEND);
+        var repaired =
+                new JsonlSessionRepository(
+                        root,
+                        JsonlSessionRepository.TailPolicy.REPAIR_TAIL,
+                        channel -> channel.force(true),
+                        code -> {
+                            throw new IllegalStateException("safe diagnostic failure");
+                        });
+        try (var writer = repaired.openWriter("s", WriteOwnership.EXCLUSIVE)) {
+            writer.flush();
+        }
+        assertArrayEquals(valid, Files.readAllBytes(root.resolve("s.jsonl")));
+        assertEquals(1, repaired.openReader("s").events().size());
+    }
+
+    @Test
     void forcedRecordsSurviveReopenAndAClosedWriterCannotAppend() throws Exception {
         JsonlSessionRepository repo = new JsonlSessionRepository(root);
         SessionEvent event =

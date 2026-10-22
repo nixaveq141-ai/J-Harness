@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public final class BoundedReadOnlyToolScheduler implements ToolScheduler {
     private final ToolSchedulingOptions options;
     private final AtomicBoolean closed = new AtomicBoolean(), busy = new AtomicBoolean();
+    private final Object lifecycle = new Object();
     private final Set<Thread> workers = ConcurrentHashMap.newKeySet();
 
     public BoundedReadOnlyToolScheduler(ToolSchedulingOptions options) {
@@ -48,7 +49,11 @@ public final class BoundedReadOnlyToolScheduler implements ToolScheduler {
                                         throw new HarnessException(
                                                 "SCHEDULER_STOPPED", "Earlier call requires stop");
                                 });
-                if (run.stopped) break;
+                if (run.stopped) {
+                    if (prepared.isPresent())
+                        run.accept(prepared.get().abandon(call.callId(), "SCHEDULER_STOPPED"));
+                    break;
+                }
                 if (prepared.isEmpty()) {
                     run.drain();
                     if (run.stopped) break;
@@ -63,7 +68,10 @@ public final class BoundedReadOnlyToolScheduler implements ToolScheduler {
                     run.launch(call, prepared.get());
                 } else {
                     run.drain();
-                    if (run.stopped) break;
+                    if (run.stopped) {
+                        run.accept(prepared.get().abandon(call.callId(), "SCHEDULER_STOPPED"));
+                        break;
+                    }
                     decision(
                             context,
                             call,
@@ -76,19 +84,19 @@ public final class BoundedReadOnlyToolScheduler implements ToolScheduler {
                 if (run.stopped) break;
             }
             run.drain();
-            if (run.results.stream().anyMatch(r -> r.status() == ToolStatus.UNKNOWN))
+            if (run.results.stream().anyMatch(r -> ToolBatchExecution.unknownOutcome(r)))
                 throw new HarnessException(
                         "UNKNOWN_SIDE_EFFECT", "Worker outcome requires verification");
             if (run.stopped)
                 throw new HarnessException(
                         run.stopReason, "Batch stopped; inspect settled tool facts");
-            if (run.results.stream()
-                    .anyMatch(r -> Boolean.TRUE.equals(r.value().get("sideEffectUncertain"))))
-                throw new HarnessException(
-                        "UNKNOWN_SIDE_EFFECT", "Partial effects require verification");
             return List.copyOf(run.results);
         } catch (RuntimeException ex) {
-            run.abort(ex instanceof HarnessException h ? h.code() : "SCHEDULER_FAILED");
+            try {
+                run.abort(ex instanceof HarnessException h ? h.code() : "SCHEDULER_FAILED");
+            } catch (RuntimeException secondary) {
+                ex.addSuppressed(secondary);
+            }
             try {
                 run.drain();
             } catch (RuntimeException settlement) {
@@ -127,6 +135,7 @@ public final class BoundedReadOnlyToolScheduler implements ToolScheduler {
     private final class Run {
         final AtomicBoolean cancel = new AtomicBoolean();
         final ToolPipelineContext context;
+        final CancellationToken parentCancellation;
         final List<Task> pending = new ArrayList<>();
         final List<ToolResult> results = new ArrayList<>();
         boolean stopped;
@@ -134,6 +143,7 @@ public final class BoundedReadOnlyToolScheduler implements ToolScheduler {
         long grace;
 
         Run(ToolPipelineContext c) {
+            parentCancellation = c.cancellation();
             context =
                     new ToolPipelineContext(
                             c.scope(),
@@ -150,7 +160,9 @@ public final class BoundedReadOnlyToolScheduler implements ToolScheduler {
 
         void abort(String reason) {
             stopped = true;
-            if (stopReason == null) {
+            if (stopReason == null
+                    || "UNKNOWN_SIDE_EFFECT".equals(reason)
+                    || "CANCELLED".equals(stopReason) && !"CANCELLED".equals(reason)) {
                 stopReason = reason;
                 grace = System.nanoTime() + TimeUnit.SECONDS.toNanos(2);
                 EventSupport.append(
@@ -172,10 +184,7 @@ public final class BoundedReadOnlyToolScheduler implements ToolScheduler {
             results.add(result);
             if (ToolBatchExecution.stops(result))
                 abort(
-                        result.status() == ToolStatus.UNKNOWN
-                                        || result.status() != ToolStatus.CANCELLED
-                                                && Boolean.TRUE.equals(
-                                                        result.value().get("sideEffectUncertain"))
+                        ToolBatchExecution.unknownOutcome(result)
                                 ? "UNKNOWN_SIDE_EFFECT"
                                 : result.status() == ToolStatus.TIMEOUT
                                         ? "SCHEDULER_TIMEOUT"
@@ -204,48 +213,68 @@ public final class BoundedReadOnlyToolScheduler implements ToolScheduler {
                                             if (task.result != null
                                                     && ToolBatchExecution.stops(task.result))
                                                 cancel.set(true);
-                                            task.done.countDown();
                                             workers.remove(Thread.currentThread());
+                                            task.done.countDown();
                                         }
                                     });
-            workers.add(task.thread);
-            task.thread.start();
+            synchronized (lifecycle) {
+                if (closed.get()) {
+                    task.result =
+                            ToolResults.failure(
+                                    call.callId(), ToolStatus.CANCELLED, "SCHEDULER_CLOSED");
+                    task.done.countDown();
+                    return;
+                }
+                workers.add(task.thread);
+                task.thread.start();
+            }
         }
 
         void drain() {
-            for (Task task : pending) {
-                while (task.done.getCount() != 0) {
-                    if (context.cancellation().isCancelled() && !stopped) abort("CANCELLED");
-                    if (System.nanoTime() - task.started >= options.timeout().toNanos() && !stopped)
-                        abort("SCHEDULER_TIMEOUT");
-                    if (stopped && System.nanoTime() >= grace) break;
-                    try {
-                        task.done.await(20, TimeUnit.MILLISECONDS);
-                    } catch (InterruptedException ex) {
-                        abort("CANCELLED");
+            RuntimeException failure = null;
+            for (Task task : new ArrayList<>(pending)) {
+                pending.remove(task);
+                try {
+                    while (task.done.getCount() != 0) {
+                        if (parentCancellation.isCancelled() && !stopped) abort("CANCELLED");
+                        if (closed.get() && !stopped) abort("SCHEDULER_CLOSED");
+                        if (System.nanoTime() - task.started >= options.timeout().toNanos()
+                                && !stopped) abort("SCHEDULER_TIMEOUT");
+                        if (stopped && System.nanoTime() >= grace) break;
+                        try {
+                            task.done.await(20, TimeUnit.MILLISECONDS);
+                        } catch (InterruptedException ex) {
+                            abort("CANCELLED");
+                        }
                     }
-                }
-                ToolResult result =
-                        task.done.getCount() == 0
-                                ? task.result
-                                : ToolResults.failure(
+                    ToolResult result =
+                            task.done.getCount() == 0
+                                    ? task.result
+                                    : ToolResults.failure(
+                                            task.call.callId(),
+                                            ToolStatus.UNKNOWN,
+                                            "SCHEDULER_WORKER_UNKNOWN");
+                    if (result == null)
+                        result =
+                                ToolResults.failure(
                                         task.call.callId(),
                                         ToolStatus.UNKNOWN,
-                                        "SCHEDULER_WORKER_UNKNOWN");
-                if (result == null)
-                    result =
-                            ToolResults.failure(
-                                    task.call.callId(),
-                                    ToolStatus.UNKNOWN,
-                                    "SCHEDULER_WORKER_FAILED");
-                if (result.status() == ToolStatus.CANCELLED
-                        && "SCHEDULER_TIMEOUT".equals(stopReason))
-                    result =
-                            ToolResults.failure(
-                                    task.call.callId(), ToolStatus.TIMEOUT, "SCHEDULER_TIMEOUT");
-                accept(task.prepared.finish(result));
+                                        "SCHEDULER_WORKER_FAILED");
+                    if (result.status() == ToolStatus.CANCELLED
+                            && "SCHEDULER_TIMEOUT".equals(stopReason))
+                        result =
+                                ToolResults.failure(
+                                        task.call.callId(),
+                                        ToolStatus.TIMEOUT,
+                                        "SCHEDULER_TIMEOUT");
+                    accept(task.prepared.finish(result));
+                } catch (RuntimeException error) {
+                    if (failure == null) failure = error;
+                    else failure.addSuppressed(error);
+                    cancel.set(true);
+                }
             }
-            pending.clear();
+            if (failure != null) throw failure;
         }
     }
 
@@ -265,7 +294,9 @@ public final class BoundedReadOnlyToolScheduler implements ToolScheduler {
 
     @Override
     public void close() {
-        closed.set(true);
-        workers.forEach(Thread::interrupt);
+        synchronized (lifecycle) {
+            closed.set(true);
+            workers.forEach(Thread::interrupt);
+        }
     }
 }

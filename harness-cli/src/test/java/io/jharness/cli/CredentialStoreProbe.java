@@ -15,6 +15,7 @@ public final class CredentialStoreProbe {
         var vault = new SystemCredentials();
         boolean succeeded = false;
         String failureCode = "";
+        String cleanupFailureCode = "";
         try {
             require(vault.supported());
             checks.put("available", true);
@@ -30,15 +31,12 @@ public final class CredentialStoreProbe {
             require(new SystemCredentials().read(target).isEmpty());
             checks.put("deleteRestartRead", true);
             new SystemCredentials().delete(target);
+            require(new SystemCredentials().read(target).isEmpty());
             checks.put("deleteMissing", true);
             succeeded = true;
         } catch (Exception failure) {
             // Only fixed categories: native errors and exception text may contain secrets.
-            failureCode =
-                    failure instanceof IOException
-                                    && "Credential store timeout".equals(failure.getMessage())
-                            ? "WORKER_TIMEOUT"
-                            : "PROBE_FAILED";
+            failureCode = failureCode(failure);
         } finally {
             try {
                 vault.delete(target);
@@ -46,6 +44,8 @@ public final class CredentialStoreProbe {
                 checks.put("cleanup", true);
             } catch (Exception failure) {
                 succeeded = false;
+                cleanupFailureCode = "CLEANUP_FAILED";
+                if (failureCode.isEmpty()) failureCode = cleanupFailureCode;
                 checks.put("cleanup", false);
             }
             System.out.println(
@@ -59,10 +59,25 @@ public final class CredentialStoreProbe {
                                     succeeded,
                                     "failureCode",
                                     failureCode,
+                                    "cleanupFailureCode",
+                                    cleanupFailureCode,
                                     "checks",
                                     checks)));
         }
         if (!succeeded) throw new IllegalStateException("Native credential validation failed");
+    }
+
+    static String failureCode(Exception failure) {
+        if (failure instanceof IOException) {
+            return switch (String.valueOf(failure.getMessage())) {
+                case "CREDENTIAL_WORKER_TIMEOUT", "Credential store timeout" -> "WORKER_TIMEOUT";
+                case "CREDENTIAL_UPDATE_UNKNOWN" -> "UPDATE_UNKNOWN";
+                case "CREDENTIAL_OPERATION_INVALID" -> "OPERATION_INVALID";
+                case "CREDENTIAL_STORE_UNAVAILABLE" -> "STORE_UNAVAILABLE";
+                default -> "PROBE_FAILED";
+            };
+        }
+        return "PROBE_FAILED";
     }
 
     private static void require(boolean value) {

@@ -15,13 +15,18 @@ final class M7EcosystemFixture implements AutoCloseable {
     final Path root;
     final JsonlSessionRepository repository;
     final SessionWriter writer;
-    final ToolRegistry tools = new ScopedToolRegistry();
+    final ToolRegistry tools;
     final DefaultEventBus events = new DefaultEventBus();
     final PluginContainer container;
     final SecretRedactor clean = new SecretRedactor(List.of("mcp-secret-token"));
     final DefaultToolPipeline pipeline = new DefaultToolPipeline(new JsonSchemaValidator(), clean);
 
     M7EcosystemFixture(Path base, HarnessPlugin extension) throws Exception {
+        this(base, extension, new ScopedToolRegistry());
+    }
+
+    M7EcosystemFixture(Path base, HarnessPlugin extension, ToolRegistry tools) throws Exception {
+        this.tools = tools;
         root = base.resolve("workspace");
         Files.createDirectories(root);
         repository = new JsonlSessionRepository(base.resolve("sessions"));

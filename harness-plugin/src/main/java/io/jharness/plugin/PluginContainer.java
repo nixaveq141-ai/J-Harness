@@ -17,6 +17,7 @@ public final class PluginContainer implements AutoCloseable {
     private final Map<String, ConfigView> configs;
     private final List<ServiceRequirement> requirements;
     private final List<Running> running = new ArrayList<>();
+    private final List<CleanupFailure> cleanupFailures = new ArrayList<>();
     private State state = State.NEW;
     private final AtomicBoolean closed = new AtomicBoolean();
 
@@ -25,7 +26,8 @@ public final class PluginContainer implements AutoCloseable {
         STARTING,
         RUNNING,
         FAILED,
-        STOPPED
+        STOPPED,
+        STOP_FAILED
     }
 
     public PluginContainer(
@@ -74,6 +76,13 @@ public final class PluginContainer implements AutoCloseable {
         return state;
     }
 
+    /** Failed cleanup is evidence of unconfirmed resources, never permission to retry stop. */
+    public synchronized List<CleanupFailure> cleanupFailures() {
+        return List.copyOf(cleanupFailures);
+    }
+
+    public record CleanupFailure(String pluginId, String stage, String causeType) {}
+
     public synchronized void start() {
         if (state != State.NEW)
             throw new HarnessException("CONTAINER_STATE", "Container cannot start from " + state);
@@ -97,9 +106,13 @@ public final class PluginContainer implements AutoCloseable {
                 else registry.require(requirement.type(), requirement.key(), scope);
             }
             state = State.RUNNING;
-        } catch (RuntimeException ex) {
+        } catch (RuntimeException | Error ex) {
             state = State.FAILED;
-            lifecycle("plugin.failed", activating);
+            try {
+                lifecycle("plugin.failed", activating);
+            } catch (RuntimeException | Error notification) {
+                ex.addSuppressed(notification);
+            }
             RuntimeException cleanup = cleanup();
             if (cleanup != null) ex.addSuppressed(cleanup);
             throw ex;
@@ -161,21 +174,30 @@ public final class PluginContainer implements AutoCloseable {
             Running item = running.get(i);
             try {
                 item.descriptor.plugin.stop();
-            } catch (RuntimeException ex) {
+            } catch (RuntimeException | Error ex) {
+                cleanupFailures.add(
+                        new CleanupFailure(item.descriptor.id, "stop", ex.getClass().getName()));
                 failure = accumulate(failure, ex);
             }
             try {
                 item.context.close();
-            } catch (RuntimeException ex) {
+            } catch (RuntimeException | Error ex) {
+                cleanupFailures.add(
+                        new CleanupFailure(
+                                item.descriptor.id, "owned.close", ex.getClass().getName()));
                 failure = accumulate(failure, ex);
             }
-            lifecycle("plugin.stopped", item.descriptor.id);
+            try {
+                lifecycle("plugin.stopped", item.descriptor.id);
+            } catch (RuntimeException | Error notification) {
+                failure = accumulate(failure, notification);
+            }
         }
         running.clear();
         return failure;
     }
 
-    private static RuntimeException accumulate(RuntimeException previous, RuntimeException next) {
+    private static RuntimeException accumulate(RuntimeException previous, Throwable next) {
         if (previous == null)
             return new HarnessException("CLEANUP_FAILED", "Plugin cleanup failed", next);
         previous.addSuppressed(next);
@@ -184,24 +206,34 @@ public final class PluginContainer implements AutoCloseable {
 
     /** Stop contributions but leave observers available to inspect lifecycle facts. */
     public synchronized void stop() {
-        if (state == State.STOPPED) return;
+        if (state == State.STOPPED || state == State.STOP_FAILED) return;
         RuntimeException failure = cleanup();
-        state = State.STOPPED;
+        state = failure == null ? State.STOPPED : State.STOP_FAILED;
         if (failure != null) throw failure;
     }
 
     @Override
     public void close() {
         if (!closed.compareAndSet(false, true)) return;
+        RuntimeException failure = null;
         try {
             stop();
-        } finally {
-            try {
-                bus.awaitNotifications(Duration.ofSeconds(2));
-            } finally {
-                bus.close();
-            }
+        } catch (RuntimeException error) {
+            failure = error;
         }
+        try {
+            bus.awaitNotifications(Duration.ofSeconds(2));
+        } catch (RuntimeException observation) {
+            if (failure == null) failure = observation;
+            else failure.addSuppressed(observation);
+        }
+        try {
+            bus.close();
+        } catch (RuntimeException observation) {
+            if (failure == null) failure = observation;
+            else failure.addSuppressed(observation);
+        }
+        if (failure != null) throw failure;
     }
 
     private record Descriptor(
@@ -237,24 +269,54 @@ public final class PluginContainer implements AutoCloseable {
                     @Override
                     public <T> Optional<T> find(Class<T> type, String key, PluginScope requested) {
                         verify(requested);
-                        return registry.find(type, key, requested);
+                        return registry.find(type, key, requested)
+                                .map(value -> scoped(type, value));
                     }
 
                     @Override
                     public <T> T require(Class<T> type, String key, PluginScope requested) {
                         verify(requested);
-                        return registry.require(type, key, requested);
+                        return scoped(type, registry.require(type, key, requested));
                     }
 
                     @Override
                     public <T> T requireUnique(Class<T> type, PluginScope requested) {
                         verify(requested);
-                        return registry.requireUnique(type, requested);
+                        return scoped(type, registry.requireUnique(type, requested));
                     }
                 };
 
         Context(ConfigView config) {
             this.config = config;
+        }
+
+        private <T> T scoped(Class<T> type, T service) {
+            if (type != ToolRegistry.class) return service;
+            ToolRegistry tools = (ToolRegistry) service;
+            return type.cast(
+                    new ToolRegistry() {
+                        private void verify(PluginScope requested) {
+                            ensureOpen();
+                            if (!scope.equals(requested))
+                                throw new HarnessException(
+                                        "SCOPE_DENIED", "Another tool scope is not visible");
+                        }
+
+                        public Registration register(AgentTool tool, PluginScope requested) {
+                            verify(requested);
+                            return Context.this.own(tools.register(tool, requested));
+                        }
+
+                        public Optional<AgentTool> resolve(String name, PluginScope requested) {
+                            verify(requested);
+                            return tools.resolve(name, requested);
+                        }
+
+                        public List<AgentTool> visibleTools(PluginScope requested) {
+                            verify(requested);
+                            return tools.visibleTools(requested);
+                        }
+                    });
         }
 
         private synchronized void ensureOpen() {
@@ -268,7 +330,7 @@ public final class PluginContainer implements AutoCloseable {
         }
 
         @Override
-        public synchronized Registration own(AutoCloseable resource) {
+        public Registration own(AutoCloseable resource) {
             Objects.requireNonNull(resource);
             AtomicBoolean revoked = new AtomicBoolean();
             Registration handle =
@@ -282,12 +344,14 @@ public final class PluginContainer implements AutoCloseable {
                             }
                         }
                     };
-            if (closed) {
-                handle.close();
-                throw new HarnessException("CONTEXT_CLOSED", "Plugin context is closed");
+            synchronized (this) {
+                if (!closed) {
+                    owned.add(handle);
+                    return handle;
+                }
             }
-            owned.add(handle);
-            return handle;
+            handle.close();
+            throw new HarnessException("CONTEXT_CLOSED", "Plugin context is closed");
         }
 
         @Override
@@ -314,18 +378,22 @@ public final class PluginContainer implements AutoCloseable {
         }
 
         @Override
-        public synchronized void close() {
-            if (closed) return;
-            closed = true;
+        public void close() {
+            List<Registration> snapshot;
+            synchronized (this) {
+                if (closed) return;
+                closed = true;
+                snapshot = new ArrayList<>(owned);
+                owned.clear();
+            }
             RuntimeException failure = null;
-            for (int i = owned.size() - 1; i >= 0; i--) {
+            for (int i = snapshot.size() - 1; i >= 0; i--) {
                 try {
-                    owned.get(i).close();
-                } catch (RuntimeException ex) {
-                    failure = accumulate(failure, ex);
+                    snapshot.get(i).close();
+                } catch (RuntimeException | Error error) {
+                    failure = accumulate(failure, error);
                 }
             }
-            owned.clear();
             if (failure != null) throw failure;
         }
 

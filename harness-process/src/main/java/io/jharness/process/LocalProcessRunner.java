@@ -21,6 +21,7 @@ public final class LocalProcessRunner implements ProcessRunner, AutoCloseable {
     private final Set<Process> active = ConcurrentHashMap.newKeySet();
     private final Consumer<ProcessHandle> terminate;
     private final int secretTail;
+    private final Object lifecycle = new Object();
 
     public LocalProcessRunner(
             LocalWorkspace workspace,
@@ -39,16 +40,22 @@ public final class LocalProcessRunner implements ProcessRunner, AutoCloseable {
             Consumer<ProcessHandle> terminate) {
         this.workspace = Objects.requireNonNull(workspace);
         this.limits = Objects.requireNonNull(limits);
-        this.environment = Map.copyOf(environment);
-        for (var entry : environment.entrySet())
-            if (!entry.getKey().matches("[A-Za-z_][A-Za-z0-9_]*")
-                    || entry.getValue().indexOf('\0') >= 0)
-                throw new IllegalArgumentException("Invalid environment");
+        this.environment = validatedEnvironment(environment);
         this.redactor = new SecretRedactor(secrets);
         slots = new Semaphore(limits.maxConcurrent());
         this.terminate = Objects.requireNonNull(terminate);
         secretTail =
                 secrets.stream().filter(Objects::nonNull).mapToInt(String::length).max().orElse(0);
+    }
+
+    /** Validate exactly the explicit host snapshot, never a later mutable-map view. */
+    public static Map<String, String> validatedEnvironment(Map<String, String> environment) {
+        Map<String, String> snapshot = Map.copyOf(environment);
+        for (var entry : snapshot.entrySet())
+            if (!entry.getKey().matches("[A-Za-z_][A-Za-z0-9_]*")
+                    || entry.getValue().indexOf('\0') >= 0)
+                throw new IllegalArgumentException("Invalid environment");
+        return snapshot;
     }
 
     /** Minimal inherited variables needed by native build tools. No arbitrary host variables. */
@@ -111,8 +118,12 @@ public final class LocalProcessRunner implements ProcessRunner, AutoCloseable {
             ProcessBuilder builder = new ProcessBuilder(argv).directory(cwd.toFile());
             builder.environment().clear();
             builder.environment().putAll(environment);
-            process = builder.start();
-            active.add(process);
+            synchronized (lifecycle) {
+                if (closed.get())
+                    return notStarted(request, ToolStatus.FAILED, "PROCESS_SERVICE_CLOSED", start);
+                process = builder.start();
+                active.add(process);
+            }
             tree = new Tree(process.toHandle(), limits.maxTreeProcesses(), terminate);
             process.getOutputStream().close(); // noninteractive service: stdin EOF
             stdout =
@@ -156,13 +167,14 @@ public final class LocalProcessRunner implements ProcessRunner, AutoCloseable {
         } catch (Exception ex) {
             reason = ex instanceof HarnessException h ? h.code() : "PROCESS_IO";
         } finally {
-            if (tree != null) tree.cleanup();
+            if (tree != null) interrupted |= tree.cleanup();
             if (stdout != null) stdout.stop.set(true);
             if (stderr != null) stderr.stop.set(true);
             interrupted |= join(outThread) | join(errThread);
             if (process != null) {
                 closeQuietly(process.getInputStream());
                 closeQuietly(process.getErrorStream());
+                interrupted |= join(outThread) | join(errThread);
                 active.remove(process);
             }
             slots.release();
@@ -180,7 +192,21 @@ public final class LocalProcessRunner implements ProcessRunner, AutoCloseable {
                 (outThread == null || !outThread.isAlive())
                         && (errThread == null || !errThread.isAlive());
         boolean observedClean =
-                residual.isEmpty() && readersStopped && tree != null && !tree.inspectionFailed;
+                residual.isEmpty()
+                        && readersStopped
+                        && tree != null
+                        && !tree.inspectionFailed
+                        && !tree.exceeded;
+        if (!readersStopped) {
+            if (stdout != null) {
+                stdout.truncated = true;
+                stdout.ioFailed = true;
+            }
+            if (stderr != null) {
+                stderr.truncated = true;
+                stderr.ioFailed = true;
+            }
+        }
         if (reason.equals("EXIT")
                 && (stdout != null && stdout.ioFailed || stderr != null && stderr.ioFailed))
             reason = "OUTPUT_IO";
@@ -380,10 +406,16 @@ public final class LocalProcessRunner implements ProcessRunner, AutoCloseable {
 
     @Override
     public void close() {
-        closed.set(true);
-        for (Process process : active) {
-            new Tree(process.toHandle(), limits.maxTreeProcesses(), terminate).cleanup();
+        List<Process> snapshot;
+        synchronized (lifecycle) {
+            closed.set(true);
+            snapshot = List.copyOf(active);
         }
+        boolean interrupted = false;
+        for (Process process : snapshot)
+            interrupted |=
+                    new Tree(process.toHandle(), limits.maxTreeProcesses(), terminate).cleanup();
+        if (interrupted) Thread.currentThread().interrupt();
     }
 
     private static final class Collector implements Runnable {
@@ -417,9 +449,11 @@ public final class LocalProcessRunner implements ProcessRunner, AutoCloseable {
                     if (available > 0) {
                         int count = stream.read(buffer, 0, Math.min(buffer.length, available));
                         if (count > 0) {
-                            int retained = Math.min(count, limit - bytes.size());
-                            bytes.write(buffer, 0, retained);
-                            if (retained < count) truncated = true;
+                            synchronized (bytes) {
+                                int retained = Math.min(count, limit - bytes.size());
+                                bytes.write(buffer, 0, retained);
+                                if (retained < count) truncated = true;
+                            }
                         }
                     } else if (stop.get()) break;
                     else Thread.sleep(2);
@@ -432,7 +466,10 @@ public final class LocalProcessRunner implements ProcessRunner, AutoCloseable {
 
         String text() {
             // Never expose an incomplete final token/line where a configured secret may be clipped.
-            String text = bytes.toString(encoding);
+            String text;
+            synchronized (bytes) {
+                text = bytes.toString(encoding);
+            }
             if (truncated) {
                 text = text.substring(0, Math.max(0, text.length() - secretTail));
                 int line = text.lastIndexOf('\n');
@@ -475,7 +512,8 @@ public final class LocalProcessRunner implements ProcessRunner, AutoCloseable {
             }
         }
 
-        void cleanup() {
+        boolean cleanup() {
+            boolean interrupted = false;
             sample();
             long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(2);
             do {
@@ -491,9 +529,10 @@ public final class LocalProcessRunner implements ProcessRunner, AutoCloseable {
                 try {
                     Thread.sleep(10);
                 } catch (InterruptedException ex) {
-                    /* cleanup still runs to deadline */
+                    interrupted = true;
                 }
             } while (System.nanoTime() < deadline);
+            return interrupted;
         }
 
         List<Long> residual() {

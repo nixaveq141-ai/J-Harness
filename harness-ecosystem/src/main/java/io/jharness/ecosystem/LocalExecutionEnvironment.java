@@ -10,6 +10,8 @@ import java.util.*;
 
 public final class LocalExecutionEnvironment implements ExecutionEnvironment {
     private final String id;
+    private final java.util.concurrent.atomic.AtomicBoolean closed =
+            new java.util.concurrent.atomic.AtomicBoolean();
     private final LocalWorkspace files;
     private final LocalProcessRunner processes;
     private final LocalTerminalSession terminal;
@@ -75,10 +77,18 @@ public final class LocalExecutionEnvironment implements ExecutionEnvironment {
 
     @Override
     public void close() {
+        if (!closed.compareAndSet(false, true)) return;
+        files.revoke();
         try {
             terminal.close();
-        } finally {
-            processes.close();
+        } catch (RuntimeException | Error primary) {
+            try {
+                processes.close();
+            } catch (RuntimeException | Error secondary) {
+                primary.addSuppressed(secondary);
+            }
+            throw primary;
         }
+        processes.close();
     }
 }

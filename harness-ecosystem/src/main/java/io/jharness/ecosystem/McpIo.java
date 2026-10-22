@@ -28,11 +28,13 @@ final class McpIo {
                                 () -> {
                                     try {
                                         result.complete(action.call());
-                                    } catch (Exception ex) {
+                                    } catch (Throwable ex) {
                                         result.completeExceptionally(ex);
                                     }
                                 });
         long deadline = System.nanoTime() + timeout.toNanos();
+        Throwable primary = null;
+        boolean interrupted = false;
         try {
             while (true) {
                 if (token.isCancelled() || System.nanoTime() >= deadline)
@@ -44,17 +46,42 @@ final class McpIo {
                 }
             }
         } catch (InterruptedException ex) {
-            Thread.currentThread().interrupt();
-            throw BoundedJson.error("MCP_OUTCOME_UNKNOWN");
+            interrupted = true;
+            var failure = BoundedJson.error("MCP_OUTCOME_UNKNOWN");
+            primary = failure;
+            throw failure;
         } catch (ExecutionException ex) {
-            if (ex.getCause() instanceof HarnessException failure) throw failure;
-            throw BoundedJson.error("MCP_TRANSPORT_FAILED");
+            if (ex.getCause() instanceof Error fatal) {
+                primary = fatal;
+                throw fatal;
+            }
+            var failure =
+                    ex.getCause() instanceof HarnessException known
+                            ? known
+                            : new HarnessException(
+                                    "MCP_TRANSPORT_FAILED", "MCP transport failed", ex.getCause());
+            primary = failure;
+            throw failure;
+        } catch (HarnessException ex) {
+            primary = ex;
+            throw ex;
         } finally {
-            if (!result.isDone() || result.isCompletedExceptionally()) {
+            if (primary != null || !result.isDone() || result.isCompletedExceptionally()) {
                 try {
                     abort.run();
+                } catch (RuntimeException | Error ex) {
+                    if (primary != null) primary.addSuppressed(ex);
+                    else throw ex;
                 } finally {
                     thread.interrupt();
+                    try {
+                        thread.join(250);
+                    } catch (InterruptedException ex) {
+                        interrupted = true;
+                    }
+                    if (thread.isAlive() && primary != null)
+                        primary.addSuppressed(BoundedJson.error("MCP_CLEANUP_UNKNOWN"));
+                    if (interrupted) Thread.currentThread().interrupt();
                 }
             }
         }

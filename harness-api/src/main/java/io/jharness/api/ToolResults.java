@@ -32,9 +32,22 @@ public final class ToolResults {
 
     public static ToolResult sanitized(ToolResult result, DataSanitizer sanitizer) {
         Map<String, Object> payload = sanitizer.sanitize(event(result));
+        if (payload == null
+                || !(payload.get("value") instanceof Map<?, ?>)
+                || !(payload.get("display") instanceof Map<?, ?>)
+                || !(payload.get("content") instanceof String)
+                || result.error().isPresent() && !(payload.get("error") instanceof Map<?, ?>))
+            throw new HarnessException(
+                    "INVALID_SANITIZER_OUTPUT", "Sanitizer changed required result structure");
         Optional<ToolResult.ErrorInfo> error = Optional.empty();
         if (payload.containsKey("error")) {
             Map<String, Object> e = Values.object(payload.get("error"));
+            if (!(e.get("code") instanceof String code)
+                    || code.isBlank()
+                    || !(e.get("message") instanceof String message)
+                    || message.isBlank())
+                throw new HarnessException(
+                        "INVALID_SANITIZER_OUTPUT", "Sanitizer changed diagnostic structure");
             error =
                     Optional.of(
                             new ToolResult.ErrorInfo(

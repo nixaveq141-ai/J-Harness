@@ -173,6 +173,19 @@ final class DurableTaskCatalog implements SessionWriter {
     }
 
     void scan(Consumer<List<SessionEvent>> receive) {
+        scanSnapshot(
+                history -> {
+                    synchronized (this) {
+                        remember(history);
+                    }
+                    receive.accept(history);
+                });
+    }
+
+    /**
+     * Read-only bounded disk scan; does not mutate the admission cache or hold the HTTP monitor.
+     */
+    void scanSnapshot(Consumer<List<SessionEvent>> receive) {
         try {
             check();
             try (var files = Files.newDirectoryStream(directory, "h-*.jsonl")) {
@@ -183,7 +196,6 @@ final class DurableTaskCatalog implements SessionWriter {
                     if (!id.matches("h-[a-f0-9]{64}")) throw error("INVALID_WEB_CATALOG");
                     var history = records.openReader(id).events();
                     if (!history.isEmpty()) {
-                        remember(history);
                         receive.accept(history);
                     }
                 }

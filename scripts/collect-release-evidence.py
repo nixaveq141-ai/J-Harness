@@ -7,7 +7,7 @@ import platform
 import subprocess
 from evidence_io import atomic_write_json, read_json_snapshot, bounded_path, stream_sha256
 from evidence_run import inputs, validate
-from evidence_checks import suite_details, xml_document_snapshot
+from evidence_checks import suite_details, xml_document_snapshot, validate_java_suites
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -41,8 +41,8 @@ def main(argv=None):
             suites.append(entry)
             java.update(e.get("value") for e in suite.findall("properties/property") if e.get("name") == "java.version")
     totals = {k: sum(s[k] for s in suites) for k in ("tests", "failures", "errors", "skipped")}
-    if totals["tests"] != 410 or any(totals[k] for k in ("failures", "errors", "skipped")):
-        raise ValueError("Incomplete or failing test evidence: " + str(totals))
+    contract = read_json_snapshot(ROOT, 'scripts/contracts/m1059-java-cases.json').data
+    validate_java_suites(suites, contract)
     paths = [ROOT / "pom.xml"]
     for module in modules:
         paths += [ROOT / module / "pom.xml"] + sorted((ROOT / module / "src").rglob("*.java"))

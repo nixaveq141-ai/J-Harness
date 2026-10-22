@@ -20,6 +20,36 @@ import org.junit.jupiter.api.Test;
 
 class M1AgentLoopTest {
     @Test
+    @org.junit.jupiter.api.Timeout(5)
+    void expiredDeadlineDoesNotReplaceUnknownExecutionFact() {
+        var llm =
+                new FakeLlm(
+                        List.of(
+                                response("call", call("uncertain", "late")),
+                                response("must not send")));
+        try (Fixture f = new Fixture(llm)) {
+            f.budget = new Budget(2, Duration.ofMillis(500));
+            f.tool(
+                    "uncertain",
+                    call -> {
+                        long start = System.nanoTime();
+                        while (System.nanoTime() - start < Duration.ofMillis(700).toNanos())
+                            java.util.concurrent.locks.LockSupport.parkNanos(1_000_000);
+                        return ToolResults.failure(
+                                call.callId(), ToolStatus.UNKNOWN, "UNKNOWN_SIDE_EFFECT");
+                    });
+            f.run();
+            var finalState = f.events().getLast().payload();
+            assertEquals(TaskStatus.FAILED, f.status());
+            assertEquals("UNKNOWN_SIDE_EFFECT", finalState.get("reason"));
+            assertEquals("UNKNOWN_SIDE_EFFECT", finalState.get("originalError"));
+            assertEquals(true, finalState.get("deadlineExceeded"));
+            assertEquals(1, llm.requests().size());
+            assertEquals(List.of("late"), f.project().uncertainCalls());
+        }
+    }
+
+    @Test
     void unknownSideEffectsStopTheTurnSettleOtherCallsAndPreventAutomaticNextTurn() {
         FakeLlm llm =
                 new FakeLlm(
@@ -167,6 +197,9 @@ class M1AgentLoopTest {
             f.tool("echo", c -> ok(c, true));
             f.run();
             assertEquals("DUPLICATE_CALL_ID", f.events().getLast().payload().get("reason"));
+            assertEquals(TaskStatus.FAILED, f.status());
+            assertEquals(
+                    1, f.events().stream().filter(e -> e.type().equals("model.requested")).count());
             assertTrue(f.execution.isEmpty());
         }
         try (Fixture f = new Fixture(new FakeLlm(List.of()))) {

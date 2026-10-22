@@ -202,6 +202,8 @@ class PythonRereviewTests(unittest.TestCase):
         suite_path = target/'TEST-fixture.xml'
         suite_path.write_text(XML.replace('tests="1"', 'tests="410"').replace('<testcase name="real"/>',
             ''.join('<testcase name="case'+str(i)+'"/>' for i in range(410))))
+        evidence_io.atomic_write_json(self.root/'scripts/contracts/m1059-java-cases.json',
+            dict(schemaVersion=1,suites=[dict(module='harness-fixture',name='fixture',cases=['case'+str(i) for i in range(410)])]))
         jar = self.root/'harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar'
         jar.parent.mkdir(parents=True)
         jar.write_bytes(b'unit test jar bytes')

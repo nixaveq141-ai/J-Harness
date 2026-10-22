@@ -374,6 +374,14 @@ public final class WorkspaceToolsPlugin implements HarnessPlugin {
                     default -> throw new IllegalStateException();
                 }
             } catch (HarnessException ex) {
+                if (ex.rejectedBeforeMutation())
+                    return new ToolResult(
+                            call.callId(),
+                            ex.code().equals("PATH_DENIED") ? ToolStatus.DENIED : ToolStatus.FAILED,
+                            Map.of("sideEffectUncertain", false, "executionRejected", true),
+                            ex.code(),
+                            Map.of(),
+                            Optional.of(new ToolResult.ErrorInfo(ex.code(), ex.code())));
                 if (!Set.of(
                                         "PATH_DENIED",
                                         "FILE_CONFLICT",

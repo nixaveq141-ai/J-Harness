@@ -44,6 +44,7 @@ class M10WebTest {
             assertEquals("UNKNOWN", ((Map<?, ?>) object(diagnosis).get("task")).get("phase"));
             assertEquals(id, ((Map<?, ?>) object(diagnosis).get("association")).get("sessionId"));
             assertFalse(diagnosis.body().contains(M10BrowserHost.TOKEN));
+            assertFalse(diagnosis.body().contains("fixture-secret-do-not-display"));
             assertEquals(405, request(host, "POST", path, Map.of(), true).statusCode());
             assertEquals(
                     "UNKNOWN",
@@ -121,14 +122,20 @@ class M10WebTest {
     void settingsRequireOperatorAuthAndUnknownBindingBlocksMutation() throws Exception {
         try (var host = new M10BrowserHost(root)) {
             var saved = new java.util.concurrent.atomic.AtomicInteger();
+            var savedInput = new java.util.concurrent.atomic.AtomicReference<Map<String, Object>>();
             host.server.settings(
                     new io.jharness.web.HarnessWebServer.Settings() {
                         public Map<String, Object> read() {
-                            return Map.of("revision", "fixture");
+                            return Map.of(
+                                    "revision",
+                                    "fixture",
+                                    "diagnostic",
+                                    "fixture-secret-do-not-display");
                         }
 
                         public Map<String, Object> save(Map<String, Object> input) {
                             saved.incrementAndGet();
+                            savedInput.set(Map.copyOf(input));
                             return read();
                         }
                     });
@@ -143,7 +150,7 @@ class M10WebTest {
                             "extensions",
                             Map.of(),
                             "apiKeys",
-                            Map.of());
+                            Map.of("default", "fixture-secret-do-not-display"));
             assertEquals(401, request(host, "POST", "/v1/settings", input, false).statusCode());
             assertEquals(
                     403,
@@ -156,8 +163,13 @@ class M10WebTest {
                                     "Origin",
                                     "https://evil.invalid")
                             .statusCode());
-            assertEquals(200, request(host, "GET", "/v1/settings", null, true).statusCode());
-            assertEquals(200, request(host, "POST", "/v1/settings", input, true).statusCode());
+            var read = request(host, "GET", "/v1/settings", null, true);
+            assertEquals(200, read.statusCode());
+            assertFalse(read.body().contains("fixture-secret-do-not-display"));
+            var write = request(host, "POST", "/v1/settings", input, true);
+            assertEquals(200, write.statusCode());
+            assertFalse(write.body().contains("fixture-secret-do-not-display"));
+            assertEquals(input, savedInput.get());
             assertEquals(1, saved.get());
             var task =
                     object(

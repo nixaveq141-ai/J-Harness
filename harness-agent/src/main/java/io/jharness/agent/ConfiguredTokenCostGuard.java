@@ -47,6 +47,10 @@ public final class ConfiguredTokenCostGuard implements ApiCostGuard {
 
     @Override
     public BigDecimal maximumCost(ChatRequest request) {
+        if (conservativeInputUnits(request) > inputCeiling)
+            throw new HarnessException(
+                    "COST_BUDGET_UNAVAILABLE",
+                    "Prepared input exceeds configured conservative input ceiling");
         Object cap = request.parameters().get("max_tokens");
         Object count = request.parameters().getOrDefault("n", 1);
         if (!model.equals(request.parameters().get("model"))
@@ -62,6 +66,43 @@ public final class ConfiguredTokenCostGuard implements ApiCostGuard {
         return inputUsdPerToken
                 .multiply(BigDecimal.valueOf(inputCeiling))
                 .add(outputUsdPerToken.multiply(BigDecimal.valueOf(number.intValue())));
+    }
+
+    /**
+     * Conservative supported-adapter bound: JSON escaped bytes plus explicit framing allowance. It
+     * is not a tokenizer promise for arbitrary providers with hidden prompt expansion.
+     */
+    public static long conservativeInputUnits(ChatRequest request) {
+        return 64L
+                + 32L * request.messages().size()
+                + 16L * request.tools().size()
+                + jsonBytes(request.messages())
+                + jsonBytes(request.tools())
+                + jsonBytes(request.parameters());
+    }
+
+    private static long jsonBytes(Object value) {
+        if (value == null) return 4;
+        if (value instanceof String text) {
+            long size = 2;
+            for (int i = 0; i < text.length(); i++) {
+                char c = text.charAt(i);
+                size += c == '"' || c == '\\' ? 2 : c < 32 || c > 127 ? 6 : 1;
+            }
+            return size;
+        }
+        if (value instanceof java.util.Map<?, ?> map) {
+            long size = 2;
+            for (var entry : map.entrySet())
+                size += jsonBytes(entry.getKey()) + 1 + jsonBytes(entry.getValue()) + 1;
+            return size;
+        }
+        if (value instanceof java.util.List<?> list) {
+            long size = 2;
+            for (Object item : list) size += jsonBytes(item) + 1;
+            return size;
+        }
+        return value.toString().length();
     }
 
     @Override

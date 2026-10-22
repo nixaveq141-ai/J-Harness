@@ -8,13 +8,15 @@ public final class ScopedToolRegistry implements ToolRegistry {
     private final Map<Key, AgentTool> tools = new LinkedHashMap<>();
 
     @Override
-    public synchronized Registration register(AgentTool tool, PluginScope scope) {
+    public Registration register(AgentTool tool, PluginScope scope) {
         Objects.requireNonNull(tool);
         Objects.requireNonNull(scope);
         Key key = new Key(Values.required(tool.name(), "tool name"), scope);
-        if (tools.containsKey(key))
-            throw new HarnessException("DUPLICATE_TOOL", "Duplicate tool: " + key.name);
-        tools.put(key, tool);
+        synchronized (this) {
+            if (tools.containsKey(key))
+                throw new HarnessException("DUPLICATE_TOOL", "Duplicate tool: " + key.name);
+            tools.put(key, tool);
+        }
         return new Registration() {
             private boolean closed;
 

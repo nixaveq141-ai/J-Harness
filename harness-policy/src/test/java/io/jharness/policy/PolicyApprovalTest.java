@@ -86,10 +86,14 @@ class PolicyApprovalTest {
             var prompt = awaitPrompt(approvals);
             assertEquals(call, prompt.call());
             assertEquals("project", prompt.target());
-            assertTrue(prompt.impact().contains("network"));
+            assertEquals(SideEffectLevel.SYSTEM_IMPACT, prompt.call().sideEffectLevel());
+            assertTrue(prompt.impact().contains("arbitrary commands"));
             assertTrue(approvals.answer(prompt.id(), false, "Keep working tree", "user"));
             assertFalse(approvals.answer(prompt.id(), true, "late", "user"));
-            assertFalse(decision.get(2, TimeUnit.SECONDS).approved());
+            var rejected = decision.get(1, TimeUnit.SECONDS);
+            assertFalse(rejected.approved());
+            assertEquals("user", rejected.actor());
+            assertEquals("Keep working tree", rejected.reason());
             assertTrue(approvals.prompts().isEmpty());
         }
     }
@@ -132,8 +136,11 @@ class PolicyApprovalTest {
     static InteractiveApprovalService.Prompt awaitPrompt(InteractiveApprovalService service)
             throws Exception {
         long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(2);
-        while (service.prompts().isEmpty() && System.nanoTime() < deadline) Thread.sleep(5);
-        assertFalse(service.prompts().isEmpty());
-        return service.prompts().getFirst();
+        do {
+            var snapshot = service.prompts();
+            if (!snapshot.isEmpty()) return snapshot.getFirst();
+            Thread.sleep(5);
+        } while (System.nanoTime() < deadline);
+        throw new AssertionError("No prompt before deadline");
     }
 }

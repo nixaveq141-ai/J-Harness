@@ -9,15 +9,23 @@ public final class StreamingLlmClient implements LlmClient, ModelRouter {
     private final LlmClient delegate;
     private final Consumer<String> display;
     private final SecretRedactor redactor;
-    private final int hold;
     private final List<String> secrets;
+    private final Consumer<ModelDisplay.Update> updates;
 
     public StreamingLlmClient(LlmClient delegate, Consumer<String> display, List<String> secrets) {
+        this(delegate, display, secrets, update -> {});
+    }
+
+    private StreamingLlmClient(
+            LlmClient delegate,
+            Consumer<String> display,
+            List<String> secrets,
+            Consumer<ModelDisplay.Update> updates) {
         this.delegate = Objects.requireNonNull(delegate);
         this.display = Objects.requireNonNull(display);
         this.secrets = List.copyOf(secrets);
         redactor = new SecretRedactor(secrets);
-        hold = secrets.stream().filter(Objects::nonNull).mapToInt(String::length).max().orElse(0);
+        this.updates = updates;
     }
 
     @Override
@@ -29,7 +37,27 @@ public final class StreamingLlmClient implements LlmClient, ModelRouter {
                     display.accept(text);
                     observer.accept(text);
                 },
-                secrets);
+                secrets,
+                updates);
+    }
+
+    @Override
+    public LlmClient withDisplayUpdates(Consumer<ModelDisplay.Update> observer) {
+        Objects.requireNonNull(observer);
+        return new StreamingLlmClient(
+                delegate,
+                display,
+                secrets,
+                update -> {
+                    updates.accept(update);
+                    observer.accept(update);
+                });
+    }
+
+    private void display(String cumulative) {
+        var update = redactor.streamingUpdate(cumulative);
+        display.accept(update.text());
+        updates.accept(update);
     }
 
     @Override
@@ -61,17 +89,21 @@ public final class StreamingLlmClient implements LlmClient, ModelRouter {
     @Override
     public ChatResponse complete(ChatRequest request, CancellationToken cancellation) {
         if (!capabilities().streaming()) return delegate.complete(request, cancellation);
-        display.accept("");
+        display("");
         try (StreamHandle handle = delegate.stream(request, cancellation)) {
             handle.consume(
                     frame -> {
-                        String safe = redactor.text(frame.text());
-                        display.accept(safe.substring(0, Math.max(0, safe.length() - hold)));
+                        display(frame.text());
                     });
             ChatResponse response = handle.finalResponse();
-            display.accept(redactor.text(response.text()));
+            display(response.text());
             return response;
         }
+    }
+
+    @Override
+    public boolean supportsSingleAttempt() {
+        return delegate.supportsSingleAttempt();
     }
 
     @Override

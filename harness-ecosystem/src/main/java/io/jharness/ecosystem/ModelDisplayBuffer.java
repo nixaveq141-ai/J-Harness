@@ -29,7 +29,9 @@ final class ModelDisplayBuffer implements ModelDisplay {
         inputLength = 0;
     }
 
-    synchronized void accept(String value) {
+    synchronized void accept(ModelDisplay.Update update) {
+        String value = update.text();
+        truncated |= update.truncated();
         if (sourceId.isEmpty()) {
             var request =
                     reader.events().reversed().stream()
@@ -47,7 +49,7 @@ final class ModelDisplayBuffer implements ModelDisplay {
         updated = now;
         inputLength = value.length();
         String clean = sanitizer.streamingText(value);
-        truncated = clean.length() > 65536;
+        truncated |= value.length() > 65536 || clean.length() > 65536;
         int end = Math.min(65536, clean.length());
         if (end > 0 && Character.isHighSurrogate(clean.charAt(end - 1))) end--;
         text = clean.substring(0, end);

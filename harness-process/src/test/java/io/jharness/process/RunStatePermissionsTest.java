@@ -54,6 +54,23 @@ class RunStatePermissionsTest {
             Files.delete(linked);
         }
         try (var run = new LocalRunControl(root.resolve("runs"))) {
+            Path directory = run.stateFile().getParent();
+            assertEquals(Files.getOwner(directory), Files.getOwner(run.stateFile()));
+            var dirPosix = Files.getFileAttributeView(directory, PosixFileAttributeView.class);
+            if (dirPosix != null)
+                assertEquals(
+                        PosixFilePermissions.fromString("rwx------"),
+                        dirPosix.readAttributes().permissions());
+            else {
+                var dirAcl = Files.getFileAttributeView(directory, AclFileAttributeView.class);
+                var dirOwner = dirAcl.getOwner();
+                assertTrue(
+                        dirAcl.getAcl().stream()
+                                .allMatch(
+                                        e ->
+                                                e.type() == AclEntryType.ALLOW
+                                                        && e.principal().equals(dirOwner)));
+            }
             var posix = Files.getFileAttributeView(run.stateFile(), PosixFileAttributeView.class);
             if (posix != null)
                 assertEquals(

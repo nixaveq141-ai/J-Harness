@@ -103,6 +103,20 @@ class M2WorkspaceIntegrationTest {
             assertEquals(ToolStatus.DENIED, denied.status());
             assertEquals("PATH_DENIED", denied.error().orElseThrow().code());
             assertFalse(f.events().toString().contains("outside-secret"));
+            assertTrue(
+                    f.events().stream()
+                            .anyMatch(
+                                    event ->
+                                            event.type().equals("tool.completed")
+                                                    && "outside".equals(event.callId())
+                                                    && "DENIED"
+                                                            .equals(
+                                                                    event.payload()
+                                                                            .get("status"))));
+            f.writer.flush();
+            String deniedJournal = Files.readString(f.store.resolve("s.jsonl"));
+            assertFalse(deniedJournal.contains("outside-secret"));
+            assertFalse(deniedJournal.contains(outside.toString()));
             Files.writeString(f.root.resolve("a"), "same");
             f.run(call("read_file", "read", Map.of("path", "a")));
             Files.writeString(f.root.resolve("a"), "same plus user");
@@ -114,7 +128,28 @@ class M2WorkspaceIntegrationTest {
                                     Map.of("path", "a", "oldText", "same", "newText", "replace")));
             assertEquals(ToolStatus.FAILED, conflict.status());
             assertEquals("FILE_CONFLICT", conflict.error().orElseThrow().code());
+            assertEquals(false, conflict.value().get("sideEffectUncertain"));
+            assertEquals(true, conflict.value().get("executionRejected"));
             assertEquals("same plus user", Files.readString(f.root.resolve("a")));
+        }
+    }
+
+    @Test
+    void reachableReadActuallyRedactsTheToolResultAndDurableJournal() throws Exception {
+        try (Fixture fixture = new Fixture()) {
+            Files.writeString(
+                    fixture.root.resolve("reachable.txt"), "hello reachable-secret-sentinel");
+            var result =
+                    fixture.run(call("read_file", "reachable", Map.of("path", "reachable.txt")));
+            assertEquals(ToolStatus.SUCCESS, result.status());
+            assertFalse(result.toString().contains("reachable-secret-sentinel"));
+            assertTrue(result.toString().contains("[REDACTED]"));
+            fixture.writer.flush();
+            assertFalse(fixture.events().toString().contains("reachable-secret-sentinel"));
+            assertTrue(fixture.events().toString().contains("[REDACTED]"));
+            assertFalse(
+                    Files.readString(fixture.store.resolve("s.jsonl"))
+                            .contains("reachable-secret-sentinel"));
         }
     }
 
@@ -377,7 +412,9 @@ class M2WorkspaceIntegrationTest {
         final ScopedToolRegistry tools = new ScopedToolRegistry();
         final DefaultServiceRegistry registry = new DefaultServiceRegistry();
         final DefaultToolPipeline pipeline =
-                new DefaultToolPipeline(new JsonSchemaValidator(), new SecretRedactor());
+                new DefaultToolPipeline(
+                        new JsonSchemaValidator(),
+                        new SecretRedactor(List.of("reachable-secret-sentinel")));
         final PluginContainer container;
 
         Fixture() throws IOException {
@@ -386,7 +423,8 @@ class M2WorkspaceIntegrationTest {
             repo = new JsonlSessionRepository(store);
             writer =
                     new SanitizingSessionWriter(
-                            repo.openWriter("s", WriteOwnership.EXCLUSIVE), new SecretRedactor());
+                            repo.openWriter("s", WriteOwnership.EXCLUSIVE),
+                            new SecretRedactor(List.of("reachable-secret-sentinel")));
             reader = repo.openReader("s");
             writer.append(SessionEvent.session("s", "session.created", Map.of()));
             writer.append(

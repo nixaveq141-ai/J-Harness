@@ -65,10 +65,11 @@ class M1056ContentTest {
         String input = "visible " + "x".repeat(200) + other.substring(0, 10);
         assertTrue(chain.streamingText(input).startsWith("visible"));
         assertFalse(chain.streamingText(input).contains(other.substring(0, 10)));
-        assertFalse(
+        String streamed =
                 chain.streamingText(
-                                "visible " + "x".repeat(200) + other + SECRET + "tail".repeat(30))
-                        .contains(other));
+                        "visible " + "x".repeat(200) + other + SECRET + "tail".repeat(30));
+        assertFalse(streamed.contains(other));
+        assertFalse(streamed.contains(SECRET));
         DataSanitizer unknown = data -> data;
         assertEquals("", unknown.streamingText("untrusted partial"));
         assertEquals("", DataSanitizer.chain(unknown, new SecretRedactor()).streamingText(input));

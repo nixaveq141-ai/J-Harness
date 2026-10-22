@@ -24,6 +24,8 @@ public final class LocalWorkspace implements WorkspaceFiles {
         timeout = source.timeout;
         hook = source.hook;
         searchFilter = source.searchFilter;
+        revoked = source.revoked;
+        ensureOpen();
         checkSegments(root);
     }
 
@@ -34,6 +36,17 @@ public final class LocalWorkspace implements WorkspaceFiles {
     private static final Set<String> PROTECTED = Set.of(".git", ".jharness");
     private static final Set<String> DEFAULT_EXCLUDED = Set.of("target", "node_modules");
     private final Path root;
+    private final java.util.concurrent.atomic.AtomicBoolean revoked;
+
+    /** Revokes all borrowed views; an operation reaching its next check then stops. */
+    public void revoke() {
+        revoked.set(true);
+    }
+
+    private void ensureOpen() {
+        if (revoked.get()) throw new HarnessException("ENVIRONMENT_CLOSED", "Environment closed");
+    }
+
     private final Duration timeout;
     private final CommitHook hook;
     private final WorkspaceSearchFilter searchFilter;
@@ -60,6 +73,7 @@ public final class LocalWorkspace implements WorkspaceFiles {
     public LocalWorkspace(
             Path root, Duration timeout, CommitHook hook, WorkspaceSearchFilter searchFilter)
             throws IOException {
+        this.revoked = new java.util.concurrent.atomic.AtomicBoolean();
         this.root = root.toRealPath();
         if (!Files.isDirectory(this.root)) throw new IOException("Workspace must be a directory");
         this.timeout = Objects.requireNonNull(timeout);
@@ -70,12 +84,15 @@ public final class LocalWorkspace implements WorkspaceFiles {
 
     @Override
     public ExecPath root() {
+        ensureOpen();
         return new ExecPath(".");
     }
 
     private CancellationToken bounded(CancellationToken token) {
+        ensureOpen();
         long start = System.nanoTime(), budget = timeout.toNanos();
         return () -> {
+            ensureOpen();
             if (System.nanoTime() - start >= budget)
                 throw new HarnessException(
                         "TIMEOUT", "File operation timed out; inspect version before retry");
@@ -86,6 +103,21 @@ public final class LocalWorkspace implements WorkspaceFiles {
     @Override
     public synchronized Map<String, Object> applyPatch(
             String patchText, Map<String, String> expectedVersions, CancellationToken cancellation)
+            throws IOException {
+        boolean[] mutationAttempted = {false};
+        try {
+            return applyPatchTracked(patchText, expectedVersions, cancellation, mutationAttempted);
+        } catch (HarnessException failure) {
+            if (!mutationAttempted[0]) throw HarnessException.rejectedBeforeMutation(failure);
+            throw failure;
+        }
+    }
+
+    private Map<String, Object> applyPatchTracked(
+            String patchText,
+            Map<String, String> expectedVersions,
+            CancellationToken cancellation,
+            boolean[] mutationAttempted)
             throws IOException {
         var patches = UnifiedPatch.parse(patchText);
         Map<String, String> versions = new LinkedHashMap<>(), contents = new LinkedHashMap<>();
@@ -119,6 +151,7 @@ public final class LocalWorkspace implements WorkspaceFiles {
         List<Map<String, Object>> changes = new ArrayList<>();
         for (var patch : patches) {
             try {
+                mutationAttempted[0] = true;
                 var change =
                         write(
                                 new ExecPath(patch.path()),
@@ -161,6 +194,7 @@ public final class LocalWorkspace implements WorkspaceFiles {
     }
 
     private Path resolve(ExecPath path) throws IOException {
+        ensureOpen();
         String text = path.value().replace('\\', '/');
         if (text.startsWith("/")
                 || text.contains(":")
@@ -402,6 +436,24 @@ public final class LocalWorkspace implements WorkspaceFiles {
             String expectedVersion,
             CancellationToken cancellation)
             throws IOException {
+        boolean[] mutationAttempted = {false};
+        try {
+            return writeTracked(
+                    path, content, overwrite, expectedVersion, cancellation, mutationAttempted);
+        } catch (HarnessException failure) {
+            if (!mutationAttempted[0]) throw HarnessException.rejectedBeforeMutation(failure);
+            throw failure;
+        }
+    }
+
+    private FileChange writeTracked(
+            ExecPath path,
+            String content,
+            boolean overwrite,
+            String expectedVersion,
+            CancellationToken cancellation,
+            boolean[] mutationAttempted)
+            throws IOException {
         CancellationToken token = bounded(cancellation);
         token.throwIfCancelled();
         Path target = resolve(path);
@@ -421,11 +473,13 @@ public final class LocalWorkspace implements WorkspaceFiles {
         if (bytes.length > WRITE_LIMIT || after.indexOf('\0') >= 0)
             throw new HarnessException("FILE_LIMIT", "Write must be bounded UTF-8 text");
         Path parent = target.getParent();
+        mutationAttempted[0] = true;
         createParents(parent, token);
         checkSegments(target);
         token.throwIfCancelled();
         Path temporary = parent.resolve(".jharness-write-" + UUID.randomUUID() + ".tmp");
         boolean committed = false;
+        Throwable primary = null;
         try {
             try (FileChannel channel =
                     FileChannel.open(
@@ -467,13 +521,24 @@ public final class LocalWorkspace implements WorkspaceFiles {
                     afterVersion,
                     UnifiedDiff.between(relative(target), before, after));
         } catch (IOException | RuntimeException ex) {
-            if (committed)
-                throw new HarnessException(
-                        "UNKNOWN_SIDE_EFFECT",
-                        "Commit may have completed; reread/version verification required");
-            throw ex;
+            primary =
+                    committed
+                            ? new HarnessException(
+                                    "UNKNOWN_SIDE_EFFECT",
+                                    "Commit may have completed; reread/version verification required",
+                                    ex)
+                            : ex;
+            if (primary instanceof IOException io) throw io;
+            throw (RuntimeException) primary;
         } finally {
-            if (!committed) Files.deleteIfExists(temporary);
+            if (!committed) {
+                try {
+                    Files.deleteIfExists(temporary);
+                } catch (IOException | RuntimeException cleanup) {
+                    if (primary != null) primary.addSuppressed(cleanup);
+                    else throw cleanup;
+                }
+            }
         }
     }
 
@@ -504,23 +569,29 @@ public final class LocalWorkspace implements WorkspaceFiles {
             String expectedVersion,
             CancellationToken cancellation)
             throws IOException {
-        if (oldText.isEmpty() || expectedOccurrences < 1)
-            throw new HarnessException(
-                    "INVALID_EDIT", "Nonempty oldText and positive occurrence count required");
-        String original = readTextForEdit(path, cancellation);
-        String needle =
-                original.contains("\r\n")
-                        ? oldText.replace("\r\n", "\n").replace("\n", "\r\n")
-                        : oldText;
-        int matches = 0, index = 0;
-        while ((index = original.indexOf(needle, index)) >= 0) {
-            matches++;
-            index += needle.length();
+        String replacement;
+        try {
+            if (oldText.isEmpty() || expectedOccurrences < 1)
+                throw new HarnessException(
+                        "INVALID_EDIT", "Nonempty oldText and positive occurrence count required");
+            String original = readTextForEdit(path, cancellation);
+            String needle =
+                    original.contains("\r\n")
+                            ? oldText.replace("\r\n", "\n").replace("\n", "\r\n")
+                            : oldText;
+            int matches = 0, index = 0;
+            while ((index = original.indexOf(needle, index)) >= 0) {
+                matches++;
+                index += needle.length();
+            }
+            if (matches != expectedOccurrences)
+                throw new HarnessException(
+                        "EDIT_MATCH_CONFLICT",
+                        "Actual match count differs from expectedOccurrences");
+            replacement = original.replace(needle, newText);
+        } catch (HarnessException failure) {
+            throw HarnessException.rejectedBeforeMutation(failure);
         }
-        if (matches != expectedOccurrences)
-            throw new HarnessException(
-                    "EDIT_MATCH_CONFLICT", "Actual match count differs from expectedOccurrences");
-        String replacement = original.replace(needle, newText);
         return write(path, replacement, true, expectedVersion, cancellation);
     }
 
@@ -800,10 +871,16 @@ public final class LocalWorkspace implements WorkspaceFiles {
         List<String> command =
                 new ArrayList<>(
                         List.of(
-                                "git",
+                                trustedGit(),
                                 "--no-pager",
                                 "-c",
                                 "core.fsmonitor=false",
+                                "-c",
+                                "core.hooksPath=",
+                                "-c",
+                                "diff.external=",
+                                "-c",
+                                "core.quotePath=true",
                                 "-C",
                                 root.toString(),
                                 "diff",
@@ -812,21 +889,54 @@ public final class LocalWorkspace implements WorkspaceFiles {
         if (scope.equals("staged")) command.add("--cached");
         command.add("--");
         ProcessBuilder builder = new ProcessBuilder(command).directory(root.toFile());
-        builder.environment().keySet().removeIf(key -> key.startsWith("GIT_"));
+        var inherited = new HashMap<>(builder.environment());
+        builder.environment().clear();
+        for (String name :
+                List.of("SystemRoot", "WINDIR", "SYSTEMROOT", "PATH", "PATHEXT", "TEMP", "TMP"))
+            if (inherited.containsKey(name)) builder.environment().put(name, inherited.get(name));
+        builder.environment().put("GIT_CONFIG_NOSYSTEM", "1");
+        builder.environment()
+                .put(
+                        "GIT_CONFIG_GLOBAL",
+                        System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("win")
+                                ? "NUL"
+                                : "/dev/null");
+        builder.environment().put("GIT_TERMINAL_PROMPT", "0");
+        builder.environment().put("LC_ALL", "C");
         Process process = builder.start();
+        var overflow = new java.util.concurrent.atomic.AtomicBoolean();
+        var diagnosticOverflow = new java.util.concurrent.atomic.AtomicBoolean();
         try (ExecutorService streams = Executors.newVirtualThreadPerTaskExecutor()) {
             Future<byte[]> stdout =
-                    streams.submit(() -> process.getInputStream().readNBytes(2 * WRITE_LIMIT + 1));
-            Future<byte[]> stderr = streams.submit(() -> process.getErrorStream().readNBytes(4097));
+                    streams.submit(
+                            () ->
+                                    gitOutput(
+                                            process,
+                                            process.getInputStream(),
+                                            2 * WRITE_LIMIT,
+                                            overflow));
+            Future<byte[]> stderr =
+                    streams.submit(
+                            () ->
+                                    gitOutput(
+                                            process,
+                                            process.getErrorStream(),
+                                            4096,
+                                            diagnosticOverflow));
             try {
                 while (!process.waitFor(20, TimeUnit.MILLISECONDS)) {
                     token.throwIfCancelled();
                 }
                 byte[] output = stdout.get(1, TimeUnit.SECONDS);
                 stderr.get(1, TimeUnit.SECONDS);
+                if (overflow.get())
+                    throw new HarnessException("OUTPUT_LIMIT", "Git diff exceeds output bound");
                 if (process.exitValue() != 0)
                     throw new HarnessException(
                             "GIT_DIFF_UNAVAILABLE", "No supported Git diff for this workspace");
+                if (diagnosticOverflow.get())
+                    throw new HarnessException(
+                            "OUTPUT_LIMIT", "Git diagnostics exceed output bound");
                 if (output.length > 2 * WRITE_LIMIT)
                     throw new HarnessException("OUTPUT_LIMIT", "Git diff exceeds output bound");
                 return new String(output, StandardCharsets.UTF_8);
@@ -841,5 +951,39 @@ public final class LocalWorkspace implements WorkspaceFiles {
                 process.getErrorStream().close();
             }
         }
+    }
+
+    private static byte[] gitOutput(
+            Process process,
+            InputStream input,
+            int limit,
+            java.util.concurrent.atomic.AtomicBoolean overflow)
+            throws IOException {
+        try (input) {
+            byte[] output = input.readNBytes(limit + 1);
+            if (output.length > limit) {
+                overflow.set(true);
+                process.destroyForcibly();
+            }
+            return output;
+        }
+    }
+
+    private static String trustedGit() throws IOException {
+        boolean windows = System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("win");
+        List<Path> candidates = new ArrayList<>();
+        if (windows) {
+            for (String name : List.of("ProgramFiles", "ProgramFiles(x86)")) {
+                String folder = System.getenv(name);
+                if (folder != null) candidates.add(Path.of(folder, "Git", "cmd", "git.exe"));
+            }
+        } else {
+            candidates.add(Path.of("/usr/bin/git"));
+            candidates.add(Path.of("/bin/git"));
+        }
+        for (Path path : candidates)
+            if (Files.isRegularFile(path)) return path.toRealPath().toString();
+        throw new HarnessException(
+                "GIT_DIFF_UNAVAILABLE", "Trusted system Git executable unavailable");
     }
 }

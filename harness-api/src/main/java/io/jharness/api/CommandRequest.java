@@ -33,4 +33,15 @@ public record CommandRequest(
                 || timeout.compareTo(Duration.ofHours(1)) > 0)
             throw new IllegalArgumentException("Invalid bounded command");
     }
+
+    @Override
+    public String toString() {
+        return "CommandRequest[mode="
+                + mode
+                + ", argc="
+                + argv.size()
+                + ", timeout="
+                + timeout
+                + "]";
+    }
 }

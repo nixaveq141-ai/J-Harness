@@ -254,6 +254,9 @@ class LocalProcessRunnerTest {
                             CancellationToken.NONE);
             assertEquals("PROCESS_LIMIT", limited.value().get("reason"));
             assertEquals(List.of(), limited.value().get("residualPids"));
+            assertEquals(ToolStatus.UNKNOWN, limited.status());
+            assertEquals(Boolean.FALSE, limited.value().get("observedClean"));
+            assertEquals("failed", limited.value().get("cleanupStatus"));
             if (System.getProperty("os.name").startsWith("Windows")) {
                 Files.writeString(
                         root.resolve("fixture.cmd"),
@@ -299,7 +302,11 @@ class LocalProcessRunnerTest {
                 assertFalse(
                         ((List<?>) result.value().get("trackedPids")).contains(pid),
                         "runner left a tracked fixture process alive");
-                assertEquals("partial", result.value().get("cleanupStatus"));
+                assertEquals(
+                        Boolean.TRUE.equals(result.value().get("observedClean"))
+                                ? "partial"
+                                : "failed",
+                        result.value().get("cleanupStatus"));
                 assertTrue(result.value().get("limitations").toString().contains("unobserved"));
             }
         } finally {

@@ -143,7 +143,7 @@ public final class HarnessSdk implements AutoCloseable {
         binding.put("agentId", scope.agentId());
         reader = repository.openReader(sessionId);
         display = new ModelDisplayBuffer(scope, reader, sanitizer);
-        var displayModel = model.withDisplay(display::accept);
+        var displayModel = model.withDisplayUpdates(display::accept);
         writer =
                 new SanitizingSessionWriter(
                         repository.openWriter(sessionId, WriteOwnership.EXCLUSIVE), sanitizer);
@@ -513,44 +513,44 @@ public final class HarnessSdk implements AutoCloseable {
         cancel();
         synchronized (this) {
             if (!closed.compareAndSet(false, true)) return;
+            Throwable primary = null;
+            String cleanup = "SUCCESS";
             try {
-                try {
-                    container.close();
-                    writer.append(
-                            SessionEvent.session(
-                                    scope.sessionId(),
-                                    "environment.closed",
-                                    Map.of(
-                                            "environmentId",
-                                            environment.id(),
-                                            "status",
-                                            "SUCCESS")));
-                } catch (RuntimeException ex) {
-                    writer.append(
-                            SessionEvent.session(
-                                    scope.sessionId(),
-                                    "environment.closed",
-                                    Map.of(
-                                            "environmentId",
-                                            environment.id(),
-                                            "status",
-                                            "UNKNOWN")));
-                    writer.flush();
-                    throw ex;
-                }
+                container.close();
+            } catch (RuntimeException | Error ex) {
+                primary = ex;
+                cleanup = "UNKNOWN";
+            }
+            try {
+                writer.append(
+                        SessionEvent.session(
+                                scope.sessionId(),
+                                "environment.closed",
+                                Map.of("environmentId", environment.id(), "status", cleanup)));
                 writer.append(
                         SessionEvent.session(
                                 scope.sessionId(),
                                 "terminal.snapshot",
                                 Map.of("tasks", environment.terminal().states())));
                 writer.flush();
-            } finally {
-                try {
-                    model.close();
-                } finally {
-                    writer.close();
-                }
+            } catch (RuntimeException | Error ex) {
+                if (primary == null) primary = ex;
+                else primary.addSuppressed(ex);
             }
+            try {
+                model.close();
+            } catch (RuntimeException | Error ex) {
+                if (primary == null) primary = ex;
+                else primary.addSuppressed(ex);
+            }
+            try {
+                writer.close();
+            } catch (RuntimeException | Error ex) {
+                if (primary == null) primary = ex;
+                else primary.addSuppressed(ex);
+            }
+            if (primary instanceof Error fatal) throw fatal;
+            if (primary instanceof RuntimeException failure) throw failure;
         }
     }
 }

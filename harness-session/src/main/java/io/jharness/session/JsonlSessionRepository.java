@@ -146,7 +146,7 @@ public final class JsonlSessionRepository implements SessionRepository {
                         if (tailPolicy == TailPolicy.REJECT) throw error("TAIL_DAMAGED");
                         channel.truncate(parsed.validBytes);
                         barrier.force(channel);
-                        diagnostics.accept("TAIL_REPAIRED");
+                        diagnose("TAIL_REPAIRED");
                     }
                 }
                 channel.position(channel.size());

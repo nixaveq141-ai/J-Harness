@@ -45,7 +45,11 @@ class WorkbenchContentSearchTest {
     void scopeArchivesRelevanceStablePaginationAndCursorBinding() throws Exception {
         base = base.toRealPath();
         var repo = new JsonlSessionRepository(base.resolve("sessions"));
-        var provider = new TokenSessionSearch(base.resolve("index"), repo, new SecretRedactor());
+        var provider =
+                new TokenSessionSearch(
+                        base.resolve("index"),
+                        repo,
+                        new SecretRedactor(List.of("synthetic-snippet-private")));
         var profile =
                 new HarnessWebServer.Profile(
                         "local",
@@ -65,7 +69,11 @@ class WorkbenchContentSearchTest {
                         SessionEvent.session(
                                 id,
                                 "user.message",
-                                Map.of("content", i == 0 ? "alpha beta alpha" : "alpha beta")));
+                                Map.of(
+                                        "content",
+                                        i == 0
+                                                ? "alpha beta alpha synthetic-snippet-private"
+                                                : "alpha beta synthetic-snippet-private")));
                 writer.flush();
             }
             scope.add(
@@ -85,6 +93,8 @@ class WorkbenchContentSearchTest {
                         scope,
                         profiles);
         assertEquals(3, first.get("total"));
+        assertFalse(first.toString().contains("synthetic-snippet-private"));
+        assertTrue(first.toString().contains("[REDACTED]"));
         assertEquals(
                 "s0", Values.object(((List<?>) first.get("matches")).getFirst()).get("sessionId"));
         String cursor = (String) first.get("next");

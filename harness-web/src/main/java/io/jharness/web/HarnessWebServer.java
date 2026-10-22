@@ -135,6 +135,8 @@ public final class HarnessWebServer implements AutoCloseable {
     private final DataSanitizer sanitizer;
     private final Duration approvalTimeout;
     private final int maxActive, maxTasks;
+    private boolean resourcesClosed;
+    private boolean settingsChanging;
     private boolean closed, broken;
 
     /**
@@ -166,7 +168,7 @@ public final class HarnessWebServer implements AutoCloseable {
                 || approvalTimeout.isZero()
                 || approvalTimeout.compareTo(Duration.ofSeconds(60)) > 0)
             throw new IllegalArgumentException("Invalid local Web configuration");
-        this.profiles = new LinkedHashMap<>(profiles);
+        this.profiles = new java.util.concurrent.ConcurrentHashMap<>(profiles);
         this.catalogId = Values.required(catalogId, "catalog id");
         catalogBinding =
                 hash(
@@ -337,9 +339,13 @@ public final class HarnessWebServer implements AutoCloseable {
             if (event.type().equals("web.task.accepted") || event.type().equals("web.task.changed"))
                 task.revision = event.eventId();
         }
+        Profile registered;
+        synchronized (this) {
+            registered = task == null ? null : profiles.get(task.profile);
+        }
         if (task == null
-                || !profiles.containsKey(task.profile)
-                || !profiles.get(task.profile).workspaceBinding().equals(task.binding))
+                || registered == null
+                || !registered.workspaceBinding().equals(task.binding))
             throw new IllegalArgumentException("Catalog/profile mismatch");
         if (task.turns.inputs.values().stream().anyMatch(i -> i.state.equals("UNKNOWN")))
             task.phase = "UNKNOWN";
@@ -490,9 +496,18 @@ public final class HarnessWebServer implements AutoCloseable {
     private Map<String, Object> taskPage(Map<String, String> query) {
         if (!Set.of("profile", "view", "after", "limit").containsAll(query.keySet()))
             throw fault(400, "INVALID_QUERY");
+        Map<String, Task> hot;
+        Map<String, Profile> allowed;
+        int hotCount;
+        synchronized (this) {
+            allowed = Map.copyOf(profiles);
+            hot = new LinkedHashMap<>();
+            tasks.forEach((id, task) -> hot.put(id, pageSnapshot(task)));
+            hotCount = tasks.size();
+        }
         String profile = query.getOrDefault("profile", ""),
                 view = query.getOrDefault("view", "active");
-        if (!profile.isEmpty() && !profiles.containsKey(profile)
+        if (!profile.isEmpty() && !allowed.containsKey(profile)
                 || !Set.of("active", "archived", "all").contains(view))
             throw fault(400, "INVALID_QUERY");
         int limit;
@@ -504,7 +519,9 @@ public final class HarnessWebServer implements AutoCloseable {
         if (limit < 1 || limit > 32) throw fault(400, "INVALID_QUERY");
         Cursor cursor = null;
         if (query.containsKey("after")) {
-            cursor = cursors.get(query.get("after"));
+            synchronized (this) {
+                cursor = cursors.get(query.get("after"));
+            }
             if (cursor == null || !cursor.profile.equals(profile) || !cursor.view.equals(view))
                 throw fault(400, "UNKNOWN_CURSOR");
         }
@@ -518,20 +535,19 @@ public final class HarnessWebServer implements AutoCloseable {
                 task -> {
                     reconcileArchival(task);
                     if (!profile.isEmpty()
-                                    && !task.binding.equals(
-                                            profiles.get(profile).workspaceBinding())
+                                    && !task.binding.equals(allowed.get(profile).workspaceBinding())
                             || view.equals("active") && task.archived
                             || view.equals("archived") && !task.archived
                             || boundary != null && after(task, boundary) <= 0) return;
                     queue.add(task);
                     if (queue.size() > limit + 1) queue.remove();
                 };
-        if (diskCatalog == null) tasks.values().forEach(receive);
+        if (diskCatalog == null) hot.values().forEach(receive);
         else
-            diskCatalog.scan(
+            diskCatalog.scanSnapshot(
                     history -> {
                         var t = parseTask(history);
-                        receive.accept(tasks.getOrDefault(t.id, t));
+                        receive.accept(hot.getOrDefault(t.id, t));
                     });
         var page = new ArrayList<>(queue);
         page.sort(order);
@@ -540,15 +556,17 @@ public final class HarnessWebServer implements AutoCloseable {
         String next = "";
         if (more) {
             next = UUID.randomUUID().toString();
-            cursors.put(
-                    next,
-                    new Cursor(
-                            page.getLast().pinned,
-                            page.getLast().createdAt,
-                            page.getLast().id,
-                            profile,
-                            view));
-            if (cursors.size() > 32) cursors.remove(cursors.keySet().iterator().next());
+            synchronized (this) {
+                cursors.put(
+                        next,
+                        new Cursor(
+                                page.getLast().pinned,
+                                page.getLast().createdAt,
+                                page.getLast().id,
+                                profile,
+                                view));
+                if (cursors.size() > 32) cursors.remove(cursors.keySet().iterator().next());
+            }
         }
         return Map.of(
                 "tasks",
@@ -558,11 +576,29 @@ public final class HarnessWebServer implements AutoCloseable {
                 "more",
                 more,
                 "hotCount",
-                tasks.size(),
+                hotCount,
                 "hotLimit",
                 maxTasks,
                 "historyCount",
-                diskCatalog == null ? tasks.size() : diskCatalog.count());
+                diskCatalog == null ? hotCount : diskCatalog.count());
+    }
+
+    private Task pageSnapshot(Task task) {
+        var copy = new Task(task.id, task.profile, task.requestHash, task.goalHash, task.binding);
+        copy.selection = task.selection;
+        copy.executionSelection = task.executionSelection;
+        copy.phase = task.phase;
+        copy.status = task.status;
+        copy.error = task.error;
+        copy.name = task.name;
+        copy.createdAt = task.createdAt;
+        copy.revision = task.revision;
+        copy.pinned = task.pinned;
+        copy.archived = task.archived;
+        copy.cancelled = task.cancelled;
+        copy.recovered = task.recovered;
+        copy.pendingSnapshot = task.turns.pending();
+        return copy;
     }
 
     private void handle(HttpExchange exchange) {
@@ -673,8 +709,22 @@ public final class HarnessWebServer implements AutoCloseable {
                                                     "archived",
                                                     task.archived));
                     if (diskCatalog == null) tasks.values().forEach(receive);
-                    else diskCatalog.scan(history -> receive.accept(parseTask(history)));
                 }
+                if (diskCatalog != null)
+                    diskCatalog.scanSnapshot(
+                            history -> {
+                                var task = parseTask(history);
+                                scope.add(
+                                        Map.of(
+                                                "sessionId",
+                                                task.id,
+                                                "profile",
+                                                task.profile,
+                                                "name",
+                                                task.name,
+                                                "archived",
+                                                task.archived));
+                            });
                 respond(exchange, 200, contentSearch.search(input, scope, allowed));
             } catch (HarnessException ex) {
                 throw fault(ex.code().equals("SEARCH_CURSOR_EXPIRED") ? 409 : 400, ex.code());
@@ -684,45 +734,53 @@ public final class HarnessWebServer implements AutoCloseable {
         if (Arrays.equals(path, new String[] {"", "v1", "skills"})) {
             if (!method.equals("GET")) throw fault(405, "METHOD_NOT_ALLOWED");
             if (!query.keySet().equals(Set.of("profile"))) throw fault(400, "INVALID_QUERY");
+            Profile profile;
+            Settings current;
             synchronized (this) {
-                var profile = profiles.get(query.get("profile"));
-                if (settings == null || profile == null) throw fault(404, "NOT_FOUND");
-                try {
-                    respond(exchange, 200, settings.skills(profile.workspaceBinding()));
-                } catch (HarnessException ex) {
-                    throw fault(400, ex.code());
-                } catch (IOException | IllegalArgumentException ex) {
-                    throw fault(400, "SKILL_SCAN_FAILED");
-                }
+                profile = profiles.get(query.get("profile"));
+                current = settings;
+                if (current == null || profile == null) throw fault(404, "NOT_FOUND");
+            }
+            try {
+                respond(exchange, 200, current.skills(profile.workspaceBinding()));
+            } catch (HarnessException ex) {
+                throw fault(400, ex.code());
+            } catch (IOException | IllegalArgumentException ex) {
+                throw fault(400, "SKILL_SCAN_FAILED");
             }
             return;
         }
         if (Arrays.equals(path, new String[] {"", "v1", "settings"}) && query.isEmpty()) {
+            Settings current;
             synchronized (this) {
-                if (settings == null) throw fault(404, "NOT_FOUND");
-                if (method.equals("GET")) {
-                    respond(exchange, 200, settings.read());
-                } else if (method.equals("POST")) {
-                    var input =
-                            body(
-                                    exchange,
-                                    Set.of(
-                                            "revision",
-                                            "models",
-                                            "selected",
-                                            "extensions",
-                                            "apiKeys"),
-                                    Set.of("policy"));
-                    if (!occupied.isEmpty()) throw fault(409, "WORKSPACE_BUSY");
-                    try {
-                        respond(exchange, 200, settings.save(input));
-                    } catch (HarnessException ex) {
-                        throw fault(ex.code().equals("SETTINGS_CONFLICT") ? 409 : 400, ex.code());
-                    } catch (IllegalArgumentException ex) {
-                        throw fault(400, "INVALID_SETTINGS");
-                    }
-                } else throw fault(405, "METHOD_NOT_ALLOWED");
+                current = settings;
+                if (current == null) throw fault(404, "NOT_FOUND");
             }
+            if (method.equals("GET")) respond(exchange, 200, current.read());
+            else if (method.equals("POST")) {
+                var input =
+                        body(
+                                exchange,
+                                Set.of("revision", "models", "selected", "extensions", "apiKeys"),
+                                Set.of("policy"));
+                synchronized (this) {
+                    if (closed || broken) throw fault(503, "WEB_UNAVAILABLE");
+                    if (!occupied.isEmpty() || settingsChanging) throw fault(409, "WORKSPACE_BUSY");
+                    settingsChanging = true;
+                }
+                try {
+                    respond(exchange, 200, current.save(input));
+                } catch (HarnessException ex) {
+                    throw fault(ex.code().equals("SETTINGS_CONFLICT") ? 409 : 400, ex.code());
+                } catch (IllegalArgumentException ex) {
+                    throw fault(400, "INVALID_SETTINGS");
+                } finally {
+                    synchronized (this) {
+                        settingsChanging = false;
+                        notifyAll();
+                    }
+                }
+            } else throw fault(405, "METHOD_NOT_ALLOWED");
             return;
         }
         if (method.equals("GET") && query.isEmpty()) {
@@ -732,7 +790,7 @@ public final class HarnessWebServer implements AutoCloseable {
                         200,
                         Map.of(
                                 "profiles",
-                                profiles.keySet().stream().sorted().toList(),
+                                profileIds(),
                                 "protocolVersion",
                                 HarnessSdk.PROTOCOL_VERSION));
                 return;
@@ -748,34 +806,52 @@ public final class HarnessWebServer implements AutoCloseable {
             }
         }
         if (Arrays.equals(path, new String[] {"", "v1", "workspaces"}) && query.isEmpty()) {
-            synchronized (this) {
-                if (method.equals("GET")) {
-                    respond(exchange, 200, workspaceInfo());
-                    return;
+            if (method.equals("GET")) {
+                Map<String, Object> out;
+                synchronized (this) {
+                    out = workspaceInfo();
                 }
-                if (method.equals("POST") && workspaces != null) {
-                    var input = body(exchange, Set.of("path", "name"));
-                    if (profiles.size() >= 16) throw fault(409, "WORKSPACE_LIMIT");
-                    try {
-                        var registered =
-                                workspaces.register(
-                                        text(input, "path", 1024), clean(text(input, "name", 80)));
-                        try {
-                            attachLease(registered.getValue());
-                        } catch (IOException | HarnessException ex) {
-                            occupied.add(registered.getValue().workspaceBinding());
-                        }
-                        profiles.put(registered.getKey(), registered.getValue());
-                        respond(exchange, 200, workspaceInfo());
-                        return;
-                    } catch (HarnessException ex) {
-                        throw fault(409, ex.code());
-                    } catch (IOException ex) {
-                        throw fault(400, "WORKSPACE_PATH_DENIED");
-                    }
-                }
-                throw fault(405, "METHOD_NOT_ALLOWED");
+                respond(exchange, 200, out);
+                return;
             }
+            if (!method.equals("POST")) throw fault(405, "METHOD_NOT_ALLOWED");
+            var input = body(exchange, Set.of("path", "name"));
+            Workspaces registry;
+            synchronized (this) {
+                registry = workspaces;
+                if (registry == null) throw fault(405, "METHOD_NOT_ALLOWED");
+                if (closed || broken) throw fault(503, "WEB_UNAVAILABLE");
+                if (profiles.size() >= 16) throw fault(409, "WORKSPACE_LIMIT");
+                if (settingsChanging) throw fault(409, "WORKSPACE_BUSY");
+                settingsChanging = true;
+            }
+            try {
+                var registered =
+                        registry.register(
+                                text(input, "path", 1024), clean(text(input, "name", 80)));
+                Map<String, Object> out;
+                synchronized (this) {
+                    if (closed || broken) throw fault(503, "WEB_UNAVAILABLE");
+                    try {
+                        attachLease(registered.getValue());
+                    } catch (IOException | HarnessException unavailable) {
+                        occupied.add(registered.getValue().workspaceBinding());
+                    }
+                    profiles.put(registered.getKey(), registered.getValue());
+                    out = workspaceInfo();
+                }
+                respond(exchange, 200, out);
+            } catch (HarnessException ex) {
+                throw fault(409, ex.code());
+            } catch (IOException ex) {
+                throw fault(400, "WORKSPACE_PATH_DENIED");
+            } finally {
+                synchronized (this) {
+                    settingsChanging = false;
+                    notifyAll();
+                }
+            }
+            return;
         }
         if (path.length >= 3 && path[1].equals("v1") && path[2].equals("models")) {
             if (settings == null || !query.isEmpty()) throw fault(404, "NOT_FOUND");
@@ -822,9 +898,7 @@ public final class HarnessWebServer implements AutoCloseable {
             }
             if (method.equals("GET")) {
                 Map<String, Object> response;
-                synchronized (this) {
-                    response = taskPage(query);
-                }
+                response = taskPage(query);
                 respond(exchange, 200, response);
                 return;
             }
@@ -1146,10 +1220,13 @@ public final class HarnessWebServer implements AutoCloseable {
                 Pending pending = task.approvals.get(path[5]);
                 if (pending == null
                         || pending.decision.isDone()
+                        || closed
+                        || System.nanoTime() >= pending.deadline
                         || task.cancelled
                         || !callId.equals(pending.callId)) throw fault(409, "STALE_APPROVAL");
-                pending.decision.complete(
-                        new ApprovalService.ApprovalDecision(approved, reason, "web-operator"));
+                if (!pending.decision.complete(
+                        new ApprovalService.ApprovalDecision(approved, reason, "web-operator")))
+                    throw fault(409, "STALE_APPROVAL");
             }
             respond(exchange, 200, Map.of("accepted", true));
         } else throw fault(405, "METHOD_OR_QUERY_NOT_ALLOWED");
@@ -1423,7 +1500,7 @@ public final class HarnessWebServer implements AutoCloseable {
                 var receipt =
                         service == null
                                 ? io.jharness.ecosystem.UserQuestionsPlugin.recorded(
-                                        events(task), input)
+                                        events(task), input, sanitizer)
                                 : service.respond(input);
                 respond(exchange, "SUBMITTED".equals(receipt.get("state")) ? 202 : 200, receipt);
                 return;
@@ -1438,9 +1515,14 @@ public final class HarnessWebServer implements AutoCloseable {
         }
     }
 
+    private synchronized List<String> profileIds() {
+        return profiles.keySet().stream().sorted().toList();
+    }
+
     private synchronized Map<String, Object> submit(
             String profile, String goal, String requestId, String modelId) {
         if (closed || broken) throw fault(503, "WEB_UNAVAILABLE");
+        if (settingsChanging) throw fault(409, "WORKSPACE_BUSY");
         if (!requestId.matches("[A-Za-z0-9_-]{1,64}")) throw fault(400, "INVALID_REQUEST_ID");
         String requestHash = hash(requestId), goalHash = hash(goal);
         var prior = submission(requestHash);
@@ -1675,6 +1757,7 @@ public final class HarnessWebServer implements AutoCloseable {
             Task task, String requestId, String content, String kind, String modelId)
             throws IOException {
         if (closed || broken) throw fault(503, "WEB_UNAVAILABLE");
+        if (settingsChanging) throw fault(409, "WORKSPACE_BUSY");
         if (!requestId.matches("[A-Za-z0-9_-]{1,64}")) throw fault(400, "INVALID_REQUEST_ID");
         if (!Set.of("message", "supplement").contains(kind)) throw fault(400, "INVALID_BODY");
         String requestHash = hash(requestId), goalHash = hash(content);
@@ -1960,8 +2043,16 @@ public final class HarnessWebServer implements AutoCloseable {
             error = "TASK_EXECUTION_UNCERTAIN";
         } finally {
             if (sdk != null) {
+                try {
+                    var display = sdk.display().snapshot();
+                    synchronized (this) {
+                        task.display = display;
+                    }
+                } catch (RuntimeException displayFailure) {
+                    phase = "UNKNOWN";
+                    error = "TASK_DISPLAY_UNCERTAIN";
+                }
                 synchronized (this) {
-                    task.display = sdk.display().snapshot();
                     task.phase = "CLOSING";
                 }
                 try {
@@ -2040,16 +2131,31 @@ public final class HarnessWebServer implements AutoCloseable {
                         task.error = "WORKSPACE_CHECKPOINT_FAILED";
                     }
                 }
-                if (!closed && !broken) {
-                    if (task.phase.equals("FINISHED") && !task.cancelled) {
-                        try {
-                            advance(task);
-                        } catch (WebFault ex) {
-                            /* failed checkpoint already preserves UNKNOWN */
-                        }
-                    } else pauseInputs(task);
+                try {
+                    if (!closed && !broken) {
+                        if (task.phase.equals("FINISHED") && !task.cancelled) {
+                            try {
+                                advance(task);
+                            } catch (WebFault ex) {
+                                /* failed checkpoint already preserves UNKNOWN */
+                            }
+                        } else pauseInputs(task);
+                    }
+                } catch (RuntimeException pauseFailure) {
+                    broken = true;
+                    task.phase = "UNKNOWN";
+                    task.error = "QUEUE_CHECKPOINT_FAILED";
+                } finally {
+                    notifyAll();
+                    if (closed
+                            && tasks.values().stream()
+                                    .noneMatch(
+                                            t ->
+                                                    t.worker != null
+                                                            && t.worker != Thread.currentThread()
+                                                            && t.worker.isAlive()))
+                        closeResources();
                 }
-                notifyAll();
             }
         }
     }
@@ -2074,14 +2180,15 @@ public final class HarnessWebServer implements AutoCloseable {
                                 "arguments",
                                 call.arguments(),
                                 "sideEffectLevel",
-                                call.sideEffectLevel().name()));
+                                call.sideEffectLevel().name()),
+                        System.nanoTime() + approvalTimeout.toNanos());
         synchronized (this) {
             if (closed || task.cancelled || task.approvals.size() >= 8)
                 return new ApprovalService.ApprovalDecision(
                         false, "Approval unavailable", "web-server");
             task.approvals.put(id, pending);
         }
-        long end = System.nanoTime() + approvalTimeout.toNanos();
+        long end = pending.deadline;
         try {
             while (System.nanoTime() < end) {
                 context.cancellation().throwIfCancelled();
@@ -2089,7 +2196,14 @@ public final class HarnessWebServer implements AutoCloseable {
                     if (closed || task.cancelled) break;
                 }
                 try {
-                    return pending.decision.get(20, TimeUnit.MILLISECONDS);
+                    var answer = pending.decision.get(20, TimeUnit.MILLISECONDS);
+                    synchronized (this) {
+                        if (closed
+                                || task.cancelled
+                                || context.cancellation().isCancelled()
+                                || System.nanoTime() >= end) break;
+                        return answer;
+                    }
                 } catch (TimeoutException ignored) {
                     /* bounded cancellation polling */
                 }
@@ -2165,12 +2279,17 @@ public final class HarnessWebServer implements AutoCloseable {
         value.put("archived", task.archived);
         value.put("createdAt", task.createdAt);
         value.put("revision", task.revision);
-        value.put("queuedInputs", task.turns.pending());
+        value.put(
+                "queuedInputs",
+                task.pendingSnapshot == null ? task.turns.pending() : task.pendingSnapshot);
         return value;
     }
 
     private List<SessionEvent> events(Task task) {
-        var repository = profiles.get(task.profile).sessions();
+        SessionRepository repository;
+        synchronized (this) {
+            repository = profiles.get(task.profile).sessions();
+        }
         if (repository instanceof JsonlSessionRepository physical) {
             if (!java.nio.file.Files.exists(
                     physical.directory().resolve(task.id + ".jsonl"),
@@ -2417,12 +2536,14 @@ public final class HarnessWebServer implements AutoCloseable {
 
     private static final class Pending {
         final String callId;
+        final long deadline;
         final Map<String, Object> view;
         final CompletableFuture<ApprovalService.ApprovalDecision> decision =
                 new CompletableFuture<>();
 
-        Pending(String callId, Map<String, Object> view) {
+        Pending(String callId, Map<String, Object> view, long deadline) {
             this.callId = callId;
+            this.deadline = deadline;
             this.view = view;
         }
     }
@@ -2431,6 +2552,7 @@ public final class HarnessWebServer implements AutoCloseable {
         final String id, profile, requestHash, goalHash, binding;
         Map<String, Object> selection = Map.of(), executionSelection = Map.of();
         final TurnQueue turns = new TurnQueue();
+        Long pendingSnapshot;
         final Map<String, Pending> approvals = new LinkedHashMap<>();
         String phase = "STARTING", status = "CREATED", error = "";
         String name = "", createdAt = java.time.Instant.now().toString(), revision = "";
@@ -2611,8 +2733,30 @@ public final class HarnessWebServer implements AutoCloseable {
             if (worker.isAlive()) worker.interrupt();
         }
         synchronized (this) {
-            catalog.close();
-            leases.values().forEach(WorkspaceLease::close);
+            if (workers.stream().noneMatch(Thread::isAlive)) closeResources();
+            // A noncooperating worker retains the ownership locks until its mandatory cleanup
+            // exits.
+            // Its acceptance pointer remains unresolved; a new host must not replay it.
         }
+    }
+
+    private void closeResources() {
+        if (resourcesClosed) return;
+        resourcesClosed = true;
+        RuntimeException failure = null;
+        try {
+            catalog.close();
+        } catch (RuntimeException ex) {
+            failure = ex;
+        }
+        for (var lease : leases.values()) {
+            try {
+                lease.close();
+            } catch (RuntimeException ex) {
+                if (failure == null) failure = ex;
+                else failure.addSuppressed(ex);
+            }
+        }
+        if (failure != null) throw failure;
     }
 }

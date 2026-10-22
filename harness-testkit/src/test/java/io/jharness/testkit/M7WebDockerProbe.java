@@ -15,6 +15,7 @@ import java.security.MessageDigest;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /** Opt-in packaged CLI -> real HTTP approval -> SDK -> local/Docker evidence. No paid models. */
@@ -263,20 +264,24 @@ public final class M7WebDockerProbe {
             process = builder.start();
             final Process owned = process;
             var lines = new LinkedBlockingQueue<String>(128);
-            Thread.ofVirtual()
-                    .start(
-                            () -> {
-                                try (var input =
-                                        new BufferedReader(
-                                                new InputStreamReader(
-                                                        owned.getInputStream(),
-                                                        StandardCharsets.UTF_8))) {
-                                    String line;
-                                    while ((line = input.readLine()) != null)
-                                        if (!lines.offer(line)) break;
-                                } catch (IOException ignored) {
-                                }
-                            });
+            var disclosed = new AtomicBoolean();
+            Thread outputReader =
+                    Thread.ofVirtual()
+                            .start(
+                                    () -> {
+                                        try (var input =
+                                                new BufferedReader(
+                                                        new InputStreamReader(
+                                                                owned.getInputStream(),
+                                                                StandardCharsets.UTF_8))) {
+                                            String line;
+                                            while ((line = input.readLine()) != null) {
+                                                if (containsSecret(line)) disclosed.set(true);
+                                                lines.offer(line);
+                                            }
+                                        } catch (IOException ignored) {
+                                        }
+                                    });
             String startup = lines.poll(15, TimeUnit.SECONDS);
             require(startup != null && startup.startsWith("WEB "), "CLI Web startup: " + startup);
             URI address = URI.create(startup.split(" ")[1]);
@@ -353,19 +358,36 @@ public final class M7WebDockerProbe {
                                     .get("taskId")),
                     "Submission deduplicated");
             require(count.get() == (resilience ? 4 : 3), "Exact model attempt count");
-            var page =
-                    http(
-                            client,
-                            address,
-                            "GET",
-                            "/v1/tasks/" + task + "/events?limit=100",
-                            null,
-                            true);
-            require(
-                    page.statusCode() == 200
-                            && page.body().contains("tool.completed")
-                            && !page.body().contains(TOKEN),
-                    "Events and redaction");
+            String eventCursor = "";
+            boolean sawTool = false;
+            var visited = new HashSet<String>();
+            for (; ; ) {
+                var page =
+                        http(
+                                client,
+                                address,
+                                "GET",
+                                "/v1/tasks/"
+                                        + task
+                                        + "/events?limit=10"
+                                        + (eventCursor.isEmpty()
+                                                ? ""
+                                                : "&after="
+                                                        + URLEncoder.encode(
+                                                                eventCursor,
+                                                                StandardCharsets.UTF_8)),
+                                null,
+                                true);
+                require(page.statusCode() == 200, "Event page available");
+                sawTool |= page.body().contains("tool.completed");
+                var decoded = object(page);
+                if (!Boolean.TRUE.equals(decoded.get("more"))) break;
+                eventCursor = (String) decoded.get("next");
+                require(
+                        eventCursor != null && !eventCursor.isEmpty() && visited.add(eventCursor),
+                        "Event page advances");
+            }
+            require(sawTool, "All event pages include tool evidence");
             var repository = new JsonlSessionRepository(root.resolve(".jharness/sessions"));
             var events = repository.openReader(task).events();
             if (resilience) {
@@ -429,6 +451,13 @@ public final class M7WebDockerProbe {
                             new EventRequestJournal()
                                     .reconstruct(events.subList(0, i + 1), events.get(i).eventId());
                     var wire = new LinkedHashMap<>(request.parameters());
+                    // Routing is durable request metadata, not a Chat Completions HTTP field.
+                    require(
+                            "chat-completions".equals(wire.remove("protocol")),
+                            "Durable request retains the exact routing protocol");
+                    require(
+                            !captured.get(reconstructed).containsKey("protocol"),
+                            "Actual HTTP request excludes local routing metadata");
                     var messages = new ArrayList<Map<String, Object>>();
                     for (var message : request.messages()) {
                         var encoded = new LinkedHashMap<String, Object>();
@@ -503,6 +532,11 @@ public final class M7WebDockerProbe {
             require(
                     process.waitFor(10, TimeUnit.SECONDS) && process.exitValue() == 0,
                     "Web host clean exit");
+            outputReader.join(2000);
+            require(
+                    !outputReader.isAlive() && !disclosed.get(),
+                    "Complete process output redacted");
+            require(!containsSecret(captured.toString()), "Captured model request bodies redacted");
             return Map.of(
                     "parallelReadOnlyScheduling",
                     parallel,
@@ -540,15 +574,22 @@ public final class M7WebDockerProbe {
         var builder = HttpRequest.newBuilder(address.resolve(path)).timeout(Duration.ofSeconds(8));
         if (authorized) builder.header("Authorization", "Bearer " + TOKEN);
         if (body != null) builder.header("Content-Type", "application/json");
-        return client.send(
-                builder.method(
-                                method,
-                                body == null
-                                        ? HttpRequest.BodyPublishers.noBody()
-                                        : HttpRequest.BodyPublishers.ofByteArray(
-                                                JSON.writeValueAsBytes(body)))
-                        .build(),
-                HttpResponse.BodyHandlers.ofString());
+        var response =
+                client.send(
+                        builder.method(
+                                        method,
+                                        body == null
+                                                ? HttpRequest.BodyPublishers.noBody()
+                                                : HttpRequest.BodyPublishers.ofByteArray(
+                                                        JSON.writeValueAsBytes(body)))
+                                .build(),
+                        HttpResponse.BodyHandlers.ofString());
+        require(!containsSecret(response.body()), "HTTP body redacted");
+        return response;
+    }
+
+    private static boolean containsSecret(String text) {
+        return text.contains(TOKEN) || text.contains("fixture-only-not-paid");
     }
 
     private static Map<String, Object> object(HttpResponse<String> response) throws IOException {

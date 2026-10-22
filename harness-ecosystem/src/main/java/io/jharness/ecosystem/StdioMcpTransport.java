@@ -28,24 +28,30 @@ public final class StdioMcpTransport implements McpTransport {
         builder.environment().clear();
         builder.environment().putAll(LocalProcessRunner.buildEnvironment());
         process = builder.start();
-        input = new BufferedInputStream(process.getInputStream());
-        output = process.getOutputStream();
-        Thread.ofVirtual()
-                .start(
-                        () -> {
-                            try (var errors = process.getErrorStream()) {
-                                long size = 0;
-                                byte[] buffer = new byte[4096];
-                                int count;
-                                while ((count = errors.read(buffer)) != -1)
-                                    if ((size += count) > 8 * 1024 * 1024) {
-                                        close();
-                                        break;
-                                    }
-                            } catch (IOException ignored) {
-                                /* Never persist server stderr or credentials. */
-                            }
-                        });
+        try {
+            input = new BufferedInputStream(process.getInputStream());
+            output = process.getOutputStream();
+            Thread.ofVirtual()
+                    .start(
+                            () -> {
+                                try (var errors = process.getErrorStream()) {
+                                    long size = 0;
+                                    byte[] buffer = new byte[4096];
+                                    int count;
+                                    while ((count = errors.read(buffer)) != -1)
+                                        if ((size += count) > 8 * 1024 * 1024) {
+                                            close();
+                                            break;
+                                        }
+                                } catch (IOException ignored) {
+                                    /* Never persist server stderr or credentials. */
+                                }
+                            });
+        } catch (RuntimeException | Error failure) {
+            if (!ProcessCleanup.stop(process))
+                failure.addSuppressed(BoundedJson.error("MCP_CLEANUP_UNKNOWN"));
+            throw failure;
+        }
     }
 
     @Override
@@ -90,18 +96,6 @@ public final class StdioMcpTransport implements McpTransport {
     @Override
     public void close() {
         if (!closed.compareAndSet(false, true)) return;
-        try {
-            process.descendants().limit(64).forEach(ProcessHandle::destroyForcibly);
-        } catch (RuntimeException ignored) {
-            /* sampled cleanup; not an OS sandbox */
-        }
-        process.destroyForcibly();
-        try {
-            output.close();
-            input.close();
-            process.getErrorStream().close();
-        } catch (IOException ignored) {
-            /* terminated connection cannot be reused */
-        }
+        if (!ProcessCleanup.stop(process)) throw BoundedJson.error("MCP_CLEANUP_UNKNOWN");
     }
 }

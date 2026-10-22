@@ -74,7 +74,7 @@ public final class EventSessionProjection implements SessionProjection {
                                         "Operator verification of call "
                                                 + event.callId()
                                                 + ": "
-                                                + event.payload()));
+                                                + verificationSummary(event.payload())));
                 }
                 case "turn.ended" -> {
                     Object value = event.payload().get("status");
@@ -126,5 +126,20 @@ public final class EventSessionProjection implements SessionProjection {
     @Override
     public TaskStatus taskStatus() {
         return status;
+    }
+
+    private static String verificationSummary(Map<String, Object> payload) {
+        StringBuilder text = new StringBuilder();
+        for (String key : List.of("outcome", "reason")) {
+            Object value = payload.get(key);
+            if (value instanceof String message)
+                text.append(key)
+                        .append("=")
+                        .append(message.length())
+                        .append(":")
+                        .append(message)
+                        .append(";");
+        }
+        return text.toString();
     }
 }
