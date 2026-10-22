@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "phase": "R1",
-  "status": "LOCAL_SCOPE_IMPLEMENTED_VALIDATION_LIMITED_CI_PENDING",
+  "status": "LOCAL_IMPLEMENTATION_VALIDATED_CI_PENDING",
   "opinions": [
     {
       "id": "OCR-0063",
@@ -718,18 +718,27 @@
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "partial",
-      "status": "LOCAL_PARTIAL",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
       "implementation": "三个CLI装配入口统一扩展AWS等明确凭据环境变量别名。",
       "files": [
         "harness-cli/src/main/java/io/jharness/cli/CliApplication.java",
         "harness-cli/src/test/java/io/jharness/cli/R1ApplicationNativeTest.java"
       ],
       "tests": [
+        "io.jharness.cli.R1ApplicationNativeTest#awsAliasesAreRedactedByClassicCliAndRejectedByEcosystemAssembly",
         "io.jharness.cli.R1ApplicationNativeTest#credentialsAliasesAreRedactedInWorkbenchAndFailedInputsRemainRegistered"
       ],
       "limitations": [
-        "新增用例直接覆盖Workbench装配，其他两入口目前静态核对同规则。"
-      ]
+        "本机确定性故障注入及实际本地资源测试，不代表远端三平台CI或任意敌对OS资源隔离。"
+      ],
+      "faultWindowVerification": {
+        "date": "2026-10-22",
+        "runId": "r1-20261022-fault18-b",
+        "tests": [
+          "io.jharness.cli.R1ApplicationNativeTest#awsAliasesAreRedactedByClassicCliAndRejectedByEcosystemAssembly"
+        ],
+        "evidence": "经典CLI实际config命令及Ecosystem装配覆盖三种AWS凭据别名，拒绝秘密字面值且stdout/stderr无泄露。"
+      }
     },
     {
       "id": "OCR-0312",
@@ -752,18 +761,28 @@
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "partial",
-      "status": "LOCAL_PARTIAL",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
       "implementation": "生态MCP配置拒绝userinfo/fragment，沿用已知敏感配置键和凭据引用契约。",
       "files": [
         "harness-cli/src/main/java/io/jharness/cli/EcosystemCli.java",
+        "harness-cli/src/test/java/io/jharness/cli/R1ApplicationNativeTest.java",
         "harness-testkit/src/test/java/io/jharness/testkit/M7ClosureTest.java"
       ],
       "tests": [
+        "io.jharness.cli.R1ApplicationNativeTest#mcpUserInfoAndFragmentsAreRejectedBeforeAnyConnection",
         "io.jharness.testkit.M7ClosureTest#trustedConfigurationRejectsSecretsAndUnknownOrUnpinnedCapabilities"
       ],
       "limitations": [
-        "未添加sk前缀猜测；该测试是否专门触达userinfo需另核。"
-      ]
+        "本机确定性故障注入及实际本地资源测试，不代表远端三平台CI或任意敌对OS资源隔离。"
+      ],
+      "faultWindowVerification": {
+        "date": "2026-10-22",
+        "runId": "r1-20261022-fault18-b",
+        "tests": [
+          "io.jharness.cli.R1ApplicationNativeTest#mcpUserInfoAndFragmentsAreRejectedBeforeAnyConnection"
+        ],
+        "evidence": "含userinfo/fragment的MCP URI在装配前拒绝，合法tokenEnv对照通过；未猜测任意sk前缀。"
+      }
     },
     {
       "id": "OCR-0329",
@@ -982,18 +1001,27 @@
       "task": "R1-06",
       "owner": "application",
       "originalVerdict": "partial",
-      "status": "LOCAL_PARTIAL",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
       "implementation": "read证据同轮SUCCESS正例及UNKNOWN/FAILED负例，路径与reason精确检查。",
       "files": [
         "harness-cli/src/test/java/io/jharness/cli/EvidenceCompletionTest.java",
         "harness-cli/src/test/java/io/jharness/cli/R1ApplicationEvidenceTest.java"
       ],
       "tests": [
+        "io.jharness.cli.R1ApplicationEvidenceTest#missingStatusReadAndWriteCannotAuthorizeCompletion",
         "io.jharness.cli.R1ApplicationEvidenceTest#readEvidenceNormalizesBothSidesAndRejectsUnknown"
       ],
       "limitations": [
-        "当前新例未单独构造缺status read/write；实现按非SUCCESS拒绝。"
-      ]
+        "本机确定性故障注入及实际本地资源测试，不代表远端三平台CI或任意敌对OS资源隔离。"
+      ],
+      "faultWindowVerification": {
+        "date": "2026-10-22",
+        "runId": "r1-20261022-fault18-b",
+        "tests": [
+          "io.jharness.cli.R1ApplicationEvidenceTest#missingStatusReadAndWriteCannotAuthorizeCompletion"
+        ],
+        "evidence": "缺status的read/write不得完成；明确SUCCESS及实际文件版本为正例。"
+      }
     },
     {
       "id": "OCR-0359",
@@ -1080,18 +1108,27 @@
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "partial",
-      "status": "LOCAL_PARTIAL",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
       "implementation": "secret集合去重，仅变化时发布不可变redactor；失败提交的秘密保持已登记以脱敏错误。",
       "files": [
         "harness-cli/src/main/java/io/jharness/cli/WorkbenchSettings.java",
         "harness-cli/src/test/java/io/jharness/cli/R1WorkbenchTransactionTest.java"
       ],
       "tests": [
-        "io.jharness.cli.R1WorkbenchTransactionTest#failedFileCommitCompensatesOnlyNewCredentialAndRedactsFailedInput"
+        "io.jharness.cli.R1WorkbenchTransactionTest#failedFileCommitCompensatesOnlyNewCredentialAndRedactsFailedInput",
+        "io.jharness.cli.R1WorkbenchTransactionTest#repeatedSavesReuseRedactorUntilASecretIsAddedIncludingFailedRotation"
       ],
       "limitations": [
-        "暂无重复save下redactor实例重建次数或增长上界的专门测试。"
-      ]
+        "本机确定性故障注入及实际本地资源测试，不代表远端三平台CI或任意敌对OS资源隔离。"
+      ],
+      "faultWindowVerification": {
+        "date": "2026-10-22",
+        "runId": "r1-20261022-fault18-b",
+        "tests": [
+          "io.jharness.cli.R1WorkbenchTransactionTest#repeatedSavesReuseRedactorUntilASecretIsAddedIncludingFailedRotation"
+        ],
+        "evidence": "重复保存复用同一脱敏器；失败轮换仍注册新秘密且去重，不覆盖旧凭据。"
+      }
     },
     {
       "id": "OCR-0390",
@@ -1243,17 +1280,27 @@
       "task": "R1-02",
       "owner": "process",
       "originalVerdict": "accepted",
-      "status": "LOCAL_PARTIAL",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
       "implementation": "关闭先撤销能力；terminal失败后仍关闭process，保留首因并suppressed后续异常。",
       "files": [
-        "harness-ecosystem/src/main/java/io/jharness/ecosystem/LocalExecutionEnvironment.java"
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/LocalExecutionEnvironment.java",
+        "harness-ecosystem/src/test/java/io/jharness/ecosystem/R1RemainingOwnershipFaultTest.java"
       ],
       "tests": [
-        "io.jharness.ecosystem.R1EnvironmentLifecycleTest#closedLocalEnvironmentRevokesAlreadyBorrowedFiles"
+        "io.jharness.ecosystem.R1EnvironmentLifecycleTest#closedLocalEnvironmentRevokesAlreadyBorrowedFiles",
+        "io.jharness.ecosystem.R1RemainingOwnershipFaultTest#environmentDoubleCloseFailureRevokesFilesAndPreservesBothCauses"
       ],
       "limitations": [
-        "终端和进程同时关闭失败的双故障仅源码控制流复核，现测试验证真实借用能力关闭边界。"
-      ]
+        "本机确定性故障注入及实际本地资源测试，不代表远端三平台CI或任意敌对OS资源隔离。"
+      ],
+      "faultWindowVerification": {
+        "date": "2026-10-22",
+        "runId": "r1-20261022-fault18-b",
+        "tests": [
+          "io.jharness.ecosystem.R1RemainingOwnershipFaultTest#environmentDoubleCloseFailureRevokesFilesAndPreservesBothCauses"
+        ],
+        "evidence": "终端和进程关闭同时失败，仍撤销借出文件能力，保留首因及suppressed，并且重复close不重做。"
+      }
     },
     {
       "id": "OCR-0438",
@@ -1530,36 +1577,64 @@
       "task": "R1-02",
       "owner": "process",
       "originalVerdict": "partial",
-      "status": "LOCAL_PARTIAL",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
       "implementation": "stdio构造启动后失败补偿，有界后代采样/强杀/等待/流关闭，清理不完整明确MCP_CLEANUP_UNKNOWN。",
       "files": [
-        "harness-ecosystem/src/main/java/io/jharness/ecosystem/StdioMcpTransport.java"
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/StdioMcpTransport.java",
+        "harness-ecosystem/src/test/java/io/jharness/ecosystem/R1RemainingOwnershipFaultTest.java"
       ],
       "tests": [
+        "io.jharness.ecosystem.R1RemainingOwnershipFaultTest#postStartFatalFailureKeepsCleanupUncertaintyAsSuppressed",
+        "io.jharness.ecosystem.R1RemainingOwnershipFaultTest#postStartInitializationErrorReapsActualOwnedChildAndRethrowsSameError",
         "io.jharness.testkit.M1057ExtensionsTest#stdioResourcesAndTemplatesUseRealChildProtocolAndCleanUp",
         "io.jharness.testkit.M7McpTest#stdioDiscoversButNeverTrustsReadonlyHintAndRevokesOnStop"
       ],
       "limitations": [
-        "构造器分配失败补偿为静态路径复核；不制造OOM，不吞Error继续。后代采样不是OS隔离。"
-      ]
+        "本机确定性故障注入及实际本地资源测试，不代表远端三平台CI或任意敌对OS资源隔离。",
+        "使用受控AssertionError模拟启动后初始化分配边界；不制造真实OOM，采样超限不宣称进程树已完全包含。"
+      ],
+      "faultWindowVerification": {
+        "date": "2026-10-22",
+        "runId": "r1-20261022-fault18-b",
+        "tests": [
+          "io.jharness.ecosystem.R1RemainingOwnershipFaultTest#postStartInitializationErrorReapsActualOwnedChildAndRethrowsSameError",
+          "io.jharness.ecosystem.R1RemainingOwnershipFaultTest#postStartFatalFailureKeepsCleanupUncertaintyAsSuppressed"
+        ],
+        "evidence": "真实已启动Java子进程在流初始化受控AssertionError处失败，补偿关闭三流并停止子进程；清理失败保持UNKNOWN及原Error。"
+      }
     },
     {
       "id": "OCR-0533",
       "task": "R1-02",
       "owner": "process",
       "originalVerdict": "partial",
-      "status": "LOCAL_PARTIAL",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
       "implementation": "stdio构造启动后失败补偿，有界后代采样/强杀/等待/流关闭，清理不完整明确MCP_CLEANUP_UNKNOWN。",
       "files": [
-        "harness-ecosystem/src/main/java/io/jharness/ecosystem/StdioMcpTransport.java"
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/StdioMcpTransport.java",
+        "harness-ecosystem/src/test/java/io/jharness/ecosystem/R1RemainingOwnershipFaultTest.java"
       ],
       "tests": [
+        "io.jharness.ecosystem.R1RemainingOwnershipFaultTest#postStartFatalFailureKeepsCleanupUncertaintyAsSuppressed",
+        "io.jharness.ecosystem.R1RemainingOwnershipFaultTest#postStartInitializationErrorReapsActualOwnedChildAndRethrowsSameError",
+        "io.jharness.ecosystem.R1RemainingOwnershipFaultTest#stdioCloseReportsSamplingOverflowAndStopsEveryRetainedHandle",
         "io.jharness.testkit.M1057ExtensionsTest#stdioResourcesAndTemplatesUseRealChildProtocolAndCleanUp",
         "io.jharness.testkit.M7McpTest#stdioDiscoversButNeverTrustsReadonlyHintAndRevokesOnStop"
       ],
       "limitations": [
-        "构造器分配失败补偿为静态路径复核；不制造OOM，不吞Error继续。后代采样不是OS隔离。"
-      ]
+        "本机确定性故障注入及实际本地资源测试，不代表远端三平台CI或任意敌对OS资源隔离。",
+        "使用受控AssertionError模拟启动后初始化分配边界；不制造真实OOM，采样超限不宣称进程树已完全包含。"
+      ],
+      "faultWindowVerification": {
+        "date": "2026-10-22",
+        "runId": "r1-20261022-fault18-b",
+        "tests": [
+          "io.jharness.ecosystem.R1RemainingOwnershipFaultTest#postStartInitializationErrorReapsActualOwnedChildAndRethrowsSameError",
+          "io.jharness.ecosystem.R1RemainingOwnershipFaultTest#postStartFatalFailureKeepsCleanupUncertaintyAsSuppressed",
+          "io.jharness.ecosystem.R1RemainingOwnershipFaultTest#stdioCloseReportsSamplingOverflowAndStopsEveryRetainedHandle"
+        ],
+        "evidence": "同一启动后失败补偿路径及65个合成子孙采样超限：仅64个被保留/终止，未保留者明确未知。"
+      }
     },
     {
       "id": "OCR-0535",
@@ -1599,17 +1674,29 @@
       "task": "R1-02",
       "owner": "process",
       "originalVerdict": "accepted",
-      "status": "LOCAL_PARTIAL",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
       "implementation": "WebFetch以abandoned与received双向交接response body；finally回收已到/迟到body，取消pending和reading。",
       "files": [
-        "harness-ecosystem/src/main/java/io/jharness/ecosystem/WebFetchPlugin.java"
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/WebFetchPlugin.java",
+        "harness-ecosystem/src/test/java/io/jharness/ecosystem/R1RemainingOwnershipFaultTest.java"
       ],
       "tests": [
+        "io.jharness.ecosystem.R1RemainingOwnershipFaultTest#webResponseArrivingAfterFailedCancellationIsClosedByLateCallback",
+        "io.jharness.ecosystem.R1RemainingOwnershipFaultTest#webResponseReceivedBeforeCancellationAndNeverHandedOffIsClosed",
         "io.jharness.testkit.M7ClosureTest#fetchIsAllowlistedApprovedBoundedAndNeverFollowsRedirects"
       ],
       "limitations": [
-        "覆盖真实HTTP取消与常规资源回收，精确纳秒迟到headers窗口未构造独立调度器探针。"
-      ]
+        "本机确定性故障注入及实际本地资源测试，不代表远端三平台CI或任意敌对OS资源隔离。"
+      ],
+      "faultWindowVerification": {
+        "date": "2026-10-22",
+        "runId": "r1-20261022-fault18-b",
+        "tests": [
+          "io.jharness.ecosystem.R1RemainingOwnershipFaultTest#webResponseReceivedBeforeCancellationAndNeverHandedOffIsClosed",
+          "io.jharness.ecosystem.R1RemainingOwnershipFaultTest#webResponseArrivingAfterFailedCancellationIsClosedByLateCallback"
+        ],
+        "evidence": "确定性future/token交接覆盖收到响应但未接管及finally之后迟到响应，body各关闭一次且仅一次fetch。"
+      }
     },
     {
       "id": "OCR-0544",
@@ -1841,12 +1928,14 @@
       "task": "R1-03",
       "owner": "process",
       "originalVerdict": "partial",
-      "status": "LOCAL_PARTIAL",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
       "implementation": "cancel_requested落盘失败仍通过finally触发sdk.cancel，CAS token传播不依赖事件成功。",
       "files": [
-        "harness-ecosystem/src/main/java/io/jharness/ecosystem/SubagentPlugin.java"
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/SubagentPlugin.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/M7SubagentTest.java"
       ],
       "tests": [
+        "io.jharness.testkit.M7SubagentTest#cancellationPersistenceFailureStillCancelsChildSdk",
         "io.jharness.testkit.M7SubagentTest#explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[10]",
         "io.jharness.testkit.M7SubagentTest#explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[1]",
         "io.jharness.testkit.M7SubagentTest#explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[2]",
@@ -1859,8 +1948,16 @@
         "io.jharness.testkit.M7SubagentTest#explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[9]"
       ],
       "limitations": [
-        "cancel_requested单点落盘失败的finally保底为静态控制流复核。"
-      ]
+        "本机确定性故障注入及实际本地资源测试，不代表远端三平台CI或任意敌对OS资源隔离。"
+      ],
+      "faultWindowVerification": {
+        "date": "2026-10-22",
+        "runId": "r1-20261022-fault18-b",
+        "tests": [
+          "io.jharness.testkit.M7SubagentTest#cancellationPersistenceFailureStillCancelsChildSdk"
+        ],
+        "evidence": "真实JSONL写入前单点拒绝cancel_requested；子token观察取消，并独立核对SDK取消标志，避免共享CAS掩盖finally缺失。"
+      }
     },
     {
       "id": "OCR-0603",
@@ -1882,17 +1979,26 @@
       "task": "R1-03",
       "owner": "process",
       "originalVerdict": "partial",
-      "status": "LOCAL_PARTIAL",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
       "implementation": "验证识别已有subagent.verified，允许重入补tool.verified，仍要求子journal已结算与双写者空闲。",
       "files": [
-        "harness-ecosystem/src/main/java/io/jharness/ecosystem/SubagentPlugin.java"
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/SubagentPlugin.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/M7SubagentTest.java"
       ],
       "tests": [
         "io.jharness.testkit.M7SubagentTest#parentCancellationAndUncooperativeChildStayUnknownUntilExplicitSettledAudit"
       ],
       "limitations": [
-        "两个verify事实中间中断的重入条件静态核对；既有真实恢复用例覆盖正常verify。"
-      ]
+        "本机确定性故障注入及实际本地资源测试，不代表远端三平台CI或任意敌对OS资源隔离。"
+      ],
+      "faultWindowVerification": {
+        "date": "2026-10-22",
+        "runId": "r1-20261022-fault18-b",
+        "tests": [
+          "io.jharness.testkit.M7SubagentTest#parentCancellationAndUncooperativeChildStayUnknownUntilExplicitSettledAudit"
+        ],
+        "evidence": "子任务真实停止/人工核实后，在两条verify事实之间注入append失败；第一条持久、第二条缺失时仍未就绪，重入仅补第二条且不重放。"
+      }
     },
     {
       "id": "OCR-0622",
@@ -2192,19 +2298,28 @@
       "task": "R1-05",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "LOCAL_PARTIAL",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
       "implementation": "新增超时与close精确reason/actor和prompts清空断言。",
       "files": [
         "harness-policy/src/test/java/io/jharness/policy/PolicyApprovalTest.java",
         "harness-policy/src/test/java/io/jharness/policy/R1ApplicationPolicyTest.java"
       ],
       "tests": [
-        "io.jharness.policy.R1ApplicationPolicyTest#expiredPromptHasPreciseReasonAndIsWithdrawn",
-        "io.jharness.policy.R1ApplicationPolicyTest#closingImmediatelyRevokesPromptsAndCannotAcceptNewAnswers"
+        "io.jharness.policy.PolicyApprovalTest#cancellationRevokesPromptAndTimeoutAndCloseDeny",
+        "io.jharness.policy.R1ApplicationPolicyTest#closingImmediatelyRevokesPromptsAndCannotAcceptNewAnswers",
+        "io.jharness.policy.R1ApplicationPolicyTest#expiredPromptHasPreciseReasonAndIsWithdrawn"
       ],
       "limitations": [
-        "cancel分支仍主要断CANCELLED与拒绝stale answer，尚缺取消后prompts空的专门断言。"
-      ]
+        "本机确定性故障注入及实际本地资源测试，不代表远端三平台CI或任意敌对OS资源隔离。"
+      ],
+      "faultWindowVerification": {
+        "date": "2026-10-22",
+        "runId": "r1-20261022-fault18-b",
+        "tests": [
+          "io.jharness.policy.PolicyApprovalTest#cancellationRevokesPromptAndTimeoutAndCloseDeny"
+        ],
+        "evidence": "取消后prompts为空且拒绝旧回答；超时/关闭也撤销prompt并核对精确reason和actor。"
+      }
     },
     {
       "id": "OCR-0652",
@@ -2567,17 +2682,27 @@
       "task": "R1-03",
       "owner": "process",
       "originalVerdict": "partial",
-      "status": "LOCAL_PARTIAL",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
       "implementation": "终端stdin future失败撤销任务并停止，后续write拒绝，不把未知输入标成确定未发送。",
       "files": [
-        "harness-process/src/main/java/io/jharness/process/LocalTerminalSession.java"
+        "harness-process/src/main/java/io/jharness/process/LocalTerminalSession.java",
+        "harness-process/src/test/java/io/jharness/process/R1RemainingProcessFaultTest.java"
       ],
       "tests": [
-        "io.jharness.process.M6TerminalTest#cancellingBlockedStdinStopsProcessAndReturnsUnknownWithinTheDeadline"
+        "io.jharness.process.M6TerminalTest#cancellingBlockedStdinStopsProcessAndReturnsUnknownWithinTheDeadline",
+        "io.jharness.process.R1RemainingProcessFaultTest#exceptionalStdinFutureStopsLiveChildAndRejectsSecondWrite"
       ],
       "limitations": [
-        "既有测试覆盖阻塞输入取消；ExecutionException精确故障分支静态复核。"
-      ]
+        "本机确定性故障注入及实际本地资源测试，不代表远端三平台CI或任意敌对OS资源隔离。"
+      ],
+      "faultWindowVerification": {
+        "date": "2026-10-22",
+        "runId": "r1-20261022-fault18-b",
+        "tests": [
+          "io.jharness.process.R1RemainingProcessFaultTest#exceptionalStdinFutureStopsLiveChildAndRejectsSecondWrite"
+        ],
+        "evidence": "真实活子进程只关闭本测试stdin句柄，使写future走ExecutionException；终止子进程并拒绝重写。"
+      }
     },
     {
       "id": "OCR-0717",
@@ -2693,17 +2818,27 @@
       "task": "R1-03",
       "owner": "process",
       "originalVerdict": "accepted",
-      "status": "LOCAL_PARTIAL",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
       "implementation": "tree cleanup/join累计中断标志，清理完成后恢复，不丢中断。",
       "files": [
-        "harness-process/src/main/java/io/jharness/process/LocalProcessRunner.java"
+        "harness-process/src/main/java/io/jharness/process/LocalProcessRunner.java",
+        "harness-process/src/test/java/io/jharness/process/R1RemainingProcessFaultTest.java"
       ],
       "tests": [
-        "io.jharness.process.LocalProcessRunnerTest#cancellationKillsObservedRealChildTreeAndPreservesHonestScope"
+        "io.jharness.process.LocalProcessRunnerTest#cancellationKillsObservedRealChildTreeAndPreservesHonestScope",
+        "io.jharness.process.R1RemainingProcessFaultTest#cleanupSleepInterruptionStillKillsOwnedChildAndRestoresInterrupt"
       ],
       "limitations": [
-        "清理sleep精确中断窗口未新增专门调度器注入；控制端点中断持久化另有真实回归。"
-      ]
+        "本机确定性故障注入及实际本地资源测试，不代表远端三平台CI或任意敌对OS资源隔离。"
+      ],
+      "faultWindowVerification": {
+        "date": "2026-10-22",
+        "runId": "r1-20261022-fault18-b",
+        "tests": [
+          "io.jharness.process.R1RemainingProcessFaultTest#cleanupSleepInterruptionStillKillsOwnedChildAndRestoresInterrupt"
+        ],
+        "evidence": "首轮终止保留真实子进程并置interrupt，下一cleanup sleep确定抛中断，继续终止直至确认清理且恢复interrupt。"
+      }
     },
     {
       "id": "OCR-0747",
@@ -2873,7 +3008,7 @@
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "partial",
-      "status": "LOCAL_PARTIAL",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
       "implementation": "离线verifyTask与archive操作使用与host一致的known-secret sanitizer。",
       "files": [
         "harness-testkit/src/test/java/io/jharness/testkit/M1053TurnsTest.java"
@@ -2882,15 +3017,23 @@
         "io.jharness.testkit.M1053TurnsTest#failedStartCheckpointRecoversOriginalTurnAsUnknownWithoutReplay"
       ],
       "limitations": [
-        "尚未额外注入独立维护事件秘密，当前主要是原fixture秘密与输出扫描。"
-      ]
+        "本机确定性故障注入及实际本地资源测试，不代表远端三平台CI或任意敌对OS资源隔离。"
+      ],
+      "faultWindowVerification": {
+        "date": "2026-10-22",
+        "runId": "r1-20261022-fault18-b",
+        "tests": [
+          "io.jharness.testkit.M1053TurnsTest#failedStartCheckpointRecoversOriginalTurnAsUnknownWithoutReplay"
+        ],
+        "evidence": "verify及CLI archive维护理由实际包含合成秘密，落盘仅脱敏文字；继续原轮不重放。"
+      }
     },
     {
       "id": "OCR-0855",
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "LOCAL_PARTIAL",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
       "implementation": "fixture扫描范围从catalog扩为root全部本例JSONL。",
       "files": [
         "harness-testkit/src/test/java/io/jharness/testkit/M1053TurnsTest.java"
@@ -2899,8 +3042,16 @@
         "io.jharness.testkit.M1053TurnsTest#failedStartCheckpointRecoversOriginalTurnAsUnknownWithoutReplay"
       ],
       "limitations": [
-        "当前只扫描JSONL，未覆盖任意artifact内容和stdout；仍需明确本例实际产物。"
-      ]
+        "本机确定性故障注入及实际本地资源测试，不代表远端三平台CI或任意敌对OS资源隔离。"
+      ],
+      "faultWindowVerification": {
+        "date": "2026-10-22",
+        "runId": "r1-20261022-fault18-b",
+        "tests": [
+          "io.jharness.testkit.M1053TurnsTest#failedStartCheckpointRecoversOriginalTurnAsUnknownWithoutReplay"
+        ],
+        "evidence": "本夹具生成真实持久artifact并用实际CLI读取，扫描本fixture全目录regular files及stdout/stderr，无合成秘密；不概括任意用户文件。"
+      }
     },
     {
       "id": "OCR-0856",
@@ -2967,7 +3118,7 @@
       "task": "R1-04",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "LOCAL_PARTIAL",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
       "implementation": "完成后唯一assistant.message内容精确等于完整脱敏最终文本。",
       "files": [
         "harness-testkit/src/test/java/io/jharness/testkit/M1056DisplayTest.java"
@@ -2976,8 +3127,17 @@
         "io.jharness.testkit.M1056DisplayTest#liveSnapshotIsSanitizedScopedAndOnlyFinalResponseIsPersisted"
       ],
       "limitations": [
-        "当前短回复未生成artifact引用，因此未新增artifact内容断言。"
-      ]
+        "本机确定性故障注入及实际本地资源测试，不代表远端三平台CI或任意敌对OS资源隔离。",
+        "fixture把实际最终assistant文本保存为交付产物进行SDK读回；不宣称产品自动把短回复转为artifact。"
+      ],
+      "faultWindowVerification": {
+        "date": "2026-10-22",
+        "runId": "r1-20261022-fault18-b",
+        "tests": [
+          "io.jharness.testkit.M1056DisplayTest#liveSnapshotIsSanitizedScopedAndOnlyFinalResponseIsPersisted"
+        ],
+        "evidence": "精确核对唯一最终assistant文本，并将该真实文本作为fixture交付artifact经SDK作用域读回，核对全文/SHA且无秘密前缀；不宣称短回复自动生成artifact。"
+      }
     },
     {
       "id": "OCR-0867",
@@ -3777,37 +3937,70 @@
       "task": "R1-05",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "LOCAL_PARTIAL",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
       "implementation": "历史分页短锁复制hot/allowed后锁外scanSnapshot/reconcile/summary，scan不改热cache。",
       "files": [
-        "harness-web/src/main/java/io/jharness/web/HarnessWebServer.java",
-        "harness-testkit/src/test/java/io/jharness/testkit/R1WebOwnershipTest.java"
+        "harness-testkit/src/test/java/io/jharness/testkit/R1WebOwnershipTest.java",
+        "harness-testkit/src/test/java/io/jharness/web/R1CatalogScanBoundaryTest.java",
+        "harness-web/src/main/java/io/jharness/web/HarnessWebServer.java"
       ],
       "tests": [
-        "io.jharness.testkit.R1WebOwnershipTest#slowHistoryReconciliationCannotBlockUnrelatedRequestsOrOwnServerMonitor"
+        "io.jharness.testkit.R1WebOwnershipTest#slowHistoryReconciliationCannotBlockUnrelatedRequestsOrOwnServerMonitor",
+        "io.jharness.web.R1CatalogScanBoundaryTest#flatTenThousandRecordScanIsBoundedAndDoesNotHoldCatalogMonitor"
       ],
       "limitations": [
-        "仍按上限10000扫描磁盘目录，没有宣称建立持久派生索引。"
-      ]
+        "本机确定性故障注入及实际本地资源测试，不代表远端三平台CI或任意敌对OS资源隔离。",
+        "仍是10000条有界磁盘扫描，不宣称建立持久索引或无界历史查询。"
+      ],
+      "faultWindowVerification": {
+        "date": "2026-10-22",
+        "runId": "r1-20261022-fault18-b",
+        "tests": [
+          "io.jharness.web.R1CatalogScanBoundaryTest#flatTenThousandRecordScanIsBoundedAndDoesNotHoldCatalogMonitor"
+        ],
+        "evidence": "真实10000个平铺合法记录完整去重扫描，阻塞时独立读取可获monitor；第10001项拒绝且回调最多10000。"
+      }
     },
     {
       "id": "OCR-1156",
       "task": "R1-05",
       "owner": "application",
       "originalVerdict": "accepted",
-      "status": "LOCAL_PARTIAL",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
       "implementation": "Web审批POST锁内核截止/closed/cancelled并检查future.complete实际结果。",
       "files": [
-        "harness-web/src/main/java/io/jharness/web/HarnessWebServer.java",
-        "harness-testkit/src/test/java/io/jharness/testkit/M7WebTest.java"
+        "harness-policy/src/main/java/io/jharness/policy/InteractiveApprovalService.java",
+        "harness-policy/src/test/java/io/jharness/policy/R1ApprovalDeadlineTest.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/M7WebTest.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/R1WebOwnershipTest.java",
+        "harness-web/src/main/java/io/jharness/web/HarnessWebServer.java"
       ],
       "tests": [
+        "io.jharness.policy.R1ApprovalDeadlineTest#acceptedAnswerSurvivesOwnerDelayedBeyondDeadline",
+        "io.jharness.policy.R1ApprovalDeadlineTest#cancellationStillWinsOverAcceptedAnswerBeforeOwnerReadsIt",
+        "io.jharness.policy.R1ApprovalDeadlineTest#closeStillWinsOverAcceptedAnswerBeforeOwnerReadsIt",
+        "io.jharness.policy.R1ApprovalDeadlineTest#expiredAnswerAndOwnerContendOnPendingMonitorAndBothDeny",
+        "io.jharness.testkit.M7WebTest#cancellationRevokesPendingApprovalAndDoesNotWrite",
         "io.jharness.testkit.M7WebTest#denialAndApprovalTimeoutNeverEnterWriteBody",
-        "io.jharness.testkit.M7WebTest#cancellationRevokesPendingApprovalAndDoesNotWrite"
+        "io.jharness.testkit.R1WebOwnershipTest#approvalAcceptedBeforeDeadlineSurvivesOwnerResumingAfterDeadline",
+        "io.jharness.testkit.R1WebOwnershipTest#expiredApprovalPostAndOwnerContendAtSameBarrierAndBothDeny"
       ],
       "limitations": [
-        "尚无超时边界POST/owner同屏障竞态专项测试。"
-      ]
+        "本机确定性故障注入及实际本地资源测试，不代表远端三平台CI或任意敌对OS资源隔离。"
+      ],
+      "faultWindowVerification": {
+        "date": "2026-10-22",
+        "runId": "r1-20261022-fault18-b",
+        "tests": [
+          "io.jharness.testkit.R1WebOwnershipTest#approvalAcceptedBeforeDeadlineSurvivesOwnerResumingAfterDeadline",
+          "io.jharness.testkit.R1WebOwnershipTest#expiredApprovalPostAndOwnerContendAtSameBarrierAndBothDeny",
+          "io.jharness.policy.R1ApprovalDeadlineTest#acceptedAnswerSurvivesOwnerDelayedBeyondDeadline",
+          "io.jharness.policy.R1ApprovalDeadlineTest#cancellationStillWinsOverAcceptedAnswerBeforeOwnerReadsIt",
+          "io.jharness.policy.R1ApprovalDeadlineTest#closeStillWinsOverAcceptedAnswerBeforeOwnerReadsIt",
+          "io.jharness.policy.R1ApprovalDeadlineTest#expiredAnswerAndOwnerContendOnPendingMonitorAndBothDeny"
+        ],
+        "evidence": "真实HTTP/交互审批在共同monitor上跨截止竞争，准时接受跨截止保留、过期双方拒绝，取消/关闭继续优先。补测修复两入口owner延迟误判超时。"
+      }
     },
     {
       "id": "OCR-1159",
@@ -4056,44 +4249,37 @@
       ]
     }
   ],
-  "updatedAt": "2026-10-21T12:22:11.082719+00:00",
+  "updatedAt": "2026-10-22T03:39:12.646871+00:00",
   "validation": {
-    "rawResults": ".build-cache/R1/final-f/results.json",
-    "supplementalResults": ".build-cache/R1/final-f-supplemental/results.json",
-    "summary": "docs/testing/OCR-R1-2026-10-21-results.json",
-    "scope": "Source review plus exact linked passing local regressions. LOCAL_PARTIAL retains explicit unexercised fault windows; no remote CI, native POSIX, Firefox or paid evaluation pass is claimed.",
-    "neighborResults": ".build-cache/R1/final-f-neighbors/results.json",
-    "browserResults": ".build-cache/R1/final-f-browser-verified.json"
+    "rawResults": ".build-cache/R1/fault18-b/results.json",
+    "supplementalResults": ".build-cache/R1/fault18-b-supplemental-retry/results.json",
+    "summary": "docs/testing/OCR-R1-fault18-2026-10-22-results.json",
+    "scope": "Fresh full Java/client/gate and native/Docker receipts. All 18 previously limited exact fault-window tests passed. No new browser/SDK/release/remote CI claim.",
+    "historicalSummary": "docs/testing/OCR-R1-2026-10-21-results.json"
   },
   "counts": {
     "total": 237,
     "byStatus": {
-      "IMPLEMENTED_LOCAL_VALIDATED": 219,
-      "LOCAL_PARTIAL": 18
+      "IMPLEMENTED_LOCAL_VALIDATED": 237
     },
     "byTask": {
       "R1-01": {
         "IMPLEMENTED_LOCAL_VALIDATED": 30
       },
       "R1-02": {
-        "IMPLEMENTED_LOCAL_VALIDATED": 52,
-        "LOCAL_PARTIAL": 4
+        "IMPLEMENTED_LOCAL_VALIDATED": 56
       },
       "R1-03": {
-        "IMPLEMENTED_LOCAL_VALIDATED": 26,
-        "LOCAL_PARTIAL": 4
+        "IMPLEMENTED_LOCAL_VALIDATED": 30
       },
       "R1-04": {
-        "IMPLEMENTED_LOCAL_VALIDATED": 66,
-        "LOCAL_PARTIAL": 6
+        "IMPLEMENTED_LOCAL_VALIDATED": 72
       },
       "R1-05": {
-        "IMPLEMENTED_LOCAL_VALIDATED": 19,
-        "LOCAL_PARTIAL": 3
+        "IMPLEMENTED_LOCAL_VALIDATED": 22
       },
       "R1-06": {
-        "IMPLEMENTED_LOCAL_VALIDATED": 19,
-        "LOCAL_PARTIAL": 1
+        "IMPLEMENTED_LOCAL_VALIDATED": 20
       },
       "R1-07": {
         "IMPLEMENTED_LOCAL_VALIDATED": 7

@@ -115,14 +115,17 @@ class PolicyApprovalTest {
                     assertThrows(ExecutionException.class, () -> future.get(2, TimeUnit.SECONDS));
             assertEquals("CANCELLED", ((HarnessException) error.getCause()).code());
             assertFalse(approvals.answer(prompt.id(), true, "stale", "user"));
+            assertTrue(approvals.prompts().isEmpty());
         }
-        try (var approvals = new InteractiveApprovalService(Duration.ofMillis(30))) {
-            assertFalse(
-                    approvals
-                            .decide(
-                                    command(Map.of("argv", List.of("rm", "x"))),
-                                    new ToolContext(scope, CancellationToken.NONE))
-                            .approved());
+        try (var approvals = new InteractiveApprovalService(Duration.ofMillis(150))) {
+            var timedOut =
+                    approvals.decide(
+                            command(Map.of("argv", List.of("rm", "x"))),
+                            new ToolContext(scope, CancellationToken.NONE));
+            assertFalse(timedOut.approved());
+            assertEquals("Approval timed out", timedOut.reason());
+            assertEquals("system", timedOut.actor());
+            assertTrue(approvals.prompts().isEmpty());
         }
         var closed = new InteractiveApprovalService(Duration.ofSeconds(1));
         closed.close();

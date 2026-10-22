@@ -19,7 +19,12 @@ public final class StdioMcpTransport implements McpTransport {
     private final AtomicBoolean closed = new AtomicBoolean();
 
     public StdioMcpTransport(List<String> command, Path cwd, Duration timeout) throws IOException {
-        this.timeout = McpIo.bounded(timeout);
+        this(() -> start(command, cwd, timeout), timeout);
+    }
+
+    private static Process start(List<String> command, Path cwd, Duration timeout)
+            throws IOException {
+        McpIo.bounded(timeout);
         if (command.isEmpty()
                 || command.size() > 256
                 || command.stream().mapToInt(String::length).sum() > 32768)
@@ -27,7 +32,24 @@ public final class StdioMcpTransport implements McpTransport {
         var builder = new ProcessBuilder(List.copyOf(command)).directory(cwd.toRealPath().toFile());
         builder.environment().clear();
         builder.environment().putAll(LocalProcessRunner.buildEnvironment());
-        process = builder.start();
+        return builder.start();
+    }
+
+    /** Package-local ownership seam: exercises post-start failure without exhausting the JVM. */
+    StdioMcpTransport(Process started, Duration timeout) throws IOException {
+        this(() -> Objects.requireNonNull(started), timeout);
+    }
+
+    @FunctionalInterface
+    private interface ProcessStarter {
+        Process start() throws IOException;
+    }
+
+    private StdioMcpTransport(ProcessStarter starter, Duration timeout) throws IOException {
+        this.timeout = McpIo.bounded(timeout);
+        // Instance ownership state is initialized before the production starter can acquire
+        // an OS process. Constructor argument evaluation must not start that process early.
+        process = starter.start();
         try {
             input = new BufferedInputStream(process.getInputStream());
             output = process.getOutputStream();

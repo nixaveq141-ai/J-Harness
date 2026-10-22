@@ -589,7 +589,7 @@ class M1053TurnsTest {
                 sessions,
                 id,
                 "workspace",
-                "fixture failed before second SDK construction; no executor running; original resources inspected",
+                "fixture synthetic-secret failed before second SDK construction; no executor running; original resources inspected",
                 new SecretRedactor(List.of("synthetic-secret")));
         try (var host = host()) {
             assertEquals("VERIFIED", inputs(host, id).getFirst().get("state"));
@@ -597,9 +597,82 @@ class M1053TurnsTest {
             turn(host, id, "after-verification", "operator explicitly continues", "message");
             settled(host, id, 2);
         }
-        try (var files = Files.walk(root)) {
-            for (var path : files.filter(p -> p.toString().endsWith(".jsonl")).toList())
-                assertFalse(Files.readString(path).contains("synthetic-secret"));
+        var sanitizer = new SecretRedactor(List.of("synthetic-secret"));
+        var cliSessions = new JsonlSessionRepository(root.resolve(".jharness/sessions"));
+        try (var writer =
+                cliSessions.openWriter("maintenance-artifact", WriteOwnership.EXCLUSIVE)) {
+            writer.append(
+                    SessionEvent.session("maintenance-artifact", "session.created", Map.of()));
+            writer.flush();
         }
+        var store = new LocalArtifactStore(root.resolve(".jharness/artifacts"), sanitizer);
+        var artifact = store.put("maintenance-artifact", "persisted export synthetic-secret tail");
+        var stdout = new java.io.ByteArrayOutputStream();
+        var stderr = new java.io.ByteArrayOutputStream();
+        var cli =
+                new io.jharness.cli.CliApplication(Map.of("JHARNESS_API_KEY", "synthetic-secret"));
+        for (var command :
+                List.of(
+                        new String[] {
+                            "sessions",
+                            "archive",
+                            "--session",
+                            "maintenance-artifact",
+                            "--reason",
+                            "checked synthetic-secret"
+                        },
+                        new String[] {
+                            "sessions",
+                            "artifact",
+                            "--session",
+                            "maintenance-artifact",
+                            "--artifact",
+                            artifact.id()
+                        })) {
+            var argv = new ArrayList<>(List.of(command));
+            argv.addAll(List.of("--workspace", root.toString()));
+            assertEquals(
+                    0,
+                    cli.execute(
+                            argv.toArray(String[]::new),
+                            new java.io.ByteArrayInputStream(new byte[0]),
+                            new java.io.PrintStream(
+                                    stdout, true, java.nio.charset.StandardCharsets.UTF_8),
+                            new java.io.PrintStream(
+                                    stderr, true, java.nio.charset.StandardCharsets.UTF_8)),
+                    stderr.toString());
+        }
+        assertTrue(
+                stdout.toString(java.nio.charset.StandardCharsets.UTF_8)
+                        .contains("persisted export [REDACTED] tail"));
+        assertFalse(
+                stdout.toString(java.nio.charset.StandardCharsets.UTF_8)
+                        .contains("synthetic-secret"));
+        assertFalse(
+                stderr.toString(java.nio.charset.StandardCharsets.UTF_8)
+                        .contains("synthetic-secret"));
+        var archived =
+                cliSessions.openReader("maintenance-artifact").events().stream()
+                        .filter(e -> e.type().equals("session.archived"))
+                        .findFirst()
+                        .orElseThrow();
+        assertEquals("checked [REDACTED]", archived.payload().get("reason"));
+        boolean foundVerification = false, foundArtifact = false;
+        try (var files = Files.walk(root)) {
+            for (var path : files.filter(Files::isRegularFile).toList()) {
+                String persisted = Files.readString(path);
+                assertFalse(persisted.contains("synthetic-secret"), path.toString());
+                foundVerification |=
+                        persisted.contains(
+                                "fixture [REDACTED] failed before second SDK construction");
+                foundArtifact |=
+                        path.toString().endsWith(".txt")
+                                && persisted.equals("persisted export [REDACTED] tail");
+            }
+        }
+        assertTrue(
+                foundVerification,
+                "verification reason must have passed through the configured sanitizer");
+        assertTrue(foundArtifact, "the complete-tree check must include a real persisted artifact");
     }
 }

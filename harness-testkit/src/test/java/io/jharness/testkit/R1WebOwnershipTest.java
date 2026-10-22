@@ -32,6 +32,15 @@ class R1WebOwnershipTest {
 
     HarnessWebServer host(LlmClient model, SessionRepository repo, SessionRepository catalog)
             throws Exception {
+        return host(model, repo, catalog, Duration.ofSeconds(3));
+    }
+
+    HarnessWebServer host(
+            LlmClient model,
+            SessionRepository repo,
+            SessionRepository catalog,
+            Duration approvalTimeout)
+            throws Exception {
         Files.createDirectories(root.resolve("workspace"));
         return new HarnessWebServer(
                 0,
@@ -67,7 +76,7 @@ class R1WebOwnershipTest {
                 new SecretRedactor(),
                 1,
                 8,
-                Duration.ofSeconds(3));
+                approvalTimeout);
     }
 
     @Test
@@ -155,9 +164,14 @@ class R1WebOwnershipTest {
     }
 
     HttpResponse<String> request(HarnessWebServer host, String path, String body) throws Exception {
+        return request(host, path, body, Duration.ofSeconds(1));
+    }
+
+    HttpResponse<String> request(HarnessWebServer host, String path, String body, Duration timeout)
+            throws Exception {
         var b =
                 HttpRequest.newBuilder(host.address().resolve(path))
-                        .timeout(Duration.ofSeconds(1))
+                        .timeout(timeout)
                         .header("Authorization", "Bearer " + TOKEN);
         if (body != null)
             b.header("Content-Type", "application/json")
@@ -593,6 +607,165 @@ class R1WebOwnershipTest {
                             .statusCode());
         } finally {
             release.countDown();
+        }
+    }
+
+    // The owner token is an explicit barrier before the decision read; real HTTP POSTs
+    // still traverse authentication, task association, deadline checks and completion.
+    @Test
+    void approvalAcceptedBeforeDeadlineSurvivesOwnerResumingAfterDeadline() throws Exception {
+        approvalDeadlineRace(true);
+    }
+
+    @Test
+    void expiredApprovalPostAndOwnerContendAtSameBarrierAndBothDeny() throws Exception {
+        approvalDeadlineRace(false);
+    }
+
+    @SuppressWarnings("unchecked")
+    void approvalDeadlineRace(boolean acceptBeforeDeadline) throws Exception {
+        try (var host =
+                        host(
+                                new FakeLlm(List.of(), 8192),
+                                new JsonlSessionRepository(root.resolve("sessions")),
+                                new JsonlSessionRepository(root.resolve("catalog")),
+                                Duration.ofMillis(1500));
+                var pool = Executors.newVirtualThreadPerTaskExecutor()) {
+            Class<?> taskType = Class.forName(HarnessWebServer.class.getName() + "$Task");
+            var constructor =
+                    taskType.getDeclaredConstructor(
+                            String.class, String.class, String.class, String.class, String.class);
+            constructor.setAccessible(true);
+            Object task =
+                    constructor.newInstance(
+                            "race-task", "local", "0".repeat(64), "1".repeat(64), "workspace");
+            var tasksField = HarnessWebServer.class.getDeclaredField("tasks");
+            tasksField.setAccessible(true);
+            synchronized (host) {
+                ((Map<String, Object>) tasksField.get(host)).put("race-task", task);
+            }
+            var approve =
+                    HarnessWebServer.class.getDeclaredMethod(
+                            "approve", taskType, ToolInvocation.class, ToolContext.class);
+            approve.setAccessible(true);
+            var entered = new CountDownLatch(1);
+            var release = new CountDownLatch(1);
+            CancellationToken token =
+                    () -> {
+                        // approve checks cancellation only after publishing the pending approval.
+                        entered.countDown();
+                        try {
+                            if (!release.await(4, TimeUnit.SECONDS))
+                                throw new AssertionError("owner release timeout");
+                        } catch (InterruptedException ex) {
+                            Thread.currentThread().interrupt();
+                            throw new AssertionError(ex);
+                        }
+                        return false;
+                    };
+            var owner =
+                    pool.submit(
+                            () ->
+                                    (ApprovalService.ApprovalDecision)
+                                            approve.invoke(
+                                                    host,
+                                                    task,
+                                                    new ToolInvocation(
+                                                            "race-call",
+                                                            "write_file",
+                                                            Map.of("path", "x"),
+                                                            SideEffectLevel.WORKSPACE_WRITE),
+                                                    new ToolContext(
+                                                            new PluginScope("race-task", "agent"),
+                                                            token)));
+            try {
+                assertTrue(entered.await(2, TimeUnit.SECONDS));
+                var response = request(host, "/v1/tasks/race-task/approvals", null);
+                var body =
+                        new com.fasterxml.jackson.databind.ObjectMapper()
+                                .readValue(response.body(), Map.class);
+                var approvals = (List<Map<String, Object>>) body.get("approvals");
+                assertEquals(1, approvals.size());
+                String path =
+                        "/v1/tasks/race-task/approvals/" + approvals.getFirst().get("approvalId");
+                var approvalsField = taskType.getDeclaredField("approvals");
+                approvalsField.setAccessible(true);
+                Object pending;
+                synchronized (host) {
+                    pending = ((Map<?, ?>) approvalsField.get(task)).values().iterator().next();
+                }
+                var deadlineField = pending.getClass().getDeclaredField("deadline");
+                deadlineField.setAccessible(true);
+                long deadline = deadlineField.getLong(pending);
+                String decision =
+                        "{\"approved\":true,\"reason\":\"operator\",\"callId\":\"race-call\"}";
+                Future<HttpResponse<String>> posted = null;
+                if (acceptBeforeDeadline) {
+                    var accepted = request(host, path, decision);
+                    assertEquals(200, accepted.statusCode());
+                    assertTrue(accepted.body().contains("true"));
+                }
+                synchronized (host) {
+                    if (!acceptBeforeDeadline) {
+                        var postStarted = new CountDownLatch(1);
+                        posted =
+                                pool.submit(
+                                        () -> {
+                                            postStarted.countDown();
+                                            return request(
+                                                    host, path, decision, Duration.ofSeconds(4));
+                                        });
+                        assertTrue(postStarted.await(1, TimeUnit.SECONDS));
+                        release.countDown();
+                        var threads = java.lang.management.ManagementFactory.getThreadMXBean();
+                        long waitingUntil = System.nanoTime() + TimeUnit.SECONDS.toNanos(2);
+                        boolean httpBlocked = false;
+                        while (System.nanoTime() < waitingUntil && !httpBlocked) {
+                            httpBlocked =
+                                    Arrays.stream(threads.dumpAllThreads(false, false))
+                                            .anyMatch(
+                                                    info ->
+                                                            info.getThreadName()
+                                                                            .startsWith(
+                                                                                    "jharness-web-http")
+                                                                    && info.getThreadState()
+                                                                            == Thread.State.BLOCKED
+                                                                    && info.getLockInfo() != null
+                                                                    && info.getLockInfo()
+                                                                                    .getIdentityHashCode()
+                                                                            == System
+                                                                                    .identityHashCode(
+                                                                                            host));
+                            if (!httpBlocked) Thread.sleep(2);
+                        }
+                        assertTrue(
+                                httpBlocked,
+                                "HTTP handler must contend for the held server monitor");
+                    }
+                    // Both contenders cannot acquire the monitor until the deadline is past.
+                    while (System.nanoTime() <= deadline) Thread.sleep(2);
+                    if (acceptBeforeDeadline) release.countDown();
+                }
+                var outcome = owner.get(2, TimeUnit.SECONDS);
+                assertEquals(acceptBeforeDeadline, outcome.approved());
+                assertEquals(
+                        acceptBeforeDeadline ? "operator" : "Approval expired", outcome.reason());
+                assertEquals(acceptBeforeDeadline ? "web-operator" : "web-server", outcome.actor());
+                if (posted != null) {
+                    var rejected = posted.get(2, TimeUnit.SECONDS);
+                    assertEquals(409, rejected.statusCode());
+                    assertTrue(rejected.body().contains("STALE_APPROVAL"));
+                }
+                assertEquals(409, request(host, path, decision).statusCode());
+                var empty =
+                        new com.fasterxml.jackson.databind.ObjectMapper()
+                                .readValue(
+                                        request(host, "/v1/tasks/race-task/approvals", null).body(),
+                                        Map.class);
+                assertTrue(((List<?>) empty.get("approvals")).isEmpty());
+            } finally {
+                release.countDown();
+            }
         }
     }
 }

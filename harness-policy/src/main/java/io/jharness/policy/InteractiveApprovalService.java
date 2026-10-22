@@ -75,14 +75,24 @@ public final class InteractiveApprovalService implements ApprovalService, AutoCl
                 return new ApprovalDecision(false, "Approval interface closed", "system");
             pending.put(id, value);
         }
-        long start = System.nanoTime();
         try {
             while (true) {
                 context.cancellation().throwIfCancelled();
-                if (closed.get())
-                    return new ApprovalDecision(false, "Approval interface closed", "system");
-                if (System.nanoTime() - start >= timeout.toNanos())
-                    return new ApprovalDecision(false, "Approval timed out", "system");
+                synchronized (value) {
+                    context.cancellation().throwIfCancelled();
+                    if (closed.get())
+                        return new ApprovalDecision(false, "Approval interface closed", "system");
+                    // answer() and expiry settle once under the same pending monitor.
+                    // An answer accepted on time survives delayed owner scheduling.
+                    if (value.answer().isDone()) return value.answer().join();
+                    if (System.nanoTime() - value.deadline() >= 0) {
+                        value.answer()
+                                .complete(
+                                        new ApprovalDecision(
+                                                false, "Approval timed out", "system"));
+                        return value.answer().join();
+                    }
+                }
                 try {
                     var decision = value.answer().get(20, TimeUnit.MILLISECONDS);
                     synchronized (value) {
@@ -90,8 +100,6 @@ public final class InteractiveApprovalService implements ApprovalService, AutoCl
                         if (closed.get())
                             return new ApprovalDecision(
                                     false, "Approval interface closed", "system");
-                        if (System.nanoTime() - value.deadline() >= 0)
-                            return new ApprovalDecision(false, "Approval timed out", "system");
                         return decision;
                     }
                 } catch (TimeoutException ex) {

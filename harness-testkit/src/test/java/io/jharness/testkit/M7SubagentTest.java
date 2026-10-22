@@ -22,7 +22,7 @@ import org.junit.jupiter.api.io.TempDir;
 class M7SubagentTest {
     @TempDir Path base;
     private static final PluginScope PARENT = new PluginScope("parent", "default");
-    private JsonlSessionRepository repository;
+    private SessionRepository repository;
     private ArtifactStore artifacts;
 
     private void prepare() throws Exception {
@@ -616,12 +616,37 @@ class M7SubagentTest {
                                         "operator")));
             writer.flush();
         }
+        var failure = new AtomicBoolean(true);
+        var interruptedRepository =
+                failParentAppend(
+                        repository,
+                        event -> event.type().equals("tool.verified") && failure.getAndSet(false));
+        assertEquals(
+                "CHECKPOINT_FAILED",
+                assertThrows(
+                                HarnessException.class,
+                                () ->
+                                        SubagentPlugin.verify(
+                                                interruptedRepository,
+                                                "parent",
+                                                taskId,
+                                                "injected interruption between verification facts",
+                                                new SecretRedactor()))
+                        .code());
+        var partial = repository.openReader("parent").events();
+        assertEquals(1, partial.stream().filter(e -> e.type().equals("subagent.verified")).count());
+        assertEquals(0, partial.stream().filter(e -> e.type().equals("tool.verified")).count());
+        assertFalse(SessionRecovery.inspect(partial).ready());
         SubagentPlugin.verify(
                 repository,
                 "parent",
                 taskId,
                 "child writer released and pending request audited",
                 new SecretRedactor());
+        var verified = repository.openReader("parent").events();
+        assertEquals(
+                1, verified.stream().filter(e -> e.type().equals("subagent.verified")).count());
+        assertEquals(1, verified.stream().filter(e -> e.type().equals("tool.verified")).count());
         assertTrue(SessionRecovery.inspect(repository.openReader("parent").events()).ready());
         assertFalse(
                 repository.openReader("parent").events().stream()
@@ -1120,6 +1145,134 @@ class M7SubagentTest {
                                                             .equals(event.payload().get("state"))));
             assertEquals(2, child.requests().size());
         }
+    }
+
+    @Test
+    void cancellationPersistenceFailureStillCancelsChildSdk() throws Exception {
+        prepare();
+        var underlying = repository;
+        var injected = new AtomicInteger();
+        repository =
+                failParentAppend(
+                        underlying,
+                        event -> {
+                            if (!event.type().equals("subagent.cancel_requested")) return false;
+                            injected.incrementAndGet();
+                            return true;
+                        });
+        var entered = new CountDownLatch(1);
+        var observedCancellation = new CountDownLatch(1);
+        var release = new CountDownLatch(1);
+        var fake = readerModel();
+        LlmClient child =
+                new LlmClient() {
+                    public ModelCapabilities capabilities() {
+                        return fake.capabilities();
+                    }
+
+                    public PreparedRequest prepare(ChatRequest request) {
+                        return fake.prepare(request);
+                    }
+
+                    public ChatResponse complete(ChatRequest request, CancellationToken token) {
+                        entered.countDown();
+                        long deadline = System.nanoTime() + Duration.ofSeconds(5).toNanos();
+                        while (release.getCount() != 0 && System.nanoTime() < deadline) {
+                            if (token.isCancelled()) {
+                                observedCancellation.countDown();
+                                token.throwIfCancelled();
+                            }
+                            java.util.concurrent.locks.LockSupport.parkNanos(
+                                    TimeUnit.MILLISECONDS.toNanos(1));
+                        }
+                        return done();
+                    }
+
+                    public StreamHandle stream(ChatRequest request, CancellationToken token) {
+                        throw new AssertionError("non-streaming child");
+                    }
+                };
+        var capture = new Capture();
+        var plugin = new SubagentPlugin(Map.of("inspect", profile(() -> child)), 1, 2);
+        try (var sdk =
+                sdk(
+                        new FakeLlm(List.of(), 32768),
+                        plugin,
+                        M7EcosystemFixture.approve(),
+                        parentBudget(),
+                        ApiCostGuard.unavailable(),
+                        notComplete(),
+                        List.of(capture))) {
+            assertEquals(TaskStatus.CREATED, sdk.snapshot().status());
+            var parent =
+                    CompletableFuture.supplyAsync(
+                            () -> capture.delegate("read", CancellationToken.NONE));
+            assertTrue(entered.await(3, TimeUnit.SECONDS));
+            String task = (String) capture.service.tasks().getFirst().get("taskId");
+            var error = assertThrows(HarnessException.class, () -> capture.service.cancel(task));
+            assertEquals("CHECKPOINT_FAILED", error.code());
+            // The shared task CAS alone can cancel the model. Inspect the independent SDK flag
+            // as well, so removing the finally sdk.cancel() would make this regression fail.
+            var tasksField = SubagentPlugin.class.getDeclaredField("tasks");
+            tasksField.setAccessible(true);
+            Object childTask = ((Map<?, ?>) tasksField.get(plugin)).get(task);
+            var sdkField = childTask.getClass().getDeclaredField("sdk");
+            sdkField.setAccessible(true);
+            var cancelledField = HarnessSdk.class.getDeclaredField("cancelled");
+            cancelledField.setAccessible(true);
+            assertTrue(((AtomicBoolean) cancelledField.get(sdkField.get(childTask))).get());
+            assertTrue(
+                    observedCancellation.await(3, TimeUnit.SECONDS),
+                    "SDK cancellation must survive append failure");
+            assertTrue(injected.get() >= 1);
+            assertNotEquals(ToolStatus.SUCCESS, parent.get(5, TimeUnit.SECONDS).status());
+            assertFalse(
+                    underlying.openReader("parent").events().stream()
+                            .anyMatch(e -> e.type().equals("subagent.cancel_requested")));
+        } finally {
+            release.countDown();
+        }
+    }
+
+    private static SessionRepository failParentAppend(
+            SessionRepository delegate, java.util.function.Predicate<SessionEvent> reject) {
+        return new SessionRepository() {
+            public SessionWriter openWriter(String id, WriteOwnership ownership) {
+                var writer = delegate.openWriter(id, ownership);
+                return new SessionWriter() {
+                    public boolean durable() {
+                        return writer.durable();
+                    }
+
+                    public String append(SessionEvent event) {
+                        if (id.equals("parent") && reject.test(event))
+                            throw new HarnessException(
+                                    "CHECKPOINT_FAILED", "injected physical append boundary");
+                        return writer.append(event);
+                    }
+
+                    public void flush() {
+                        writer.flush();
+                    }
+
+                    public void close() {
+                        writer.close();
+                    }
+                };
+            }
+
+            public SessionReader openReader(String id) {
+                return delegate.openReader(id);
+            }
+
+            public List<String> list() {
+                return delegate.list();
+            }
+
+            public String fork(String id, String event) {
+                return delegate.fork(id, event);
+            }
+        };
     }
 
     private static final class BlockingModel implements LlmClient {

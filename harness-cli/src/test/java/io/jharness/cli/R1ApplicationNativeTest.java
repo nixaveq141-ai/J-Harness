@@ -143,4 +143,86 @@ class R1ApplicationNativeTest {
                 CredentialStoreProbe.failureCode(
                         new java.io.IOException("synthetic-secret-native-error")));
     }
+
+    @Test
+    void awsAliasesAreRedactedByClassicCliAndRejectedByEcosystemAssembly() throws Exception {
+        for (String alias :
+                List.of("AWS_SECRET_ACCESS_KEY", "AWS_ACCESS_KEY_ID", "AWS_CREDENTIALS")) {
+            String secret = "synthetic-aws-" + alias.toLowerCase(Locale.ROOT);
+            var environment = Map.of(alias, secret);
+            var output = new java.io.ByteArrayOutputStream();
+            var errors = new java.io.ByteArrayOutputStream();
+            int code =
+                    new CliApplication(environment)
+                            .execute(
+                                    new String[] {
+                                        "config",
+                                        "set",
+                                        "model",
+                                        secret,
+                                        "--workspace",
+                                        root.toString()
+                                    },
+                                    new java.io.ByteArrayInputStream(new byte[0]),
+                                    new java.io.PrintStream(output),
+                                    new java.io.PrintStream(errors));
+            assertEquals(5, code, errors.toString());
+            assertTrue(errors.toString().contains("SECRET_CONFIG"));
+            assertFalse(output.toString().contains(secret));
+            assertFalse(errors.toString().contains(secret));
+            assertEquals(
+                    "SECRET_CONFIG",
+                    assertThrows(
+                                    HarnessException.class,
+                                    () ->
+                                            new EcosystemCli(
+                                                    new CliConfig(Map.of("model", secret)),
+                                                    environment,
+                                                    root,
+                                                    new Metadata(root)))
+                            .code());
+        }
+    }
+
+    @Test
+    void mcpUserInfoAndFragmentsAreRejectedBeforeAnyConnection() {
+        for (String url :
+                List.of(
+                        "https://user:synthetic-password@localhost/mcp",
+                        "https://localhost/mcp#synthetic-fragment")) {
+            assertThrows(
+                    HarnessException.class,
+                    () ->
+                            new CliConfig(
+                                    Map.of(
+                                            "ecosystem",
+                                            Map.of(
+                                                    "mcp",
+                                                    List.of(
+                                                            Map.of(
+                                                                    "id",
+                                                                    "fixture",
+                                                                    "transport",
+                                                                    "http",
+                                                                    "url",
+                                                                    url))))));
+        }
+        assertDoesNotThrow(
+                () ->
+                        new CliConfig(
+                                Map.of(
+                                        "ecosystem",
+                                        Map.of(
+                                                "mcp",
+                                                List.of(
+                                                        Map.of(
+                                                                "id",
+                                                                "fixture",
+                                                                "transport",
+                                                                "http",
+                                                                "url",
+                                                                "https://localhost/mcp",
+                                                                "tokenEnv",
+                                                                "MCP_FIXTURE"))))));
+    }
 }

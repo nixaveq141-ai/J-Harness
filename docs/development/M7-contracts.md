@@ -164,3 +164,6 @@ Workflow、PTC、Goal/Schedule、LSP、自动只读工具并行与通用重试/�
 
 
 M10.5.3 SDK增量（2026-10-17）：兼容原run(goal,cancellation)，新增携带requestHash/kind的公共重载，先记录sdk.input.applied与userEventId再开始新Loop；不直接改变运行轮次，日志前缀仍可重建。归档判断采用最新archived/restored事实，使已恢复会话可续轮。实际多轮/恢复验收见M10.5.3-contracts.md及对应记录。
+
+
+R1 定点补验修订（2026-10-22）：Web 审批 POST 与 owner 的到期判断在共同服务端监视器内单次结算。截止前已接受的决定允许 owner 在截止后读取；截止后到达的 POST 不得报告 accepted。取消及关闭仍阻止执行。测试覆盖真实 HTTP 在同一监视器阻塞后跨截止释放，不把客户端请求已发出当作服务端已经接受。子任务核实在 subagent.verified 已落盘、tool.verified 未落盘时允许重入仅补后者，仍要求双 writer 空闲与子日志已结算，不重放工具。

@@ -232,4 +232,55 @@ class R1ApplicationEvidenceTest {
                                         1)));
         assertEquals("CHANGE_EVIDENCE_INVALID:a.txt", result(e, f).reason());
     }
+
+    @Test
+    void missingStatusReadAndWriteCannotAuthorizeCompletion() throws Exception {
+        Files.writeString(root.resolve("a.txt"), "actual");
+        String version = new LocalWorkspace(root).versionOf(new ExecPath("a.txt"));
+        var read =
+                EvidenceCompletionTest.fact(
+                        "t",
+                        "tool.completed",
+                        "read-missing-status",
+                        Map.of("tool", "read_file", "value", Map.of("path", "a.txt")));
+        var write =
+                EvidenceCompletionTest.fact(
+                        "t",
+                        "tool.completed",
+                        "write-missing-status",
+                        Map.of(
+                                "tool",
+                                "write_file",
+                                "sideEffectLevel",
+                                "WORKSPACE_WRITE",
+                                "display",
+                                Map.of(
+                                        "path",
+                                        "a.txt",
+                                        "beforeVersion",
+                                        "old",
+                                        "afterVersion",
+                                        version)));
+        assertEquals(
+                "READ_EVIDENCE_MISSING:a.txt",
+                result(evaluator("--require-read", "a.txt"), read).reason());
+        assertEquals(
+                "CHANGE_EVIDENCE_MISSING:a.txt",
+                result(evaluator("--expect-file", "a.txt"), write).reason());
+        var successfulPayload = new HashMap<String, Object>(write.payload());
+        successfulPayload.put("status", "SUCCESS");
+        var acceptedWrite =
+                new SessionEvent(
+                        write.eventId(),
+                        write.sessionId(),
+                        write.type(),
+                        write.timestamp(),
+                        write.schemaVersion(),
+                        write.level(),
+                        write.turnId(),
+                        write.stepId(),
+                        write.callId(),
+                        successfulPayload);
+        assertTrue(result(evaluator("--expect-file", "a.txt"), acceptedWrite).achieved());
+    }
 }

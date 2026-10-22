@@ -2190,18 +2190,25 @@ public final class HarnessWebServer implements AutoCloseable {
         }
         long end = pending.deadline;
         try {
-            while (System.nanoTime() < end) {
+            while (true) {
                 context.cancellation().throwIfCancelled();
                 synchronized (this) {
                     if (closed || task.cancelled) break;
+                    if (context.cancellation().isCancelled()) break;
+                    // POST and expiry linearize under the same monitor. A decision accepted
+                    // before the deadline must survive a delayed owner waking after it.
+                    if (pending.decision.isDone()) return pending.decision.join();
+                    if (System.nanoTime() >= end) {
+                        pending.decision.complete(
+                                new ApprovalService.ApprovalDecision(
+                                        false, "Approval expired", "web-server"));
+                        return pending.decision.join();
+                    }
                 }
                 try {
                     var answer = pending.decision.get(20, TimeUnit.MILLISECONDS);
                     synchronized (this) {
-                        if (closed
-                                || task.cancelled
-                                || context.cancellation().isCancelled()
-                                || System.nanoTime() >= end) break;
+                        if (closed || task.cancelled || context.cancellation().isCancelled()) break;
                         return answer;
                     }
                 } catch (TimeoutException ignored) {

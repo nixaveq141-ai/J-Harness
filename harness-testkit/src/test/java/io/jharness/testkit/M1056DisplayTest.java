@@ -153,7 +153,21 @@ class M1056DisplayTest {
             assertEquals(
                     "Visible prefix " + "-".repeat(64) + "[REDACTED] tail",
                     assistant.payload().get("content"));
-            assertNotNull(sdk.content());
+            // Persist the actual final answer as a delivery artifact, then read it through the
+            // SDK's scoped inspection service; a non-null service alone proves no content property.
+            String finalText = (String) assistant.payload().get("content");
+            var store =
+                    new LocalArtifactStore(
+                            root.resolve("artifacts"), new SecretRedactor(List.of(SECRET)));
+            var artifact = store.put("display", finalText);
+            var page =
+                    sdk.content().artifact("display", artifact.id(), 0, "", CancellationToken.NONE);
+            assertEquals(finalText, page.get("text"));
+            assertEquals(ContentPages.sha(finalText), page.get("contentSha256"));
+            assertEquals(finalText, store.readText("display", artifact.id()));
+            assertFalse(page.toString().contains(SECRET));
+            assertFalse(page.toString().contains(SECRET.substring(0, 8)));
+            assertFalse(finalText.contains(SECRET.substring(0, 8)));
         }
     }
 

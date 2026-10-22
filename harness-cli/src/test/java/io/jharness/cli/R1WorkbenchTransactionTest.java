@@ -130,4 +130,33 @@ class R1WorkbenchTransactionTest {
                 "synthetic-original-secret",
                 manager(vault).runtime().environment().get("JHARNESS_UI_API_KEY"));
     }
+
+    @Test
+    void repeatedSavesReuseRedactorUntilASecretIsAddedIncludingFailedRotation() throws Exception {
+        var vault = new Vault();
+        var settings = manager(vault);
+        String original = "synthetic-repeated-save-original",
+                replacement = "synthetic-failed-rotation-new";
+        settings.save(input(settings, original));
+        var field = WorkbenchSettings.class.getDeclaredField("redactor");
+        field.setAccessible(true);
+        Object first = field.get(settings);
+        for (int i = 0; i < 5; i++) {
+            settings.save(input(settings, original));
+            assertSame(
+                    first,
+                    field.get(settings),
+                    "unchanged secret set must reuse the immutable redactor");
+        }
+        vault.failWrite = true;
+        assertThrows(IOException.class, () -> settings.save(input(settings, replacement)));
+        Object changed = field.get(settings);
+        assertNotSame(first, changed);
+        assertEquals(
+                "[REDACTED] [REDACTED]",
+                settings.sanitize(Map.of("value", original + " " + replacement)).get("value"));
+        assertThrows(IOException.class, () -> settings.save(input(settings, replacement)));
+        assertSame(changed, field.get(settings), "failed-input registration is deduplicated too");
+        assertEquals(Set.of(original), new HashSet<>(vault.values.values()));
+    }
 }

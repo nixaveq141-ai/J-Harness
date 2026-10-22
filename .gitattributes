@@ -37,3 +37,4 @@ scripts/contracts/*.json text eol=lf
 scripts/*.ps1 text eol=lf
 LICENSE text eol=lf
 NOTICE text eol=lf
+docs/testing/OCR-R1-fault18-2026-10-22-results.json -text

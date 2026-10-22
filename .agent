@@ -1,8 +1,10 @@
 # J-Harness 项目接续说明
 
-最后更新：2026-10-21（Asia/Shanghai）。根目录 AGENTS.md 引用本文件。开始实现前阅读，并以当前源码、Git 与验收记录核实日期快照。
+最后更新：2026-10-22（Asia/Shanghai）。根目录 AGENTS.md 引用本文件。开始实现前阅读，并以当前源码、Git 与验收记录核实日期快照。
 
 ## 当前接续状态
+
+- 2026-10-22按用户要求补测R1前轮18条LOCAL_PARTIAL：新增20项并强化4项JUnit，18条精确故障窗口均通过，当前237条本地验证/0条局部验证。补测发现并修复Web及交互审批准时接受后owner延迟跨截止误判超时；取消/关闭仍优先，资源故障注入入口保持字段初始化后才启动进程。最终b同运行563Java/85suites、165门禁/33客户端及Windows原生/兼容、实际Docker子任务与Web专项通过；回执、源码/JAR及逐条身份独立核对，报告OCR-R1-fault18-2026-10-22.md和新results保留。前轮历史JSON不改，首轮失败不计通过；本轮未重跑浏览器/SDK/完整发布或远端CI/原生POSIX，M10.5.9仍LOCAL_PARTIAL_CI_PENDING/m11Eligible=false，R2～R6和原R0后续项保持。仅本地提交，无推送/发布/付费调用；用户原有.agent扫描段及background-R0.md不纳入。
 
 - 2026-10-21按用户要求落实R1七工作包237条原采纳范围（113采纳/124部分采纳）；逐项台账219条本地验证、18条LOCAL_PARTIAL（精确故障窗口有限，未冒称全动态复现）。同F运行clean verify的543Java/81suites（保留原410）、165门禁/33客户端、Chrome/WebKit各271共542、SDK58/示例2/启动器8及Windows原生7/兼容4+父清理、真实Docker子任务与Web专项通过；主/补充/浏览器回执同源码新JAR独立复核。151份暂存源码字节与执行字节相同，失败日志及D临时目录占用后无残留核实保留；历史审查/验收JSON不改。开发报告OCR-R1-remediation-2026-10-21.md、实施台账与OCR-R1-2026-10-21-results.json已更新。18条定点补验及R2～R6仍明确保留；M10.5.9保持LOCAL_PARTIAL_CI_PENDING/m11Eligible=false，远端CI/原生POSIX/Firefox/完整发布smoke未运行。仅本地提交，无推送/发布/付费请求；用户原有.agent扫描段/background-R0.md及忽略缓存保持。
 

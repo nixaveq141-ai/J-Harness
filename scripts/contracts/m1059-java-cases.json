@@ -115,6 +115,7 @@
         "latestExecutedVerificationMustPass",
         "malformedAfterVersionIsNegativeWithoutCrashing",
         "malformedChangesAreNegativeWithoutCrashing",
+        "missingStatusReadAndWriteCannotAuthorizeCompletion",
         "nullableForeignExitCodeIsNegativeEvidence",
         "readEvidenceNormalizesBothSidesAndRejectsUnknown"
       ]
@@ -123,8 +124,10 @@
       "module": "harness-cli",
       "name": "io.jharness.cli.R1ApplicationNativeTest",
       "cases": [
+        "awsAliasesAreRedactedByClassicCliAndRejectedByEcosystemAssembly",
         "conflictingAndOversizedBatchesNeverReachVault",
         "credentialsAliasesAreRedactedInWorkbenchAndFailedInputsRemainRegistered",
+        "mcpUserInfoAndFragmentsAreRejectedBeforeAnyConnection",
         "nativeProbeReportsOnlyFixedSafeFailureCategories",
         "reportRedactsBeforeTruncationWithoutLeakingKnownSecretPrefix",
         "resourceCloseFailureCannotSkipOtherResourcesAndPreservesSuppressed",
@@ -174,7 +177,8 @@
         "failedFileCommitCompensatesOnlyNewCredentialAndRedactsFailedInput",
         "failedRotationPreservesDiskAndOriginalCredentialAcrossRestart",
         "invalidSaveLeavesExistingDiskRuntimeAndVaultUntouched",
-        "obsoleteCredentialCleanupSurvivesRestartAndResetsPending"
+        "obsoleteCredentialCleanupSurvivesRestartAndResetsPending",
+        "repeatedSavesReuseRedactorUntilASecretIsAddedIncludingFailedRotation"
       ]
     },
     {
@@ -231,6 +235,18 @@
         "skillScanDeadlineIsDistinctFromUserCancellation",
         "uncertainCommandNeverReportsRemovedWhenRemovalFailed",
         "workerUncertaintyNormalizesPublicStatusButKeepsExitEvidence"
+      ]
+    },
+    {
+      "module": "harness-ecosystem",
+      "name": "io.jharness.ecosystem.R1RemainingOwnershipFaultTest",
+      "cases": [
+        "environmentDoubleCloseFailureRevokesFilesAndPreservesBothCauses",
+        "postStartFatalFailureKeepsCleanupUncertaintyAsSuppressed",
+        "postStartInitializationErrorReapsActualOwnedChildAndRethrowsSameError",
+        "stdioCloseReportsSamplingOverflowAndStopsEveryRetainedHandle",
+        "webResponseArrivingAfterFailedCancellationIsClosedByLateCallback",
+        "webResponseReceivedBeforeCancellationAndNeverHandedOffIsClosed"
       ]
     },
     {
@@ -359,6 +375,16 @@
       ]
     },
     {
+      "module": "harness-policy",
+      "name": "io.jharness.policy.R1ApprovalDeadlineTest",
+      "cases": [
+        "acceptedAnswerSurvivesOwnerDelayedBeyondDeadline",
+        "cancellationStillWinsOverAcceptedAnswerBeforeOwnerReadsIt",
+        "closeStillWinsOverAcceptedAnswerBeforeOwnerReadsIt",
+        "expiredAnswerAndOwnerContendOnPendingMonitorAndBothDeny"
+      ]
+    },
+    {
       "module": "harness-process",
       "name": "io.jharness.process.LocalPlanPreviewerTest",
       "cases": [
@@ -420,6 +446,14 @@
         "staleProcessIdentityIsRejectedBeforeSendingCancellation",
         "terminalSecretChunksRotateWithStableSanitizedOffsetsAndKeepNormalFinalTail",
         "terminalSuppressesKnownSecretPrefixAtEofWithoutDroppingOrdinaryTail"
+      ]
+    },
+    {
+      "module": "harness-process",
+      "name": "io.jharness.process.R1RemainingProcessFaultTest",
+      "cases": [
+        "cleanupSleepInterruptionStillKillsOwnedChildAndRestoresInterrupt",
+        "exceptionalStdinFutureStopsLiveChildAndRejectsSecondWrite"
       ]
     },
     {
@@ -819,6 +853,7 @@
       "module": "harness-testkit",
       "name": "io.jharness.testkit.M7SubagentTest",
       "cases": [
+        "cancellationPersistenceFailureStillCancelsChildSdk",
         "concurrencyQuotaAndTaskQuotaDoNotLaunchExtraModels",
         "explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[10]",
         "explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[1]",
@@ -946,9 +981,11 @@
       "module": "harness-testkit",
       "name": "io.jharness.testkit.R1WebOwnershipTest",
       "cases": [
+        "approvalAcceptedBeforeDeadlineSurvivesOwnerResumingAfterDeadline",
         "closeRetainsCatalogOwnershipUntilUncooperativeWorkerActuallyLeaves",
         "concurrentProfileRegistrationAndInfoReadReturnCompleteSafeSnapshots",
         "displaySnapshotFailureStillClosesSdkAndPreservesUnknownOwnership",
+        "expiredApprovalPostAndOwnerContendAtSameBarrierAndBothDeny",
         "failedQueuePauseNotifiesWaitersAndCannotReleaseUncertainTask",
         "slowHistoryReconciliationCannotBlockUnrelatedRequestsOrOwnServerMonitor",
         "slowSettingsBodyCannotOwnServerLockOrBlockUnrelatedRequests",
@@ -964,6 +1001,13 @@
         "fakeLlmCapturesRequestsHonorsCancellationAndFailsWhenExhausted",
         "temporaryProjectHasMavenFilesAndCleansOnlyItsOwnedDirectory",
         "toolRegistryIsolationDuplicatesAndOldHandleCannotRemoveNewRegistration"
+      ]
+    },
+    {
+      "module": "harness-testkit",
+      "name": "io.jharness.web.R1CatalogScanBoundaryTest",
+      "cases": [
+        "flatTenThousandRecordScanIsBoundedAndDoesNotHoldCatalogMonitor"
       ]
     },
     {

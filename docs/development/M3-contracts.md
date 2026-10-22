@@ -71,3 +71,6 @@ discover 最多列举 1,000 个状态 ID，包括已退出记录；保留/轮转
 LocalPlanPreviewer 仅读取明确 write_file/edit_file 目标，返回 path、beforeVersion、Diff 估计、truncated、executed=false。版本与匹配数冲突拒绝；预览期间版本变化拒绝。预览不替代真正执行时的版本守护、策略、审批和检查点。UTF-8 BOM/换行保留规则仍由真实文件服务提交，Diff 是文本估计；长 Diff 最多 8,192 字符并标记截断。
 
 所有命令和未支持工具返回 previewable=false、executed=false、明确“无法预览”，包括 Shell 重定向与子进程调用，绝不把无法推断解释为“无变更”。M4 将此服务接入 --dry-run 和计划展示。
+
+
+R1 定点补验修订（2026-10-22）：交互审批的及时性以共同 pending 监视器内接受回答的时刻为准。已在截止前接受的回答，不因等待者延迟读取跨过截止而变为超时；到期与回答只结算一次。取消和关闭在等待者采用结果前仍优先，均撤销待决提示。该规则不授予额外工具权限。
