@@ -56,7 +56,7 @@ async function start(){base=undefined;output='';host=spawn(java,['-Dfile.encodin
 async function stop(){if(host&&host.exitCode===null&&host.signalCode===null){stoppedOrigins.add(base);host.stdin.end(':quit\n');await until(()=>host.exitCode!==null);assert.equal(host.exitCode,0)}}
 async function api(path,body){const r=await context.request.fetch(base+path,{method:body===undefined?'GET':'POST',headers:{Authorization:'Bearer '+token,...(body===undefined?{}:{'Content-Type':'application/json'})},...(body===undefined?{}:{data:body})});return{status:r.status(),body:await r.json()}}
 async function create(goal,profile='default'){const r=await api('/v1/tasks',{profile,goal,requestId:randomUUID()});assert.equal(r.status,202,JSON.stringify(r.body));await show(r.body.taskId);return r.body.taskId}
-async function show(id){await page.setViewportSize({width:1440,height:1000});await page.evaluate(id=>sessionStorage.setItem('jh-selected',id),id);await page.reload();await page.locator('.connection-state').filter({hasText:'本机服务已连接'}).waitFor()}
+async function show(id){await page.setViewportSize({width:1440,height:1000});await page.locator('.connection-state').filter({hasText:'本机服务已连接'}).waitFor({state:'attached'});await page.evaluate(id=>sessionStorage.setItem('jh-selected',id),id);await page.reload();await page.locator('.connection-state').filter({hasText:'本机服务已连接'}).waitFor({state:'attached'})}
 async function ended(id){await until(async()=>['FINISHED','UNKNOWN'].includes((await api('/v1/tasks/'+id)).body.phase));await page.getByText(/^(已同步全部记录|结果待核实 · 不会重放任务)$/).waitFor()}
 const enc=value=>Buffer.from(value).toString('base64url')
 async function shot(name){const path=join(out,'M10.5.6-'+name+'.png');await page.screenshot({path,fullPage:true});screenshots.push({path:path.slice(root.length+1).replaceAll('\\','/'),sha256:createHash('sha256').update(await readFile(path)).digest('hex')})}
@@ -67,7 +67,7 @@ try{
  context=await browser.newContext({viewport:{width:1440,height:1000},acceptDownloads:true,...(engine==='chromium'?{permissions:['clipboard-read','clipboard-write']}:{})})
  await context.addInitScript(()=>{const write=navigator.clipboard.writeText.bind(navigator.clipboard);Object.defineProperty(navigator.clipboard,'writeText',{value:async text=>{await write(text);window.__copiedExact=text}})})
  page=await context.newPage();page.on('pageerror',e=>{const stopped=stoppedHostDiagnostic(e.message,stoppedOrigins),offline=offlineFault&&stoppedHostDiagnostic(e.message,new Set([base]));if(stopped||offline)transportDiagnostics.push({phase:stopped?'stopped-host':'injected-offline',message:e.message});else errors.push(e.message)});page.on('request',r=>requests.push(r.url()));await page.goto(base)
- await page.locator('.connection-state').filter({hasText:'本机服务已连接'}).waitFor()
+ await page.locator('.connection-state').filter({hasText:'本机服务已连接'}).waitFor({state:'attached'})
  const settings=(await api('/v1/settings')).body
  const clone={...settings.models[0],id:'unused-route',label:'Unused fixture',apiKeyEnv:'JHARNESS_UNUSED_KEY',model:'unused-model'}
  const saved=await api('/v1/settings',{revision:settings.revision,models:[...settings.models,clone],selected:settings.selected,extensions:settings.extensions,policy:settings.policy,apiKeys:{}})

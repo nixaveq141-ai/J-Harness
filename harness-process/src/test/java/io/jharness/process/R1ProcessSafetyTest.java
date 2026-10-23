@@ -6,11 +6,17 @@ import io.jharness.workspace.LocalWorkspace;
 import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 class R1ProcessSafetyTest {
     @TempDir Path root;
+
+    @BeforeEach
+    void canonicalTemporaryRoot() throws java.io.IOException {
+        root = root.toRealPath();
+    }
 
     @Test
     void environmentValidationUsesTheEffectiveSnapshot() throws Exception {

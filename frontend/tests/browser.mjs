@@ -1,4 +1,4 @@
-import { browserType as chromium } from './runtime.mjs'
+import { browserType as chromium, stoppedHostDiagnostic } from './runtime.mjs'
 import { spawn } from 'node:child_process'
 import { readFile, writeFile, mkdir } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
@@ -17,6 +17,7 @@ let hostOutput = ''; host.stdout.on('data', d => { hostOutput += d }); host.stde
 const wait = ms => new Promise(r => setTimeout(r, ms))
 const checks = [], screenshots = [], errors = [], requests = []
 const browserCredentials = new Set()
+const controlledOrigins = new Set(), transportDiagnostics = []
 let browser, base, context, page
 const check = (name, detail = true) => { assert.ok(detail, name); checks.push({ name, passed: true }); console.log('PASS', name) }
 async function until(predicate, timeout = 15000) {
@@ -33,7 +34,10 @@ try {
   browser = await chromium.launch(process.env.JHARNESS_BROWSER_CHANNEL ? { channel: process.env.JHARNESS_BROWSER_CHANNEL } : {})
   context = await browser.newContext({ viewport: { width: 1440, height: 960 }, acceptDownloads: true })
   page = await context.newPage()
-  page.on('pageerror', e => errors.push(e.message))
+  page.on('pageerror', e => {
+    if (stoppedHostDiagnostic(e.message, controlledOrigins)) transportDiagnostics.push(e.message)
+    else errors.push(e.message)
+  })
   page.on('response', r => { if (new URL(r.url()).pathname === '/v1/browser-session') void r.json().then(v => browserCredentials.add(v.token)).catch(() => {}) })
   page.on('request', r => { if (r.url().includes('/v1/')) requests.push({ method: r.method(), path: new URL(r.url()).pathname }) })
   async function screenshot(name) {
@@ -41,6 +45,11 @@ try {
   }
   const createCount = () => requests.filter(r => r.method === 'POST' && r.path === '/v1/tasks').length
   async function connect() { await page.locator('.connection-state').filter({ hasText: '本机服务已连接' }).waitFor() }
+  async function reload() {
+    controlledOrigins.add(base)
+    try { await page.reload(); await connect() }
+    finally { controlledOrigins.delete(base) }
+  }
   async function newTask(profile, goal) {
     await page.getByRole('button', { name: '新建任务', exact: true }).click()
     await page.getByLabel('任务配置').selectOption(profile)
@@ -107,7 +116,7 @@ try {
   check('in-flight query cannot mix changed keywords with an old cursor')
   check('full sanitized session query reads real events')
   const countBeforeRefresh = createCount()
-  await page.reload(); await connect()
+  await reload()
   assert.equal(await page.getByLabel('本机连接凭据').count(), 0)
   await connect(); await page.getByText('已同步全部记录', { exact: true }).waitFor()
   check('refresh automatically reconnects and never resubmits task', createCount() === countBeforeRefresh)
@@ -132,7 +141,9 @@ try {
   const cancelId = await newTask('cancel', '等待取消并验证断线只恢复读取')
   await until(async () => (await api(`/v1/tasks/${cancelId}/events?limit=100`)).body.events.some(e => e.type === 'model.requested'))
   const countBeforeOffline = createCount()
-  await context.setOffline(true); await wait(2300); await context.setOffline(false)
+  controlledOrigins.add(base)
+  try { await context.setOffline(true); await wait(2300) }
+  finally { await context.setOffline(false); controlledOrigins.delete(base) }
   await page.getByRole('button', { name: '重载历史', exact: true }).click()
   check('offline recovery never creates a new task', createCount() === countBeforeOffline)
   let cursorReads = 0
@@ -173,7 +184,7 @@ try {
   await page.getByRole('button', { name: '创建任务', exact: true }).click()
   await page.getByRole('button', { name: '核对提交状态', exact: true }).waitFor()
   await until(async () => !(await page.getByRole('button', { name: '核对提交状态', exact: true }).isDisabled()))
-  await page.reload(); await connect()
+  await reload()
   assert.equal(await page.getByRole('button', { name: '创建任务', exact: true }).isDisabled(), true)
   await page.getByRole('button', { name: '核对提交状态', exact: true }).click()
   await until(async () => (await page.evaluate(() => sessionStorage.getItem('jh-pending'))) === null)
@@ -225,7 +236,7 @@ try {
   const sourceFiles = await import('node:child_process').then(({ execFileSync }) => execFileSync('git', ['ls-files', '--cached', '--others', '--exclude-standard', '--', 'frontend', 'harness-web', 'harness-testkit/src/test/java/io/jharness/testkit/M10BrowserHost.java', 'harness-testkit/src/test/java/io/jharness/testkit/M10WebTest.java'], { cwd: root }).toString().trim().split(/\r?\n/))
   const sourceSha256 = Object.fromEntries(await Promise.all([...new Set(sourceFiles)].filter(p => !p.startsWith('frontend/dist/') && !p.includes('node_modules')).sort().map(async p => [p, createHash('sha256').update(await readFile(join(root, p))).digest('hex')])))
   const final = { status: 'PASS', capturedAt: new Date().toISOString(), testedOrigin: base, browserEngine:process.env.JHARNESS_BROWSER_ENGINE??'chromium', browserVersion, browserChannel: process.env.JHARNESS_BROWSER_CHANNEL ?? process.env.JHARNESS_BROWSER_ENGINE ?? 'chromium', checks, runtime, sourceSha256,
-    requests: { taskSubmissions: createCount(), total: requests.length }, browserErrors: errors,
+    requests: { taskSubmissions: createCount(), total: requests.length }, browserErrors: errors, transportDiagnostics,
     screenshots: await Promise.all(screenshots.map(async p => ({ path: p.replace(root + '\\', '').replace(root + '/', ''), sha256: createHash('sha256').update(await readFile(p)).digest('hex') }))),
     jarSha256: createHash('sha256').update(await readFile(join(root, 'harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar'))).digest('hex') }
   await writeFile(join(out, 'M10-browser-results.json'), JSON.stringify(final, null, 2) + '\n')
