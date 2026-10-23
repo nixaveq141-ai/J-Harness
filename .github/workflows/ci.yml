@@ -119,6 +119,7 @@ jobs:
           set -euo pipefail
           python scripts/test-release-tools.py
           python scripts/test-sdk-inventory.py
+          python scripts/test-r3-provider.py
           python scripts/run-r1-validation.py --run-id "${JHARNESS_EVIDENCE_RUN_ID}-r1" --output ".build-cache/R1/${JHARNESS_EVIDENCE_RUN_ID}-r1"
           python scripts/run-r1-validation.py --verify ".build-cache/R1/${JHARNESS_EVIDENCE_RUN_ID}-r1/results.json"
           python scripts/test-source-secrets.py

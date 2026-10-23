@@ -11,7 +11,7 @@ const checks=[]
 try {
   const end=Date.now()+10000
   while(!ready.includes('Offline SDK provider')&&provider.exitCode===null&&Date.now()<end)await new Promise(r=>setTimeout(r,50))
-  assert.ok(ready.includes('Offline SDK provider'),error)
+  assert.ok(ready.includes('Offline SDK provider'),JSON.stringify({exitCode:provider.exitCode,signal:provider.signalCode,stdout:ready.slice(0,4096),stderr:error.slice(0,4096)}))
   for(const language of ['typescript','python']) {
     const workspace=join(cache,'M10.5.8-example-'+language+'-'+Date.now());await mkdir(workspace,{recursive:true});await writeFile(join(workspace,'README.md'),'README: offline SDK example fixture. 中文\n')
     const child=spawn(language==='typescript'?process.execPath:python,language==='typescript'?['--experimental-strip-types','sdk/examples/run.ts']:['sdk/examples/run.py'],{cwd:root,windowsHide:true,env:{...process.env,...(language==='python'?{PYTHONIOENCODING:'cp1252'}:{}),JHARNESS_SDK_JAR:jar,JHARNESS_SDK_WORKSPACE:workspace,JHARNESS_API_KEY:'synthetic-demo-key'},stdio:'pipe'})

@@ -1,6 +1,14 @@
 """Offline SDK example provider. Binds only loopback; never forwards a model request."""
 import json
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from socketserver import TCPServer
+
+class LoopbackServer(ThreadingHTTPServer):
+    def server_bind(self):
+        # HTTPServer's default bind performs reverse DNS, even for a numeric loopback IP.
+        TCPServer.server_bind(self)
+        self.server_name = 'localhost'
+        self.server_port = self.server_address[1]
 
 class Provider(BaseHTTPRequestHandler):
     def setup(self):
@@ -47,7 +55,7 @@ class Provider(BaseHTTPRequestHandler):
         pass
 
 if __name__ == '__main__':
-    with ThreadingHTTPServer(('127.0.0.1',8089), Provider) as server:
+    with LoopbackServer(('127.0.0.1',8089), Provider) as server:
         print('Offline SDK provider on loopback port 8089', flush=True)
         try: server.serve_forever()
         except KeyboardInterrupt: pass

@@ -11,6 +11,7 @@ import threading
 import time
 import unittest
 from http.server import ThreadingHTTPServer
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 spec = importlib.util.spec_from_file_location("r3_provider", ROOT / "sdk/examples/loopback_provider.py")
@@ -52,7 +53,10 @@ class ClientCleanupTest(unittest.TestCase):
 
 class ProviderBoundaryTest(unittest.TestCase):
     def setUp(self):
-        self.server = ThreadingHTTPServer(("127.0.0.1", 0), provider.Provider)
+        with patch.object(socket, "getfqdn", side_effect=AssertionError("Offline provider must not resolve DNS")):
+            self.server = provider.LoopbackServer(("127.0.0.1", 0), provider.Provider)
+        self.assertEqual("localhost", self.server.server_name)
+        self.assertEqual("127.0.0.1", self.server.server_address[0])
         self.worker = threading.Thread(target=self.server.serve_forever, daemon=True)
         self.worker.start()
 
