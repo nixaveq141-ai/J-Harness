@@ -12,12 +12,18 @@ public record ProcessLimits(
         Charset outputEncoding) {
     public ProcessLimits(
             Duration timeout, int maxConcurrent, int maxTreeProcesses, int outputBytes) {
-        this(
-                timeout,
-                maxConcurrent,
-                maxTreeProcesses,
-                outputBytes,
-                Charset.forName(System.getProperty("native.encoding", "UTF-8")));
+        this(timeout, maxConcurrent, maxTreeProcesses, outputBytes, nativeEncoding());
+    }
+
+    private static Charset nativeEncoding() {
+        try {
+            return Charset.forName(System.getProperty("native.encoding", "UTF-8"));
+        } catch (IllegalArgumentException ex) {
+            throw new io.jharness.api.HarnessException(
+                    "INVALID_PROCESS_ENCODING",
+                    "Invalid native.encoding; configure a supported output charset explicitly",
+                    ex);
+        }
     }
 
     public ProcessLimits {

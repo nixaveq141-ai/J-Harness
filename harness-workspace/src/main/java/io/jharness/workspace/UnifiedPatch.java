@@ -5,23 +5,31 @@ import java.util.*;
 import java.util.regex.*;
 
 /** Bounded exact unified diff subset: create/update, no fuzz, rename, binary or deletion. */
-final class UnifiedPatch {
-    record FilePatch(String path, boolean create, List<String> hunks) {}
+public final class UnifiedPatch {
+    public record FilePatch(String path, boolean create, List<String> hunks) {}
 
     private static final Pattern HUNK =
             Pattern.compile("@@ -(\\d+)(?:,(\\d+))? \\+(\\d+)(?:,(\\d+))? @@.*");
 
     private UnifiedPatch() {}
 
-    static List<FilePatch> parse(String patch) {
+    public static List<FilePatch> parse(String patch) {
         if (patch == null || patch.length() > 1024 * 1024) fail("PATCH_LIMIT");
         String[] lines = patch.replace("\r\n", "\n").split("\n", -1);
         List<FilePatch> files = new ArrayList<>();
         Set<String> paths = new HashSet<>();
+        boolean git = false;
         for (int i = 0; i < lines.length; ) {
-            if (lines[i].isEmpty()
-                    || lines[i].startsWith("diff --git ")
-                    || lines[i].startsWith("index ")) {
+            if (lines[i].isEmpty()) {
+                i++;
+                continue;
+            }
+            if (lines[i].startsWith("diff --git ")) {
+                git = true;
+                i++;
+                continue;
+            }
+            if (git && (lines[i].startsWith("index ") || lines[i].equals("new file mode 100644"))) {
                 i++;
                 continue;
             }
@@ -30,21 +38,43 @@ final class UnifiedPatch {
                     || !lines[i + 1].startsWith("+++ ")) fail("INVALID_PATCH");
             String old = header(lines[i++].substring(4)), path = header(lines[i++].substring(4));
             boolean create = old.equals("/dev/null");
+            if (git
+                    || (!create
+                            && old.startsWith("a/")
+                            && path.startsWith("b/")
+                            && old.substring(2).equals(path.substring(2)))) {
+                if ((!create && !old.startsWith("a/")) || !path.startsWith("b/"))
+                    fail("UNSUPPORTED_PATCH");
+                if (!create) old = old.substring(2);
+                path = path.substring(2);
+            }
+            if (create && !git && path.startsWith("b/")) path = path.substring(2);
             if (path.equals("/dev/null") || !create && !old.equals(path)) fail("UNSUPPORTED_PATCH");
             if (!paths.add(path) || files.size() >= 64) fail("PATCH_LIMIT");
             List<String> hunks = new ArrayList<>();
-            while (i < lines.length
-                    && !lines[i].startsWith("--- ")
-                    && !lines[i].startsWith("diff --git ")) {
-                if (i == lines.length - 1 && lines[i].isEmpty()) {
-                    i++;
-                    break;
-                }
-                if (lines[i].startsWith("\\ No newline")) fail("UNSUPPORTED_PATCH");
+            while (i < lines.length && lines[i].startsWith("@@ ")) {
+                Matcher m = HUNK.matcher(lines[i]);
+                if (!m.matches()) fail("INVALID_PATCH");
+                int removed = m.group(2) == null ? 1 : number(m.group(2));
+                int added = m.group(4) == null ? 1 : number(m.group(4));
                 hunks.add(lines[i++]);
+                while (removed > 0 || added > 0) {
+                    if (i >= lines.length || lines[i].isEmpty()) fail("INVALID_PATCH");
+                    String line = lines[i++];
+                    char action = line.charAt(0);
+                    if (action == ' ') {
+                        removed--;
+                        added--;
+                    } else if (action == '-') removed--;
+                    else if (action == '+') added--;
+                    else fail("INVALID_PATCH");
+                    if (removed < 0 || added < 0) fail("INVALID_PATCH");
+                    hunks.add(line);
+                }
             }
-            if (hunks.isEmpty() || !hunks.getFirst().startsWith("@@ ")) fail("INVALID_PATCH");
+            if (hunks.isEmpty()) fail("INVALID_PATCH");
             files.add(new FilePatch(path, create, List.copyOf(hunks)));
+            git = false;
         }
         if (files.isEmpty()) fail("INVALID_PATCH");
         return List.copyOf(files);
@@ -52,7 +82,9 @@ final class UnifiedPatch {
 
     private static String header(String line) {
         String path = line.split("\t", 2)[0];
-        if (path.startsWith("a/") || path.startsWith("b/")) path = path.substring(2);
+        if (path.isBlank()
+                || path.chars().anyMatch(Character::isISOControl)
+                || path.startsWith("\"")) fail("UNSUPPORTED_PATCH");
         return path;
     }
 

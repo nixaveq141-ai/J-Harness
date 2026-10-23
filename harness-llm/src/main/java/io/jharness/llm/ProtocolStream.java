@@ -18,7 +18,8 @@ final class ProtocolStream {
     private String id, stop;
     private long sequence = -1;
     private Integer open;
-    private StringBuilder arguments;
+    private StringBuilder arguments, blockText;
+    private Boolean sequenced;
     private boolean terminal, messageDelta;
 
     ProtocolStream(ModelProtocol protocol, ObjectMapper json) {
@@ -43,7 +44,9 @@ final class ProtocolStream {
 
     private void responses(Map<String, Object> frame) {
         String type = text(frame, "type");
-        if (frame.get("sequence_number") != null) {
+        if (sequenced == null) sequenced = frame.containsKey("sequence_number");
+        if (sequenced != frame.containsKey("sequence_number")) throw error("MODEL_BAD_RESPONSE");
+        if (frame.containsKey("sequence_number")) {
             Object n = frame.get("sequence_number");
             if (!(n instanceof Integer || n instanceof Long)
                     || ((Number) n).longValue() <= sequence) throw error("MODEL_BAD_RESPONSE");
@@ -60,7 +63,7 @@ final class ProtocolStream {
                 var response = obj(frame.get("response"));
                 if (!id.equals(response.get("id"))) throw error("MODEL_BAD_RESPONSE");
                 var output = list(response.get("output"));
-                if (!started.keySet().equals(ended.keySet()))
+                if (output.size() != ended.size() || !started.keySet().equals(ended.keySet()))
                     throw error("MODEL_STREAM_INCOMPLETE");
                 for (var entry : ended.entrySet()) {
                     if (entry.getKey() >= output.size()
@@ -145,8 +148,10 @@ final class ProtocolStream {
                 var block = new LinkedHashMap<>(obj(frame.get("content_block")));
                 String kind = text(block, "type");
                 if (!Set.of("text", "tool_use").contains(kind)) throw error("UNSUPPORTED_MESSAGE");
-                if (kind.equals("text")) preview.append(string(block, "text"));
-                else {
+                if (kind.equals("text")) {
+                    blockText = new StringBuilder(string(block, "text"));
+                    preview.append(blockText);
+                } else {
                     text(block, "id");
                     text(block, "name");
                     if (!obj(block.get("input")).isEmpty()) throw error("MODEL_BAD_RESPONSE");
@@ -163,7 +168,7 @@ final class ProtocolStream {
                 if ("text".equals(block.get("type")) && "text_delta".equals(delta.get("type"))) {
                     String fragment = string(delta, "text");
                     preview.append(fragment);
-                    block.put("text", string(block, "text") + fragment);
+                    blockText.append(fragment);
                 } else if ("tool_use".equals(block.get("type"))
                         && "input_json_delta".equals(delta.get("type")))
                     arguments.append(string(delta, "partial_json"));
@@ -172,6 +177,7 @@ final class ProtocolStream {
             case "content_block_stop" -> {
                 if (open == null || blockIndex(frame) != open) throw error("MODEL_BAD_RESPONSE");
                 var block = blocks.get(open);
+                if ("text".equals(block.get("type"))) block.put("text", blockText.toString());
                 if ("tool_use".equals(block.get("type"))) {
                     try {
                         block.put(

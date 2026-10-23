@@ -7,6 +7,9 @@ public final class UnifiedDiff {
     private UnifiedDiff() {}
 
     public static String between(String path, String before, String after) {
+        io.jharness.api.Values.required(path, "path");
+        if (path.chars().anyMatch(Character::isISOControl))
+            throw new IllegalArgumentException("Unsupported diff path");
         if (before.equals(after)) return "";
         List<String> oldLines = lines(before), newLines = lines(after);
         StringBuilder diff = new StringBuilder("--- a/" + path + "\n+++ b/" + path + "\n");

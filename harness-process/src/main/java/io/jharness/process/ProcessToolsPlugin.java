@@ -110,10 +110,17 @@ public final class ProcessToolsPlugin implements HarnessPlugin {
         }
 
         @Override
+        public void validateArguments(ToolInvocation call) {
+            new JsonSchema().validate(inputSchema(), call.arguments());
+            CommandInputs.request(call);
+        }
+
+        @Override
         public ToolResult execute(ToolInvocation call, ToolContext context)
                 throws java.io.IOException {
             if (!scope.equals(context.scope()))
                 throw new HarnessException("SCOPE_DENIED", "Command tool scope mismatch");
+            validateArguments(call);
             Map<String, Object> args = call.arguments();
             List<String> argv =
                     ((List<?>) args.get("argv")).stream().map(String.class::cast).toList();

@@ -8,8 +8,11 @@ public record ChatRequest(
         List<Map<String, Object>> tools,
         Map<String, Object> parameters) {
     public ChatRequest {
-        messages = messages.stream().map(Values::snapshot).toList();
-        tools = tools.stream().map(Values::snapshot).toList();
-        parameters = Values.snapshot(parameters);
+        messages =
+                Objects.requireNonNull(messages, "messages").stream()
+                        .map(Values::snapshot)
+                        .toList();
+        tools = Objects.requireNonNull(tools, "tools").stream().map(Values::snapshot).toList();
+        parameters = Values.snapshot(Objects.requireNonNull(parameters, "parameters"));
     }
 }

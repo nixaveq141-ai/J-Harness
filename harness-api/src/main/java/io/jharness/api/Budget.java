@@ -27,9 +27,9 @@ public record Budget(
                 throw new IllegalArgumentException("Duration exceeds monotonic budget range");
             }
         }
-        if (!java.util.Set.of("USD", "CNY").contains(currency))
+        if (currency == null || !java.util.Set.of("USD", "CNY").contains(currency))
             throw new IllegalArgumentException("Unsupported currency");
-        java.util.Objects.requireNonNull(maxApiCost);
+        java.util.Objects.requireNonNull(maxApiCost, "maxApiCost");
         if (maxApiCost.isPresent() && maxApiCost.get().signum() <= 0)
             throw new IllegalArgumentException("Cost budget must be positive");
         if (maxSteps <= 0

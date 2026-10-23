@@ -67,8 +67,12 @@ public final class StreamingLlmClient implements LlmClient, ModelRouter {
 
     @Override
     public LlmClient select(String route) {
-        if (delegate instanceof ModelRouter router) return router.select(route);
-        if (route.equals("base")) return delegate;
+        if (delegate instanceof ModelRouter router) {
+            LlmClient chosen = Objects.requireNonNull(router.select(route), "selected client");
+            if (chosen == delegate) return this;
+            return new StreamingLlmClient(chosen, display, secrets, updates);
+        }
+        if ("base".equals(route)) return this;
         throw new HarnessException("MODEL_ROUTE_NOT_FOUND", "Unknown model route");
     }
 

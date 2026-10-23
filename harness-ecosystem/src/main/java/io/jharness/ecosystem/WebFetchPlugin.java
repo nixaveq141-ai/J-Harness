@@ -172,6 +172,12 @@ public final class WebFetchPlugin implements HarnessPlugin {
                                 .toLowerCase(Locale.ROOT);
                 if (!(type.startsWith("text/") || type.startsWith("application/json")))
                     throw BoundedJson.error("WEB_FETCH_CONTENT_TYPE");
+                for (String parameter : type.split(";")) {
+                    String part = parameter.trim();
+                    if (part.startsWith("charset=")
+                            && !Set.of("charset=utf-8", "charset=\"utf-8\"").contains(part))
+                        throw BoundedJson.error("WEB_FETCH_CHARSET");
+                }
                 reading = reads.submit(() -> input.readNBytes(1024 * 1024 + 1));
                 byte[] bytes = await(reading, context.cancellation(), deadline);
                 if (bytes.length > 1024 * 1024) throw BoundedJson.error("WEB_FETCH_LIMIT");
@@ -200,7 +206,10 @@ public final class WebFetchPlugin implements HarnessPlugin {
                                                         .digest(bytes)),
                                 "content",
                                 "Untrusted external content:\n"
-                                        + new String(bytes, StandardCharsets.UTF_8));
+                                        + StandardCharsets.UTF_8
+                                                .newDecoder()
+                                                .decode(java.nio.ByteBuffer.wrap(bytes))
+                                                .toString());
                 return new ToolResult(
                         call.callId(),
                         ToolStatus.SUCCESS,

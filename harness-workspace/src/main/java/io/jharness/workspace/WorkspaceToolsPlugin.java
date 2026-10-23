@@ -33,16 +33,13 @@ public final class WorkspaceToolsPlugin implements HarnessPlugin {
     }
 
     public WorkspaceToolsPlugin(ExecutionEnvironment environment, ArtifactStore artifacts) {
-        this(
-                requireWorkspace(environment),
-                artifacts,
-                environment.processes(),
-                environment.terminal());
+        this(requireWorkspace(environment), artifacts, null, null);
         this.environment = Objects.requireNonNull(environment);
     }
 
     private static WorkspaceFiles requireWorkspace(ExecutionEnvironment environment) {
-        if (!(environment.files() instanceof WorkspaceFiles files))
+        if (!(Objects.requireNonNull(environment, "environment").files()
+                instanceof WorkspaceFiles files))
             throw new HarnessException(
                     "UNSUPPORTED_WORKSPACE", "Environment must supply workspace file capabilities");
         return files;
@@ -336,25 +333,48 @@ public final class WorkspaceToolsPlugin implements HarnessPlugin {
                         result =
                                 files.applyPatch(
                                         (String) args.get("patchText"), versions, cancellation);
-                        display =
-                                Map.of(
-                                        "changes",
-                                        ((List<?>) result.get("changes"))
-                                                .stream()
-                                                        .map(
-                                                                raw -> {
-                                                                    var change = Values.object(raw);
-                                                                    return Map.of(
-                                                                            "path",
-                                                                            change.get("path"),
-                                                                            "beforeVersion",
-                                                                            change.get(
-                                                                                    "beforeVersion"),
-                                                                            "afterVersion",
-                                                                            change.get(
-                                                                                    "afterVersion"));
-                                                                })
-                                                        .toList());
+                        try {
+                            if (!(result.get("changes") instanceof List<?> changes)
+                                    || changes.size() > 64)
+                                throw new HarnessException(
+                                        "INVALID_WORKSPACE_RESULT", "Invalid patch changes");
+                            var summaries = new ArrayList<Map<String, Object>>();
+                            for (Object raw : changes) {
+                                var change = Values.object(raw);
+                                for (String field :
+                                        List.of("path", "beforeVersion", "afterVersion"))
+                                    if (!(change.get(field) instanceof String))
+                                        throw new HarnessException(
+                                                "INVALID_WORKSPACE_RESULT",
+                                                "Invalid patch change identity");
+                                summaries.add(
+                                        Map.of(
+                                                "path",
+                                                change.get("path"),
+                                                "beforeVersion",
+                                                change.get("beforeVersion"),
+                                                "afterVersion",
+                                                change.get("afterVersion")));
+                            }
+                            display = Map.of("changes", summaries);
+                        } catch (RuntimeException invalidResult) {
+                            Map<String, Object> reported;
+                            try {
+                                reported = Values.snapshot(result);
+                            } catch (RuntimeException malformed) {
+                                reported = Map.of("unavailable", true);
+                            }
+                            return new ToolResult(
+                                    call.callId(),
+                                    ToolStatus.UNKNOWN,
+                                    Map.of("sideEffectUncertain", true, "reportedResult", reported),
+                                    "Patch result invalid after invocation; inspect files before retry",
+                                    Map.of(),
+                                    Optional.of(
+                                            new ToolResult.ErrorInfo(
+                                                    "INVALID_WORKSPACE_RESULT",
+                                                    "Invalid patch result")));
+                        }
                         if (Boolean.TRUE.equals(result.get("partial")))
                             return new ToolResult(
                                     call.callId(),

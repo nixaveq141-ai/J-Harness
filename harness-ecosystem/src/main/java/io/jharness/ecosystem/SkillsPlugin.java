@@ -47,6 +47,7 @@ public final class SkillsPlugin implements HarnessPlugin {
     private final Map<String, Snapshot> resources = new LinkedHashMap<>(),
             scripts = new LinkedHashMap<>();
     private Snapshot manifest;
+    private int loadedBytes;
 
     public SkillsPlugin(Spec spec) {
         this.spec = Objects.requireNonNull(spec);
@@ -88,11 +89,21 @@ public final class SkillsPlugin implements HarnessPlugin {
     }
 
     private Snapshot read(ExecPath path) throws IOException {
-        String before = environment.files().versionOf(path),
-                text = environment.files().readText(path);
+        if (loadedBytes >= 512 * 1024) throw BoundedJson.error("SKILL_TOTAL_LIMIT");
+        int limit = Math.min(65536, 512 * 1024 - loadedBytes);
+        String before = environment.files().versionOf(path), text;
+        try {
+            text = environment.files().readText(path, limit);
+        } catch (HarnessException ex) {
+            if (ex.code().equals("FILE_LIMIT"))
+                throw BoundedJson.error(limit < 65536 ? "SKILL_TOTAL_LIMIT" : "SKILL_FILE_LIMIT");
+            throw ex;
+        }
         if (!before.equals(environment.files().versionOf(path)))
             throw BoundedJson.error("FILE_CONFLICT");
         byte[] bytes = text.getBytes(StandardCharsets.UTF_8);
+        loadedBytes += bytes.length;
+        if (loadedBytes > 512 * 1024) throw BoundedJson.error("SKILL_TOTAL_LIMIT");
         if (bytes.length > 65536) throw BoundedJson.error("SKILL_FILE_LIMIT");
         try {
             return new Snapshot(
@@ -114,8 +125,20 @@ public final class SkillsPlugin implements HarnessPlugin {
             manifest = read(path(new ExecPath("SKILL.md")));
             for (var entry : spec.resources().entrySet())
                 resources.put(entry.getKey(), read(path(entry.getValue())));
-            for (var entry : spec.scripts().entrySet())
-                scripts.put(entry.getKey(), read(path(entry.getValue().path())));
+            for (var entry : spec.scripts().entrySet()) {
+                var script = read(path(entry.getValue().path()));
+                try {
+                    new CommandRequest(
+                            "skill-validation",
+                            entry.getValue().mode(),
+                            List.of(script.text()),
+                            spec.directory(),
+                            entry.getValue().timeout());
+                } catch (IllegalArgumentException ex) {
+                    throw BoundedJson.error("INVALID_SKILL_SCRIPT");
+                }
+                scripts.put(entry.getKey(), script);
+            }
         } catch (IOException ex) {
             throw BoundedJson.error("SKILL_IO");
         }

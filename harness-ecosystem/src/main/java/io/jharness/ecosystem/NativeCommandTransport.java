@@ -15,14 +15,15 @@ public final class NativeCommandTransport implements CommandTransport {
         if (stdin.length > BoundedJson.LIMIT) throw BoundedJson.error("PAYLOAD_LIMIT");
         cancellation.throwIfCancelled();
         Process process = null;
+        CompletableFuture<byte[]> out = null, err = null;
         try {
             var builder = new ProcessBuilder(command);
             builder.environment().clear();
             builder.environment().putAll(LocalProcessRunner.buildEnvironment());
             process = builder.start();
             final Process child = process;
-            CompletableFuture<byte[]> out = read(child.getInputStream(), BoundedJson.LIMIT),
-                    err = read(child.getErrorStream(), 65536);
+            out = read(child.getInputStream(), BoundedJson.LIMIT);
+            err = read(child.getErrorStream(), 65536);
             CompletableFuture<Void> sent = new CompletableFuture<>();
             Thread.ofVirtual()
                     .start(
@@ -38,7 +39,13 @@ public final class NativeCommandTransport implements CommandTransport {
             while (child.isAlive() || !out.isDone() || !err.isDone() || !sent.isDone()) {
                 if (cancellation.isCancelled() || System.nanoTime() > deadline) {
                     ProcessCleanup.stop(child);
-                    return new Reply(-1, new byte[0], new byte[0], true, true);
+                    return new Reply(
+                            -1,
+                            observed(out),
+                            observed(err),
+                            true,
+                            true,
+                            cancellation.isCancelled() ? "CANCELLED" : "TIMEOUT");
                 }
                 Thread.sleep(10);
             }
@@ -49,14 +56,36 @@ public final class NativeCommandTransport implements CommandTransport {
             return new Reply(exitCode, stdout, stderr, true, !observedClean);
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
-            return new Reply(-1, new byte[0], new byte[0], process != null, process != null);
+            return new Reply(
+                    exit(process),
+                    observed(out),
+                    observed(err),
+                    process != null,
+                    process != null,
+                    "INTERRUPTED");
         } catch (IOException | ExecutionException ex) {
-            return new Reply(-1, new byte[0], new byte[0], process != null, process != null);
+            return new Reply(
+                    exit(process),
+                    observed(out),
+                    observed(err),
+                    process != null,
+                    process != null,
+                    ex instanceof IOException ? "CONTROL_IO" : "CONTROL_EXCHANGE_FAILED");
         } finally {
             if (process != null) {
                 ProcessCleanup.stop(process);
             }
         }
+    }
+
+    private static int exit(Process process) {
+        return process != null && !process.isAlive() ? process.exitValue() : -1;
+    }
+
+    private static byte[] observed(CompletableFuture<byte[]> future) {
+        if (future == null || !future.isDone() || future.isCompletedExceptionally())
+            return new byte[0];
+        return future.getNow(new byte[0]);
     }
 
     private static CompletableFuture<byte[]> read(InputStream input, int limit) {

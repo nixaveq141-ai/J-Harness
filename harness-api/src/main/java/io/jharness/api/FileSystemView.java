@@ -12,6 +12,15 @@ public interface FileSystemView {
 
     String readText(ExecPath path) throws IOException;
 
+    /** Bounded full text; production providers should enforce the limit during reading. */
+    default String readText(ExecPath path, int maxBytes) throws IOException {
+        if (maxBytes < 1 || maxBytes > 1024 * 1024) throw new IllegalArgumentException("maxBytes");
+        String text = readText(path);
+        if (text.getBytes(java.nio.charset.StandardCharsets.UTF_8).length > maxBytes)
+            throw new HarnessException("FILE_LIMIT", "Bounded text limit exceeded");
+        return text;
+    }
+
     /** Text and SHA-256 version from the same UTF-8 content snapshot. */
     default TextSnapshot readSnapshot(ExecPath path) throws IOException {
         String text = readText(path);

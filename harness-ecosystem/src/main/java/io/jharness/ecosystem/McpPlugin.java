@@ -80,6 +80,8 @@ public final class McpPlugin implements HarnessPlugin {
             if (discoveryBytes > BoundedJson.LIMIT) throw BoundedJson.error("MCP_DISCOVERY_LIMIT");
             for (Object raw : list) {
                 var tool = Values.object(raw);
+                if (!(tool.get("name") instanceof String))
+                    throw BoundedJson.error("MCP_INVALID_TOOLS");
                 String name = (String) tool.get("name");
                 if (name == null
                         || !name.matches("[a-zA-Z0-9_.-]{1,40}")
@@ -96,6 +98,8 @@ public final class McpPlugin implements HarnessPlugin {
                         throw BoundedJson.error("MCP_INVALID_SCHEMA");
                 }
             }
+            if (result.get("nextCursor") != null && !(result.get("nextCursor") instanceof String))
+                throw BoundedJson.error("MCP_PROTOCOL_ERROR");
             cursor = (String) result.get("nextCursor");
             if (cursor == null) break;
             if (cursor.length() > 1024 || !cursors.add(cursor) || page == 7)
@@ -324,6 +328,7 @@ public final class McpPlugin implements HarnessPlugin {
                 transport.exchange(
                         Map.of("jsonrpc", "2.0", "id", id, "method", method, "params", parameters),
                         cancellation);
+        BoundedJson.encode(response);
         if (!McpIo.response(response, id)
                 || response.containsKey("result") == response.containsKey("error"))
             throw BoundedJson.error("MCP_PROTOCOL_ERROR");
@@ -403,9 +408,16 @@ public final class McpPlugin implements HarnessPlugin {
         }
 
         @Override
+        public void validateArguments(ToolInvocation call) {
+            schemas.validate(inputSchema(), call.arguments());
+            BoundedJson.encode(Map.of("name", name, "arguments", call.arguments()));
+        }
+
+        @Override
         public ToolResult execute(ToolInvocation args, ToolContext context) {
             if (failed || !scope.equals(context.scope())) throw BoundedJson.error("SCOPE_DENIED");
             context.cancellation().throwIfCancelled();
+            validateArguments(args);
             try {
                 var result =
                         rpc(
@@ -441,7 +453,9 @@ public final class McpPlugin implements HarnessPlugin {
                                 "tool",
                                 name,
                                 "transport",
-                                transport.kind());
+                                transport.kind(),
+                                "untrusted",
+                                true);
                 var value = Map.<String, Object>of("source", source, "result", result);
                 return new ToolResult(
                         args.callId(),
@@ -457,7 +471,8 @@ public final class McpPlugin implements HarnessPlugin {
                         Optional.empty());
             } catch (RuntimeException ex) {
                 if (ex instanceof HarnessException failure
-                        && "MCP_RPC_ERROR".equals(failure.code()))
+                        && "MCP_RPC_ERROR".equals(failure.code())
+                        && sideEffectLevel() == SideEffectLevel.READ_ONLY)
                     return ToolResults.failure(args.callId(), ToolStatus.FAILED, failure.code());
                 failed = true;
                 try {

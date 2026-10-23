@@ -53,7 +53,11 @@ public final class LocalArtifactStore implements ArtifactStore {
 
     @Override
     public Artifact put(String session, String content) throws IOException {
-        String clean = (String) sanitizer.sanitize(Map.of("content", content)).get("content");
+        var sanitized = sanitizer.sanitize(Map.of("content", content));
+        if (sanitized == null || !(sanitized.get("content") instanceof String))
+            throw new HarnessException(
+                    "INVALID_SANITIZER_RESULT", "Sanitizer must return text content");
+        String clean = (String) sanitized.get("content");
         byte[] bytes = clean.getBytes(StandardCharsets.UTF_8);
         if (bytes.length > LIMIT)
             throw new HarnessException("ARTIFACT_LIMIT", "Artifact exceeds bound");

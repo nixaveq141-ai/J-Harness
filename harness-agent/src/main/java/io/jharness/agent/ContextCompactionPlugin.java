@@ -18,6 +18,7 @@ public final class ContextCompactionPlugin implements HarnessPlugin {
         this.compactor = Objects.requireNonNull(compactor);
         this.writer = Objects.requireNonNull(writer);
         this.reader = Objects.requireNonNull(reader);
+        if (characters < 1) throw new IllegalArgumentException("characters must be positive");
         this.characters = characters;
     }
 
@@ -42,6 +43,7 @@ public final class ContextCompactionPlugin implements HarnessPlugin {
                                     context.services()
                                             .requireUnique(ContextCompactor.class, context.scope())
                                             .compact(request, characters);
+                            validateCompaction(request, result);
                             if (!result.removedMessageIndices().isEmpty()) {
                                 EventSupport.append(
                                         writer,
@@ -80,6 +82,44 @@ public final class ContextCompactionPlugin implements HarnessPlugin {
                             return next.proceed(result.request());
                         },
                         100);
+    }
+
+    static void validateCompaction(ChatRequest request, ContextCompactor.Compaction result) {
+        if (result == null
+                || !request.tools().equals(result.request().tools())
+                || !request.parameters().equals(result.request().parameters()))
+            throw new HarnessException(
+                    "INVALID_COMPACTION", "Compactor changed request configuration");
+        var removed = new HashSet<Integer>();
+        for (int index : result.removedMessageIndices())
+            if (index < 0 || index >= request.messages().size() || !removed.add(index))
+                throw new HarnessException("INVALID_COMPACTION", "Invalid original message index");
+        Set<String> pending = new HashSet<>();
+        for (var message : request.messages()) {
+            if (message.get("tool_calls") instanceof List<?> calls)
+                for (Object raw : calls) pending.add((String) Values.object(raw).get("id"));
+            if ("tool".equals(message.get("role"))) pending.remove(message.get("tool_call_id"));
+        }
+        int latestUser = -1;
+        for (int i = 0; i < request.messages().size(); i++) {
+            var message = request.messages().get(i);
+            if ("user".equals(message.get("role"))) latestUser = i;
+            boolean protectedMessage = "system".equals(message.get("role"));
+            if (message.get("tool_calls") instanceof List<?> calls)
+                protectedMessage |=
+                        calls.stream()
+                                .anyMatch(raw -> pending.contains(Values.object(raw).get("id")));
+            if (protectedMessage
+                    && (removed.contains(i) || !result.request().messages().contains(message)))
+                throw new HarnessException(
+                        "INVALID_COMPACTION", "Protected protocol message removed");
+        }
+        if (latestUser >= 0
+                && (removed.contains(latestUser)
+                        || !result.request()
+                                .messages()
+                                .contains(request.messages().get(latestUser))))
+            throw new HarnessException("INVALID_COMPACTION", "Latest user message removed");
     }
 
     @Override

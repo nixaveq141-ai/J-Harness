@@ -12,9 +12,9 @@ public record ChatResponse(
     }
 
     public ChatResponse {
-        Objects.requireNonNull(text);
-        toolCalls = List.copyOf(toolCalls);
-        usage = Values.snapshot(usage);
-        providerState = Values.snapshot(providerState);
+        Objects.requireNonNull(text, "text");
+        toolCalls = List.copyOf(Objects.requireNonNull(toolCalls, "toolCalls"));
+        usage = Values.snapshot(Objects.requireNonNull(usage, "usage"));
+        providerState = Values.snapshot(Objects.requireNonNull(providerState, "providerState"));
     }
 }

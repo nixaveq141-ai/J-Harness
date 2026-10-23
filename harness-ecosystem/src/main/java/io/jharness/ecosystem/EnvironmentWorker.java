@@ -41,13 +41,33 @@ public final class EnvironmentWorker {
 
     public static Map<String, Object> dispatch(WorkspaceFiles files, Map<String, Object> request)
             throws IOException {
+        validate(request);
         String op = (String) request.get("op");
         var path = new ExecPath((String) request.getOrDefault("path", "."));
         Map<String, Object> value =
                 switch (op) {
                     case "filter-info" -> Map.of();
                     case "read" -> {
-                        var snapshot = files.readSnapshot(path);
+                        String text =
+                                files.readText(path, number(request, "maxBytes", 1024 * 1024));
+                        String version;
+                        try {
+                            version =
+                                    HexFormat.of()
+                                            .formatHex(
+                                                    java.security.MessageDigest.getInstance(
+                                                                    "SHA-256")
+                                                            .digest(
+                                                                    text.getBytes(
+                                                                            java.nio.charset
+                                                                                    .StandardCharsets
+                                                                                    .UTF_8)));
+                        } catch (java.security.NoSuchAlgorithmException ex) {
+                            throw new IllegalStateException(ex);
+                        }
+                        if (!version.equals(files.versionOf(path)))
+                            throw BoundedJson.error("FILE_CONFLICT");
+                        var snapshot = new FileSystemView.TextSnapshot(text, version);
                         yield Map.of("text", snapshot.text(), "version", snapshot.version());
                     }
                     case "version" -> Map.of("version", files.versionOf(path));
@@ -126,8 +146,9 @@ public final class EnvironmentWorker {
                                                     .stream().map(String.class::cast).toList(),
                                             path,
                                             Duration.ofMillis(
-                                                    ((Number) request.get("timeoutMs"))
-                                                            .longValue()));
+                                                    Values.integer(
+                                                            request.get("timeoutMs"),
+                                                            "WORKER_INVALID_REQUEST")));
                             var result = runner.execute(command, CancellationToken.NONE);
                             yield Map.of(
                                     "status",
@@ -148,6 +169,72 @@ public final class EnvironmentWorker {
         return Map.of("value", value);
     }
 
+    private static void validate(Map<String, Object> request) {
+        if (!(request.get("op") instanceof String))
+            throw BoundedJson.error("WORKER_INVALID_REQUEST");
+        for (String key :
+                List.of(
+                        "path",
+                        "glob",
+                        "literal",
+                        "content",
+                        "expectedVersion",
+                        "oldText",
+                        "newText",
+                        "scope",
+                        "callId",
+                        "mode",
+                        "patch"))
+            if (request.containsKey(key)
+                    && !(key.equals("expectedVersion") && request.get(key) == null)
+                    && !(request.get(key) instanceof String))
+                throw BoundedJson.error("WORKER_INVALID_REQUEST");
+        for (String key :
+                List.of("start", "end", "depth", "limit", "occurrences", "timeoutMs", "maxBytes"))
+            if (request.containsKey(key))
+                Values.integer(request.get(key), "WORKER_INVALID_REQUEST");
+        for (String key : List.of("argv", "paths"))
+            if (request.containsKey(key)
+                    && (!(request.get(key) instanceof List<?> values)
+                            || values.stream().anyMatch(v -> !(v instanceof String))))
+                throw BoundedJson.error("WORKER_INVALID_REQUEST");
+        if (request.containsKey("overwrite") && !(request.get("overwrite") instanceof Boolean))
+            throw BoundedJson.error("WORKER_INVALID_REQUEST");
+        String op = (String) request.get("op");
+        List<String> required =
+                switch (op) {
+                    case "search" -> List.of("glob");
+                    case "grep" -> List.of("literal", "paths");
+                    case "write" -> List.of("content");
+                    case "edit" -> List.of("oldText", "newText");
+                    case "patch" -> List.of("patch", "versions");
+                    case "diff" -> List.of("scope");
+                    case "command" -> List.of("callId", "mode", "argv", "timeoutMs");
+                    default -> List.of();
+                };
+        if (!request.keySet().containsAll(required))
+            throw BoundedJson.error("WORKER_INVALID_REQUEST");
+        if (op.equals("command")) {
+            try {
+                new CommandRequest(
+                        (String) request.get("callId"),
+                        CommandRequest.Mode.valueOf((String) request.get("mode")),
+                        ((List<?>) request.get("argv")).stream().map(String.class::cast).toList(),
+                        new ExecPath((String) request.getOrDefault("path", ".")),
+                        Duration.ofMillis(
+                                Values.integer(
+                                        request.get("timeoutMs"), "WORKER_INVALID_REQUEST")));
+            } catch (IllegalArgumentException ex) {
+                throw BoundedJson.error("WORKER_INVALID_REQUEST");
+            }
+        }
+        if (op.equals("patch")) {
+            var versions = Values.object(request.get("versions"));
+            if (versions.values().stream().anyMatch(v -> !(v instanceof String)))
+                throw BoundedJson.error("WORKER_INVALID_REQUEST");
+        }
+    }
+
     static Map<String, Object> change(FileSystemView.FileChange change) {
         return Map.of(
                 "path",
@@ -163,6 +250,6 @@ public final class EnvironmentWorker {
     }
 
     private static int number(Map<String, Object> map, String key, int fallback) {
-        return ((Number) map.getOrDefault(key, fallback)).intValue();
+        return Values.integer(map.getOrDefault(key, fallback), "WORKER_INVALID_REQUEST");
     }
 }

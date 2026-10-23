@@ -9,6 +9,14 @@ public final class DefaultPolicyEngine implements PolicyEngine {
         public TrustedCommand {
             argv = List.copyOf(argv);
             cwd = Values.required(cwd, "cwd");
+            if (forbiddenPath(cwd))
+                throw new IllegalArgumentException("Invalid trusted command cwd");
+            new CommandRequest(
+                    "trusted-command",
+                    CommandRequest.Mode.ARGV,
+                    argv,
+                    new ExecPath(cwd),
+                    java.time.Duration.ofSeconds(1));
         }
 
         boolean matches(Map<String, Object> args) {

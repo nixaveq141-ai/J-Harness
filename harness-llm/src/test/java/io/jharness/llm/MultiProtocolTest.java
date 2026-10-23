@@ -149,25 +149,55 @@ class MultiProtocolTest {
     }
 
     static String stream(ModelProtocol protocol, boolean tool, boolean terminal) throws Exception {
-        if (protocol == ModelProtocol.RESPONSES)
-            return event(
+        if (protocol == ModelProtocol.RESPONSES) {
+            var response = response(protocol, tool);
+            String result =
+                    event(
                             Map.of(
                                     "type",
                                     "response.created",
                                     "sequence_number",
                                     0,
                                     "response",
-                                    Map.of("id", "r1")))
+                                    Map.of("id", "r1")));
+            int sequence = 1, index = 0;
+            for (Object raw : (List<?>) response.get("output")) {
+                var item = ProtocolCodec.obj(raw);
+                result +=
+                        event(
+                                Map.of(
+                                        "type",
+                                        "response.output_item.added",
+                                        "sequence_number",
+                                        sequence++,
+                                        "output_index",
+                                        index,
+                                        "item",
+                                        item));
+                result +=
+                        event(
+                                Map.of(
+                                        "type",
+                                        "response.output_item.done",
+                                        "sequence_number",
+                                        sequence++,
+                                        "output_index",
+                                        index++,
+                                        "item",
+                                        item));
+            }
+            return result
                     + (terminal
                             ? event(
                                     Map.of(
                                             "type",
                                             "response.completed",
                                             "sequence_number",
-                                            1,
+                                            sequence,
                                             "response",
-                                            response(protocol, tool)))
+                                            response))
                             : "");
+        }
         if (protocol == ModelProtocol.ANTHROPIC) {
             var start =
                     Map.<String, Object>of(

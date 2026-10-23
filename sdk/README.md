@@ -4,11 +4,11 @@
 
 客户端通过 `java -jar JAR --workspace PATH --config JSON sdk-stdio` 启动并拥有一个子进程。密钥只从环境或已有系统凭据读取；不要放在argv、目标文本或配置明文中。进程内部复用本机工作台/Java SDK服务，loopback连接凭据仅内存保存，stdout只有UTF-8 JSON-RPC帧。
 
-`openSession/open_session` 返回不执行的草稿句柄；`sendInput/send_input` 首次受理后返回真实sessionId。已有会话可通过sessionId重新打开。句柄只存在于当前进程，最多32个；持久事实与幂等记录不随句柄消失。列举、事件、提问/回答、工具审批、取消、结果/报告、分页产物及内容检索都有对应方法，也可使用严格的 `call(method, params)`。
+`openSession/open_session` 返回不执行的草稿句柄；`sendInput/send_input` 首次受理后返回真实sessionId。已有会话可通过sessionId重新打开。`closeSession/close_session` 释放当前桥接句柄，不取消或删除宿主任务。句柄只存在于当前进程，最多32个；持久事实与幂等记录不随句柄消失。列举、事件、提问/回答、工具审批、取消、结果/报告、分页产物及内容检索都有对应方法，也可使用严格的 `call(method, params)`。
 
 每条输入请保留requestId。请求超时、断线或进程退出时不会自动重发；先通过 `request.get` 核对首次受理，或 `input.get` 核对后续消息。超时意味着受理可能未知，不等于取消。问题回答不批准工具；审批必须携带服务返回的精确approvalId/callId。UNKNOWN禁止自动续跑和在线清除，继续使用既有离线核实流程。
 
-客户端最多32个待决请求，单请求64KiB、单响应512KiB，默认15秒超时、可选0.1～60秒；服务器单请求10秒边界。超时后迟到回复只匹配其原ID并丢弃，不污染新请求。stderr被排空但不保留/回显。关闭先请求shutdown，再有界等待；必要时只终止本实例拥有的子进程。关闭可能留下UNKNOWN，不能解释为所有远端操作成功或已撤销。
+客户端最多32个待决请求，单请求64KiB、单响应512KiB，默认15秒超时、可选0.1～60秒；服务器单请求10秒边界。超时后迟到回复只匹配其原ID并丢弃，不污染新请求。过期ID不再按64项淘汰；4096项历史（另有最多32个已在途请求的尾项）耗尽后拒绝新调用，先对账并显式重开。真正未知或重复响应ID仍关闭连接。stderr被排空但不保留/回显。关闭先请求shutdown，再有界等待；必要时只终止本实例拥有的子进程，并升级强制终止；不能确认清理则返回 PROCESS_CLEANUP_UNKNOWN。并发 TypeScript close 共享同一个有界 Promise。关闭可能留下UNKNOWN，不能解释为所有远端操作成功或已撤销。
 
 ## 可运行的零费用示例
 

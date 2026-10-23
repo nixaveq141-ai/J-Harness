@@ -163,6 +163,8 @@ public final class OpenAiCompatibleLlmClient implements LlmClient {
                 if (cause instanceof HarnessException h) throw error(h.code());
                 if (cause instanceof HttpTimeoutException) throw error("MODEL_TIMEOUT");
                 throw error("MODEL_TRANSPORT_UNKNOWN");
+            } catch (CancellationException ex) {
+                throw error("MODEL_TRANSPORT_UNKNOWN");
             } catch (RuntimeException ex) {
                 pending.cancel(true);
                 throw ex;
@@ -240,7 +242,17 @@ public final class OpenAiCompatibleLlmClient implements LlmClient {
                                         return HttpResponse.BodySubscribers.mapping(
                                                 new LimitedBody(config.maxResponseBytes),
                                                 bytes -> {
-                                                    throw error("MODEL_HTTP_ERROR");
+                                                    throw error(
+                                                            switch (info.statusCode()) {
+                                                                case 401 -> "MODEL_AUTH_FAILED";
+                                                                case 402 -> "MODEL_BALANCE";
+                                                                case 429 -> "MODEL_RATE_LIMIT";
+                                                                case 400, 422 ->
+                                                                        "MODEL_BAD_REQUEST";
+                                                                case 500, 503 ->
+                                                                        "MODEL_SERVER_ERROR";
+                                                                default -> "MODEL_HTTP_ERROR";
+                                                            });
                                                 });
                                     }
                                     if (!info.headers()
@@ -254,6 +266,7 @@ public final class OpenAiCompatibleLlmClient implements LlmClient {
                                                     throw error("MODEL_BAD_CONTENT_TYPE");
                                                 });
                                     subscriber = new SseBody(consumer);
+                                    if (closed) subscriber.cancel();
                                     return subscriber;
                                 });
                 try {
@@ -277,6 +290,8 @@ public final class OpenAiCompatibleLlmClient implements LlmClient {
                 } catch (InterruptedException ex) {
                     Thread.currentThread().interrupt();
                     throw error("CANCELLED");
+                } catch (CancellationException ex) {
+                    throw error("MODEL_TRANSPORT_UNKNOWN");
                 } catch (ExecutionException ex) {
                     if (ex.getCause() instanceof HarnessException h) throw error(h.code());
                     if (ex.getCause() instanceof HttpTimeoutException) throw error("MODEL_TIMEOUT");
@@ -416,6 +431,7 @@ public final class OpenAiCompatibleLlmClient implements LlmClient {
             }
             if (calls.isEmpty() && (content == null || ((String) content).isBlank()))
                 throw error("MODEL_BAD_RESPONSE");
+            if ("tool_calls".equals(finish) != !calls.isEmpty()) throw error("MODEL_BAD_RESPONSE");
             Map<String, Object> usage =
                     root.containsKey("usage") && root.get("usage") != null
                             ? Values.object(root.get("usage"))
@@ -474,7 +490,8 @@ public final class OpenAiCompatibleLlmClient implements LlmClient {
         private final StringBuilder data = new StringBuilder(), text = new StringBuilder();
         private final SortedMap<Integer, Map<String, StringBuilder>> calls = new TreeMap<>();
         private final java.util.function.Consumer<ChatResponse> consumer;
-        private Flow.Subscription subscription;
+        private volatile Flow.Subscription subscription;
+        private boolean cancelled;
         private int bytes;
         private String eventName = "";
         private String finish;
@@ -495,12 +512,17 @@ public final class OpenAiCompatibleLlmClient implements LlmClient {
         }
 
         @Override
-        public void onSubscribe(Flow.Subscription value) {
+        public synchronized void onSubscribe(Flow.Subscription value) {
+            if (cancelled || subscription != null) {
+                value.cancel();
+                return;
+            }
             subscription = value;
             value.request(1);
         }
 
-        void cancel() {
+        synchronized void cancel() {
+            cancelled = true;
             if (subscription != null) subscription.cancel();
         }
 

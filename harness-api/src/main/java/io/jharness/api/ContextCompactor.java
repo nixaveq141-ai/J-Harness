@@ -8,9 +8,9 @@ public interface ContextCompactor {
 
     record Compaction(ChatRequest request, List<Integer> removedMessageIndices, String summary) {
         public Compaction {
-            Objects.requireNonNull(request);
+            Objects.requireNonNull(request, "request");
             removedMessageIndices = List.copyOf(removedMessageIndices);
-            Objects.requireNonNull(summary);
+            Objects.requireNonNull(summary, "summary");
         }
     }
 }

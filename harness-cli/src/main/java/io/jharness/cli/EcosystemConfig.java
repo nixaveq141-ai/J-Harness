@@ -30,11 +30,9 @@ final class EcosystemConfig {
 
     static int number(Map<String, Object> map, String key, int fallback, int max) {
         Object value = map.getOrDefault(key, fallback);
-        if (!(value instanceof Number n)
-                || n.doubleValue() != n.intValue()
-                || n.intValue() < 0
-                || n.intValue() > max) throw invalid();
-        return n.intValue();
+        int number = Values.integer(value, "INVALID_ECOSYSTEM_CONFIG");
+        if (number < 0 || number > max) throw invalid();
+        return number;
     }
 
     static List<Map<String, Object>> entries(Map<String, Object> map, String key, int max) {
@@ -51,6 +49,14 @@ final class EcosystemConfig {
     }
 
     static void validate(Map<String, Object> config) {
+        try {
+            validateFields(config);
+        } catch (IllegalArgumentException | ClassCastException | NullPointerException ex) {
+            throw invalid();
+        }
+    }
+
+    private static void validateFields(Map<String, Object> config) {
         keys(
                 config,
                 "environment",
@@ -89,6 +95,11 @@ final class EcosystemConfig {
             int timeout = number(mcp, "timeoutSeconds", 15, 60);
             if (timeout < 1) throw invalid();
             if (transport.equals("stdio")) {
+                String cwd = text(mcp, "cwd", ".").replace('\\', '/');
+                if (cwd.startsWith("/")
+                        || cwd.contains(":")
+                        || Arrays.asList(cwd.split("/")).contains("..")
+                        || cwd.chars().anyMatch(Character::isISOControl)) throw invalid();
                 if (strings(mcp.get("command")).isEmpty()
                         || mcp.containsKey("url")
                         || mcp.containsKey("tokenEnv")) throw invalid();
@@ -152,7 +163,10 @@ final class EcosystemConfig {
                             .containsAll(
                                     strings(child.getOrDefault("tools", List.of("read_file")))))
                         throw invalid();
-                    strings(child.getOrDefault("requireRead", List.of()));
+                    var required = strings(child.getOrDefault("requireRead", List.of()));
+                    if (required.isEmpty()
+                            || !strings(child.getOrDefault("tools", List.of("read_file")))
+                                    .contains("read_file")) throw invalid();
                     if (number(child, "maxSteps", 4, 64) < 1
                             || number(child, "durationSeconds", 30, 300) < 1) throw invalid();
                 });
@@ -184,6 +198,7 @@ final class EcosystemConfig {
                         (k, raw) -> {
                             var script = Values.object(raw);
                             keys(script, "path", "mode", "timeoutSeconds");
+                            if (number(script, "timeoutSeconds", 10, 60) < 1) throw invalid();
                             scripts.put(
                                     k,
                                     new SkillsPlugin.Script(

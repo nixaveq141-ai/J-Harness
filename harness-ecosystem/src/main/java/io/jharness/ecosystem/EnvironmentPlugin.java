@@ -30,15 +30,20 @@ public final class EnvironmentPlugin implements HarnessPlugin {
     public void start(PluginContext context) {
         context.own(environment);
         new WorkspaceToolsPlugin(environment, artifacts).start(context);
-        context.register(ProcessRunner.class, "default", environment.processes());
+        var processes = Objects.requireNonNull(environment.processes(), "processes");
+        context.register(ProcessRunner.class, "default", processes);
         var registry = context.services().requireUnique(ToolRegistry.class, context.scope());
         context.own(
                 registry.register(
-                        new ProcessToolsPlugin.CommandTool(
-                                environment.processes(), context.scope(), artifacts),
+                        new ProcessToolsPlugin.CommandTool(processes, context.scope(), artifacts),
                         context.scope()));
         if ("unsupported".equals(environment.descriptor().get("terminal")))
-            context.register(TerminalSession.class, "default", environment.terminal());
+            context.register(
+                    TerminalSession.class,
+                    "default",
+                    new TerminalSession() {
+                        public void close() {}
+                    });
         else new TerminalToolsPlugin(environment.terminal()).start(context);
     }
 

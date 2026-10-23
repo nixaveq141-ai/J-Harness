@@ -21,8 +21,10 @@ public final class DefaultPromptComposer implements PromptComposer {
         List<Map<String, Object>> declarations =
                 tools.visibleTools(scope).stream()
                         .map(
-                                tool ->
-                                        Map.<String, Object>of(
+                                tool -> {
+                                    try {
+                                        new JsonSchema().checkSchema(tool.inputSchema());
+                                        return Map.<String, Object>of(
                                                 "type",
                                                 "function",
                                                 "function",
@@ -32,7 +34,14 @@ public final class DefaultPromptComposer implements PromptComposer {
                                                         "description",
                                                         tool.description(),
                                                         "parameters",
-                                                        tool.inputSchema())))
+                                                        tool.inputSchema()));
+                                    } catch (RuntimeException ex) {
+                                        throw new HarnessException(
+                                                "INVALID_TOOL_DECLARATION",
+                                                "Invalid declaration for tool: " + tool.name(),
+                                                ex);
+                                    }
+                                })
                         .toList();
         return new ChatRequest(projection.messages(), declarations, parameters);
     }

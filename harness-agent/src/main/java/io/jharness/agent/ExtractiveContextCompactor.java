@@ -7,6 +7,8 @@ import java.util.*;
 public final class ExtractiveContextCompactor implements ContextCompactor {
     @Override
     public Compaction compact(ChatRequest request, int maxCharacters) {
+        Objects.requireNonNull(request, "request");
+        if (maxCharacters < 1) throw new IllegalArgumentException("maxCharacters must be positive");
         if (size(request) <= maxCharacters) return new Compaction(request, List.of(), "");
         var messages = request.messages();
         int latestUser = -1;

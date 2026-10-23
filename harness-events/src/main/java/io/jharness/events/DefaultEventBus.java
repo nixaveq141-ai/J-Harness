@@ -199,10 +199,11 @@ public final class DefaultEventBus implements EventBus, AutoCloseable {
                     Thread.currentThread().interrupt();
                     throw new HarnessException("CANCELLED", "Serial dispatch interrupted", ex);
                 } catch (ExecutionException ex) {
+                    Throwable cause = ex.getCause();
+                    while (cause instanceof CompletionException && cause.getCause() != null)
+                        cause = cause.getCause();
                     throw new HarnessException(
-                            "SERIAL_FAILED",
-                            "Serial listener failed: " + event.type(),
-                            ex.getCause());
+                            "SERIAL_FAILED", "Serial listener failed: " + event.type(), cause);
                 }
             }
         }

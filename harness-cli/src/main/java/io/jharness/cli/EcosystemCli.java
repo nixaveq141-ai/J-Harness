@@ -238,11 +238,20 @@ final class EcosystemCli {
             }
             if (args.positional.size() > 1) Arguments.fail();
             int last = 0;
+            boolean prompt = true;
             while (!input.eof()) {
-                out.print("jharness> ");
-                out.flush();
+                if (prompt) {
+                    out.print("jharness> ");
+                    out.flush();
+                    prompt = false;
+                }
                 String goal = input.poll(Duration.ofMillis(100));
                 if (goal == null) continue;
+                prompt = true;
+                if (goal.equals(":cancel")) {
+                    out.println("NO_ACTIVE_RUN");
+                    continue;
+                }
                 if (goal.equals(":quit")) break;
                 if (!goal.isBlank()) last = run(id, goal, args, input, out);
             }
@@ -265,7 +274,13 @@ final class EcosystemCli {
             try {
                 CliApplication.interact(
                         task, approvals, control, metadata.directory("runs"), input, out);
-                task.get();
+                try {
+                    task.get();
+                } catch (ExecutionException ex) {
+                    if (ex.getCause() instanceof RuntimeException cause) throw cause;
+                    if (ex.getCause() instanceof Error fatal) throw fatal;
+                    throw ex;
+                }
             } catch (Exception failure) {
                 try {
                     sdk.cancel();
@@ -332,6 +347,11 @@ final class EcosystemCli {
                         ? UUID.randomUUID().toString() + UUID.randomUUID()
                         : environment.get(
                                 EcosystemConfig.text(web, "tokenEnv", "JHARNESS_WEB_TOKEN"));
+        if (token == null || token.isBlank())
+            throw new HarnessException(
+                    "WEB_TOKEN_REQUIRED", "Explicit CLI serve requires a strong environment token");
+        if (!token.matches("[A-Za-z0-9_-]{32,256}"))
+            throw new HarnessException("WEB_TOKEN_WEAK", "Explicit CLI serve token is invalid");
         var settings =
                 new WorkbenchSettings(config, environment, metadata, new SystemCredentials());
         var workspaces =

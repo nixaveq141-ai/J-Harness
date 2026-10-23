@@ -15,11 +15,18 @@ public interface DataSanitizer {
     }
 
     static DataSanitizer chain(DataSanitizer first, DataSanitizer second) {
-        java.util.Objects.requireNonNull(first);
-        java.util.Objects.requireNonNull(second);
+        java.util.Objects.requireNonNull(first, "first");
+        java.util.Objects.requireNonNull(second, "second");
         return new DataSanitizer() {
             public Map<String, Object> sanitize(Map<String, Object> data) {
-                return second.sanitize(first.sanitize(data));
+                return Values.snapshot(
+                        java.util.Objects.requireNonNull(
+                                second.sanitize(
+                                        Values.snapshot(
+                                                java.util.Objects.requireNonNull(
+                                                        first.sanitize(Values.snapshot(data)),
+                                                        "first sanitizer result"))),
+                                "second sanitizer result"));
             }
 
             public String streamingText(String cumulative) {

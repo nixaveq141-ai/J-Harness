@@ -78,6 +78,9 @@ public final class CliApplication {
             Path configPath =
                     args.has("config") ? Path.of(args.get("config", "")) : metadata.config();
             if (command.equals("config")) return configure(args, configPath, metadata, out);
+            if (args.has("config") && !Files.exists(configPath, LinkOption.NOFOLLOW_LINKS))
+                throw new HarnessException(
+                        "CONFIG_NOT_FOUND", "Explicit configuration file does not exist");
             CliConfig config = ConfigurationSelection.resolve(CliConfig.load(configPath), args);
             var files = new LocalWorkspace(workspace, config.searchFilter());
             if (command.equals("doctor")) return doctor(config, workspace, files, out);
@@ -1328,6 +1331,9 @@ public final class CliApplication {
         List<Map<String, Object>> plans = new ArrayList<>();
         for (Object raw : calls) {
             var map = Values.object(raw);
+            if (!map.keySet().equals(Set.of("tool", "arguments"))
+                    || !(map.get("tool") instanceof String))
+                throw new HarnessException("INVALID_PLAN", "Invalid offline plan call");
             var call =
                     new ToolInvocation(
                             UUID.randomUUID().toString(),
@@ -1357,7 +1363,13 @@ public final class CliApplication {
         for (var event : events) {
             if (event.type().equals("assistant.message")
                     && event.payload().get("tool_calls") instanceof List<?> calls)
-                for (Object call : calls) pending.add((String) Values.object(call).get("id"));
+                for (Object call : calls) {
+                    var rawId = Values.object(call).get("id");
+                    if (!(rawId instanceof String callId) || callId.isBlank())
+                        throw new HarnessException(
+                                "INVALID_SESSION_EVENT", "Invalid pending call identity");
+                    pending.add(callId);
+                }
             if (event.type().equals("tool.completed")) pending.remove(event.callId());
         }
         return List.copyOf(pending);

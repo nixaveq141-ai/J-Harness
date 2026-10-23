@@ -46,6 +46,12 @@ final class ReadOnlyChildEnvironment implements ExecutionEnvironment {
                     }
 
                     @Override
+                    public String readText(ExecPath path, int maxBytes) throws IOException {
+                        check();
+                        return base.readText(path, maxBytes);
+                    }
+
+                    @Override
                     public String versionOf(ExecPath path) throws IOException {
                         check();
                         return base.versionOf(path);
@@ -139,8 +145,15 @@ final class ReadOnlyChildEnvironment implements ExecutionEnvironment {
 
     @Override
     public ProcessRunner processes() {
-        return (argv, cwd, cancellation) -> {
-            throw denied();
+        return new ProcessRunner() {
+            public ToolResult execute(
+                    List<String> argv, ExecPath cwd, CancellationToken cancellation) {
+                throw denied();
+            }
+
+            public ToolResult execute(CommandRequest request, CancellationToken cancellation) {
+                throw denied();
+            }
         };
     }
 

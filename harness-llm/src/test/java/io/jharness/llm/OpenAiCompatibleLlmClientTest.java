@@ -19,6 +19,28 @@ class OpenAiCompatibleLlmClientTest {
     private static final ObjectMapper JSON = new ObjectMapper();
 
     @Test
+    void finishReasonMustAgreeWithCallsEvenWhenRateRetriesEnabled() throws Exception {
+        for (String body :
+                List.of(
+                        toolResponse("{}", false)
+                                .replace(
+                                        "\"finish_reason\":\"tool_calls\"",
+                                        "\"finish_reason\":\"stop\""),
+                        text("done").replace("stop", "tool_calls"))) {
+            try (Server server = new Server(exchange -> reply(exchange, 200, body));
+                    var client = server.client(Duration.ofSeconds(3), 4096, 3)) {
+                assertEquals(
+                        "MODEL_BAD_RESPONSE",
+                        assertThrows(
+                                        HarnessException.class,
+                                        () -> client.complete(request(), CancellationToken.NONE))
+                                .code());
+                assertEquals(1, server.requests.size());
+            }
+        }
+    }
+
+    @Test
     void sensitiveToolIdentityIsRejectedRatherThanRenamedIntoCollision() throws Exception {
         for (String response :
                 List.of(

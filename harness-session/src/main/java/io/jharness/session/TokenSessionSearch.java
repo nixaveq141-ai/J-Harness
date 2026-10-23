@@ -84,7 +84,7 @@ public final class TokenSessionSearch implements ContentSearchProvider {
         if (text == null
                 || text.isBlank()
                 || text.length() > 256
-                || !Set.of("tokens", "phrase").contains(mode)
+                || (mode == null || !Set.of("tokens", "phrase").contains(mode))
                 || limit < 1
                 || limit > 4096) throw error("INVALID_SEARCH");
         var needles = tokens(text);

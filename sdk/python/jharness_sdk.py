@@ -74,6 +74,8 @@ class JHarnessClient:
         with self._lock:
             if self._closed or self._closing and method != "shutdown":
                 raise RpcError("CLIENT_CLOSED")
+            if len(self._expired) >= 4096:
+                raise RpcError("EXPIRED_HISTORY_LIMIT")
             if len(self._pending) >= 32:
                 raise RpcError("BACKPRESSURE_LIMIT")
             self._pending[request_id] = future
@@ -88,8 +90,6 @@ class JHarnessClient:
             with self._lock:
                 self._pending.pop(request_id, None)
                 self._expired[request_id] = True
-                if len(self._expired) > 64:
-                    self._expired.popitem(last=False)
             raise RpcError("REQUEST_TIMEOUT_ACCEPTANCE_UNKNOWN") from None
 
     def _write(self):
@@ -112,6 +112,7 @@ class JHarnessClient:
                 self._process.stdin.flush()
         except (OSError, ValueError):
             self._fail("PROCESS_DISCONNECTED")
+            self._terminate()
 
     def _read(self):
         try:
@@ -187,33 +188,47 @@ class JHarnessClient:
         except queue.Full:
             pass
         try:
-            self._process.wait(timeout=5)
-        except subprocess.TimeoutExpired:
-            self._terminate()
             try:
-                self._process.wait(timeout=2)
+                self._process.wait(timeout=5)
             except subprocess.TimeoutExpired:
-                self._process.kill()
-                self._process.wait(timeout=2)
-        self._fail("CLIENT_CLOSED")
-        try:
-            self._writes.put_nowait(None)
-        except queue.Full:
-            pass
-        for stream in (self._process.stdin, self._process.stdout, self._process.stderr):
+                self._terminate()
+                try:
+                    self._process.wait(timeout=2)
+                except subprocess.TimeoutExpired:
+                    self._process.kill()
+                    try:
+                        self._process.wait(timeout=2)
+                    except subprocess.TimeoutExpired:
+                        raise RpcError("PROCESS_CLEANUP_UNKNOWN") from None
+        except OSError:
+            raise RpcError("PROCESS_CLEANUP_UNKNOWN") from None
+        finally:
+            self._fail("CLIENT_CLOSED")
             try:
-                stream.close()
-            except (OSError, ValueError):
+                self._writes.put_nowait(None)
+            except queue.Full:
                 pass
+            for stream in (self._process.stdin, self._process.stdout, self._process.stderr):
+                try:
+                    stream.close()
+                except (OSError, ValueError):
+                    pass
 
     def __enter__(self):
         return self
 
-    def __exit__(self, *_):
-        self.close()
+    def __exit__(self, exc_type, exc, traceback):
+        try:
+            self.close()
+        except RpcError:
+            if exc is None:
+                raise
 
     def open_session(self, profile="default", session_id=None):
         return self.call("session.open", {"profile": profile, **({"sessionId": session_id} if session_id else {})})
+
+    def close_session(self, handle):
+        return self.call("session.close", {"handle": handle})
 
     def list_sessions(self, profile=None, view="all", after=None):
         return self.call("sessions.list", {"view": view, **({"profile": profile} if profile else {}), **({"after": after} if after else {})})

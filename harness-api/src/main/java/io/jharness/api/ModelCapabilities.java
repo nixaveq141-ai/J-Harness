@@ -7,6 +7,8 @@ public record ModelCapabilities(
         boolean parallelTools,
         int maxContextTokens) {
     public ModelCapabilities {
+        if (parallelTools && !tools)
+            throw new IllegalArgumentException("parallelTools requires tools");
         if (maxContextTokens <= 0) throw new IllegalArgumentException("maxContextTokens");
     }
 }

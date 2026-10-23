@@ -31,8 +31,17 @@ public final class ObservedLlmClient implements LlmClient, ModelRouter {
 
     @Override
     public LlmClient select(String route) {
-        if (delegate instanceof ModelRouter router) return router.select(route);
-        if (route.equals("base")) return delegate;
+        if (delegate instanceof ModelRouter router) {
+            LlmClient chosen = Objects.requireNonNull(router.select(route), "selected client");
+            if (chosen == delegate) return this;
+            if (chosen instanceof ObservedLlmClient observed
+                    && observed.writer == writer
+                    && observed.reader == reader
+                    && observed.sanitizer == sanitizer
+                    && Objects.equals(observed.session, session)) return chosen;
+            return new ObservedLlmClient(chosen, writer, reader, sanitizer, session);
+        }
+        if ("base".equals(route)) return this;
         throw new HarnessException("MODEL_ROUTE_NOT_FOUND", "Unknown model route");
     }
 

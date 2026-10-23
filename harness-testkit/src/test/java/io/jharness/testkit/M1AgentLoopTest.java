@@ -583,6 +583,11 @@ class M1AgentLoopTest {
             SessionWriter writer = delegate.openWriter(id, ownership);
             return new SessionWriter() {
                 @Override
+                public boolean durable() {
+                    return writer.durable();
+                }
+
+                @Override
                 public String append(SessionEvent e) {
                     return writer.append(e);
                 }

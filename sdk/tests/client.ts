@@ -14,6 +14,8 @@ try{
   client=await JHarnessClient.start(options('flow'));check('protocol negotiates version and bounds',client.capabilities.protocolVersion==='1.0'&&client.capabilities.maxPending===32)
   await assert.rejects(client.call('unknown.method'),e=>e instanceof RpcError&&e.code==='METHOD_NOT_FOUND')
   await assert.rejects(client.call('session.open',{path:'outside'}),e=>e instanceof RpcError&&e.code==='INVALID_PARAMS');check('unknown methods and fields reject')
+  for(let i=0;i<40;i++){const h=await client.openSession();await client.closeSession(String(h.handle))}
+  check('forty draft handles release without exhausting quota',(await client.listSessions()).historyCount===0)
   const opened=await client.openSession();check('opening is a nonexecuting draft',opened.state==='DRAFT'&&opened.persisted===false&&(await client.listSessions()).historyCount===0)
   const receipt=await client.sendInput(String(opened.handle),'SDK_FLOW','initial-flow'),id=String(receipt.sessionId)
   await until(async()=>rows((await client!.questions(id)).questions).some(q=>q.state==='PENDING'))
@@ -56,12 +58,17 @@ try{
   client=await JHarnessClient.start({...options('flow'),jar:process.env.JHARNESS_SDK_PEER_JAR!})
   await assert.rejects(client.call('slow',{},100),e=>e instanceof RpcError&&e.code==='REQUEST_TIMEOUT_ACCEPTANCE_UNKNOWN')
   await wait(900);check('timeout discards late response and never retries',(await client.call('stats')).slowCalls===1)
+  for(let i=0;i<65;i++)await assert.rejects(client.call('defer',{},100),e=>e instanceof RpcError&&e.code==='REQUEST_TIMEOUT_ACCEPTANCE_UNKNOWN')
+  check('sixty five expired replies remain known',(await client.call('flush')).lateReplies===65)
+  await assert.rejects(client.call('ping',{value:1n} as any),e=>e instanceof RpcError&&e.code==='INVALID_REQUEST')
+  const cyclic:any={};cyclic.self=cyclic;await assert.rejects(client.call('ping',cyclic),e=>e instanceof RpcError&&e.code==='INVALID_REQUEST')
+  check('invalid request rejects asynchronously without pending leak',(await client.call('stats')).slowCalls===1)
   await client.call('stderr');check('child diagnostic text never appears in API result')
   await assert.rejects(client.call('ping',{text:'x'.repeat(65537)}),e=>e instanceof RpcError&&e.code==='RPC_REQUEST_LIMIT');check('request byte bound rejects before sending')
   const pending=Array.from({length:32},()=>client!.call('hold').then(()=>false,()=>true))
   await assert.rejects(client.call('hold'),e=>e instanceof RpcError&&e.code==='BACKPRESSURE_LIMIT');check('pending request bound applies backpressure')
-  await client.close();check('close rejects every pending call', (await Promise.all(pending)).every(Boolean))
-  for(const method of ['duplicate','oversized']){
+  const closing=client.close();assert.strictEqual(client.close(),closing);await closing;check('close rejects every pending call', (await Promise.all(pending)).every(Boolean))
+  for(const method of ['duplicate','oversized','unknownid']){
     client=await JHarnessClient.start({...options('flow'),jar:process.env.JHARNESS_SDK_PEER_JAR!})
     await assert.rejects(client.call(method),e=>e instanceof RpcError&&e.code==='INVALID_RESPONSE');await client.close();check(method+' response fails closed and stops owned peer')
   }

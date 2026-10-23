@@ -49,7 +49,11 @@ public interface ToolBatchExecution {
                                 "default serial policy",
                                 "maxConcurrency",
                                 1));
+                context.cancellation().throwIfCancelled();
                 var result = pipeline.execute(call, context);
+                if (result == null)
+                    throw new HarnessException(
+                            "TOOL_OUTCOME_UNKNOWN", "Pipeline returned no execution outcome");
                 results.add(result);
                 if (stops(result)) {
                     EventSupport.append(

@@ -18,20 +18,29 @@ public record CommandRequest(
 
     public CommandRequest {
         callId = Values.required(callId, "callId");
-        Objects.requireNonNull(mode);
+        if (callId.length() > 256)
+            throw new IllegalArgumentException("callId exceeds 256 characters");
+        Objects.requireNonNull(mode, "mode");
+        Objects.requireNonNull(argv, "argv");
+        Objects.requireNonNull(cwd, "cwd");
+        Objects.requireNonNull(timeout, "timeout");
+        if (argv.isEmpty() || argv.size() > 256)
+            throw new IllegalArgumentException("argv count must be 1..256");
+        long characters = 0;
+        for (String argument : argv) {
+            Objects.requireNonNull(argument, "argv element");
+            if (argument.indexOf('\0') >= 0)
+                throw new IllegalArgumentException("argv element contains NUL");
+            characters += argument.length();
+        }
+        if (characters > 32768) throw new IllegalArgumentException("argv exceeds 32768 characters");
+        if (argv.getFirst().isBlank())
+            throw new IllegalArgumentException("argv first element is blank");
+        if (mode != Mode.ARGV && argv.size() != 1)
+            throw new IllegalArgumentException("argv count must be one in shell mode");
+        if (timeout.isNegative() || timeout.isZero() || timeout.compareTo(Duration.ofHours(1)) > 0)
+            throw new IllegalArgumentException("timeout must be positive and at most one hour");
         argv = List.copyOf(argv);
-        Objects.requireNonNull(cwd);
-        Objects.requireNonNull(timeout);
-        if (argv.isEmpty()
-                || argv.size() > 256
-                || argv.stream().anyMatch(s -> s == null || s.indexOf('\0') >= 0)
-                || argv.stream().mapToLong(String::length).sum() > 32768
-                || argv.getFirst().isBlank()
-                || (mode != Mode.ARGV && argv.size() != 1)
-                || timeout.isNegative()
-                || timeout.isZero()
-                || timeout.compareTo(Duration.ofHours(1)) > 0)
-            throw new IllegalArgumentException("Invalid bounded command");
     }
 
     @Override

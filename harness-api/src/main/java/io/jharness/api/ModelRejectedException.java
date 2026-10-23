@@ -12,7 +12,7 @@ public final class ModelRejectedException extends RuntimeException {
     /** Safe structured metadata only; raw provider bodies and headers are never retained. */
     public ModelRejectedException(java.util.OptionalLong retryAfterMillis) {
         super("MODEL_RATE_LIMIT");
-        java.util.Objects.requireNonNull(retryAfterMillis);
+        java.util.Objects.requireNonNull(retryAfterMillis, "retryAfterMillis");
         if (retryAfterMillis.isPresent()
                 && (retryAfterMillis.getAsLong() < 0 || retryAfterMillis.getAsLong() > 86_400_000))
             throw new IllegalArgumentException("retryAfterMillis");

@@ -242,11 +242,11 @@ class R1PluginRollbackTest {
                                 }
 
                                 public Map<String, Object> inputSchema() {
-                                    return Map.of();
+                                    return Map.of("type", "object");
                                 }
 
                                 public Map<String, Object> outputSchema() {
-                                    return Map.of();
+                                    return Map.of("type", "object");
                                 }
 
                                 public SideEffectLevel sideEffectLevel() {

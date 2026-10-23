@@ -13,10 +13,10 @@ public final class Values {
     }
 
     public static Map<String, Object> snapshot(Map<String, ?> value) {
-        Objects.requireNonNull(value);
-        Map<String, Object> copy = new LinkedHashMap<>();
-        value.forEach((key, item) -> copy.put(required(key, "key"), freeze(item)));
-        return Collections.unmodifiableMap(copy);
+        Objects.requireNonNull(value, "value");
+        @SuppressWarnings("unchecked")
+        Map<String, Object> copy = (Map<String, Object>) freeze(value, 0, new int[] {100000});
+        return copy;
     }
 
     public static Map<String, Object> object(Object value) {
@@ -29,17 +29,27 @@ public final class Values {
                         throw new HarnessException("INVALID_JSON", "Expected string key");
                     result.put(text, item);
                 });
-        return snapshot(result);
+        try {
+            return snapshot(result);
+        } catch (IllegalArgumentException ex) {
+            throw new HarnessException("INVALID_JSON", "Invalid bounded JSON object", ex);
+        }
     }
 
-    private static Object freeze(Object value) {
-        return freeze(value, 0);
+    /** Exact integer conversion; fractional and overflowing numbers are rejected. */
+    public static int integer(Object value, String code) {
+        try {
+            if (!(value instanceof Number)) throw new ArithmeticException();
+            return new java.math.BigDecimal(value.toString()).intValueExact();
+        } catch (ArithmeticException | NumberFormatException ex) {
+            throw new HarnessException(code, "Expected bounded integer", ex);
+        }
     }
 
-    private static Object freeze(Object value, int depth) {
-        if (depth > 64)
+    private static Object freeze(Object value, int depth, int[] remaining) {
+        if (--remaining[0] < 0 || depth > 64)
             throw new IllegalArgumentException(
-                    "JSON nesting exceeds 64 levels or contains a cycle");
+                    "JSON exceeds node/depth limits or contains a cycle");
         if (value == null
                 || value instanceof String
                 || value instanceof Boolean
@@ -49,11 +59,19 @@ public final class Values {
                 || value instanceof Long
                 || value instanceof java.math.BigInteger
                 || value instanceof java.math.BigDecimal) return value;
-        if (value instanceof Double d && Double.isFinite(d)) return d;
-        if (value instanceof Float f && Float.isFinite(f)) return f;
+        if (value instanceof Double d) {
+            if (!Double.isFinite(d))
+                throw new IllegalArgumentException("JSON number must be finite");
+            return d;
+        }
+        if (value instanceof Float f) {
+            if (!Float.isFinite(f))
+                throw new IllegalArgumentException("JSON number must be finite");
+            return f;
+        }
         if (value instanceof List<?> list) {
             List<Object> copy = new ArrayList<>();
-            list.forEach(item -> copy.add(freeze(item, depth + 1)));
+            list.forEach(item -> copy.add(freeze(item, depth + 1, remaining)));
             return Collections.unmodifiableList(copy);
         }
         if (value instanceof Map<?, ?> map) {
@@ -62,7 +80,7 @@ public final class Values {
                     (key, item) -> {
                         if (!(key instanceof String text))
                             throw new IllegalArgumentException("JSON key must be a string");
-                        copy.put(required(text, "key"), freeze(item, depth + 1));
+                        copy.put(text, freeze(item, depth + 1, remaining));
                     });
             return Collections.unmodifiableMap(copy);
         }

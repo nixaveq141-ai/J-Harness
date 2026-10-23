@@ -4,6 +4,8 @@
 
 ## 当前接续状态
 
+- 2026-10-23按用户要求完成R3五包304条采纳范围的本地实现/契约澄清与关联验证：183条实现或回归补强、121条契约，不冒称304次独立动态复现。共享schema/SPI、流终态/路由工厂、MCP/技能/网页、CLI/stdio SDK和精确patch协议已补强。最终final3同源码640Java/104suites（保留603、新增37）、170门禁/33客户端、SDK66/示例2/启动器8、Windows原生7/兼容4+父清理及真实Docker子任务/Web通过，另有实际Linux反斜杠目录SKILL_PATH_DENIED与容器清理反例。546构建输入、119提交实施输入、回执、JAR及5份包内UI字节独立核对；失败/替代运行保留。详见OCR-R3-remediation-2026-10-23.md、逐项台账及OCR-R3-2026-10-23-results.json。浏览器未重采，R2 WebKit问答失败留R6；原生Linux/macOS/Firefox/远端CI/完整发布smoke未运行。M10.5.9仍LOCAL_PARTIAL_CI_PENDING/m11Eligible=false，下一入口R4。仅本地版本管理，无推送/发布/付费调用；用户原有.agent扫描段与background-R0.md不纳入。
+
 - 2026-10-23按用户要求完成R2四包107条采纳范围的本地修复与验证：88条实现、17条契约澄清、2条既有防护确认，逐项关联用例，不冒称107条独立动态复现。fork/产物补偿、版本快照/权限、SDK初始化/输入/费用纪元、事实恢复/迁移/租约、问答/计划/队列历史已加固。最终k同源码603Java/92suites（保留563、新增40）、165门禁/33客户端、Chrome271/WebKit245（问答运行时断言失败，完整矩阵FAILED，留R6）、SDK58/示例2/启动器8及Windows原生7/兼容4+父清理、真实Docker子任务/Web/过滤器两配置通过；回执、源码/JAR/UI/截图独立核对，失败及重叠无效运行保留。开发记录OCR-R2-remediation-2026-10-22.md、逐条台账及OCR-R2-2026-10-22-results.json为接续。原生Linux/macOS/Firefox、远端CI与完整发布smoke未运行；所有权受限显式metadata、目录竞态/掉电/历史容量边界见契约。M10.5.9仍LOCAL_PARTIAL_CI_PENDING/m11Eligible=false，下一入口R3及未决完整CI。仅本地提交，无推送/发布/付费调用；用户原有.agent扫描段与background-R0.md不纳入。
 
 - 2026-10-22按用户要求补测R1前轮18条LOCAL_PARTIAL：新增20项并强化4项JUnit，18条精确故障窗口均通过，当前237条本地验证/0条局部验证。补测发现并修复Web及交互审批准时接受后owner延迟跨截止误判超时；取消/关闭仍优先，资源故障注入入口保持字段初始化后才启动进程。最终b同运行563Java/85suites、165门禁/33客户端及Windows原生/兼容、实际Docker子任务与Web专项通过；回执、源码/JAR及逐条身份独立核对，报告OCR-R1-fault18-2026-10-22.md和新results保留。前轮历史JSON不改，首轮失败不计通过；本轮未重跑浏览器/SDK/完整发布或远端CI/原生POSIX，M10.5.9仍LOCAL_PARTIAL_CI_PENDING/m11Eligible=false，R2～R6和原R0后续项保持。仅本地提交，无推送/发布/付费调用；用户原有.agent扫描段及background-R0.md不纳入。

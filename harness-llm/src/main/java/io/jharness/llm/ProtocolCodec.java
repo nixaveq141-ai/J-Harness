@@ -102,7 +102,16 @@ final class ProtocolCodec {
             if (result.containsKey("reasoning_effort")) throw error("UNSUPPORTED_REASONING");
             if (result.remove("thinking") != null)
                 result.put("thinking", Map.of("type", "disabled"));
-            move(result, "stop", "stop_sequences");
+            if (result.containsKey("stop")) {
+                Object stop = result.remove("stop");
+                List<?> stops = stop instanceof String ? List.of(stop) : list(stop);
+                if (stops.isEmpty()
+                        || stops.size() > 4
+                        || stops.stream()
+                                .anyMatch(v -> !(v instanceof String text) || text.isEmpty()))
+                    throw error("UNSUPPORTED_PARAMETER");
+                result.put("stop_sequences", stops);
+            }
             if (!result.containsKey("max_tokens")) throw error("UNSUPPORTED_PARAMETER");
             var messages = new ArrayList<Map<String, Object>>();
             var system = new ArrayList<String>();
@@ -283,7 +292,19 @@ final class ProtocolCodec {
             if (!"summary_text".equals(summary.get("type"))) throw error("UNSUPPORTED_REASONING");
             string(summary, "text");
         }
-        safe.put("summary", summaries);
+        safe.put(
+                "summary",
+                summaries.stream()
+                        .map(
+                                raw -> {
+                                    var summary = obj(raw);
+                                    return Map.of(
+                                            "type",
+                                            "summary_text",
+                                            "text",
+                                            string(summary, "text"));
+                                })
+                        .toList());
         return safe;
     }
 

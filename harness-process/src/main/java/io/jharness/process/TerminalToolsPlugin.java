@@ -121,10 +121,17 @@ public final class TerminalToolsPlugin implements HarnessPlugin {
                         }
 
                         @Override
+                        public void validateArguments(ToolInvocation call) {
+                            new JsonSchema().validate(inputSchema(), call.arguments());
+                            if (operation.equals("start")) CommandInputs.request(call);
+                        }
+
+                        @Override
                         public ToolResult execute(ToolInvocation call, ToolContext invocation) {
                             if (!context.scope().equals(invocation.scope()))
                                 throw new HarnessException(
                                         "SCOPE_DENIED", "Terminal scope mismatch");
+                            validateArguments(call);
                             var args = call.arguments();
                             String id = (String) args.get("id");
                             try {

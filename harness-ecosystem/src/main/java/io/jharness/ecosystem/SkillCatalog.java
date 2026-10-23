@@ -115,6 +115,9 @@ public final class SkillCatalog {
                 if (!Files.isDirectory(child, LinkOption.NOFOLLOW_LINKS)) continue;
                 String directory = child.getFileName().toString();
                 if (directory.startsWith(".") || directory.length() > 128) continue;
+                if (directory.indexOf('\\') >= 0
+                        || directory.chars().anyMatch(Character::isISOControl))
+                    throw BoundedJson.error("SKILL_PATH_DENIED");
                 verify(child);
                 Path manifest = child.resolve("SKILL.md");
                 if (!Files.exists(manifest, LinkOption.NOFOLLOW_LINKS)) continue;
@@ -125,7 +128,11 @@ public final class SkillCatalog {
                     throw BoundedJson.error("SKILL_PATH_DENIED");
                 if (attrs.size() > 65536) throw BoundedJson.error("SKILL_FILE_LIMIT");
                 var relative = new ExecPath(directory + "/SKILL.md");
-                String version = files.versionOf(relative), text = files.readText(relative);
+                String version = files.versionOf(relative),
+                        text =
+                                files.readText(
+                                        relative,
+                                        (int) Math.max(1, Math.min(65536, 512 * 1024 - bytes)));
                 if (!version.equals(files.versionOf(relative)))
                     throw BoundedJson.error("FILE_CONFLICT");
                 byte[] content = text.getBytes(StandardCharsets.UTF_8);
@@ -178,6 +185,9 @@ public final class SkillCatalog {
             if (colon <= 0) continue;
             String key = line.substring(0, colon), value = line.substring(colon + 1).trim();
             if (!Set.of("name", "description").contains(key)) continue;
+            if ((value.startsWith("\"") || value.startsWith("'"))
+                    && (value.length() < 2 || value.charAt(value.length() - 1) != value.charAt(0)))
+                throw BoundedJson.error("SKILL_FRONTMATTER_INVALID");
             if (value.startsWith("\"") && value.endsWith("\"")
                     || value.startsWith("'") && value.endsWith("'"))
                 value = value.substring(1, value.length() - 1);

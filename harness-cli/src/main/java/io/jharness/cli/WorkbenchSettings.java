@@ -219,6 +219,8 @@ final class WorkbenchSettings implements HarnessWebServer.Settings, DataSanitize
         }
         if (!next.stream().map(m -> m.get("id")).toList().containsAll(keys.keySet()))
             throw error("INVALID_SETTINGS");
+        if (!(input.get("selected") instanceof String)
+                || !(input.get("extensions") instanceof Map<?, ?>)) throw error("INVALID_SETTINGS");
         var candidate =
                 Values.snapshot(
                         Map.of(
@@ -487,7 +489,12 @@ final class WorkbenchSettings implements HarnessWebServer.Settings, DataSanitize
             if (!id.matches("[A-Za-z0-9_-]+") || !ids.add(id)) throw error("INVALID_SETTINGS");
             field(model, "label", 80);
             field(model, "model", 128);
-            URI uri = URI.create(field(model, "baseUrl", 512));
+            URI uri;
+            try {
+                uri = URI.create(field(model, "baseUrl", 512));
+            } catch (IllegalArgumentException ex) {
+                throw error("INVALID_SETTINGS");
+            }
             if (!Set.of("http", "https").contains(uri.getScheme())
                     || uri.getHost() == null
                     || uri.getUserInfo() != null

@@ -19,12 +19,44 @@ public record SessionEvent(
         eventId = Values.required(eventId, "eventId");
         sessionId = Values.required(sessionId, "sessionId");
         type = Values.required(type, "type");
-        Objects.requireNonNull(timestamp);
-        Objects.requireNonNull(level);
+        Objects.requireNonNull(timestamp, "timestamp");
+        Objects.requireNonNull(level, "level");
         if (schemaVersion < 1) throw new IllegalArgumentException("Invalid schemaVersion");
         EventLevel expected =
                 switch (type) {
-                    case "session.created", "checkpoint.failed" -> null;
+                    case "session.created", "checkpoint.failed", "user.message" -> null;
+                    case "config.selected",
+                                    "context.injected",
+                                    "context.compacted",
+                                    "delivery.registered",
+                                    "environment.closed",
+                                    "environment.verified",
+                                    "extensions.ready",
+                                    "model.observed",
+                                    "model.verified",
+                                    "sdk.created",
+                                    "sdk.input.applied",
+                                    "sdk.turn.configured",
+                                    "session.archived",
+                                    "session.forked",
+                                    "subagent.origin",
+                                    "subagent.started",
+                                    "subagent.verified",
+                                    "system.message",
+                                    "terminal.snapshot",
+                                    "terminal.verified",
+                                    "web.catalog.version",
+                                    "web.task.accepted",
+                                    "web.task.changed",
+                                    "web.task.finished",
+                                    "web.task.verified",
+                                    "web.turn.accepted",
+                                    "web.turn.cancelled",
+                                    "web.turn.finished",
+                                    "web.turn.interrupted",
+                                    "web.turn.paused",
+                                    "web.turn.started" ->
+                            EventLevel.SESSION;
                     case "turn.started", "turn.ended" -> EventLevel.TURN;
                     case "step.started",
                                     "step.ended",
@@ -41,13 +73,17 @@ public record SessionEvent(
                                     "tool.completed",
                                     "tool.verified",
                                     "approval.decided",
-                                    "approval.requested" ->
+                                    "approval.requested",
+                                    "tool.preview",
+                                    "tool.scheduled" ->
                             EventLevel.TOOL;
                     default ->
                             type.startsWith("plugin.") || type.startsWith("config.")
                                     ? EventLevel.SESSION
                                     : null;
                 };
+        if (type.equals("user.message") && level != EventLevel.SESSION && level != EventLevel.TURN)
+            throw new IllegalArgumentException("User message level");
         if (type.equals("session.created") && level != EventLevel.SESSION)
             throw new IllegalArgumentException("Session event level");
         if (expected != null && expected != level)

@@ -2,6 +2,9 @@ package io.jharness.api;
 
 import java.util.Map;
 
+/**
+ * Stable immutable metadata for one registration; declarations cannot be null or change over time.
+ */
 public interface AgentTool {
     String name();
 
@@ -19,6 +22,9 @@ public interface AgentTool {
     default boolean requiresSerialExecution() {
         return false;
     }
+
+    /** Pure semantic validation, called before approval/intent/body. Must not acquire resources. */
+    default void validateArguments(ToolInvocation call) {}
 
     ToolResult execute(ToolInvocation args, ToolContext context) throws Exception;
 }

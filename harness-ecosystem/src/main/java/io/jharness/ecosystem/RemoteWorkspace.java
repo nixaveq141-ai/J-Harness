@@ -47,8 +47,33 @@ public final class RemoteWorkspace implements WorkspaceFiles {
         request.put("path", safe(path));
         cancellation.throwIfCancelled();
         var response = exchange.apply(Values.snapshot(request), cancellation);
-        if (response.get("error") instanceof String code) throw BoundedJson.error(code);
-        return Values.object(response.get("value"));
+        boolean mutation = Set.of("write", "edit", "patch").contains(op);
+        try {
+            if (response == null || response.containsKey("error") == response.containsKey("value"))
+                throw BoundedJson.error("WORKER_PROTOCOL_ERROR");
+            if (response.containsKey("error")) {
+                if (!(response.get("error") instanceof String code) || code.isBlank())
+                    throw BoundedJson.error("WORKER_PROTOCOL_ERROR");
+                throw BoundedJson.error(code);
+            }
+            BoundedJson.encode(response);
+            var value = Values.object(response.get("value"));
+            if (op.equals("read")
+                    && (!(value.get("text") instanceof String)
+                            || !(value.get("version") instanceof String)))
+                throw BoundedJson.error("WORKER_PROTOCOL_ERROR");
+            if (op.equals("version") && !(value.get("version") instanceof String))
+                throw BoundedJson.error("WORKER_PROTOCOL_ERROR");
+            if (op.equals("write") || op.equals("edit")) {
+                var change = change(value);
+                if (!safe(change.path()).equals(safe(path)))
+                    throw BoundedJson.error("WORKER_PROTOCOL_ERROR");
+            }
+            return value;
+        } catch (RuntimeException ex) {
+            if (mutation) observed.clear();
+            throw ex;
+        }
     }
 
     void verifyFilter() {
@@ -62,7 +87,13 @@ public final class RemoteWorkspace implements WorkspaceFiles {
 
     @Override
     public synchronized String readText(ExecPath path) {
-        var value = call("read", path, Map.of(), CancellationToken.NONE);
+        return readText(path, 1024 * 1024);
+    }
+
+    @Override
+    public synchronized String readText(ExecPath path, int maxBytes) {
+        if (maxBytes < 1 || maxBytes > 1024 * 1024) throw new IllegalArgumentException("maxBytes");
+        var value = call("read", path, Map.of("maxBytes", maxBytes), CancellationToken.NONE);
         remember(safe(path), (String) value.get("version"));
         return (String) value.get("text");
     }
@@ -159,14 +190,9 @@ public final class RemoteWorkspace implements WorkspaceFiles {
         var all = new LinkedHashMap<String, String>();
         for (var entry : versions.entrySet())
             all.put(safe(new ExecPath(entry.getKey())), entry.getValue());
-        for (String line : patch.split("\\n")) {
-            if (line.startsWith("+++ ")) {
-                String header = line.substring(4).split("\t", 2)[0];
-                if (header.startsWith("b/")) header = header.substring(2);
-                String key = safe(new ExecPath(header));
-                if (!all.containsKey(key) && observed.containsKey(key))
-                    all.put(key, observed.get(key));
-            }
+        for (var file : io.jharness.workspace.UnifiedPatch.parse(patch)) {
+            String key = safe(new ExecPath(file.path()));
+            if (!all.containsKey(key) && observed.containsKey(key)) all.put(key, observed.get(key));
         }
         var result = call("patch", root(), Map.of("patch", patch, "versions", all), cancellation);
         // A partial/unknown commit must never leave implicit authority from an older observation.
@@ -193,6 +219,13 @@ public final class RemoteWorkspace implements WorkspaceFiles {
     }
 
     private static FileChange change(Map<String, Object> value) {
+        for (String key : List.of("path", "beforeVersion", "afterVersion", "diff"))
+            if (!(value.get(key) instanceof String))
+                throw BoundedJson.error("WORKER_PROTOCOL_ERROR");
+        safe(new ExecPath((String) value.get("path")));
+        if (((String) value.get("afterVersion")).isBlank()
+                || ((String) value.get("beforeVersion")).isBlank())
+            throw BoundedJson.error("WORKER_PROTOCOL_ERROR");
         return new FileChange(
                 new ExecPath((String) value.get("path")),
                 (String) value.get("beforeVersion"),

@@ -89,7 +89,12 @@ public final class WorkspaceContentInspection implements ContentInspection {
                             .filter(
                                     v -> {
                                         try {
-                                            pathAllowed((String) Values.object(v).get("path"));
+                                            var entry = Values.object(v);
+                                            if (!(entry.get("path") instanceof String itemPath))
+                                                throw new HarnessException(
+                                                        "INVALID_PROVIDER_RESULT",
+                                                        "Missing entry path");
+                                            pathAllowed(itemPath);
                                             return true;
                                         } catch (HarnessException denied) {
                                             return false;

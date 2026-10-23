@@ -304,6 +304,10 @@ public final class LocalWorkspace implements WorkspaceFiles {
     }
 
     private String text(Path path, CancellationToken token) throws IOException {
+        return text(path, token, WRITE_LIMIT);
+    }
+
+    private String text(Path path, CancellationToken token, int limit) throws IOException {
         checkSegments(path);
         if (!Files.exists(path, LinkOption.NOFOLLOW_LINKS))
             throw new HarnessException("FILE_NOT_FOUND", "File not found");
@@ -311,10 +315,10 @@ public final class LocalWorkspace implements WorkspaceFiles {
             throw new HarnessException("NOT_TEXT_FILE", "Expected a regular file");
         byte[] bytes;
         try (InputStream input = Files.newInputStream(path, LinkOption.NOFOLLOW_LINKS)) {
-            bytes = input.readNBytes(WRITE_LIMIT + 1);
+            bytes = input.readNBytes(limit + 1);
         }
         token.throwIfCancelled();
-        if (bytes.length > WRITE_LIMIT)
+        if (bytes.length > limit)
             throw new HarnessException(
                     "FILE_LIMIT", "Use paginated read; full text/write limit is 1 MiB");
         if (containsZero(bytes))
@@ -338,9 +342,15 @@ public final class LocalWorkspace implements WorkspaceFiles {
 
     @Override
     public synchronized String readText(ExecPath path) throws IOException {
+        return readText(path, WRITE_LIMIT);
+    }
+
+    @Override
+    public synchronized String readText(ExecPath path, int maxBytes) throws IOException {
+        if (maxBytes < 1 || maxBytes > WRITE_LIMIT) throw new IllegalArgumentException("maxBytes");
         CancellationToken token = bounded(CancellationToken.NONE);
         Path target = resolve(path);
-        String content = text(target, token);
+        String content = text(target, token, maxBytes);
         String before =
                 HexFormat.of().formatHex(sha().digest(content.getBytes(StandardCharsets.UTF_8)));
         if (!before.equals(version(target, token)))

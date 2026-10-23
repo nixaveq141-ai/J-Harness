@@ -36,6 +36,9 @@ public final class DefaultServiceRegistry implements ServiceRegistry {
 
     @Override
     public synchronized <T> Optional<T> find(Class<T> type, String key, PluginScope scope) {
+        Objects.requireNonNull(type, "type");
+        Objects.requireNonNull(scope, "scope");
+        Values.required(key, "key");
         return Optional.ofNullable(type.cast(entries.get(new Key(type, key, scope))));
     }
 
@@ -51,6 +54,8 @@ public final class DefaultServiceRegistry implements ServiceRegistry {
 
     @Override
     public synchronized <T> T requireUnique(Class<T> type, PluginScope scope) {
+        Objects.requireNonNull(type, "type");
+        Objects.requireNonNull(scope, "scope");
         List<T> found =
                 entries.entrySet().stream()
                         .filter(e -> e.getKey().type.equals(type) && e.getKey().scope.equals(scope))

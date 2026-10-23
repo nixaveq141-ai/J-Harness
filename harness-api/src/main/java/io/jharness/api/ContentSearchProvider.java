@@ -11,11 +11,26 @@ public interface ContentSearchProvider {
             String timestamp,
             String turnId,
             String snippet,
-            int score) {}
+            int score) {
+        public Hit {
+            eventId = Values.required(eventId, "eventId");
+            type = Values.required(type, "type");
+            timestamp = Values.required(timestamp, "timestamp");
+            turnId = turnId == null ? "" : turnId;
+            java.util.Objects.requireNonNull(snippet, "snippet");
+            if (snippet.length() > 400 || score < 0)
+                throw new IllegalArgumentException("Invalid search hit bounds");
+        }
+    }
 
     record Result(List<Hit> hits, int indexedEvents, int reusedEvents, boolean rebuilt) {
         public Result {
             hits = List.copyOf(hits);
+            if (hits.size() > 4096
+                    || indexedEvents < 0
+                    || reusedEvents < 0
+                    || reusedEvents > indexedEvents)
+                throw new IllegalArgumentException("Invalid search result bounds");
         }
     }
 

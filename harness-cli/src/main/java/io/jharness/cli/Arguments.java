@@ -54,15 +54,21 @@ final class Arguments {
                 break;
             }
             if (!arg.startsWith("--")) {
+                if (arg.startsWith("-") && positional.isEmpty()) fail();
                 positional.add(arg);
                 continue;
             }
-            String name = arg.substring(2);
+            int equals = arg.indexOf('=');
+            String name = arg.substring(2, equals < 0 ? arg.length() : equals);
             if (!FLAGS.contains(name) && !VALUES.contains(name)) fail();
+            if (equals >= 0 && FLAGS.contains(name)) fail();
             String value = "true";
             if (VALUES.contains(name)) {
-                if (++i >= argv.length) fail();
-                value = argv[i];
+                if (equals >= 0) value = arg.substring(equals + 1);
+                else {
+                    if (++i >= argv.length || argv[i].startsWith("--")) fail();
+                    value = argv[i];
+                }
             }
             if (options.containsKey(name)
                     && !Set.of("require-read", "expect-file", "bundle").contains(name)) fail();
@@ -75,7 +81,7 @@ final class Arguments {
     }
 
     List<String> all(String key) {
-        return options.getOrDefault(key, List.of());
+        return List.copyOf(options.getOrDefault(key, List.of()));
     }
 
     boolean has(String key) {

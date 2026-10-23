@@ -47,13 +47,15 @@ public final class OpenAiCompatibleConfig {
         Objects.requireNonNull(baseUrl);
         String host = baseUrl.getHost();
         boolean loopback =
-                "localhost".equals(host) || "127.0.0.1".equals(host) || "[::1]".equals(host);
+                "localhost".equalsIgnoreCase(host)
+                        || "127.0.0.1".equals(host)
+                        || "[::1]".equals(host);
         if (host == null
                 || baseUrl.getUserInfo() != null
                 || baseUrl.getQuery() != null
                 || baseUrl.getFragment() != null
-                || !("https".equals(baseUrl.getScheme())
-                        || "http".equals(baseUrl.getScheme()) && loopback))
+                || !("https".equalsIgnoreCase(baseUrl.getScheme())
+                        || "http".equalsIgnoreCase(baseUrl.getScheme()) && loopback))
             throw new IllegalArgumentException(
                     "Use HTTPS or loopback HTTP without URL credentials/query/fragment");
         this.model = Values.required(model, "model");
@@ -63,7 +65,7 @@ public final class OpenAiCompatibleConfig {
             throw new IllegalArgumentException("Invalid model name");
         this.protocol = Objects.requireNonNull(protocol);
         this.apiKey = Values.required(apiKey, "apiKey");
-        if (apiKey.contains("\r") || apiKey.contains("\n"))
+        if (apiKey.length() > 8192 || apiKey.chars().anyMatch(c -> c < 33 || c > 126))
             throw new IllegalArgumentException("Invalid API key");
         if (timeout == null
                 || timeout.isZero()

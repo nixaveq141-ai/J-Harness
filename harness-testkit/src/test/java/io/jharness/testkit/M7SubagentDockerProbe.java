@@ -143,6 +143,13 @@ public final class M7SubagentDockerProbe {
                                     "Delegate reading; independently read and perform parent edit",
                                     CancellationToken.NONE);
                     require(snapshot.status() == TaskStatus.COMPLETED, "parent task status");
+                    var parentTools = parent.requests().getFirst().tools();
+                    require(
+                            parent.requests().size() >= 2
+                                    && parent.requests().stream()
+                                            .allMatch(
+                                                    request -> request.tools().equals(parentTools)),
+                            "parent registry preserved before and after delegation");
                     if (container) {
                         var edit =
                                 snapshot.events().stream()

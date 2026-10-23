@@ -21,6 +21,8 @@ public record SessionQuery(
     }
 
     public List<SessionEvent> apply(List<SessionEvent> events) {
+        java.util.Objects.requireNonNull(events, "events");
+        events.forEach(event -> java.util.Objects.requireNonNull(event, "events element"));
         return events.stream()
                 .filter(e -> after == null || !e.timestamp().isBefore(after))
                 .filter(e -> before == null || !e.timestamp().isAfter(before))

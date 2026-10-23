@@ -41,6 +41,10 @@ try:
     rejects(lambda: client.call('unknown.method'), 'METHOD_NOT_FOUND')
     rejects(lambda: client.call('session.open', {'path': 'outside'}), 'INVALID_PARAMS')
     check('unknown methods and fields reject')
+    for _ in range(40):
+        handle = client.open_session()
+        client.close_session(handle["handle"])
+    check("forty draft handles release without exhausting quota", client.list_sessions()["historyCount"] == 0)
     opened = client.open_session()
     check('opening is a nonexecuting draft', opened['state'] == 'DRAFT' and not opened['persisted'] and client.list_sessions()['historyCount'] == 0)
     receipt = client.send_input(opened['handle'], 'SDK_FLOW', 'initial-flow')
@@ -108,6 +112,12 @@ try:
     rejects(lambda: client.call('slow', timeout=.1), 'REQUEST_TIMEOUT_ACCEPTANCE_UNKNOWN')
     time.sleep(.9)
     check('timeout discards late response and never retries', client.call('stats')['slowCalls']==1)
+    for _ in range(65):
+        rejects(lambda: client.call("defer", timeout=.1), "REQUEST_TIMEOUT_ACCEPTANCE_UNKNOWN")
+    check("sixty five expired replies remain known", client.call("flush")["lateReplies"] == 65)
+    cycle = {}; cycle["self"] = cycle
+    rejects(lambda: client.call("ping", cycle), "INVALID_REQUEST")
+    check("invalid request rejects without pending leak", client.call("stats")["slowCalls"] == 1)
     client.call('stderr')
     check('child diagnostic text never appears in API result')
     rejects(lambda: client.call('ping', {'text':'x'*65537}), 'RPC_REQUEST_LIMIT')
@@ -123,7 +133,7 @@ try:
         check('pending request bound applies backpressure')
         client.close()
         check('close rejects every pending call', all(f.result(timeout=5) for f in pending))
-    for method in ['duplicate','oversized']:
+    for method in ['duplicate','oversized','unknownid']:
         client = peer()
         rejects(lambda: client.call(method), 'INVALID_RESPONSE')
         client.close()

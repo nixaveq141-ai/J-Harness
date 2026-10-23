@@ -75,6 +75,8 @@ public final class CliConfig {
                     "INVALID_CONFIG",
                     "Unknown config key; API keys must be environment references");
         this.values = Values.snapshot(values);
+        if (Json.text(this.values).getBytes(java.nio.charset.StandardCharsets.UTF_8).length > 65536)
+            throw new HarnessException("INVALID_CONFIG", "Configuration exceeds 64 KiB");
         searchFilter();
         scheduling();
         resilience();
@@ -106,21 +108,26 @@ public final class CliConfig {
         if (scheduling().maxConcurrency() > 1 && !enabled().contains("tool-scheduling"))
             throw new HarnessException(
                     "INVALID_TOOL_SCHEDULING", "Parallel scheduling plugin is disabled");
-        if (values.containsKey("baseUrl"))
-            new OpenAiCompatibleConfig(
-                    URI.create(string("baseUrl", "")),
-                    string("model", "unconfigured"),
-                    "validation-only",
-                    requestTimeout(),
-                    2 * 1024 * 1024,
-                    0,
-                    new ModelCapabilities(
-                            !Boolean.FALSE.equals(values.get("toolsSupported")),
-                            Boolean.TRUE.equals(values.get("streamSupported")),
-                            false,
-                            false,
-                            contextTokens()),
-                    ModelProtocol.fromId(string("protocol", "chat-completions")));
+        if (values.containsKey("baseUrl")) {
+            try {
+                new OpenAiCompatibleConfig(
+                        URI.create(string("baseUrl", "")),
+                        string("model", "unconfigured"),
+                        "validation-only",
+                        requestTimeout(),
+                        2 * 1024 * 1024,
+                        0,
+                        new ModelCapabilities(
+                                !Boolean.FALSE.equals(values.get("toolsSupported")),
+                                Boolean.TRUE.equals(values.get("streamSupported")),
+                                false,
+                                false,
+                                contextTokens()),
+                        ModelProtocol.fromId(string("protocol", "chat-completions")));
+            } catch (IllegalArgumentException ex) {
+                throw new HarnessException("INVALID_CONFIG", "Invalid model configuration", ex);
+            }
+        }
         if (!string("apiKeyEnv", "JHARNESS_API_KEY").matches("[A-Za-z_][A-Za-z0-9_]*"))
             throw new HarnessException("INVALID_CONFIG", "Invalid environment variable name");
         for (String flag :
@@ -129,6 +136,9 @@ public final class CliConfig {
                 throw new HarnessException("INVALID_CONFIG", "Expected boolean " + flag);
         if (!Set.of("default", "read-only").contains(string("policy", "default")))
             throw new HarnessException("INVALID_CONFIG", "Unknown policy");
+        if (Boolean.TRUE.equals(values.get("compactContext"))
+                && !enabled().contains("context-compaction"))
+            throw new HarnessException("INVALID_CONFIG", "Context compaction plugin disabled");
         integer("compactionCharacters", contextTokens(), 1024, contextTokens());
         for (String list : List.of("enabledTools", "prompts"))
             if (values.containsKey(list)
@@ -153,6 +163,11 @@ public final class CliConfig {
         if (values.containsKey("disableThinking")
                 && !(values.get("disableThinking") instanceof Boolean))
             throw new HarnessException("INVALID_CONFIG", "disableThinking must be boolean");
+        for (String price : List.of("inputPerMillion", "outputPerMillion"))
+            if (values.containsKey(price) && decimal(price).signum() < 0)
+                throw new HarnessException("INVALID_CONFIG", "Negative model price");
+        if (values.containsKey("inputTokenCeiling")) integer("inputTokenCeiling", 0, 1, 1000000);
+        if (values.containsKey("maxCost")) costs();
         if (values.containsKey("maxCost") && decimal("maxCost").signum() <= 0)
             throw new HarnessException("INVALID_CONFIG", "maxCost must be positive");
     }

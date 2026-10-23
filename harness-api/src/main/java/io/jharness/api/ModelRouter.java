@@ -6,6 +6,7 @@ import java.util.Set;
 public interface ModelRouter extends AutoCloseable {
     Set<String> routes();
 
+    /** Borrowed router-owned client; unknown/null routes fail and must never fall back silently. */
     LlmClient select(String route);
 
     @Override

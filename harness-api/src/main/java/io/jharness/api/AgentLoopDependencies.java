@@ -11,14 +11,14 @@ public record AgentLoopDependencies(
         CancellationToken cancellation,
         Budget budget) {
     public AgentLoopDependencies {
-        java.util.Objects.requireNonNull(llm);
-        java.util.Objects.requireNonNull(tools);
-        java.util.Objects.requireNonNull(session);
-        java.util.Objects.requireNonNull(projection);
-        java.util.Objects.requireNonNull(promptComposer);
-        java.util.Objects.requireNonNull(events);
-        java.util.Objects.requireNonNull(policy);
-        java.util.Objects.requireNonNull(cancellation);
-        java.util.Objects.requireNonNull(budget);
+        java.util.Objects.requireNonNull(llm, "llm");
+        java.util.Objects.requireNonNull(tools, "tools");
+        java.util.Objects.requireNonNull(session, "session");
+        java.util.Objects.requireNonNull(projection, "projection");
+        java.util.Objects.requireNonNull(promptComposer, "promptComposer");
+        java.util.Objects.requireNonNull(events, "events");
+        java.util.Objects.requireNonNull(policy, "policy");
+        java.util.Objects.requireNonNull(cancellation, "cancellation");
+        java.util.Objects.requireNonNull(budget, "budget");
     }
 }

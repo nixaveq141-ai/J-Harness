@@ -6,6 +6,6 @@ public interface SessionReader {
     List<SessionEvent> events();
 
     default List<SessionEvent> query(SessionQuery query) {
-        return query.apply(events());
+        return java.util.Objects.requireNonNull(query, "query").apply(events());
     }
 }

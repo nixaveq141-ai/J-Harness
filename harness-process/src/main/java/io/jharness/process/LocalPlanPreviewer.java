@@ -30,6 +30,20 @@ public final class LocalPlanPreviewer implements PlanPreviewer {
                     false,
                     "reason",
                     "无法预览：任意命令或未支持工具的实际副作用不可预测");
+        var args = call.arguments();
+        for (String key :
+                call.tool().equals("write_file")
+                        ? List.of("path", "content")
+                        : List.of("path", "oldText", "newText"))
+            if (!(args.get(key) instanceof String))
+                throw new HarnessException("SCHEMA_MISMATCH", "Invalid preview argument");
+        if (args.containsKey("expectedVersion") && !(args.get("expectedVersion") instanceof String)
+                || args.containsKey("overwrite") && !(args.get("overwrite") instanceof Boolean))
+            throw new HarnessException("SCHEMA_MISMATCH", "Invalid preview argument");
+        int occurrences =
+                Values.integer(args.getOrDefault("expectedOccurrences", 1), "SCHEMA_MISMATCH");
+        if (occurrences < 1)
+            throw new HarnessException("SCHEMA_MISMATCH", "Invalid occurrence count");
         try {
             ExecPath path = new ExecPath((String) call.arguments().get("path"));
             String version = files.versionOf(path);
@@ -37,6 +51,9 @@ public final class LocalPlanPreviewer implements PlanPreviewer {
             if (!version.equals("MISSING")) {
                 var snapshot = files.readSnapshot(path);
                 before = snapshot.text();
+                if (before.getBytes(java.nio.charset.StandardCharsets.UTF_8).length > 1024 * 1024)
+                    throw new HarnessException("FILE_LIMIT", "Preview input size limit");
+                cancellation.throwIfCancelled();
                 version = snapshot.version();
             }
             String after;
@@ -56,13 +73,12 @@ public final class LocalPlanPreviewer implements PlanPreviewer {
                     throw new HarnessException("INVALID_EDIT", "Empty oldText");
                 int count = 0;
                 for (int at = 0; (at = before.indexOf(old, at)) >= 0; at += old.length()) count++;
-                if (count
-                        != ((Number) call.arguments().getOrDefault("expectedOccurrences", 1))
-                                .intValue())
+                if (count != occurrences)
                     throw new HarnessException("EDIT_MATCH_CONFLICT", "Preview match conflict");
                 after = before.replace(old, replacement);
             }
-            if (after == null || after.length() > 1024 * 1024)
+            if (after == null
+                    || after.getBytes(java.nio.charset.StandardCharsets.UTF_8).length > 1024 * 1024)
                 throw new HarnessException("FILE_LIMIT", "Preview size limit");
             if (call.arguments().get("expectedVersion") instanceof String expected
                     && !expected.equals(version))

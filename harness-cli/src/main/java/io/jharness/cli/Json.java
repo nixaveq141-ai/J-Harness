@@ -29,18 +29,25 @@ final class Json {
         try {
             return MAPPER.readValue(text, Object.class);
         } catch (IOException ex) {
-            throw new HarnessException("INVALID_JSON", "Invalid bounded JSON");
+            throw new HarnessException("INVALID_JSON", "Invalid bounded JSON", ex);
         }
     }
 
     static Map<String, Object> read(Path path, int limit) throws IOException {
+        if (limit < 1 || limit == Integer.MAX_VALUE)
+            throw new IllegalArgumentException("limit must be in 1..2147483646");
         if (!Files.isRegularFile(path, LinkOption.NOFOLLOW_LINKS))
             throw new HarnessException("CONFIG_PATH_DENIED", "Expected regular file");
         try (InputStream input = Files.newInputStream(path, LinkOption.NOFOLLOW_LINKS)) {
             byte[] bytes = input.readNBytes(limit + 1);
             if (bytes.length > limit)
                 throw new HarnessException("CONFIG_LIMIT", "Input file exceeds limit");
-            return Values.object(parse(new String(bytes, StandardCharsets.UTF_8)));
+            return Values.object(
+                    parse(
+                            StandardCharsets.UTF_8
+                                    .newDecoder()
+                                    .decode(java.nio.ByteBuffer.wrap(bytes))
+                                    .toString()));
         }
     }
 

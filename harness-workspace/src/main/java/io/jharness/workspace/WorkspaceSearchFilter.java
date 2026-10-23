@@ -16,6 +16,7 @@ public record WorkspaceSearchFilter(
 
     public static WorkspaceSearchFilter from(Object raw) {
         if (!(raw instanceof Map<?, ?> map)
+                || map.keySet().stream().anyMatch(k -> !(k instanceof String))
                 || !Set.of("useDefaultExcludes", "useGitignore", "rules").containsAll(map.keySet())
                 || map.containsKey("useDefaultExcludes")
                         && !(map.get("useDefaultExcludes") instanceof Boolean)

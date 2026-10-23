@@ -31,6 +31,7 @@ public record ModelResilienceOptions(
 
     public static ModelResilienceOptions from(Object raw) {
         if (!(raw instanceof Map<?, ?> m)
+                || m.keySet().stream().anyMatch(k -> !(k instanceof String))
                 || !Set.of(
                                 "enabled",
                                 "maxAttempts",
@@ -71,10 +72,6 @@ public record ModelResilienceOptions(
 
     private static int number(Map<?, ?> m, String key, int fallback) {
         Object raw = m.containsKey(key) ? m.get(key) : fallback;
-        if (!(raw instanceof Number n)
-                || !Double.isFinite(n.doubleValue())
-                || n.doubleValue() != n.intValue())
-            throw new HarnessException("INVALID_MODEL_RESILIENCE", "Expected bounded integer");
-        return n.intValue();
+        return Values.integer(raw, "INVALID_MODEL_RESILIENCE");
     }
 }

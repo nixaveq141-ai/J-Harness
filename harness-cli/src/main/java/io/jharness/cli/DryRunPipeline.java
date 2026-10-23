@@ -17,15 +17,22 @@ final class DryRunPipeline implements ToolPipeline {
 
     @Override
     public ToolResult execute(ToolInvocation proposed, ToolPipelineContext context) {
+        context.cancellation().throwIfCancelled();
         AgentTool tool = context.tools().require(proposed.tool(), context.scope());
         if (tool.sideEffectLevel() == SideEffectLevel.READ_ONLY)
             return delegate.execute(proposed, context);
+        new JsonSchemaValidator().validate(tool.inputSchema(), proposed.arguments());
+        tool.validateArguments(proposed);
         ToolInvocation call =
                 context.events()
                         .invoke(StandardExtensionPoints.BEFORE_TOOL, proposed, value -> value);
         if (!call.callId().equals(proposed.callId()) || !call.tool().equals(proposed.tool()))
             throw new HarnessException("CALL_IDENTITY_CHANGED", "Preview identity changed");
         new JsonSchemaValidator().validate(tool.inputSchema(), call.arguments());
+        tool.validateArguments(call);
+        if (!sanitizer.sanitize(call.arguments()).equals(call.arguments()))
+            throw new HarnessException(
+                    "SECRET_ARGUMENT", "Sensitive preview arguments require a secure channel");
         context.cancellation().throwIfCancelled();
         call =
                 new ToolInvocation(
@@ -35,16 +42,31 @@ final class DryRunPipeline implements ToolPipeline {
                         .invoke(PolicyExtensionPoints.EVALUATE, context.policy(), value -> value);
         var decision =
                 policy.evaluate(call, new ToolContext(context.scope(), context.cancellation()));
-        Map<String, Object> plan =
-                decision == null || decision == PolicyEngine.Decision.DENY
-                        ? Map.of(
-                                "previewable",
-                                false,
-                                "executed",
-                                false,
-                                "reason",
-                                "PERMISSION_DENIED")
-                        : preview.preview(call, context.cancellation());
+        Map<String, Object> plan;
+        try {
+            plan =
+                    decision == null || decision == PolicyEngine.Decision.DENY
+                            ? Map.of(
+                                    "previewable",
+                                    false,
+                                    "executed",
+                                    false,
+                                    "reason",
+                                    "PERMISSION_DENIED")
+                            : preview.preview(call, context.cancellation());
+        } catch (HarnessException ex) {
+            if (!Set.of(
+                            "FILE_EXISTS",
+                            "FILE_NOT_FOUND",
+                            "FILE_CONFLICT",
+                            "EDIT_MATCH_CONFLICT",
+                            "INVALID_EDIT")
+                    .contains(ex.code())) throw ex;
+            plan = Map.of("previewable", false, "executed", false, "reason", ex.code());
+        }
+        plan = new LinkedHashMap<>(Objects.requireNonNull(plan, "preview result"));
+        plan.put("policyDecision", decision == null ? "INVALID_PROVIDER_RESULT" : decision.name());
+        plan.put("approvalRequired", decision == PolicyEngine.Decision.ASK);
         plan = sanitizer.sanitize(plan);
         EventSupport.append(
                 context.session(),

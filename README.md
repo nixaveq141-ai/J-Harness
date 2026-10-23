@@ -1,5 +1,7 @@
 # J-Harness
 
+[R3 模型、工具、扩展与配置修复](docs/development/OCR-R3-remediation-2026-10-23.md)已完成304条采纳范围的本地实现、契约澄清与关联验证：640个Java用例、170项门禁、33项客户端及66项SDK检查通过；Windows/固定Docker专项与真实Linux目录别名反例通过。下一入口R4，M10.5.9和完整CI门禁保持。
+
 2026-10-23：2457 条 OCR 意见的核实与阶段计划见[核实报告](docs/development/code-review-2026-10-20.md)和[修复计划](docs/requirements/OCR-remediation-plan-2026-10-20.md)。R0/R1 已有本地修复证据，[R2 持久化与恢复修复](docs/development/OCR-R2-remediation-2026-10-22.md)已完成采纳范围的本地实现与验证（107条逐项台账，603个Java用例）。WebKit问答运行时断言仍失败，完整浏览器矩阵未通过，留R6定位；M10.5.9及M11准入仍按实际验收证据判断。
 
 后续开发已按用户要求插入 **M10.5工作台完善 → M11 Desktop → M12扩展**。M10.5包含九个切片，当前.1～.8已完成本地验收，.9整阶段验收实施中，覆盖多轮交互、会话容量/管理、错误恢复、模型协议、提问、展示、扩展、检索/SDK及整阶段验证；详细顺序和验收见[M10.5计划](docs/requirements/M10.5-workbench-improvement-plan.md)。M10.5.1已实现执行诊断、只读核实交接和权限选择，已完成本地验收，见[本片记录](docs/testing/M10.5.1-validation.md)。
@@ -127,7 +129,7 @@ Docker 采用固定镜像摘要、非 root、只读根、禁外网、资源配�
 
 | 模块 | 职责 |
 |---|---|
-| harness-api | API 1.13 服务、事件、会话、模型、工作区、策略和执行环境契约 |
+| harness-api | API 1.14 服务、事件、会话、模型、工作区、策略和执行环境契约 |
 | harness-events | 异步通知、串行事件、拦截链与诊断 |
 | harness-plugin | 精确作用域注册、静态装配、依赖与生命周期 |
 | harness-session | 内存/JSONL、单写者、查询、分叉、迁移、恢复、请求重建、检查点与产物 |

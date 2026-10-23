@@ -11,12 +11,12 @@ public final class HarnessException extends RuntimeException {
 
     public HarnessException(String code, String message) {
         super(message);
-        this.code = code;
+        this.code = Values.required(code, "code");
     }
 
     public HarnessException(String code, String message, Throwable cause) {
         super(message, cause);
-        this.code = code;
+        this.code = Values.required(code, "code");
     }
 
     public String code() {

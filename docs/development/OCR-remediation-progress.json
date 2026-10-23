@@ -1,8 +1,8 @@
 {
   "updatedAt": "2026-10-23",
-  "phase": "R2",
+  "phase": "R3",
   "status": "LOCAL_VALIDATED_CI_PENDING",
-  "details": "docs/development/OCR-R2-remediation-2026-10-22.md",
+  "details": "docs/development/OCR-R3-remediation-2026-10-23.md",
   "productMilestone": "M10.5.9",
   "productStatus": "LOCAL_PARTIAL_CI_PENDING",
   "m11Eligible": false,
@@ -73,6 +73,26 @@
     "R2-04": {
       "status": "IMPLEMENTED_LOCAL_VALIDATED",
       "description": "采纳范围已实施并本地验证；最终k同源码603Java/165门禁/33客户端及Chrome、SDK、Windows原生和真实Docker通过；WebKit245通过但问答运行时断言失败，完整矩阵FAILED留R6。逐项边界见OCR-R2-implementation-2026-10-22.json；不代表107个独立动态复现或远端CI/发布收口"
+    },
+    "R3-01": {
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "description": "R3五包304条采纳范围已本地实施/澄清并关联验证：183条实现或回归补强、121条契约；同源码640Java/170门禁/33客户端/66SDK及示例、启动器、Windows原生和固定Docker专项通过，另有Linux目录别名反例。不是304次独立动态复现，不代表完整CI/发布验收；逐项见OCR-R3-implementation-2026-10-23.json"
+    },
+    "R3-02": {
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "description": "R3五包304条采纳范围已本地实施/澄清并关联验证：183条实现或回归补强、121条契约；同源码640Java/170门禁/33客户端/66SDK及示例、启动器、Windows原生和固定Docker专项通过，另有Linux目录别名反例。不是304次独立动态复现，不代表完整CI/发布验收；逐项见OCR-R3-implementation-2026-10-23.json"
+    },
+    "R3-03": {
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "description": "R3五包304条采纳范围已本地实施/澄清并关联验证：183条实现或回归补强、121条契约；同源码640Java/170门禁/33客户端/66SDK及示例、启动器、Windows原生和固定Docker专项通过，另有Linux目录别名反例。不是304次独立动态复现，不代表完整CI/发布验收；逐项见OCR-R3-implementation-2026-10-23.json"
+    },
+    "R3-04": {
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "description": "R3五包304条采纳范围已本地实施/澄清并关联验证：183条实现或回归补强、121条契约；同源码640Java/170门禁/33客户端/66SDK及示例、启动器、Windows原生和固定Docker专项通过，另有Linux目录别名反例。不是304次独立动态复现，不代表完整CI/发布验收；逐项见OCR-R3-implementation-2026-10-23.json"
+    },
+    "R3-05": {
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "description": "R3五包304条采纳范围已本地实施/澄清并关联验证：183条实现或回归补强、121条契约；同源码640Java/170门禁/33客户端/66SDK及示例、启动器、Windows原生和固定Docker专项通过，另有Linux目录别名反例。不是304次独立动态复现，不代表完整CI/发布验收；逐项见OCR-R3-implementation-2026-10-23.json"
     }
   },
   "r1": {
@@ -100,5 +120,15 @@
       "fullMatrixStatus": "FAILED",
       "reason": "WebKit questions strict runtime-exception assertion; Chrome271/WebKit245 passing; no assertion weakened"
     }
+  },
+  "r3": {
+    "status": "LOCAL_IMPLEMENTATION_VALIDATED_CI_PENDING",
+    "runId": "r3-20261023-final3",
+    "adoptedScopes": 304,
+    "implementedOrRegressionStrengthened": 183,
+    "contractClarified": 121,
+    "implementationLedger": "docs/development/OCR-R3-implementation-2026-10-23.json",
+    "results": "docs/testing/OCR-R3-2026-10-23-results.json",
+    "nextPhase": "R4"
   }
 }

@@ -37,7 +37,7 @@ final class McpIo {
         boolean interrupted = false;
         try {
             while (true) {
-                if (token.isCancelled() || System.nanoTime() >= deadline)
+                if (!result.isDone() && (token.isCancelled() || System.nanoTime() >= deadline))
                     throw BoundedJson.error("MCP_OUTCOME_UNKNOWN");
                 try {
                     return result.get(20, TimeUnit.MILLISECONDS);
@@ -93,19 +93,29 @@ final class McpIo {
 
     static boolean response(Map<String, Object> message, Object id) {
         if (!"2.0".equals(message.get("jsonrpc"))) throw BoundedJson.error("MCP_PROTOCOL_ERROR");
-        return !message.containsKey("method") && Objects.equals(id, message.get("id"));
+        if (message.containsKey("method")) return false;
+        if (!message.containsKey("id")
+                || message.containsKey("result") == message.containsKey("error"))
+            throw BoundedJson.error("MCP_PROTOCOL_ERROR");
+        if (message.containsKey("error")) {
+            var error = Values.object(message.get("error"));
+            Values.integer(error.get("code"), "MCP_PROTOCOL_ERROR");
+            if (!(error.get("message") instanceof String))
+                throw BoundedJson.error("MCP_PROTOCOL_ERROR");
+        }
+        return Objects.equals(id, message.get("id"));
     }
 
     static Map<String, Object> rejection(Map<String, Object> request) {
-        return Map.of(
-                "jsonrpc",
-                "2.0",
-                "id",
-                request.get("id"),
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("jsonrpc", "2.0");
+        response.put("id", request.get("id"));
+        response.put(
                 "ping".equals(request.get("method")) ? "result" : "error",
                 "ping".equals(request.get("method"))
                         ? Map.of()
                         : Map.of("code", -32601, "message", "Client capability unsupported"));
+        return Values.snapshot(response);
     }
 
     static void notification(Map<String, Object> message) {

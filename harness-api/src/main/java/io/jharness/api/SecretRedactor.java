@@ -34,7 +34,7 @@ public final class SecretRedactor implements DataSanitizer {
     }
 
     public String text(String text) {
-        String clean = Objects.requireNonNull(text);
+        String clean = Objects.requireNonNull(text, "text");
         for (String secret : secrets) clean = clean.replace(secret, "[REDACTED]");
         return clean;
     }
@@ -45,7 +45,7 @@ public final class SecretRedactor implements DataSanitizer {
     }
 
     public ModelDisplay.Update streamingUpdate(String cumulative) {
-        Objects.requireNonNull(cumulative);
+        Objects.requireNonNull(cumulative, "cumulative");
         boolean truncated = cumulative.length() > 65536;
         if (cumulative.length() > 65536) cumulative = cumulative.substring(0, 65536);
         int end = cumulative.length();
@@ -87,6 +87,7 @@ public final class SecretRedactor implements DataSanitizer {
 
     @Override
     public Map<String, Object> sanitize(Map<String, Object> data) {
+        data = Values.snapshot(Objects.requireNonNull(data, "data"));
         Map<String, Object> result = new LinkedHashMap<>();
         data.forEach(
                 (key, value) -> {

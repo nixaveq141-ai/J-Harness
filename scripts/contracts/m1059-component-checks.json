@@ -1,5 +1,5 @@
 {
-  "provenance": "Case identities copied from the historical M10.5.9 local baseline; this file is a contract, not a new execution result.",
+  "provenance": "Preserved historical component identities plus reviewed R3 SDK handle, response-history and invalid-input regressions; contract only, not new execution evidence.",
   "sdk": {
     "typescript": [
       "version mismatch rejects without execution and closes child",
@@ -30,7 +30,11 @@
       "pending request bound applies backpressure",
       "close rejects every pending call",
       "duplicate response fails closed and stops owned peer",
-      "oversized response fails closed and stops owned peer"
+      "oversized response fails closed and stops owned peer",
+      "forty draft handles release without exhausting quota",
+      "sixty five expired replies remain known",
+      "invalid request rejects asynchronously without pending leak",
+      "unknownid response fails closed and stops owned peer"
     ],
     "python": [
       "version mismatch rejects without execution and closes child",
@@ -61,7 +65,11 @@
       "pending request bound applies backpressure",
       "close rejects every pending call",
       "duplicate response fails closed and stops owned peer",
-      "oversized response fails closed and stops owned peer"
+      "oversized response fails closed and stops owned peer",
+      "forty draft handles release without exhausting quota",
+      "sixty five expired replies remain known",
+      "invalid request rejects without pending leak",
+      "unknownid response fails closed and stops owned peer"
     ]
   },
   "examples": [

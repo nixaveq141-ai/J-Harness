@@ -25,12 +25,40 @@ final class BoundedJson {
                     .enable(DeserializationFeature.FAIL_ON_TRAILING_TOKENS);
 
     static byte[] encode(Object value) {
+        boolean[] exceeded = {false};
+        var output =
+                new ByteArrayOutputStream() {
+                    private void check(int count) throws IOException {
+                        if (count > LIMIT - size()) {
+                            exceeded[0] = true;
+                            throw new IOException("Bounded JSON output limit");
+                        }
+                    }
+
+                    @Override
+                    public synchronized void write(int b) {
+                        if (size() >= LIMIT) {
+                            exceeded[0] = true;
+                            throw error("PAYLOAD_LIMIT");
+                        }
+                        super.write(b);
+                    }
+
+                    @Override
+                    public synchronized void write(byte[] bytes, int offset, int length) {
+                        try {
+                            check(length);
+                        } catch (IOException ex) {
+                            throw error("PAYLOAD_LIMIT");
+                        }
+                        super.write(bytes, offset, length);
+                    }
+                };
         try {
-            byte[] bytes = MAPPER.writeValueAsBytes(value);
-            if (bytes.length > LIMIT) throw error("PAYLOAD_LIMIT");
-            return bytes;
+            MAPPER.writeValue(output, value);
+            return output.toByteArray();
         } catch (IOException ex) {
-            throw error("INVALID_JSON");
+            throw error(exceeded[0] ? "PAYLOAD_LIMIT" : "INVALID_JSON");
         }
     }
 
@@ -44,8 +72,10 @@ final class BoundedJson {
             }
             return Values.object(
                     MAPPER.readValue(bytes, new TypeReference<Map<String, Object>>() {}));
+        } catch (com.fasterxml.jackson.core.exc.StreamConstraintsException ex) {
+            throw new HarnessException("PAYLOAD_LIMIT", "Bounded JSON constraints exceeded", ex);
         } catch (IOException ex) {
-            throw error("INVALID_JSON");
+            throw new HarnessException("INVALID_JSON", "Invalid bounded JSON", ex);
         }
     }
 

@@ -38,15 +38,15 @@ public record AgentRuntimeServices(
     }
 
     public AgentRuntimeServices {
-        Objects.requireNonNull(costs);
-        Objects.requireNonNull(scope);
-        Objects.requireNonNull(reader);
-        Objects.requireNonNull(projector);
-        Objects.requireNonNull(checkpoints);
-        Objects.requireNonNull(approvals);
-        Objects.requireNonNull(pipeline);
-        Objects.requireNonNull(requests);
-        Objects.requireNonNull(sanitizer);
-        Objects.requireNonNull(completion);
+        Objects.requireNonNull(costs, "costs");
+        Objects.requireNonNull(scope, "scope");
+        Objects.requireNonNull(reader, "reader");
+        Objects.requireNonNull(projector, "projector");
+        Objects.requireNonNull(checkpoints, "checkpoints");
+        Objects.requireNonNull(approvals, "approvals");
+        Objects.requireNonNull(pipeline, "pipeline");
+        Objects.requireNonNull(requests, "requests");
+        Objects.requireNonNull(sanitizer, "sanitizer");
+        Objects.requireNonNull(completion, "completion");
     }
 }

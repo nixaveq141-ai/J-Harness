@@ -11,7 +11,7 @@ public record ToolInvocation(
         callId = Values.required(callId, "callId");
         tool = Values.required(tool, "tool");
         arguments = Values.snapshot(arguments);
-        java.util.Objects.requireNonNull(sideEffectLevel);
+        java.util.Objects.requireNonNull(sideEffectLevel, "sideEffectLevel");
     }
 
     @Override

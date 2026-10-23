@@ -11,11 +11,11 @@ public record ToolResult(
         Optional<ErrorInfo> error) {
     public ToolResult {
         callId = Values.required(callId, "callId");
-        Objects.requireNonNull(status);
+        Objects.requireNonNull(status, "status");
         value = Values.snapshot(value);
-        Objects.requireNonNull(modelContent);
+        Objects.requireNonNull(modelContent, "modelContent");
         display = Values.snapshot(display);
-        Objects.requireNonNull(error);
+        Objects.requireNonNull(error, "error");
         if (status == ToolStatus.SUCCESS && error.isPresent())
             throw new IllegalArgumentException("Success cannot carry a failure diagnostic");
         if (status != ToolStatus.SUCCESS && error.isEmpty())

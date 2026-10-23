@@ -54,6 +54,7 @@ final class StdioSdkServer {
                 Map<String, Object> response;
                 try {
                     var request = Values.object(Json.parse(line));
+                    if (request.get("id") instanceof String) id = identifier(request, "id");
                     if (!request.keySet().equals(Set.of("jsonrpc", "id", "method", "params"))
                             || !"2.0".equals(request.get("jsonrpc")))
                         throw error("INVALID_REQUEST");
@@ -104,6 +105,7 @@ final class StdioSdkServer {
                     "methods",
                     List.of(
                             "session.open",
+                            "session.close",
                             "sessions.list",
                             "input.send",
                             "request.get",
@@ -158,6 +160,12 @@ final class StdioSdkServer {
                         session.isEmpty() ? "DRAFT" : "OPEN",
                         "persisted",
                         !session.isEmpty());
+            }
+            case "session.close" -> {
+                keys(p, "handle");
+                String key = identifier(p, "handle");
+                if (handles.remove(key) == null) throw error("HANDLE_NOT_FOUND");
+                return Map.of("released", true);
             }
             case "sessions.list" -> {
                 optionalKeys(p, Set.of(), Set.of("profile", "view", "after"));
@@ -236,6 +244,15 @@ final class StdioSdkServer {
                         "selected",
                         "text",
                         "skip");
+                for (String key : List.of("questionId", "turnId", "callId", "requestId"))
+                    identifier(p, key);
+                if (!(p.get("skip") instanceof Boolean)
+                        || !(p.get("text") instanceof String text)
+                        || text.length() > 16384
+                        || !(p.get("selected") instanceof List<?> selected)
+                        || selected.size() > 16
+                        || selected.stream().anyMatch(v -> !(v instanceof String)))
+                    throw error("INVALID_PARAMS");
                 var body = new LinkedHashMap<>(p);
                 return http(
                         task(p) + "/questions/" + identifier(p, "questionId") + "/answer", body);
@@ -246,6 +263,7 @@ final class StdioSdkServer {
             }
             case "approval.decide" -> {
                 keys(p, "sessionId", "approvalId", "callId", "approved", "reason");
+                if (!(p.get("approved") instanceof Boolean)) throw error("INVALID_PARAMS");
                 return http(
                         task(p) + "/approvals/" + identifier(p, "approvalId"),
                         Map.of(
@@ -292,6 +310,14 @@ final class StdioSdkServer {
                         "cursor",
                         "limit",
                         "rebuild");
+                field(p, "text", 256);
+                optionalEnum(p, "mode", "tokens", Set.of("tokens", "phrase"));
+                optionalEnum(p, "view", "active", Set.of("active", "archived", "all"));
+                field(p, "profile", 64);
+                field(p, "sessionId", 128);
+                field(p, "cursor", 1024);
+                number(p, "limit", 20, 1, 32);
+                if (!(p.get("rebuild") instanceof Boolean)) throw error("INVALID_PARAMS");
                 return http("/v1/search", p);
             }
             default -> throw error("METHOD_NOT_FOUND");
@@ -314,7 +340,13 @@ final class StdioSdkServer {
         try (var input = response.body()) {
             byte[] bytes = input.readNBytes(524289);
             if (bytes.length > 524288) throw error("RPC_RESPONSE_LIMIT");
-            var value = Values.object(Json.parse(decode(bytes)));
+            Map<String, Object> value;
+            try {
+                value = Values.object(Json.parse(decode(bytes)));
+            } catch (HarnessException ex) {
+                if (response.statusCode() >= 400) throw error("SDK_HTTP_ERROR");
+                throw ex;
+            }
             if (response.statusCode() >= 400)
                 throw error(
                         value.get("error") instanceof String code && code.matches("[A-Z0-9_]{1,64}")

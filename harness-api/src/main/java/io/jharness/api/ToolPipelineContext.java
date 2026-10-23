@@ -14,15 +14,15 @@ public record ToolPipelineContext(
         CheckpointPolicy checkpoints,
         CancellationToken cancellation) {
     public ToolPipelineContext {
-        Objects.requireNonNull(scope);
+        Objects.requireNonNull(scope, "scope");
         turnId = Values.required(turnId, "turnId");
         stepId = Values.required(stepId, "stepId");
-        Objects.requireNonNull(tools);
-        Objects.requireNonNull(session);
-        Objects.requireNonNull(events);
-        Objects.requireNonNull(policy);
-        Objects.requireNonNull(approvals);
-        Objects.requireNonNull(checkpoints);
-        Objects.requireNonNull(cancellation);
+        Objects.requireNonNull(tools, "tools");
+        Objects.requireNonNull(session, "session");
+        Objects.requireNonNull(events, "events");
+        Objects.requireNonNull(policy, "policy");
+        Objects.requireNonNull(approvals, "approvals");
+        Objects.requireNonNull(checkpoints, "checkpoints");
+        Objects.requireNonNull(cancellation, "cancellation");
     }
 }

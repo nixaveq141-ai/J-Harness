@@ -3,12 +3,35 @@ import json
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 class Provider(BaseHTTPRequestHandler):
+    def setup(self):
+        super().setup()
+        self.connection.settimeout(2)
+
     def do_POST(self):
-        size = int(self.headers.get('Content-Length', '0'))
+        try:
+            self._post()
+        except (ValueError, KeyError, TypeError, UnicodeError):
+            self.send_error(400)
+        except (TimeoutError, ConnectionError, OSError):
+            self.close_connection = True
+
+    def _post(self):
+        try:
+            size = int(self.headers.get('Content-Length', '0'))
+        except ValueError:
+            self.send_error(400)
+            return
         if not 0 < size <= 1048576:
             self.send_error(413)
             return
-        body = json.loads(self.rfile.read(size))
+        raw = self.rfile.read(size)
+        if len(raw) != size:
+            self.send_error(400)
+            return
+        body = json.loads(raw.decode("utf-8"))
+        if not isinstance(body, dict) or not isinstance(body.get("messages"), list) or any(not isinstance(m, dict) or not isinstance(m.get("role"), str) for m in body["messages"]):
+            self.send_error(400)
+            return
         called = any(message.get('role') == 'tool' for message in body['messages'])
         message = {'role': 'assistant', 'content': 'README inspected using the local SDK fixture.'}
         if not called:

@@ -33,6 +33,7 @@ export class JHarnessClient {
   private buffer = Buffer.alloc(0)
   private closed = false
   private closing = false
+  private closingPromise?: Promise<void>
   private timeout: number
   private exit: Promise<void>
   private constructor(options: Options) {
@@ -51,18 +52,20 @@ export class JHarnessClient {
       client.capabilities=await client.call('initialize',{protocolVersion:options.protocolVersion??'1.0'})
       if(client.capabilities.protocolVersion!=='1.0')throw new RpcError('VERSION_UNSUPPORTED')
       return client
-    } catch(e) { await client.close(); throw e }
+    } catch(e) { try{await client.close()}catch(cleanup){if(e instanceof Error)e.cause=cleanup}throw e }
   }
   call(method: string, params: ObjectValue = {}, timeoutMs=this.timeout): Promise<ObjectValue> {
     if(this.closed||this.closing&&method!=='shutdown')return Promise.reject(new RpcError('CLIENT_CLOSED'))
     if(timeoutMs<100||timeoutMs>60000)return Promise.reject(new RpcError('INVALID_TIMEOUT'))
     if(this.pending.size>=32)return Promise.reject(new RpcError('BACKPRESSURE_LIMIT'))
-    const id=randomUUID(),frame=Buffer.from(JSON.stringify({jsonrpc:'2.0',id,method,params})+'\n')
+    if(this.expired.size>=4096)return Promise.reject(new RpcError('EXPIRED_HISTORY_LIMIT'))
+    const id=randomUUID();let frame:Buffer
+    try{frame=Buffer.from(JSON.stringify({jsonrpc:'2.0',id,method,params})+'\n')}catch{return Promise.reject(new RpcError('INVALID_REQUEST'))}
     if(frame.byteLength-1>65536)return Promise.reject(new RpcError('RPC_REQUEST_LIMIT'))
     return new Promise((resolve,reject)=>{
-      const timer=setTimeout(()=>{this.pending.delete(id);this.expired.add(id);if(this.expired.size>64)this.expired.delete(this.expired.values().next().value!);reject(new RpcError('REQUEST_TIMEOUT_ACCEPTANCE_UNKNOWN'))},timeoutMs)
+      const timer=setTimeout(()=>{this.pending.delete(id);this.expired.add(id);reject(new RpcError('REQUEST_TIMEOUT_ACCEPTANCE_UNKNOWN'))},timeoutMs)
       this.pending.set(id,{resolve,reject,timer})
-      this.process.stdin.write(frame,error=>{if(error)this.fail('PROCESS_DISCONNECTED')})
+      try{this.process.stdin.write(frame,error=>{if(error)this.fail('PROCESS_DISCONNECTED')})}catch{this.fail('PROCESS_DISCONNECTED')}
     })
   }
   private read(chunk: Buffer) {
@@ -86,17 +89,31 @@ export class JHarnessClient {
       } catch {this.fail('INVALID_RESPONSE');this.process.kill();return}
     }
   }
-  private fail(code: string) { this.closed=true;for(const p of this.pending.values()){clearTimeout(p.timer);p.reject(new RpcError(code))}this.pending.clear() }
-  async close() {
-    if(this.closing)return this.exit
+  private fail(code: string) { this.closed=true;for(const p of this.pending.values()){clearTimeout(p.timer);p.reject(new RpcError(code))}this.pending.clear();if(code!=='CLIENT_CLOSED'&&this.process.exitCode===null)this.process.kill() }
+  close():Promise<void> {
+    if(this.closingPromise)return this.closingPromise
     this.closing=true
-    try{if(!this.closed)await this.call('shutdown',{},3000)}catch{}
-    this.process.stdin.end()
-    const exited=await Promise.race([this.exit.then(()=>true),new Promise<boolean>(resolve=>{const t=setTimeout(()=>resolve(false),5000);t.unref()})])
-    if(!exited){this.process.kill();await Promise.race([this.exit,new Promise<void>(resolve=>{const t=setTimeout(resolve,2000);t.unref()})])}
-    this.fail('CLIENT_CLOSED')
+    this.closingPromise=this.closeOwned()
+    return this.closingPromise
+  }
+  private async closeOwned() {
+    const wait=async(ms:number)=>{
+      let timer:ReturnType<typeof setTimeout>|undefined
+      try{return await Promise.race([this.exit.then(()=>true),new Promise<boolean>(resolve=>{timer=setTimeout(()=>resolve(false),ms)})])}
+      finally{if(timer)clearTimeout(timer)}
+    }
+    try {
+      try{if(!this.closed)await this.call('shutdown',{},3000)}catch{}
+      this.process.stdin.end()
+      if(!await wait(5000)){
+        this.process.kill()
+        if(!await wait(2000)){this.process.kill('SIGKILL');if(!await wait(2000))throw new RpcError('PROCESS_CLEANUP_UNKNOWN')}
+      }
+    } catch(error) {throw error instanceof RpcError?error:new RpcError('PROCESS_CLEANUP_UNKNOWN')}
+    finally {this.fail('CLIENT_CLOSED');this.process.stdin.destroy();this.process.stdout.destroy();this.process.stderr.destroy()}
   }
   openSession(profile='default',sessionId?:string){return this.call('session.open',{profile,...(sessionId?{sessionId}:{})})}
+  closeSession(handle:string){return this.call('session.close',{handle})}
   listSessions(profile='',view='all',after=''){return this.call('sessions.list',{view,...(profile?{profile}:{}),...(after?{after}:{})})}
   sendInput(handle:string,text:string,requestId:string=randomUUID(),options:{modelId?:string;kind?:'message'|'supplement'}={}){return this.call('input.send',{handle,text,requestId,...options})}
   events(sessionId:string,after='',limit=32){return this.call('events.list',{sessionId,limit,...(after?{after}:{})})}

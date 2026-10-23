@@ -100,10 +100,21 @@ class M8FilterIntegrationTest {
                 assertEquals(
                         List.of("input.txt"),
                         Values.object(search.payload().get("value")).get("paths"));
-                assertTrue(
+                var selected =
                         events.stream()
                                 .filter(e -> e.type().equals("config.selected"))
-                                .anyMatch(e -> e.payload().toString().contains("hidden.txt")));
+                                .findFirst()
+                                .orElseThrow();
+                var actualFilter =
+                        ecology
+                                ? Values.object(
+                                        Values.object(selected.payload().get("resolved"))
+                                                .get("searchFilter"))
+                                : Values.object(selected.payload().get("searchFilter"));
+                assertEquals(
+                        WorkspaceSearchFilter.from(config.get("searchFilter")).configuration(),
+                        WorkspaceSearchFilter.from(actualFilter).configuration());
+                assertEquals("s", selected.sessionId());
                 assertEquals(
                         2, events.stream().filter(e -> e.type().equals("model.requested")).count());
                 assertEquals(
@@ -188,6 +199,23 @@ class M8FilterIntegrationTest {
                                     e ->
                                             e.type().equals("tool.intent")
                                                     && "write".equals(e.callId())));
+            assertTrue(
+                    events.stream()
+                            .anyMatch(
+                                    e ->
+                                            e.type().equals("tool.scheduled")
+                                                    && "write".equals(e.callId())));
+            assertEquals(
+                    false,
+                    events.stream()
+                            .filter(
+                                    e ->
+                                            e.type().equals("tool.completed")
+                                                    && "write".equals(e.callId()))
+                            .findFirst()
+                            .orElseThrow()
+                            .payload()
+                            .get("bodyEntered"));
             assertTrue(
                     events.stream()
                             .filter(e -> e.type().equals("tool.scheduled"))

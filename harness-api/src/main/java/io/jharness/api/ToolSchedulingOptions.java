@@ -5,8 +5,8 @@ import java.util.*;
 
 public record ToolSchedulingOptions(int maxConcurrency, Set<String> tools, Duration timeout) {
     public ToolSchedulingOptions {
-        Objects.requireNonNull(tools);
-        Objects.requireNonNull(timeout);
+        Objects.requireNonNull(tools, "tools");
+        Objects.requireNonNull(timeout, "timeout");
         if (maxConcurrency < 1
                 || maxConcurrency > 8
                 || tools.size() > 32
@@ -24,12 +24,14 @@ public record ToolSchedulingOptions(int maxConcurrency, Set<String> tools, Durat
 
     public static ToolSchedulingOptions from(Object raw) {
         if (!(raw instanceof Map<?, ?> map)
+                || map.keySet().stream().anyMatch(k -> !(k instanceof String))
                 || !Set.of("mode", "maxConcurrency", "tools", "timeoutSeconds")
                         .containsAll(map.keySet()))
             throw new HarnessException(
                     "INVALID_TOOL_SCHEDULING", "Invalid scheduling configuration");
         Object mode = map.containsKey("mode") ? map.get("mode") : "serial";
-        if ("serial".equals(mode) && map.size() <= 1) return serial();
+        if ("serial".equals(mode) && (map.isEmpty() || map.size() == 1 && map.containsKey("mode")))
+            return serial();
         if (!"readonly-parallel".equals(mode))
             throw new HarnessException(
                     "INVALID_TOOL_SCHEDULING", "Unknown or conflicting scheduling mode");
@@ -52,9 +54,7 @@ public record ToolSchedulingOptions(int maxConcurrency, Set<String> tools, Durat
 
     private static int number(Map<?, ?> map, String key, int fallback) {
         Object raw = map.containsKey(key) ? map.get(key) : fallback;
-        if (!(raw instanceof Number n) || n.doubleValue() != n.intValue())
-            throw new HarnessException("INVALID_TOOL_SCHEDULING", "Expected integer option");
-        return n.intValue();
+        return Values.integer(raw, "INVALID_TOOL_SCHEDULING");
     }
 
     public Map<String, Object> configuration() {

@@ -60,6 +60,7 @@ public final class DefaultToolPipeline implements ToolPipeline {
                 tool = context.tools().require(proposed.tool(), context.scope());
                 effect = tool.sideEffectLevel();
                 schemas.validate(tool.inputSchema(), proposed.arguments());
+                tool.validateArguments(proposed);
                 call =
                         context.events()
                                 .invoke(
@@ -71,6 +72,7 @@ public final class DefaultToolPipeline implements ToolPipeline {
                     throw new HarnessException(
                             "CALL_IDENTITY_CHANGED", "Interceptor cannot change call identity");
                 schemas.validate(tool.inputSchema(), call.arguments());
+                tool.validateArguments(call);
                 if (!sanitizer.sanitize(call.arguments()).equals(call.arguments()))
                     throw new HarnessException(
                             "SECRET_ARGUMENT",

@@ -1,6 +1,7 @@
 package io.jharness.llm;
 
 import io.jharness.api.*;
+import java.util.Objects;
 import java.util.Set;
 
 /** Frozen task route, with a separate router service for selecting adapters for future tasks. */
@@ -9,8 +10,8 @@ public final class RoutedLlmClient implements LlmClient, ModelRouter {
     private final LlmClient selected;
 
     public RoutedLlmClient(ModelRouter router, String route) {
-        this.router = router;
-        selected = router.select(route);
+        this.router = Objects.requireNonNull(router, "router");
+        selected = Objects.requireNonNull(router.select(route), "selected client");
     }
 
     @Override
