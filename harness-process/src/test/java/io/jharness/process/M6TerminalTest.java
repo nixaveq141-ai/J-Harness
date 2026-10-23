@@ -14,6 +14,74 @@ class M6TerminalTest {
     @TempDir Path root;
 
     @Test
+    void terminalCleanupWaitsForRootProcessReaperEvenAfterHandlesDisappear() throws Exception {
+        // ProcessHandle may report exit before Process's reaper updates its cached state.
+        var process =
+                new Process() {
+                    boolean destroyed;
+                    int exitObservations;
+
+                    public java.io.OutputStream getOutputStream() {
+                        return java.io.OutputStream.nullOutputStream();
+                    }
+
+                    public java.io.InputStream getInputStream() {
+                        return java.io.InputStream.nullInputStream();
+                    }
+
+                    public java.io.InputStream getErrorStream() {
+                        return java.io.InputStream.nullInputStream();
+                    }
+
+                    public int waitFor() throws InterruptedException {
+                        while (isAlive()) Thread.sleep(1);
+                        return 0;
+                    }
+
+                    public int exitValue() {
+                        if (isAlive()) throw new IllegalThreadStateException();
+                        return 0;
+                    }
+
+                    public void destroy() {
+                        destroyed = true;
+                    }
+
+                    public Process destroyForcibly() {
+                        destroy();
+                        return this;
+                    }
+
+                    public boolean isAlive() {
+                        return !destroyed || ++exitObservations <= 3;
+                    }
+
+                    public long pid() {
+                        return ProcessHandle.current().pid();
+                    }
+                };
+        try (var terminal = terminal()) {
+            Class<?> type = Class.forName(LocalTerminalSession.class.getName() + "$Task");
+            var constructor =
+                    type.getDeclaredConstructor(
+                            LocalTerminalSession.class,
+                            String.class,
+                            Process.class,
+                            boolean.class,
+                            long.class,
+                            String.class);
+            constructor.setAccessible(true);
+            Object task =
+                    constructor.newInstance(terminal, "reaper-lag", process, false, 1L, "call");
+            // Do not begin the task: no real OS handle is observed or terminated.
+            var cleanup = type.getDeclaredMethod("cleanup");
+            cleanup.setAccessible(true);
+            cleanup.invoke(task);
+            assertFalse(process.isAlive(), "cleanup must await the Process exit state too");
+        }
+    }
+
+    @Test
     void lifetimeHistoryLimitKeepsCompletedLogsAndRejectsThirtyThirdTask() throws Exception {
         try (var terminal = terminal()) {
             String first = "";

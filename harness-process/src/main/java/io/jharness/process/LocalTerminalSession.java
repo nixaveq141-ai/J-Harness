@@ -360,7 +360,8 @@ public final class LocalTerminalSession implements TerminalSession {
                     .forEach(ProcessHandle::destroyForcibly);
             process.destroyForcibly();
             long until = System.nanoTime() + TimeUnit.SECONDS.toNanos(2);
-            while (observed.values().stream().anyMatch(ProcessHandle::isAlive)
+            while ((process.isAlive()
+                            || observed.values().stream().anyMatch(ProcessHandle::isAlive))
                     && System.nanoTime() < until) {
                 try {
                     Thread.sleep(10);
