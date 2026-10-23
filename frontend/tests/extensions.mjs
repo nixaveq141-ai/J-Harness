@@ -64,7 +64,7 @@ await writeFile(join(userRoot, 'userguide/SKILL.md'), '---\nname: userguide\ndes
 await writeFile(join(workspace, 'explicit/SKILL.md'), 'Explicit skill with allowlisted resource and script.\n')
 await writeFile(join(workspace, 'explicit/guide.txt'), 'Allowlisted resource.\n')
 await writeFile(join(workspace, 'explicit', scriptPath), scriptMode === 'POWERSHELL'
-  ? "[System.IO.File]::WriteAllText((Join-Path $PWD 'marker.txt'), 'approved')\n"
+  ? "[System.IO.File]::WriteAllText([System.IO.Path]::Combine([System.Environment]::CurrentDirectory, 'marker.txt'), 'approved')\n"
   : "printf approved > marker.txt\n")
 await new Promise(r => provider.listen(0, '127.0.0.1', r)); await new Promise(r => peer.listen(0, '127.0.0.1', r))
 const config = join(workspace, 'config.json'), endpoint = `http://127.0.0.1:${provider.address().port}`, peerUrl = `http://127.0.0.1:${peer.address().port}/mcp`
@@ -93,8 +93,8 @@ try {
   await skills.getByLabel('标识 ID', { exact: true }).fill('explicit'); await skills.getByLabel('技能目录', { exact: true }).fill('explicit')
   await skills.getByRole('button', { name: '添加资源白名单', exact: true }).click(); await skills.getByLabel('名称', { exact: true }).fill('guide'); await skills.getByLabel('资源相对路径').fill('guide.txt')
   await skills.getByRole('button', { name: '添加脚本白名单', exact: true }).click(); await skills.getByLabel('名称', { exact: true }).nth(1).fill('check'); await skills.getByLabel('脚本相对路径').fill(scriptPath); await skills.getByRole('combobox', { name: /^脚本模式/ }).selectOption(scriptMode)
-  // This success-path fixture allows hosted Windows PowerShell cold start. Timeout
-  // and uncertain-cleanup behavior are covered independently with short budgets.
+  // Configure the success-path script explicitly; timeout and uncertain-cleanup
+  // behavior are covered independently with short budgets.
   await skills.getByLabel('脚本超时（秒）', {exact:true}).fill('30')
   const roots = group('技能目录发现'); await roots.locator('summary').first().click(); await roots.getByRole('button', { name: '添加技能根', exact: true }).click()
   await roots.getByLabel('标识 ID', { exact: true }).fill('project'); await roots.getByLabel('允许扫描的目录').fill('skills')

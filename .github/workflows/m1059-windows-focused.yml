@@ -16,7 +16,7 @@ jobs:
     env:
       JHARNESS_EVIDENCE_RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}-${{ github.sha }}
       JHARNESS_MATRIX_ENGINES: chromium,firefox,webkit
-      JHARNESS_MATRIX_FIXTURES: history,extensions,content
+      JHARNESS_MATRIX_FIXTURES: extensions
       JHARNESS_MATRIX_KEEP_GOING: '1'
     steps:
       - uses: actions/checkout@v4
@@ -42,7 +42,27 @@ jobs:
       - name: Install the three diagnostic browsers
         working-directory: frontend
         run: npx playwright install chromium firefox webkit
-      - name: Reproduce Windows history extensions and content failures
+      - name: Diagnose PowerShell with the process service environment
+        shell: pwsh
+        run: |
+          @'
+          import {spawnSync} from 'node:child_process'
+          import {mkdir,writeFile} from 'node:fs/promises'
+          import {resolve,join} from 'node:path'
+          const directory=resolve('.build-cache/M10.5.9/powershell-probes');await mkdir(directory,{recursive:true})
+          const names=['PATH','SystemRoot','WINDIR','JAVA_HOME','TEMP','TMP','HOME','USERPROFILE','LANG','LC_ALL','LC_CTYPE']
+          const env=Object.fromEntries(names.filter(n=>process.env[n]!==undefined).map(n=>[n,process.env[n]]))
+          const executable=join(process.env.SystemRoot,'System32/WindowsPowerShell/v1.0/powershell.exe')
+          const cases={basic:"'ready'",joinPath:"[System.IO.File]::WriteAllText((Join-Path $PWD 'join.txt'), 'approved')\n",dotNet:"[System.IO.File]::WriteAllText([System.IO.Path]::Combine([System.Environment]::CurrentDirectory, 'dotnet.txt'), 'approved')\n",dotNetNoNewline:"[System.IO.File]::WriteAllText([System.IO.Path]::Combine([System.Environment]::CurrentDirectory, 'dotnet-flat.txt'), 'approved')"}
+          const results=[]
+          for(const [name,script] of Object.entries(cases)){
+            const start=Date.now(),r=spawnSync(executable,['-NoLogo','-NoProfile','-NonInteractive','-Command',script],{cwd:directory,env,input:'',encoding:'utf8',timeout:10000,windowsHide:true,maxBuffer:65536})
+            results.push({name,elapsedMs:Date.now()-start,status:r.status,signal:r.signal,error:r.error?.code,stdout:r.stdout,stderr:r.stderr})
+          }
+          await writeFile(join(directory,'results.json'),JSON.stringify({scope:'diagnostic only; not an acceptance gate',results},null,2))
+          console.log(JSON.stringify(results))
+          '@ | node --input-type=module
+      - name: Reproduce remaining Windows extension failures
         run: node scripts/run-workbench-matrix.mjs
       - name: Explain diagnostic scope
         if: always()
@@ -58,6 +78,7 @@ jobs:
           path: |
             focused-build.log
             .build-cache/M10.5.9/browser/
+            .build-cache/M10.5.9/powershell-probes/
             .build-cache/M10.5.2-*.png
             .build-cache/M10.5.6-*.png
             .build-cache/M10.5.7-*.png
