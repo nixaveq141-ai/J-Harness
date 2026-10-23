@@ -16,7 +16,8 @@ export function stoppedHostDiagnostic(message, origins) {
   if(!match)return false
   try {
     const url=new URL(match[1].startsWith('/')?'http:/'+match[1]:match[1].replace(/^http: ?\/{1,2}/,'http://'))
-    const read=/^\/v1\/tasks\/[A-Za-z0-9_-]+(?:\/(?:approvals|diagnosis|display|questions|tools))?$/.test(url.pathname)
+    const read=url.pathname==='/v1/models'&&!url.search
+      || /^\/v1\/tasks\/[A-Za-z0-9_-]+(?:\/(?:approvals|diagnosis|display|questions|tools))?$/.test(url.pathname)
       || /^\/v1\/tasks\/[A-Za-z0-9_-]+\/events$/.test(url.pathname)&&url.search.startsWith('?limit=')
       || /^\/v1\/tasks\/[A-Za-z0-9_-]+\/turns$/.test(url.pathname)&&url.search.startsWith('?offset=')
     return url.hostname==='127.0.0.1'&&origins.has(url.origin)&&read

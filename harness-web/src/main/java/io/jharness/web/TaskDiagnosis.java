@@ -22,8 +22,15 @@ public final class TaskDiagnosis {
         Map<String, Object> configuration = Map.of();
         int issueCount = 0;
         for (var e : events) {
-            var p = sanitizer.sanitize(e.payload());
-            if (e.turnId() != null) turns.add(e.turnId());
+            if (e.turnId() != null && turns.size() < 64) turns.add(e.turnId());
+            if (!Set.of(
+                            "config.selected",
+                            "tool.requested",
+                            "approval.decided",
+                            "tool.completed",
+                            "turn.ended")
+                    .contains(e.type())) continue;
+            var p = sanitizer.sanitize(diagnosticPayload(e));
             if (e.type().equals("config.selected")) {
                 var resolved = object(p.get("resolved"));
                 var selection = object(p.get("selection"));
@@ -68,12 +75,12 @@ public final class TaskDiagnosis {
                                     : "unknown");
             row.put(
                     "effects",
-                    "not_started".equals(value.get("cleanupStatus"))
-                                    || Boolean.FALSE.equals(p.get("bodyEntered"))
-                            ? "not_started"
-                            : Boolean.TRUE.equals(value.get("sideEffectsMayHaveOccurred"))
-                                            || Boolean.TRUE.equals(value.get("sideEffectUncertain"))
-                                    ? "possible"
+                    Boolean.TRUE.equals(value.get("sideEffectsMayHaveOccurred"))
+                                    || Boolean.TRUE.equals(value.get("sideEffectUncertain"))
+                            ? "possible"
+                            : "not_started".equals(value.get("cleanupStatus"))
+                                            || Boolean.FALSE.equals(p.get("bodyEntered"))
+                                    ? "not_started"
                                     : "READ_ONLY".equals(p.get("sideEffectLevel"))
                                             ? "read_only"
                                             : "unknown");
@@ -89,7 +96,8 @@ public final class TaskDiagnosis {
             if (value.get("durationMs") instanceof Number n) row.put("commandDurationMs", n);
             var args = object(requested.getOrDefault(e.callId(), Map.of()).get("arguments"));
             copy(args, row, "mode", "timeoutMs");
-            if (value.get("mode") instanceof String mode) row.put("mode", mode);
+            if (value.get("mode") instanceof String mode && !mode.isBlank())
+                row.put("mode", string(mode));
             if (issues.size() == 12) issues.removeFirst();
             issues.add(row);
             issueCount++;
@@ -126,6 +134,56 @@ public final class TaskDiagnosis {
                 recovery.ready());
     }
 
+    private static Map<String, Object> diagnosticPayload(SessionEvent event) {
+        var source = event.payload();
+        var out = new LinkedHashMap<String, Object>();
+        out.putAll(
+                project(
+                        source,
+                        "status",
+                        "reason",
+                        "tool",
+                        "bodyEntered",
+                        "durationMs",
+                        "sideEffectLevel"));
+        out.put("arguments", project(object(source.get("arguments")), "mode", "timeoutMs"));
+        out.put(
+                "value",
+                project(
+                        object(source.get("value")),
+                        "cleanupStatus",
+                        "sideEffectsMayHaveOccurred",
+                        "sideEffectUncertain",
+                        "observedClean",
+                        "timedOut",
+                        "cancelled",
+                        "durationMs",
+                        "mode"));
+        out.put("error", project(object(source.get("error")), "code"));
+        out.put(
+                "selection",
+                project(
+                        object(source.get("selection")),
+                        "settingsRevision",
+                        "modelRoute",
+                        "resolvedSha256"));
+        out.put(
+                "resolved",
+                project(
+                        object(source.get("resolved")),
+                        "policy",
+                        "durationSeconds",
+                        "requestTimeoutSeconds"));
+        return out;
+    }
+
+    private static Map<String, Object> project(Map<String, Object> source, String... fields) {
+        var out = new LinkedHashMap<String, Object>();
+        for (String field : fields)
+            if (source.containsKey(field)) out.put(field, source.get(field));
+        return out;
+    }
+
     private static String category(String status, String code) {
         if (status.equals("UNKNOWN") || code.equals("UNKNOWN_SIDE_EFFECT")) return "UNKNOWN";
         if (status.equals("DENIED") || code.contains("DENIED")) return "DENIED";
@@ -141,7 +199,7 @@ public final class TaskDiagnosis {
                 || code.contains("NETWORK")
                 || code.contains("LLM")
                 || code.contains("CONNECTION")) return "MODEL_NETWORK";
-        return "FAILED";
+        return status.equals("FAILED") ? "FAILED" : "UNKNOWN";
     }
 
     private static Map<String, Object> object(Object value) {

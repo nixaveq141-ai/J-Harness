@@ -111,11 +111,13 @@ function page(value: unknown): Page {
 }
 export function mergeEvents(old: SessionEvent[], incoming: SessionEvent[]): SessionEvent[] {
   const seen = new Set(old.map(e => e.eventId))
-  return [...old, ...incoming.filter(e => { if (seen.has(e.eventId)) return false; seen.add(e.eventId); return true })].slice(0, 4000)
+  return [...old, ...incoming.filter(e => { if (seen.has(e.eventId)) return false; seen.add(e.eventId); return true })].slice(-4000)
 }
 export const isTerminal = (t: Task) => ['FINISHED', 'UNKNOWN', 'VERIFIED'].includes(t.phase)
 export const uncertain = (t: Task) => t.phase !== 'VERIFIED' && (t.phase === 'UNKNOWN' || t.status === 'UNKNOWN')
 export class Api {
+  private mutationVersion=0
+  get stateVersion(){return this.mutationVersion}
   async display(id:string,signal?:AbortSignal) {
     const v=object(await this.json('/v1/tasks/'+identifier(id)+'/display',undefined,signal))
     if(v.sessionId!==id||v.source!=='temporary-model-stream'||!['IDLE','UNAVAILABLE','STREAMING','INTERRUPTED','PERSISTED'].includes(String(v.state)))throw new ApiError('INVALID_RESPONSE')
@@ -143,6 +145,15 @@ export class Api {
     return {artifacts:v.artifacts.map(raw=>{const a=object(raw),id=text(a.id,101);if(!/^[0-9a-f-]{36}-[a-f0-9]{64}$/.test(id)||a.sha256!==id.slice(37))throw new ApiError('INVALID_RESPONSE');return{id,sha256:String(a.sha256)}}),limited:v.limited}
   }
   async questions(id: string) { return (await this.questionPage(id)).questions }
+  async questionStatus(id: string, questionId: string) {
+    identifier(questionId)
+    for (let offset=0;offset<64;offset+=8) {
+      const page=await this.questionPage(id,offset),found=page.questions.find(q=>q.questionId===questionId)
+      if(found)return found
+      if(offset+8>=page.total)break
+    }
+    throw new ApiError('QUESTION_NOT_FOUND',404)
+  }
   async questionPage(id: string, offset = 0) {
     if (!Number.isInteger(offset) || offset<0 || offset>64) throw new ApiError('INVALID_RESPONSE')
     const v = object(await this.json('/v1/tasks/' + identifier(id) + '/questions?offset=' + offset))
@@ -160,6 +171,7 @@ export class Api {
   }
 
   async turns(id: string, offset = 0) {
+    if (!Number.isSafeInteger(offset) || offset < 0 || offset > 256) throw new ApiError('INVALID_RESPONSE')
     const v = object(await this.json(`/v1/tasks/${identifier(id)}/turns?offset=${offset}`))
     if (!Array.isArray(v.submissions) || v.submissions.length > 32 || typeof v.more !== 'boolean' || !Number.isInteger(v.next) || !Number.isInteger(v.total)) throw new ApiError('INVALID_RESPONSE')
     return { submissions: v.submissions.map(turnSubmission), more: v.more, next: v.next as number, total: v.total as number }
@@ -171,6 +183,7 @@ export class Api {
   async turnAction(id: string, hash: string, action: 'cancel' | 'start') { return turnReceipt(await this.json(`/v1/tasks/${identifier(id)}/turns/${identifier(hash)}/${action}`, {}), id) }
   async workspaces() { return workspaceData(await this.json('/v1/workspaces')) }
   async searchContent(input: { text: string; mode: 'tokens' | 'phrase'; profile: string; view: string; sessionId: string; cursor: string; limit: number; rebuild: boolean }, signal?: AbortSignal): Promise<ContentResults> {
+    if (!Number.isSafeInteger(input.limit) || input.limit < 1 || input.limit > 32) throw new ApiError('INVALID_RESPONSE')
     const v = object(await this.json('/v1/search', input, signal)), names = new Set<string>()
     if (v.source !== 'sanitized-session-content' || !Array.isArray(v.matches) || v.matches.length > input.limit || !Number.isInteger(v.total) || (v.total as number)<v.matches.length || (v.total as number)>4096 || typeof v.more !== 'boolean' || v.more && !v.matches.length || !Number.isInteger(v.reusedEvents) || !Number.isInteger(v.rebuiltSessions)) throw new ApiError('INVALID_RESPONSE')
     const next = text(v.next,64), snapshotId = identifier(v.snapshotId)
@@ -225,7 +238,9 @@ export class Api {
   async models() {
     const v = object(await this.json('/v1/models'))
     // Reuse the settings model validator without accepting arbitrary model metadata.
-    return { models: settings({ ...v, extensions: {}, corePlugins: [], credentialStore: '', credentialCleanupPending: false }).models, selected: identifier(v.selected) }
+    const models = settings({ ...v, extensions: {}, corePlugins: [], credentialStore: '', credentialCleanupPending: false }).models, selected = identifier(v.selected)
+    if (!models.some(m => m.id === selected)) throw new ApiError('INVALID_RESPONSE')
+    return { models, selected }
   }
   async checkModel(modelId: string) {
     const v = object(await this.json('/v1/models/check', { modelId: identifier(modelId) }))
@@ -273,6 +288,7 @@ export class Api {
     const abort = () => { void reader.cancel().catch(() => {}) }
     const timer = setTimeout(() => { expired = true; abort() }, 12000)
     signal?.addEventListener('abort', abort, { once: true })
+    if(signal?.aborted)abort()
     let size = 0, content = ''
     try {
       for (;;) {
@@ -285,10 +301,14 @@ export class Api {
       if (signal?.aborted) throw new ApiError('ABORTED')
       if (expired) throw new ApiError('CONNECTION_LOST')
       return JSON.parse(content + decoder.decode()) as unknown
-    } catch (e) { await reader.cancel().catch(() => {}); if (e instanceof ApiError) throw e; throw new ApiError('INVALID_RESPONSE') }
+    } catch (e) { await reader.cancel().catch(() => {}); if (signal?.aborted) throw new ApiError('ABORTED'); if (expired) throw new ApiError('CONNECTION_LOST'); if (e instanceof ApiError) throw e; throw new ApiError('INVALID_RESPONSE') }
     finally { clearTimeout(timer); signal?.removeEventListener('abort', abort); reader.releaseLock() }
   }
-  private async json(path: string, body?: unknown, signal?: AbortSignal) { return this.readJson(await this.call(path, body, signal), signal) }
+  private async json(path: string, body?: unknown, signal?: AbortSignal) {
+    if(body!==undefined)this.mutationVersion++
+    try{return await this.readJson(await this.call(path, body, signal), signal)}
+    finally{if(body!==undefined)this.mutationVersion++}
+  }
   async info() {
     const v = object(await this.json('/v1/info'))
     if (!Array.isArray(v.profiles) || v.profiles.length > 16) throw new ApiError('INVALID_RESPONSE')

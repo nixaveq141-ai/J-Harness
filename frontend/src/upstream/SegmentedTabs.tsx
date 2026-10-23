@@ -28,7 +28,7 @@ export function SegmentedTabs<Value extends string>({ items, value, onChange, la
   label: string
   className?: string | undefined
 }): ReactNode {
-  const selectedIndex = items.findIndex(item => item.value === value)
+  const selectedIndex = Math.max(0, items.findIndex(item => item.value === value))
 
   const onKeyDown = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
     let next: number
@@ -45,7 +45,7 @@ export function SegmentedTabs<Value extends string>({ items, value, onChange, la
     const nextItem = items[next]
     /* v8 ignore next -- the event comes from a mounted direct child and next is bounded by non-empty items. */
     if (tablist === null || nextItem === undefined) return
-    tablist.querySelectorAll<HTMLButtonElement>('[role="tab"]').item(next).focus()
+    tablist.querySelectorAll<HTMLButtonElement>(':scope > [role="tab"]').item(next)?.focus()
     onChange(nextItem.value)
   }
 
@@ -67,9 +67,9 @@ export function SegmentedTabs<Value extends string>({ items, value, onChange, la
           id={item.id}
           role="tab"
           className={css.tab}
-          aria-selected={value === item.value}
+          aria-selected={selectedIndex === index}
           aria-controls={item.panelId}
-          tabIndex={value === item.value ? 0 : -1}
+          tabIndex={selectedIndex === index ? 0 : -1}
           onClick={() => { onChange(item.value) }}
           onKeyDown={(event) => { onKeyDown(event, index) }}
         >

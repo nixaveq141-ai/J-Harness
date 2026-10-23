@@ -108,7 +108,7 @@ try {
   await page.getByRole('button', { name: '使用 /guide', exact: true }).waitFor(); check('slash prefix offers matching scanned skills', await page.getByRole('button', { name: '使用 /userguide', exact: true }).count() === 0)
   await page.getByText('查看技能快照', { exact: true }).click(); check('frontmatter snapshot is viewable without model request', await page.getByText('不可信技能文本 · SHA256', { exact: false }).isVisible() && !wire.length)
   await page.getByRole('button', { name: '使用 /guide', exact: true }).click(); check('candidate only inserts draft', await page.getByLabel('任务目标').inputValue() === '/guide ' && !wire.length)
-  await page.getByRole('button', { name: '技能目录', exact: true }).click(); check('explicit and user skills are available in catalog', await page.getByRole('button', { name: '使用 /explicit', exact: true }).isVisible() && await page.getByRole('button', { name: '使用 /userguide', exact: true }).isVisible())
+  await page.getByRole('button', { name: '技能目录', exact: true }).click(); await page.getByRole('button', { name: '使用 /explicit', exact: true }).waitFor(); await page.getByRole('button', { name: '使用 /userguide', exact: true }).waitFor(); check('explicit and user skills are available in catalog', await page.getByRole('button', { name: '使用 /explicit', exact: true }).isVisible() && await page.getByRole('button', { name: '使用 /userguide', exact: true }).isVisible())
   await shot('skills-desktop'); await page.getByRole('button', { name: '技能目录', exact: true }).click()
   await page.getByRole('button', { name: '创建任务', exact: true }).click(); await until(() => !!hold)
   const task = (await api('/v1/tasks')).body.tasks[0]

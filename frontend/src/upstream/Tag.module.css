@@ -2,6 +2,12 @@
  * palette varies. Tone colors ride background/border/color so a render site can
  * still position the tag with its own class without touching the palette. */
 .tag {
+  box-sizing: border-box;
+  border: 0.5px solid transparent;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
   display: inline-flex;
   align-items: center;
   border-radius: 999px;

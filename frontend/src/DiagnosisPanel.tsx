@@ -23,7 +23,7 @@ export function DiagnosisPanel({ api, task, refresh }: { api: Api; task: Task; r
   }, [api, task.taskId, task.phase, task.status, refresh, reload])
   if (loading) return <p className="muted" role="status">正在读取执行诊断…</p>
   if (error) return <div className="diagnosis"><p role="status">{error}</p><Button onClick={() => setReload(v => v + 1)}>重新读取诊断</Button></div>
-  if (!data || data.issues.length === 0 && data.sdkFactsSettled && !uncertain(data.task)) return null
+  if (!data || data.issues.length === 0 && data.sdkFactsSettled && !uncertain(data.task) && !data.task.error && !data.task.cancelRequested) return null
   const needsVerification = uncertain(data.task) || !data.sdkFactsSettled
   return <section className="diagnosis" aria-label="执行诊断">
     <h3>{needsVerification ? '为什么结果待核实' : '执行情况说明'}</h3>

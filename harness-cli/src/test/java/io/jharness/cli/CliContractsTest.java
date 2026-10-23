@@ -293,4 +293,34 @@ class CliContractsTest {
                 call,
                 payload);
     }
+
+    @Test
+    void reportNullFactsStayUnknownAndPartialChangesAreSeparate() {
+        var payload = new LinkedHashMap<String, Object>();
+        payload.put("status", null);
+        payload.put("error", null);
+        payload.put("sideEffectLevel", "WORKSPACE_WRITE");
+        payload.put(
+                "value",
+                Map.of(
+                        "changes",
+                        List.of(Map.of("path", "x", "beforeVersion", "a", "afterVersion", "b"))));
+        var ended = new LinkedHashMap<String, Object>();
+        ended.put("status", null);
+        ended.put("reason", null);
+        ended.put("reservedApiCost", null);
+        var report =
+                EvidenceReport.build(
+                        "goal",
+                        List.of(
+                                event("tool.completed", EventLevel.TOOL, "step", "call", payload),
+                                event("turn.ended", EventLevel.TURN, null, null, ended)),
+                        new SecretRedactor());
+        assertEquals("UNKNOWN", report.get("status"));
+        assertEquals("UNKNOWN", Values.object(report.get("cost")).get("upperBound"));
+        var facts = Values.object(report.get("recordedFacts"));
+        assertEquals(List.of(), facts.get("changes"));
+        assertEquals(1, ((List<?>) facts.get("partialOrUncertainChanges")).size());
+        assertEquals(1, ((List<?>) facts.get("issues")).size());
+    }
 }

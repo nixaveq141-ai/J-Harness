@@ -10,8 +10,7 @@ final class ModelDisplayBuffer implements ModelDisplay {
     private final DataSanitizer sanitizer;
     private String text = "", sourceId = "", turnId = "", stepId = "";
     private boolean truncated;
-    private long updated;
-    private int inputLength;
+    private boolean unavailable;
 
     ModelDisplayBuffer(PluginScope scope, SessionReader reader, DataSanitizer sanitizer) {
         this.scope = scope;
@@ -25,11 +24,19 @@ final class ModelDisplayBuffer implements ModelDisplay {
         turnId = "";
         stepId = "";
         truncated = false;
-        updated = 0;
-        inputLength = 0;
+        unavailable = false;
     }
 
     synchronized void accept(ModelDisplay.Update update) {
+        try {
+            acceptSnapshot(update);
+        } catch (RuntimeException failure) {
+            text = "";
+            unavailable = true;
+        }
+    }
+
+    private void acceptSnapshot(ModelDisplay.Update update) {
         String value = update.text();
         truncated |= update.truncated();
         if (sourceId.isEmpty()) {
@@ -43,11 +50,6 @@ final class ModelDisplayBuffer implements ModelDisplay {
             turnId = e.turnId();
             stepId = e.stepId();
         }
-        long now = System.nanoTime();
-        if (!text.isEmpty() && now - updated < 50000000L && value.length() - inputLength < 16384)
-            return;
-        updated = now;
-        inputLength = value.length();
         String clean = sanitizer.streamingText(value);
         truncated |= value.length() > 65536 || clean.length() > 65536;
         int end = Math.min(65536, clean.length());
@@ -56,6 +58,27 @@ final class ModelDisplayBuffer implements ModelDisplay {
     }
 
     public synchronized Map<String, Object> snapshot() {
+        // A fact-reader failure during owner settlement must remain visible to the host,
+        // which retains UNKNOWN ownership. Only a failed presentation callback degrades.
+        if (!unavailable) return currentSnapshot();
+        return Map.of(
+                "sessionId",
+                scope.sessionId(),
+                "source",
+                "temporary-model-stream",
+                "sourceEvent",
+                sourceId,
+                "state",
+                "UNAVAILABLE",
+                "text",
+                "",
+                "truncated",
+                truncated,
+                "diagnostic",
+                "DISPLAY_UNAVAILABLE");
+    }
+
+    private Map<String, Object> currentSnapshot() {
         String state = sourceId.isEmpty() ? "IDLE" : "STREAMING";
         boolean after = false;
         for (var e : reader.events()) {

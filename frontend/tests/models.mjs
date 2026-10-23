@@ -19,7 +19,14 @@ data: ${JSON.stringify(value)}
 
 `
 function sse(protocol, response) {
-  if(protocol==='responses') return frame({type:'response.created',sequence_number:0,response:{id:response.id}})+frame({type:'response.completed',sequence_number:1,response})
+  if(protocol==='responses') {
+    let sequence=0,text=frame({type:'response.created',sequence_number:sequence++,response:{id:response.id}})
+    response.output.forEach((item,output_index)=>{
+      text+=frame({type:'response.output_item.added',sequence_number:sequence++,output_index,item})
+      text+=frame({type:'response.output_item.done',sequence_number:sequence++,output_index,item})
+    })
+    return text+frame({type:'response.completed',sequence_number:sequence++,response})
+  }
   if(protocol==='anthropic') {
     let text=frame({type:'message_start',message:{...response,content:[],stop_reason:null,usage:{input_tokens:10,output_tokens:0}}})
     response.content.forEach((block,index)=>{

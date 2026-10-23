@@ -10,13 +10,14 @@ public final class EvidenceReport {
             String goal, List<SessionEvent> events, DataSanitizer sanitizer) {
         List<Map<String, Object>> changes = new ArrayList<>(),
                 commands = new ArrayList<>(),
+                partialChanges = new ArrayList<>(),
                 issues = new ArrayList<>(),
                 previews = new ArrayList<>();
         String narration = "",
                 status = "INCOMPLETE",
                 reason = "NO_TERMINAL_EVENT",
-                currency = "USD",
-                cost = "0";
+                currency = "UNKNOWN",
+                cost = "UNKNOWN";
         String latestTurn =
                 events.stream()
                         .filter(e -> e.type().equals("turn.started"))
@@ -45,16 +46,15 @@ public final class EvidenceReport {
             if (e.type().equals("assistant.message")
                     && e.payload().get("content") instanceof String text) narration = text;
             if (e.type().equals("turn.ended")) {
-                status = String.valueOf(e.payload().get("status"));
-                reason = String.valueOf(e.payload().get("reason"));
-                currency = String.valueOf(e.payload().getOrDefault("currency", "USD"));
+                status = factText(e.payload().get("status"));
+                reason = factText(e.payload().get("reason"));
+                currency = factText(e.payload().get("currency"));
                 cost =
-                        String.valueOf(
+                        factText(
                                 e.payload()
                                         .getOrDefault(
                                                 "reservedApiCost",
-                                                e.payload()
-                                                        .getOrDefault("reservedApiCostUsd", "0")));
+                                                e.payload().get("reservedApiCostUsd")));
             }
             if (e.type().equals("tool.preview")) previews.add(reference(e, e.payload()));
             if (!e.type().equals("tool.completed")) continue;
@@ -79,16 +79,19 @@ public final class EvidenceReport {
                     if (!Objects.equals(
                             Values.object(change).get("beforeVersion"),
                             Values.object(change).get("afterVersion")))
-                        changes.add(reference(e, Values.object(change)));
+                        ("SUCCESS".equals(e.payload().get("status")) ? changes : partialChanges)
+                                .add(reference(e, Values.object(change)));
             if (!"SUCCESS".equals(e.payload().get("status")))
                 issues.add(
                         reference(
                                 e,
                                 Map.of(
                                         "status",
-                                        e.payload().get("status"),
+                                        factText(e.payload().get("status")),
                                         "error",
-                                        e.payload().getOrDefault("error", Map.of()))));
+                                        e.payload().get("error") instanceof Map<?, ?> error
+                                                ? error
+                                                : Map.of("code", "UNVERIFIED_EVENT"))));
         }
         return sanitizer.sanitize(
                 Map.of(
@@ -104,6 +107,8 @@ public final class EvidenceReport {
                                 changes,
                                 "commands",
                                 commands,
+                                "partialOrUncertainChanges",
+                                partialChanges,
                                 "issues",
                                 issues,
                                 "previews",
@@ -146,9 +151,17 @@ public final class EvidenceReport {
         Map<String, Object> out = new LinkedHashMap<>(data);
         out.put("eventId", event.eventId());
         out.put("callId", event.callId());
+        out.put("turnId", event.turnId());
+        out.put("timestamp", event.timestamp().toString());
+        if (event.type().equals("terminal.snapshot"))
+            out.put("scope", "historical-last-known-snapshot");
         if (event.payload().containsKey("status"))
             out.put("toolStatus", event.payload().get("status"));
         return out;
+    }
+
+    private static String factText(Object value) {
+        return value instanceof String s && !s.isBlank() ? s : "UNKNOWN";
     }
 
     private static Map<String, Object> commandSummary(Map<String, Object> value) {

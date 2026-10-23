@@ -2,9 +2,11 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Api, ApiError, type UserQuestion } from './api'
 import { Button } from './upstream/Button'
 import { Tag } from './upstream/Tag'
+import { useLifetime } from './lifecycle'
 
 const labels: Record<string,string> = { PENDING: '等待回答', SUBMITTED: '正在核对回答', ANSWERED: '已回答', SKIPPED: '已跳过', TIMED_OUT: '已超时 · 未收到答案', CANCELLED: '已取消', INTERRUPTED: '等待已中断 · 不会自动重提' }
-function marker(key: string, value?: string) { try { if (value !== undefined) { if (value) sessionStorage.setItem(key,value); else sessionStorage.removeItem(key) } return sessionStorage.getItem(key) ?? '' } catch { return '' } }
+const memoryMarkers=new Map<string,string>()
+function marker(key: string, value?: string) { if(value!==undefined)memoryMarkers.set(key,value);try { if (value !== undefined) { if (value) sessionStorage.setItem(key,value); else sessionStorage.removeItem(key) } const saved=sessionStorage.getItem(key)??'';memoryMarkers.set(key,saved);return saved } catch { return memoryMarkers.get(key)??'' } }
 
 export function Questions({ api, id, onGuard, onWaiting }: { api: Api; id: string; onGuard: (value: boolean) => void; onWaiting: (value: boolean) => void }) {
   const [offset,setOffset] = useState(0), [total,setTotal] = useState(0), [hasWaiting,setHasWaiting] = useState(false)
@@ -14,10 +16,10 @@ export function Questions({ api, id, onGuard, onWaiting }: { api: Api; id: strin
   const [rows,setRows] = useState<UserQuestion[]>([]), [error,setError] = useState('')
   useEffect(()=>{onWaiting(hasWaiting);return()=>onWaiting(false)},[hasWaiting,onWaiting])
   useEffect(() => {
-    let stopped = false, reading = false
-    async function read() { if (stopped || reading) return; reading = true
-      try { const value = await api.questionPage(id,offset); if (!stopped) { setRows(value.questions);setTotal(value.total);setHasWaiting(value.hasWaiting);setError('') } }
-      catch (e) { if (!stopped && !(e instanceof ApiError && e.status===404)) setError('问题读取中断。重连只读取状态，不会自动回答。') }
+    let stopped = false, reading = false, failures=0,nextRead=0
+    async function read() { if (stopped || reading || document.hidden || Date.now()<nextRead) return; reading = true
+      try { const value = await api.questionPage(id,offset); if (!stopped) { failures=0;setRows(value.questions);setTotal(value.total);setHasWaiting(value.hasWaiting);setError('') } }
+      catch (e) { nextRead=Date.now()+Math.min(30000,700*2**Math.min(++failures,6));if (!stopped && !(e instanceof ApiError && e.status===404)) setError('问题读取中断。重连只读取状态，不会自动回答。') }
       finally { reading = false }
     }
     void read(); const timer = setInterval(() => void read(),700)
@@ -34,6 +36,7 @@ function QuestionCard({ api, value: q, onGuard }: { api: Api; value: UserQuestio
   const [dirty,setDirty] = useState(false), [checking,setChecking] = useState(false)
   const saving = useRef(false), revision = useRef(q.draftRevision ?? 0), [draftTick,setDraftTick] = useState(0)
   const lock = useRef(false), edit = useRef(0), alive = useRef(true), card = useRef<HTMLElement>(null)
+  const life=useLifetime(api,q.sessionId,q.questionId),attempt=useRef(pending),savingTask=useRef<Promise<unknown>|null>(null)
   const open = q.state==='PENDING', waiting = !!pending || q.state==='SUBMITTED'
   useEffect(()=>{ onGuard(q.questionId,open && (dirty || busy));return()=>onGuard(q.questionId,false) },[onGuard,q.questionId,open,dirty,busy])
   useEffect(()=>{ alive.current=true; if(open)card.current?.scrollIntoView({block:'nearest'});return()=>{alive.current=false} },[])
@@ -46,7 +49,7 @@ function QuestionCard({ api, value: q, onGuard }: { api: Api; value: UserQuestio
     const timer=setTimeout(()=>{
       if (saving.current) return
       saving.current=true
-      void api.questionDraft(q,selected,text,revision.current).then(saved=>{
+      savingTask.current=api.questionDraft(q,selected,text,revision.current).then(saved=>{
         revision.current=saved.revision
         if(alive.current && generation===edit.current){setDirty(false);setNotice('草稿已保存到当前宿主内存，刷新可恢复')}
       }).catch(e=>{
@@ -59,8 +62,17 @@ function QuestionCard({ api, value: q, onGuard }: { api: Api; value: UserQuestio
   function changed() { edit.current++;setDirty(true);setError('');setNotice('草稿尚未保存') }
   async function answer(skip: boolean) {
     if(lock.current || !open || waiting) return
-    const id=crypto.randomUUID();lock.current=true;setBusy(true);setError('');setPending(id);marker(key,id)
-    try { const receipt=await api.answerQuestion(q,id,skip?[]:selected,skip?'':text,skip);if(alive.current)setNotice(receipt.state==='SUBMITTED'?'已接收，正在核对持久记录':'回答状态已记录') }
+    lock.current=true;setBusy(true);setError('')
+    try {
+      if(savingTask.current)await savingTask.current
+      if(!life.alive)return
+      // Flush the exact answer snapshot before any admission can lose its response.
+      const saved=await api.questionDraft(q,selected,text,revision.current);revision.current=saved.revision
+      if(!life.alive)return
+      const id=attempt.current||crypto.randomUUID();attempt.current=id;setPending(id);marker(key,id)
+      try { if(sessionStorage.getItem(key)!==id)setNotice('本页核对标记无法保存；请保持页面，刷新后先查问题状态。') }catch{setNotice('本页核对标记无法保存；请保持页面，刷新后先查问题状态。')}
+      const receipt=await api.answerQuestion(q,id,skip?[]:selected,skip?'':text,skip);if(life.alive){setDirty(false);setNotice(receipt.state==='SUBMITTED'?'已接收，正在核对持久记录':'回答状态已记录')}
+    }
     catch(e) { if(alive.current){setError(e instanceof ApiError && e.code==='INVALID_ANSWER'?'答案格式无效，请检查选项或文字。':'回答未确认，请核对状态；不会自动重发。');if(e instanceof ApiError && e.status===400){setPending('');marker(key,'')}} }
     finally { lock.current=false;if(alive.current)setBusy(false) }
   }
@@ -74,7 +86,7 @@ function QuestionCard({ api, value: q, onGuard }: { api: Api; value: UserQuestio
     </fieldset>
     <p className="muted question-deadline">截止 {new Date(q.expiresAt).toLocaleTimeString()} · 超时不视为同意</p>
     <div className="question-actions"><Button variant="outline" disabled={!open || waiting || busy} onClick={()=>void answer(true)}>跳过问题</Button><Button variant="primary" disabled={!open || waiting || busy || !selected.length && !text.trim()} onClick={()=>void answer(false)}>提交回答</Button></div>
-    {waiting && <div role="status">回答待核对，不会自动重发。<Button disabled={checking || busy} onClick={()=>{setChecking(true);void api.questions(q.sessionId).then(rows=>{const row=rows.find(v=>v.questionId===q.questionId);setNotice(row ? '服务器状态：'+labels[row.state] : '未找到问题');if(row?.state==='PENDING')setNotice('暂未看到回答记录；可继续核对，或明确清除本页标记。')}).catch(()=>setError('读取失败，请保持待核对状态。')).finally(()=>setChecking(false))}}>核对回答</Button>{q.state==='PENDING' && <Button disabled={busy || checking} onClick={()=>{marker(key,'');setPending('');setNotice('已清除本页标记，未撤回后台可能已经接收的回答。')}}>清除本页标记</Button>}</div>}
+    {waiting && <div role="status">回答待核对，不会自动重发。<Button disabled={checking || busy} onClick={()=>{setChecking(true);void api.questionStatus(q.sessionId,q.questionId).then(row=>{if(!life.alive)return;setNotice(row ? '服务器状态：'+labels[row.state] : '未找到问题');if(row?.state==='PENDING')setNotice('暂未看到回答记录；可继续核对，或明确清除本页标记。')}).catch(()=>setError('读取失败，请保持待核对状态。')).finally(()=>setChecking(false))}}>核对回答</Button>{q.state==='PENDING' && <Button disabled={busy || checking} onClick={()=>{marker(key,'');setPending('');setNotice('已清除本页标记，未撤回后台可能已经接收的回答。')}}>清除本页标记</Button>}</div>}
     {error && <p className="inline-error" role="alert">{error}</p>}{notice && <p className="question-notice" role="status">{notice}</p>}
   </article>
 }

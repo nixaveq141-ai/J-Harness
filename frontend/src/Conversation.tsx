@@ -34,15 +34,15 @@ function Message({api,id,event:e,onInspect,onFile}:{api:Api;id:string;event:Sess
   </article>
 }
 function ToolCard({api,id,request,result,onInspect,onFile}:{api:Api;id:string;request?:SessionEvent;result?:SessionEvent;onInspect:(e:SessionEvent)=>void;onFile:(path:string,line:number)=>void}) {
-  const [read,setRead]=useState(false),[artifactRead,setArtifactRead]=useState(false),e=result??request!,p=e.payload,r=obj(result?.payload.value)
+  const [read,setRead]=useState(false),[artifactRead,setArtifactRead]=useState(false),[expanded,setExpanded]=useState(false),e=result??request!,p=e.payload,r=obj(result?.payload.value)
   const tool=String(request?.payload.tool??result?.payload.tool??'工具'),status=String(result?.payload.status??'等待结果')
   const changes=(Array.isArray(r.changes)?r.changes.map(obj):[r]).filter(c=>typeof c.path==='string'&&typeof c.beforeVersion==='string'&&typeof c.afterVersion==='string')
-  const body=typeof result?.payload.content==='string'?result.payload.content:result?pretty(r):''
+  const body=expanded?(typeof result?.payload.content==='string'?result.payload.content:result?pretty(r):''):''
   return <article className="tool-card" aria-label={'工具卡 '+tool}><div className="tool-card-heading"><strong>{names[tool]??tool}</strong><Tag tone={status==='SUCCESS'?'success':status==='FAILED'?'danger':'neutral'}>{statuses[status]??status}</Tag><Button aria-label={'查看事件 '+e.eventId} onClick={()=>onInspect(e)}>来源</Button></div>
     <p className="tool-meta">{String(request?.payload.sideEffectLevel??result?.payload.sideEffectLevel??'影响级别未记录')}{typeof p.durationMs==='number'?' · '+p.durationMs+' ms':''}</p>
     {request&&<details><summary>调用参数与关联</summary><pre>{pretty(request.payload)}</pre><code>{request.callId}</code></details>}
-    {result&&<details><summary>查看工具结果</summary><pre>{body.slice(0,4000)}</pre>{body.length>4000&&<p className="muted">预览已截断，可回读完整事件。</p>}</details>}
-    {(result?.payload.omitted===true||body.length>4000)&&<Button onClick={()=>setRead(v=>!v)}>回读完整工具结果</Button>}
+    {result&&<details onToggle={event=>setExpanded(event.currentTarget.open)}><summary>查看工具结果</summary><pre>{body.slice(0,4000)}</pre>{body.length>4000&&<p className="muted">预览已截断，可回读完整事件。</p>}</details>}
+    {result&&<Button onClick={()=>setRead(v=>!v)}>回读完整工具结果</Button>}
     {typeof r.path==='string'&&!changes.length&&<button className="file-reference" onClick={()=>onFile(r.path as string,1)}>{r.path}</button>}
     {changes.map((c,i)=><div className="changed-file" key={i}><button className="file-reference" onClick={()=>onFile(String(c.path),1)}>{String(c.path)}</button><span>当时记录的变更</span>{typeof c.beforeVersion==='string'&&<small>{c.beforeVersion.slice(0,10)} → {String(c.afterVersion??'未知').slice(0,10)}</small>}</div>)}
     {read&&result&&<ContentReader api={api} id={id} kind="content" target={result.eventId}/>}
@@ -62,7 +62,7 @@ function LiveDisplay({api,task}:{api:Api;task:Task}) {
   },[api,task.taskId,task.phase,paused])
   useEffect(()=>{const node=block.current,scroll=node?.closest('.timeline');if(node&&scroll&&scroll.scrollHeight-scroll.scrollTop-scroll.clientHeight<180)node.scrollIntoView({block:'nearest'})},[value?.text])
   if(!value&&!error)return null
-  if(value?.state==='PERSISTED'||value?.state==='IDLE'||value?.state==='UNAVAILABLE')return null
+  if(value?.state==='PERSISTED'||value?.state==='IDLE'||value?.state==='UNAVAILABLE')return error?<p role="status">{error}</p>:null
   return <section className="stream-display" ref={block} aria-label="临时流式输出"><div className="content-heading"><strong>{value?.state==='INTERRUPTED'?'输出已中断':'正在生成'}</strong><Button onClick={()=>setPaused(v=>!v)}>{paused?'恢复显示':'停止显示'}</Button></div>
     <p className="muted small">{value?.state==='INTERRUPTED'?'以下片段不是完整答案，不会自动重发请求。':'临时文本尚未成为完整持久回答。停止显示不取消任务。'}</p>{value?.text?<pre>{value.text}</pre>:<p className="muted small">尚无可安全展示的文本，以完整持久记录为准。</p>}{value?.truncated&&<p>临时显示已达65536字符，完整结果请等待持久记录。</p>}{error&&<p role="status">{error}</p>}<details><summary>流来源</summary><code>{value?.sourceEvent}</code></details></section>
 }

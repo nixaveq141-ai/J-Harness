@@ -8,21 +8,21 @@ export function ContentSearch({ api, profile, view, currentSession, workspaces, 
   const [query,setQuery]=useState(''),[mode,setMode]=useState<'tokens'|'phrase'>('tokens'),[selectedProfile,setProfile]=useState(profile),[selectedView,setView]=useState(view),[single,setSingle]=useState(false)
   const [result,setResult]=useState<ContentResults|null>(null),[busy,setBusy]=useState(false),[error,setError]=useState(''),[source,setSource]=useState('')
   const request=useRef<AbortController|null>(null), lock=useRef(false)
-  useEffect(()=>()=>{request.current?.abort()},[api])
+  useEffect(()=>{lock.current=false;setBusy(false);setResult(null);setSource('');setError('');return()=>{request.current?.abort()}},[api,currentSession])
   function change(update:()=>void) { request.current?.abort(); lock.current=false;setBusy(false);setResult(null);setSource('');setError('');update() }
   async function search(more=false,rebuild=false) {
     if(lock.current||!query.trim())return
     const controller=new AbortController();request.current=controller;lock.current=true;setBusy(true);setError('')
     if(!more){setResult(null);setSource('')}
     try {
-      const value=await api.searchContent({text:query,mode,profile:selectedProfile,view:selectedView,sessionId:single?currentSession:'',cursor:more&&result?result.next:'',limit:20,rebuild},controller.signal)
+      const value=await api.searchContent({text:query,mode,profile:selectedProfile,view:selectedView,sessionId:single&&currentSession?currentSession:'',cursor:more&&result?result.next:'',limit:20,rebuild},controller.signal)
       if(controller.signal.aborted)return
-      if(more&&result&&(value.snapshotId!==result.snapshotId||value.total!==result.total||value.matches.some(h=>result.matches.some(old=>old.eventId===h.eventId&&old.sessionId===h.sessionId))))throw new ApiError('INVALID_RESPONSE')
+      if(more&&result&&(value.snapshotId!==result.snapshotId||value.total!==result.total||value.matches.length+result.matches.length>value.total||value.more&&value.next===result.next||value.matches.some(h=>result.matches.some(old=>old.eventId===h.eventId&&old.sessionId===h.sessionId))))throw new ApiError('INVALID_RESPONSE')
       setResult(more&&result?{...value,matches:[...result.matches,...value.matches]}:value)
     } catch(e) {
       if(controller.signal.aborted)return
       const labels:Record<string,string>={SEARCH_CURSOR_EXPIRED:'结果快照已过期或范围已变化，请重新查询。',SEARCH_SCOPE_LIMIT:'当前范围超过256个会话，请选择工作区或仅查询当前会话。',SEARCH_INDEX_LIMIT:'会话正文超过索引容量限制，请使用原会话事件分页查看。',SEARCH_RESULT_LIMIT:'匹配结果超过4096条，请缩小查询条件。',SEARCH_BUSY:'索引正由其他请求更新，请稍后重新查询。',SEARCH_UNAVAILABLE:'该工作区未启用内容检索。',SEARCH_SCOPE_DENIED:'当前会话不在所选工作区或归档范围内。',CANCELLED:'查询达到时间限制，请缩小范围后重试。',INVALID_SEARCH:'请输入有效词语或连续短语（最多256字符）。'}
-      setError(e instanceof ApiError?labels[e.code]??'内容查询未完成，请重新查询。':'连接中断；不会自动重新查询。')
+      setError(e instanceof ApiError?e.code==='INVALID_RESPONSE'?'服务数据与检索协议不符，请核对版本后重新读取。':labels[e.code]??'内容查询未完成，请重新查询。':'连接中断；不会自动重新查询。')
     } finally { if(!controller.signal.aborted){lock.current=false;setBusy(false)} }
   }
   return <section className="content-search-page" aria-label="内容检索">
@@ -33,7 +33,7 @@ export function ContentSearch({ api, profile, view, currentSession, workspaces, 
         <label>匹配方式<select value={mode} onChange={e=>change(()=>setMode(e.target.value as 'tokens'|'phrase'))}><option value="tokens">所有词匹配</option><option value="phrase">连续短语</option></select></label>
         <label>检索工作区<select value={selectedProfile} onChange={e=>change(()=>setProfile(e.target.value))}><option value="">所有已注册工作区</option>{Object.entries(workspaces).map(([id,name])=><option value={id} key={id}>{name}</option>)}</select></label>
         <label>归档范围<select value={selectedView} onChange={e=>change(()=>setView(e.target.value))}><option value="active">未归档</option><option value="archived">已归档</option><option value="all">全部会话</option></select></label>
-        <label className="settings-check"><input type="checkbox" disabled={!currentSession} checked={single} onChange={e=>change(()=>setSingle(e.target.checked))}/>仅当前会话</label>
+        <label className="settings-check"><input type="checkbox" disabled={!currentSession} checked={single&&!!currentSession} onChange={e=>change(()=>setSingle(e.target.checked))}/>仅当前会话</label>
         <Button type="submit" variant="primary" disabled={busy||!query.trim()}>检索内容</Button>
       </div>
     </form>

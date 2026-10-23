@@ -36,7 +36,7 @@ function TextContent({ children, className }: Pick<TextShimmerProps, 'children' 
  */
 export const TextShimmer = memo(function TextShimmer({ children, active = false, className, contentClassName }: TextShimmerProps) {
   const decorative = useContext(DecorativeCopy)
-  if (decorative !== undefined) return <TextContent className={className}>{children}</TextContent>
+  if (decorative !== undefined) return <TextContent className={clsx(className, contentClassName)}>{children}</TextContent>
   const content = typeof children === 'string' ? <TextContent>{children}</TextContent> : children
   return (
     <span className={clsx(css.root, className)} data-shimmer={active || undefined}>

@@ -6,26 +6,34 @@
     {
       "source": "packages/client/ui-primitives/src/Button.tsx",
       "destination": "src/upstream/Button.tsx",
-      "sha256": "514c31404c5c8fb21ad906e92631b9c554c08d23c77437009e3443cef3a94e9c",
-      "modified": false
+      "sha256": "6a14a4d3a8e68692adb59580167ac71495292f49746fc08e799d001d4af6e304",
+      "modified": true,
+      "upstreamSha256": "514c31404c5c8fb21ad906e92631b9c554c08d23c77437009e3443cef3a94e9c",
+      "modification": "R4: keyboard, disabled, overflow and controlled component boundary fixes; upstream appearance retained."
     },
     {
       "source": "packages/client/ui-primitives/src/Button.module.css",
       "destination": "src/upstream/Button.module.css",
-      "sha256": "d5e324be7782f28b320ebac3e5b48e3a3f95a6c8d90656c086a3a933e0b2c7a5",
-      "modified": false
+      "sha256": "055baff9846a4e4e372df2327e1bf00e4a7b09139df984ac33d724708395b121",
+      "modified": true,
+      "upstreamSha256": "d5e324be7782f28b320ebac3e5b48e3a3f95a6c8d90656c086a3a933e0b2c7a5",
+      "modification": "R4: keyboard, disabled, overflow and controlled component boundary fixes; upstream appearance retained."
     },
     {
       "source": "packages/client/ui-primitives/src/Input.tsx",
       "destination": "src/upstream/Input.tsx",
-      "sha256": "f418f7ea495f16c5c656e87f61c27d262f86f39e8bf14c33b8eeccfb41492b67",
-      "modified": false
+      "sha256": "d283a4dc76b1aafac99c4c64065f044889adca59742828e37859d3ea460dc46e",
+      "modified": true,
+      "upstreamSha256": "f418f7ea495f16c5c656e87f61c27d262f86f39e8bf14c33b8eeccfb41492b67",
+      "modification": "R4: keyboard, disabled, overflow and controlled component boundary fixes; upstream appearance retained."
     },
     {
       "source": "packages/client/ui-primitives/src/Input.module.css",
       "destination": "src/upstream/Input.module.css",
-      "sha256": "e24eb924cfefcc009e486b25cd8de6afaf4bfff5d9c0c3da17b5afb6441c8632",
-      "modified": false
+      "sha256": "919e6761bf1d73fbb5326af21ff0aca921e725d2d9bfec7775803fb03ad5dde6",
+      "modified": true,
+      "upstreamSha256": "e24eb924cfefcc009e486b25cd8de6afaf4bfff5d9c0c3da17b5afb6441c8632",
+      "modification": "R4: keyboard, disabled, overflow and controlled component boundary fixes; upstream appearance retained."
     },
     {
       "source": "packages/client/ui-primitives/src/Tag.tsx",
@@ -36,38 +44,50 @@
     {
       "source": "packages/client/ui-primitives/src/Tag.module.css",
       "destination": "src/upstream/Tag.module.css",
-      "sha256": "ac135f028674d5bce37a2617902c86d5934b299742536056a2abc5e99583764e",
-      "modified": false
+      "sha256": "fe5416dc85defb356e25188ff74b489a327b1e53fef4e883a0ab03028a868a27",
+      "modified": true,
+      "upstreamSha256": "ac135f028674d5bce37a2617902c86d5934b299742536056a2abc5e99583764e",
+      "modification": "R4: keyboard, disabled, overflow and controlled component boundary fixes; upstream appearance retained."
     },
     {
       "source": "packages/client/ui-primitives/src/Pill.tsx",
       "destination": "src/upstream/Pill.tsx",
-      "sha256": "851727b4f745755f8553a92bc5881e54d0479ea680d1686533ba210cb943ca2f",
-      "modified": false
+      "sha256": "bc474f93aeed215445d180c637c1aaefbbbd2ff13d8f17d1dd506defbe2cff8d",
+      "modified": true,
+      "upstreamSha256": "851727b4f745755f8553a92bc5881e54d0479ea680d1686533ba210cb943ca2f",
+      "modification": "R4: keyboard, disabled, overflow and controlled component boundary fixes; upstream appearance retained."
     },
     {
       "source": "packages/client/ui-primitives/src/Pill.module.css",
       "destination": "src/upstream/Pill.module.css",
-      "sha256": "8059dd46e4a5340c00e6758278b6afb4f480c4dd2d11c7b555d914e52bd06f82",
-      "modified": false
+      "sha256": "a6258eff405b10351daf33fd2da222253b17a576ce49753d22ebf813a14e6f4b",
+      "modified": true,
+      "upstreamSha256": "8059dd46e4a5340c00e6758278b6afb4f480c4dd2d11c7b555d914e52bd06f82",
+      "modification": "R4: keyboard, disabled, overflow and controlled component boundary fixes; upstream appearance retained."
     },
     {
       "source": "packages/client/ui-primitives/src/SegmentedTabs.tsx",
       "destination": "src/upstream/SegmentedTabs.tsx",
-      "sha256": "c069e4bf6d76170420cf27b160b3e7d8f9f36669ef53702182459d57ba3637fd",
-      "modified": false
+      "sha256": "78a75bc091194b5d71209cae614ad579b5296c944ffae06dee6e62d122533f16",
+      "modified": true,
+      "upstreamSha256": "c069e4bf6d76170420cf27b160b3e7d8f9f36669ef53702182459d57ba3637fd",
+      "modification": "R4: keyboard, disabled, overflow and controlled component boundary fixes; upstream appearance retained."
     },
     {
       "source": "packages/client/ui-primitives/src/SegmentedTabs.module.css",
       "destination": "src/upstream/SegmentedTabs.module.css",
-      "sha256": "022efca5f83f640c83afcf472ef64b2776b2b20bfa351adda347171ba5cc4c18",
-      "modified": false
+      "sha256": "8431c0f499466f6eff09e3db72994284c026e2fbda060d05d6aec31a478bfb77",
+      "modified": true,
+      "upstreamSha256": "022efca5f83f640c83afcf472ef64b2776b2b20bfa351adda347171ba5cc4c18",
+      "modification": "R4: keyboard, disabled, overflow and controlled component boundary fixes; upstream appearance retained."
     },
     {
       "source": "packages/client/ui-primitives/src/TextShimmer.tsx",
       "destination": "src/upstream/TextShimmer.tsx",
-      "sha256": "ffd8cc02a2f76b73c5f1f7a4338fb5df8985a1abe3473eea974a900236b48b50",
-      "modified": false
+      "sha256": "24170def15201e54a20648fa5dba7f8814dcec872df99db1cd8d06ec71f020c5",
+      "modified": true,
+      "upstreamSha256": "ffd8cc02a2f76b73c5f1f7a4338fb5df8985a1abe3473eea974a900236b48b50",
+      "modification": "R4: keyboard, disabled, overflow and controlled component boundary fixes; upstream appearance retained."
     },
     {
       "source": "packages/client/ui-primitives/src/TextShimmer.module.css",

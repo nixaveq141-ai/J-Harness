@@ -10,6 +10,45 @@ import org.junit.jupiter.api.Test;
 
 class M105DiagnosisTest {
     @Test
+    void uncertainEffectsTakePriorityOverContradictoryNotStartedFlags() {
+        var result =
+                issue(
+                        List.of(
+                                tool(
+                                        "tool.completed",
+                                        "conflict",
+                                        Map.of(
+                                                "status",
+                                                "UNKNOWN",
+                                                "bodyEntered",
+                                                false,
+                                                "value",
+                                                Map.of(
+                                                        "cleanupStatus",
+                                                        "not_started",
+                                                        "sideEffectUncertain",
+                                                        true)))));
+        assertEquals("possible", result.get("effects"));
+        assertEquals("UNKNOWN", result.get("category"));
+    }
+
+    @Test
+    void blankProviderModeCannotEraseTheRecordedRequestMode() {
+        var result =
+                issue(
+                        List.of(
+                                tool(
+                                        "tool.requested",
+                                        "mode",
+                                        Map.of("arguments", Map.of("mode", "ARGV"))),
+                                tool(
+                                        "tool.completed",
+                                        "mode",
+                                        Map.of("status", "FAILED", "value", Map.of("mode", "")))));
+        assertEquals("ARGV", result.get("mode"));
+    }
+
+    @Test
     void redactionPrecedesTruncationAndDoesNotExposeSecretPrefixes() {
         String secret = "synthetic-long-secret-" + "x".repeat(400);
         var result =
@@ -233,7 +272,10 @@ class M105DiagnosisTest {
         var result = TaskDiagnosis.inspect(events);
         assertEquals(12, ((List<?>) result.get("issues")).size());
         assertEquals(true, result.get("issuesLimited"));
-        assertEquals("call68", issue(events).get("callId"));
+        assertEquals(
+                java.util.stream.IntStream.range(68, 80).mapToObj(i -> "call" + i).toList(),
+                ((List<?>) result.get("issues"))
+                        .stream().map(v -> Values.object(v).get("callId")).toList());
     }
 
     @Test

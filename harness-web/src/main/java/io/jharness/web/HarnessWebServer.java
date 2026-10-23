@@ -9,6 +9,7 @@ import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.Consumer;
@@ -484,7 +485,8 @@ public final class HarnessWebServer implements AutoCloseable {
 
     private static int after(Task task, Cursor cursor) {
         int result = Boolean.compare(!task.pinned, !cursor.pinned);
-        if (result == 0) result = cursor.createdAt.compareTo(task.createdAt);
+        if (result == 0)
+            result = Instant.parse(cursor.createdAt).compareTo(Instant.parse(task.createdAt));
         return result == 0 ? task.id.compareTo(cursor.id) : result;
     }
 
@@ -522,7 +524,7 @@ public final class HarnessWebServer implements AutoCloseable {
         }
         var order =
                 Comparator.comparing((Task t) -> !t.pinned)
-                        .thenComparing(t -> t.createdAt, Comparator.reverseOrder())
+                        .thenComparing(t -> Instant.parse(t.createdAt), Comparator.reverseOrder())
                         .thenComparing(t -> t.id);
         var queue = new PriorityQueue<Task>(limit + 2, order.reversed());
         Cursor boundary = cursor;
@@ -2374,12 +2376,18 @@ public final class HarnessWebServer implements AutoCloseable {
                                             + new String(data, StandardCharsets.UTF_8)
                                             + "\n\n")
                                     .getBytes(StandardCharsets.UTF_8);
-                    if (bytes + frame.length > WebJson.RESPONSE_LIMIT) return;
+                    if (bytes + frame.length + 256 > WebJson.RESPONSE_LIMIT) {
+                        continuation(exchange, cursorQuery);
+                        return;
+                    }
                     exchange.getResponseBody().write(frame);
                     exchange.getResponseBody().flush();
                     cursorQuery.put("after", id);
                     bytes += frame.length;
-                    if (++count >= limit) return;
+                    if (++count >= limit) {
+                        continuation(exchange, cursorQuery);
+                        return;
+                    }
                 }
                 synchronized (this) {
                     if (closed
@@ -2395,9 +2403,22 @@ public final class HarnessWebServer implements AutoCloseable {
                 cursorQuery.put("limit", Integer.toString(limit - count));
                 page = eventPage(task, cursorQuery);
             }
+            continuation(exchange, cursorQuery);
         } finally {
             streams.release();
         }
+    }
+
+    /** SSE EOF never proves all facts have been read; resume only with a bounded GET. */
+    private static void continuation(HttpExchange exchange, Map<String, String> query)
+            throws IOException {
+        exchange.getResponseBody()
+                .write(
+                        (": continuation=GET; after="
+                                        + query.getOrDefault("after", "")
+                                        + "; eof-is-not-completion\n\n")
+                                .getBytes(StandardCharsets.UTF_8));
+        exchange.getResponseBody().flush();
     }
 
     private Map<String, Object> event(SessionEvent event) throws IOException {

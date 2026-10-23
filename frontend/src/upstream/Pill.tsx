@@ -21,7 +21,7 @@ export function Pill({ active = false, className, children, onClick, ...rest }: 
   children?: ReactNode
 } & ButtonHTMLAttributes<HTMLButtonElement>) {
   if (!onClick) {
-    return <span className={clsx(css.pill, active && css.active, className)}>{children}</span>
+    return <span className={clsx(css.pill, active && css.active, className)} title={rest.title} id={rest.id} role={rest.role} aria-label={rest['aria-label']} aria-describedby={rest['aria-describedby']}>{children}</span>
   }
   return (
     <button

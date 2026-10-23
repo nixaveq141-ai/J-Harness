@@ -110,6 +110,7 @@ export function App() {
   const listEnd = useRef<HTMLDivElement>(null), autoScroll = useRef(true)
   const diagnosisAnchor = useRef<HTMLDivElement>(null), presentedDiagnosis = useRef('')
   const selectedRef = useRef(selected); selectedRef.current = selected
+  const mutationEpoch = useRef(0)
   const active = detailTask?.taskId === selected ? detailTask : tasks.find(t => t.taskId === selected)
   const hasProblems = !!active && isTerminal(active) && (uncertain(active) || active.status !== 'COMPLETED' || events.some(e => e.type === 'tool.completed' && e.payload.status !== 'SUCCESS'))
   const currentApi = useRef(api); currentApi.current = api
@@ -123,6 +124,7 @@ export function App() {
     return () => cancelAnimationFrame(frame)
   }, [hasProblems, selected, live])
   const updateTask = useCallback((task: Task) => {
+    mutationEpoch.current++
     setTasks(old => old.map(t => t.taskId === task.taskId ? task : t))
     if (selectedRef.current === task.taskId) setDetailTask(task)
   }, [])
@@ -136,7 +138,7 @@ export function App() {
     const abort = new AbortController()
     void (async () => {
       while (!abort.signal.aborted) {
-        try { const result = await api.taskPage(viewProfile, viewMode, pageCursor, abort.signal); if (!abort.signal.aborted) { pageMoving.current = false; setPageLoading(false); setTasks(result.tasks); setNextPage(result.next); setMorePages(result.more); const current = result.tasks.find(t => t.taskId === selectedRef.current); if (current) setDetailTask(current) } }
+        try { const epoch=mutationEpoch.current,apiVersion=api.stateVersion,result = await api.taskPage(viewProfile, viewMode, pageCursor, abort.signal); if (!abort.signal.aborted && epoch===mutationEpoch.current && apiVersion===api.stateVersion && !actionLock.current && !createLock.current) { pageMoving.current = false; setPageLoading(false); setTasks(result.tasks); setNextPage(result.next); setMorePages(result.more); const current = result.tasks.find(t => t.taskId === selectedRef.current); if (current) setDetailTask(current) } }
         catch (e) { if (!abort.signal.aborted) { pageMoving.current = false; setPageLoading(false); setError(errorText(e)); if (e instanceof ApiError && e.code === 'UNKNOWN_CURSOR') { resetPages(); break } if (e instanceof ApiError && e.status === 401) { setApi(null); break } } }
         await sleep(2000, abort.signal)
       }
@@ -163,28 +165,30 @@ export function App() {
           const p = await api.events(selected, cursor, abort.signal)
           if (abort.signal.aborted) return
           setEvents(old => mergeEvents(old, p.events)); count += p.events.length; cursor = p.next; more = p.more
-          if (count >= 4000) { setLive('已达到 4000 条显示上限，请使用会话查询'); return }
+          if (count >= 4000) setLive('显示最近4000条记录；更早正文可用会话查询回读')
         }
         while (!abort.signal.aborted) {
-          const t = await api.detail(selected, abort.signal)
+          const epoch=mutationEpoch.current,apiVersion=api.stateVersion,t = await api.detail(selected, abort.signal)
           if (abort.signal.aborted) return
+          if(epoch!==mutationEpoch.current||apiVersion!==api.stateVersion||actionLock.current){await sleep(400,abort.signal);continue}
           updateTask(t)
+          const approvalEpoch=mutationEpoch.current
           const a = await api.approvals(selected, abort.signal)
           if (abort.signal.aborted) return
-          setApprovals(a)
+          if(approvalEpoch===mutationEpoch.current&&!actionLock.current)setApprovals(a)
           if (isTerminal(t)) {
             let more = true
             while (more && !abort.signal.aborted) {
               const p = await api.events(selected, cursor, abort.signal)
               if (abort.signal.aborted) return
               setEvents(old => mergeEvents(old, p.events)); cursor = p.next; more = p.more; count += p.events.length
-              if (count >= 4000) { setLive('已达到显示上限，请使用查询'); return }
+              if (count >= 4000) setLive('显示最近4000条记录；更早正文可用会话查询回读')
             }
             setLive(uncertain(t) ? '结果待核实 · 不会重放任务' : '已同步全部记录'); await sleep(1200, abort.signal); continue
           }
           setLive('实时更新中')
           await api.stream(selected, cursor, e => { cursor = e.eventId; count++; setEvents(old => mergeEvents(old, [e])) }, abort.signal)
-          if (count >= 4000) { setLive('已达到显示上限，请使用查询'); return }
+          if (count >= 4000) setLive('显示最近4000条记录；更早正文可用会话查询回读')
           readFailures.current = 0
           await sleep(400, abort.signal)
         }
@@ -205,7 +209,7 @@ export function App() {
     if (!api || !selected || active && isTerminal(active)) return
     const abort = new AbortController()
     void (async () => { while (!abort.signal.aborted) {
-      try { const a = await api.approvals(selected, abort.signal); if (!abort.signal.aborted) setApprovals(a) } catch { /* main read lifecycle reports connection failures */ }
+      try { const epoch=mutationEpoch.current,apiVersion=api.stateVersion,a = await api.approvals(selected, abort.signal); if (!abort.signal.aborted && epoch===mutationEpoch.current && apiVersion===api.stateVersion && !actionLock.current) setApprovals(a) } catch { /* main read lifecycle reports connection failures */ }
       await sleep(900, abort.signal)
     } })()
     return () => abort.abort()
@@ -227,8 +231,8 @@ export function App() {
     setPending(id); storage('jh-pending', id); setError('')
     try {
       const t = await api.submit(profile, text, id, modelId)
-      storage('jh-pending', ''); setPending('')
       if (currentApi.current !== api) return
+      storage('jh-pending', ''); setPending('')
       showTask(t); setGoal('')
     } catch (e) { if (currentApi.current === api) {
       if (e instanceof ApiError && e.code === 'API_KEY_MISSING') { storage('jh-pending', ''); setPending(''); setError(errorText(e)) }
@@ -239,19 +243,19 @@ export function App() {
   async function forkSession(eventId: string) {
     if (!api || !active || pending || createLock.current) return
     const requestId = crypto.randomUUID(); createLock.current = true; setSubmitting(true); setPending(requestId); storage('jh-pending', requestId); setError('')
-    try { const value = await api.fork(active, eventId, requestId); storage('jh-pending', ''); setPending(''); if (currentApi.current === api) showTask(value) }
+    try { const value = await api.fork(active, eventId, requestId); if (currentApi.current !== api)return;storage('jh-pending', ''); setPending(''); showTask(value) }
     catch (e) { setError(errorText(e) + ' 请核对本次提交状态。') }
     finally { createLock.current = false; setSubmitting(false) }
   }
   async function reconcile() {
     if (!api || !pending || actionLock.current) return
     actionLock.current = true; setBusy('reconcile')
-    try { const t = await api.submission(pending); storage('jh-pending', ''); setPending(''); if (currentApi.current === api) { showTask(t); setGoal(''); setError('') } }
+    try { const t = await api.submission(pending); if(currentApi.current !== api)return;storage('jh-pending', ''); setPending(''); showTask(t); setGoal(''); setError('') }
     catch (e) { setError(errorText(e)) } finally { actionLock.current = false; setBusy('') }
   }
   async function decide(a: Approval, approved: boolean) {
     if (!api || !active || actionLock.current) return
-    const id = selected; actionLock.current = true; setBusy(a.approvalId); setError('')
+    const id = selected; actionLock.current = true; mutationEpoch.current++;setBusy(a.approvalId); setError('')
     try { await api.decide(id, a, approved, approved ? '用户批准本次操作' : '用户拒绝本次操作') }
     catch (e) { setError(errorText(e)) }
     finally { if (currentApi.current === api) { const remaining = await api.approvals(id).catch(() => []); if (storage('jh-selected') === id) setApprovals(remaining) }
@@ -259,7 +263,7 @@ export function App() {
   }
   async function cancel() {
     if (!api || !active || actionLock.current) return
-    const id = selected; actionLock.current = true; setBusy('cancel')
+    const id = selected; actionLock.current = true; mutationEpoch.current++;setBusy('cancel')
     try { const t = await api.cancel(id); if (currentApi.current === api) updateTask(t) }
     catch (e) { setError(errorText(e)) } finally { actionLock.current = false; setBusy('') }
   }

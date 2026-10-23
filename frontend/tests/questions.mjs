@@ -34,10 +34,11 @@ await mkdir(workspace,{recursive:true});await writeFile(join(workspace,'note.txt
 const config=join(workspace,'config.json')
 await writeFile(config,JSON.stringify({baseUrl:'http://127.0.0.1:'+provider.address().port,model:'questions-fixture',apiKeyEnv:'JHARNESS_QUESTION_KEY',maxSteps:6,durationSeconds:240,requestTimeoutSeconds:30,ecosystem:{web:{port:0}}}))
 async function start(){base=undefined;output='';host=spawn(java,['-Dfile.encoding=UTF-8','-jar',jar,'--workspace',workspace,'--config',config,'--require-read','note.txt','serve'],{cwd:root,env:{...process.env,JHARNESS_WEB_TOKEN:token,JHARNESS_QUESTION_KEY:secret},stdio:['pipe','pipe','pipe'],windowsHide:true});host.stdout.on('data',d=>{output+=d;base=output.match(/WEB (http:[/][/]127[.]0[.]0[.]1:[0-9]+)/)?.[1]});host.stderr.on('data',d=>output+=d);await until(()=>base||host.exitCode!==null);assert.ok(base,output)}
-const stoppedOrigins=new Set(),transportDiagnostics=[]
+const stoppedOrigins=new Set(),navigationOrigins=new Set(),transportDiagnostics=[]
+async function reloadPage(){navigationOrigins.add(base);try{await page.reload();await page.locator('.connection-state').filter({hasText:'本机服务已连接'}).waitFor({state:'attached'})}finally{navigationOrigins.delete(base)}}
 async function stop(){if(host&&host.exitCode===null&&host.signalCode===null){stoppedOrigins.add(base);host.stdin.end(':quit\n');await until(()=>host.exitCode!==null);assert.equal(host.exitCode,0)}}
 async function api(path,body){const r=await context.request.fetch(base+path,{method:body===undefined?'GET':'POST',headers:{Authorization:'Bearer '+token,...(body===undefined?{}:{'Content-Type':'application/json'})},...(body===undefined?{}:{data:body})});return{status:r.status(),body:await r.json()}}
-async function create(goal){const r=await api('/v1/tasks',{profile:'default',goal,requestId:randomUUID()});assert.equal(r.status,202,JSON.stringify(r.body));const id=r.body.taskId;await page.evaluate(id=>sessionStorage.setItem('jh-selected',id),id);await page.reload();await page.locator('.connection-state').filter({hasText:'本机服务已连接'}).waitFor();return id}
+async function create(goal){await page.locator('.connection-state').filter({hasText:'本机服务已连接'}).waitFor({state:'attached'});const r=await api('/v1/tasks',{profile:'default',goal,requestId:randomUUID()});assert.equal(r.status,202,JSON.stringify(r.body));const id=r.body.taskId;await page.evaluate(id=>sessionStorage.setItem('jh-selected',id),id);await reloadPage();await page.locator('.connection-state').filter({hasText:'本机服务已连接'}).waitFor({state:'attached'});return id}
 async function pending(id,number=1){let rows;await until(async()=>{rows=(await api('/v1/tasks/'+id+'/questions')).body.questions;return rows?.length>=number&&rows[number-1].state==='PENDING'});return rows[number-1]}
 async function settled(id){await until(async()=>(await api('/v1/tasks/'+id)).body.phase==='FINISHED')}
 const card=()=>page.getByLabel('待回答问题',{exact:true})
@@ -46,7 +47,7 @@ async function shot(name){const file=join(out,'M10.5.5-'+name+'.png');await page
 function body(q,id,selected,text='',skip=false){return {questionId:q.questionId,sessionId:q.sessionId,turnId:q.turnId,callId:q.callId,requestId:id,selected,text,skip}}
 async function answer(q,data){return api('/v1/tasks/'+q.sessionId+'/questions/'+q.questionId+'/answer',data)}
 try{
- await start();browser=await chromium.launch(process.env.JHARNESS_BROWSER_CHANNEL?{channel:process.env.JHARNESS_BROWSER_CHANNEL}:{});context=await browser.newContext({viewport:{width:1440,height:1000}});page=await context.newPage();page.on('pageerror',e=>{if(stoppedHostDiagnostic(e.message,stoppedOrigins))transportDiagnostics.push(e.message);else errors.push(String(e))});page.on('request',r=>{if(r.method()==='POST'&&r.url().endsWith('/answer'))posts.push(r.postDataJSON())})
+ await start();browser=await chromium.launch(process.env.JHARNESS_BROWSER_CHANNEL?{channel:process.env.JHARNESS_BROWSER_CHANNEL}:{});context=await browser.newContext({viewport:{width:1440,height:1000}});page=await context.newPage();page.on('pageerror',e=>{if(stoppedHostDiagnostic(e.message,new Set([...stoppedOrigins,...navigationOrigins])))transportDiagnostics.push(e.message);else errors.push(String(e))});page.on('request',r=>{if(r.method()==='POST'&&r.url().endsWith('/answer'))posts.push(r.postDataJSON())})
  await page.goto(base)
  const id=await create('flow');const q1=await pending(id);await card().waitFor();await card().getByRole('radio',{name:/First choice/}).waitFor()
  check('real SDK ask_user exposes preselected recommendation without submitting',await card().getByRole('radio',{name:/First choice/}).isChecked()&&wire.filter(w=>w.goal==='flow').length===1&&(await api('/v1/tasks/'+id+'/questions')).body.questions[0].state==='PENDING')
@@ -58,7 +59,7 @@ try{
  await until(()=>!!releaseDraft);await card().getByLabel('问题文字回答',{exact:true}).fill('Keep separate approval');await wait(600)
  check('draft writes serialize while prior save is delayed',draftCalls===1);await releaseDraft()
 
- await page.getByText('草稿已保存到当前宿主内存，刷新可恢复',{exact:true}).waitFor();await page.unroute('**/questions/*/draft');await page.reload();await card().waitFor()
+ await page.getByText('草稿已保存到当前宿主内存，刷新可恢复',{exact:true}).waitFor();await page.unroute('**/questions/*/draft');await reloadPage();await card().waitFor()
  check('refresh restores scoped choice and text draft',await card().getByRole('radio',{name:/Second choice/}).isChecked()&&await card().getByLabel('问题文字回答',{exact:true}).inputValue()==='Keep separate approval')
  await submit().evaluate(e=>{e.click();e.click()});await page.getByRole('button',{name:'批准本次操作',exact:true}).waitFor()
  check('answer does not approve queued write tool',!(await readFile(join(workspace,'note.txt'),'utf8')).includes('requires separate approval')&&(await api('/v1/tasks/'+id+'/approvals')).body.approvals.length===1)
@@ -78,12 +79,12 @@ try{
  const timeoutId=await create('timeout');await settled(timeoutId);const timed=(await api('/v1/tasks/'+timeoutId+'/questions')).body.questions[0]
  check('timeout records no selected answer and rejects late response',timed.state==='TIMED_OUT'&&timed.selected===undefined&&(await answer(timed,body(timed,'late',['a']))).status===409)
  const privateId=await create('private');await pending(privateId);await card().getByLabel('问题文字回答',{exact:true}).fill(secret)
- await page.getByText('草稿已保存到当前宿主内存，刷新可恢复',{exact:true}).waitFor();await page.reload();await card().waitFor()
+ await page.getByText('草稿已保存到当前宿主内存，刷新可恢复',{exact:true}).waitFor();await reloadPage();await card().waitFor()
  check('draft sanitization and refresh do not store key in browser',!(await page.evaluate(()=>JSON.stringify({localStorage,sessionStorage}))).includes(secret)&&await card().getByLabel('问题文字回答',{exact:true}).inputValue()==='[REDACTED]')
  await submit().click();await settled(privateId)
  check('next request contains only redacted answer',wire.filter(w=>w.goal==='private').every(w=>!JSON.stringify(w.body).includes(secret)))
  const lostId=await create('lost');const lost=await pending(lostId);await card().getByLabel('问题文字回答',{exact:true}).fill('One accepted answer')
- await page.route('**/questions/*/answer',async route=>{await route.fetch();await route.abort('failed')});const before=posts.length;await submit().click();await settled(lostId);await page.unroute('**/questions/*/answer');await page.reload()
+ await page.route('**/questions/*/answer',async route=>{await route.fetch();await route.abort('failed')});const before=posts.length;await submit().click();await settled(lostId);await page.unroute('**/questions/*/answer');await reloadPage()
  check('lost response reconciles with GET without repost',posts.length===before+1&&(await api('/v1/tasks/'+lostId+'/questions')).body.questions[0].state==='ANSWERED')
  const cancelId=await create('cancel');await pending(cancelId);await card().waitFor();await page.getByRole('button',{name:'取消任务',exact:true}).click();await settled(cancelId)
  check('cancel resolves wait and does not call model again',(await api('/v1/tasks/'+cancelId+'/questions')).body.questions[0].state==='CANCELLED'&&wire.filter(w=>w.goal==='cancel').length===1)

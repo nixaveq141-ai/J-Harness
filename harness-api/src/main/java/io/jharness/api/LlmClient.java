@@ -4,7 +4,12 @@ public interface LlmClient extends AutoCloseable {
     @Override
     default void close() {}
 
-    /** Optional independent host display observer; callback snapshots are never execution facts. */
+    /**
+     * Optional independent host display observer. Text is a cumulative sanitized snapshot, never a
+     * delta or execution fact. Implementations must isolate display failures from model completion;
+     * low-level stream() frames are provider data and require sanitization before presentation,
+     * logging or export.
+     */
     default LlmClient withDisplay(java.util.function.Consumer<String> display) {
         return this;
     }

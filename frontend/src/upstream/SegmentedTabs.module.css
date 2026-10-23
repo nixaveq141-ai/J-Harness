@@ -20,7 +20,9 @@
 .tab {
   position: relative;
   justify-content: center;
-  height: 34px;
+  min-height: 34px;
+  height: auto;
+  overflow-wrap: anywhere;
   padding: 0 12px;
   border-radius: var(--dsw-radius-md);
   font-size: 14px;
@@ -41,7 +43,8 @@
 }
 
 .tab:focus-visible {
-  outline: none;
+  outline: 2px solid var(--dsw-alias-state-business-primary);
+  outline-offset: -2px;
   text-decoration: underline;
   text-decoration-thickness: 1px;
   text-underline-offset: 4px;

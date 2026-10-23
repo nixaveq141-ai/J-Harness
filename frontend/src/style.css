@@ -294,7 +294,7 @@ button { background: transparent; border: 0; }
 }
 
 .code-toolbar>span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.code-toolbar>button{flex-shrink:0}
-.turn-read-toggle{display:none!important;align-self:flex-end;margin:4px 24px;font-size:12px!important}
+.turn-read-toggle{display:inline-flex!important;align-self:flex-end;margin:4px 24px;font-size:12px!important}
 .extension-form{border:0;padding:0;min-width:0}.extension-entry{border-top:1px solid var(--dsw-alias-border-l3);padding:20px 0;display:grid;gap:14px;min-width:0}
 .extension-entry-heading{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.extension-entry-heading>span{flex:1;font-size:12px}
 .extension-entry label{display:flex;flex-direction:column;gap:6px;font-size:13px}.extension-entry .settings-check{flex-direction:row;align-items:center}

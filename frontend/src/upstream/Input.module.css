@@ -11,7 +11,12 @@
 
 .wrap:focus-within {
   border-color: var(--dsw-alias-state-business-primary);
+  outline: 2px solid var(--dsw-alias-state-business-primary);
+  outline-offset: 2px;
 }
+
+.wrap[data-disabled] { opacity: .5; cursor: not-allowed; }
+.wrap[data-disabled] input { cursor: not-allowed; }
 
 .icon {
   display: inline-flex;
@@ -34,5 +39,5 @@
 }
 
 .input::placeholder {
-  color: var(--dsw-alias-label-dimmed);
+  color: var(--dsw-alias-label-secondary);
 }

@@ -13,6 +13,9 @@ test('stopped-host event diagnostic is scoped to the deliberately stopped origin
   const display='Fetch API cannot load http: /127.0.0.1:9999/v1/tasks/task_1/display due to access control checks.'
   assert.equal(stoppedHostDiagnostic(display,new Set()),false)
   assert.equal(stoppedHostDiagnostic(display,origins),true)
+  assert.equal(stoppedHostDiagnostic('Fetch API cannot load http://127.0.0.1:9999/v1/models due to access control checks.',origins),true)
+  assert.equal(stoppedHostDiagnostic('Fetch API cannot load http://127.0.0.1:9999/v1/models due to access control checks.',new Set()),false)
+  assert.equal(stoppedHostDiagnostic('Fetch API cannot load http://127.0.0.1:9999/v1/models/check due to access control checks.',origins),false)
 })
 test('live-host CORS writes and JavaScript errors remain failures',async()=>{
   const {stoppedHostDiagnostic}=await import('./runtime.mjs'),origins=new Set(['http://127.0.0.1:9999'])
@@ -35,6 +38,47 @@ const event: SessionEvent = { eventId: 'event_1', type: 'assistant.message', tim
 const row = { taskId: 'task_1', profile: 'default', phase: 'RUNNING', status: 'RUNNING',
   error: '', cancelRequested: false, recovered: false, protocolVersion: '1.9', name: '', pinned: false, archived: false, revision: '', createdAt: '' }
 const json = (value: unknown, status = 200) => new Response(JSON.stringify(value), { status, headers: { 'content-type': 'application/json' } })
+
+test('turn offsets and content search limits reject unsafe numbers before fetching', async()=>{
+  let calls=0
+  const api=new Api(token,(async()=>{calls++;return json({})}) as typeof fetch)
+  for(const offset of [-1,257,NaN,Infinity,1.5,'0&request=other'])await assert.rejects(api.turns('task_1',offset as number),ApiError)
+  for(const limit of [0,33,NaN,Infinity,1.5])await assert.rejects(api.searchContent({text:'x',mode:'tokens',profile:'',view:'all',sessionId:'',cursor:'',limit,rebuild:false}),ApiError)
+  assert.equal(calls,0)
+})
+
+test('aborting JSON reads classifies both rejected and completed reader cancellation',async()=>{
+  for(const reject of [false,true]){
+    const abort=new AbortController();let started!:()=>void
+    const ready=new Promise<void>(r=>started=r)
+    const stream=new ReadableStream({start(c){if(reject)abort.signal.addEventListener('abort',()=>c.error(Error('private transport failure')))},pull(){started()}})
+    const api=new Api(token,(async()=>new Response(stream)) as typeof fetch)
+    const startedAt=Date.now(),result=api.tasks(abort.signal);await ready;abort.abort()
+    await assert.rejects(result,(e:unknown)=>e instanceof ApiError&&e.code==='ABORTED')
+    assert.ok(Date.now()-startedAt<1000,'already-aborted reads must not wait for the body timeout')
+  }
+})
+
+test('model catalog rejects a default outside the validated connection set',async()=>{
+  const model={id:'a',label:'A',baseUrl:'http://127.0.0.1',model:'fixture',apiKeyEnv:'FIXTURE',keyConfigured:true,pricing:{},disableThinking:false}
+  const api=new Api(token,(async()=>json({models:[model],selected:'missing'})) as typeof fetch)
+  await assert.rejects(api.models(),ApiError)
+})
+
+test('question reconciliation finds an older question across bounded pages without posting',async()=>{
+  const calls:string[]=[]
+  const make=(id:string)=>({questionId:id,sessionId:'task_1',turnId:'turn_1',callId:'call_1',question:'Question?',mode:'text',options:[],allowText:true,state:'PENDING',expiresAt:'2026-10-23T00:00:00Z',draftRevision:0})
+  const api=new Api(token,(async(path,init)=>{assert.equal(init?.method,'GET');calls.push(String(path));const offset=Number(new URL(String(path),'http://localhost').searchParams.get('offset'));return json({questions:offset===0?Array.from({length:8},(_,i)=>make('new_'+i)):[make('older')],total:9,hasWaiting:true})}) as typeof fetch)
+  assert.equal((await api.questionStatus('task_1','older')).questionId,'older')
+  assert.equal(calls.length,2);assert.ok(calls[1].endsWith('offset=8'))
+})
+
+test('mutation barrier changes before and after a lost response for read reconciliation',async()=>{
+  let fail!:()=>void
+  const api=new Api(token,(()=>new Promise((_resolve,reject)=>{fail=()=>reject(Error())})) as typeof fetch)
+  const before=api.stateVersion,pending=api.submit('default','goal','request_1')
+  assert.ok(api.stateVersion>before);const inFlight=api.stateVersion;fail();await assert.rejects(pending,ApiError);assert.ok(api.stateVersion>inFlight)
+})
 
 test('diagnosis is read only and rejects incompatible or excessive facts', async () => {
   assert.equal(uncertain({ ...row, phase: 'VERIFIED', status: 'UNKNOWN' }), false)
@@ -104,6 +148,8 @@ test('SSE retains only complete matching-id frames and de-duplicates reconnects'
   assert.deepEqual(received, [event])
   assert.deepEqual(mergeEvents(received, [event, { ...event, eventId: 'event_2' }]).map(e => e.eventId), ['event_1', 'event_2'])
   assert.equal(mergeEvents([], Array.from({ length: 4100 }, (_, i) => ({ ...event, eventId: `bounded_${i}` }))).length, 4000)
+  const window=mergeEvents([],Array.from({length:4100},(_,i)=>({...event,eventId:`bounded_${i}`})))
+  assert.equal(window[0].eventId,'bounded_100');assert.equal(window.at(-1)?.eventId,'bounded_4099')
   assert.equal(received[0].payload.content, event.payload.content)
 })
 test('SSE mismatched id is rejected instead of advancing the cursor', async () => {

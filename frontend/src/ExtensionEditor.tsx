@@ -1,17 +1,18 @@
 import { Button } from './upstream/Button'
 import { Input } from './upstream/Input'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 type Row = Record<string, unknown>
 const object = (v: unknown): v is Row => !!v && typeof v === 'object' && !Array.isArray(v)
 const string = (v: unknown) => typeof v === 'string' ? v : ''
 const lines = (v: unknown) => Array.isArray(v) ? v.filter(x => typeof x === 'string').join('\n') : ''
-const array = (v: string) => v.split('\n').map(x => x.trim()).filter(Boolean)
+const array = (v: string) => v === '' ? [] : v.split('\n')
 export type ExtensionKind = 'mcp' | 'skills' | 'skillRoots' | 'subagents'
 
 /** Both views edit the same JSON draft. Invalid advanced input is preserved for correction. */
 export function ExtensionEditor({ kind, value, disabled, onChange }: { kind: ExtensionKind; value: string; disabled: boolean; onChange: (value: string) => void }) {
   const [error, setError] = useState('')
+  useEffect(()=>setError(''),[value])
   let rows: Row[]
   try {
     const parsed: unknown = JSON.parse(value)
@@ -33,13 +34,16 @@ export function ExtensionEditor({ kind, value, disabled, onChange }: { kind: Ext
   }
   function update(index: number, patch: Row) { commit(rows.map((row, i) => { if (i !== index) return row; const next = { ...row, ...patch }; if (next.tokenEnv === '') delete next.tokenEnv; return next })) }
   function field(row: Row, i: number, key: string, label: string, help = '') {
+    if(row[key]!==undefined&&typeof row[key]!=='string')return <p role="status">{label}必须是文字，请在高级 JSON 中修正；原值保留。</p>
     return <div><label>{label}<Input value={string(row[key])} maxLength={key === 'prompt' ? 4096 : 1024} onChange={e => update(i, { [key]: e.target.value })} /></label>{help && <small className="field-help">{help}</small>}</div>
   }
   function multiline(row: Row, i: number, key: string, label: string) {
+    if(row[key]!==undefined&&(!Array.isArray(row[key])||!(row[key] as unknown[]).every(v=>typeof v==='string')))return <p role="status">{label}必须是文字数组，请在高级 JSON 中修正；原值保留。</p>
     return <label>{label}<textarea rows={3} value={lines(row[key])} onChange={e => update(i, { [key]: array(e.target.value) })} /></label>
   }
   function number(row: Row, i: number, key: string, label: string, fallback: number, max: number) {
-    return <label>{label}<Input type="number" min={1} max={max} value={typeof row[key] === 'number' ? row[key] : fallback} onChange={e => update(i, { [key]: Number(e.target.value) })} /></label>
+    const v=row[key]??fallback,valid=typeof v==='number'&&Number.isSafeInteger(v)&&v>=1&&v<=max
+    return <label>{label}<Input type="number" min={1} max={max} aria-invalid={!valid} value={typeof v==='number'||typeof v==='string'?v:''} onChange={e => update(i, { [key]: e.target.value!==''&&Number.isSafeInteger(Number(e.target.value))?Number(e.target.value):e.target.value })} />{!valid&&<small role="status">请输入1～{max}的整数；无效草稿不会自动改成0。</small>}</label>
   }
   function mapping(row: Row, i: number, key: string, label: string, mode: 'text' | 'effect' | 'script') {
     const raw = row[key] ?? {}
@@ -62,7 +66,9 @@ export function ExtensionEditor({ kind, value, disabled, onChange }: { kind: Ext
     </div>)}<Button disabled={values.length >= (mode === 'script' ? 16 : 32)} onClick={() => set([...values, [`entry-${crypto.randomUUID().slice(0, 6)}`, mode === 'script' ? { path: '', mode: 'POWERSHELL', timeoutSeconds: 10 } : mode === 'effect' ? 'SYSTEM_IMPACT' : '']])}>添加{label}</Button></div>
   }
   const label = { mcp: 'MCP 服务', skills: '技能', skillRoots: '技能根', subagents: '只读角色' }[kind]
+  const invalidIds=rows.some(r=>typeof r.id!=='string'||!/^[A-Za-z0-9_-]{1,24}$/.test(r.id))||new Set(rows.map(r=>r.id)).size!==rows.length
   return <fieldset className="extension-form" disabled={disabled}>
+    {invalidIds&&<p role="status" className="inline-error">ID须为1～24个字母、数字、下划线或短横线，同类不能重复。请修正后保存。</p>}
     {error && <p className="inline-error" role="status">{error}</p>}
     {!rows.length && <p className="muted">尚未配置{label}。添加后填写字段，再保存设置。</p>}
     {rows.map((row, i) => <section className="extension-entry" key={i} aria-label={`${label}条目 ${i + 1}`}>

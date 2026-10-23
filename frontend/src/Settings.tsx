@@ -10,6 +10,7 @@ import { Input } from './upstream/Input'
 import { Tag } from './upstream/Tag'
 import { SegmentedTabs, type SegmentedTab } from './upstream/SegmentedTabs'
 import { ExtensionEditor } from './ExtensionEditor'
+import { useLifetime } from './lifecycle'
 
 type Tab = 'models' | 'plugins' | 'permissions'
 const tabs: [SegmentedTab<Tab>, ...SegmentedTab<Tab>[]] = [
@@ -40,7 +41,9 @@ export function Settings({ api, onBack, onGuardChange }: { api: Api; onBack: () 
   const [editing, setEditing] = useState(''), [keys, setKeys] = useState<Record<string, string>>({})
   const [error, setError] = useState(''), [notice, setNotice] = useState(''), [busy, setBusy] = useState(false), [dirty, setDirty] = useState(false)
   const [drafts, setDrafts] = useState<Record<string, string>>({})
-  const alive = useRef(true), lock = useRef(false)
+  const life = useLifetime(api), lock = useRef(false), editRef = useRef(editing), savedModels=useRef<ModelConnection[]>([]); editRef.current = editing
+  const alive = { get current() { return life.alive } }
+  const loadEpoch=useRef(0)
   useEffect(() => { onGuardChange(dirty || busy); return () => onGuardChange(false) }, [dirty, busy, onGuardChange])
   useEffect(() => {
     if (!dirty && !busy) return
@@ -48,13 +51,14 @@ export function Settings({ api, onBack, onGuardChange }: { api: Api; onBack: () 
     window.addEventListener('beforeunload', protect)
     return () => window.removeEventListener('beforeunload', protect)
   }, [dirty, busy])
-  useEffect(() => { alive.current = true; void load(); return () => { alive.current = false } }, [api])
-  function apply(v: SettingsData) { setData(v); setEditing(v.selected); setKeys({}); setDirty(false); setDrafts(Object.fromEntries(extensionTypes.map(x => [x.key, JSON.stringify(v.extensions[x.key] ?? (x.key === 'mcp' || x.key === 'skills' || x.key === 'skillRoots' ? [] : {}), null, 2)]))) }
+  useEffect(() => { lock.current = false; setKeys({}); setData(null); setDirty(false); void load() }, [api])
+  function apply(v: SettingsData) { savedModels.current=v.models;setData(v); setEditing(v.models.some(m => m.id === editRef.current) ? editRef.current : v.selected); setKeys({}); setDirty(false); setDrafts(Object.fromEntries(extensionTypes.map(x => [x.key, JSON.stringify(v.extensions[x.key] ?? (x.key === 'mcp' || x.key === 'skills' || x.key === 'skillRoots' ? [] : {}), null, 2)]))) }
   async function load() {
     if (lock.current) return
+    const epoch=++loadEpoch.current
     lock.current = true; setBusy(true); setError('')
-    try { const v = await api.settings(); if (alive.current) apply(v) } catch (e) { if (alive.current) setError(message(e)) }
-    finally { lock.current = false; if (alive.current) setBusy(false) }
+    try { const v = await api.settings(); if (alive.current&&epoch===loadEpoch.current) apply(v) } catch (e) { if (alive.current&&epoch===loadEpoch.current) setError(message(e)) }
+    finally { if (alive.current&&epoch===loadEpoch.current) { lock.current = false; setBusy(false) } }
   }
   function update(patch: Partial<ModelConnection>) {
     if (!data) return
@@ -71,19 +75,21 @@ export function Settings({ api, onBack, onGuardChange }: { api: Api; onBack: () 
     catch { setError('扩展配置不是有效 JSON，请检查后再保存。'); setTab('plugins'); return }
     const pendingKeys = Object.fromEntries(Object.entries(keys).filter(([, value]) => value !== ''))
     if (Object.keys(pendingKeys).length > 4) { setError('一次最多更新 4 个连接的密钥，请分次保存。'); return }
-    lock.current = true; setBusy(true); setError(''); setNotice(''); setKeys({})
+    lock.current = true; setBusy(true); setError(''); setNotice('')
     try { const v = await api.saveSettings({ ...data, extensions }, pendingKeys); if (alive.current) { apply(v); setNotice('设置已保存，将用于后续新消息。') } }
     catch (e) { if (alive.current) setError(message(e)) }
-    finally { lock.current = false; if (alive.current) setBusy(false) }
+    finally { if(alive.current){lock.current = false; setBusy(false)} }
   }
   async function checkSaved(model: ModelConnection) {
     if (lock.current || dirty) return
     lock.current = true; setBusy(true); setError(''); setNotice('')
     try { await api.checkModel(model.id); if (alive.current) setNotice(model.label + '：本地配置有效、密钥可读取。未连接服务，未发送模型请求。') }
     catch (e) { if (alive.current) setError(message(e)) }
-    finally { lock.current = false; if (alive.current) setBusy(false) }
+    finally { if(alive.current){lock.current = false; setBusy(false)} }
   }
   const model = data?.models.find(m => m.id === editing)
+  const savedModel=savedModels.current.find(m=>m.id===editing)
+  const origin=(url:string)=>{try{return new URL(url).origin}catch{return ''}}
   return <section className="settings-page" aria-label="工作台设置">
     <div className="settings-heading"><div><h2>工作台设置</h2><p className="muted">管理模型连接与任务可用的扩展。</p></div><Button onClick={onBack} disabled={busy || dirty}>返回任务</Button></div>
     <SegmentedTabs items={tabs} value={tab} onChange={setTab} label="设置分类" />
@@ -100,6 +106,8 @@ export function Settings({ api, onBack, onGuardChange }: { api: Api; onBack: () 
         </div>{model && <fieldset className="connection-editor" disabled={busy}>
           <label>连接名称<Input value={model.label} maxLength={80} onChange={e => update({ label: e.target.value })} /></label>
           <label>API URL<Input type="url" value={model.baseUrl} maxLength={512} onChange={e => update({ baseUrl: e.target.value })} /></label><p className="field-help">填写服务基础地址（可含 /v1），不要追加 /chat/completions、/responses 或 /messages；不要附带密钥。</p>
+          {savedModel?.keyConfigured&&origin(savedModel.baseUrl)!==origin(model.baseUrl)&&<p role="status">服务来源已从 {origin(savedModel.baseUrl)} 改为 {origin(model.baseUrl)||'无效地址'}。保存后，后续消息将向新来源使用原密钥；请核对来源和凭据。</p>}
+          {model.baseUrl.startsWith('http:')&&<p className="field-help">HTTP使用明文传输，请仅用于可信本机或受控代理；服务请求可能包含密钥。</p>}
           <label>API 协议<select aria-label="API 协议" value={model.protocol ?? 'chat-completions'} onChange={e => update({ protocol: e.target.value as ModelConnection['protocol'] })}><option value="chat-completions">Chat Completions</option><option value="responses">Responses</option><option value="anthropic">Anthropic Messages</option></select></label>
           <label>模型名称<Input value={model.model} maxLength={128} placeholder="服务端的模型 ID" onChange={e => update({ model: e.target.value })} /></label>
           <label>API Key<Input type="password" autoComplete="off" spellCheck={false} maxLength={1024} value={keys[model.id] ?? ''} disabled={data.credentialStore === 'unavailable'} placeholder={model.keyConfigured ? '已配置；留空保留原密钥' : '输入 API Key'} onChange={e => { setKeys({ ...keys, [model.id]: e.target.value }); setDirty(true) }} /></label><p className="field-help">{data.credentialStore === 'unavailable' ? '系统凭据服务暂不可用，请解锁或启动服务后重启工作台。' : `密钥保存到 ${data.credentialStore}，页面不回显原文。`} 留空使用已存密钥或下方环境变量。</p>

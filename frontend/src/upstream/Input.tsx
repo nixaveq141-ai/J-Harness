@@ -16,7 +16,7 @@ export const Input = forwardRef<HTMLInputElement, {
   className?: string
 } & InputHTMLAttributes<HTMLInputElement>>(function Input({ icon, className, ...rest }, ref) {
   return (
-    <span className={clsx(css.wrap, className)}>
+    <span className={clsx(css.wrap, className)} data-disabled={rest.disabled || undefined}>
       {icon != null && <span className={css.icon}>{icon}</span>}
       <input ref={ref} className={css.input} {...rest} />
     </span>

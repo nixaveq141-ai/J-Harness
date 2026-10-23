@@ -5,6 +5,10 @@ import { CodeBlock } from './Markdown'
 export interface FileSelection {path:string;line:number;serial:number}
 function failure(e:unknown) {
   if(e instanceof ApiError){
+    if(e.code==='RESPONSE_LIMIT')return '内容超过本页读取限额，请使用分页。'
+    if(e.code==='FILE_NOT_FOUND')return '文件已不存在，请刷新文件树。'
+    if(e.code==='ARTIFACT_DENIED')return '此会话没有授权读取该产物。'
+    if(e.code==='INVALID_RANGE')return '内容范围无效，请重新读取第一页。'
     if(['CONTENT_CHANGED','FILE_CONFLICT'].includes(e.code))return '文件或脱敏版本已变化。请点击“重新读取”查看当前内容。'
     if(['PATH_DENIED','INSPECTION_DENIED','WORKSPACE_PATH_DENIED'].includes(e.code))return '此路径不在允许读取的工作区范围内。'
     if(e.code==='FILE_LIMIT')return '此文件超过1 MiB文本预览上限。'
@@ -20,7 +24,7 @@ export function ContentReader({api,id,kind,target,line=0,onClose}:{api:Api;id:st
   const abort=useRef<AbortController|null>(null),downloading=useRef(false)
   const version=(p:ContentPage)=>kind==='file'?p.fileVersion??'':p.contentSha256
   useEffect(()=>{
-    const c=new AbortController();abort.current=c;setBusy(true);setError('')
+    const c=new AbortController();abort.current=c;setBusy(true);setError('');setPage(null);setNotice('')
     void api.content(id,kind,target,request.offset,request.version,request.line,c.signal).then(v=>{if(!c.signal.aborted)setPage(v)})
       .catch(e=>{if(!c.signal.aborted){setError(failure(e));setPage(null)}}).finally(()=>{if(!c.signal.aborted)setBusy(false)})
     return()=>c.abort()
@@ -37,6 +41,7 @@ export function ContentReader({api,id,kind,target,line=0,onClose}:{api:Api;id:st
         if(p.contentSha256!==expected)throw new ApiError('CONTENT_CHANGED')
         full+=p.text;if(full.length>8388608)throw new ApiError('RESPONSE_LIMIT')
         if(!p.more)break
+        if(p.nextOffset<=offset)throw new ApiError('INVALID_RESPONSE')
         offset=p.nextOffset;if(n===512)throw new ApiError('RESPONSE_LIMIT')
       }
       const digest=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(full)))).map(n=>n.toString(16).padStart(2,'0')).join('')
@@ -45,7 +50,7 @@ export function ContentReader({api,id,kind,target,line=0,onClose}:{api:Api;id:st
       const url=URL.createObjectURL(new Blob([full],{type:'text/plain;charset=utf-8'})),a=document.createElement('a')
       a.href=url;a.download=kind==='file'?(target.split(/[\\/]/).at(-1)||'file')+'.txt':kind==='artifacts'?'artifact-'+target.slice(0,8)+'.txt':'event-'+target.slice(0,8)+'.txt'
       a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);setNotice('已校验脱敏内容SHA-256并下载')
-    }catch(e){if(!c.signal.aborted)setError(failure(e))}
+    }catch(e){if(!c.signal.aborted){setNotice('');setError(failure(e))}}
     finally{downloading.current=false;if(!c.signal.aborted)setBusy(false)}
   }
   return <section className="content-reader" aria-label="内容预览"><div className="content-heading"><strong>{kind==='file'?'当前文件内容':kind==='artifacts'?'已记录产物':'已记录事件正文'}</strong>{onClose&&<Button onClick={onClose}>关闭预览</Button>}</div><code className="content-path">{target}</code>
@@ -61,9 +66,10 @@ export function ContentReader({api,id,kind,target,line=0,onClose}:{api:Api;id:st
 export function ContentPanel({api,id,mode,selection}:{api:Api;id:string;mode:'files'|'artifacts';selection?:FileSelection|null}) {
   const [dir,setDir]=useState('.'),[entries,setEntries]=useState<{path:string;type:string}[]>([]),[limited,setLimited]=useState(false)
   const [error,setError]=useState(''),[busy,setBusy]=useState(false),[target,setTarget]=useState(selection?.path??''),[line,setLine]=useState(selection?.line??0),[input,setInput]=useState(''),[reload,setReload]=useState(0)
+  useEffect(()=>{setDir('.');setTarget(mode==='files'?selection?.path??'':'');setLine(mode==='files'?selection?.line??0:0);setInput('')},[api,id,mode])
   useEffect(()=>{if(selection&&mode==='files'){setTarget(selection.path);setLine(selection.line)}},[selection,mode])
   useEffect(()=>{
-    const c=new AbortController();setBusy(true);setError('');setEntries([])
+    const c=new AbortController();setBusy(true);setError('');setEntries([]);setLimited(false)
     void(mode==='files'?api.files(id,dir,c.signal).then(v=>({entries:v.entries,limited:v.truncated})):api.artifacts(id,c.signal).then(v=>({entries:v.artifacts.map(a=>({path:a.id,type:'artifact'})),limited:v.limited})))
       .then(v=>{if(!c.signal.aborted){setEntries(v.entries);setLimited(v.limited)}}).catch(e=>{if(!c.signal.aborted)setError(failure(e))}).finally(()=>{if(!c.signal.aborted)setBusy(false)})
     return()=>c.abort()

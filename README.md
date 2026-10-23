@@ -1,5 +1,7 @@
 # J-Harness
 
+2026-10-23：[R4 工作台加固进展](docs/development/OCR-R4-progress-2026-10-23.md)已交付一批异步状态、密钥草稿、回答核对与展示修复；原115条范围仍在逐项复核，M10.5.9未完成。专用验证分支推送和 GitHub Actions 已获授权，待本地修复与验收准备完成后执行。
+
 [R3 模型、工具、扩展与配置修复](docs/development/OCR-R3-remediation-2026-10-23.md)已完成304条采纳范围的本地实现、契约澄清与关联验证：640个Java用例、170项门禁、33项客户端及66项SDK检查通过；Windows/固定Docker专项与真实Linux目录别名反例通过。下一入口R4，M10.5.9和完整CI门禁保持。
 
 2026-10-23：2457 条 OCR 意见的核实与阶段计划见[核实报告](docs/development/code-review-2026-10-20.md)和[修复计划](docs/requirements/OCR-remediation-plan-2026-10-20.md)。R0/R1 已有本地修复证据，[R2 持久化与恢复修复](docs/development/OCR-R2-remediation-2026-10-22.md)已完成采纳范围的本地实现与验证（107条逐项台账，603个Java用例）。WebKit问答运行时断言仍失败，完整浏览器矩阵未通过，留R6定位；M10.5.9及M11准入仍按实际验收证据判断。
@@ -218,6 +220,6 @@ M10.5.6已完成本地验收：对话/安全Markdown与代码复制、工具/变
 
 2026-10-18 M10.5.8已完成本地验收：授权跨会话/工作区正文检索、词语/短语/相关性/归档/稳定分页及来源定位、有界可替换派生索引、独立stdio JSON-RPC1.0与TS/Python客户端和示例已交付。超时/断线先对账，问题回答不批准工具，UNKNOWN不重放。最终Java410、客户端31、Chrome257（检索28+既有229）、SDK58、文档示例2、启动器8、Windows原生7通过；305份Java/POM与最终同一JAR/UI见M10.5.8-results.json及validation.md。API/SDK1.14、JSONL1/Web目录4；原生worker未改，旧三平台凭据证据独立保留。无付费请求、推送或参考项目修改；保留原审查草稿。下一入口M10.5.9，整阶段及M11/M12未完成。
 
-M10.5.9当前本地验证、三平台CI准备和保留门禁见[验收状态](docs/testing/M10.5.9-validation.md)。未获得新一轮推送/CI授权，不提前进入M11。
+M10.5.9当前本地验证、三平台CI准备和保留门禁见[验收状态](docs/testing/M10.5.9-validation.md)。本轮专用验证分支推送/CI已获授权，尚未执行；R4～R6及最终门禁闭合前不进入M11。
 
 2026-10-19 M10.5.9实施中、本机部分验收和CI准备完成：Java410/客户端33、Chrome155与WebKit26.5各271项共542、SDK58、示例2、启动器8及Windows原生7通过，候选真实安装/审批/取消/显式恢复5项通过；Maven18依赖OSV、前端6运行依赖SBOM/npm审计0发现、SDK零外部依赖源码清单及秘密模式门禁已核对。跨引擎夹具保持断言并修正异步等待，受控断网/停机的只读诊断单独留痕。Firefox原包14001，隔离清单副本仅版本探针成功，实际无头启动仍失败；不计通过。证据M10.5.9-results.json/validation.md为LOCAL_PARTIAL_CI_PENDING、m11Eligible=false；三平台/三引擎严格CI工作流已准备但未授权推送/未运行，不能收口或进入M11。下一步取得对应推送/CI授权后在当前版本真实Windows/Linux/macOS运行并解决失败。保留原审查草稿，参考目录未改，无付费模型请求。

@@ -56,8 +56,25 @@ public final class StreamingLlmClient implements LlmClient, ModelRouter {
 
     private void display(String cumulative) {
         var update = redactor.streamingUpdate(cumulative);
-        display.accept(update.text());
-        updates.accept(update);
+        // Observers are optional presentation sinks, never part of model completion.
+        try {
+            display.accept(update.text());
+        } catch (RuntimeException ignored) {
+            try {
+                display.accept("");
+            } catch (RuntimeException unavailable) {
+                /* disabled sink */
+            }
+        }
+        try {
+            updates.accept(update);
+        } catch (RuntimeException ignored) {
+            try {
+                updates.accept(redactor.streamingUpdate(""));
+            } catch (RuntimeException unavailable) {
+                /* disabled sink */
+            }
+        }
     }
 
     @Override
@@ -100,6 +117,9 @@ public final class StreamingLlmClient implements LlmClient, ModelRouter {
                         display(frame.text());
                     });
             ChatResponse response = handle.finalResponse();
+            if (response == null)
+                throw new HarnessException(
+                        "MODEL_BAD_RESPONSE", "Stream returned no final response");
             display(response.text());
             return response;
         }
