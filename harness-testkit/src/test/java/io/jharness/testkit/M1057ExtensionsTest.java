@@ -6,11 +6,17 @@ import io.jharness.api.*;
 import io.jharness.ecosystem.*;
 import java.nio.file.*;
 import java.util.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 class M1057ExtensionsTest {
     @TempDir Path base;
+
+    @BeforeEach
+    void canonicalTemporaryRoot() throws java.io.IOException {
+        base = base.toRealPath();
+    }
 
     @Test
     void stdioResourcesAndTemplatesUseRealChildProtocolAndCleanUp() throws Exception {

@@ -14,11 +14,17 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 class M4CliIntegrationTest {
     @TempDir Path root;
+
+    @BeforeEach
+    void canonicalTemporaryRoot() throws java.io.IOException {
+        root = root.toRealPath();
+    }
     private static final ObjectMapper JSON = new ObjectMapper();
 
     @Test

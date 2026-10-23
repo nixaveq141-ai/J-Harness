@@ -208,7 +208,7 @@ try {
   check('dark theme uses original theme tokens')
   await page.getByRole('button', { name: '切换浅色主题', exact: true }).click()
   await page.setViewportSize({ width: 390, height: 844 })
-  if (await page.getByRole('button', { name: '收起任务导航', exact: true }).count()) await page.getByRole('button', { name: '收起任务导航', exact: true }).click()
+  await page.getByRole('button', { name: '展开任务导航', exact: true }).waitFor()
   await page.getByRole('button', { name: '打开任务详情', exact: true }).click()
   await page.getByRole('tab', { name: '详情', exact: true }).focus(); await page.keyboard.press('End')
   assert.equal(await page.getByRole('tab', { name: '产物', exact: true }).getAttribute('aria-selected'), 'true')
