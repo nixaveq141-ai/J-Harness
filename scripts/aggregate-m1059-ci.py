@@ -91,7 +91,7 @@ def validate_report(report, contract):
     exact_count(java.get('tests'), total, 'Java tests')
     for field in ('failures', 'errors', 'skipped'):
         exact_count(java.get(field), 0, 'Java ' + field)
-    for field, count in [('browserChecks', 813), ('sdkChecks', 58), ('frontendClientChecks', 33)]:
+    for field, count in [('browserChecks', 813), ('sdkChecks', 66), ('frontendClientChecks', 38)]:
         exact_count(report.get(field), count, field)
 
 

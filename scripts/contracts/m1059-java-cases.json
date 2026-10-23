@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "milestone": "M10.5.9",
-  "origin": "Reviewed R3 additions preserve all 603 R0/R1/R2 cases; explicit schema, protocol, configuration, SPI, skill, command and patch regression identities. This is a contract, not execution evidence.",
+  "origin": "M10.5.9 current acceptance contract: preserves all 640 reviewed baseline cases and explicitly adds seven implemented R4 regressions. Contract only, not execution evidence.",
   "suites": [
     {
       "module": "harness-agent",
@@ -62,7 +62,8 @@
         "interruptedIntentRequiresOperatorVerificationAndVerifiedFactClearsOnlyThatCall",
         "modelClaimsWithoutToolFactsNeverBecomeChangesOrTestEvidence",
         "offlineDryRunDoesNotNeedApiKeyAndDoesNotCreatePlannedFiles",
-        "parserRejectsUnknownAndDuplicateFlagsButPreservesChineseAndSpaces"
+        "parserRejectsUnknownAndDuplicateFlagsButPreservesChineseAndSpaces",
+        "reportNullFactsStayUnknownAndPartialChangesAreSeparate"
       ]
     },
     {
@@ -326,6 +327,14 @@
       ]
     },
     {
+      "module": "harness-ecosystem",
+      "name": "io.jharness.ecosystem.R4DisplayBufferTest",
+      "cases": [
+        "rapidFinalSnapshotIsVisibleWithoutASecondFrame",
+        "sanitizerAndReaderFailureClearPresentationWithoutThrowing"
+      ]
+    },
+    {
       "module": "harness-events",
       "name": "io.jharness.events.DefaultEventBusTest",
       "cases": [
@@ -416,6 +425,14 @@
       "cases": [
         "factoryReentryCannotCorruptMapOrRecursivelyConstructSameRoute",
         "factoryRunsOutsideLockAndLateClientClosesAfterRouterClose"
+      ]
+    },
+    {
+      "module": "harness-llm",
+      "name": "io.jharness.llm.R4DisplayIsolationTest",
+      "cases": [
+        "failingDisplayCannotChangeValidatedCompletion",
+        "missingFinalResponseHasExplicitProtocolFailure"
       ]
     },
     {
@@ -778,12 +795,14 @@
       "module": "harness-testkit",
       "name": "io.jharness.testkit.M105DiagnosisTest",
       "cases": [
+        "blankProviderModeCannotEraseTheRecordedRequestMode",
         "distinguishesDenialCancellationNetworkAndBoundedHistory",
         "expiredApprovalAndCancellationRaceUseRecordedOutcome",
         "freeEventAndCallIdentifiersAreSanitizedAndBoundedForDisplay",
         "redactionPrecedesTruncationAndDoesNotExposeSecretPrefixes",
         "shellValidationIsNotConfusedWithCommandStartOrMissingFacts",
         "timeoutPartialCleanupAndClosedEnvironmentNeverClearUncertainty",
+        "uncertainEffectsTakePriorityOverContradictoryNotStartedFlags",
         "unresolvedModelToolsAndTerminalsKeepExactRecoveryAssociations"
       ]
     },

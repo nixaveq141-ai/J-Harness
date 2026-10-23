@@ -95,19 +95,19 @@
       "description": "R3五包304条采纳范围已本地实施/澄清并关联验证：183条实现或回归补强、121条契约；同源码640Java/170门禁/33客户端/66SDK及示例、启动器、Windows原生和固定Docker专项通过，另有Linux目录别名反例。不是304次独立动态复现，不代表完整CI/发布验收；逐项见OCR-R3-implementation-2026-10-23.json"
     },
     "R4-01": {
-      "status": "IMPLEMENTATION_IN_PROGRESS",
+      "status": "IN_PROGRESS",
       "description": "已交付部分实现和回归；原115条采纳范围仍需逐项复核，不标记整包完成。"
     },
     "R4-02": {
-      "status": "IMPLEMENTATION_IN_PROGRESS",
+      "status": "IN_PROGRESS",
       "description": "已交付部分实现和回归；原115条采纳范围仍需逐项复核，不标记整包完成。"
     },
     "R4-03": {
-      "status": "IMPLEMENTATION_IN_PROGRESS",
+      "status": "IN_PROGRESS",
       "description": "已交付部分实现和回归；原115条采纳范围仍需逐项复核，不标记整包完成。"
     },
     "R4-04": {
-      "status": "IMPLEMENTATION_IN_PROGRESS",
+      "status": "IN_PROGRESS",
       "description": "已交付部分实现和回归；原115条采纳范围仍需逐项复核，不标记整包完成。"
     }
   },

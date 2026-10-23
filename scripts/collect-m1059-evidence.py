@@ -66,7 +66,7 @@ def collect(log):
     java_contract=load(ROOT/'scripts/contracts/m1059-java-cases.json')
     validate_java_suites(suites,java_contract)
     client=(OUT/'client.log').read_text(encoding='utf-8',errors='replace')
-    require(all(re.search(p,client) for p in [r'pass\s+33\b',r'fail\s+0\b',r'skipped\s+0\b']),'Frontend client failure')
+    require(all(re.search(p,client) for p in [r'pass\s+38\b',r'fail\s+0\b',r'skipped\s+0\b']),'Frontend client failure')
     java=[ROOT/'pom.xml']+sorted(ROOT.glob('harness-*/pom.xml'))+sorted(ROOT.glob('harness-*/src/**/*.java'))
     require(all(p.stat().st_mtime<=log.stat().st_mtime for p in java),'Newer Java source')
     jar=ROOT/'harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar';jar_sha=sha(jar)
@@ -142,7 +142,7 @@ def collect(log):
                 capturedAt=datetime.datetime.now(datetime.timezone.utc).isoformat(),platform=platform.platform(),architecture=platform.machine(),runnerOs=os.environ.get('RUNNER_OS','local'),
                 toolVersions=dict(python=sys.version,node=subprocess.check_output(['node','--version']).decode().strip(),playwright=load(ROOT/'frontend/node_modules/playwright/package.json')['version']),
                 commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT).decode().strip(),workingTreeDirty=bool(subprocess.check_output(['git','status','--porcelain'],cwd=ROOT)),ciRunId=os.environ.get('GITHUB_RUN_ID'),
-                java=totals,suites=suites,frontendClientChecks=33,browserChecks=sum(EXPECTED.values())*len(engines),browserMatrix=matrix,browserAvailability=availability,browserRuntime=runtime,sdkChecks=58,exampleChecks=2,nativeChecks=len(native['checks']),
+                java=totals,suites=suites,frontendClientChecks=38,browserChecks=sum(EXPECTED.values())*len(engines),browserMatrix=matrix,browserAvailability=availability,browserRuntime=runtime,sdkChecks=66,exampleChecks=2,nativeChecks=len(native['checks']),
                 jarSha256=jar_sha,uiSha256=ui,sourceSha256=source,
                 records=records,supplyChain={n:sha(ROOT/'target'/n) for n in ['bom.json','frontend-bom.json','frontend-audit.json','sdk-bom.json','sdk-source-inventory.json','osv-results.json','source-secrets.json','release-evidence.json','candidate-smoke.json','jharness-0.1.0-SNAPSHOT-candidate.zip']},
                 verificationLogSha256=sha(log),paidRequests=0,remoteExecution=ci)
