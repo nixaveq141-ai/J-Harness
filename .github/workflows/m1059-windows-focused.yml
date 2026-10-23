@@ -1,0 +1,63 @@
+name: M10.5.9 Windows focused diagnostics (not acceptance)
+on:
+  push:
+    branches: [codex/m1059-full-validation]
+    paths:
+      - frontend/tests/**
+      - harness-*/**
+      - .github/workflows/m1059-windows-focused.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  focused:
+    runs-on: windows-latest
+    timeout-minutes: 35
+    env:
+      JHARNESS_EVIDENCE_RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}-${{ github.sha }}
+      JHARNESS_MATRIX_ENGINES: chromium,firefox,webkit
+      JHARNESS_MATRIX_FIXTURES: history,extensions,content
+      JHARNESS_MATRIX_KEEP_GOING: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Build current UI and packaged diagnostic runtime
+        shell: pwsh
+        run: |
+          npm --prefix frontend ci
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          npm --prefix frontend run build
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          .\mvnw.cmd -B -DskipTests package *> focused-build.log
+          if ($LASTEXITCODE -ne 0) { Get-Content focused-build.log -Tail 80; exit 1 }
+      - name: Install the three diagnostic browsers
+        working-directory: frontend
+        run: npx playwright install chromium firefox webkit
+      - name: Reproduce Windows history extensions and content failures
+        run: node scripts/run-workbench-matrix.mjs
+      - name: Explain diagnostic scope
+        if: always()
+        shell: pwsh
+        run: |
+          'This job diagnoses three fixtures on Windows only. It does not run the full Java/release gates and cannot complete M10.5.9 or grant M11 eligibility.' >> $env:GITHUB_STEP_SUMMARY
+      - name: Preserve original diagnostic evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m1059-windows-focused
+          include-hidden-files: true
+          path: |
+            focused-build.log
+            .build-cache/M10.5.9/browser/
+            .build-cache/M10.5.2-*.png
+            .build-cache/M10.5.6-*.png
+            .build-cache/M10.5.7-*.png

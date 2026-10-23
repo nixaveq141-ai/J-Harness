@@ -108,7 +108,11 @@ try {
   await page.getByRole('button', { name: '放弃修改并重新读取', exact: true }).click(); await until(async () => !(await page.getByRole('button', { name: '返回任务', exact: true }).isDisabled()))
   const invalid = saveBody(saved); invalid.extensions = { ...invalid.extensions, skillRoots: [{ id: 'escape', kind: 'project', directory: '../outside' }] }
   check('server rejects traversal root before saving', (await api('/v1/settings', invalid)).status === 400)
-  await page.getByRole('button', { name: '返回任务', exact: true }).click(); await page.getByLabel('任务目标').fill('/gu')
+  await page.getByRole('button', { name: '返回任务', exact: true }).click(); await page.getByLabel('任务目标').waitFor()
+  if(await page.getByLabel('任务配置').count())await page.getByLabel('任务配置').selectOption('default')
+  else assert.deepEqual((await api('/v1/info')).body.profiles,['default'])
+  const catalog=await api('/v1/skills?profile=default');assert.equal(catalog.status,200,JSON.stringify(catalog.body));assert.ok(catalog.body.skills.some(s=>s.id==='guide'),JSON.stringify(catalog.body))
+  await page.getByLabel('任务目标').fill('/gu')
   await page.getByRole('button', { name: '使用 /guide', exact: true }).waitFor(); check('slash prefix offers matching scanned skills', await page.getByRole('button', { name: '使用 /userguide', exact: true }).count() === 0)
   await page.getByText('查看技能快照', { exact: true }).click(); check('frontmatter snapshot is viewable without model request', await page.getByText('不可信技能文本 · SHA256', { exact: false }).isVisible() && !wire.length)
   await page.getByRole('button', { name: '使用 /guide', exact: true }).click(); check('candidate only inserts draft', await page.getByLabel('任务目标').inputValue() === '/guide ' && !wire.length)

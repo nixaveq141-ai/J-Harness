@@ -66,7 +66,7 @@ try{
  await start();browser=await chromium.launch(process.env.JHARNESS_BROWSER_CHANNEL?{channel:process.env.JHARNESS_BROWSER_CHANNEL}:{})
  context=await browser.newContext({viewport:{width:1440,height:1000},acceptDownloads:true,...(engine==='chromium'?{permissions:['clipboard-read','clipboard-write']}:{})})
  await context.addInitScript(()=>{const write=navigator.clipboard.writeText.bind(navigator.clipboard);Object.defineProperty(navigator.clipboard,'writeText',{value:async text=>{await write(text);window.__copiedExact=text}})})
- page=await context.newPage();page.on('pageerror',e=>{const stopped=stoppedHostDiagnostic(e.message,stoppedOrigins),offline=offlineFault&&stoppedHostDiagnostic(e.message,new Set([base]));if(stopped||offline)transportDiagnostics.push({phase:stopped?'stopped-host':'injected-offline',message:e.message});else errors.push(e.message)});page.on('request',r=>requests.push(r.url()));await page.goto(base)
+ page=await context.newPage();page.on('pageerror',e=>{const stopped=stoppedHostDiagnostic(e.message,stoppedOrigins),offline=offlineFault&&stoppedHostDiagnostic(e.message,new Set([base]));if(stopped||offline)transportDiagnostics.push({phase:stopped?'stopped-host':'injected-offline',message:e.message});else errors.push({message:e.message,base,stoppedOrigins:[...stoppedOrigins],offlineFault,pageUrl:page.url()})});page.on('request',r=>requests.push(r.url()));await page.goto(base)
  await page.locator('.connection-state').filter({hasText:'本机服务已连接'}).waitFor({state:'attached'})
  const settings=(await api('/v1/settings')).body
  const clone={...settings.models[0],id:'unused-route',label:'Unused fixture',apiKeyEnv:'JHARNESS_UNUSED_KEY',model:'unused-model'}

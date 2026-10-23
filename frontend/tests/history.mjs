@@ -43,10 +43,13 @@ async function api(path, body) {
 async function connected() { await page.goto(base); await page.locator('.connection-state').filter({ hasText: '本机服务已连接' }).waitFor() }
 async function ended(id) { await until(async () => ['FINISHED', 'UNKNOWN', 'VERIFIED'].includes((await api(`/v1/tasks/${id}`)).body.phase)); assert.equal((await api(`/v1/tasks/${id}`)).body.phase, 'FINISHED') }
 async function create(goal) {
-  const prior = await page.evaluate(() => sessionStorage.getItem('jh-selected'))
-  await page.getByRole('button', { name: '新建任务', exact: true }).click(); await page.getByLabel('任务目标').fill(goal); await page.getByRole('button', { name: '创建任务', exact: true }).click()
-  await until(async () => { const id = await page.evaluate(() => sessionStorage.getItem('jh-selected')); return id && id !== prior })
-  const id = await page.evaluate(() => sessionStorage.getItem('jh-selected')); await ended(id); return id
+  const profile = await page.getByLabel('浏览工作区').inputValue()
+  await page.getByRole('button', { name: '新建任务', exact: true }).click(); await page.getByLabel('任务配置').selectOption(profile); await page.getByLabel('任务目标').fill(goal)
+  const accepted=page.waitForResponse(r=>r.request().method()==='POST'&&r.url()===base+'/v1/tasks')
+  await page.getByRole('button', { name: '创建任务', exact: true }).click()
+  const response=await accepted;assert.equal(response.status(),202);const receipt=await response.json(),id=receipt.taskId
+  assert.ok(typeof id==='string'&&id);await until(async()=>await page.evaluate(()=>sessionStorage.getItem('jh-selected'))===id)
+  await ended(id);assert.equal((await api(`/v1/tasks/${id}`)).body.profile,profile);return id
 }
 async function shot(name) { const path = join(out, `M10.5.2-${name}.png`); await page.screenshot({ path, fullPage: true }); screenshots.push({ path: path.replace(root + '\\', '').replace(root + '/', ''), sha256: createHash('sha256').update(await readFile(path)).digest('hex') }) }
 async function manage() { const panel = page.locator('.session-actions'); await panel.waitFor(); if (!(await panel.evaluate(e => e.open))) await panel.locator('summary').click(); return panel }
@@ -89,6 +92,7 @@ try {
   check('workspace switch changes next SDK root and filtered history', JSON.stringify((await api(`/v1/tasks/${alphaTask}/events?limit=100`)).body).includes('alpha workspace source') && (await api('/v1/tasks?profile=default')).body.tasks.every(t => t.profile === 'default'))
   const outsideTask = await create('outside-root read must fail')
   const outsideEvents = (await api(`/v1/tasks/${outsideTask}/events?limit=100`)).body.events
+  if(!outsideEvents.some(e=>e.type==='tool.completed'&&e.payload.status!=='SUCCESS'))console.log('HISTORY_DIAGNOSTIC',JSON.stringify({task:outsideTask,events:outsideEvents}).replaceAll(key,'[REDACTED]').replaceAll(token,'[REDACTED]'))
   check('model cannot escape root or read sibling sentinel', outsideEvents.some(e => e.type === 'tool.completed' && e.payload.status !== 'SUCCESS') && !JSON.stringify(outsideEvents).includes('outside sentinel must not be read') && await readFile(join(baseDir, 'outside.txt'), 'utf8') === 'outside sentinel must not be read\n')
   const ids = []
   for (let i = 0; i < 65; i++) {
