@@ -45,9 +45,18 @@ async function ended(id) { await until(async () => ['FINISHED', 'UNKNOWN', 'VERI
 async function create(goal) {
   const profile = await page.getByLabel('浏览工作区').inputValue()
   await page.getByRole('button', { name: '新建任务', exact: true }).click(); await page.getByLabel('任务配置').selectOption(profile); await page.getByLabel('任务目标').fill(goal)
-  const accepted=page.waitForResponse(r=>r.request().method()==='POST'&&r.url()===base+'/v1/tasks').then(async response=>({status:response.status(),receipt:await response.json()}))
-  await page.getByRole('button', { name: '创建任务', exact: true }).click()
-  const response=await accepted;assert.equal(response.status,202);const id=response.receipt.taskId
+  let accept,reject
+  const accepted=new Promise((resolve,fail)=>{accept=resolve;reject=fail}),url=base+'/v1/tasks'
+  const capture=async route=>{
+    if(route.request().method()!=='POST'){await route.continue();return}
+    try{const response=await route.fetch(),receipt=await response.json();await route.fulfill({response});accept({status:response.status(),receipt})}
+    catch(error){await route.abort();reject(error)}
+  }
+  await page.route(url,capture)
+  let response
+  try{await page.getByRole('button', { name: '创建任务', exact: true }).click();response=await accepted}
+  finally{await page.unroute(url,capture)}
+  assert.equal(response.status,202);const id=response.receipt.taskId
   assert.ok(typeof id==='string'&&id);await until(async()=>await page.evaluate(()=>sessionStorage.getItem('jh-selected'))===id)
   await ended(id);assert.equal((await api(`/v1/tasks/${id}`)).body.profile,profile);return id
 }
@@ -103,11 +112,11 @@ try {
   const seen = new Set(first.tasks.map(t => t.taskId)); let next = first.next
   while (next) { const value = (await api(`/v1/tasks?profile=default&limit=24&view=all&after=${next}`)).body; value.tasks.forEach(t => { assert.ok(!seen.has(t.taskId)); seen.add(t.taskId) }); next = value.next }
   check('65 completed production CLI tasks exceed hot limit and page without loss', ids.every(id => seen.has(id)) && first.hotCount <= 32 && first.hotLimit === 32 && first.historyCount >= 65)
-  await until(async () => (await page.locator('.task-item').first().textContent()).includes(ids.at(-1).slice(-64, -56)) && await page.getByRole('button', { name: '下一页会话' }).isEnabled())
-  const newest = await page.locator('.task-item').first().textContent()
-  await page.getByRole('button', { name: '下一页会话' }).evaluate(e => { e.click(); e.click() }); await until(async () => await page.getByRole('button', { name: '上一页会话' }).isEnabled() && await page.locator('.task-item').first().textContent() !== newest)
+  await until(async () => (await page.locator('.task-item .task-name').first().textContent()).includes(ids.at(-1).slice(-64, -56)) && await page.getByRole('button', { name: '下一页会话' }).isEnabled())
+  const newest = await page.locator('.task-item .task-name').first().textContent()
+  await page.getByRole('button', { name: '下一页会话' }).evaluate(e => { e.click(); e.click() }); await until(async () => await page.getByRole('button', { name: '上一页会话' }).isEnabled() && await page.locator('.task-item .task-name').first().textContent() !== newest)
   check('browser reads bounded next page', await page.locator('.history-pages > span').textContent() === '2' && await page.locator('.task-item').count() <= 32 && await page.getByRole('button', { name: '上一页会话' }).isEnabled())
-  await page.getByRole('button', { name: '上一页会话' }).click(); await until(async () => await page.locator('.task-item').first().textContent() === newest)
+  await page.getByRole('button', { name: '上一页会话' }).click(); await until(async () => await page.locator('.task-item .task-name').first().textContent() === newest)
   await shot('history-pages')
   await page.getByRole('button', { name: '切换深色主题', exact: true }).click(); await shot('dark')
   await page.setViewportSize({ width: 390, height: 844 }); await page.getByRole('button', { name: '展开任务导航', exact: true }).click(); await shot('mobile')
