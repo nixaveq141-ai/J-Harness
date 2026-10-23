@@ -1,4 +1,4 @@
-import { browserType as chromium, stoppedHostDiagnostic } from './runtime.mjs'
+import { browserType as chromium, stoppedHostDiagnostic, fixtureEnvironment } from './runtime.mjs'
 import { createServer } from 'node:http'
 import { spawn } from 'node:child_process'
 import { mkdir, writeFile, readFile, access } from 'node:fs/promises'
@@ -71,7 +71,7 @@ const config = join(workspace, 'config.json'), endpoint = `http://127.0.0.1:${pr
 await writeFile(config, JSON.stringify({ baseUrl: endpoint, model: 'extensions-fixture', maxSteps: 6, durationSeconds: 120, requestTimeoutSeconds: 20, ecosystem: { web: { port: 0, approvalSeconds: 60 } } }))
 async function start() {
   output = ''; base = undefined
-  host = spawn(java, ['-Dfile.encoding=UTF-8', '-jar', jar, '--workspace', workspace, '--config', config, 'serve'], { cwd: root, env: { ...process.env, JHARNESS_WEB_TOKEN: token, JHARNESS_API_KEY: secret }, stdio: ['pipe', 'pipe', 'pipe'], windowsHide: true })
+  host = spawn(java, ['-Dfile.encoding=UTF-8', '-jar', jar, '--workspace', workspace, '--config', config, 'serve'], { cwd: root, env: fixtureEnvironment({ JHARNESS_WEB_TOKEN: token, JHARNESS_API_KEY: secret }), stdio: ['pipe', 'pipe', 'pipe'], windowsHide: true })
   const receive = d => { output += d; base = output.match(/WEB (http:\/\/127\.0\.0\.1:\d+)/)?.[1] }
   host.stdout.on('data', receive); host.stderr.on('data', receive); await until(() => base || host.exitCode !== null); assert.ok(base, output)
 }

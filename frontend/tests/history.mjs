@@ -1,4 +1,4 @@
-import { browserType as chromium, stoppedHostDiagnostic } from './runtime.mjs'
+import { browserType as chromium, stoppedHostDiagnostic, fixtureEnvironment } from './runtime.mjs'
 import { createServer } from 'node:http'
 import { spawn } from 'node:child_process'
 import { mkdir, writeFile, readFile } from 'node:fs/promises'
@@ -31,7 +31,7 @@ await new Promise(r => provider.listen(0, '127.0.0.1', r))
 await writeFile(config, JSON.stringify({ baseUrl: `http://127.0.0.1:${provider.address().port}`, model: 'history-fixture', apiKeyEnv: 'JHARNESS_HISTORY_KEY', maxSteps: 3, durationSeconds: 20, requestTimeoutSeconds: 5, ecosystem: { web: { port: 0, maxTasks: 32 } } }))
 async function start() {
   base = undefined; hostOutput = ''
-  host = spawn(java, ['-Dfile.encoding=UTF-8', '-jar', jar, '--workspace', primary, '--config', config, '--require-read', 'note.txt', 'serve'], { cwd: root, env: { ...process.env, JHARNESS_WEB_TOKEN: token, JHARNESS_HISTORY_KEY: key }, stdio: ['pipe', 'pipe', 'pipe'], windowsHide: true })
+  host = spawn(java, ['-Dfile.encoding=UTF-8', '-jar', jar, '--workspace', primary, '--config', config, '--require-read', 'note.txt', 'serve'], { cwd: root, env: fixtureEnvironment({ JHARNESS_WEB_TOKEN: token, JHARNESS_HISTORY_KEY: key }), stdio: ['pipe', 'pipe', 'pipe'], windowsHide: true })
   host.stdout.on('data', d => { hostOutput += d; base = hostOutput.match(/WEB (http:\/\/127\.0\.0\.1:\d+)/)?.[1] }); host.stderr.on('data', d => { hostOutput += d })
   await until(() => base || host.exitCode !== null); assert.ok(base, 'History host failed: ' + hostOutput)
 }
@@ -45,9 +45,9 @@ async function ended(id) { await until(async () => ['FINISHED', 'UNKNOWN', 'VERI
 async function create(goal) {
   const profile = await page.getByLabel('浏览工作区').inputValue()
   await page.getByRole('button', { name: '新建任务', exact: true }).click(); await page.getByLabel('任务配置').selectOption(profile); await page.getByLabel('任务目标').fill(goal)
-  const accepted=page.waitForResponse(r=>r.request().method()==='POST'&&r.url()===base+'/v1/tasks')
+  const accepted=page.waitForResponse(r=>r.request().method()==='POST'&&r.url()===base+'/v1/tasks').then(async response=>({status:response.status(),receipt:await response.json()}))
   await page.getByRole('button', { name: '创建任务', exact: true }).click()
-  const response=await accepted;assert.equal(response.status(),202);const receipt=await response.json(),id=receipt.taskId
+  const response=await accepted;assert.equal(response.status,202);const id=response.receipt.taskId
   assert.ok(typeof id==='string'&&id);await until(async()=>await page.evaluate(()=>sessionStorage.getItem('jh-selected'))===id)
   await ended(id);assert.equal((await api(`/v1/tasks/${id}`)).body.profile,profile);return id
 }

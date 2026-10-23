@@ -1,4 +1,10 @@
 import { chromium, firefox, webkit } from 'playwright'
+// Fixture hosts receive only their explicit synthetic credentials. Unrelated runner
+// credentials can redact fixture vocabulary and protocol keys (for example root).
+export function fixtureEnvironment(overrides) {
+  const inherited=Object.fromEntries(Object.entries(process.env).filter(([name])=>!/(API_KEY|ACCESS_KEY_ID|SECRET_ACCESS_KEY|ACCESS_KEY|PRIVATE_KEY|CREDENTIALS|TOKEN|SECRET|PASSWORD|PASS)$/i.test(name)))
+  return {...inherited,...overrides}
+}
 export const engine = process.env.JHARNESS_BROWSER_ENGINE ?? 'chromium'
 if (!['chromium','firefox','webkit'].includes(engine)) throw Error('Unsupported browser engine')
 const selected = {chromium,firefox,webkit}[engine]
