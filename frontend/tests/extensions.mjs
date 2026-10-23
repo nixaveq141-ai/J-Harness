@@ -11,6 +11,8 @@ const root = resolve(import.meta.dirname, '../..'), out = join(root, '.build-cac
 const workspace = join(out, `M10.5.7-extensions-${Date.now()}`), userRoot = join(out, `M10.5.7-user-${Date.now()}`)
 const jar = join(root, 'harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar'), java = join(process.env.JAVA_HOME, process.platform==='win32'?'bin/java.exe':'bin/java')
 const token = 'extensions_0123456789_ABCDEFGHIJKLMNOPQRSTUVWXYZ', secret = `synthetic-${randomUUID()}`
+const scriptMode = process.platform === 'win32' ? 'POWERSHELL' : 'SH'
+const scriptPath = process.platform === 'win32' ? 'check.ps1' : 'check.sh'
 const checks = [], screenshots = [], wire = [], peerWire = [], errors = []
 let host, base, output = '', browser, page, context, hold, parentSent = false, childSent = false, result
 const wait = ms => new Promise(r => setTimeout(r, ms))
@@ -61,7 +63,9 @@ await writeFile(join(workspace, 'skills/guide/SKILL.md'), '---\nname: guide\ndes
 await writeFile(join(userRoot, 'userguide/SKILL.md'), '---\nname: userguide\ndescription: User guide\n---\nUntrusted user text.\n')
 await writeFile(join(workspace, 'explicit/SKILL.md'), 'Explicit skill with allowlisted resource and script.\n')
 await writeFile(join(workspace, 'explicit/guide.txt'), 'Allowlisted resource.\n')
-await writeFile(join(workspace, 'explicit/check.ps1'), "[System.IO.File]::WriteAllText((Join-Path $PWD 'marker.txt'), 'approved')\n")
+await writeFile(join(workspace, 'explicit', scriptPath), scriptMode === 'POWERSHELL'
+  ? "[System.IO.File]::WriteAllText((Join-Path $PWD 'marker.txt'), 'approved')\n"
+  : "printf approved > marker.txt\n")
 await new Promise(r => provider.listen(0, '127.0.0.1', r)); await new Promise(r => peer.listen(0, '127.0.0.1', r))
 const config = join(workspace, 'config.json'), endpoint = `http://127.0.0.1:${provider.address().port}`, peerUrl = `http://127.0.0.1:${peer.address().port}/mcp`
 await writeFile(config, JSON.stringify({ baseUrl: endpoint, model: 'extensions-fixture', maxSteps: 6, durationSeconds: 120, requestTimeoutSeconds: 20, ecosystem: { web: { port: 0, approvalSeconds: 60 } } }))
@@ -88,7 +92,7 @@ try {
   const skills = group('Skills'); await skills.locator('summary').first().click(); await skills.getByRole('button', { name: '添加技能', exact: true }).click()
   await skills.getByLabel('标识 ID', { exact: true }).fill('explicit'); await skills.getByLabel('技能目录', { exact: true }).fill('explicit')
   await skills.getByRole('button', { name: '添加资源白名单', exact: true }).click(); await skills.getByLabel('名称', { exact: true }).fill('guide'); await skills.getByLabel('资源相对路径').fill('guide.txt')
-  await skills.getByRole('button', { name: '添加脚本白名单', exact: true }).click(); await skills.getByLabel('名称', { exact: true }).nth(1).fill('check'); await skills.getByLabel('脚本相对路径').fill('check.ps1')
+  await skills.getByRole('button', { name: '添加脚本白名单', exact: true }).click(); await skills.getByLabel('名称', { exact: true }).nth(1).fill('check'); await skills.getByLabel('脚本相对路径').fill(scriptPath); await skills.getByRole('combobox', { name: /^脚本模式/ }).selectOption(scriptMode)
   const roots = group('技能目录发现'); await roots.locator('summary').first().click(); await roots.getByRole('button', { name: '添加技能根', exact: true }).click()
   await roots.getByLabel('标识 ID', { exact: true }).fill('project'); await roots.getByLabel('允许扫描的目录').fill('skills')
   await roots.getByRole('button', { name: '添加技能根', exact: true }).click(); await roots.getByLabel('标识 ID', { exact: true }).nth(1).fill('user'); await roots.getByLabel('根目录来源').nth(1).selectOption('user'); await roots.getByLabel('允许扫描的目录').nth(1).fill(userRoot)
@@ -96,7 +100,7 @@ try {
   await shot('forms-desktop')
   await page.getByRole('button', { name: '保存设置', exact: true }).click(); await page.getByText('设置已保存，将用于后续新消息。', { exact: true }).waitFor()
   let saved = (await api('/v1/settings')).body
-  check('forms persist MCP skills resources scripts roots and read-only profile', saved.extensions.mcp[0].id === 'notes' && saved.extensions.skills[0].scripts.check.mode === 'POWERSHELL' && saved.extensions.skills[0].resources.guide === 'guide.txt' && saved.extensions.skillRoots.length === 2 && saved.extensions.subagents.reviewer.tools.join() === 'read_file')
+  check('forms persist MCP skills resources scripts roots and read-only profile', saved.extensions.mcp[0].id === 'notes' && saved.extensions.skills[0].scripts.check.mode === scriptMode && saved.extensions.skills[0].scripts.check.path === scriptPath && saved.extensions.skills[0].resources.guide === 'guide.txt' && saved.extensions.skillRoots.length === 2 && saved.extensions.subagents.reviewer.tools.join() === 'read_file')
   check('saving configuration performs no execution', !wire.length && !peerWire.length)
   await roots.getByText('高级 JSON', { exact: true }).click(); const raw = roots.getByLabel('技能目录发现配置', { exact: true }); await raw.fill('{broken')
   check('invalid advanced JSON keeps corrective input and explains form state', await roots.getByText('高级 JSON 格式或条目类型无效。请在下方修正后继续编辑表单。', { exact: true }).isVisible())

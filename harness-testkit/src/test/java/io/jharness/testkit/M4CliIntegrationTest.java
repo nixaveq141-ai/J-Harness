@@ -25,6 +25,7 @@ class M4CliIntegrationTest {
     void canonicalTemporaryRoot() throws java.io.IOException {
         root = root.toRealPath();
     }
+
     private static final ObjectMapper JSON = new ObjectMapper();
 
     @Test
