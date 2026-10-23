@@ -54,9 +54,14 @@ try {
     await page.getByRole('button', { name: '新建任务', exact: true }).click()
     await page.getByLabel('任务配置').selectOption(profile)
     await page.getByLabel('任务目标').fill(goal)
+    const accepted = page.waitForResponse(r => r.request().method() === 'POST' && r.url() === base + '/v1/tasks')
     await page.getByRole('button', { name: '创建任务', exact: true }).click()
-    await until(() => page.locator('.task-item.selected').count())
-    return page.evaluate(() => sessionStorage.getItem('jh-selected'))
+    const response = await accepted
+    assert.equal(response.status(), 202)
+    const receipt = await response.json()
+    assert.ok(typeof receipt.taskId === 'string' && receipt.taskId)
+    await until(async () => await page.evaluate(() => sessionStorage.getItem('jh-selected')) === receipt.taskId && await page.locator('.task-item.selected').count() === 1)
+    return receipt.taskId
   }
   async function ended(id) { await until(async () => ['FINISHED', 'UNKNOWN', 'VERIFIED'].includes((await api(`/v1/tasks/${id}`)).body.phase)) }
   await page.goto(base)
@@ -217,9 +222,12 @@ try {
   await page.keyboard.press('ArrowRight')
   await page.keyboard.press('ArrowRight')
   assert.equal(await page.getByRole('tab', { name: '查询', exact: true }).getAttribute('aria-selected'), 'true')
-  await wait(220)
-  const chosenBounds = await page.getByRole('tab', { name: '查询', exact: true }).boundingBox()
-  const indicatorBounds = await page.locator('.inspector [role=tablist] > span').boundingBox()
+  let chosenBounds, indicatorBounds
+  await until(async () => {
+    chosenBounds = await page.getByRole('tab', { name: '查询', exact: true }).boundingBox()
+    indicatorBounds = await page.locator('.inspector [role=tablist] > span').boundingBox()
+    return chosenBounds && indicatorBounds && Math.abs(chosenBounds.x - indicatorBounds.x) < 2 && Math.abs(chosenBounds.width - indicatorBounds.width) < 2
+  })
   check('mobile tab indicator aligns with selected keyboard tab', Math.abs(chosenBounds.x - indicatorBounds.x) < 2 && Math.abs(chosenBounds.width - indicatorBounds.width) < 2)
   await screenshot('mobile')
   check('mobile has no viewport overflow and tabs support keyboard', await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth))

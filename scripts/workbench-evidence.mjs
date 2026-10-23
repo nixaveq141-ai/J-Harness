@@ -147,7 +147,8 @@ export async function validateMatrix(root,name='.build-cache/M10.5.9/browser/mat
   }
   return matrix
 }
-if(process.argv[1]&&import.meta.url===pathToFileURL(resolve(process.argv[1])).href){
+const entryPath=process.argv[1]?await realpath(resolve(process.argv[1])).catch(()=>null):null
+if(entryPath&&import.meta.url===pathToFileURL(entryPath).href){
   requireThat(process.argv.length===3,'Usage: node scripts/workbench-evidence.mjs <repository-relative matrix.json>')
   const matrix=await validateMatrix(resolve(import.meta.dirname,'..'),process.argv[2]);console.log(JSON.stringify({status:'PASS',runId:matrix.runId,records:matrix.records.length}))
 }
