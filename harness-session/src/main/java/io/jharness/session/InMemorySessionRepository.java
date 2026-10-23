@@ -105,7 +105,8 @@ public final class InMemorySessionRepository implements SessionRepository {
                     throw new HarnessException(
                             "SESSION_MISMATCH", "Event belongs to another session");
                 if (event.schemaVersion() > 1)
-                    throw new HarnessException("FUTURE_VERSION", "Unsupported event schema");
+                    throw new HarnessException(
+                            "FUTURE_VERSION_READ_ONLY", "Unsupported event schema");
                 if (!store.ids.add(event.eventId()))
                     throw new HarnessException("DUPLICATE_EVENT", "Duplicate eventId");
                 store.events.add(event);

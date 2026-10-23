@@ -188,7 +188,9 @@ class M1056WebContentTest {
             Files.writeString(
                     root.resolve("read-artifacts").resolve(id).resolve(artifact.id() + ".txt"),
                     "changed");
-            assertEquals(400, request(host, "GET", route, null, true).statusCode());
+            var corrupt = request(host, "GET", route, null, true);
+            assertEquals(400, corrupt.statusCode());
+            assertTrue(corrupt.body().contains("ARTIFACT_CORRUPT"));
         }
     }
 }

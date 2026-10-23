@@ -137,10 +137,10 @@ public final class HarnessSdk implements AutoCloseable {
         this.budget = Objects.requireNonNull(budget);
         Objects.requireNonNull(completion);
         Values.required(workspaceBinding, "workspace binding");
-        var binding = new LinkedHashMap<>(environment.descriptor());
-        binding.remove("id");
+        var binding = stableBinding(environment.descriptor());
         binding.put("workspaceBinding", workspaceBinding);
         binding.put("agentId", scope.agentId());
+        String bindingFingerprint = bindingFingerprint(binding);
         reader = repository.openReader(sessionId);
         display = new ModelDisplayBuffer(scope, reader, sanitizer);
         var displayModel = model.withDisplayUpdates(display::accept);
@@ -154,28 +154,56 @@ public final class HarnessSdk implements AutoCloseable {
         try {
             var events = reader.events();
             if (SessionLifecycle.archived(events)) throw BoundedJson.error("SESSION_ARCHIVED");
-            if (!SessionRecovery.inspect(events).ready())
-                throw BoundedJson.error("UNKNOWN_SIDE_EFFECT");
             var created = events.stream().filter(e -> e.type().equals("sdk.created")).findFirst();
-            if (!events.isEmpty() && created.isEmpty())
+            boolean initializing =
+                    events.size() == 1
+                            && events.getFirst().type().equals("session.created")
+                            && "PENDING"
+                                    .equals(events.getFirst().payload().get("sdkInitialization"))
+                            && bindingFingerprint.equals(
+                                    events.getFirst().payload().get("bindingFingerprint"));
+            if (!events.isEmpty() && created.isEmpty() && !initializing)
                 throw BoundedJson.error("SDK_SESSION_BINDING_REQUIRED");
+            if (!initializing && !SessionRecovery.inspect(events).ready())
+                throw BoundedJson.error("UNKNOWN_SIDE_EFFECT");
             if (created.isPresent()) {
+                Object protocol = created.get().payload().get("protocolVersion");
+                if (!(protocol instanceof String version)
+                        || !version.matches("1\\.(?:[0-9]|1[0-4])"))
+                    throw BoundedJson.error("UNSUPPORTED_SDK_PROTOCOL");
                 var previous =
                         new LinkedHashMap<>(Values.object(created.get().payload().get("binding")));
                 previous.putIfAbsent("agentId", "default");
-                if (!previous.equals(binding)) throw BoundedJson.error("ENVIRONMENT_MISMATCH");
+                Object fingerprint = created.get().payload().get("bindingFingerprint");
+                if (fingerprint == null
+                        ? !previous.equals(binding)
+                        : !bindingFingerprint.equals(fingerprint))
+                    throw BoundedJson.error("ENVIRONMENT_MISMATCH");
             }
             if (created.isEmpty()) {
-                writer.append(
-                        SessionEvent.session(
-                                sessionId,
-                                "session.created",
-                                Map.of("apiVersion", ApiVersion.CURRENT)));
+                if (!initializing)
+                    writer.append(
+                            SessionEvent.session(
+                                    sessionId,
+                                    "session.created",
+                                    Map.of(
+                                            "apiVersion",
+                                            ApiVersion.CURRENT,
+                                            "sdkInitialization",
+                                            "PENDING",
+                                            "bindingFingerprint",
+                                            bindingFingerprint)));
                 writer.append(
                         SessionEvent.session(
                                 sessionId,
                                 "sdk.created",
-                                Map.of("protocolVersion", PROTOCOL_VERSION, "binding", binding)));
+                                Map.of(
+                                        "protocolVersion",
+                                        PROTOCOL_VERSION,
+                                        "binding",
+                                        binding,
+                                        "bindingFingerprint",
+                                        bindingFingerprint)));
                 writer.flush();
             }
             if (!options.origin().isEmpty()) {
@@ -355,6 +383,35 @@ public final class HarnessSdk implements AutoCloseable {
         }
     }
 
+    private static String bindingFingerprint(Map<String, Object> binding) {
+        try {
+            return java.util.HexFormat.of()
+                    .formatHex(
+                            java.security.MessageDigest.getInstance("SHA-256")
+                                    .digest(BoundedJson.encode(canonical(binding))));
+        } catch (java.security.NoSuchAlgorithmException ex) {
+            throw new IllegalStateException(ex);
+        }
+    }
+
+    private static Object canonical(Object value) {
+        if (value instanceof Map<?, ?> map) {
+            var result = new TreeMap<String, Object>();
+            map.forEach((key, item) -> result.put((String) key, canonical(item)));
+            return result;
+        }
+        if (value instanceof List<?> list) return list.stream().map(HarnessSdk::canonical).toList();
+        return value;
+    }
+
+    private static LinkedHashMap<String, Object> stableBinding(Map<String, Object> descriptor) {
+        var result = new LinkedHashMap<>(descriptor);
+        result.remove("id");
+        if (result.get("parent") instanceof Map<?, ?> parent)
+            result.put("parent", stableBinding(Values.object(parent)));
+        return result;
+    }
+
     /** A run is serialized; cancellation is callable concurrently and is never reset implicitly. */
     public synchronized Snapshot run(String goal, CancellationToken cancellation) {
         return run(goal, cancellation, Map.of());
@@ -364,13 +421,39 @@ public final class HarnessSdk implements AutoCloseable {
     public synchronized Snapshot run(
             String goal, CancellationToken cancellation, Map<String, String> input) {
         if (closed.get()) throw BoundedJson.error("SDK_CLOSED");
+        if (goal == null || goal.isBlank() || goal.length() > 65536)
+            throw BoundedJson.error("INVALID_GOAL");
+        if (input == null
+                || !input.isEmpty()
+                        && (!input.keySet().equals(Set.of("requestHash", "kind"))
+                                || input.get("requestHash") == null
+                                || !input.get("requestHash").matches("[a-f0-9]{64}")
+                                || input.get("kind") == null
+                                || !Set.of("message", "supplement").contains(input.get("kind"))))
+            throw BoundedJson.error("INVALID_SUBMISSION");
+        Objects.requireNonNull(cancellation, "cancellation");
         var token = (CancellationToken) () -> cancelled.get() || cancellation.isCancelled();
         token.throwIfCancelled();
         if (!SessionRecovery.inspect(reader.events()).ready())
             throw BoundedJson.error("UNKNOWN_SIDE_EFFECT");
+        if (!input.isEmpty()) {
+            var applied =
+                    reader.events().stream()
+                            .filter(
+                                    e ->
+                                            e.type().equals("sdk.input.applied")
+                                                    && input.get("requestHash")
+                                                            .equals(e.payload().get("requestHash")))
+                            .findFirst();
+            if (applied.isPresent()) {
+                if (!input.get("kind").equals(applied.get().payload().get("kind"))
+                        || !bindingFingerprint(Map.of("content", goal))
+                                .equals(applied.get().payload().get("inputContentHash")))
+                    throw BoundedJson.error("SUBMISSION_CONFLICT");
+                return snapshot();
+            }
+        }
         if (rootBudget) fees.beginTurn();
-        if (goal == null || goal.isBlank() || goal.length() > 65536)
-            throw BoundedJson.error("INVALID_GOAL");
         writer.append(
                 SessionEvent.session(
                         scope.sessionId(),
@@ -399,11 +482,8 @@ public final class HarnessSdk implements AutoCloseable {
         var userMessage =
                 SessionEvent.session(
                         scope.sessionId(), "user.message", Map.of("role", "user", "content", goal));
-        if (!input.isEmpty()) {
-            if (!input.keySet().equals(Set.of("requestHash", "kind"))
-                    || !input.get("requestHash").matches("[a-f0-9]{64}")
-                    || !Set.of("message", "supplement").contains(input.get("kind")))
-                throw BoundedJson.error("INVALID_SUBMISSION");
+        if (input.isEmpty()) writer.append(userMessage);
+        else
             writer.append(
                     SessionEvent.session(
                             scope.sessionId(),
@@ -413,12 +493,12 @@ public final class HarnessSdk implements AutoCloseable {
                                     input.get("requestHash"),
                                     "kind",
                                     input.get("kind"),
-                                    "userEventId",
-                                    userMessage.eventId(),
+                                    "userMessage",
+                                    userMessage.payload(),
+                                    "inputContentHash",
+                                    bindingFingerprint(Map.of("content", goal)),
                                     "boundary",
                                     "next-turn")));
-        }
-        writer.append(userMessage);
         writer.flush();
         var loop =
                 registry.requireUnique(AgentLoopFactory.class, scope)
@@ -485,10 +565,13 @@ public final class HarnessSdk implements AutoCloseable {
             DataSanitizer sanitizer) {
         if (reason == null || reason.isBlank() || reason.length() > 4096)
             throw BoundedJson.error("VERIFICATION_REASON_REQUIRED");
+        var existing = repository.openReader(sessionId).events();
+        if (SessionLifecycle.archived(existing)) throw BoundedJson.error("SESSION_ARCHIVED");
         try (var writer =
                 new SanitizingSessionWriter(
                         repository.openWriter(sessionId, WriteOwnership.EXCLUSIVE), sanitizer)) {
             var events = repository.openReader(sessionId).events();
+            if (SessionLifecycle.archived(events)) throw BoundedJson.error("SESSION_ARCHIVED");
             if (!SessionRecovery.inspect(events)
                     .uncertainCalls()
                     .contains("environment:" + environmentId))

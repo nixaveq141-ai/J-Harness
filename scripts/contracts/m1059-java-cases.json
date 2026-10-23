@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "milestone": "M10.5.9",
-  "origin": "Reviewed current case identities: preserved 410-case M10.5.9 baseline plus R0/R1 fault, race and lifecycle regressions. This contract is not execution evidence.",
+  "origin": "Reviewed case identities: preserved 563-case R0/R1 baseline plus R2 persistence, snapshot, migration and fact-boundary regressions. This contract is not execution evidence.",
   "suites": [
     {
       "module": "harness-api",
@@ -15,6 +15,13 @@
         "sanitizationShapeFailureHasStableCode",
         "sanitizerAliasesAndKeyCollisionsAreFailClosed",
         "streamingNeverSplitsReplacementAndRetainsOnlyPotentialSecretSuffix"
+      ]
+    },
+    {
+      "module": "harness-api",
+      "name": "io.jharness.api.R2ArtifactContractTest",
+      "cases": [
+        "defaultTextReaderContinuesShortUtf16BlocksUntilEmptyEof"
       ]
     },
     {
@@ -183,6 +190,17 @@
     },
     {
       "module": "harness-cli",
+      "name": "io.jharness.cli.R2RegistryTest",
+      "cases": [
+        "jsonReplacementKeepsExistingOwnerWithoutReassigningSameOwner",
+        "malformedRegistryPathReportsStableCodeWithoutRewritingFile",
+        "metadataRejectsNonSegmentsButKeepsExplicitRootAccess",
+        "missingRegisteredRootIsVisibleAsUnavailableAndRestoredRootCanReopen",
+        "replacedDirectoryIdentityRevokesMetadataAndWorkspaceChecks"
+      ]
+    },
+    {
+      "module": "harness-cli",
       "name": "io.jharness.cli.StdioSdkServerTest",
       "cases": [
         "duplicateFieldsRejectRatherThanSelectingLastValue",
@@ -247,6 +265,16 @@
         "stdioCloseReportsSamplingOverflowAndStopsEveryRetainedHandle",
         "webResponseArrivingAfterFailedCancellationIsClosedByLateCallback",
         "webResponseReceivedBeforeCancellationAndNeverHandedOffIsClosed"
+      ]
+    },
+    {
+      "module": "harness-ecosystem",
+      "name": "io.jharness.ecosystem.R2WorkspaceAndBudgetTest",
+      "cases": [
+        "canonicalAliasesShareGuardAndPatchRefreshesOnlyAffectedVersions",
+        "concurrentRemoteReadsCannotPublishAnOlderGuardAfterNewerWrite",
+        "invalidAnswerIdentityHasOneErrorCodeBeforeHistoryLookupOrPersistence",
+        "lateEpochSettlementFailsBeforeCallingDelegateAndCannotRefundCurrentTurn"
       ]
     },
     {
@@ -422,6 +450,7 @@
         "backgroundTaskStatusLogStopAndTimeoutAreBounded",
         "cancellationTraversalInvalidPagesAndCloseNeverStartOrLeakTasks",
         "cancellingBlockedStdinStopsProcessAndReturnsUnknownWithinTheDeadline",
+        "lifetimeHistoryLimitKeepsCompletedLogsAndRejectsThirtyThirdTask",
         "realPtyAcceptsInputResizesAndPreservesItsWorkingDirectory",
         "rollingLogsAndConcurrentTaskQuotaStayBounded"
       ]
@@ -521,6 +550,23 @@
     },
     {
       "module": "harness-session",
+      "name": "io.jharness.session.R2PersistenceTest",
+      "cases": [
+        "ambiguousResponsesCannotSettleTwoUnresolvedAttempts",
+        "archiveRestoreCatalogAndMissingLifecycleHaveOneMeaning",
+        "destinationOwnershipIsHeldThroughoutPreparationAcrossProcesses",
+        "eventBudgetIsCheckedBeforeArtifactPreparation",
+        "existingAndOwnedForkDestinationsNeverChangeOrPrepareArtifacts",
+        "failedArtifactCopyPublishesNoPartialScopeAndValidCopyIsIndependent",
+        "logPublicationFailureCompensatesOnlyNewlyCopiedScope",
+        "malformedTimestampIsTailDamageButUnsupportedSchemaCannotBeRepairedAway",
+        "orphanContextIsNotComposedAndMalformedCoreMessagesFailClosed",
+        "replacedArtifactRootIdentityIsRejectedBeforeScopeCreation",
+        "terminalVerificationRejectsStaleSnapshotsButNewObservedActivityRemainsUnknown"
+      ]
+    },
+    {
+      "module": "harness-session",
       "name": "io.jharness.session.TokenSessionSearchTest",
       "cases": [
         "excessiveIndexedBodyFailsWithoutChangingFactsOrPublishingPartialIndex",
@@ -589,6 +635,7 @@
         "maximumUnicodeAnswerIsPreservedInNextPreparedRequest",
         "overallTaskBudgetStopsQuestionWaitWithoutInventingAnswer",
         "persistedAnswerFingerprintOmitsRawSensitiveTextAndSurvivesRestartComparison",
+        "r2AcceptedAnswerRetainsIdentityWhenCancellationPrecedesOwnerResume",
         "skipDoesNotSubmitPreselectedRecommendedOption",
         "stopWaitsForOwnerSettlementAndKeepsAnAlreadyAcceptedAnswer",
         "timeoutIsExplicitUnansweredAndLateAnswerIsRejected"
@@ -714,6 +761,7 @@
       "cases": [
         "actualFileReadEditLoopUsesDurableIntentAndEveryDiskRequestReconstructs",
         "actualJsonlForceFailureBeforeWriteLeavesTargetUntouchedAndNeverReachesCommit",
+        "committedWriteRetainsVersionsWhenDiffArtifactPublicationFails",
         "crashAfterPhysicalWriteButBeforeResultIsUncertainAndCannotAutomaticallyRunAgain",
         "gitDiffUsesActualGitAndPluginStopRevokesFilesystemTools",
         "oversizedDiffSpillsToPersistedReferenceAndCanBeReadBackAfterReopen",
@@ -794,6 +842,7 @@
       "cases": [
         "fetchIsAllowlistedApprovedBoundedAndNeverFollowsRedirects",
         "planningCannotClaimCompletionOrSkipApprovalAndChangesRevokeApproval",
+        "r2PlanningRejectsExecutingEditsStaleEvidenceAndRevisionOverflow",
         "searchCompareAndLogicalArchiveAreUsableFromCli",
         "searchIsIncrementalRebuildableAndDoesNotChangeFacts",
         "todosAndPlansPersistSeparatelyWithExplicitApprovalAndRealEvidence",
@@ -994,6 +1043,18 @@
     },
     {
       "module": "harness-testkit",
+      "name": "io.jharness.testkit.R2SdkPersistenceTest",
+      "cases": [
+        "environmentVerificationCannotCreateMissingOrAlterArchivedSession",
+        "futureSdkProtocolRefusesReopenWithoutChangingFacts",
+        "halfInitializationIsDiagnosedAndOnlySameFingerprintCanResumeBeforePlugins",
+        "inputCheckpointFailureCannotLeaveDanglingUserAssociationOrExecuteModel",
+        "invalidGoalAndSubmissionLeaveExactJournalBytesUntouched",
+        "recursiveRandomIdsAndNewSecretConfigurationDoNotChangeStableBinding"
+      ]
+    },
+    {
+      "module": "harness-testkit",
       "name": "io.jharness.testkit.TestkitTest",
       "cases": [
         "checkpointRecorderAndFailureInjectorExposeBoundaries",
@@ -1026,6 +1087,19 @@
         "misplacedConstraintsAndConflictingBoundsFailClosedAndNumbersCompareSemantically",
         "nestedRequiredPropertiesAndNumericAndArrayBoundsAreEnforced",
         "unsupportedConstraintsAreRejectedInsteadOfIgnored"
+      ]
+    },
+    {
+      "module": "harness-web",
+      "name": "io.jharness.web.R2WebFactsTest",
+      "cases": [
+        "catalogRejectsMalformedWritesAndPreservesUnknownOutcomes",
+        "malformedLeaseIdentityNeverPersistsAndValidLeaseReopensExactly",
+        "migrationResumesAcrossNewSecretConfigurationWithoutLosingIdentity",
+        "oversizedLeaseIsRejectedAndOwnershipReleasedForDiagnosis",
+        "queueLifetimeAndPendingLimitsAreBoundedWithoutDroppingIdempotence",
+        "replacementDurableRepositoryRestoresMetadataAndPausedTurnProjection",
+        "startedQueueDropsExecutableTextAndRejectsNullOutcome"
       ]
     },
     {
@@ -1064,6 +1138,14 @@
         "localGitConfigurationCannotRunExternalDiffOrFsmonitor",
         "oversizedGitOutputTerminatesAtTheOutputBudget",
         "temporaryCleanupFailureCannotReplaceTheOriginalConflict"
+      ]
+    },
+    {
+      "module": "harness-workspace",
+      "name": "io.jharness.workspace.R2WorkspaceSnapshotTest",
+      "cases": [
+        "atomicReplacementPreservesSupportedAccessAttributes",
+        "utf8FullTextAndPaginatedVersionIdentifyActualReturnedSnapshot"
       ]
     },
     {

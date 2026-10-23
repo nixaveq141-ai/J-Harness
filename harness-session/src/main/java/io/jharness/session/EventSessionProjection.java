@@ -19,6 +19,23 @@ public final class EventSessionProjection implements SessionProjection {
         String sessionId = null;
         String turn = null;
         Set<String> ids = new HashSet<>();
+        Set<String> requestedApprovals = new HashSet<>();
+        var referencedContexts = new HashSet<String>();
+        var contexts = new HashMap<String, SessionEvent>();
+        for (var event : events) {
+            if (event.type().equals("request.context")) contexts.put(event.eventId(), event);
+            if (event.type().equals("model.requested")
+                    && event.payload().get("contextEventId") instanceof String id) {
+                var context = contexts.get(id);
+                if (context == null
+                        || !context.sessionId().equals(event.sessionId())
+                        || !Objects.equals(context.turnId(), event.turnId())
+                        || !Objects.equals(context.stepId(), event.stepId()))
+                    throw new HarnessException(
+                            "REQUEST_CONTEXT_MISSING", "Unassociated request context");
+                referencedContexts.add(id);
+            }
+        }
         for (SessionEvent event : List.copyOf(events)) {
             if (sessionId == null) sessionId = event.sessionId();
             if (!sessionId.equals(event.sessionId()))
@@ -28,13 +45,30 @@ public final class EventSessionProjection implements SessionProjection {
             if (!ids.add(event.eventId()))
                 throw new HarnessException("DUPLICATE_EVENT", "Duplicate event in projection");
             switch (event.type()) {
-                case "user.message", "assistant.message", "context.injected" ->
-                        messageList.add(event.payload());
+                case "user.message", "assistant.message", "context.injected" -> {
+                    if (event.type().equals("context.injected")
+                            && (!(event.payload().get("role") instanceof String role)
+                                    || !Set.of("user", "assistant", "system", "tool")
+                                            .contains(role)))
+                        throw new HarnessException(
+                                "INVALID_EVENT", "Message requires a valid role");
+                    messageList.add(event.payload());
+                }
+                case "sdk.input.applied" -> {
+                    if (event.payload().containsKey("userMessage")) {
+                        var message = Values.object(event.payload().get("userMessage"));
+                        if (!"user".equals(message.get("role"))
+                                || !(message.get("content") instanceof String))
+                            throw new HarnessException("INVALID_EVENT", "Invalid atomic SDK input");
+                        messageList.add(message);
+                    }
+                }
                 case "system.message" -> {
                     messageList.removeIf(message -> "system".equals(message.get("role")));
                     messageList.addFirst(event.payload());
                 }
                 case "request.context" -> {
+                    if (!referencedContexts.contains(event.eventId())) break;
                     messageList.clear();
                     messageList.addAll(EventRequestJournal.fromPayload(event.payload()).messages());
                 }
@@ -42,10 +76,20 @@ public final class EventSessionProjection implements SessionProjection {
                     current = TaskStatus.RUNNING;
                     if (event.type().equals("turn.started")) turn = event.turnId();
                 }
-                case "approval.requested" -> current = TaskStatus.WAITING_APPROVAL;
+                case "approval.requested" -> {
+                    requestedApprovals.add(event.callId());
+                    current = TaskStatus.WAITING_APPROVAL;
+                }
                 case "approval.decided" -> {
                     approvalList.add(event);
-                    current = TaskStatus.RUNNING;
+                    if (requestedApprovals.remove(event.callId())
+                            || toolList.stream()
+                                    .anyMatch(
+                                            e ->
+                                                    e.type().equals("tool.requested")
+                                                            && Objects.equals(
+                                                                    e.callId(), event.callId())))
+                        current = TaskStatus.RUNNING;
                 }
                 case "tool.requested",
                         "tool.intent",

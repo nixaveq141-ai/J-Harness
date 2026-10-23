@@ -78,6 +78,7 @@ final class Json {
                 while (buffer.hasRemaining()) channel.write(buffer);
                 channel.force(true);
             }
+            if (Files.exists(path, LinkOption.NOFOLLOW_LINKS)) AtomicFileMetadata.copy(path, temp);
             Files.move(
                     temp,
                     path,

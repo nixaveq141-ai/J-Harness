@@ -167,6 +167,8 @@ public final class LocalWorkspace implements WorkspaceFiles {
                                 change.beforeVersion(),
                                 "afterVersion",
                                 change.afterVersion(),
+                                "metadata",
+                                change.metadata(),
                                 "diff",
                                 change.diff().substring(0, Math.min(change.diff().length(), 8192)),
                                 "diffTruncated",
@@ -183,9 +185,13 @@ public final class LocalWorkspace implements WorkspaceFiles {
                         true,
                         "error",
                         code,
+                        "failedPath",
+                        patch.path(),
+                        "failedPathState",
+                        "REQUIRES_INSPECTION",
                         "pendingPaths",
                         patches.stream()
-                                .skip(changes.size())
+                                .skip(changes.size() + 1)
                                 .map(UnifiedPatch.FilePatch::path)
                                 .toList());
             }
@@ -334,7 +340,9 @@ public final class LocalWorkspace implements WorkspaceFiles {
     public synchronized String readText(ExecPath path) throws IOException {
         CancellationToken token = bounded(CancellationToken.NONE);
         Path target = resolve(path);
-        String before = version(target, token), content = text(target, token);
+        String content = text(target, token);
+        String before =
+                HexFormat.of().formatHex(sha().digest(content.getBytes(StandardCharsets.UTF_8)));
         if (!before.equals(version(target, token)))
             throw new HarnessException("FILE_CONFLICT", "File changed during read");
         observed.put(relative(target), before);
@@ -342,15 +350,21 @@ public final class LocalWorkspace implements WorkspaceFiles {
     }
 
     @Override
-    public Map<String, Object> readPage(
+    public synchronized Map<String, Object> readPage(
             ExecPath path, int startLine, int endLine, CancellationToken cancellation)
             throws IOException {
         if (startLine < 1 || endLine < startLine || endLine - startLine >= 2000)
             throw new HarnessException("INVALID_RANGE", "At most 2000 lines per page");
         CancellationToken token = bounded(cancellation);
         Path target = resolve(path);
-        String before = version(target, token);
-        if (before.equals(MISSING)) throw new HarnessException("FILE_NOT_FOUND", "File not found");
+        checkSegments(target);
+        byte[] snapshot;
+        try (InputStream input = Files.newInputStream(target, LinkOption.NOFOLLOW_LINKS)) {
+            snapshot = input.readNBytes(SCAN_LIMIT + 1);
+        }
+        if (snapshot.length > SCAN_LIMIT)
+            throw new HarnessException("FILE_LIMIT", "Read scan bound exceeded");
+        String before = HexFormat.of().formatHex(sha().digest(snapshot));
         StringBuilder out = new StringBuilder();
         int line = 1;
         boolean truncated = false;
@@ -358,9 +372,7 @@ public final class LocalWorkspace implements WorkspaceFiles {
         boolean beginning = true;
         CharsetDecoder decoder =
                 StandardCharsets.UTF_8.newDecoder().onMalformedInput(CodingErrorAction.REPORT);
-        try (Reader reader =
-                new InputStreamReader(
-                        Files.newInputStream(target, LinkOption.NOFOLLOW_LINKS), decoder)) {
+        try (Reader reader = new InputStreamReader(new ByteArrayInputStream(snapshot), decoder)) {
             char[] buffer = new char[4096];
             int count;
             outer:
@@ -479,6 +491,7 @@ public final class LocalWorkspace implements WorkspaceFiles {
         token.throwIfCancelled();
         Path temporary = parent.resolve(".jharness-write-" + UUID.randomUUID() + ".tmp");
         boolean committed = false;
+        Map<String, Object> metadata = Map.of();
         Throwable primary = null;
         try {
             try (FileChannel channel =
@@ -494,6 +507,8 @@ public final class LocalWorkspace implements WorkspaceFiles {
                 }
                 channel.force(true);
             }
+            if (!beforeVersion.equals(MISSING))
+                metadata = AtomicFileMetadata.copyForWorkspace(target, temporary);
             hook.beforeCommit(target);
             checkSegments(target);
             token.throwIfCancelled();
@@ -519,7 +534,8 @@ public final class LocalWorkspace implements WorkspaceFiles {
                     new ExecPath(relative(target)),
                     beforeVersion,
                     afterVersion,
-                    UnifiedDiff.between(relative(target), before, after));
+                    UnifiedDiff.between(relative(target), before, after),
+                    metadata);
         } catch (IOException | RuntimeException ex) {
             primary =
                     committed

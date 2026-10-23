@@ -143,6 +143,12 @@ class M1056ContentTest {
         Files.writeString(work.resolve("src/A.java"), "class A {}");
         Files.writeString(work.resolve(".env.private"), SECRET);
         Files.createDirectory(work.resolve(".aws"));
+        Files.writeString(work.resolve(".aws/secret"), "protected sentinel");
+        Files.createDirectories(work.resolve(".git"));
+        Files.writeString(work.resolve(".git/config"), "protected git sentinel");
+        Files.createDirectories(work.resolve(".jharness"));
+        Files.writeString(work.resolve(".jharness/config"), "protected metadata sentinel");
+        Files.writeString(root.resolve("outside.txt"), "external sentinel");
         String listing = service.list(".", CancellationToken.NONE).toString();
         assertTrue(listing.contains("src"));
         assertFalse(listing.contains(".env"));
@@ -155,10 +161,15 @@ class M1056ContentTest {
                         ".aws/secret",
                         ".env.private",
                         work.toString() + "/src/A.java"))
-            assertThrows(
-                    HarnessException.class,
-                    () -> service.file(path, 0, 0, "", CancellationToken.NONE),
-                    path);
+            assertEquals(
+                    (path.startsWith("../") || path.startsWith(work.toString()))
+                            ? "INSPECTION_DENIED"
+                            : "PATH_DENIED",
+                    assertThrows(
+                                    HarnessException.class,
+                                    () -> service.file(path, 0, 0, "", CancellationToken.NONE),
+                                    path)
+                            .code());
         Files.write(work.resolve("binary.txt"), new byte[] {1, 0, 2});
         assertEquals(
                 "BINARY_FILE",
@@ -213,9 +224,27 @@ class M1056ContentTest {
                 first.get("contentSha256"));
         assertNotEquals(artifact.sha256(), first.get("contentSha256"));
         assertFalse(first.toString().contains(SECRET));
-        assertThrows(
-                HarnessException.class,
-                () -> service.artifact("second", artifact.id(), 0, "", CancellationToken.NONE));
+        var other = store.put("second", "actual second session text");
+        var scoped =
+                new WorkspaceContentInspection(
+                        files,
+                        store,
+                        new SecretRedactor(),
+                        new DefaultPolicyEngine(),
+                        () -> {},
+                        "first");
+        assertEquals(
+                "ARTIFACT_DENIED",
+                assertThrows(
+                                HarnessException.class,
+                                () ->
+                                        scoped.artifact(
+                                                "second",
+                                                other.id(),
+                                                0,
+                                                "",
+                                                CancellationToken.NONE))
+                        .code());
         Files.writeString(
                 root.resolve("artifacts/first").resolve(artifact.id() + ".txt"), "corrupted");
         assertEquals(

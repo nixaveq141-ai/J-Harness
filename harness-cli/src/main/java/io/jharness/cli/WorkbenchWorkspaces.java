@@ -12,12 +12,30 @@ import java.util.*;
 
 /** Operator-owned roots. Registering a directory never loads its model or extension config. */
 final class WorkbenchWorkspaces implements HarnessWebServer.Workspaces {
-    record RootCheck(Path root, String owner) {
+    record RootCheck(Path root, String owner, Object fileKey, DirectoryIdentity metadataIdentity) {
+        RootCheck(Path root, String owner) throws IOException {
+            this(
+                    root,
+                    owner,
+                    DirectoryIdentity.read(root),
+                    Files.exists(root.resolve(".jharness"), LinkOption.NOFOLLOW_LINKS)
+                            ? DirectoryIdentity.read(root.resolve(".jharness"))
+                            : null);
+        }
+
         RootCheck(Path root) throws IOException {
             this(root, Files.getOwner(root).getName());
         }
 
         void verify() throws IOException {
+            if (metadataIdentity != null) {
+                try {
+                    if (!metadataIdentity.equals(DirectoryIdentity.read(root.resolve(".jharness"))))
+                        throw new IOException("Metadata identity changed");
+                } catch (IOException ex) {
+                    throw error("WORKSPACE_PATH_DENIED");
+                }
+            }
             Path current = root.getRoot();
             for (Path part : root) {
                 current = current.resolve(part);
@@ -30,6 +48,8 @@ final class WorkbenchWorkspaces implements HarnessWebServer.Workspaces {
                         || !current.toRealPath().equals(current.toAbsolutePath().normalize()))
                     throw error("WORKSPACE_PATH_DENIED");
             }
+            if (!java.util.Objects.equals(fileKey, DirectoryIdentity.read(root)))
+                throw error("WORKSPACE_PATH_DENIED");
             if (!Files.getOwner(root).getName().equals(owner))
                 throw error("WORKSPACE_OWNER_MISMATCH");
         }
@@ -47,9 +67,11 @@ final class WorkbenchWorkspaces implements HarnessWebServer.Workspaces {
     private final String owner;
     private final List<Map<String, Object>> entries = new ArrayList<>();
     private final Map<String, HarnessWebServer.Profile> profiles = new LinkedHashMap<>();
+    private final Map<String, String> unavailable = new LinkedHashMap<>();
 
     WorkbenchWorkspaces(Metadata metadata, DataSanitizer sanitizer, Factory factory)
             throws IOException {
+        if (metadata.workspace().getParent() == null) throw error("WORKSPACE_PATH_DENIED");
         this.metadata = metadata;
         this.sanitizer = sanitizer;
         this.factory = factory;
@@ -77,21 +99,32 @@ final class WorkbenchWorkspaces implements HarnessWebServer.Workspaces {
             if (!entry.keySet().equals(Set.of("id", "name", "path"))
                     || !(entry.get("id") instanceof String id)
                     || !id.matches("[A-Za-z0-9_-]{1,32}")
-                    || profiles.containsKey(id)) throw error("INVALID_WORKSPACE_REGISTRY");
+                    || profiles.containsKey(id)
+                    || unavailable.containsKey(id)) throw error("INVALID_WORKSPACE_REGISTRY");
             name(entry.get("name"));
-            Path root = validate((String) entry.get("path"));
+            if (!(entry.get("path") instanceof String path))
+                throw error("INVALID_WORKSPACE_REGISTRY");
+            Path root;
+            try {
+                root = validate(path);
+            } catch (NoSuchFileException ex) {
+                unavailable.put(id, "WORKSPACE_NOT_FOUND");
+                continue;
+            } catch (InvalidPathException ex) {
+                throw error("INVALID_WORKSPACE_REGISTRY");
+            }
             if (!roots.add(root)) throw error("WORKSPACE_EXISTS");
             profiles.put(id, factory.create(root));
         }
     }
 
-    Map<String, HarnessWebServer.Profile> profiles() {
+    synchronized Map<String, HarnessWebServer.Profile> profiles() {
         return Map.copyOf(profiles);
     }
 
     @Override
     public synchronized Map<String, Object> read() {
-        return Map.of("workspaces", List.copyOf(entries));
+        return Map.of("workspaces", List.copyOf(entries), "unavailable", Map.copyOf(unavailable));
     }
 
     @Override
@@ -163,7 +196,11 @@ final class WorkbenchWorkspaces implements HarnessWebServer.Workspaces {
         }
         if (!Files.getOwner(path).getName().equals(owner)) throw error("WORKSPACE_OWNER_MISMATCH");
         Path real = path.toRealPath();
+        if (!real.equals(path)) throw error("WORKSPACE_PATH_DENIED");
+        var before = DirectoryIdentity.read(real);
         new Metadata(real).directory("sessions");
+        if (!before.equals(DirectoryIdentity.read(real))) throw error("WORKSPACE_PATH_DENIED");
+        new RootCheck(real, owner).verify();
         return real;
     }
 

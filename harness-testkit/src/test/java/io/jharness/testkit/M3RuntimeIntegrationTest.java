@@ -236,6 +236,15 @@ class M3RuntimeIntegrationTest {
                         new BigDecimal("0.000001"),
                         new BigDecimal("0.000002"));
         assertEquals(
+                "COST_BUDGET_UNAVAILABLE",
+                assertThrows(
+                                HarnessException.class,
+                                () ->
+                                        costs.actualCost(
+                                                new ChatRequest(List.of(), List.of(), Map.of()),
+                                                null))
+                        .code());
+        assertEquals(
                 new BigDecimal("0.008392"),
                 costs.maximumCost(
                         new ChatRequest(

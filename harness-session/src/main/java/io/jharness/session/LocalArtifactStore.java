@@ -13,15 +13,30 @@ import java.util.*;
 public final class LocalArtifactStore implements ArtifactStore {
     private static final int LIMIT = 4 * 1024 * 1024;
     private final Path root;
+    private final Object rootKey;
     private final DataSanitizer sanitizer;
 
     public LocalArtifactStore(Path root, DataSanitizer sanitizer) throws IOException {
         Files.createDirectories(root);
         this.root = root.toRealPath();
+        rootKey = DirectoryIdentity.bind(this.root);
         this.sanitizer = Objects.requireNonNull(sanitizer);
     }
 
+    private void checkRoot() throws IOException {
+        var attributes =
+                Files.readAttributes(
+                        root,
+                        java.nio.file.attribute.BasicFileAttributes.class,
+                        LinkOption.NOFOLLOW_LINKS);
+        if (!attributes.isDirectory()
+                || !Objects.equals(rootKey, DirectoryIdentity.read(root))
+                || !root.toRealPath().equals(root))
+            throw new HarnessException("ARTIFACT_DENIED", "Artifact root identity changed");
+    }
+
     private Path directory(String session, boolean create) throws IOException {
+        checkRoot();
         if (session == null || !session.matches("[A-Za-z0-9][A-Za-z0-9_-]{0,127}"))
             throw new HarnessException("INVALID_SESSION_ID", "Invalid artifact scope");
         Path path = root.resolve(session);
@@ -32,6 +47,7 @@ public final class LocalArtifactStore implements ArtifactStore {
         if (create) Files.createDirectories(path);
         else if (!Files.isDirectory(path, LinkOption.NOFOLLOW_LINKS))
             throw new HarnessException("ARTIFACT_NOT_FOUND", "Unknown artifact scope");
+        checkRoot();
         return path;
     }
 
@@ -96,37 +112,77 @@ public final class LocalArtifactStore implements ArtifactStore {
 
     /** Copy verified immutable artifacts before publishing a fork. No parent fallback. */
     public void copyScope(String source, String target) throws IOException {
+        validateScope(source);
+        validateScope(target);
+        checkRoot();
+        Path targetPath = root.resolve(target);
+        if (Files.exists(targetPath, LinkOption.NOFOLLOW_LINKS))
+            throw new HarnessException("ARTIFACT_SCOPE_EXISTS", "Fork scope already exists");
         Path sourcePath = root.resolve(source);
         if (!Files.exists(sourcePath, LinkOption.NOFOLLOW_LINKS)) return;
         sourcePath = directory(source, false);
-        Path targetPath = directory(target, true);
-        long total = 0;
-        int count = 0;
-        try (DirectoryStream<Path> files = Files.newDirectoryStream(sourcePath, "*.txt")) {
-            for (Path file : files) {
-                if (++count > 1000 || (total += Files.size(file)) > 32 * 1024 * 1024)
-                    throw new HarnessException("ARTIFACT_LIMIT", "Fork artifacts exceed bound");
-                String name = file.getFileName().toString();
-                String id = name.substring(0, name.length() - 4);
-                read(source, id, 0, 1);
-                byte[] bytes;
-                try (InputStream input = Files.newInputStream(file, LinkOption.NOFOLLOW_LINKS)) {
-                    bytes = input.readNBytes(LIMIT + 1);
-                }
-                if (bytes.length > LIMIT || !hash(bytes).equals(id.substring(37)))
-                    throw new HarnessException(
-                            "ARTIFACT_CORRUPT", "Fork artifact integrity failed");
-                try (FileChannel channel =
-                        FileChannel.open(
-                                targetPath.resolve(name),
-                                StandardOpenOption.CREATE_NEW,
-                                StandardOpenOption.WRITE,
-                                LinkOption.NOFOLLOW_LINKS)) {
-                    ByteBuffer buffer = ByteBuffer.wrap(bytes);
-                    while (buffer.hasRemaining()) channel.write(buffer);
-                    channel.force(true);
+        Path staged = Files.createTempDirectory(root, ".fork-artifacts-");
+        try {
+            long total = 0;
+            int count = 0;
+            try (DirectoryStream<Path> files = Files.newDirectoryStream(sourcePath, "*.txt")) {
+                for (Path file : files) {
+                    if (!Files.isRegularFile(file, LinkOption.NOFOLLOW_LINKS))
+                        throw new HarnessException("ARTIFACT_DENIED", "Fork entry must be regular");
+                    String name = file.getFileName().toString();
+                    if (!name.matches("[0-9a-f-]{36}-[0-9a-f]{64}\\.txt"))
+                        throw new HarnessException("ARTIFACT_DENIED", "Invalid fork artifact name");
+                    byte[] bytes;
+                    try (InputStream input =
+                            Files.newInputStream(file, LinkOption.NOFOLLOW_LINKS)) {
+                        bytes = input.readNBytes(LIMIT + 1);
+                    }
+                    if (++count > 1000 || (total += bytes.length) > 32 * 1024 * 1024)
+                        throw new HarnessException("ARTIFACT_LIMIT", "Fork artifacts exceed bound");
+                    if (bytes.length > LIMIT || !hash(bytes).equals(name.substring(37, 101)))
+                        throw new HarnessException(
+                                "ARTIFACT_CORRUPT", "Fork artifact integrity failed");
+                    try (FileChannel channel =
+                            FileChannel.open(
+                                    staged.resolve(name),
+                                    StandardOpenOption.CREATE_NEW,
+                                    StandardOpenOption.WRITE,
+                                    LinkOption.NOFOLLOW_LINKS)) {
+                        ByteBuffer buffer = ByteBuffer.wrap(bytes);
+                        while (buffer.hasRemaining()) channel.write(buffer);
+                        channel.force(true);
+                    }
                 }
             }
+            checkRoot();
+            Files.move(staged, targetPath, StandardCopyOption.ATOMIC_MOVE);
+        } finally {
+            if (Files.exists(staged, LinkOption.NOFOLLOW_LINKS)) removeDirectory(staged);
         }
+    }
+
+    /** Compensation only for a newly copied, exclusively owned fork destination. */
+    public void rollbackCopy(String target) throws IOException {
+        validateScope(target);
+        Path path = root.resolve(target);
+        if (Files.exists(path, LinkOption.NOFOLLOW_LINKS))
+            removeDirectory(directory(target, false));
+    }
+
+    private static void validateScope(String scope) {
+        if (scope == null || !scope.matches("[A-Za-z0-9][A-Za-z0-9_-]{0,127}"))
+            throw new HarnessException("INVALID_SESSION_ID", "Invalid artifact scope");
+    }
+
+    private static void removeDirectory(Path path) throws IOException {
+        try (var entries = Files.newDirectoryStream(path)) {
+            for (Path entry : entries) {
+                if (!Files.isRegularFile(entry, LinkOption.NOFOLLOW_LINKS))
+                    throw new HarnessException(
+                            "ARTIFACT_DENIED", "Unexpected fork compensation entry");
+                Files.delete(entry);
+            }
+        }
+        Files.delete(path);
     }
 }

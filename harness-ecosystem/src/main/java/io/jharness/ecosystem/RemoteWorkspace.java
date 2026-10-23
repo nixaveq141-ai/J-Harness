@@ -2,7 +2,6 @@ package io.jharness.ecosystem;
 
 import io.jharness.api.*;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 
 /**
@@ -16,7 +15,7 @@ public final class RemoteWorkspace implements WorkspaceFiles {
     }
 
     private final BiFunction<Map<String, Object>, CancellationToken, Map<String, Object>> exchange;
-    private final Map<String, String> observed = new ConcurrentHashMap<>();
+    private final Map<String, String> observed = new LinkedHashMap<>();
 
     public RemoteWorkspace(
             BiFunction<Map<String, Object>, CancellationToken, Map<String, Object>> exchange) {
@@ -35,7 +34,10 @@ public final class RemoteWorkspace implements WorkspaceFiles {
                     || part.equalsIgnoreCase(".jharness")
                     || part.matches("(?i)(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])(?:\\..*)?"))
                 throw BoundedJson.error("PATH_DENIED");
-        return value;
+        var parts = new ArrayList<String>();
+        for (String part : value.split("/"))
+            if (!part.isEmpty() && !part.equals(".")) parts.add(part);
+        return parts.isEmpty() ? "." : String.join("/", parts);
     }
 
     private Map<String, Object> call(
@@ -59,32 +61,32 @@ public final class RemoteWorkspace implements WorkspaceFiles {
     }
 
     @Override
-    public String readText(ExecPath path) {
+    public synchronized String readText(ExecPath path) {
         var value = call("read", path, Map.of(), CancellationToken.NONE);
-        observed.put(safe(path), (String) value.get("version"));
+        remember(safe(path), (String) value.get("version"));
         return (String) value.get("text");
     }
 
     @Override
-    public String versionOf(ExecPath path) {
+    public synchronized String versionOf(ExecPath path) {
         return (String) call("version", path, Map.of(), CancellationToken.NONE).get("version");
     }
 
     @Override
-    public FileChange writeText(ExecPath path, String text, VersionGuard guard) {
+    public synchronized FileChange writeText(ExecPath path, String text, VersionGuard guard) {
         return write(
                 path,
                 text,
                 true,
-                guard == null ? null : guard.expectedVersion(),
+                Objects.requireNonNull(guard).expectedVersion(),
                 CancellationToken.NONE);
     }
 
     @Override
-    public Map<String, Object> readPage(
+    public synchronized Map<String, Object> readPage(
             ExecPath path, int start, int end, CancellationToken cancellation) {
         var value = call("page", path, Map.of("start", start, "end", end), cancellation);
-        if (value.get("version") instanceof String version) observed.put(safe(path), version);
+        if (value.get("version") instanceof String version) remember(safe(path), version);
         return value;
     }
 
@@ -116,7 +118,7 @@ public final class RemoteWorkspace implements WorkspaceFiles {
     }
 
     @Override
-    public FileChange write(
+    public synchronized FileChange write(
             ExecPath path,
             String text,
             boolean overwrite,
@@ -128,12 +130,12 @@ public final class RemoteWorkspace implements WorkspaceFiles {
         extra.put("expectedVersion", expected == null ? observed.get(safe(path)) : expected);
         var value = call("write", path, extra, cancellation);
         FileChange result = change(value);
-        observed.put(safe(path), result.afterVersion());
+        remember(safe(path), result.afterVersion());
         return result;
     }
 
     @Override
-    public FileChange edit(
+    public synchronized FileChange edit(
             ExecPath path,
             String oldText,
             String newText,
@@ -147,16 +149,36 @@ public final class RemoteWorkspace implements WorkspaceFiles {
         extra.put("expectedVersion", expected == null ? observed.get(safe(path)) : expected);
         var value = call("edit", path, extra, cancellation);
         FileChange result = change(value);
-        observed.put(safe(path), result.afterVersion());
+        remember(safe(path), result.afterVersion());
         return result;
     }
 
     @Override
-    public Map<String, Object> applyPatch(
+    public synchronized Map<String, Object> applyPatch(
             String patch, Map<String, String> versions, CancellationToken cancellation) {
-        var all = new LinkedHashMap<>(observed);
-        all.putAll(versions);
-        return call("patch", root(), Map.of("patch", patch, "versions", all), cancellation);
+        var all = new LinkedHashMap<String, String>();
+        for (var entry : versions.entrySet())
+            all.put(safe(new ExecPath(entry.getKey())), entry.getValue());
+        for (String line : patch.split("\\n")) {
+            if (line.startsWith("+++ ")) {
+                String header = line.substring(4).split("\t", 2)[0];
+                if (header.startsWith("b/")) header = header.substring(2);
+                String key = safe(new ExecPath(header));
+                if (!all.containsKey(key) && observed.containsKey(key))
+                    all.put(key, observed.get(key));
+            }
+        }
+        var result = call("patch", root(), Map.of("patch", patch, "versions", all), cancellation);
+        // A partial/unknown commit must never leave implicit authority from an older observation.
+        observed.clear();
+        if (result.get("changes") instanceof List<?> changes)
+            for (Object raw : changes) {
+                var change = Values.object(raw);
+                if (change.get("path") instanceof String path
+                        && change.get("afterVersion") instanceof String version)
+                    remember(safe(new ExecPath(path)), version);
+            }
+        return result;
     }
 
     @Override
@@ -164,11 +186,18 @@ public final class RemoteWorkspace implements WorkspaceFiles {
         return (String) call("diff", root(), Map.of("scope", scope), cancellation).get("diff");
     }
 
+    private void remember(String path, String version) {
+        observed.remove(path);
+        observed.put(path, version);
+        if (observed.size() > 10000) observed.remove(observed.keySet().iterator().next());
+    }
+
     private static FileChange change(Map<String, Object> value) {
         return new FileChange(
                 new ExecPath((String) value.get("path")),
                 (String) value.get("beforeVersion"),
                 (String) value.get("afterVersion"),
-                (String) value.get("diff"));
+                (String) value.get("diff"),
+                Values.object(value.getOrDefault("metadata", Map.of())));
     }
 }

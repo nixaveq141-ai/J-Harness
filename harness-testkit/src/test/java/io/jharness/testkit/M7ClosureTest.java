@@ -29,6 +29,92 @@ class M7ClosureTest {
 
     private final SecretRedactor sanitizer = new SecretRedactor();
 
+    @Test
+    void r2PlanningRejectsExecutingEditsStaleEvidenceAndRevisionOverflow() throws Exception {
+        Files.createDirectories(root.resolve("workspace"));
+        Files.writeString(root.resolve("workspace/input.txt"), "evidence");
+        var driver = new Driver();
+        try (var sdk = open("planning", List.of(new PlanningPlugin(), driver))) {
+            sdk.snapshot();
+            driver.call("read_file", Map.of("path", "input.txt"));
+            String old =
+                    repository().openReader("planning").events().stream()
+                            .filter(
+                                    e ->
+                                            e.type().equals("tool.completed")
+                                                    && "read_file".equals(e.payload().get("tool")))
+                            .findFirst()
+                            .orElseThrow()
+                            .eventId();
+            driver.call("todo_update", todo("PENDING", 0, List.of()));
+            assertEquals(
+                    "EVIDENCE_REQUIRED",
+                    driver.call("todo_update", todo("DONE", 1, List.of(old)))
+                            .error()
+                            .orElseThrow()
+                            .code());
+            driver.call(
+                    "plan_update",
+                    Map.of("revision", 0, "steps", List.of("read input", "verify input")));
+            driver.call("plan_transition", transition("APPROVED", 1, List.of()));
+            driver.call("plan_transition", transition("EXECUTING", 2, List.of()));
+            assertEquals(
+                    "INVALID_PLAN_TRANSITION",
+                    driver.call(
+                                    "plan_update",
+                                    Map.of(
+                                            "revision",
+                                            3,
+                                            "steps",
+                                            List.of("replace executing plan")))
+                            .error()
+                            .orElseThrow()
+                            .code());
+            driver.call("read_file", Map.of("path", "input.txt"));
+            String shared =
+                    repository().openReader("planning").events().reversed().stream()
+                            .filter(
+                                    e ->
+                                            e.type().equals("tool.completed")
+                                                    && "read_file".equals(e.payload().get("tool")))
+                            .findFirst()
+                            .orElseThrow()
+                            .eventId();
+            assertEquals(
+                    ToolStatus.SUCCESS,
+                    driver.call(
+                                    "plan_transition",
+                                    transition("COMPLETED", 3, List.of(shared, shared)))
+                            .status());
+            var writer =
+                    driver.context
+                            .services()
+                            .requireUnique(SessionWriter.class, driver.context.scope());
+            writer.append(
+                    SessionEvent.session(
+                            "planning",
+                            "plan.changed",
+                            Map.of(
+                                    "revision",
+                                    10000,
+                                    "state",
+                                    "DRAFT",
+                                    "steps",
+                                    List.of("bounded"),
+                                    "evidence",
+                                    List.of())));
+            assertEquals(
+                    "REVISION_LIMIT",
+                    driver.call(
+                                    "plan_update",
+                                    Map.of("revision", 10000, "steps", List.of("overflow")))
+                            .error()
+                            .orElseThrow()
+                            .code());
+            assertEquals(10000, driver.call("plan_view", Map.of()).value().get("revision"));
+        }
+    }
+
     private JsonlSessionRepository repository() throws IOException {
         return new JsonlSessionRepository(root.resolve("sessions"));
     }

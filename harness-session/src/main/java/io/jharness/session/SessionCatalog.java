@@ -72,9 +72,8 @@ public final class SessionCatalog {
                                 "ready",
                                 recovery.ready(),
                                 "archived",
-                                events.stream()
-                                        .anyMatch(e -> e.type().equals("session.archived"))));
-            } catch (HarnessException ex) {
+                                SessionLifecycle.archived(events)));
+            } catch (RuntimeException ex) {
                 if (workspace == null
                         && model == null
                         && after == null
@@ -82,7 +81,14 @@ public final class SessionCatalog {
                         && tool == null
                         && status == null
                         && matched++ >= offset)
-                    result.add(Map.of("session", id, "diagnostic", ex.code(), "ready", false));
+                    result.add(
+                            Map.of(
+                                    "session",
+                                    id,
+                                    "diagnostic",
+                                    ex instanceof HarnessException h ? h.code() : "INVALID_EVENT",
+                                    "ready",
+                                    false));
             }
             if (result.size() == limit) break;
         }

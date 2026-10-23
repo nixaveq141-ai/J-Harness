@@ -17,6 +17,36 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 class M1055QuestionsTest {
     @TempDir Path root;
+
+    @Test
+    void r2AcceptedAnswerRetainsIdentityWhenCancellationPrecedesOwnerResume() throws Exception {
+        var model = model(spec("single", 5), false);
+        try (var sdk = open("accepted-cancel", model);
+                var executor = Executors.newSingleThreadExecutor()) {
+            var running = executor.submit(() -> sdk.run("ask", CancellationToken.NONE));
+            var question = pending(sdk);
+            var input = answer(question, "accepted-before-cancel", List.of("a"), "", false);
+            var service = sdk.questions();
+            synchronized (service) {
+                assertEquals("SUBMITTED", service.respond(input).get("state"));
+                sdk.cancel();
+            }
+            running.get(4, TimeUnit.SECONDS);
+            var fact =
+                    sdk.snapshot().events().stream()
+                            .filter(e -> e.type().equals("question.resolved"))
+                            .findFirst()
+                            .orElseThrow();
+            assertEquals("ANSWERED", fact.payload().get("state"));
+            assertEquals("accepted-before-cancel", fact.payload().get("requestId"));
+            assertEquals(true, fact.payload().get("cancellationObserved"));
+            assertEquals(
+                    "ANSWERED",
+                    UserQuestionsPlugin.recorded(sdk.snapshot().events(), input).get("state"));
+            assertEquals(1, model.requests().size());
+        }
+    }
+
     boolean parallelQuestionFixture;
     int fixtureContextTokens = 8192;
     Duration fixtureBudget = Duration.ofSeconds(10);

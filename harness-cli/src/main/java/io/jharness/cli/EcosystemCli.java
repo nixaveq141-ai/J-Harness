@@ -385,11 +385,10 @@ final class EcosystemCli {
                                                                             .nullOutputStream()));
                                         }
                                     },
-                                    (source, target) ->
+                                    HarnessWebServer.ForkArtifacts.local(
                                             new LocalArtifactStore(
-                                                            targetMetadata.directory("artifacts"),
-                                                            settings)
-                                                    .copyScope(source, target),
+                                                    targetMetadata.directory("artifacts"),
+                                                    settings)),
                                     new WorkspaceContentInspection(
                                             new io.jharness.workspace.LocalWorkspace(
                                                     root, config.searchFilter()),

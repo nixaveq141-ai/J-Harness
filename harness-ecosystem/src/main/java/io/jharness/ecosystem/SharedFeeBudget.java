@@ -62,8 +62,11 @@ final class SharedFeeBudget {
 
             @Override
             public BigDecimal actualCost(ChatRequest request, ChatResponse response) {
-                BigDecimal actual = Objects.requireNonNull(delegate.actualCost(request, response));
                 synchronized (SharedFeeBudget.this) {
+                    if (pending == null || pendingEpoch != epoch)
+                        throw BoundedJson.error("COST_ACCOUNTING_BREACH");
+                    BigDecimal actual =
+                            Objects.requireNonNull(delegate.actualCost(request, response));
                     if (pending == null
                             || pendingEpoch != epoch
                             || actual.signum() < 0

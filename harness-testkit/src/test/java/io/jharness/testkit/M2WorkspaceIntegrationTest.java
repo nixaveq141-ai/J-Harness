@@ -22,6 +22,29 @@ class M2WorkspaceIntegrationTest {
     private static final PluginScope SCOPE = new PluginScope("s", "agent");
 
     @Test
+    void committedWriteRetainsVersionsWhenDiffArtifactPublicationFails() throws Exception {
+        try (Fixture f = new Fixture(true)) {
+            String content = "line of committed content\n".repeat(600);
+            var result =
+                    f.run(
+                            call(
+                                    "write_file",
+                                    "write",
+                                    Map.of("path", "written.txt", "content", content)));
+            assertEquals(ToolStatus.FAILED, result.status());
+            assertEquals("ARTIFACT_WRITE_FAILED", result.error().orElseThrow().code());
+            assertEquals(true, result.value().get("committed"));
+            assertEquals(false, result.value().get("sideEffectUncertain"));
+            assertEquals(content, Files.readString(f.root.resolve("written.txt")));
+            assertEquals(
+                    new LocalWorkspace(f.root).versionOf(new ExecPath("written.txt")),
+                    result.value().get("afterVersion"));
+            assertEquals("MISSING", result.value().get("beforeVersion"));
+            assertEquals(true, result.value().get("outputTruncated"));
+        }
+    }
+
+    @Test
     void actualFileReadEditLoopUsesDurableIntentAndEveryDiskRequestReconstructs() throws Exception {
         try (Fixture f = new Fixture()) {
             Files.writeString(f.root.resolve("Main.java"), "class Main { int value = 1; }\n");
@@ -296,7 +319,10 @@ class M2WorkspaceIntegrationTest {
 
     @Test
     void oversizedDiffSpillsToPersistedReferenceAndCanBeReadBackAfterReopen() throws Exception {
+        Path coldStore;
+        String artifactId;
         try (Fixture f = new Fixture()) {
+            coldStore = f.store;
             String content = "line of generated content\n".repeat(600);
             ToolResult result =
                     f.run(
@@ -307,6 +333,7 @@ class M2WorkspaceIntegrationTest {
             assertEquals(ToolStatus.SUCCESS, result.status());
             assertEquals(true, result.value().get("outputTruncated"));
             String id = (String) result.value().get("artifactRef");
+            artifactId = id;
             String page =
                     new LocalArtifactStore(f.store.resolve("artifacts"), new SecretRedactor())
                             .read("s", id, 0, 8192);
@@ -317,6 +344,24 @@ class M2WorkspaceIntegrationTest {
             assertTrue(readBack.value().toString().contains("large.txt"));
             assertTrue(Files.readString(f.root.resolve("large.txt")).equals(content));
         }
+        var cold = new JsonlSessionRepository(coldStore);
+        var fact =
+                cold.openReader("s").events().stream()
+                        .filter(
+                                e ->
+                                        e.type().equals("tool.completed")
+                                                && "write".equals(e.callId()))
+                        .findFirst()
+                        .orElseThrow();
+        var reference = Values.object(fact.payload().get("value"));
+        assertEquals(artifactId, reference.get("artifactRef"));
+        String complete =
+                new LocalArtifactStore(coldStore.resolve("artifacts"), new SecretRedactor())
+                        .readText("s", artifactId);
+        assertEquals(
+                UnifiedDiff.between("large.txt", "", "line of generated content\n".repeat(600)),
+                complete);
+        assertEquals(artifactId.substring(37), reference.get("artifactSha256"));
     }
 
     @Test
@@ -418,6 +463,10 @@ class M2WorkspaceIntegrationTest {
         final PluginContainer container;
 
         Fixture() throws IOException {
+            this(false);
+        }
+
+        Fixture(boolean failArtifacts) throws IOException {
             root = Files.createDirectory(temporary.resolve("workspace"));
             store = temporary.resolve("store");
             repo = new JsonlSessionRepository(store);
@@ -432,6 +481,21 @@ class M2WorkspaceIntegrationTest {
                             "s",
                             "user.message",
                             Map.of("role", "user", "content", "Edit Main.java precisely")));
+            ArtifactStore spill =
+                    failArtifacts
+                            ? new ArtifactStore() {
+                                public Artifact put(String session, String content)
+                                        throws IOException {
+                                    throw new IOException("artifact fixture failure");
+                                }
+
+                                public String read(
+                                        String session, String id, int offset, int limit) {
+                                    throw new AssertionError("No read");
+                                }
+                            }
+                            : new LocalArtifactStore(
+                                    store.resolve("artifacts"), new SecretRedactor());
             List<HarnessPlugin> plugins =
                     List.of(
                             registryPlugin(tools),
@@ -439,10 +503,7 @@ class M2WorkspaceIntegrationTest {
                                     repo,
                                     new LocalArtifactStore(
                                             store.resolve("artifacts"), new SecretRedactor())),
-                            new WorkspaceToolsPlugin(
-                                    new LocalWorkspace(root),
-                                    new LocalArtifactStore(
-                                            store.resolve("artifacts"), new SecretRedactor())));
+                            new WorkspaceToolsPlugin(new LocalWorkspace(root), spill));
             container =
                     new PluginContainer(
                             SCOPE,

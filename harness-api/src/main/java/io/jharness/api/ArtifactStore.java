@@ -5,9 +5,16 @@ import java.io.IOException;
 public interface ArtifactStore {
     Artifact put(String sessionId, String content) throws IOException;
 
+    /**
+     * UTF-16 character offset/limit; an empty block denotes EOF, short blocks need not. Providers
+     * validate scope, identity and integrity before returning text.
+     */
     String read(String sessionId, String id, int offset, int limit) throws IOException;
 
-    /** Complete verified text for bounded host inspection, not an unbounded storage read. */
+    /**
+     * Complete text for host inspection, bounded to 4,194,304 UTF-16 units. Artifact.bytes is the
+     * stored UTF-8 byte count; integrity is the provider responsibility.
+     */
     default String readText(String sessionId, String id) throws IOException {
         var text = new StringBuilder();
         for (int offset = 0; ; ) {
@@ -16,7 +23,7 @@ public interface ArtifactStore {
             offset += part.length();
             if (text.length() > 4194304)
                 throw new HarnessException("ARTIFACT_LIMIT", "Artifact exceeds bound");
-            if (part.length() < 262144) return text.toString();
+            if (part.isEmpty()) return text.toString();
         }
     }
 

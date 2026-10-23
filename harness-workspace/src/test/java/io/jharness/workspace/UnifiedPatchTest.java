@@ -72,7 +72,9 @@ class UnifiedPatchTest {
         var result = files.applyPatch(UPDATE + CREATE, Map.of(), CancellationToken.NONE);
         assertEquals(true, result.get("partial"));
         assertEquals(true, result.get("sideEffectUncertain"));
-        assertEquals(List.of("b.txt"), result.get("pendingPaths"));
+        assertEquals(List.of(), result.get("pendingPaths"));
+        assertEquals("b.txt", result.get("failedPath"));
+        assertEquals("REQUIRES_INSPECTION", result.get("failedPathState"));
         assertEquals(1, ((List<?>) result.get("changes")).size());
         assertEquals("one\nnew\n", Files.readString(root.resolve("a.txt")));
         assertFalse(Files.exists(root.resolve("b.txt")));

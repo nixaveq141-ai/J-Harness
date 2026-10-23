@@ -605,15 +605,26 @@ public final class CliApplication {
             if (!args.has("event")) Arguments.fail();
             var artifacts = new LocalArtifactStore(metadata.directory("artifacts"), sanitizer);
             String fork =
-                    repo.fork(
+                    repo.forkTo(
                             id,
                             args.get("event", ""),
+                            "s-" + UUID.randomUUID(),
                             target -> {
                                 try {
                                     artifacts.copyScope(id, target);
                                 } catch (IOException ex) {
                                     throw new HarnessException(
                                             "ARTIFACT_COPY_FAILED", "Cannot copy fork artifacts");
+                                }
+                            },
+                            target -> {
+                                try {
+                                    artifacts.rollbackCopy(target);
+                                } catch (IOException ex) {
+                                    throw new HarnessException(
+                                            "ARTIFACT_ROLLBACK_FAILED",
+                                            "Artifact compensation failed",
+                                            ex);
                                 }
                             });
             out.println(Json.text(Map.of("session", fork, "parentSession", id)));

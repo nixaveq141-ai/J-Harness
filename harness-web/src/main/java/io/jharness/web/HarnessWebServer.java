@@ -53,6 +53,20 @@ public final class HarnessWebServer implements AutoCloseable {
     @FunctionalInterface
     public interface ForkArtifacts {
         void copy(String source, String target) throws IOException;
+
+        default void rollback(String target) throws IOException {}
+
+        static ForkArtifacts local(LocalArtifactStore store) {
+            return new ForkArtifacts() {
+                public void copy(String source, String target) throws IOException {
+                    store.copyScope(source, target);
+                }
+
+                public void rollback(String target) throws IOException {
+                    store.rollbackCopy(target);
+                }
+            };
+        }
     }
 
     private Workspaces workspaces;
@@ -247,37 +261,17 @@ public final class HarnessWebServer implements AutoCloseable {
     }
 
     private void restore(List<SessionEvent> events) {
+        var grouped = new LinkedHashMap<String, List<SessionEvent>>();
         for (var event : events) {
-            var payload = event.payload();
-            if (event.type().equals("web.task.accepted")) {
-                var task =
-                        new Task(
-                                (String) payload.get("taskId"),
-                                (String) payload.get("profile"),
-                                (String) payload.get("requestHash"),
-                                (String) payload.get("goalHash"),
-                                (String) payload.get("workspaceBinding"));
-                task.selection = Values.object(payload.getOrDefault("selection", Map.of()));
-                task.phase = "UNKNOWN";
-                task.recovered = true;
-                if (!profiles.containsKey(task.profile)
-                        || !profiles.get(task.profile).workspaceBinding().equals(task.binding)
-                        || tasks.putIfAbsent(task.id, task) != null
-                        || submissions.putIfAbsent(task.requestHash, task) != null)
-                    throw new IllegalArgumentException("Catalog/profile mismatch");
-            } else if (event.type().equals("web.task.verified")) {
-                var task = tasks.get(payload.get("taskId"));
-                if (task == null || !task.phase.equals("UNKNOWN"))
-                    throw new IllegalArgumentException("Invalid Web verification");
-                task.phase = "VERIFIED";
-                task.error = "EXTERNALLY_VERIFIED_NO_REPLAY";
-            } else if (event.type().equals("web.task.finished")) {
-                var task = tasks.get(payload.get("taskId"));
-                if (task == null) throw new IllegalArgumentException("Invalid Web catalog");
-                task.phase = (String) payload.get("phase");
-                task.status = (String) payload.get("status");
-                task.error = (String) payload.get("error");
-            } else throw new IllegalArgumentException("Not a Web catalog");
+            if (!(event.payload().get("taskId") instanceof String id))
+                throw new HarnessException("INVALID_WEB_CATALOG", "Missing task identity");
+            grouped.computeIfAbsent(id, ignored -> new ArrayList<>()).add(event);
+        }
+        for (var history : grouped.values()) {
+            var task = parseTask(history);
+            if (tasks.putIfAbsent(task.id, task) != null
+                    || submissions.putIfAbsent(task.requestHash, task) != null)
+                throw new HarnessException("INVALID_WEB_CATALOG", "Duplicate task identity");
         }
         if (tasks.size() > maxTasks)
             throw new IllegalArgumentException("Catalog exceeds task bound");
@@ -290,6 +284,7 @@ public final class HarnessWebServer implements AutoCloseable {
     private Task parseTask(List<SessionEvent> history) {
         Task task = null;
         for (var event : history) {
+            DurableTaskCatalog.validate(event);
             var p = event.payload();
             if (event.type().equals("web.task.accepted")) {
                 if (task != null) throw new IllegalArgumentException("Repeated admission");
@@ -1642,7 +1637,6 @@ public final class HarnessWebServer implements AutoCloseable {
             String method,
             Map<String, String> query)
             throws IOException {
-        if (diskCatalog == null) throw fault(400, "TURNS_UNAVAILABLE");
         if (path.length == 5 && method.equals("GET")) {
             if (query.keySet().equals(Set.of("request"))) {
                 if (!query.get("request").matches("[A-Za-z0-9_-]{1,64}"))
@@ -1663,6 +1657,7 @@ public final class HarnessWebServer implements AutoCloseable {
             respond(exchange, 200, task.turns.page(offset));
             return;
         }
+        if (diskCatalog == null) throw fault(400, "TURNS_UNAVAILABLE");
         if (!query.isEmpty()) throw fault(400, "INVALID_QUERY");
         if (path.length == 5 && method.equals("POST")) {
             var input = body(exchange, Set.of("requestId", "text", "kind"), Set.of("modelId"));
@@ -1849,6 +1844,7 @@ public final class HarnessWebServer implements AutoCloseable {
     }
 
     private void startInput(Task task, TurnQueue.Input input) {
+        String content = input.content;
         try {
             var pointer = new LinkedHashMap<String, Object>(accepted(task));
             pointer.put("turnHash", input.hash);
@@ -1871,7 +1867,6 @@ public final class HarnessWebServer implements AutoCloseable {
             task.cancelled = false;
             task.recovered = false;
             occupied.add(task.binding);
-            String content = input.content;
             task.worker = new Thread(() -> execute(task, content, input), "jharness-web-turn");
             task.worker.setDaemon(true);
             task.worker.start();
@@ -1955,6 +1950,14 @@ public final class HarnessWebServer implements AutoCloseable {
                         } catch (IOException ex) {
                             throw new HarnessException(
                                     "ARTIFACT_COPY_FAILED", "Artifact snapshot failed");
+                        }
+                    },
+                    target -> {
+                        try {
+                            profile.artifacts().rollback(target);
+                        } catch (IOException ex) {
+                            throw new HarnessException(
+                                    "ARTIFACT_ROLLBACK_FAILED", "Artifact compensation failed", ex);
                         }
                     });
             task.phase = "FINISHED";

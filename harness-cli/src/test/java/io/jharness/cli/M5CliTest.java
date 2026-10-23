@@ -129,6 +129,29 @@ class M5CliTest {
         try (var writer = repo().openWriter("s", WriteOwnership.EXCLUSIVE)) {
             writer.append(
                     new SessionEvent(
+                            "context",
+                            "s",
+                            "request.context",
+                            Instant.now(),
+                            1,
+                            EventLevel.STEP,
+                            "turn",
+                            "step",
+                            null,
+                            Map.of(
+                                    "messages",
+                                    List.of(
+                                            Map.of(
+                                                    "role",
+                                                    "user",
+                                                    "content",
+                                                    "pending request fixture")),
+                                    "tools",
+                                    List.of(),
+                                    "parameters",
+                                    Map.of())));
+            writer.append(
+                    new SessionEvent(
                             "request",
                             "s",
                             "model.requested",

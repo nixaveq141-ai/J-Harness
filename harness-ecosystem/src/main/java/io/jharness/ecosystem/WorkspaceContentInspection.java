@@ -111,7 +111,8 @@ public final class WorkspaceContentInspection implements ContentInspection {
             throw new HarnessException("INVALID_RANGE", "Invalid preview range");
         var view = files.isolatedView();
         var p = new ExecPath(path);
-        String before = view.versionOf(p), text = view.readText(p);
+        var snapshot = view.readSnapshot(p);
+        String before = snapshot.version(), text = snapshot.text();
         token.throwIfCancelled();
         if (!before.equals(view.versionOf(p)))
             throw new HarnessException("FILE_CONFLICT", "File changed during read");

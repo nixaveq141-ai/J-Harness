@@ -29,8 +29,8 @@ class WorkbenchWorkspacesTest {
 
     @Test
     void registrationPersistsCanonicalRootsWithoutLoadingTargetConfig() throws Exception {
-        Path a = Files.createDirectories(temp.resolve("a")),
-                b = Files.createDirectories(temp.resolve("b"));
+        Path a = Files.createDirectories(temp.resolve("a")).toRealPath(),
+                b = Files.createDirectories(temp.resolve("b")).toRealPath();
         Files.createDirectories(b.resolve(".jharness"));
         Files.writeString(
                 b.resolve(".jharness/config.json"), "this deliberately is not valid config");
@@ -53,7 +53,7 @@ class WorkbenchWorkspacesTest {
     @Test
     void relativeTraversalMetadataSecretsLinksAndWrongOwnerAreRejected() throws Exception {
         Path a = Files.createDirectories(temp.resolve("a")),
-                target = Files.createDirectories(temp.resolve("target"));
+                target = Files.createDirectories(temp.resolve("target")).toRealPath();
         var manager = manager(a);
         for (String path :
                 List.of(
@@ -62,13 +62,20 @@ class WorkbenchWorkspacesTest {
                         a.resolve(".jharness").toString(),
                         Files.createDirectories(temp.resolve(".ssh")).toString(),
                         "\\\\server\\share\\folder"))
-            assertThrows(Exception.class, () -> manager.register(path, "rejected"));
-        assertThrows(
-                HarnessException.class,
-                () ->
-                        new WorkbenchWorkspaces.RootCheck(target, "different-owner-fixture")
-                                .verify());
-        Path link = temp.resolve("alias");
+            assertEquals(
+                    "WORKSPACE_PATH_DENIED",
+                    assertThrows(HarnessException.class, () -> manager.register(path, "rejected"))
+                            .code());
+        assertEquals(
+                "WORKSPACE_OWNER_MISMATCH",
+                assertThrows(
+                                HarnessException.class,
+                                () ->
+                                        new WorkbenchWorkspaces.RootCheck(
+                                                        target, "different-owner-fixture")
+                                                .verify())
+                        .code());
+        Path link = temp.toRealPath().resolve("alias");
         if (System.getProperty("os.name").startsWith("Windows")) {
             var process =
                     new ProcessBuilder(
@@ -101,8 +108,12 @@ class WorkbenchWorkspacesTest {
                 new JsonlSessionRepository(new Metadata(target.toRealPath()).directory("sessions"));
         try (var owner = sessions.openWriter("web-workspace-owner", WriteOwnership.EXCLUSIVE)) {
             owner.flush();
-            assertThrows(
-                    HarnessException.class, () -> manager(a).register(target.toString(), "busy"));
+            assertEquals(
+                    "WRITE_CONFLICT",
+                    assertThrows(
+                                    HarnessException.class,
+                                    () -> manager(a).register(target.toString(), "busy"))
+                            .code());
         }
         assertEquals(1, manager(a).profiles().size());
     }

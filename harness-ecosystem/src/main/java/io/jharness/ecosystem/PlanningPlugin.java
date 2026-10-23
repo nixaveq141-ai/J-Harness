@@ -67,17 +67,24 @@ public final class PlanningPlugin implements HarnessPlugin {
     }
 
     private void revision(Map<String, Object> current, Map<String, Object> args) {
+        if (((Number) args.get("revision")).intValue() >= 10000)
+            throw BoundedJson.error("REVISION_LIMIT");
         if (((Number) current.getOrDefault("revision", 0)).intValue()
                 != ((Number) args.get("revision")).intValue())
             throw BoundedJson.error("REVISION_CONFLICT");
     }
 
-    private void evidence(List<?> ids, int required) {
-        if (ids.size() != required || new HashSet<>(ids).size() != ids.size())
-            throw BoundedJson.error("EVIDENCE_REQUIRED");
+    private void evidence(List<?> ids, int required, Map<String, Object> current) {
+        if (ids.size() != required) throw BoundedJson.error("EVIDENCE_REQUIRED");
         var events = reader.events();
+        int boundary = -1;
+        for (int i = 0; i < events.size(); i++)
+            if (Set.of("todo.changed", "plan.changed").contains(events.get(i).type())
+                    && events.get(i).payload().equals(current)) boundary = i;
+        if (boundary < 0) throw BoundedJson.error("EVIDENCE_REQUIRED");
+        var relevant = events.subList(boundary + 1, events.size());
         for (Object id : ids)
-            if (events.stream()
+            if (relevant.stream()
                     .noneMatch(
                             e ->
                                     e.eventId().equals(id)
@@ -182,8 +189,11 @@ public final class PlanningPlugin implements HarnessPlugin {
                         throw BoundedJson.error("TODO_LIMIT");
                     var current = Values.object(all.getOrDefault(id, Map.of()));
                     revision(current, args);
-                    if (args.get("state").equals("DONE"))
-                        evidence((List<?>) args.get("evidence"), 1);
+                    if (args.get("state").equals("DONE")) {
+                        if (!Objects.equals(args.get("title"), current.get("title")))
+                            throw BoundedJson.error("EVIDENCE_REQUIRED");
+                        evidence((List<?>) args.get("evidence"), 1, current);
+                    }
                     result = new LinkedHashMap<>(args);
                     result.put("revision", ((Number) args.get("revision")).intValue() + 1);
                     mutationAttempted = true;
@@ -193,6 +203,8 @@ public final class PlanningPlugin implements HarnessPlugin {
                     revision(current, args);
                     result = new LinkedHashMap<>(current);
                     if (name.equals("plan_update")) {
+                        if ("EXECUTING".equals(current.get("state")))
+                            throw BoundedJson.error("INVALID_PLAN_TRANSITION");
                         result.put("steps", args.get("steps"));
                         result.put("state", "DRAFT");
                         result.put("evidence", List.of());
@@ -210,7 +222,8 @@ public final class PlanningPlugin implements HarnessPlugin {
                         if (state.equals("COMPLETED"))
                             evidence(
                                     (List<?>) args.get("evidence"),
-                                    ((List<?>) current.get("steps")).size());
+                                    ((List<?>) current.get("steps")).size(),
+                                    current);
                         result.put("state", state);
                         result.put("evidence", args.get("evidence"));
                     }

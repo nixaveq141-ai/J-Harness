@@ -300,6 +300,11 @@ public final class WorkspaceToolsPlugin implements HarnessPlugin {
                                         change.afterVersion(),
                                         "diff",
                                         change.diff());
+                        if (!change.metadata().isEmpty()) {
+                            var withMetadata = new LinkedHashMap<>(result);
+                            withMetadata.put("metadata", change.metadata());
+                            result = withMetadata;
+                        }
                         display =
                                 Map.of(
                                         "path",
@@ -406,7 +411,28 @@ public final class WorkspaceToolsPlugin implements HarnessPlugin {
                         ex.code().equals("PATH_DENIED") ? ToolStatus.DENIED : ToolStatus.FAILED,
                         ex.code());
             }
-            result = compact(result, scope.sessionId());
+            try {
+                result = compact(result, scope.sessionId());
+            } catch (IOException | RuntimeException artifactFailure) {
+                if (!Set.of("write_file", "edit_file").contains(name)) throw artifactFailure;
+                var committed = new LinkedHashMap<>(result);
+                if (committed.get("diff") instanceof String diff)
+                    committed.put("diff", diff.substring(0, Math.min(4096, diff.length())));
+                committed.put("outputTruncated", true);
+                committed.put("artifactError", "ARTIFACT_WRITE_FAILED");
+                committed.put("sideEffectUncertain", false);
+                committed.put("committed", true);
+                return new ToolResult(
+                        call.callId(),
+                        ToolStatus.FAILED,
+                        committed,
+                        "File committed; artifact publication failed",
+                        display,
+                        Optional.of(
+                                new ToolResult.ErrorInfo(
+                                        "ARTIFACT_WRITE_FAILED",
+                                        "File committed; inspect recorded versions")));
+            }
             return new ToolResult(
                     call.callId(),
                     ToolStatus.SUCCESS,

@@ -3,6 +3,15 @@ package io.jharness.api;
 import java.io.IOException;
 import java.util.*;
 
+/**
+ * Bounded environment operations. Local and remote providers share these result fields: list:
+ * entries (path/type), truncated; search: paths, truncated; grep: matches, truncated; readPage:
+ * path/text/version/startLine/nextLine/truncated. Page lines are one-based (max 2000), list depth
+ * 1..16 and list/search limit 1..5000; grep limit/paths max 1000. Existing-file overwrite still
+ * requires an explicit matching version or a current observation; null versions use only the
+ * provider's isolated observation cache, never unconditional overwrite. Diff scope is exactly
+ * working or staged.
+ */
 public interface WorkspaceFiles extends FileSystemView {
     /**
      * Separate observation/version cache over the same workspace; no file copying or new rights.

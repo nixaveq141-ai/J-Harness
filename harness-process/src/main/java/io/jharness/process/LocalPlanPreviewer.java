@@ -33,7 +33,12 @@ public final class LocalPlanPreviewer implements PlanPreviewer {
         try {
             ExecPath path = new ExecPath((String) call.arguments().get("path"));
             String version = files.versionOf(path);
-            String before = version.equals("MISSING") ? "" : files.readText(path);
+            String before = "";
+            if (!version.equals("MISSING")) {
+                var snapshot = files.readSnapshot(path);
+                before = snapshot.text();
+                version = snapshot.version();
+            }
             String after;
             if (call.tool().equals("write_file")) {
                 if (!version.equals("MISSING")

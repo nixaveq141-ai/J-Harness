@@ -52,11 +52,13 @@ public final class EventRequestJournal implements RequestJournal {
         String sessionId = null;
         for (SessionEvent event : events) {
             if (sessionId == null) sessionId = event.sessionId();
-            if (!sessionId.equals(event.sessionId())
-                    || event.schemaVersion() != 1
-                    || prefix.putIfAbsent(event.eventId(), event) != null)
+            if (!sessionId.equals(event.sessionId()))
+                throw new HarnessException("SESSION_MISMATCH", "Mixed request sessions");
+            if (event.schemaVersion() != 1)
                 throw new HarnessException(
-                        "INVALID_EVENT", "Request prefix must be a single valid session");
+                        "FUTURE_VERSION_READ_ONLY", "Unsupported request schema");
+            if (prefix.putIfAbsent(event.eventId(), event) != null)
+                throw new HarnessException("DUPLICATE_EVENT", "Duplicate request event");
             if (!event.eventId().equals(requestedEventId)) continue;
             if (!event.type().equals("model.requested"))
                 throw new HarnessException("INVALID_EVENT", "Target is not a model request");
@@ -78,9 +80,13 @@ public final class EventRequestJournal implements RequestJournal {
         if (!(payload.get("messages") instanceof List<?> messages)
                 || !(payload.get("tools") instanceof List<?> tools))
             throw new HarnessException("INVALID_EVENT", "Missing request messages or tools");
-        return new ChatRequest(
-                messages.stream().map(Values::object).toList(),
-                tools.stream().map(Values::object).toList(),
-                Values.object(payload.get("parameters")));
+        try {
+            return new ChatRequest(
+                    messages.stream().map(Values::object).toList(),
+                    tools.stream().map(Values::object).toList(),
+                    Values.object(payload.get("parameters")));
+        } catch (RuntimeException ex) {
+            throw new HarnessException("INVALID_EVENT", "Malformed request envelope", ex);
+        }
     }
 }

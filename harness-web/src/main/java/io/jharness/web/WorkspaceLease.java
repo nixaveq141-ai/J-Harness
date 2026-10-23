@@ -22,11 +22,16 @@ final class WorkspaceLease implements AutoCloseable {
         try {
             check();
             if (Files.exists(file, LinkOption.NOFOLLOW_LINKS)) {
-                if (Files.size(file) > 65536) throw new IOException("Lease state limit");
-                var state = WebJson.decode(Files.readAllBytes(file));
+                byte[] bytes;
+                try (var input = Files.newInputStream(file, LinkOption.NOFOLLOW_LINKS)) {
+                    bytes = input.readNBytes(65537);
+                }
+                if (bytes.length > 65536) throw new IOException("Lease state limit");
+                var state = WebJson.decode(bytes);
                 if (!Integer.valueOf(1).equals(state.get("version")))
                     throw new IOException("Future lease");
                 pending = Values.object(state.get("pending"));
+                validate(pending);
             } else pending = Map.of();
         } catch (IOException | RuntimeException ex) {
             owner.close();
@@ -43,6 +48,7 @@ final class WorkspaceLease implements AutoCloseable {
             throw new HarnessException("WORKSPACE_BUSY", "Workspace has unsettled admission");
         var next = new LinkedHashMap<>(accepted);
         next.put("catalogKey", catalogId);
+        validate(next);
         save(next);
     }
 
@@ -51,6 +57,18 @@ final class WorkspaceLease implements AutoCloseable {
         if (!task.equals(pending.get("taskId")) || !catalogId.equals(pending.get("catalogKey")))
             throw new HarnessException("ENVIRONMENT_MISMATCH", "Wrong workspace admission");
         save(Map.of());
+    }
+
+    private static void validate(Map<String, Object> state) {
+        if (state.isEmpty()) return;
+        if (!(state.get("taskId") instanceof String task)
+                || !task.matches("[A-Za-z0-9_-]{1,128}")
+                || !(state.get("catalogKey") instanceof String catalog)
+                || !catalog.matches("[a-f0-9]{64}")
+                || !(state.get("requestHash") instanceof String hash)
+                || !hash.matches("[a-f0-9]{64}"))
+            throw new HarnessException(
+                    "INVALID_WORKSPACE_LEASE", "Invalid workspace admission identity");
     }
 
     private void check() throws IOException {

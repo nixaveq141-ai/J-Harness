@@ -143,6 +143,30 @@ public final class M7SubagentDockerProbe {
                                     "Delegate reading; independently read and perform parent edit",
                                     CancellationToken.NONE);
                     require(snapshot.status() == TaskStatus.COMPLETED, "parent task status");
+                    if (container) {
+                        var edit =
+                                snapshot.events().stream()
+                                        .filter(
+                                                e ->
+                                                        e.type().equals("tool.completed")
+                                                                && "edit_file"
+                                                                        .equals(
+                                                                                e.payload()
+                                                                                        .get(
+                                                                                                "tool")))
+                                        .findFirst()
+                                        .orElseThrow();
+                        var metadata =
+                                Values.object(
+                                        Values.object(edit.payload().get("value")).get("metadata"));
+                        require(
+                                Boolean.TRUE.equals(metadata.get("permissionsPreserved")),
+                                "POSIX mode preserved");
+                        require(
+                                Boolean.FALSE.equals(metadata.get("ownerPreserved"))
+                                        && metadata.get("ownershipNote") instanceof String,
+                                "unavailable POSIX ownership explicitly reported");
+                    }
                     var assignment =
                             snapshot.events().stream()
                                     .filter(event -> event.type().equals("subagent.started"))

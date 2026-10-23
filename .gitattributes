@@ -26,6 +26,8 @@ docs/development/OCR-implementation-artifacts.json text eol=lf
 docs/testing/OCR-R0-rereview-fixes-2026-10-21-results.json -text
 docs/development/OCR-R1-implementation-2026-10-21.json text eol=lf
 docs/testing/OCR-R1-2026-10-21-results.json -text
+docs/development/OCR-R2-implementation-2026-10-22.json text eol=lf
+docs/testing/OCR-R2-2026-10-22-results.json -text
 # Frontend source has stable LF bytes; copied upstream files retain their original bytes.
 frontend/** text eol=lf
 frontend/src/upstream/** -text

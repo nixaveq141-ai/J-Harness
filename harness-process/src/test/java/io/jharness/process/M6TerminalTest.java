@@ -13,6 +13,38 @@ import org.junit.jupiter.api.io.TempDir;
 class M6TerminalTest {
     @TempDir Path root;
 
+    @Test
+    void lifetimeHistoryLimitKeepsCompletedLogsAndRejectsThirtyThirdTask() throws Exception {
+        try (var terminal = terminal()) {
+            String first = "";
+            for (int i = 0; i < 32; i++) {
+                var row =
+                        terminal.start(
+                                command(windows(), "echo capacity-sentinel", 5000),
+                                false,
+                                CancellationToken.NONE);
+                String id = (String) row.get("id");
+                if (i == 0) first = id;
+                waitForExit(terminal, id);
+            }
+            assertEquals(32, terminal.states().size());
+            assertEquals(
+                    "TERMINAL_LIMIT",
+                    assertThrows(
+                                    HarnessException.class,
+                                    () ->
+                                            terminal.start(
+                                                    command(windows(), "echo must-not-enter", 5000),
+                                                    false,
+                                                    CancellationToken.NONE))
+                            .code());
+            assertTrue(
+                    ((String) terminal.log(first, 0, 65536).get("text"))
+                            .contains("capacity-sentinel"));
+            assertEquals(32, terminal.states().size());
+        }
+    }
+
     private LocalTerminalSession terminal() throws Exception {
         return new LocalTerminalSession(
                 new LocalWorkspace(root),

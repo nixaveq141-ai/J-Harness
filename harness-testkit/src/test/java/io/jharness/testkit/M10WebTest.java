@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.net.URI;
 import java.net.http.*;
 import java.nio.file.Path;
 import java.time.Duration;
@@ -211,7 +212,10 @@ class M10WebTest {
             String... headers)
             throws Exception {
         var b =
-                HttpRequest.newBuilder(host.server.address().resolve(path))
+                HttpRequest.newBuilder(
+                                URI.create(
+                                        host.server.address().toString().replaceAll("/$", "")
+                                                + path))
                         .timeout(Duration.ofSeconds(5));
         if (auth) b.header("Authorization", "Bearer " + M10BrowserHost.TOKEN);
         for (int i = 0; i < headers.length; i += 2) b.header(headers[i], headers[i + 1]);

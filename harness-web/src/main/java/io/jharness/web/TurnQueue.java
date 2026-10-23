@@ -18,7 +18,10 @@ final class TurnQueue {
                     || !hash.matches("[a-f0-9]{64}")
                     || goalHash == null
                     || !goalHash.matches("[a-f0-9]{64}")
+                    || kind == null
                     || !Set.of("message", "supplement").contains(kind)
+                    || content == null
+                    || state == null
                     || content.length() > 16384)
                 throw new IllegalArgumentException("Invalid submission fact");
             this.hash = hash;
@@ -51,7 +54,8 @@ final class TurnQueue {
 
     void apply(SessionEvent event) {
         var p = event.payload();
-        String hash = (String) p.get("requestHash");
+        if (!(p.get("requestHash") instanceof String hash) || !hash.matches("[a-f0-9]{64}"))
+            throw new HarnessException("INVALID_WEB_CATALOG", "Invalid submission hash");
         if (event.type().equals("web.turn.accepted")
                 || event.type().equals("web.turn.interrupted")) {
             if (inputs.size() >= 256 || inputs.containsKey(hash))
@@ -65,13 +69,34 @@ final class TurnQueue {
                             (String) p.getOrDefault("content", ""),
                             event.type().equals("web.turn.interrupted") ? "UNKNOWN" : "PAUSED"));
             inputs.get(hash).selection = Values.object(p.getOrDefault("selection", Map.of()));
+            var selection = inputs.get(hash).selection;
+            if (selection.containsKey("modelRoute")
+                    && !(selection.get("modelRoute") instanceof String))
+                throw new HarnessException("INVALID_WEB_CATALOG", "Invalid model route");
             return;
         }
         var input = inputs.get(hash);
         if (input == null) throw new IllegalArgumentException("Submission fact without admission");
         switch (event.type()) {
-            case "web.turn.started" -> input.state = "UNKNOWN";
+            case "web.turn.started" -> {
+                input.state = "UNKNOWN";
+                input.content = "";
+            }
             case "web.turn.finished" -> {
+                if (!(p.get("status") instanceof String status)
+                        || !Set.of(
+                                        "UNKNOWN",
+                                        "CREATED",
+                                        "RUNNING",
+                                        "WAITING_APPROVAL",
+                                        "EXECUTING_TOOL",
+                                        "COMPLETED",
+                                        "FAILED",
+                                        "CANCELLED",
+                                        "LIMIT_REACHED")
+                                .contains(status)
+                        || p.containsKey("turnId") && !(p.get("turnId") instanceof String))
+                    throw new HarnessException("INVALID_WEB_CATALOG", "Invalid submission outcome");
                 input.state = "FINISHED";
                 input.status = (String) p.get("status");
                 input.turnId = (String) p.getOrDefault("turnId", "");

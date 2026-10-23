@@ -18,6 +18,7 @@ public final class SessionLifecycle {
 
     public static void setArchived(
             SessionRepository repository, String id, boolean archived, DataSanitizer sanitizer) {
+        repository.openReader(id).events(); // Existence and validity before acquiring a writer.
         try (var writer =
                 new SanitizingSessionWriter(
                         repository.openWriter(id, WriteOwnership.EXCLUSIVE), sanitizer)) {

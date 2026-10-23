@@ -14,4 +14,19 @@ record SdkHost(
         PolicyEngine policy,
         ApprovalService approvals,
         Budget budget,
-        SharedFeeBudget fees) {}
+        SharedFeeBudget fees) {
+    SdkHost {
+        java.util.Objects.requireNonNull(scope);
+        java.util.Objects.requireNonNull(repository);
+        java.util.Objects.requireNonNull(reader);
+        java.util.Objects.requireNonNull(writer);
+        java.util.Objects.requireNonNull(environment);
+        java.util.Objects.requireNonNull(model);
+        java.util.Objects.requireNonNull(artifacts);
+        java.util.Objects.requireNonNull(sanitizer);
+        java.util.Objects.requireNonNull(policy);
+        java.util.Objects.requireNonNull(approvals);
+        java.util.Objects.requireNonNull(budget);
+        java.util.Objects.requireNonNull(fees);
+    }
+}

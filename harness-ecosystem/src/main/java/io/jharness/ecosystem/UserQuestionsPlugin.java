@@ -132,12 +132,19 @@ public final class UserQuestionsPlugin implements HarnessPlugin, UserQuestionSer
                     Thread.sleep(20);
                 } catch (InterruptedException ex) {
                     Thread.currentThread().interrupt();
-                    resolution = Map.of("state", "CANCELLED");
+                    synchronized (this) {
+                        resolution =
+                                wait.answer != null ? wait.answer : Map.of("state", "CANCELLED");
+                    }
                     break;
                 }
             }
             var fact = new LinkedHashMap<>(view);
             fact.putAll(resolution);
+            if (!active
+                    || context.cancellation().isCancelled()
+                    || Thread.currentThread().isInterrupted())
+                fact.put("cancellationObserved", true);
             synchronized (this) {
                 if (!wait.fingerprint.isEmpty()) fact.put("answerHash", wait.fingerprint);
                 if (!wait.fingerprint.isEmpty()) fact.put("answerFingerprintVersion", 2);
@@ -253,6 +260,8 @@ public final class UserQuestionsPlugin implements HarnessPlugin, UserQuestionSer
                                 "selected",
                                 "text",
                                 "skip"))) throw error("INVALID_ANSWER");
+        if (!(input.get("requestId") instanceof String requestId)
+                || !requestId.matches("[A-Za-z0-9_-]{1,64}")) throw error("INVALID_ANSWER");
         var row =
                 project(events).stream()
                         .filter(v -> Objects.equals(v.get("questionId"), input.get("questionId")))
@@ -283,7 +292,11 @@ public final class UserQuestionsPlugin implements HarnessPlugin, UserQuestionSer
                                 "selected",
                                 "text",
                                 "skip"))) throw error("INVALID_ANSWER");
-        String id = string(input, "questionId", 64), requestId = string(input, "requestId", 64);
+        if (!(input.get("questionId") instanceof String id)
+                || id.isBlank()
+                || id.length() > 64
+                || !(input.get("requestId") instanceof String requestId))
+            throw error("INVALID_ANSWER");
         if (!requestId.matches("[A-Za-z0-9_-]{1,64}")) throw error("INVALID_ANSWER");
         var row =
                 list().stream()
@@ -331,6 +344,8 @@ public final class UserQuestionsPlugin implements HarnessPlugin, UserQuestionSer
 
     private static Map<String, Object> validateAnswer(
             Map<String, Object> input, Map<String, Object> question) {
+        if (!(input.get("requestId") instanceof String requestId)
+                || !requestId.matches("[A-Za-z0-9_-]{1,64}")) throw error("INVALID_ANSWER");
         if (!(input.get("selected") instanceof List<?> selected)
                 || selected.size() > 8
                 || new HashSet<>(selected).size() != selected.size()
@@ -403,10 +418,56 @@ public final class UserQuestionsPlugin implements HarnessPlugin, UserQuestionSer
                 var row = new LinkedHashMap<>(event.payload());
                 if (!Objects.equals(row.get("sessionId"), event.sessionId())
                         || !Objects.equals(row.get("turnId"), event.turnId())
+                        || !Objects.equals(row.get("stepId"), event.stepId())
                         || !Objects.equals(row.get("callId"), event.callId()))
                     throw error("QUESTION_ASSOCIATION_MISMATCH");
-                if (event.type().equals("question.requested")) row.put("state", "INTERRUPTED");
-                rows.put((String) row.get("questionId"), Values.snapshot(row));
+                if (!(row.get("questionId") instanceof String id)
+                        || id.isBlank()
+                        || id.length() > 64) throw error("INVALID_QUESTION_FACT");
+                var spec = new LinkedHashMap<String, Object>();
+                for (String key :
+                        List.of("question", "mode", "options", "allowText", "timeoutSeconds"))
+                    spec.put(key, row.get(key));
+                validateSpec(spec);
+                try {
+                    Instant.parse((String) row.get("expiresAt"));
+                } catch (RuntimeException ex) {
+                    throw error("INVALID_QUESTION_FACT");
+                }
+                if (event.type().equals("question.requested")) {
+                    if (rows.containsKey(id) || !"PENDING".equals(row.get("state")))
+                        throw error("QUESTION_FACT_CONFLICT");
+                    row.put("state", "INTERRUPTED");
+                } else {
+                    var prior = rows.get(id);
+                    if (prior == null || !"INTERRUPTED".equals(prior.get("state")))
+                        throw error("QUESTION_FACT_CONFLICT");
+                    for (String key :
+                            List.of(
+                                    "sessionId",
+                                    "turnId",
+                                    "stepId",
+                                    "callId",
+                                    "question",
+                                    "mode",
+                                    "options",
+                                    "allowText",
+                                    "timeoutSeconds",
+                                    "expiresAt"))
+                        if (!Objects.equals(prior.get(key), row.get(key)))
+                            throw error("QUESTION_FACT_CONFLICT");
+                    if (!Set.of("ANSWERED", "SKIPPED", "CANCELLED", "TIMED_OUT")
+                            .contains(row.get("state"))) throw error("INVALID_QUESTION_FACT");
+                    if (Set.of("ANSWERED", "SKIPPED").contains(row.get("state"))) {
+                        var answer = new LinkedHashMap<>(row);
+                        answer.put("skip", "SKIPPED".equals(row.get("state")));
+                        validateAnswer(answer, row);
+                        if (!(row.get("answerHash") instanceof String hash)
+                                || !hash.matches("[a-f0-9]{64}"))
+                            throw error("INVALID_QUESTION_FACT");
+                    }
+                }
+                rows.put(id, Values.snapshot(row));
                 if (rows.size() > 64) throw error("QUESTION_LIMIT");
             }
         return List.copyOf(rows.values());

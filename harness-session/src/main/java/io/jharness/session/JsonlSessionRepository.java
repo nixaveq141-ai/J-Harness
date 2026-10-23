@@ -243,10 +243,23 @@ public final class JsonlSessionRepository implements SessionRepository {
     /** Deterministic destination for host-owned idempotent snapshot admission. */
     public String forkTo(
             String id, String eventId, String target, Consumer<String> prepareArtifacts) {
+        return forkTo(id, eventId, target, prepareArtifacts, ignored -> {});
+    }
+
+    public String forkTo(
+            String id,
+            String eventId,
+            String target,
+            Consumer<String> prepareArtifacts,
+            Consumer<String> rollbackArtifacts) {
         file(target, ".jsonl");
         if (id.equals(target)) throw error("SESSION_EXISTS");
-        try (Maintenance ownership = maintenance(id)) {
+        try (Maintenance ownership = maintenance(id);
+                Maintenance destination = ownership(target)) {
             ownership.ensureValid();
+            destination.ensureValid();
+            if (Files.exists(file(target, ".jsonl"), LinkOption.NOFOLLOW_LINKS))
+                throw error("SESSION_EXISTS");
             Path source = file(id, ".jsonl");
             synchronized (gate(source)) {
                 Parsed parsed = parse(source, id);
@@ -281,7 +294,6 @@ public final class JsonlSessionRepository implements SessionRepository {
                                 "SESSION",
                                 "payload",
                                 Map.of("parentSessionId", id, "fromEventId", eventId)));
-                prepareArtifacts.accept(target);
                 ByteArrayOutputStream buffer = new ByteArrayOutputStream();
                 for (var record : prefix) {
                     byte[] encoded = encode(record);
@@ -289,7 +301,27 @@ public final class JsonlSessionRepository implements SessionRepository {
                     buffer.write(encoded);
                     if (buffer.size() > LOG_LIMIT) throw error("SESSION_LIMIT");
                 }
-                publish(target, buffer.toByteArray());
+                if (end + 2 > 10000) throw error("SESSION_LIMIT");
+                byte[] candidate = buffer.toByteArray();
+                // Validate every budget, schema and association before copying any artifacts.
+                Path validation = root.resolve(".fork-check-" + UUID.randomUUID());
+                try {
+                    forcedFile(validation, candidate);
+                    if (parse(validation, target).damaged) throw error("TAIL_DAMAGED");
+                } finally {
+                    Files.deleteIfExists(validation);
+                }
+                prepareArtifacts.accept(target);
+                try {
+                    publish(target, candidate);
+                } catch (IOException | RuntimeException failure) {
+                    try {
+                        rollbackArtifacts.accept(target);
+                    } catch (RuntimeException cleanup) {
+                        failure.addSuppressed(cleanup);
+                    }
+                    throw failure;
+                }
                 return target;
             }
         } catch (IOException ex) {
@@ -412,6 +444,10 @@ public final class JsonlSessionRepository implements SessionRepository {
 
     private Maintenance maintenance(String id) throws IOException {
         if (!Files.exists(file(id, ".jsonl"))) throw error("SESSION_NOT_FOUND");
+        return ownership(id);
+    }
+
+    private Maintenance ownership(String id) throws IOException {
         Path lockPath = file(id, ".lock");
         if (!OWNERS.add(lockPath)) throw error("WRITE_CONFLICT");
         FileChannel channel = null;
@@ -469,6 +505,7 @@ public final class JsonlSessionRepository implements SessionRepository {
                 Map<String, Object> record = decode(bytes, start, end, nodeBudget);
                 int schema = integer(record, "schemaVersion");
                 if (schema > 1) throw error("FUTURE_VERSION_READ_ONLY");
+                if (schema < 1) throw error("UNSUPPORTED_EVENT_SCHEMA");
                 SessionEvent event =
                         new SessionEvent(
                                 text(record, "eventId"),
@@ -489,13 +526,14 @@ public final class JsonlSessionRepository implements SessionRepository {
             } catch (HarnessException ex) {
                 if (Set.of(
                                 "FUTURE_VERSION_READ_ONLY",
+                                "UNSUPPORTED_EVENT_SCHEMA",
                                 "SESSION_MISMATCH",
                                 "DUPLICATE_EVENT",
                                 "RECORD_LIMIT")
                         .contains(ex.code())) throw ex;
                 if (end != bytes.length - 1) throw error("MID_LOG_DAMAGED");
                 return new Parsed(List.copyOf(events), valid, true, validNodes);
-            } catch (IllegalArgumentException ex) {
+            } catch (IllegalArgumentException | java.time.format.DateTimeParseException ex) {
                 if (end != bytes.length - 1) throw error("MID_LOG_DAMAGED");
                 return new Parsed(List.copyOf(events), valid, true, validNodes);
             }

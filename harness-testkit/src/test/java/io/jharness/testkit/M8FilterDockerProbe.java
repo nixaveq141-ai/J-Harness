@@ -52,6 +52,10 @@ public final class M8FilterDockerProbe {
                 Files.writeString(root.resolve(".gitignore"), "hidden.txt\ncache/\n");
             }
             Map<String, Object> localResult, dockerResult;
+            Files.writeString(
+                    localRoot.getParent().resolve("outside.txt"), "outside-boundary-sentinel");
+            if (!Files.isReadable(localRoot.getParent().resolve("outside.txt")))
+                throw new IllegalStateException("Missing local outside sentinel");
             try (var local =
                             new LocalExecutionEnvironment(
                                     "filter-local", localRoot, List.of(), filter);
@@ -64,6 +68,14 @@ public final class M8FilterDockerProbe {
                                     transport,
                                     filter)) {
                 owners.add(docker.id());
+                var outside =
+                        transport.call(
+                                List.of(args[0], "exec", docker.id(), "test", "-r", "/etc/passwd"),
+                                new byte[0],
+                                Duration.ofSeconds(5),
+                                CancellationToken.NONE);
+                if (outside.uncertain() || outside.exitCode() != 0)
+                    throw new IllegalStateException("Missing real container outside sentinel");
                 localResult = inspect(local, filter);
                 dockerResult = inspect(docker, filter);
                 if (!localResult.equals(dockerResult))
@@ -108,6 +120,7 @@ public final class M8FilterDockerProbe {
         report.put("milestone", "M8.1");
         report.put("result", "SUCCESS");
         report.put("actualDocker", true);
+        report.put("existingOutsideSentinelVerified", true);
         report.put("image", args[1]);
         report.put("cases", cases);
         report.put("cleanupVerified", true);
@@ -165,7 +178,13 @@ public final class M8FilterDockerProbe {
             throw new IllegalStateException("Grep differs");
         if (!files.readText(new ExecPath("cache/drop.txt")).contains("needle"))
             throw new IllegalStateException("Filter changed read authorization");
-        for (String denied : List.of(".git/secret.txt", ".jharness/secret.txt", "../outside.txt")) {
+        for (String denied :
+                List.of(
+                        ".git/secret.txt",
+                        ".jharness/secret.txt",
+                        environment instanceof DockerExecutionEnvironment
+                                ? "../etc/passwd"
+                                : "../outside.txt")) {
             try {
                 files.readText(new ExecPath(denied));
                 throw new IllegalStateException("Unsafe path accepted");

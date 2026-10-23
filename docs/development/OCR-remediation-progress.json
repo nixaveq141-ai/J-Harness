@@ -1,8 +1,8 @@
 {
-  "updatedAt": "2026-10-22",
-  "phase": "R1",
+  "updatedAt": "2026-10-23",
+  "phase": "R2",
   "status": "LOCAL_VALIDATED_CI_PENDING",
-  "details": "docs/development/OCR-R1-fault18-2026-10-22.md",
+  "details": "docs/development/OCR-R2-remediation-2026-10-22.md",
   "productMilestone": "M10.5.9",
   "productStatus": "LOCAL_PARTIAL_CI_PENDING",
   "m11Eligible": false,
@@ -57,6 +57,22 @@
     "R1-07": {
       "status": "IMPLEMENTED_LOCAL_VALIDATED",
       "description": "原采纳范围7条本地验证；此前18条精确故障窗口均已补测。新运行563Java/165门禁/33客户端及Windows原生/兼容、Docker专项通过；仍不代表远端CI、原生POSIX、浏览器新矩阵或完整发布验收"
+    },
+    "R2-01": {
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "description": "采纳范围已实施并本地验证；最终k同源码603Java/165门禁/33客户端及Chrome、SDK、Windows原生和真实Docker通过；WebKit245通过但问答运行时断言失败，完整矩阵FAILED留R6。逐项边界见OCR-R2-implementation-2026-10-22.json；不代表107个独立动态复现或远端CI/发布收口"
+    },
+    "R2-02": {
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "description": "采纳范围已实施并本地验证；最终k同源码603Java/165门禁/33客户端及Chrome、SDK、Windows原生和真实Docker通过；WebKit245通过但问答运行时断言失败，完整矩阵FAILED留R6。逐项边界见OCR-R2-implementation-2026-10-22.json；不代表107个独立动态复现或远端CI/发布收口"
+    },
+    "R2-03": {
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "description": "采纳范围已实施并本地验证；最终k同源码603Java/165门禁/33客户端及Chrome、SDK、Windows原生和真实Docker通过；WebKit245通过但问答运行时断言失败，完整矩阵FAILED留R6。逐项边界见OCR-R2-implementation-2026-10-22.json；不代表107个独立动态复现或远端CI/发布收口"
+    },
+    "R2-04": {
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "description": "采纳范围已实施并本地验证；最终k同源码603Java/165门禁/33客户端及Chrome、SDK、Windows原生和真实Docker通过；WebKit245通过但问答运行时断言失败，完整矩阵FAILED留R6。逐项边界见OCR-R2-implementation-2026-10-22.json；不代表107个独立动态复现或远端CI/发布收口"
     }
   },
   "r1": {
@@ -68,5 +84,21 @@
     "limitedVerificationScopes": 0,
     "implementationLedger": "docs/development/OCR-R1-implementation-2026-10-21.json",
     "results": "docs/testing/OCR-R1-fault18-2026-10-22-results.json"
+  },
+  "r2": {
+    "status": "LOCAL_IMPLEMENTATION_VALIDATED_CI_PENDING",
+    "runId": "r2-20261022-k",
+    "adoptedScopes": 107,
+    "implemented": 88,
+    "contractClarified": 17,
+    "existingGuardConfirmed": 2,
+    "implementationLedger": "docs/development/OCR-R2-implementation-2026-10-22.json",
+    "results": "docs/testing/OCR-R2-2026-10-22-results.json",
+    "nextPhase": "R3",
+    "browserFollowup": {
+      "phase": "R6",
+      "fullMatrixStatus": "FAILED",
+      "reason": "WebKit questions strict runtime-exception assertion; Chrome271/WebKit245 passing; no assertion weakened"
+    }
   }
 }

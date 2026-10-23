@@ -25,6 +25,16 @@ final class DurableTaskCatalog implements SessionWriter {
             SessionWriter owner,
             DataSanitizer sanitizer)
             throws IOException {
+        this(repository, id, owner, sanitizer, () -> {});
+    }
+
+    DurableTaskCatalog(
+            JsonlSessionRepository repository,
+            String id,
+            SessionWriter owner,
+            DataSanitizer sanitizer,
+            Runnable afterMigrationRecords)
+            throws IOException {
         this.owner = owner;
         this.sanitizer = sanitizer;
         directory = repository.directory().resolve("tasks-" + hash(id).substring(0, 24));
@@ -54,6 +64,20 @@ final class DurableTaskCatalog implements SessionWriter {
                     throw error("INVALID_WEB_CATALOG");
                 grouped.computeIfAbsent(task, ignored -> new ArrayList<>()).add(event);
             }
+            var uniqueHashes = new HashSet<String>();
+            for (var history : grouped.values()) {
+                String task = (String) history.getFirst().payload().get("taskId");
+                for (var event : history) {
+                    validate(event);
+                    if (!task.equals(event.payload().get("taskId")))
+                        throw error("INVALID_WEB_CATALOG");
+                }
+                Object hash = history.getFirst().payload().get("requestHash");
+                if (!(hash instanceof String value) || !uniqueHashes.add(value))
+                    throw error("MIGRATION_CONFLICT");
+                if (history.stream().filter(e -> e.type().equals("web.task.accepted")).count() != 1)
+                    throw error("INVALID_WEB_CATALOG");
+            }
             Path backup = repository.backupOwned(id, owner);
             for (var history : grouped.values()) {
                 var first = history.getFirst();
@@ -64,13 +88,14 @@ final class DurableTaskCatalog implements SessionWriter {
                     var existing = records.openReader(recordId).events();
                     if (existing.size() > history.size()) throw error("MIGRATION_CONFLICT");
                     for (int i = 0; i < existing.size(); i++)
-                        if (!existing.get(i).equals(rehome(history.get(i), recordId)))
+                        if (!migrationMatches(existing.get(i), history.get(i), recordId))
                             throw error("MIGRATION_CONFLICT");
                     for (int i = existing.size(); i < history.size(); i++)
-                        writer.append(rehome(history.get(i), recordId));
+                        writer.append(migrationEvent(history.get(i), recordId));
                     writer.flush();
                 }
             }
+            afterMigrationRecords.run();
             owner.append(
                     SessionEvent.session(
                             id,
@@ -133,6 +158,62 @@ final class DurableTaskCatalog implements SessionWriter {
         return "h-" + hash;
     }
 
+    private boolean migrationMatches(SessionEvent stored, SessionEvent source, String id) {
+        if (stored.payload().containsKey("migrationSourceHash"))
+            return stored.eventId().equals(source.eventId())
+                    && stored.sessionId().equals(id)
+                    && sourceHash(source).equals(stored.payload().get("migrationSourceHash"));
+        return stored.equals(rehome(source, id));
+    }
+
+    private static Object canonical(Object value) {
+        if (value instanceof Map<?, ?> map) {
+            var sorted = new TreeMap<String, Object>();
+            map.forEach((key, item) -> sorted.put((String) key, canonical(item)));
+            return sorted;
+        }
+        if (value instanceof List<?> list)
+            return list.stream().map(DurableTaskCatalog::canonical).toList();
+        return value;
+    }
+
+    private static String sourceHash(SessionEvent event) {
+        try {
+            return hash(
+                    new String(
+                            WebJson.encode(
+                                    Map.of(
+                                            "id",
+                                            event.eventId(),
+                                            "type",
+                                            event.type(),
+                                            "timestamp",
+                                            event.timestamp().toString(),
+                                            "payload",
+                                            canonical(event.payload()))),
+                            StandardCharsets.UTF_8));
+        } catch (IOException ex) {
+            throw error("INVALID_WEB_CATALOG");
+        }
+    }
+
+    private SessionEvent migrationEvent(SessionEvent source, String id) {
+        var event = rehome(source, id);
+        var payload = new LinkedHashMap<>(event.payload());
+        payload.put("migrationSourceHash", sourceHash(source));
+        return new SessionEvent(
+                event.eventId(),
+                id,
+                event.type(),
+                event.timestamp(),
+                event.schemaVersion(),
+                event.level(),
+                event.turnId(),
+                event.stepId(),
+                event.callId(),
+                payload);
+    }
+
     private SessionEvent rehome(SessionEvent event, String id) {
         return new SessionEvent(
                 event.eventId(),
@@ -159,8 +240,14 @@ final class DurableTaskCatalog implements SessionWriter {
             throw error("WEB_CATALOG_PATH_DENIED");
     }
 
-    private void remember(List<SessionEvent> history) {
-        if (history.isEmpty()) return;
+    private synchronized void remember(List<SessionEvent> history) {
+        if (history.isEmpty()) throw error("EMPTY_WEB_TASK_RECORD");
+        String task = null;
+        for (var event : history) {
+            validate(event);
+            if (task == null) task = (String) event.payload().get("taskId");
+            if (!task.equals(event.payload().get("taskId"))) throw error("INVALID_WEB_CATALOG");
+        }
         var p = history.getFirst().payload();
         String id = (String) p.get("taskId"), hash = (String) p.get("requestHash");
         if (!history.getFirst().type().equals("web.task.accepted")
@@ -195,9 +282,8 @@ final class DurableTaskCatalog implements SessionWriter {
                     String id = file.getFileName().toString().replace(".jsonl", "");
                     if (!id.matches("h-[a-f0-9]{64}")) throw error("INVALID_WEB_CATALOG");
                     var history = records.openReader(id).events();
-                    if (!history.isEmpty()) {
-                        receive.accept(history);
-                    }
+                    if (history.isEmpty()) throw error("EMPTY_WEB_TASK_RECORD");
+                    receive.accept(history);
                 }
             }
         } catch (IOException ex) {
@@ -205,7 +291,7 @@ final class DurableTaskCatalog implements SessionWriter {
         }
     }
 
-    List<SessionEvent> byHash(String hash) {
+    synchronized List<SessionEvent> byHash(String hash) {
         try {
             check();
             String id = recordId(hash);
@@ -219,7 +305,7 @@ final class DurableTaskCatalog implements SessionWriter {
         }
     }
 
-    List<SessionEvent> byId(String id) {
+    synchronized List<SessionEvent> byId(String id) {
         if (recent.containsKey(id)) return byHash(recent.get(id));
         if (id.matches("web-[a-f0-9]{32}-[a-f0-9]{64}")) {
             var history = byHash(id.substring(37));
@@ -233,11 +319,11 @@ final class DurableTaskCatalog implements SessionWriter {
                     if (id.equals(history.getFirst().payload().get("taskId")))
                         found.addAll(history);
                 });
-        remember(found);
+        if (!found.isEmpty()) remember(found);
         return found;
     }
 
-    int count() {
+    synchronized int count() {
         return count;
     }
 
@@ -249,6 +335,7 @@ final class DurableTaskCatalog implements SessionWriter {
     @Override
     public synchronized String append(SessionEvent event) {
         owner.flush();
+        validate(event);
         String id = (String) event.payload().get("taskId");
         String hash;
         boolean accepted = event.type().equals("web.task.accepted");
@@ -284,6 +371,56 @@ final class DurableTaskCatalog implements SessionWriter {
     @Override
     public void close() {
         owner.close();
+    }
+
+    static void validate(SessionEvent event) {
+        var p = event.payload();
+        if (!(p.get("taskId") instanceof String task)
+                || !task.matches("[A-Za-z0-9_-]{1,128}")
+                || !Set.of(
+                                "web.task.accepted",
+                                "web.task.finished",
+                                "web.task.verified",
+                                "web.task.changed",
+                                "web.turn.accepted",
+                                "web.turn.started",
+                                "web.turn.finished",
+                                "web.turn.cancelled",
+                                "web.turn.paused",
+                                "web.turn.interrupted")
+                        .contains(event.type())) throw error("INVALID_WEB_CATALOG");
+        if (event.type().equals("web.task.accepted")) {
+            recordId(p.get("requestHash") instanceof String hash ? hash : null);
+            if (!(p.get("profile") instanceof String profile)
+                    || !profile.matches("[A-Za-z0-9_-]{1,32}")
+                    || !(p.get("goalHash") instanceof String goal)
+                    || !goal.matches("[a-f0-9]{64}")
+                    || !(p.get("workspaceBinding") instanceof String binding)
+                    || binding.isBlank()
+                    || binding.length() > 1024) throw error("INVALID_WEB_CATALOG");
+        }
+        if (event.type().equals("web.task.finished")) {
+            if (!(p.get("phase") instanceof String phase)
+                    || !Set.of("FINISHED", "UNKNOWN").contains(phase)
+                    || !(p.get("status") instanceof String status)
+                    || !Set.of(
+                                    "UNKNOWN",
+                                    "CREATED",
+                                    "RUNNING",
+                                    "WAITING_APPROVAL",
+                                    "EXECUTING_TOOL",
+                                    "COMPLETED",
+                                    "FAILED",
+                                    "CANCELLED",
+                                    "LIMIT_REACHED")
+                            .contains(status)
+                    || !(p.get("error") instanceof String)) throw error("INVALID_WEB_CATALOG");
+        }
+        if (event.type().equals("web.task.changed")
+                && (!(p.get("name") instanceof String)
+                        || !(p.get("pinned") instanceof Boolean)
+                        || !(p.get("archived") instanceof Boolean)))
+            throw error("INVALID_WEB_CATALOG");
     }
 
     private static HarnessException error(String code) {

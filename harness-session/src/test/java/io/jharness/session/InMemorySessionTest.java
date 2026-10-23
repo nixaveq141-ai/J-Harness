@@ -108,7 +108,7 @@ class InMemorySessionTest {
                             null,
                             Map.of());
             assertEquals(
-                    "FUTURE_VERSION",
+                    "FUTURE_VERSION_READ_ONLY",
                     assertThrows(HarnessException.class, () -> writer.append(future)).code());
             assertEquals(1, repo.openReader("s").events().size());
         }

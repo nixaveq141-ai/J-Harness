@@ -47,11 +47,8 @@ public final class EnvironmentWorker {
                 switch (op) {
                     case "filter-info" -> Map.of();
                     case "read" -> {
-                        String before = files.versionOf(path);
-                        String text = files.readText(path);
-                        if (!before.equals(files.versionOf(path)))
-                            throw new HarnessException("FILE_CONFLICT", "File changed during read");
-                        yield Map.of("text", text, "version", before);
+                        var snapshot = files.readSnapshot(path);
+                        yield Map.of("text", snapshot.text(), "version", snapshot.version());
                     }
                     case "version" -> Map.of("version", files.versionOf(path));
                     case "page" ->
@@ -160,7 +157,9 @@ public final class EnvironmentWorker {
                 "afterVersion",
                 change.afterVersion(),
                 "diff",
-                change.diff());
+                change.diff(),
+                "metadata",
+                change.metadata());
     }
 
     private static int number(Map<String, Object> map, String key, int fallback) {

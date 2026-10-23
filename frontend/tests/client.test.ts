@@ -10,6 +10,9 @@ test('stopped-host event diagnostic is scoped to the deliberately stopped origin
   assert.equal(stoppedHostDiagnostic('Fetch API cannot load http://127.0.0.1:9999/v1/tasks/task_1/events?limit=100 due to access control checks.',origins),true)
   assert.equal(stoppedHostDiagnostic('/127.0.0.1:9999/v1/tasks/task_1/approvals due to access control checks.',origins),true)
   assert.equal(stoppedHostDiagnostic('Fetch API cannot load http: /127.0.0.1:9999/v1/tasks/task_1/approvals due to access control checks.',origins),true)
+  const display='Fetch API cannot load http: /127.0.0.1:9999/v1/tasks/task_1/display due to access control checks.'
+  assert.equal(stoppedHostDiagnostic(display,new Set()),false)
+  assert.equal(stoppedHostDiagnostic(display,origins),true)
 })
 test('live-host CORS writes and JavaScript errors remain failures',async()=>{
   const {stoppedHostDiagnostic}=await import('./runtime.mjs'),origins=new Set(['http://127.0.0.1:9999'])

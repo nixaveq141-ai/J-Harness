@@ -112,6 +112,7 @@ public final class ConfiguredTokenCostGuard implements ApiCostGuard {
 
     @Override
     public BigDecimal actualCost(ChatRequest request, ChatResponse response) {
+        maximumCost(request); // Validate the public SPI request before reading its cap.
         Object input = response.usage().get("prompt_tokens"),
                 output = response.usage().get("completion_tokens");
         if (!(input instanceof Number in) || !(output instanceof Number out))

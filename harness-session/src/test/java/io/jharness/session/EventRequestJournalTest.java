@@ -127,7 +127,16 @@ class EventRequestJournalTest {
                         "c",
                         Map.of("content", "DENIED", "status", "DENIED"));
         SessionProjection projection =
-                new EventSessionProjection(List.of(context, assistant, result));
+                new EventSessionProjection(
+                        List.of(
+                                context,
+                                event(
+                                        "request",
+                                        "model.requested",
+                                        "p",
+                                        Map.of("contextEventId", "ctx")),
+                                assistant,
+                                result));
         assertEquals(4, projection.messages().size());
         assertEquals(
                 Map.of("role", "tool", "tool_call_id", "c", "content", "DENIED"),
