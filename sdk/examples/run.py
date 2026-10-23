@@ -1,4 +1,5 @@
 import os
+import json
 from pathlib import Path
 import sys
 import time
@@ -14,6 +15,7 @@ with JHarnessClient(java, os.environ['JHARNESS_SDK_JAR'], os.environ['JHARNESS_S
     end = time.monotonic() + 35
     while client.result(session)['phase'] not in ['FINISHED', 'UNKNOWN'] and time.monotonic() < end:
         time.sleep(.1)
-    print(client.result(session))
-    print(client.search('README', session_id=session))
-    print(client.report(session))
+    # ASCII JSON also works with redirected Windows consoles using legacy code pages.
+    print(json.dumps(client.result(session), ensure_ascii=True))
+    print(json.dumps(client.search('README', session_id=session), ensure_ascii=True))
+    print(json.dumps(client.report(session), ensure_ascii=True))
