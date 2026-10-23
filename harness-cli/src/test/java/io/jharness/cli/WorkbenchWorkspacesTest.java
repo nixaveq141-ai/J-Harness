@@ -7,11 +7,17 @@ import io.jharness.session.JsonlSessionRepository;
 import io.jharness.web.HarnessWebServer;
 import java.nio.file.*;
 import java.util.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 class WorkbenchWorkspacesTest {
     @TempDir Path temp;
+
+    @BeforeEach
+    void canonicalTemporaryRoot() throws java.io.IOException {
+        temp = temp.toRealPath();
+    }
 
     private WorkbenchWorkspaces manager(Path initial) throws Exception {
         return new WorkbenchWorkspaces(

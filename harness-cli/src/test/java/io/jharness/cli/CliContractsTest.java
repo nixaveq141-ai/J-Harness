@@ -10,11 +10,17 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.time.*;
 import java.util.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 class CliContractsTest {
     @TempDir Path root;
+
+    @BeforeEach
+    void canonicalTemporaryRoot() throws java.io.IOException {
+        root = root.toRealPath();
+    }
 
     @Test
     void parserRejectsUnknownAndDuplicateFlagsButPreservesChineseAndSpaces() {

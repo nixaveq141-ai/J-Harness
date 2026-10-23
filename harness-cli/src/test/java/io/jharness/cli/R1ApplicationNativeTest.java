@@ -5,11 +5,17 @@ import static org.junit.jupiter.api.Assertions.*;
 import io.jharness.api.*;
 import java.nio.file.*;
 import java.util.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 class R1ApplicationNativeTest {
     @TempDir Path root;
+
+    @BeforeEach
+    void canonicalTemporaryRoot() throws java.io.IOException {
+        root = root.toRealPath();
+    }
 
     @Test
     void utf8ByteLimitIsValidatedBeforeNativeOperation() {
