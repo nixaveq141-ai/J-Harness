@@ -93,9 +93,7 @@ try {
   await skills.getByLabel('标识 ID', { exact: true }).fill('explicit'); await skills.getByLabel('技能目录', { exact: true }).fill('explicit')
   await skills.getByRole('button', { name: '添加资源白名单', exact: true }).click(); await skills.getByLabel('名称', { exact: true }).fill('guide'); await skills.getByLabel('资源相对路径').fill('guide.txt')
   await skills.getByRole('button', { name: '添加脚本白名单', exact: true }).click(); await skills.getByLabel('名称', { exact: true }).nth(1).fill('check'); await skills.getByLabel('脚本相对路径').fill(scriptPath); await skills.getByRole('combobox', { name: /^脚本模式/ }).selectOption(scriptMode)
-  // Configure the success-path script explicitly; timeout and uncertain-cleanup
-  // behavior are covered independently with short budgets.
-  await skills.getByLabel('脚本超时（秒）', {exact:true}).fill('30')
+  await skills.getByLabel('脚本超时（秒）', {exact:true}).fill('10')
   const roots = group('技能目录发现'); await roots.locator('summary').first().click(); await roots.getByRole('button', { name: '添加技能根', exact: true }).click()
   await roots.getByLabel('标识 ID', { exact: true }).fill('project'); await roots.getByLabel('允许扫描的目录').fill('skills')
   await roots.getByRole('button', { name: '添加技能根', exact: true }).click(); await roots.getByLabel('标识 ID', { exact: true }).nth(1).fill('user'); await roots.getByLabel('根目录来源').nth(1).selectOption('user'); await roots.getByLabel('允许扫描的目录').nth(1).fill(userRoot)
@@ -103,11 +101,18 @@ try {
   await shot('forms-desktop')
   await page.getByRole('button', { name: '保存设置', exact: true }).click(); await page.getByText('设置已保存，将用于后续新消息。', { exact: true }).waitFor()
   let saved = (await api('/v1/settings')).body
-  check('forms persist MCP skills resources scripts roots and read-only profile', saved.extensions.mcp[0].id === 'notes' && saved.extensions.skills[0].scripts.check.mode === scriptMode && saved.extensions.skills[0].scripts.check.timeoutSeconds === 30 && saved.extensions.skills[0].scripts.check.path === scriptPath && saved.extensions.skills[0].resources.guide === 'guide.txt' && saved.extensions.skillRoots.length === 2 && saved.extensions.subagents.reviewer.tools.join() === 'read_file')
+  check('forms persist MCP skills resources scripts roots and read-only profile', saved.extensions.mcp[0].id === 'notes' && saved.extensions.skills[0].scripts.check.mode === scriptMode && saved.extensions.skills[0].scripts.check.timeoutSeconds === 10 && saved.extensions.skills[0].scripts.check.path === scriptPath && saved.extensions.skills[0].resources.guide === 'guide.txt' && saved.extensions.skillRoots.length === 2 && saved.extensions.subagents.reviewer.tools.join() === 'read_file')
   check('saving configuration performs no execution', !wire.length && !peerWire.length)
   await roots.getByText('高级 JSON', { exact: true }).click(); const raw = roots.getByLabel('技能目录发现配置', { exact: true }); await raw.fill('{broken')
   check('invalid advanced JSON keeps corrective input and explains form state', await roots.getByText('高级 JSON 格式或条目类型无效。请在下方修正后继续编辑表单。', { exact: true }).isVisible())
-  await page.getByRole('button', { name: '保存设置', exact: true }).click(); check('malformed JSON never reaches settings save', await page.getByRole('alert').innerText() === '扩展配置不是有效 JSON，请检查后再保存。')
+  let invalidPosts=0
+  const watchInvalid=request=>{if(request.method()==='POST'&&request.url()===base+'/v1/settings')invalidPosts++}
+  page.on('request',watchInvalid)
+  await page.getByRole('button', { name: '保存设置', exact: true }).click()
+  const invalidAlert=page.getByRole('region',{name:'工作台设置',exact:true}).getByRole('alert')
+  await invalidAlert.getByText('扩展配置不是有效 JSON，请检查后再保存。',{exact:true}).waitFor()
+  page.off('request',watchInvalid)
+  check('malformed JSON never reaches settings save', await invalidAlert.innerText() === '扩展配置不是有效 JSON，请检查后再保存。' && invalidPosts===0)
   await page.getByRole('button', { name: '放弃修改并重新读取', exact: true }).click(); await until(async () => !(await page.getByRole('button', { name: '返回任务', exact: true }).isDisabled()))
   const invalid = saveBody(saved); invalid.extensions = { ...invalid.extensions, skillRoots: [{ id: 'escape', kind: 'project', directory: '../outside' }] }
   check('server rejects traversal root before saving', (await api('/v1/settings', invalid)).status === 400)

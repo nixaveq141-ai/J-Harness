@@ -15,7 +15,7 @@ jobs:
     timeout-minutes: 35
     env:
       JHARNESS_EVIDENCE_RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}-${{ github.sha }}
-      JHARNESS_MATRIX_ENGINES: chromium,firefox,webkit
+      JHARNESS_MATRIX_ENGINES: firefox
       JHARNESS_MATRIX_FIXTURES: extensions
       JHARNESS_MATRIX_KEEP_GOING: '1'
     steps:
@@ -68,7 +68,7 @@ jobs:
         if: always()
         shell: pwsh
         run: |
-          'This job diagnoses three fixtures on Windows only. It does not run the full Java/release gates and cannot complete M10.5.9 or grant M11 eligibility.' >> $env:GITHUB_STEP_SUMMARY
+          'This job diagnoses the selected Windows fixture subset only. It does not run the full Java/release gates and cannot complete M10.5.9 or grant M11 eligibility.' >> $env:GITHUB_STEP_SUMMARY
       - name: Preserve original diagnostic evidence
         if: always()
         uses: actions/upload-artifact@v4
