@@ -1,11 +1,5 @@
 name: M10.5.9 Windows focused diagnostics (not acceptance)
 on:
-  push:
-    branches: [codex/m1059-full-validation]
-    paths:
-      - frontend/tests/**
-      - harness-*/**
-      - .github/workflows/m1059-windows-focused.yml
   workflow_dispatch:
 permissions:
   contents: read

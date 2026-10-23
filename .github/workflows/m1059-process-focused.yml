@@ -1,0 +1,56 @@
+name: M10.5.9 process ownership diagnostics (not acceptance)
+on:
+  push:
+    branches: [codex/m1059-full-validation]
+    paths:
+      - harness-ecosystem/src/main/java/io/jharness/ecosystem/ProcessCleanup.java
+      - harness-ecosystem/src/test/java/io/jharness/ecosystem/R1RemainingOwnershipFaultTest.java
+      - .github/workflows/m1059-process-focused.yml
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  ownership:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - name: Verify owned-process compensation on Windows
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path .build-cache/M10.5.9 | Out-Null
+          .\mvnw.cmd -B -pl harness-ecosystem -am test '-Dtest=R1RemainingOwnershipFaultTest,R1EnvironmentLifecycleTest,R3McpProtocolTest,M6TerminalTest' '-Dsurefire.failIfNoSpecifiedTests=false' *> .build-cache/M10.5.9/process-focused.log
+          if ($LASTEXITCODE -ne 0) { Get-Content .build-cache/M10.5.9/process-focused.log -Tail 100; exit 1 }
+      - name: Verify owned-process compensation on POSIX
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          mkdir -p .build-cache/M10.5.9
+          if ! bash ./mvnw -B -pl harness-ecosystem -am test '-Dtest=R1RemainingOwnershipFaultTest,R1EnvironmentLifecycleTest,R3McpProtocolTest,M6TerminalTest' '-Dsurefire.failIfNoSpecifiedTests=false' > .build-cache/M10.5.9/process-focused.log 2>&1; then
+            tail -n 100 .build-cache/M10.5.9/process-focused.log
+            exit 1
+          fi
+      - name: Explain diagnostic scope
+        if: always()
+        shell: bash
+        run: echo 'Only selected process ownership tests run here. This is not full M10.5.9 acceptance and cannot grant M11 eligibility.' >> "$GITHUB_STEP_SUMMARY"
+      - name: Preserve original process evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m1059-process-focused-${{ matrix.os }}
+          include-hidden-files: true
+          path: |
+            .build-cache/M10.5.9/process-focused.log
+            harness-ecosystem/target/surefire-reports/
+            harness-process/target/surefire-reports/

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "milestone": "M10.5.9",
-  "origin": "M10.5.9 current acceptance contract: preserves all 647 reviewed baseline cases and explicitly adds the root Process reaper-lag cleanup regression discovered by actual macOS CI. Contract only, not execution evidence.",
+  "origin": "M10.5.9 current acceptance contract: preserves all 648 reviewed baseline cases and explicitly adds the MCP root Process reaper-lag cleanup regression discovered by actual Linux CI. Contract only, not execution evidence.",
   "suites": [
     {
       "module": "harness-agent",
@@ -295,6 +295,7 @@
         "environmentDoubleCloseFailureRevokesFilesAndPreservesBothCauses",
         "postStartFatalFailureKeepsCleanupUncertaintyAsSuppressed",
         "postStartInitializationErrorReapsActualOwnedChildAndRethrowsSameError",
+        "stdioCleanupWaitsForRootProcessExitState",
         "stdioCloseReportsSamplingOverflowAndStopsEveryRetainedHandle",
         "webResponseArrivingAfterFailedCancellationIsClosedByLateCallback",
         "webResponseReceivedBeforeCancellationAndNeverHandedOffIsClosed"

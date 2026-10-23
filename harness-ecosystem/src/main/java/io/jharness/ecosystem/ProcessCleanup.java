@@ -36,14 +36,16 @@ final class ProcessCleanup {
                 clean = false;
             }
         long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(2);
-        while (handles.stream().anyMatch(ProcessHandle::isAlive) && System.nanoTime() < deadline) {
+        // OS handles can disappear before Process's cached exit state is reaped.
+        while ((process.isAlive() || handles.stream().anyMatch(ProcessHandle::isAlive))
+                && System.nanoTime() < deadline) {
             try {
                 Thread.sleep(10);
             } catch (InterruptedException ex) {
                 interrupted = true;
             }
         }
-        clean &= handles.stream().noneMatch(ProcessHandle::isAlive);
+        clean &= !process.isAlive() && handles.stream().noneMatch(ProcessHandle::isAlive);
         if (interrupted) Thread.currentThread().interrupt();
         return clean;
     }

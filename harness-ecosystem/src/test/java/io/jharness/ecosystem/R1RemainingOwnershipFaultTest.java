@@ -71,6 +71,32 @@ class R1RemainingOwnershipFaultTest {
     }
 
     @Test
+    void stdioCleanupWaitsForRootProcessExitState() {
+        var observations = new AtomicInteger();
+        var delayed =
+                new OwnedProcess(0, false) {
+                    @Override
+                    public boolean isAlive() {
+                        return alive.get() || observations.getAndIncrement() < 3;
+                    }
+                };
+        assertTrue(ProcessCleanup.stop(delayed));
+        assertFalse(delayed.isAlive(), "handle exit must not bypass the root Process reaper");
+        assertTrue(observations.get() >= 4);
+        assertEquals(3, delayed.streamCloses.get());
+
+        var unreaped =
+                new OwnedProcess(0, false) {
+                    @Override
+                    public boolean isAlive() {
+                        return true;
+                    }
+                };
+        assertFalse(ProcessCleanup.stop(unreaped), "a live root remains uncertain at the deadline");
+        assertEquals(3, unreaped.streamCloses.get());
+    }
+
+    @Test
     void postStartInitializationErrorReapsActualOwnedChildAndRethrowsSameError() throws Exception {
         var child =
                 new ProcessBuilder(
