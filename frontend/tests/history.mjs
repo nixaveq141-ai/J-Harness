@@ -1,4 +1,4 @@
-import { browserType as chromium, stoppedHostDiagnostic, fixtureEnvironment } from './runtime.mjs'
+import { browserType as chromium, stoppedHostDiagnostic, fixtureEnvironment, captureTaskAcceptance } from './runtime.mjs'
 import { createServer } from 'node:http'
 import { spawn } from 'node:child_process'
 import { mkdir, writeFile, readFile } from 'node:fs/promises'
@@ -45,18 +45,8 @@ async function ended(id) { await until(async () => ['FINISHED', 'UNKNOWN', 'VERI
 async function create(goal) {
   const profile = await page.getByLabel('浏览工作区').inputValue()
   await page.getByRole('button', { name: '新建任务', exact: true }).click(); await page.getByLabel('任务配置').selectOption(profile); await page.getByLabel('任务目标').fill(goal)
-  let accept,reject
-  const accepted=new Promise((resolve,fail)=>{accept=resolve;reject=fail}),url=base+'/v1/tasks'
-  const capture=async route=>{
-    if(route.request().method()!=='POST'){await route.continue();return}
-    try{const response=await route.fetch(),receipt=await response.json();await route.fulfill({response});accept({status:response.status(),receipt})}
-    catch(error){await route.abort();reject(error)}
-  }
-  await page.route(url,capture)
-  let response
-  try{await page.getByRole('button', { name: '创建任务', exact: true }).click();response=await accepted}
-  finally{await page.unroute(url,capture)}
-  assert.equal(response.status,202);const id=response.receipt.taskId
+  const response=await captureTaskAcceptance(page,base,()=>page.getByRole('button', { name: '创建任务', exact: true }).click())
+  assert.equal(response.status,202);const id=response.body.taskId
   assert.ok(typeof id==='string'&&id);await until(async()=>await page.evaluate(()=>sessionStorage.getItem('jh-selected'))===id)
   await ended(id);assert.equal((await api(`/v1/tasks/${id}`)).body.profile,profile);return id
 }

@@ -1,5 +1,12 @@
 name: M10.5.9 Windows focused diagnostics (not acceptance)
 on:
+  push:
+    branches: [codex/m1059-full-validation]
+    paths:
+      - frontend/tests/browser.mjs
+      - frontend/tests/history.mjs
+      - frontend/tests/runtime.mjs
+      - .github/workflows/m1059-windows-focused.yml
   workflow_dispatch:
 permissions:
   contents: read
@@ -9,8 +16,8 @@ jobs:
     timeout-minutes: 35
     env:
       JHARNESS_EVIDENCE_RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}-${{ github.sha }}
-      JHARNESS_MATRIX_ENGINES: firefox
-      JHARNESS_MATRIX_FIXTURES: extensions
+      JHARNESS_MATRIX_ENGINES: chromium
+      JHARNESS_MATRIX_FIXTURES: browser
       JHARNESS_MATRIX_KEEP_GOING: '1'
     steps:
       - uses: actions/checkout@v4
@@ -33,30 +40,10 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           .\mvnw.cmd -B -DskipTests package *> focused-build.log
           if ($LASTEXITCODE -ne 0) { Get-Content focused-build.log -Tail 80; exit 1 }
-      - name: Install the three diagnostic browsers
+      - name: Install Chromium for the selected diagnostic
         working-directory: frontend
-        run: npx playwright install chromium firefox webkit
-      - name: Diagnose PowerShell with the process service environment
-        shell: pwsh
-        run: |
-          @'
-          import {spawnSync} from 'node:child_process'
-          import {mkdir,writeFile} from 'node:fs/promises'
-          import {resolve,join} from 'node:path'
-          const directory=resolve('.build-cache/M10.5.9/powershell-probes');await mkdir(directory,{recursive:true})
-          const names=['PATH','SystemRoot','WINDIR','JAVA_HOME','TEMP','TMP','HOME','USERPROFILE','LANG','LC_ALL','LC_CTYPE']
-          const env=Object.fromEntries(names.filter(n=>process.env[n]!==undefined).map(n=>[n,process.env[n]]))
-          const executable=join(process.env.SystemRoot,'System32/WindowsPowerShell/v1.0/powershell.exe')
-          const cases={basic:"'ready'",joinPath:"[System.IO.File]::WriteAllText((Join-Path $PWD 'join.txt'), 'approved')\n",dotNet:"[System.IO.File]::WriteAllText([System.IO.Path]::Combine([System.Environment]::CurrentDirectory, 'dotnet.txt'), 'approved')\n",dotNetNoNewline:"[System.IO.File]::WriteAllText([System.IO.Path]::Combine([System.Environment]::CurrentDirectory, 'dotnet-flat.txt'), 'approved')"}
-          const results=[]
-          for(const [name,script] of Object.entries(cases)){
-            const start=Date.now(),r=spawnSync(executable,['-NoLogo','-NoProfile','-NonInteractive','-Command',script],{cwd:directory,env,input:'',encoding:'utf8',timeout:10000,windowsHide:true,maxBuffer:65536})
-            results.push({name,elapsedMs:Date.now()-start,status:r.status,signal:r.signal,error:r.error?.code,stdout:r.stdout,stderr:r.stderr})
-          }
-          await writeFile(join(directory,'results.json'),JSON.stringify({scope:'diagnostic only; not an acceptance gate',results},null,2))
-          console.log(JSON.stringify(results))
-          '@ | node --input-type=module
-      - name: Reproduce remaining Windows extension failures
+        run: node node_modules/playwright/cli.js install chromium
+      - name: Verify Windows Chromium task acceptance fixture
         run: node scripts/run-workbench-matrix.mjs
       - name: Explain diagnostic scope
         if: always()
@@ -72,7 +59,8 @@ jobs:
           path: |
             focused-build.log
             .build-cache/M10.5.9/browser/
-            .build-cache/M10.5.9/powershell-probes/
+            .build-cache/M10-*.png
+            .build-cache/M10-browser-failure.txt
             .build-cache/M10.5.2-*.png
             .build-cache/M10.5.6-*.png
             .build-cache/M10.5.7-*.png

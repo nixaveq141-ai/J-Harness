@@ -1,4 +1,4 @@
-import { browserType as chromium, stoppedHostDiagnostic } from './runtime.mjs'
+import { browserType as chromium, stoppedHostDiagnostic, captureTaskAcceptance } from './runtime.mjs'
 import { spawn } from 'node:child_process'
 import { readFile, writeFile, mkdir } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
@@ -54,11 +54,9 @@ try {
     await page.getByRole('button', { name: '新建任务', exact: true }).click()
     await page.getByLabel('任务配置').selectOption(profile)
     await page.getByLabel('任务目标').fill(goal)
-    const accepted = page.waitForResponse(r => r.request().method() === 'POST' && r.url() === base + '/v1/tasks')
-    await page.getByRole('button', { name: '创建任务', exact: true }).click()
-    const response = await accepted
-    assert.equal(response.status(), 202)
-    const receipt = await response.json()
+    const response = await captureTaskAcceptance(page, base, () => page.getByRole('button', { name: '创建任务', exact: true }).click())
+    assert.equal(response.status, 202)
+    const receipt = response.body
     assert.ok(typeof receipt.taskId === 'string' && receipt.taskId)
     await until(async () => await page.evaluate(() => sessionStorage.getItem('jh-selected')) === receipt.taskId && await page.locator('.task-item.selected').count() === 1)
     return receipt.taskId

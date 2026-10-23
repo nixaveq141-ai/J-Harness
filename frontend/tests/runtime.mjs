@@ -5,6 +5,25 @@ export function fixtureEnvironment(overrides) {
   const inherited=Object.fromEntries(Object.entries(process.env).filter(([name])=>!/(API_KEY|ACCESS_KEY_ID|SECRET_ACCESS_KEY|ACCESS_KEY|PRIVATE_KEY|CREDENTIALS|TOKEN|SECRET|PASSWORD|PASS)$/i.test(name)))
   return {...inherited,...overrides}
 }
+// Consume the real response before Chromium can discard its network body. Forward
+// the original UI request once, with no retries/redirects or replacement response.
+export async function captureTaskAcceptance(page, base, trigger) {
+  let accept,reject
+  const received=new Promise((resolve,fail)=>{accept=resolve;reject=fail})
+  const url=base+'/v1/tasks'
+  const capture=async route=>{
+    if(route.request().method()!=='POST'){await route.continue();return}
+    try {
+      const response=await route.fetch({maxRetries:0,maxRedirects:0,timeout:30000})
+      const body=await response.json(),status=response.status()
+      await route.fulfill({response});accept({status,body})
+    } catch(error) {await route.abort();reject(error)}
+  }
+  await page.route(url,capture)
+  const timer=setTimeout(()=>reject(Error('Task acceptance response not received within 30s')),30000)
+  try {const [receipt]=await Promise.all([received,Promise.resolve().then(trigger)]);return receipt}
+  finally {clearTimeout(timer);await page.unroute(url,capture)}
+}
 export const engine = process.env.JHARNESS_BROWSER_ENGINE ?? 'chromium'
 if (!['chromium','firefox','webkit'].includes(engine)) throw Error('Unsupported browser engine')
 const selected = {chromium,firefox,webkit}[engine]
