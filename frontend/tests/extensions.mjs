@@ -15,6 +15,7 @@ const scriptMode = process.platform === 'win32' ? 'POWERSHELL' : 'SH'
 const scriptPath = process.platform === 'win32' ? 'check.ps1' : 'check.sh'
 const checks = [], screenshots = [], wire = [], peerWire = [], errors = []
 let host, base, output = '', browser, page, context, hold, parentSent = false, childSent = false, result
+let unavailableInitialization=false,unavailableInitializations=0
 const wait = ms => new Promise(r => setTimeout(r, ms))
 async function until(fn, ms = 30000) { const end = Date.now() + ms; while (Date.now() < end) { if (await fn()) return; await wait(100) } throw Error('Fixture timeout') }
 function check(name, passed = true) { assert.ok(passed, name); checks.push({ name, passed: true }); console.log('PASS', name) }
@@ -43,6 +44,9 @@ const peer = createServer(async (req, res) => {
   if (req.method === 'DELETE') { res.writeHead(200); res.end(); return }
   let text = ''; for await (const chunk of req) text += chunk
   const rpc = JSON.parse(text); peerWire.push({ method: rpc.method, auth: req.headers.authorization ?? null, params: rpc.params })
+  if(unavailableInitialization&&rpc.method==='initialize'){
+    unavailableInitializations++;res.writeHead(503,{'Content-Type':'text/plain'});res.end('Synthetic initialization unavailable');return
+  }
   if (!rpc.id) { res.writeHead(202); res.end(); return }
   let value
   switch (rpc.method) {
@@ -181,11 +185,18 @@ try {
   const rejected = await api('/v1/tasks', { profile: 'default', goal: 'Missing MCP credential fixture', requestId: 'missing-credential' })
   check('missing MCP credential rejects task before model or peer request', rejected.status === 400 && rejected.body.error === 'MCP_CREDENTIAL_MISSING' && wire.length === oldWire && peerWire.filter(w => w.method === 'initialize').length === oldInit)
   const current = (await api('/v1/settings')).body, disconnected = saveBody(current)
-  disconnected.extensions = { ...disconnected.extensions, mcp: [{ ...saved.extensions.mcp[0], url: 'http://127.0.0.1:1/mcp', timeoutSeconds: 1 }] }
-  await api('/v1/settings', disconnected)
-  const unavailable = (await api('/v1/tasks', { profile: 'default', goal: 'Disconnected MCP fixture', requestId: 'disconnected' })).body
-  await until(async () => (await api(`/v1/tasks/${unavailable.taskId}`)).body.phase === 'UNKNOWN')
-  check('disconnected assembly keeps uncertainty without model request or successful inventory', wire.length === oldWire && (await api(`/v1/tasks/${unavailable.taskId}/tools`)).body.recorded === false)
+  unavailableInitialization=true
+  disconnected.extensions = { ...disconnected.extensions, mcp: [{ ...saved.extensions.mcp[0], url: peerUrl, timeoutSeconds: 1 }] }
+  const disconnectSaved=await api('/v1/settings', disconnected)
+  assert.equal(disconnectSaved.status,200,JSON.stringify(disconnectSaved.body))
+  const disconnectAccepted=await api('/v1/tasks', { profile: 'default', goal: 'Disconnected MCP fixture', requestId: 'disconnected' })
+  assert.equal(disconnectAccepted.status,202,JSON.stringify(disconnectAccepted.body))
+  const unavailable = disconnectAccepted.body
+  assert.ok(typeof unavailable.taskId==='string'&&unavailable.taskId)
+  let disconnectState
+  try{await until(async () => {disconnectState=await api(`/v1/tasks/${unavailable.taskId}`);return disconnectState.body.phase==='UNKNOWN'})}
+  catch(error){throw new Error('Disconnected assembly did not reach UNKNOWN: '+JSON.stringify(disconnectState),{cause:error})}
+  check('disconnected assembly keeps uncertainty without model request or successful inventory', unavailableInitializations===1 && wire.length === oldWire && (await api(`/v1/tasks/${unavailable.taskId}/tools`)).body.recorded === false)
   check('unknown assembly blocks settings and never replays external tool', (await api('/v1/settings', saveBody((await api('/v1/settings')).body))).body.error === 'WORKSPACE_BUSY' && peerWire.filter(w => w.method === 'tools/call').length === 1)
   check('no browser exceptions', errors.length === 0)
   result = { status: 'PASS', capturedAt: new Date().toISOString(), checks, screenshots,transportDiagnostics, browserEngine:process.env.JHARNESS_BROWSER_ENGINE??'chromium',browserVersion: browser.version(), browserChannel: process.env.JHARNESS_BROWSER_CHANNEL ?? process.env.JHARNESS_BROWSER_ENGINE ?? 'chromium', jarSha256: createHash('sha256').update(await readFile(jar)).digest('hex'), paidRequests: 0, modelRequests: wire.length, mcpMethods: peerWire.map(w => w.method) }
