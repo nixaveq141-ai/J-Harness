@@ -4,18 +4,27 @@ on:
     branches: [codex/m1059-full-validation]
     paths:
       - frontend/tests/content.mjs
+      - frontend/tests/history.mjs
       - .github/workflows/m1059-windows-focused.yml
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
   focused:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - engine: firefox
+            fixture: history
+          - engine: webkit
+            fixture: content
     runs-on: windows-latest
     timeout-minutes: 35
     env:
       JHARNESS_EVIDENCE_RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}-${{ github.sha }}
-      JHARNESS_MATRIX_ENGINES: webkit
-      JHARNESS_MATRIX_FIXTURES: content
+      JHARNESS_MATRIX_ENGINES: ${{ matrix.engine }}
+      JHARNESS_MATRIX_FIXTURES: ${{ matrix.fixture }}
       JHARNESS_MATRIX_KEEP_GOING: '1'
     steps:
       - uses: actions/checkout@v4
@@ -38,11 +47,21 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           .\mvnw.cmd -B -DskipTests package *> focused-build.log
           if ($LASTEXITCODE -ne 0) { Get-Content focused-build.log -Tail 80; exit 1 }
-      - name: Install WebKit for the selected diagnostic
+      - name: Install selected browser for the diagnostic
         working-directory: frontend
-        run: node node_modules/playwright/cli.js install webkit
-      - name: Verify Windows WebKit content fixture
-        run: node scripts/run-workbench-matrix.mjs
+        run: node node_modules/playwright/cli.js install $env:JHARNESS_MATRIX_ENGINES
+      - name: Verify selected Windows fixture (stop at first failure)
+        shell: pwsh
+        run: |
+          $rounds = if ($env:JHARNESS_MATRIX_FIXTURES -eq 'content') { 3 } else { 1 }
+          for ($round = 1; $round -le $rounds; $round++) {
+            node scripts/run-workbench-matrix.mjs
+            $fixtureExit = $LASTEXITCODE
+            $snapshot = ".build-cache/M10.5.9/focused-attempt-$round/.build-cache/M10.5.9"
+            New-Item -ItemType Directory -Force -Path $snapshot | Out-Null
+            Copy-Item -LiteralPath .build-cache/M10.5.9/browser -Destination "$snapshot/browser" -Recurse
+            if ($fixtureExit -ne 0) { exit $fixtureExit }
+          }
       - name: Explain diagnostic scope
         if: always()
         shell: pwsh
@@ -52,11 +71,12 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: m1059-windows-focused
+          name: m1059-windows-focused-${{ matrix.engine }}-${{ matrix.fixture }}
           include-hidden-files: true
           path: |
             focused-build.log
             .build-cache/M10.5.9/browser/
+            .build-cache/M10.5.9/focused-attempt-*/
             .build-cache/M10-*.png
             .build-cache/M10-browser-failure.txt
             .build-cache/M10.5.2-*.png

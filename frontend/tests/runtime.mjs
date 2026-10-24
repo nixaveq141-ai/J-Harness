@@ -7,10 +7,10 @@ export function fixtureEnvironment(overrides) {
 }
 // Consume the real response before Chromium can discard its network body. Forward
 // the original UI request once, with no retries/redirects or replacement response.
-export async function captureTaskAcceptance(page, base, trigger) {
+export async function captureTaskAcceptance(page, base, trigger, path = '/v1/tasks') {
   let accept,reject
   const received=new Promise((resolve,fail)=>{accept=resolve;reject=fail})
-  const url=base+'/v1/tasks'
+  const url=base+path
   const capture=async route=>{
     if(route.request().method()!=='POST'){await route.continue();return}
     try {

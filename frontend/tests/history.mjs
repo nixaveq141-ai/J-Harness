@@ -77,8 +77,13 @@ try {
   const exported = await readFile(exportPath, 'utf8')
   check('export is complete valid JSONL with original associations and no credential', exported.trim().split('\n').every(line => JSON.parse(line).sessionId === betaTask) && exported.includes('beta workspace source') && !exported.includes(key) && !exported.includes(token))
   const beforeFork = wire.length
-  await page.getByRole('button', { name: '分叉会话', exact: true }).click()
-  await until(async () => await page.evaluate(() => sessionStorage.getItem('jh-selected')) !== betaTask)
+  const exportedEnd = JSON.parse(exported.trim().split('\n').at(-1)).eventId
+  assert.ok(typeof exportedEnd === 'string' && exportedEnd)
+  await until(async () => await page.getByLabel('分叉截止事件', { exact: true }).inputValue() === exportedEnd)
+  const forkReceipt = await captureTaskAcceptance(page, base, () => page.getByRole('button', { name: '分叉会话', exact: true }).click(), `/v1/tasks/${betaTask}/fork`)
+  assert.equal(forkReceipt.status, 202, JSON.stringify(forkReceipt.body))
+  assert.ok(typeof forkReceipt.body.taskId === 'string' && forkReceipt.body.taskId)
+  await until(async () => await page.evaluate(() => sessionStorage.getItem('jh-selected')) === forkReceipt.body.taskId)
   const fork = await page.evaluate(() => sessionStorage.getItem('jh-selected')); await ended(fork); panel = await manage()
   check('fork creates independent session without executing model', (await api(`/v1/tasks/${fork}`)).body.name === 'Beta investigation \u00b7 \u5206\u53c9' && fork !== betaTask && wire.length === beforeFork && (await api(`/v1/tasks/${fork}/events?limit=100`)).body.events.some(e => e.type === 'session.forked' && e.payload.parentSessionId === betaTask))
   await page.getByRole('button', { name: '归档会话', exact: true }).click(); await page.getByRole('button', { name: '恢复会话', exact: true }).waitFor()
@@ -124,6 +129,7 @@ try {
   const version = browser.version(); await stop()
   await writeFile(join(out, 'M10.5.2-history-results.json'), JSON.stringify({ status: 'PASS', capturedAt: new Date().toISOString(), browserEngine:process.env.JHARNESS_BROWSER_ENGINE??'chromium',browserVersion: version, checks, screenshots,transportDiagnostics, completedCycles: ids.length, modelRequests: wire.length, paidRequests: 0, hostStopped: host.exitCode === 0, jarSha256: createHash('sha256').update(await readFile(jar)).digest('hex') }, null, 2))
 } catch (e) {
+  if (page && !page.isClosed()) console.log('HISTORY_STATE',JSON.stringify(await page.evaluate(()=>({selected:sessionStorage.getItem('jh-selected'),pending:!!sessionStorage.getItem('jh-pending'),cutoff:document.querySelector('input[aria-label="分叉截止事件"]')?.value,status:[...document.querySelectorAll('[role="alert"],[role="status"]')].map(e=>e.textContent)}))).replaceAll(key,'[REDACTED]').replaceAll(token,'[REDACTED]'))
   if (page && !page.isClosed()) await page.screenshot({ path: join(out, 'M10.5.2-history-failure.png') })
   await writeFile(join(out, 'M10.5.2-history-failure.txt'), String(e.stack) + '\n' + hostOutput.replaceAll(key, '[REDACTED]').replaceAll(token, '[REDACTED]'))
   throw e
