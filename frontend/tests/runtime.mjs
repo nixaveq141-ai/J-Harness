@@ -49,3 +49,16 @@ export function stoppedHostDiagnostic(message, origins) {
     return url.hostname==='127.0.0.1'&&origins.has(url.origin)&&read
   } catch {return false}
 }
+
+// Only reads already in flight when a fixture deliberately reloads its page.
+// The caller keeps this snapshot only for the bounded navigation operation.
+export function navigationReadDiagnostic(message, requests) {
+  return requests.some(request => {
+    if (request.method !== 'GET') return false
+    try {
+      const url = new URL(request.url)
+      return stoppedHostDiagnostic(message, new Set([url.origin]))
+        && message.endsWith(url.pathname + url.search + ' due to access control checks.')
+    } catch { return false }
+  })
+}

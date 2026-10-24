@@ -1,4 +1,4 @@
-import { browserType as chromium, stoppedHostDiagnostic } from './runtime.mjs'
+import { browserType as chromium, stoppedHostDiagnostic, captureTaskAcceptance } from './runtime.mjs'
 import { createServer } from 'node:http'
 import { spawn } from 'node:child_process'
 import { mkdir, writeFile, readFile, readdir } from 'node:fs/promises'
@@ -50,6 +50,15 @@ async function api(path, body, auth = true, extra = {}) {
 }
 const saveBody = v => ({ revision: v.revision, models: v.models, selected: v.selected, extensions: v.extensions, apiKeys: {} })
 async function connect() { await page.goto(base); await page.getByRole('button', { name: '工作台设置', exact: true }).click(); await page.getByText('模型连接', { exact: true }).waitFor() }
+async function createConfiguredTask(goal, modelId) {
+  await until(async () => await page.getByLabel('模型', { exact: true }).inputValue() === modelId)
+  const input = page.getByLabel('任务目标')
+  await input.click(); await input.press('ControlOrMeta+A'); await input.pressSequentially(goal)
+  assert.equal(await input.inputValue(), goal)
+  const receipt = await captureTaskAcceptance(page, base, () => page.getByRole('button', { name: '创建任务', exact: true }).click())
+  assert.equal(receipt.status, 202); assert.ok(typeof receipt.body.taskId === 'string' && receipt.body.taskId)
+  await until(async () => await page.evaluate(() => sessionStorage.getItem('jh-selected')) === receipt.body.taskId)
+}
 async function shot(name) { await wait(300); const path = join(out, `M10-settings-${name}.png`); await page.screenshot({ path, fullPage: true }); screenshots.push({ path: relative(root,path).replaceAll('\\','/'), sha256: createHash('sha256').update(await readFile(path)).digest('hex') }) }
 try {
   await start()
@@ -86,8 +95,7 @@ try {
   await shot('models')
   check('secret input cleared and browser storage empty of secret', await page.getByLabel('API Key', { exact: true }).inputValue() === '' && !(await page.evaluate(() => JSON.stringify({ localStorage, sessionStorage }))).includes(secret))
   await page.getByRole('button', { name: '返回任务', exact: true }).click()
-  await page.getByLabel('任务目标').fill('Use the configured todo and skill tools in this synthetic fixture.')
-  await page.getByRole('button', { name: '创建任务', exact: true }).click()
+  await createConfiguredTask('Use the configured todo and skill tools in this synthetic fixture.', saved.selected)
   await until(() => wire.length === 1)
   check('new task uses saved model URL and vault key', wire[0].model === 'settings-model' && wire[0].authorized)
   check('new connection does not inherit provider specific thinking parameter', wire[0].thinking === null)
@@ -109,8 +117,7 @@ try {
   permissionProbe = true; toolSent = false
   await page.getByRole('button', { name: '返回任务', exact: true }).click()
   await page.getByRole('button', { name: '新建任务', exact: true }).click()
-  await page.getByLabel('任务目标').fill('Read-only policy fixture; model will attempt a write.')
-  await page.getByRole('button', { name: '创建任务', exact: true }).click()
+  await createConfiguredTask('Read-only policy fixture; model will attempt a write.', saved.selected)
   await until(async () => { const id = await page.evaluate(() => sessionStorage.getItem('jh-selected')); return id && id !== task.taskId })
   const permissionId = await page.evaluate(() => sessionStorage.getItem('jh-selected'))
   await until(async () => (await api(`/v1/tasks/${permissionId}`)).body.phase === 'FINISHED')
@@ -147,6 +154,15 @@ try {
   await page.unroute('**/v1/settings')
   check('no unexpected browser runtime errors', pageErrors.length === 0)
   result = { date: new Date().toISOString(), platform: process.platform, browser: browser.version(), checks, screenshots,transportDiagnostics, modelRequests: wire.length, paidRequests: 0, jarSha256: createHash('sha256').update(await readFile(jar)).digest('hex') }
+} catch (error) {
+  if (page && !page.isClosed()) console.error('SETTINGS_FAILURE_STATE', JSON.stringify(await page.evaluate(() => ({
+    goal: document.querySelector('textarea[aria-label="任务目标"]')?.value ?? null,
+    createDisabled: document.querySelector('button[aria-label="创建任务"]')?.disabled ?? null,
+    profile: document.querySelector('select[aria-label="任务配置"]')?.value ?? null,
+    model: document.querySelector('select[aria-label="模型"]')?.value ?? null,
+    pending: !!sessionStorage.getItem('jh-pending'),
+  })).catch(() => ({ unavailable: true }))))
+  throw error
 } finally {
   block = false; held?.()
   await stop().catch(() => { host?.kill() })
