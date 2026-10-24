@@ -4,6 +4,7 @@ import { mkdir, writeFile, readFile } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 import { createHash, randomUUID } from 'node:crypto'
 import assert from 'node:assert/strict'
+import { failureDiagnostic } from './diagnostic.mjs'
 
 const root=resolve(import.meta.dirname,'../..'),cache=join(root,'.build-cache'),base=join(cache,'M10.5.8-sdk-'+Date.now())
 const secret='synthetic-sdk-'+randomUUID(),wire=[],results=[]
@@ -39,8 +40,11 @@ try{
     const child=spawn(program,args,{cwd:root,env,windowsHide:true,stdio:'pipe'})
     let output='',error='';child.stdout.on('data',d=>{output+=d});child.stderr.on('data',d=>{if(error.length<65536)error+=d})
     const timeout=setTimeout(()=>child.kill(),120000)
-    const code=await new Promise(r=>child.on('exit',r));clearTimeout(timeout)
-    if(code!==0)await writeFile(join(cache,`M10.5.8-sdk-${language}-failure.log`),(output+'\n'+error).replaceAll(secret,'[REDACTED]'))
+    const code=await new Promise(r=>child.on('close',r));clearTimeout(timeout)
+    if(code!==0){
+      await writeFile(join(cache,`M10.5.8-sdk-${language}-failure.log`),(output+'\n'+error).replaceAll(secret,'[REDACTED]'))
+      console.error('SDK_DIAGNOSTIC '+JSON.stringify(failureDiagnostic(language,code,output,error)))
+    }
     assert.equal(code,0,`${language} worker failed; see local failure log`)
     const report=JSON.parse(output.trim().split(/\r?\n/).at(-1));results.push(report);console.log('PASS',language,report.checks.length)
   }

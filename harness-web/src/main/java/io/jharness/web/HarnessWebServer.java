@@ -765,16 +765,25 @@ public final class HarnessWebServer implements AutoCloseable {
                     if (!occupied.isEmpty() || settingsChanging) throw fault(409, "WORKSPACE_BUSY");
                     settingsChanging = true;
                 }
+                boolean mutationReleased = false;
                 try {
-                    respond(exchange, 200, current.save(input));
+                    var response = prepareResponse(200, current.save(input));
+                    synchronized (this) {
+                        settingsChanging = false;
+                        mutationReleased = true;
+                        notifyAll();
+                    }
+                    respond(exchange, response);
                 } catch (HarnessException ex) {
                     throw fault(ex.code().equals("SETTINGS_CONFLICT") ? 409 : 400, ex.code());
                 } catch (IllegalArgumentException ex) {
                     throw fault(400, "INVALID_SETTINGS");
                 } finally {
-                    synchronized (this) {
-                        settingsChanging = false;
-                        notifyAll();
+                    if (!mutationReleased) {
+                        synchronized (this) {
+                            settingsChanging = false;
+                            notifyAll();
+                        }
                     }
                 }
             } else throw fault(405, "METHOD_NOT_ALLOWED");
@@ -822,11 +831,12 @@ public final class HarnessWebServer implements AutoCloseable {
                 if (settingsChanging) throw fault(409, "WORKSPACE_BUSY");
                 settingsChanging = true;
             }
+            boolean mutationReleased = false;
             try {
                 var registered =
                         registry.register(
                                 text(input, "path", 1024), clean(text(input, "name", 80)));
-                Map<String, Object> out;
+                PreparedResponse out;
                 synchronized (this) {
                     if (closed || broken) throw fault(503, "WEB_UNAVAILABLE");
                     try {
@@ -835,17 +845,22 @@ public final class HarnessWebServer implements AutoCloseable {
                         occupied.add(registered.getValue().workspaceBinding());
                     }
                     profiles.put(registered.getKey(), registered.getValue());
-                    out = workspaceInfo();
+                    out = prepareResponse(200, workspaceInfo());
+                    settingsChanging = false;
+                    mutationReleased = true;
+                    notifyAll();
                 }
-                respond(exchange, 200, out);
+                respond(exchange, out);
             } catch (HarnessException ex) {
                 throw fault(409, ex.code());
             } catch (IOException ex) {
                 throw fault(400, "WORKSPACE_PATH_DENIED");
             } finally {
-                synchronized (this) {
-                    settingsChanging = false;
-                    notifyAll();
+                if (!mutationReleased) {
+                    synchronized (this) {
+                        settingsChanging = false;
+                        notifyAll();
+                    }
                 }
             }
             return;
@@ -2512,20 +2527,31 @@ public final class HarnessWebServer implements AutoCloseable {
 
     private void respond(HttpExchange exchange, int status, Map<String, Object> value)
             throws IOException {
+        respond(exchange, prepareResponse(status, value));
+    }
+
+    private record PreparedResponse(int status, byte[] bytes) {}
+
+    private PreparedResponse prepareResponse(int status, Map<String, Object> value)
+            throws IOException {
         byte[] bytes = WebJson.encode(sanitizer.sanitize(value));
         if (bytes.length > WebJson.RESPONSE_LIMIT) {
             status = 413;
             bytes = WebJson.encode(Map.of("error", "RESPONSE_LIMIT"));
         }
+        return new PreparedResponse(status, bytes);
+    }
+
+    private void respond(HttpExchange exchange, PreparedResponse response) throws IOException {
         var headers = exchange.getResponseHeaders();
         headers.set("Connection", "close");
         headers.set("Content-Type", "application/json; charset=utf-8");
         headers.set("Cache-Control", "no-store");
         headers.set("X-Content-Type-Options", "nosniff");
         headers.set("Content-Security-Policy", "default-src 'none'; frame-ancestors 'none'");
-        if (status == 401) headers.set("WWW-Authenticate", "Bearer");
-        exchange.sendResponseHeaders(status, bytes.length);
-        exchange.getResponseBody().write(bytes);
+        if (response.status() == 401) headers.set("WWW-Authenticate", "Bearer");
+        exchange.sendResponseHeaders(response.status(), response.bytes().length);
+        exchange.getResponseBody().write(response.bytes());
     }
 
     private static byte[] digest(String text) {

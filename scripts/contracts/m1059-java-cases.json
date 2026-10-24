@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "milestone": "M10.5.9",
-  "origin": "M10.5.9 current acceptance contract: preserves all 650 reviewed cases and adds the Windows owned-process termination-signal regression, including deadline uncertainty and waiter cancellation. Contract only, not execution evidence.",
+  "origin": "M10.5.9 current acceptance contract: preserves all 651 reviewed cases and adds the response-boundary mutation-ownership regression for settings and workspace registration. Contract only, not execution evidence.",
   "suites": [
     {
       "module": "harness-agent",
@@ -1137,6 +1137,7 @@
       "cases": [
         "approvalAcceptedBeforeDeadlineSurvivesOwnerResumingAfterDeadline",
         "closeRetainsCatalogOwnershipUntilUncooperativeWorkerActuallyLeaves",
+        "committedMutationResponseCannotKeepOrReleaseAnotherMutationGuard",
         "concurrentProfileRegistrationAndInfoReadReturnCompleteSafeSnapshots",
         "displaySnapshotFailureStillClosesSdkAndPreservesUnknownOwnership",
         "expiredApprovalPostAndOwnerContendAtSameBarrierAndBothDeny",

@@ -2,11 +2,13 @@ package io.jharness.testkit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.sun.net.httpserver.*;
 import io.jharness.api.*;
 import io.jharness.ecosystem.*;
 import io.jharness.policy.DefaultPolicyEngine;
 import io.jharness.session.*;
 import io.jharness.web.HarnessWebServer;
+import java.io.*;
 import java.net.*;
 import java.net.http.*;
 import java.nio.file.*;
@@ -334,6 +336,209 @@ class R1WebOwnershipTest {
             release.countDown();
             host.close();
         }
+    }
+
+    @Test
+    void committedMutationResponseCannotKeepOrReleaseAnotherMutationGuard() throws Exception {
+        for (boolean workspace : List.of(true, false)) {
+            var entered = new CountDownLatch(1);
+            var release = new CountDownLatch(1);
+            var writes = new AtomicInteger();
+            Runnable write =
+                    () -> {
+                        if (writes.incrementAndGet() == 2) {
+                            entered.countDown();
+                            try {
+                                release.await();
+                            } catch (InterruptedException ex) {
+                                Thread.currentThread().interrupt();
+                                throw new CompletionException(ex);
+                            }
+                        }
+                    };
+            try (var host =
+                            host(
+                                    new FakeLlm(
+                                            List.of(new ChatResponse("done", List.of(), Map.of())),
+                                            8192));
+                    var pool = Executors.newVirtualThreadPerTaskExecutor()) {
+                if (workspace)
+                    host.workspaces(
+                            new HarnessWebServer.Workspaces() {
+                                public Map<String, Object> read() {
+                                    return Map.of("workspaces", List.of());
+                                }
+
+                                public Map.Entry<String, HarnessWebServer.Profile> register(
+                                        String path, String name) throws IOException {
+                                    write.run();
+                                    return Map.entry(
+                                            name,
+                                            new HarnessWebServer.Profile(
+                                                    "workspace-" + name,
+                                                    new JsonlSessionRepository(
+                                                            root.resolve("guard-" + name)),
+                                                    (id, a, z) -> {
+                                                        throw new AssertionError(
+                                                                "no SDK execution");
+                                                    }));
+                                }
+                            });
+                else
+                    host.settings(
+                            new HarnessWebServer.Settings() {
+                                public Map<String, Object> read() {
+                                    return Map.of();
+                                }
+
+                                public Map<String, Object> save(Map<String, Object> input) {
+                                    write.run();
+                                    return Map.of("revision", writes.get());
+                                }
+                            });
+                String endpoint = workspace ? "/v1/workspaces" : "/v1/settings";
+                String payload =
+                        workspace
+                                ? "{\"path\":\"fixture\",\"name\":\"guard\"}"
+                                : "{\"revision\":0,\"models\":[],\"selected\":\"fixture\",\"extensions\":{},\"apiKeys\":{}}";
+                var guard = HarnessWebServer.class.getDeclaredField("settingsChanging");
+                guard.setAccessible(true);
+                var second = new AtomicReference<Future<HttpResponse<String>>>();
+                try {
+                    HttpExchange exchange =
+                            responseBoundary(
+                                    endpoint,
+                                    payload,
+                                    () -> {
+                                        synchronized (host) {
+                                            assertFalse(
+                                                    guard.getBoolean(host),
+                                                    "committed response must release mutation guard before writing");
+                                        }
+                                        second.set(
+                                                pool.submit(
+                                                        () ->
+                                                                request(
+                                                                        host,
+                                                                        endpoint,
+                                                                        payload,
+                                                                        Duration.ofSeconds(4))));
+                                        assertTrue(entered.await(2, TimeUnit.SECONDS));
+                                        return null;
+                                    });
+                    var route =
+                            HarnessWebServer.class.getDeclaredMethod("route", HttpExchange.class);
+                    route.setAccessible(true);
+                    route.invoke(host, exchange);
+                    assertEquals(200, exchange.getResponseCode());
+                    synchronized (host) {
+                        assertTrue(
+                                guard.getBoolean(host),
+                                "first response finally must not release the second mutation owner");
+                    }
+                    var busy = request(host, endpoint, payload);
+                    assertEquals(409, busy.statusCode());
+                    assertTrue(busy.body().contains("WORKSPACE_BUSY"));
+                } finally {
+                    release.countDown();
+                    if (second.get() != null)
+                        assertEquals(200, second.get().get(4, TimeUnit.SECONDS).statusCode());
+                }
+                synchronized (host) {
+                    assertFalse(guard.getBoolean(host));
+                }
+                assertEquals(2, writes.get());
+            }
+        }
+    }
+
+    private static HttpExchange responseBoundary(
+            String endpoint, String payload, Callable<Void> beforeWrite) {
+        byte[] body = payload.getBytes(java.nio.charset.StandardCharsets.UTF_8);
+        var request = new Headers();
+        request.set("Content-Type", "application/json");
+        request.set("Content-Length", Integer.toString(body.length));
+        var response = new Headers();
+        var status = new AtomicInteger(-1);
+        var once = new AtomicBoolean();
+        OutputStream output =
+                new OutputStream() {
+                    public void write(int value) throws IOException {
+                        if (once.compareAndSet(false, true))
+                            try {
+                                beforeWrite.call();
+                            } catch (IOException failure) {
+                                throw failure;
+                            } catch (Exception failure) {
+                                throw new IOException(failure);
+                            }
+                    }
+                };
+        return new HttpExchange() {
+            public Headers getRequestHeaders() {
+                return request;
+            }
+
+            public Headers getResponseHeaders() {
+                return response;
+            }
+
+            public URI getRequestURI() {
+                return URI.create(endpoint);
+            }
+
+            public String getRequestMethod() {
+                return "POST";
+            }
+
+            public HttpContext getHttpContext() {
+                return null;
+            }
+
+            public void close() {}
+
+            public InputStream getRequestBody() {
+                return new ByteArrayInputStream(body);
+            }
+
+            public OutputStream getResponseBody() {
+                return output;
+            }
+
+            public void sendResponseHeaders(int code, long length) {
+                status.set(code);
+            }
+
+            public InetSocketAddress getRemoteAddress() {
+                return new InetSocketAddress("127.0.0.1", 1);
+            }
+
+            public InetSocketAddress getLocalAddress() {
+                return new InetSocketAddress("127.0.0.1", 2);
+            }
+
+            public String getProtocol() {
+                return "HTTP/1.1";
+            }
+
+            public Object getAttribute(String name) {
+                return null;
+            }
+
+            public void setAttribute(String name, Object value) {}
+
+            public void setStreams(InputStream input, OutputStream stream) {
+                throw new UnsupportedOperationException();
+            }
+
+            public HttpPrincipal getPrincipal() {
+                return null;
+            }
+
+            public int getResponseCode() {
+                return status.get();
+            }
+        };
     }
 
     @Test
