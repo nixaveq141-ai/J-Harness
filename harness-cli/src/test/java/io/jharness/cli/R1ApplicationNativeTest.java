@@ -129,6 +129,30 @@ class R1ApplicationNativeTest {
     @Test
     void nativeProbeReportsOnlyFixedSafeFailureCategories() {
         assertEquals(
+                "STORE_UNAVAILABLE",
+                CredentialStoreProbe.failureCode(
+                        new HarnessException(
+                                "CREDENTIAL_STORE_UNAVAILABLE", "synthetic-secret-native-error")));
+        assertEquals(
+                "PROBE_FAILED",
+                CredentialStoreProbe.failureCode(
+                        new HarnessException(
+                                "synthetic-secret-code", "CREDENTIAL_STORE_UNAVAILABLE")));
+        for (var entry :
+                Map.of(
+                                "CREDENTIAL_WORKER_INTERRUPTED",
+                                "WORKER_INTERRUPTED",
+                                "CREDENTIAL_WORKER_FAILED",
+                                "WORKER_FAILED",
+                                "Credential store response limit",
+                                "RESPONSE_LIMIT",
+                                "Credential store response invalid",
+                                "RESPONSE_INVALID")
+                        .entrySet())
+            assertEquals(
+                    entry.getValue(),
+                    CredentialStoreProbe.failureCode(new java.io.IOException(entry.getKey())));
+        assertEquals(
                 "WORKER_TIMEOUT",
                 CredentialStoreProbe.failureCode(
                         new java.io.IOException("CREDENTIAL_WORKER_TIMEOUT")));

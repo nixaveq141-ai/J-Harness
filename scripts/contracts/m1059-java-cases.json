@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "milestone": "M10.5.9",
-  "origin": "M10.5.9 current acceptance contract: preserves all 648 reviewed baseline cases and explicitly adds the MCP root Process reaper-lag cleanup regression discovered by actual Linux CI. Contract only, not execution evidence.",
+  "origin": "M10.5.9 current acceptance contract: preserves all 649 reviewed baseline cases and adds the independently proven command runner root Process reaper-lag regression. This does not establish the cause of Windows CI directory locking. Contract only, not execution evidence.",
   "suites": [
     {
       "module": "harness-agent",
@@ -523,6 +523,7 @@
         "floodingBothStreamsIsBoundedAndTimeoutReleasesAdmissionSlot",
         "invalidWorkingDirectoryAndBatchShellCannotSneakThroughArgv",
         "noInheritedSecretEnvironmentAndApprovedValuesScrubbed",
+        "rootProcessExitCacheCannotBypassTreeCleanup",
         "stdinIsClosedAndSuccessHasNoDetachedReader"
       ]
     },

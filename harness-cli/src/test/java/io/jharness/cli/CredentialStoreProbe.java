@@ -1,5 +1,6 @@
 package io.jharness.cli;
 
+import io.jharness.api.HarnessException;
 import java.io.IOException;
 import java.util.*;
 
@@ -44,7 +45,7 @@ public final class CredentialStoreProbe {
                 checks.put("cleanup", true);
             } catch (Exception failure) {
                 succeeded = false;
-                cleanupFailureCode = "CLEANUP_FAILED";
+                cleanupFailureCode = failureCode(failure);
                 if (failureCode.isEmpty()) failureCode = cleanupFailureCode;
                 checks.put("cleanup", false);
             }
@@ -68,12 +69,20 @@ public final class CredentialStoreProbe {
     }
 
     static String failureCode(Exception failure) {
-        if (failure instanceof IOException) {
-            return switch (String.valueOf(failure.getMessage())) {
+        if (failure instanceof IOException || failure instanceof HarnessException) {
+            String code =
+                    failure instanceof HarnessException harness
+                            ? harness.code()
+                            : failure.getMessage();
+            return switch (String.valueOf(code)) {
                 case "CREDENTIAL_WORKER_TIMEOUT", "Credential store timeout" -> "WORKER_TIMEOUT";
                 case "CREDENTIAL_UPDATE_UNKNOWN" -> "UPDATE_UNKNOWN";
                 case "CREDENTIAL_OPERATION_INVALID" -> "OPERATION_INVALID";
                 case "CREDENTIAL_STORE_UNAVAILABLE" -> "STORE_UNAVAILABLE";
+                case "CREDENTIAL_WORKER_INTERRUPTED" -> "WORKER_INTERRUPTED";
+                case "CREDENTIAL_WORKER_FAILED" -> "WORKER_FAILED";
+                case "Credential store response limit" -> "RESPONSE_LIMIT";
+                case "Credential store response invalid" -> "RESPONSE_INVALID";
                 default -> "PROBE_FAILED";
             };
         }

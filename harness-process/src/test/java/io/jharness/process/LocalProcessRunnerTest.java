@@ -10,6 +10,7 @@ import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -85,21 +86,25 @@ class LocalProcessRunnerTest {
     void cancellationKillsObservedRealChildTreeAndPreservesHonestScope() throws Exception {
         AtomicBoolean cancel = new AtomicBoolean();
         Path pidFile = root.resolve("child.pid");
+        Path commandDirectory = Files.createDirectory(root.resolve("command-cwd"));
         try (var runner = runner(8, 8192);
                 var executor = Executors.newVirtualThreadPerTaskExecutor()) {
             Future<ToolResult> future =
                     executor.submit(
                             () ->
                                     runner.execute(
-                                            request(
+                                            new CommandRequest(
+                                                    "c",
+                                                    CommandRequest.Mode.ARGV,
                                                     ProcessProbe.command(
                                                             "tree", pidFile.toString()),
+                                                    new ExecPath("command-cwd"),
                                                     Duration.ofSeconds(8)),
                                             cancel::get));
             awaitFile(pidFile);
             long pid = Long.parseLong(Files.readString(pidFile));
             try {
-                Thread.sleep(100);
+                awaitFile(Path.of(pidFile + ".child"));
                 cancel.set(true);
                 ToolResult result = future.get(5, TimeUnit.SECONDS);
                 assertEquals(ToolStatus.CANCELLED, result.status());
@@ -107,6 +112,30 @@ class LocalProcessRunnerTest {
                 assertTrue(((List<?>) result.value().get("trackedPids")).contains(pid));
                 assertEquals("partial", result.value().get("cleanupStatus"));
                 assertTrue(result.value().get("limitations").toString().contains("No Job Object"));
+                try {
+                    // Probe the exact fixture CWD immediately, rather than losing the
+                    // owner evidence when JUnit later removes the temporary root.
+                    Files.delete(commandDirectory);
+                } catch (java.io.IOException locked) {
+                    System.err.println(
+                            "PROCESS_CWD_LOCK tracked="
+                                    + result.value().get("trackedPids")
+                                    + " residual="
+                                    + result.value().get("residualPids"));
+                    String diagnostic = System.getenv("JHARNESS_PROCESS_HANDLE_EXE");
+                    if ("true".equals(System.getenv("GITHUB_ACTIONS")) && diagnostic != null) {
+                        Process inspector =
+                                new ProcessBuilder(
+                                                diagnostic,
+                                                "-accepteula",
+                                                "-nobanner",
+                                                commandDirectory.toString())
+                                        .inheritIO()
+                                        .start();
+                        if (!inspector.waitFor(5, TimeUnit.SECONDS)) inspector.destroyForcibly();
+                    }
+                    throw locked;
+                }
             } finally {
                 ProcessHandle.of(pid).ifPresent(ProcessHandle::destroyForcibly);
                 cancel.set(true);
@@ -144,23 +173,125 @@ class LocalProcessRunnerTest {
     }
 
     @Test
+    void rootProcessExitCacheCannotBypassTreeCleanup() throws Exception {
+        var delayed = new ExitCachedProcess(false);
+        Object tree = cleanupTree(delayed);
+        var cleanup = tree.getClass().getDeclaredMethod("cleanup");
+        cleanup.setAccessible(true);
+        assertEquals(false, cleanup.invoke(tree));
+        assertFalse(
+                delayed.isAlive(), "root Process exit-state cache must settle before clean tree");
+        assertTrue(delayed.observations.get() >= 4);
+        var residual = tree.getClass().getDeclaredMethod("residual");
+        residual.setAccessible(true);
+        assertEquals(List.of(), residual.invoke(tree));
+
+        var unreaped = new ExitCachedProcess(true);
+        Object uncertain = cleanupTree(unreaped);
+        assertTimeoutPreemptively(
+                Duration.ofSeconds(4), () -> assertEquals(false, cleanup.invoke(uncertain)));
+        assertEquals(
+                List.of(42L),
+                residual.invoke(uncertain),
+                "unsettled root remains explicit residual");
+    }
+
+    private static Object cleanupTree(Process process) throws Exception {
+        Class<?> tree = Class.forName(LocalProcessRunner.class.getName() + "$Tree");
+        var constructor =
+                tree.getDeclaredConstructor(
+                        Process.class, int.class, java.util.function.Consumer.class);
+        constructor.setAccessible(true);
+        return constructor.newInstance(
+                process,
+                8,
+                (java.util.function.Consumer<ProcessHandle>)
+                        handle -> {
+                            throw new AssertionError(
+                                    "exited fake handle must never terminate an OS process");
+                        });
+    }
+
+    private static final class ExitCachedProcess extends Process {
+        final AtomicInteger remaining = new AtomicInteger(3), observations = new AtomicInteger();
+        final boolean permanentlyAlive;
+        final ProcessHandle handle =
+                (ProcessHandle)
+                        java.lang.reflect.Proxy.newProxyInstance(
+                                ProcessHandle.class.getClassLoader(),
+                                new Class<?>[] {ProcessHandle.class},
+                                (proxy, method, args) ->
+                                        switch (method.getName()) {
+                                            case "pid" -> 42L;
+                                            case "isAlive", "destroy", "destroyForcibly" -> false;
+                                            case "children", "descendants" ->
+                                                    java.util.stream.Stream.empty();
+                                            case "parent" -> Optional.empty();
+                                            case "supportsNormalTermination" -> true;
+                                            case "hashCode" -> 42;
+                                            case "equals" -> proxy == args[0];
+                                            case "compareTo" -> 0;
+                                            case "toString" -> "exited-fixture-handle";
+                                            default -> throw new AssertionError(method.getName());
+                                        });
+
+        ExitCachedProcess(boolean permanentlyAlive) {
+            this.permanentlyAlive = permanentlyAlive;
+        }
+
+        public java.io.OutputStream getOutputStream() {
+            return java.io.OutputStream.nullOutputStream();
+        }
+
+        public java.io.InputStream getInputStream() {
+            return java.io.InputStream.nullInputStream();
+        }
+
+        public java.io.InputStream getErrorStream() {
+            return java.io.InputStream.nullInputStream();
+        }
+
+        public int waitFor() {
+            return 0;
+        }
+
+        public int exitValue() {
+            return 0;
+        }
+
+        public void destroy() {
+            throw new AssertionError("fake root must not terminate an OS process");
+        }
+
+        public ProcessHandle toHandle() {
+            return handle;
+        }
+
+        public boolean isAlive() {
+            observations.incrementAndGet();
+            return permanentlyAlive || remaining.getAndUpdate(value -> Math.max(0, value - 1)) > 0;
+        }
+    }
+
+    @Test
     void concurrentCeilingAndCloseCancelActiveCommand() throws Exception {
         var runner = runner(8, 8192);
         AtomicBoolean started = new AtomicBoolean();
+        Path ready = root.resolve("active-command.pid");
         try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
             Future<ToolResult> active =
                     executor.submit(
                             () ->
                                     runner.execute(
                                             request(
-                                                    ProcessProbe.command("block"),
+                                                    ProcessProbe.command("block", ready.toString()),
                                                     Duration.ofSeconds(8)),
                                             () -> {
                                                 started.set(true);
                                                 return false;
                                             }));
             while (!started.get()) Thread.sleep(5);
-            Thread.sleep(200);
+            awaitFile(ready);
             assertEquals(
                     "PROCESS_LIMIT",
                     runner.execute(
@@ -170,7 +301,8 @@ class LocalProcessRunnerTest {
                             .orElseThrow()
                             .code());
             runner.close();
-            assertEquals(ToolStatus.CANCELLED, active.get(5, TimeUnit.SECONDS).status());
+            var settled = active.get(5, TimeUnit.SECONDS);
+            assertEquals(ToolStatus.CANCELLED, settled.status(), () -> settled.value().toString());
             assertEquals(
                     "PROCESS_SERVICE_CLOSED",
                     runner.execute(

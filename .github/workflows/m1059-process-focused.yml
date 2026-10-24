@@ -1,11 +1,5 @@
 name: M10.5.9 process ownership diagnostics (not acceptance)
 on:
-  push:
-    branches: [codex/m1059-full-validation]
-    paths:
-      - harness-ecosystem/src/main/java/io/jharness/ecosystem/ProcessCleanup.java
-      - harness-ecosystem/src/test/java/io/jharness/ecosystem/R1RemainingOwnershipFaultTest.java
-      - .github/workflows/m1059-process-focused.yml
   workflow_dispatch:
 permissions:
   contents: read
@@ -24,19 +18,31 @@ jobs:
           distribution: temurin
           java-version: '21'
           cache: maven
+      - name: Prepare Windows lock-owner inspection
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $directory = Join-Path $env:RUNNER_TEMP 'm1059-handle'
+          New-Item -ItemType Directory -Force $directory | Out-Null
+          Invoke-WebRequest 'https://download.sysinternals.com/files/Handle.zip' -OutFile (Join-Path $directory 'Handle.zip') -TimeoutSec 30
+          Expand-Archive (Join-Path $directory 'Handle.zip') -DestinationPath $directory
+          $executable = Join-Path $directory 'handle64.exe'
+          $signature = Get-AuthenticodeSignature -LiteralPath $executable
+          if ($signature.Status -ne 'Valid' -or $signature.SignerCertificate.Subject -notmatch 'O=Microsoft Corporation') { throw 'Invalid Handle signature' }
+          "JHARNESS_PROCESS_HANDLE_EXE=$executable" >> $env:GITHUB_ENV
       - name: Verify owned-process compensation on Windows
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force -Path .build-cache/M10.5.9 | Out-Null
-          .\mvnw.cmd -B -pl harness-ecosystem -am test '-Dtest=R1RemainingOwnershipFaultTest,R1EnvironmentLifecycleTest,R3McpProtocolTest,M6TerminalTest' '-Dsurefire.failIfNoSpecifiedTests=false' *> .build-cache/M10.5.9/process-focused.log
+          .\mvnw.cmd -B -pl harness-ecosystem -am test '-Dtest=R1RemainingOwnershipFaultTest,R1EnvironmentLifecycleTest,R3McpProtocolTest,M6TerminalTest,LocalProcessRunnerTest' '-Dsurefire.failIfNoSpecifiedTests=false' *> .build-cache/M10.5.9/process-focused.log
           if ($LASTEXITCODE -ne 0) { Get-Content .build-cache/M10.5.9/process-focused.log -Tail 100; exit 1 }
       - name: Verify owned-process compensation on POSIX
         if: runner.os != 'Windows'
         shell: bash
         run: |
           mkdir -p .build-cache/M10.5.9
-          if ! bash ./mvnw -B -pl harness-ecosystem -am test '-Dtest=R1RemainingOwnershipFaultTest,R1EnvironmentLifecycleTest,R3McpProtocolTest,M6TerminalTest' '-Dsurefire.failIfNoSpecifiedTests=false' > .build-cache/M10.5.9/process-focused.log 2>&1; then
+          if ! bash ./mvnw -B -pl harness-ecosystem -am test '-Dtest=R1RemainingOwnershipFaultTest,R1EnvironmentLifecycleTest,R3McpProtocolTest,M6TerminalTest,LocalProcessRunnerTest' '-Dsurefire.failIfNoSpecifiedTests=false' > .build-cache/M10.5.9/process-focused.log 2>&1; then
             tail -n 100 .build-cache/M10.5.9/process-focused.log
             exit 1
           fi

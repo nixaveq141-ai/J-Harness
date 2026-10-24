@@ -124,7 +124,7 @@ public final class LocalProcessRunner implements ProcessRunner, AutoCloseable {
                 process = builder.start();
                 active.add(process);
             }
-            tree = new Tree(process.toHandle(), limits.maxTreeProcesses(), terminate);
+            tree = new Tree(process, limits.maxTreeProcesses(), terminate);
             process.getOutputStream().close(); // noninteractive service: stdin EOF
             stdout =
                     new Collector(
@@ -413,8 +413,7 @@ public final class LocalProcessRunner implements ProcessRunner, AutoCloseable {
         }
         boolean interrupted = false;
         for (Process process : snapshot)
-            interrupted |=
-                    new Tree(process.toHandle(), limits.maxTreeProcesses(), terminate).cleanup();
+            interrupted |= new Tree(process, limits.maxTreeProcesses(), terminate).cleanup();
         if (interrupted) Thread.currentThread().interrupt();
     }
 
@@ -480,13 +479,18 @@ public final class LocalProcessRunner implements ProcessRunner, AutoCloseable {
     }
 
     private static final class Tree {
+        private final Process process;
+        private final long rootPid;
         private final Map<ProcessHandle, ProcessHandle> handles = new LinkedHashMap<>();
         private final int limit;
         private boolean exceeded, inspectionFailed;
 
         private final Consumer<ProcessHandle> terminate;
 
-        Tree(ProcessHandle root, int limit, Consumer<ProcessHandle> terminate) {
+        Tree(Process process, int limit, Consumer<ProcessHandle> terminate) {
+            this.process = process;
+            ProcessHandle root = process.toHandle();
+            rootPid = root.pid();
             handles.put(root, root);
             this.limit = limit;
             this.terminate = terminate;
@@ -544,6 +548,13 @@ public final class LocalProcessRunner implements ProcessRunner, AutoCloseable {
                     inspectionFailed = true;
                     alive.add(handle.pid());
                 }
+            }
+            // An OS handle may report exit before the owned Process reaper cache settles.
+            try {
+                if (process.isAlive() && !alive.contains(rootPid)) alive.add(rootPid);
+            } catch (RuntimeException ex) {
+                inspectionFailed = true;
+                if (!alive.contains(rootPid)) alive.add(rootPid);
             }
             return List.copyOf(alive);
         }
