@@ -1,5 +1,10 @@
 name: M10.5.9 Windows focused diagnostics (not acceptance)
 on:
+  push:
+    branches: [codex/m1059-full-validation]
+    paths:
+      - frontend/tests/content.mjs
+      - .github/workflows/m1059-windows-focused.yml
   workflow_dispatch:
 permissions:
   contents: read
@@ -9,8 +14,8 @@ jobs:
     timeout-minutes: 35
     env:
       JHARNESS_EVIDENCE_RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}-${{ github.sha }}
-      JHARNESS_MATRIX_ENGINES: chromium
-      JHARNESS_MATRIX_FIXTURES: browser
+      JHARNESS_MATRIX_ENGINES: webkit
+      JHARNESS_MATRIX_FIXTURES: content
       JHARNESS_MATRIX_KEEP_GOING: '1'
     steps:
       - uses: actions/checkout@v4
@@ -33,10 +38,10 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           .\mvnw.cmd -B -DskipTests package *> focused-build.log
           if ($LASTEXITCODE -ne 0) { Get-Content focused-build.log -Tail 80; exit 1 }
-      - name: Install Chromium for the selected diagnostic
+      - name: Install WebKit for the selected diagnostic
         working-directory: frontend
-        run: node node_modules/playwright/cli.js install chromium
-      - name: Verify Windows Chromium task acceptance fixture
+        run: node node_modules/playwright/cli.js install webkit
+      - name: Verify Windows WebKit content fixture
         run: node scripts/run-workbench-matrix.mjs
       - name: Explain diagnostic scope
         if: always()

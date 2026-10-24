@@ -1,12 +1,5 @@
 name: M10.5.9 WebKit focused diagnostics (not acceptance)
 on:
-  push:
-    branches: [codex/m1059-full-validation]
-    paths:
-      - frontend/tests/settings.mjs
-      - frontend/tests/turns.mjs
-      - frontend/tests/runtime.d.mts
-      - .github/workflows/m1059-settings-focused.yml
   workflow_dispatch:
 permissions:
   contents: read

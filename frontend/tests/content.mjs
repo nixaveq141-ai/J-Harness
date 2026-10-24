@@ -1,4 +1,4 @@
-import { browserType as chromium, engine, stoppedHostDiagnostic } from './runtime.mjs'
+import { browserType as chromium, engine, stoppedHostDiagnostic, navigationReadDiagnostic } from './runtime.mjs'
 import {createServer} from 'node:http'
 import {spawn,execFileSync} from 'node:child_process'
 import {mkdir,writeFile,readFile,unlink,symlink} from 'node:fs/promises'
@@ -7,6 +7,9 @@ import {createHash,randomUUID} from 'node:crypto'
 import assert from 'node:assert/strict'
 const stoppedOrigins=new Set(),transportDiagnostics=[]
 let offlineFault=false
+const inFlightReads=new Map()
+let navigationReads=[]
+async function reload(){navigationReads=[...inFlightReads.values()];try{await page.reload()}finally{navigationReads=[]}}
 const root=resolve(import.meta.dirname,'../..'),out=join(root,'.build-cache'),run=join(out,'M10.5.6-content-'+Date.now()),workspace=join(run,'primary'),secondary=join(run,'secondary'),outside=join(run,'outside')
 const jar=join(root,'harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar'),java=join(process.env.JAVA_HOME,process.platform==='win32'?'bin/java.exe':'bin/java')
 const token='content_browser_0123456789_ABCDEFGHIJKLMNOPQRSTUVWXYZ',key='synthetic-content-'+randomUUID(),otherKey='synthetic-other-'+randomUUID(),wire=[],checks=[],screenshots=[],errors=[],requests=[]
@@ -56,7 +59,7 @@ async function start(){base=undefined;output='';host=spawn(java,['-Dfile.encodin
 async function stop(){if(host&&host.exitCode===null&&host.signalCode===null){stoppedOrigins.add(base);host.stdin.end(':quit\n');await until(()=>host.exitCode!==null);assert.equal(host.exitCode,0)}}
 async function api(path,body){const r=await context.request.fetch(base+path,{method:body===undefined?'GET':'POST',headers:{Authorization:'Bearer '+token,...(body===undefined?{}:{'Content-Type':'application/json'})},...(body===undefined?{}:{data:body})});return{status:r.status(),body:await r.json()}}
 async function create(goal,profile='default'){const r=await api('/v1/tasks',{profile,goal,requestId:randomUUID()});assert.equal(r.status,202,JSON.stringify(r.body));await show(r.body.taskId);return r.body.taskId}
-async function show(id){await page.setViewportSize({width:1440,height:1000});await page.locator('.connection-state').filter({hasText:'本机服务已连接'}).waitFor({state:'attached'});await page.evaluate(id=>sessionStorage.setItem('jh-selected',id),id);await page.reload();await page.locator('.connection-state').filter({hasText:'本机服务已连接'}).waitFor({state:'attached'})}
+async function show(id){await page.setViewportSize({width:1440,height:1000});await page.locator('.connection-state').filter({hasText:'本机服务已连接'}).waitFor({state:'attached'});await page.evaluate(id=>sessionStorage.setItem('jh-selected',id),id);await reload();await page.locator('.connection-state').filter({hasText:'本机服务已连接'}).waitFor({state:'attached'})}
 async function ended(id){await until(async()=>['FINISHED','UNKNOWN'].includes((await api('/v1/tasks/'+id)).body.phase));await page.getByText(/^(已同步全部记录|结果待核实 · 不会重放任务)$/).waitFor()}
 const enc=value=>Buffer.from(value).toString('base64url')
 async function shot(name){const path=join(out,'M10.5.6-'+name+'.png');await page.screenshot({path,fullPage:true});screenshots.push({path:path.slice(root.length+1).replaceAll('\\','/'),sha256:createHash('sha256').update(await readFile(path)).digest('hex')})}
@@ -66,7 +69,7 @@ try{
  await start();browser=await chromium.launch(process.env.JHARNESS_BROWSER_CHANNEL?{channel:process.env.JHARNESS_BROWSER_CHANNEL}:{})
  context=await browser.newContext({viewport:{width:1440,height:1000},acceptDownloads:true,...(engine==='chromium'?{permissions:['clipboard-read','clipboard-write']}:{})})
  await context.addInitScript(()=>{const write=navigator.clipboard.writeText.bind(navigator.clipboard);Object.defineProperty(navigator.clipboard,'writeText',{value:async text=>{await write(text);window.__copiedExact=text}})})
- page=await context.newPage();page.on('pageerror',e=>{const stopped=stoppedHostDiagnostic(e.message,stoppedOrigins),offline=offlineFault&&stoppedHostDiagnostic(e.message,new Set([base]));if(stopped||offline)transportDiagnostics.push({phase:stopped?'stopped-host':'injected-offline',message:e.message});else errors.push({message:e.message,base,stoppedOrigins:[...stoppedOrigins],offlineFault,pageUrl:page.url()})});page.on('request',r=>requests.push(r.url()));await page.goto(base)
+ page=await context.newPage();page.on('pageerror',e=>{const stopped=stoppedHostDiagnostic(e.message,stoppedOrigins),offline=offlineFault&&stoppedHostDiagnostic(e.message,new Set([base])),navigation=navigationReadDiagnostic(e.message,navigationReads);if(stopped||offline||navigation)transportDiagnostics.push({phase:stopped?'stopped-host':offline?'injected-offline':'controlled-reload',message:e.message});else errors.push({message:e.message,base,stoppedOrigins:[...stoppedOrigins],offlineFault,pageUrl:page.url()})});page.on('request',r=>{requests.push(r.url());if(r.method()==='GET')inFlightReads.set(r,{method:'GET',url:r.url()})});page.on('requestfinished',r=>inFlightReads.delete(r));page.on('requestfailed',r=>inFlightReads.delete(r));await page.goto(base)
  await page.locator('.connection-state').filter({hasText:'本机服务已连接'}).waitFor({state:'attached'})
  const settings=(await api('/v1/settings')).body
  const clone={...settings.models[0],id:'unused-route',label:'Unused fixture',apiKeyEnv:'JHARNESS_UNUSED_KEY',model:'unused-model'}
@@ -78,7 +81,7 @@ try{
  check('unselected configured secret fragments are withheld too',!(await page.getByLabel('临时流式输出',{exact:true}).textContent()).includes(otherKey.slice(0,10)))
  await page.getByRole('button',{name:'停止显示',exact:true}).click();check('stopping display leaves runtime active',(await api('/v1/tasks/'+render)).body.phase==='RUNNING')
  await page.getByRole('button',{name:'恢复显示',exact:true}).click()
- const before=wire.length;offlineFault=true;await context.setOffline(true);await wait(500);await context.setOffline(false);await page.reload();await page.getByLabel('临时流式输出',{exact:true}).waitFor();offlineFault=false
+ const before=wire.length;offlineFault=true;await context.setOffline(true);await wait(500);await context.setOffline(false);await reload();await page.getByLabel('临时流式输出',{exact:true}).waitFor();offlineFault=false
  check('refresh and reconnect only read the original stream',wire.length===before)
  await shot('stream');release();await ended(render);await page.getByRole('heading',{name:'Review notes',exact:true}).waitFor()
  check('durable Markdown renders headings lists and safe code',await page.locator('.markdown strong').filter({hasText:'Verified'}).count()>0&&await page.getByLabel('助手消息',{exact:true}).last().locator('.code-block').count()===1)
