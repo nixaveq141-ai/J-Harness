@@ -496,6 +496,35 @@ class R1EnvironmentLifecycleTest {
     @Test
     void nativeTransportReturnsOnlyAfterCancelledChildExitAndPreservesUnknownDelivery()
             throws Exception {
+        Path publication = root.resolve("publication.pid");
+        var staged = new java.util.concurrent.CountDownLatch(1);
+        var release = new java.util.concurrent.CountDownLatch(1);
+        var writer =
+                java.util.concurrent.CompletableFuture.runAsync(
+                        () -> {
+                            try {
+                                NativeProbe.publishPid(
+                                        publication,
+                                        "42",
+                                        () -> {
+                                            staged.countDown();
+                                            release.await();
+                                            return null;
+                                        });
+                            } catch (Exception failure) {
+                                throw new java.util.concurrent.CompletionException(failure);
+                            }
+                        });
+        try {
+            assertTrue(staged.await(2, java.util.concurrent.TimeUnit.SECONDS));
+            assertFalse(
+                    Files.exists(publication),
+                    "cancellation marker must not expose an unfinished PID write");
+        } finally {
+            release.countDown();
+            writer.get(3, java.util.concurrent.TimeUnit.SECONDS);
+        }
+        assertEquals("42", Files.readString(publication));
         Path pid = root.resolve("native.pid");
         var command =
                 List.of(
@@ -520,8 +549,20 @@ class R1EnvironmentLifecycleTest {
 
     public static class NativeProbe {
         public static void main(String[] arguments) throws Exception {
-            Files.writeString(Path.of(arguments[0]), Long.toString(ProcessHandle.current().pid()));
+            publishPid(
+                    Path.of(arguments[0]),
+                    Long.toString(ProcessHandle.current().pid()),
+                    () -> null);
             Thread.sleep(30000);
+        }
+
+        static void publishPid(
+                Path target, String value, java.util.concurrent.Callable<Void> beforePublish)
+                throws Exception {
+            Path staging = target.resolveSibling(target.getFileName() + ".publishing");
+            Files.writeString(staging, value, StandardOpenOption.CREATE_NEW);
+            beforePublish.call();
+            Files.move(staging, target, StandardCopyOption.ATOMIC_MOVE);
         }
     }
 

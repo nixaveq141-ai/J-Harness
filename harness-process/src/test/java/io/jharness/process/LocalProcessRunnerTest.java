@@ -452,6 +452,6 @@ class LocalProcessRunnerTest {
         long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(5);
         while ((!Files.exists(file) || Files.size(file) == 0) && System.nanoTime() < deadline)
             Thread.sleep(10);
-        assertTrue(Files.exists(file), "fixture did not start");
+        assertTrue(Files.exists(file) && Files.size(file) > 0, "fixture did not publish readiness");
     }
 }

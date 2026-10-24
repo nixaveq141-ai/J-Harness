@@ -46,7 +46,7 @@ public final class ProcessProbe {
             case "block" -> {
                 if (args.length > 1) {
                     var self = ProcessHandle.current();
-                    Files.writeString(
+                    publishReady(
                             Path.of(args[1]),
                             self.pid() + "\n" + self.info().startInstant().orElseThrow());
                 }
@@ -68,7 +68,7 @@ public final class ProcessProbe {
                                         "block",
                                         args[1] + ".child")
                                 .start();
-                Files.writeString(Path.of(args[1]), String.valueOf(child.pid()));
+                publishReady(Path.of(args[1]), String.valueOf(child.pid()));
                 Thread.sleep(30000);
             }
             default -> throw new IllegalArgumentException();
@@ -81,6 +81,12 @@ public final class ProcessProbe {
                         "bin",
                         System.getProperty("os.name").startsWith("Windows") ? "java.exe" : "java")
                 .toString();
+    }
+
+    private static void publishReady(Path target, String value) throws IOException {
+        Path staging = target.resolveSibling(target.getFileName() + ".publishing");
+        Files.writeString(staging, value, StandardOpenOption.CREATE_NEW);
+        Files.move(staging, target, StandardCopyOption.ATOMIC_MOVE);
     }
 
     public static List<String> unicodeEcho(Path root, String text, int exit) throws Exception {
