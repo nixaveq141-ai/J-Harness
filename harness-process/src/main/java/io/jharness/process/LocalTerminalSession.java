@@ -237,6 +237,7 @@ public final class LocalTerminalSession implements TerminalSession {
         final Map<Long, ProcessHandle> observed = new ConcurrentHashMap<>();
         volatile String state = "RUNNING";
         volatile boolean outputFailed;
+        volatile boolean terminationUnconfirmed;
         volatile long dropped;
         Thread reader, watcher;
 
@@ -370,6 +371,7 @@ public final class LocalTerminalSession implements TerminalSession {
                     break;
                 }
             }
+            terminationUnconfirmed = !ProcessExit.await(process, until);
         }
 
         void stop(String reason) {
@@ -434,7 +436,8 @@ public final class LocalTerminalSession implements TerminalSession {
             result.put("pty", pty);
             boolean residual =
                     !state.equals("RUNNING")
-                            && (process.isAlive()
+                            && (terminationUnconfirmed
+                                    || process.isAlive()
                                     || observed.values().stream().anyMatch(ProcessHandle::isAlive));
             result.put("state", residual ? "UNKNOWN" : state);
             result.put("startedAt", startedAt);
@@ -444,13 +447,15 @@ public final class LocalTerminalSession implements TerminalSession {
             result.put(
                     "observation",
                     "sampled ProcessHandle tree; detached unseen processes are not guaranteed");
-            result.put(
-                    "residualPids",
-                    observed.values().stream()
-                            .filter(ProcessHandle::isAlive)
-                            .map(ProcessHandle::pid)
-                            .sorted()
-                            .toList());
+            var residualPids =
+                    new ArrayList<>(
+                            observed.values().stream()
+                                    .filter(ProcessHandle::isAlive)
+                                    .map(ProcessHandle::pid)
+                                    .toList());
+            if (terminationUnconfirmed && !residualPids.contains(process.pid()))
+                residualPids.add(process.pid());
+            result.put("residualPids", residualPids.stream().sorted().toList());
             result.put("outputFailed", outputFailed);
             result.put("outputDrained", reader == null || !reader.isAlive());
             result.put("firstOffset", dropped);

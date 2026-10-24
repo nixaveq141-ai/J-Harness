@@ -212,7 +212,72 @@ class LocalProcessRunnerTest {
                         });
     }
 
-    private static final class ExitCachedProcess extends Process {
+    @Test
+    void rootExitCodeCannotBypassTerminationSignal() throws Exception {
+        var waiting = new CountDownLatch(1);
+        var released = new CountDownLatch(1);
+        var process =
+                new ExitCachedProcess(false) {
+                    public boolean isAlive() {
+                        return false;
+                    }
+
+                    public int waitFor() throws InterruptedException {
+                        waiting.countDown();
+                        released.await();
+                        return 0;
+                    }
+                };
+        Object tree = cleanupTree(process);
+        var cleanup = tree.getClass().getDeclaredMethod("cleanup");
+        cleanup.setAccessible(true);
+        var result =
+                CompletableFuture.supplyAsync(
+                        () -> {
+                            try {
+                                return cleanup.invoke(tree);
+                            } catch (ReflectiveOperationException failure) {
+                                throw new CompletionException(failure);
+                            }
+                        });
+        try {
+            assertTrue(
+                    waiting.await(1, TimeUnit.SECONDS),
+                    "cleanup must wait for the owned termination signal");
+            assertFalse(result.isDone(), "an exit code alone cannot confirm cleanup");
+        } finally {
+            released.countDown();
+            result.get(3, TimeUnit.SECONDS);
+        }
+        var residual = tree.getClass().getDeclaredMethod("residual");
+        residual.setAccessible(true);
+        assertEquals(List.of(), residual.invoke(tree));
+        var stopped = new CountDownLatch(1);
+        var neverSignalled =
+                new ExitCachedProcess(false) {
+                    public boolean isAlive() {
+                        return false;
+                    }
+
+                    public int waitFor() throws InterruptedException {
+                        try {
+                            new CountDownLatch(1).await();
+                            return 0;
+                        } finally {
+                            stopped.countDown();
+                        }
+                    }
+                };
+        Object uncertain = cleanupTree(neverSignalled);
+        assertTimeoutPreemptively(Duration.ofSeconds(4), () -> cleanup.invoke(uncertain));
+        assertEquals(
+                List.of(42L),
+                residual.invoke(uncertain),
+                "unconfirmed signal remains residual even with an exit code");
+        assertTrue(stopped.await(1, TimeUnit.SECONDS), "deadline must interrupt the owned waiter");
+    }
+
+    private static class ExitCachedProcess extends Process {
         final AtomicInteger remaining = new AtomicInteger(3), observations = new AtomicInteger();
         final boolean permanentlyAlive;
         final ProcessHandle handle =
@@ -251,7 +316,7 @@ class LocalProcessRunnerTest {
             return java.io.InputStream.nullInputStream();
         }
 
-        public int waitFor() {
+        public int waitFor() throws InterruptedException {
             return 0;
         }
 

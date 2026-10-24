@@ -483,7 +483,7 @@ public final class LocalProcessRunner implements ProcessRunner, AutoCloseable {
         private final long rootPid;
         private final Map<ProcessHandle, ProcessHandle> handles = new LinkedHashMap<>();
         private final int limit;
-        private boolean exceeded, inspectionFailed;
+        private boolean exceeded, inspectionFailed, terminationUnconfirmed;
 
         private final Consumer<ProcessHandle> terminate;
 
@@ -536,6 +536,7 @@ public final class LocalProcessRunner implements ProcessRunner, AutoCloseable {
                     interrupted = true;
                 }
             } while (System.nanoTime() < deadline);
+            terminationUnconfirmed = !ProcessExit.await(process, deadline);
             return interrupted;
         }
 
@@ -551,7 +552,8 @@ public final class LocalProcessRunner implements ProcessRunner, AutoCloseable {
             }
             // An OS handle may report exit before the owned Process reaper cache settles.
             try {
-                if (process.isAlive() && !alive.contains(rootPid)) alive.add(rootPid);
+                if ((terminationUnconfirmed || process.isAlive()) && !alive.contains(rootPid))
+                    alive.add(rootPid);
             } catch (RuntimeException ex) {
                 inspectionFailed = true;
                 if (!alive.contains(rootPid)) alive.add(rootPid);

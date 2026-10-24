@@ -1,5 +1,6 @@
 package io.jharness.ecosystem;
 
+import io.jharness.process.ProcessExit;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -45,6 +46,7 @@ final class ProcessCleanup {
                 interrupted = true;
             }
         }
+        clean &= ProcessExit.await(process, deadline);
         clean &= !process.isAlive() && handles.stream().noneMatch(ProcessHandle::isAlive);
         if (interrupted) Thread.currentThread().interrupt();
         return clean;

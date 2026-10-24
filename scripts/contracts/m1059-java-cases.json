@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "milestone": "M10.5.9",
-  "origin": "M10.5.9 current acceptance contract: preserves all 649 reviewed baseline cases and adds the independently proven command runner root Process reaper-lag regression. This does not establish the cause of Windows CI directory locking. Contract only, not execution evidence.",
+  "origin": "M10.5.9 current acceptance contract: preserves all 650 reviewed cases and adds the Windows owned-process termination-signal regression, including deadline uncertainty and waiter cancellation. Contract only, not execution evidence.",
   "suites": [
     {
       "module": "harness-agent",
@@ -523,6 +523,7 @@
         "floodingBothStreamsIsBoundedAndTimeoutReleasesAdmissionSlot",
         "invalidWorkingDirectoryAndBatchShellCannotSneakThroughArgv",
         "noInheritedSecretEnvironmentAndApprovedValuesScrubbed",
+        "rootExitCodeCannotBypassTerminationSignal",
         "rootProcessExitCacheCannotBypassTreeCleanup",
         "stdinIsClosedAndSuccessHasNoDetachedReader"
       ]
@@ -1576,6 +1577,7 @@
     "harness-process/src/main/java/io/jharness/process/LocalProcessRunner.java",
     "harness-process/src/main/java/io/jharness/process/LocalRunControl.java",
     "harness-process/src/main/java/io/jharness/process/LocalTerminalSession.java",
+    "harness-process/src/main/java/io/jharness/process/ProcessExit.java",
     "harness-process/src/main/java/io/jharness/process/ProcessLimits.java",
     "harness-process/src/main/java/io/jharness/process/ProcessToolsPlugin.java",
     "harness-process/src/main/java/io/jharness/process/TerminalToolsPlugin.java",
