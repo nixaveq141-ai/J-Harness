@@ -169,3 +169,5 @@ jobs:
             .build-cache/M10-settings-browser-results.json
             .build-cache/M10-browser-*.json
             .build-cache/M10-*.png
+            .build-cache/M10.5.*-failure.txt
+            .build-cache/M10.5.*-failure.png

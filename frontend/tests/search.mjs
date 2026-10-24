@@ -1,4 +1,4 @@
-import { browserType as chromium, stoppedHostDiagnostic } from './runtime.mjs'
+import { browserType as chromium, stoppedHostDiagnostic, captureOriginalResponse } from './runtime.mjs'
 import { createServer } from 'node:http'
 import { spawn } from 'node:child_process'
 import { mkdir, writeFile, readFile } from 'node:fs/promises'
@@ -55,8 +55,17 @@ try{
   const before=await readFile(join(workspace,'.jharness/sessions',primary[34].taskId+'.jsonl'))
   await writeFile(cache,'broken derived index')
   check('corrupt index rebuilds without changing facts',(await api('/v1/search',query({sessionId:primary[34].taskId}))).body.rebuiltSessions===1&&(await readFile(join(workspace,'.jharness/sessions',primary[34].taskId+'.jsonl'))).equals(before))
-  await page.goto(base);await page.getByRole('button',{name:'内容检索',exact:true}).click()
-  await page.getByLabel('内容关键词',{exact:true}).fill('alpha beta');await page.getByRole('button',{name:'检索内容',exact:true}).click()
+  await page.goto(base);await until(async()=>await page.locator('.task-item').count()===32&&await page.getByLabel('浏览工作区',{exact:true}).locator('option').count()===3);await page.getByRole('button',{name:'内容检索',exact:true}).click()
+  await page.getByLabel('内容关键词',{exact:true}).fill('alpha beta')
+  let browserQuery
+  const observeQuery=request=>{if(request.method()==='POST'&&request.url()===base+'/v1/search')browserQuery=request.postDataJSON()}
+  page.on('request',observeQuery)
+  let firstBrowserResult
+  try{firstBrowserResult=await captureOriginalResponse(page,base,()=>page.getByRole('button',{name:'检索内容',exact:true}).click(),'/v1/search')}
+  finally{page.off('request',observeQuery)}
+  assert.deepEqual(browserQuery,query())
+  assert.equal(firstBrowserResult.status,200,JSON.stringify(firstBrowserResult.body).replaceAll(secret,'[REDACTED]').replaceAll(token,'[REDACTED]'))
+  assert.equal(firstBrowserResult.body.total,35);assert.equal(firstBrowserResult.body.matches.length,20)
   await page.getByText('找到 35 条正文匹配，已显示 20 条。',{exact:true}).waitFor()
   check('browser uses content results with source identity',await page.locator('.content-search-results>li').count()===20&&await page.locator('.content-search-results>li').first().innerText().then(t=>t.includes('boost')&&t.includes('user.message')))
   await page.getByRole('button',{name:'加载更多正文匹配',exact:true}).click();await page.getByText('找到 35 条正文匹配，已显示 35 条。',{exact:true}).waitFor();check('browser loads stable next page',await page.locator('.content-search-results>li').count()===35)
@@ -73,6 +82,6 @@ try{
   check('all real requests use redacted authorized loopback context',wire.every(w=>w.authorized&&w.redacted))
   check('no unexpected browser runtime exceptions',errors.length===0)
   result={status:'PASS',capturedAt:new Date().toISOString(),checks,screenshots,transportDiagnostics,browserEngine:process.env.JHARNESS_BROWSER_ENGINE??'chromium',browserVersion:browser.version(),browserChannel:process.env.JHARNESS_BROWSER_CHANNEL??process.env.JHARNESS_BROWSER_ENGINE??'chromium',jarSha256:createHash('sha256').update(await readFile(jar)).digest('hex'),paidRequests:0,modelRequests:wire.length}
-}catch(e){if(page){await page.screenshot({path:join(out,'M10.5.8-search-failure.png'),fullPage:true});await writeFile(join(out,'M10.5.8-search-failure.txt'),(String(e.stack)+'\n'+output+'\n'+await page.locator('body').innerText()).replaceAll(secret,'[REDACTED]').replaceAll(token,'[REDACTED]'))}throw e}
+}catch(e){if(page){console.log('SEARCH_FAILURE_STATE',JSON.stringify(await page.evaluate(()=>({query:document.querySelector('input[aria-label="内容关键词"]')?.value,status:[...document.querySelectorAll('[role="alert"],[role="status"]')].map(e=>e.textContent)}))).replaceAll(secret,'[REDACTED]').replaceAll(token,'[REDACTED]'));await page.screenshot({path:join(out,'M10.5.8-search-failure.png'),fullPage:true});await writeFile(join(out,'M10.5.8-search-failure.txt'),(String(e.stack)+'\n'+output+'\n'+await page.locator('body').innerText()).replaceAll(secret,'[REDACTED]').replaceAll(token,'[REDACTED]'))}throw e}
 finally{await stop().catch(()=>host?.kill());await browser?.close();model.closeAllConnections();await new Promise(r=>model.close(r))}
 await writeFile(join(out,'M10.5.8-search-results.json'),JSON.stringify(result,null,2))

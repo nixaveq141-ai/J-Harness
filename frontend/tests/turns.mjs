@@ -1,4 +1,4 @@
-import { browserType as chromium, stoppedHostDiagnostic, navigationReadDiagnostic } from './runtime.mjs'
+import { browserType as chromium, stoppedHostDiagnostic, trackNavigationReads } from './runtime.mjs'
 import { createServer } from 'node:http'
 import { spawn } from 'node:child_process'
 import { mkdir, writeFile, readFile } from 'node:fs/promises'
@@ -12,8 +12,7 @@ const java = join(process.env.JAVA_HOME, 'bin', process.platform==='win32'?'java
 const checks = [], screenshots = [], wire = [], errors = [], holds = new Map()
 const stoppedOrigins = new Set(), transportDiagnostics = []
 const readFailures = []
-const inFlightReads = new Map()
-let navigationReads = []
+let navigation
 let host, base, output = '', browser, context, page, id, submissionPosts = 0
 const wait = ms => new Promise(r => setTimeout(r, ms))
 async function until(test, timeout = 30000) { const start = Date.now(); while (Date.now()-start < timeout) { if (await test()) return; await wait(80) }; throw new Error('Turn fixture condition timed out') }
@@ -71,10 +70,9 @@ async function maintain(args) {
 }
 try {
   await start(); browser = await chromium.launch(process.env.JHARNESS_BROWSER_CHANNEL ? { channel: process.env.JHARNESS_BROWSER_CHANNEL } : {})
-  context = await browser.newContext({ viewport: { width: 1440, height: 1100 } }); page = await context.newPage(); page.on('pageerror', e => {if(stoppedHostDiagnostic(e.message,stoppedOrigins)||navigationReadDiagnostic(e.message,navigationReads))transportDiagnostics.push(e.message);else {errors.push(e.message);console.log('PAGE_ERROR_STATE',JSON.stringify({message:e.message,base,pageUrl:page.url(),stoppedOrigins:[...stoppedOrigins],readFailures:readFailures.slice(-8)}))}})
-  page.on('requestfailed', request => {if(request.method()==='GET'&&new URL(request.url()).pathname.endsWith('/display'))readFailures.push({url:request.url(),error:request.failure()?.errorText,base,pageUrl:page.url(),stoppedOrigins:[...stoppedOrigins]});inFlightReads.delete(request)})
-  page.on('requestfinished', request => inFlightReads.delete(request))
-  page.on('request', r => { if(r.method()==='GET')inFlightReads.set(r,{method:'GET',url:r.url()});if (r.method() === 'POST' && /\/turns$/.test(r.url())) submissionPosts++ })
+  context = await browser.newContext({ viewport: { width: 1440, height: 1100 } }); page = await context.newPage(); navigation=trackNavigationReads(page);page.on('pageerror', e => {if(stoppedHostDiagnostic(e.message,stoppedOrigins)||navigation.diagnostic(e.message))transportDiagnostics.push(e.message);else {errors.push(e.message);console.log('PAGE_ERROR_STATE',JSON.stringify({message:e.message,base,pageUrl:page.url(),stoppedOrigins:[...stoppedOrigins],navigation:navigation.snapshot(),readFailures:readFailures.slice(-8)}))}})
+  page.on('requestfailed', request => {if(request.method()==='GET'&&new URL(request.url()).pathname.endsWith('/display'))readFailures.push({url:request.url(),error:request.failure()?.errorText,base,pageUrl:page.url(),stoppedOrigins:[...stoppedOrigins]})})
+  page.on('request', r => {if (r.method() === 'POST' && /\/turns$/.test(r.url())) submissionPosts++ })
   await connected(); await page.getByLabel('任务目标').fill('first input'); await page.getByRole('button', { name: '创建任务', exact: true }).click()
   await until(async () => id = await page.evaluate(() => sessionStorage.getItem('jh-selected'))); await settled(1)
   await page.getByLabel('后续消息', { exact: true }).waitFor()
@@ -89,9 +87,8 @@ try {
   await page.route('**/v1/tasks/*/turns', async route => { if (drop && route.request().method() === 'POST') { drop = false; await route.fetch(); await route.abort('failed') } else await route.continue() })
   await page.getByLabel('后续消息', { exact: true }).fill(`third input ${key}`); await page.getByRole('button', { name: '发送后续消息', exact: true }).click()
   await page.getByRole('button', { name: '核对消息受理', exact: true }).waitFor(); assert.equal(await page.getByLabel('后续消息', { exact: true }).isDisabled(), true); assert.equal(await page.getByLabel('消息方式', { exact: true }).isDisabled(), true); await settled(3)
-  const postsBefore = submissionPosts; page.once('dialog', d => void d.accept()); navigationReads=[...inFlightReads.values()]
-  try {await page.reload(); await page.getByRole('button', { name: '核对消息受理', exact: true }).waitFor()}
-  finally {navigationReads=[]}
+  const postsBefore = submissionPosts; page.once('dialog', d => void d.accept())
+  await navigation.during(async()=>{await page.reload(); await page.getByRole('button', { name: '核对消息受理', exact: true }).waitFor()})
   await page.getByRole('button', { name: '核对消息受理', exact: true }).click(); await until(async () => !(await page.getByRole('button', { name: '核对消息受理', exact: true }).count()))
   check('lost response and refresh reconcile by GET without duplicate POST', submissionPosts === postsBefore && await page.getByLabel('后续消息', { exact: true }).inputValue() === '')
   const third = await events(), starts = third.filter(e => e.type === 'turn.started')

@@ -1,4 +1,4 @@
-import { browserType as chromium, engine, stoppedHostDiagnostic, navigationReadDiagnostic } from './runtime.mjs'
+import { browserType as chromium, engine, stoppedHostDiagnostic, trackNavigationReads } from './runtime.mjs'
 import {createServer} from 'node:http'
 import {spawn,execFileSync} from 'node:child_process'
 import {mkdir,writeFile,readFile,unlink,symlink} from 'node:fs/promises'
@@ -7,10 +7,8 @@ import {createHash,randomUUID} from 'node:crypto'
 import assert from 'node:assert/strict'
 const stoppedOrigins=new Set(),transportDiagnostics=[]
 let offlineFault=false
-const inFlightReads=new Map()
-let navigationReads=[]
-let navigationTrace=[]
-async function reload(){navigationReads=[...inFlightReads.values()];const trace={started:Date.now(),pageUrl:page.url(),reads:navigationReads};navigationTrace.push(trace);try{await page.reload()}finally{trace.finished=Date.now();navigationReads=[]}}
+let navigation
+async function reload(){return navigation.during(()=>page.reload())}
 const root=resolve(import.meta.dirname,'../..'),out=join(root,'.build-cache'),run=join(out,'M10.5.6-content-'+Date.now()),workspace=join(run,'primary'),secondary=join(run,'secondary'),outside=join(run,'outside')
 const jar=join(root,'harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar'),java=join(process.env.JAVA_HOME,process.platform==='win32'?'bin/java.exe':'bin/java')
 const token='content_browser_0123456789_ABCDEFGHIJKLMNOPQRSTUVWXYZ',key='synthetic-content-'+randomUUID(),otherKey='synthetic-other-'+randomUUID(),wire=[],checks=[],screenshots=[],errors=[],requests=[]
@@ -70,7 +68,7 @@ try{
  await start();browser=await chromium.launch(process.env.JHARNESS_BROWSER_CHANNEL?{channel:process.env.JHARNESS_BROWSER_CHANNEL}:{})
  context=await browser.newContext({viewport:{width:1440,height:1000},acceptDownloads:true,...(engine==='chromium'?{permissions:['clipboard-read','clipboard-write']}:{})})
  await context.addInitScript(()=>{const write=navigator.clipboard.writeText.bind(navigator.clipboard);Object.defineProperty(navigator.clipboard,'writeText',{value:async text=>{await write(text);window.__copiedExact=text}})})
- page=await context.newPage();page.on('pageerror',e=>{const stopped=stoppedHostDiagnostic(e.message,stoppedOrigins),offline=offlineFault&&stoppedHostDiagnostic(e.message,new Set([base])),navigation=navigationReadDiagnostic(e.message,navigationReads);if(stopped||offline||navigation)transportDiagnostics.push({phase:stopped?'stopped-host':offline?'injected-offline':'controlled-reload',message:e.message});else {const state={message:e.message,at:Date.now(),base,stoppedOrigins:[...stoppedOrigins],offlineFault,pageUrl:page.url(),navigationReads,lastNavigation:navigationTrace.at(-1)};errors.push(state);console.log('CONTENT_ERROR_STATE',JSON.stringify(state))}});page.on('request',r=>{requests.push(r.url());if(r.method()==='GET')inFlightReads.set(r,{method:'GET',url:r.url()})});page.on('requestfinished',r=>inFlightReads.delete(r));page.on('requestfailed',r=>inFlightReads.delete(r));await page.goto(base)
+ page=await context.newPage();navigation=trackNavigationReads(page);page.on('pageerror',e=>{const stopped=stoppedHostDiagnostic(e.message,stoppedOrigins),offline=offlineFault&&stoppedHostDiagnostic(e.message,new Set([base])),interrupted=navigation.diagnostic(e.message);if(stopped||offline||interrupted)transportDiagnostics.push({phase:stopped?'stopped-host':offline?'injected-offline':'controlled-reload',message:e.message});else {const state={message:e.message,at:Date.now(),base,stoppedOrigins:[...stoppedOrigins],offlineFault,pageUrl:page.url(),navigation:navigation.snapshot()};errors.push(state);console.log('CONTENT_ERROR_STATE',JSON.stringify(state))}});page.on('request',r=>requests.push(r.url()));await page.goto(base)
  await page.locator('.connection-state').filter({hasText:'本机服务已连接'}).waitFor({state:'attached'})
  const settings=(await api('/v1/settings')).body
  const clone={...settings.models[0],id:'unused-route',label:'Unused fixture',apiKeyEnv:'JHARNESS_UNUSED_KEY',model:'unused-model'}

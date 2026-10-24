@@ -7,7 +7,7 @@ export function fixtureEnvironment(overrides) {
 }
 // Consume the real response before Chromium can discard its network body. Forward
 // the original UI request once, with no retries/redirects or replacement response.
-export async function captureTaskAcceptance(page, base, trigger, path = '/v1/tasks') {
+export async function captureOriginalResponse(page, base, trigger, path = '/v1/tasks') {
   let accept,reject
   const received=new Promise((resolve,fail)=>{accept=resolve;reject=fail})
   const url=base+path
@@ -20,10 +20,11 @@ export async function captureTaskAcceptance(page, base, trigger, path = '/v1/tas
     } catch(error) {await route.abort();reject(error)}
   }
   await page.route(url,capture)
-  const timer=setTimeout(()=>reject(Error('Task acceptance response not received within 30s')),30000)
+  const timer=setTimeout(()=>reject(Error('Original UI response not received within 30s')),30000)
   try {const [receipt]=await Promise.all([received,Promise.resolve().then(trigger)]);return receipt}
   finally {clearTimeout(timer);await page.unroute(url,capture)}
 }
+export const captureTaskAcceptance = captureOriginalResponse
 export const engine = process.env.JHARNESS_BROWSER_ENGINE ?? 'chromium'
 if (!['chromium','firefox','webkit'].includes(engine)) throw Error('Unsupported browser engine')
 const selected = {chromium,firefox,webkit}[engine]
@@ -50,8 +51,8 @@ export function stoppedHostDiagnostic(message, origins) {
   } catch {return false}
 }
 
-// Only reads already in flight when a fixture deliberately reloads its page.
-// The caller keeps this snapshot only for the bounded navigation operation.
+// Exact browser-observed reads from the outgoing document, during a bounded
+// deliberate navigation. This never exempts unrelated writes or live-page errors.
 export function navigationReadDiagnostic(message, requests) {
   return requests.some(request => {
     if (request.method !== 'GET') return false
@@ -61,4 +62,44 @@ export function navigationReadDiagnostic(message, requests) {
         && message.endsWith(url.pathname + url.search + ' due to access control checks.')
     } catch { return false }
   })
+}
+
+// Network completion does not prove JavaScript consumed a response body: WebKit
+// can report its cancelled consumption when the document unloads. Keep observed
+// URLs for that document, including polls started while beforeunload is handled.
+// Collect from the outgoing document until its main-frame navigation commits;
+// requests from the replacement document never enter this navigation snapshot.
+export function trackNavigationReads(page) {
+  const observed = new Map()
+  let operation = null, last = null
+  page.on('request', request => {
+    const url = request.url()
+    if (request.method() !== 'GET' || request.isNavigationRequest()) {
+      observed.delete(url); operation?.reads.delete(url); return
+    }
+    const read = { method: 'GET', url }
+    observed.set(read.url, read)
+    if (operation?.collecting && new URL(read.url).origin === operation.origin) operation.reads.set(read.url, read)
+    else if (operation && !operation.collecting) {
+      // A fresh document's read takes precedence over any old URL association.
+      for (const [prior, value] of operation.reads) if (value.url === read.url) operation.reads.delete(prior)
+    }
+  })
+  page.on('framenavigated', frame => {
+    if (frame === page.mainFrame()) {
+      observed.clear()
+      if (operation?.collecting) { operation.collecting = false; operation.committed = Date.now() }
+    }
+  })
+  return {
+    async during(action) {
+      if (operation) throw Error('Overlapping controlled navigation')
+      const origin = new URL(page.url()).origin
+      operation = { origin, started: Date.now(), collecting: true, reads: new Map([...observed].filter(([, read]) => new URL(read.url).origin === origin)) }
+      try { return await action() }
+      finally { last = { ...operation, finished: Date.now(), reads: [...operation.reads.values()] }; operation = null }
+    },
+    diagnostic(message) { return !!operation && navigationReadDiagnostic(message, [...operation.reads.values()]) },
+    snapshot() { return operation ? { ...operation, reads: [...operation.reads.values()] } : last },
+  }
 }

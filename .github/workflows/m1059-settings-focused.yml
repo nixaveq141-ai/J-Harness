@@ -1,5 +1,11 @@
 name: M10.5.9 WebKit focused diagnostics (not acceptance)
 on:
+  push:
+    branches: [codex/m1059-full-validation]
+    paths:
+      - frontend/tests/runtime.mjs
+      - frontend/tests/turns.mjs
+      - .github/workflows/m1059-settings-focused.yml
   workflow_dispatch:
 permissions:
   contents: read
@@ -9,8 +15,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: macos-latest
-            fixture: settings
           - os: ubuntu-latest
             fixture: turns
     runs-on: ${{ matrix.os }}
@@ -39,24 +43,16 @@ jobs:
       - name: Install WebKit
         working-directory: frontend
         run: node node_modules/playwright/cli.js install --with-deps webkit
-      - name: Prepare isolated test keychain
-        if: runner.os == 'macOS'
+      - name: Verify original selected WebKit checks (stop at first failure)
         run: |
           set -euo pipefail
-          keychain="$RUNNER_TEMP/jharness-m1059-settings.keychain-db"
-          password="$(python3 -c 'import secrets; print(secrets.token_hex(32))')"
-          security create-keychain -p "$password" "$keychain"
-          security set-keychain-settings -lut 3600 "$keychain"
-          security unlock-keychain -p "$password" "$keychain"
-          security default-keychain -d user -s "$keychain"
-          security list-keychains -d user -s "$keychain"
-      - name: Verify original selected WebKit checks
-        run: node scripts/run-workbench-matrix.mjs
-      - name: Delete isolated test keychain
-        if: always() && runner.os == 'macOS'
-        run: |
-          keychain="$RUNNER_TEMP/jharness-m1059-settings.keychain-db"
-          if [[ -f "$keychain" ]]; then security delete-keychain "$keychain"; fi
+          for round in 1 2 3; do
+            if node scripts/run-workbench-matrix.mjs; then fixture_exit=0; else fixture_exit=$?; fi
+            snapshot=".build-cache/M10.5.9/focused-attempt-$round/.build-cache/M10.5.9"
+            mkdir -p "$snapshot"
+            cp -R .build-cache/M10.5.9/browser "$snapshot/browser"
+            if [[ "$fixture_exit" != 0 ]]; then exit "$fixture_exit"; fi
+          done
       - name: Preserve original diagnostic evidence
         if: always()
         uses: actions/upload-artifact@v4
@@ -66,6 +62,7 @@ jobs:
           path: |
             focused-build.log
             .build-cache/M10.5.9/browser/
+            .build-cache/M10.5.9/focused-attempt-*/
             .build-cache/M10-settings-*.png
             .build-cache/M10.5.3-turns-*.png
             .build-cache/M10.5.3-turns-failure.txt

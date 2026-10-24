@@ -24,7 +24,7 @@ test('stopped-host event diagnostic is scoped to the deliberately stopped origin
   assert.equal(stoppedHostDiagnostic(list.replace('limit=32','limit=1000'),origins),false)
 })
 test('live-host CORS writes and JavaScript errors remain failures',async()=>{
-  const {stoppedHostDiagnostic,navigationReadDiagnostic}=await import('./runtime.mjs'),origins=new Set(['http://127.0.0.1:9999'])
+  const {stoppedHostDiagnostic,navigationReadDiagnostic,trackNavigationReads}=await import('./runtime.mjs'),origins=new Set(['http://127.0.0.1:9999'])
   for(const message of ['TypeError: fetch failed','Fetch API cannot load http://127.0.0.1:8888/v1/tasks/task_1/events?limit=100 due to access control checks.','Fetch API cannot load http://127.0.0.1:9999/v1/tasks due to access control checks.','/127.0.0.1:9999/v1/tasks/task_1/approvals/approve_1 due to access control checks.','/127.0.0.1:9999/v1/tasks/task_1/turns due to access control checks.','Fetch API cannot load https://evil.invalid/v1/tasks/task_1/events?limit=100 due to access control checks.'])assert.equal(stoppedHostDiagnostic(message,origins),false)
   const url='http://127.0.0.1:9999/v1/tasks/task_1/display',message='/127.0.0.1:9999/v1/tasks/task_1/display due to access control checks.'
   assert.equal(navigationReadDiagnostic(message,[{method:'GET',url}]),true)
@@ -35,6 +35,35 @@ test('live-host CORS writes and JavaScript errors remain failures',async()=>{
   assert.equal(navigationReadDiagnostic('TypeError: fetch failed',[{method:'GET',url}]),false)
   const writeUrl=url.replace('/display','/turns')
   assert.equal(navigationReadDiagnostic(message.replace('/display','/turns'),[{method:'POST',url:writeUrl}]),false)
+  const {EventEmitter}=await import('node:events'),mainFrame={},childFrame={}
+  const page=Object.assign(new EventEmitter(),{url:()=> 'http://127.0.0.1:9999/',mainFrame:()=>mainFrame})
+  const tracker=trackNavigationReads(page),request=(url:string,method='GET',navigation=false)=>({url:()=>url,method:()=>method,isNavigationRequest:()=>navigation})
+  const completedRead=request(url)
+  page.emit('request',completedRead);page.emit('requestfinished',completedRead)
+  let release!:()=>void
+  const action=new Promise<void>(resolve=>{release=resolve}),navigation=tracker.during(()=>action)
+  assert.equal(tracker.diagnostic(message),true,'network completion does not prove outgoing JavaScript consumed the body')
+  const lateUrl=url.replace('/display','/questions?offset=0'),lateMessage=message.replace('/display','/questions?offset=0')
+  page.emit('framenavigated',childFrame)
+  page.emit('request',request(lateUrl))
+  assert.equal(tracker.diagnostic(lateMessage),true,'outgoing poll started after reload began is captured until main-frame commit')
+  const postUrl=url.replace('/display','/cancel')
+  page.emit('request',request(postUrl,'POST'))
+  assert.equal(tracker.diagnostic(message.replace('/display','/cancel')),false)
+  page.emit('request',request(url.replace(':9999',':8888')))
+  assert.equal(tracker.diagnostic(message.replace(':9999',':8888')),false)
+  page.emit('framenavigated',mainFrame)
+  const freshUrl=url.replace('/display','/turns?offset=0')
+  page.emit('request',request(freshUrl))
+  assert.equal(tracker.diagnostic(message.replace('/display','/turns?offset=0')),false,'replacement document requests stay failures')
+  page.emit('request',request(url,'POST'))
+  assert.equal(tracker.diagnostic(message),false,'a fresh write cannot inherit an outgoing read exemption')
+  page.emit('request',request(url))
+  assert.equal(tracker.diagnostic(message),false,'replacement document read cannot inherit an old request exemption for the same URL')
+  release();await navigation
+  assert.equal(tracker.diagnostic(message),false,'completed navigation cannot exempt a live-host error')
+  await assert.rejects(tracker.during(async()=>{throw Error('navigation failed')}),/navigation failed/)
+  assert.equal(tracker.diagnostic(message),false)
 })
 test('browser connection obtains an in-memory session without user input', async () => {
   const calls: { path: string; init: RequestInit }[] = []
