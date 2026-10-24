@@ -5,6 +5,7 @@ on:
     paths:
       - frontend/tests/settings.mjs
       - frontend/tests/turns.mjs
+      - frontend/tests/runtime.d.mts
       - .github/workflows/m1059-settings-focused.yml
   workflow_dispatch:
 permissions:
