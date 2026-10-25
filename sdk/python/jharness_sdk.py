@@ -88,8 +88,8 @@ class JHarnessClient:
             return future.result(timeout=deadline)
         except concurrent.futures.TimeoutError:
             with self._lock:
-                self._pending.pop(request_id, None)
-                self._expired[request_id] = True
+                if self._pending.pop(request_id, None) is not None:
+                    self._expired[request_id] = True
             raise RpcError("REQUEST_TIMEOUT_ACCEPTANCE_UNKNOWN") from None
 
     def _write(self):
@@ -201,6 +201,12 @@ class JHarnessClient:
                     except subprocess.TimeoutExpired:
                         raise RpcError("PROCESS_CLEANUP_UNKNOWN") from None
         except OSError:
+            try:
+                if self._process.poll() is None:
+                    self._process.kill()
+                    self._process.wait(timeout=2)
+            except (OSError, subprocess.TimeoutExpired):
+                pass
             raise RpcError("PROCESS_CLEANUP_UNKNOWN") from None
         finally:
             self._fail("CLIENT_CLOSED")
@@ -220,9 +226,10 @@ class JHarnessClient:
     def __exit__(self, exc_type, exc, traceback):
         try:
             self.close()
-        except RpcError:
+        except RpcError as cleanup:
             if exc is None:
                 raise
+            exc.add_note("J-Harness cleanup: " + cleanup.code)
 
     def open_session(self, profile="default", session_id=None):
         return self.call("session.open", {"profile": profile, **({"sessionId": session_id} if session_id else {})})

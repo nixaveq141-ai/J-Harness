@@ -8,7 +8,9 @@ import java.util.List;
  * Injectable command transport. timeout/token are mandatory and cooperative. started means the
  * owned process was launched; uncertain includes incomplete stdin, timeout, cancellation and
  * unconfirmed cleanup. Observed exit/output never prove an arbitrary side effect did not happen.
- * Fake replies are contract evidence only; returned byte arrays are owned snapshots.
+ * Fake replies are contract evidence only; returned byte arrays are owned snapshots. failureCode is
+ * optional transport telemetry, not an execution-state decision. Consumers must use
+ * started/uncertain and the validated response; arbitrary failure strings are not user output.
  */
 @FunctionalInterface
 public interface CommandTransport {

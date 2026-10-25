@@ -141,7 +141,9 @@ public final class EvidenceReport {
     }
 
     private static String safeNarration(String narration, DataSanitizer sanitizer) {
-        String clean = (String) sanitizer.sanitize(Map.of("text", narration)).get("text");
+        var sanitized = sanitizer.sanitize(Map.of("text", narration));
+        if (sanitized == null || !(sanitized.get("text") instanceof String)) return "[WITHHELD]";
+        String clean = (String) sanitized.get("text");
         if (clean.length() <= 16384) return clean;
         int end = Character.isHighSurrogate(clean.charAt(16383)) ? 16383 : 16384;
         return clean.substring(0, end) + "[TRUNCATED]";

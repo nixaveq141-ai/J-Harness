@@ -1,0 +1,2925 @@
+{
+  "schemaVersion": 1,
+  "status": "LOCAL_IMPLEMENTATION_VALIDATED",
+  "baseline": "252bfd7bdf0bf121119502a386cb71a66463a2cd",
+  "reviewLedger": {
+    "path": "docs/development/OCR-R1-R3-rereview-2026-10-24.json",
+    "sha256": "bb9d0fdd40513b2afbe110d169af0f64a378643f669f477365b24cd6a0c54eb7"
+  },
+  "opinions": [
+    {
+      "id": "R123R-001",
+      "verdict": "采纳",
+      "path": ".github/workflows/ci.yml",
+      "status": "EXISTING_FIX_CONFIRMED",
+      "adoptedScope": "审查时R3 provider门禁未接入成立；当前ci.yml已直接执行test-r3-provider.py，R1契约复用不等于漏跑R3。无需为脚本命名再切换整套采集器。",
+      "files": [
+        ".github/workflows/ci.yml",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "gates:r3-provider"
+      ],
+      "limitations": [],
+      "implementation": "复核审查后的既有修复，保留现有保护，未把本编号重复计作新缺陷修复。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-002",
+      "verdict": "部分采纳",
+      "path": ".github/workflows/ci.yml",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "R0 路径确实陈旧；但同一次 upload 有其他匹配文件时，不会因单个空 glob 单独证明证据丢失。按实际采集目录同步即可。",
+      "files": [
+        ".github/workflows/ci.yml",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "gates:r3-provider"
+      ],
+      "limitations": [],
+      "implementation": "CI上传路径与当前R1采集目录对齐，撤下陈旧R0 glob；未扩大原始日志上传范围。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-003",
+      "verdict": "采纳",
+      "path": "docs/development/OCR-remediation-progress.json",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "validateProgress 确实未校验 r1/r2/r3 附加对象。应声明独立 schema/枚举，不能把顶层阶段枚举自动套到未定义附加对象。",
+      "files": [
+        "docs/development/OCR-remediation-progress.json",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "gates:ocr-progress"
+      ],
+      "limitations": [],
+      "implementation": "验证阶段摘要结构/状态/计数/别名与runId，规范字段但保留历史阶段语义。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-004",
+      "verdict": "部分采纳",
+      "path": "docs/development/OCR-remediation-progress.json",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "附加摘要字段未统一且缺结构验证；假设的 implemented 消费方不存在，不能据此宣称当前汇总已坏。可统一机器消费字段并保留各阶段不同验收含义。",
+      "files": [
+        "docs/development/OCR-remediation-progress.json",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "gates:ocr-progress"
+      ],
+      "limitations": [],
+      "implementation": "验证阶段摘要结构/状态/计数/别名与runId，规范字段但保留历史阶段语义。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-005",
+      "verdict": "部分采纳",
+      "path": "docs/testing/OCR-R1-2026-10-21-results.json",
+      "status": "CONTRACT_CLARIFIED",
+      "adoptedScope": "历史报告绑定旧台账，当前文件确实不同；但探针证明 SHA 在 5d8ff4e 可精确复现，原文“任何提交不可复现”错误。补历史 revision 引用，不删除历史摘要、不强迫历史报告绑定新台账。",
+      "files": [
+        "docs/testing/OCR-R1-2026-10-21-results.json",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "historical-reference"
+      ],
+      "limitations": [],
+      "implementation": "明确旧报告的台账字节在5d8ff4e精确可复现；历史结果保持原字节。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-006",
+      "verdict": "部分采纳",
+      "path": "docs/testing/OCR-R2-2026-10-22-results.json",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "fixture 失败与矩阵汇总错误确实形状不同；尚无强依赖 engine 的现有消费方损坏证据。新回执增加 scope，不改写旧失败证据。",
+      "files": [
+        "docs/testing/OCR-R2-2026-10-22-results.json",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "gates:workbench-evidence"
+      ],
+      "limitations": [
+        "源码/本地协议或证据回归核对；未运行三浏览器完整矩阵。"
+      ],
+      "implementation": "新矩阵级失败加scope=matrix，历史失败字节不改。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-007",
+      "verdict": "部分采纳",
+      "path": "docs/testing/OCR-R2-2026-10-22-results.json",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "与 006 内容重复，合并处理，不计作第二个独立缺陷，不删除历史失败。",
+      "files": [
+        "docs/testing/OCR-R2-2026-10-22-results.json",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "gates:workbench-evidence"
+      ],
+      "limitations": [
+        "源码/本地协议或证据回归核对；未运行三浏览器完整矩阵。"
+      ],
+      "implementation": "新矩阵级失败加scope=matrix，历史失败字节不改。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-008",
+      "verdict": "采纳",
+      "path": "harness-agent/src/main/java/io/jharness/agent/BoundedModelExecution.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "取得 active 与递减 waiters 分属两个临界区，存在错误拒绝窗口；审计期间仍属等待者，第二点本身不是另一个缺陷。",
+      "files": [
+        "harness-agent/src/main/java/io/jharness/agent/BoundedModelExecution.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.testkit.R1CoreLifecycleTest"
+      ],
+      "limitations": [],
+      "implementation": "取得活跃槽位与递减等待者在同一临界区完成。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-009",
+      "verdict": "采纳",
+      "path": "harness-agent/src/main/java/io/jharness/agent/ContextCompactionPlugin.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "探针确认已完成工具组可只删除 assistant 而保留 tool。应校验压缩后完整配对与顺序，保留未决组。",
+      "files": [
+        "harness-agent/src/main/java/io/jharness/agent/ContextCompactionPlugin.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.agent.R3CompactionBoundaryTest"
+      ],
+      "limitations": [],
+      "implementation": "校验原始索引/保留顺序、摘要与完整工具组，畸形工具ID归一INVALID_COMPACTION。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-010",
+      "verdict": "采纳",
+      "path": "harness-agent/src/main/java/io/jharness/agent/ContextCompactionPlugin.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "探针确认非字符串 tool id 抛 CCE；应在协议校验边界统一 INVALID_COMPACTION 并检查缺失/重复。",
+      "files": [
+        "harness-agent/src/main/java/io/jharness/agent/ContextCompactionPlugin.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.agent.R3CompactionBoundaryTest"
+      ],
+      "limitations": [],
+      "implementation": "校验原始索引/保留顺序、摘要与完整工具组，畸形工具ID归一INVALID_COMPACTION。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-011",
+      "verdict": "采纳",
+      "path": "harness-agent/src/main/java/io/jharness/agent/ContextCompactionPlugin.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "探针确认实际删除消息但 removed 为空可通过，压缩事实缺失。校验原始索引、保留消息有序性及允许的摘要插入。",
+      "files": [
+        "harness-agent/src/main/java/io/jharness/agent/ContextCompactionPlugin.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.agent.R3CompactionBoundaryTest"
+      ],
+      "limitations": [],
+      "implementation": "校验原始索引/保留顺序、摘要与完整工具组，畸形工具ID归一INVALID_COMPACTION。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-012",
+      "verdict": "采纳",
+      "path": "harness-agent/src/test/java/io/jharness/agent/R3CompactionBoundaryTest.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "现有三项负例未覆盖 009/010/011，应按稳定错误码补回归；不能以已有 HarnessException 断言代表协议组已受保护。",
+      "files": [
+        "harness-agent/src/test/java/io/jharness/agent/R3CompactionBoundaryTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.agent.R3CompactionBoundaryTest"
+      ],
+      "limitations": [],
+      "implementation": "按采纳范围补充精确错误码、正向或故障后观察断言，保持原有业务和安全边界。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-013",
+      "verdict": "部分采纳",
+      "path": "harness-api/src/main/java/io/jharness/api/AtomicFileMetadata.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "目的视图为空与 ACL 所有者赋值失败值得加固；契约明确允许报告的是 POSIX ownership，不能据此允许 DACL 丢失。所有权可按平台另定，权限复制失败仍应拒绝提交。",
+      "files": [
+        "harness-api/src/main/java/io/jharness/api/AtomicFileMetadata.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.cli.R2RegistryTest"
+      ],
+      "limitations": [
+        "本轮Windows实测；POSIX mode/group分支未在新的POSIX运行中复验。"
+      ],
+      "implementation": "目标权限视图为空时拒绝；所有权回退有结构化说明，ACL/权限复制与复核仍强制。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-014",
+      "verdict": "部分采纳",
+      "path": "harness-api/src/main/java/io/jharness/api/DataSanitizer.java",
+      "status": "CONTRACT_CLARIFIED",
+      "adoptedScope": "多次快照确实重复，性能影响未测；拒绝非 JSON 输出是有意契约。可优化有证明的不可变表示，不能直接信任第三方 sanitizer 返回值。",
+      "files": [
+        "harness-api/src/main/java/io/jharness/api/DataSanitizer.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md",
+        "docs/testing/tools/SanitizerCost.java"
+      ],
+      "tests": [
+        "java:io.jharness.api.R1CoreApiTest",
+        "sanitizer-cost-observation"
+      ],
+      "limitations": [
+        "合成分配/耗时观察不是生产基准，本轮未优化第三方信任边界快照。"
+      ],
+      "implementation": "测量合成JSON的链式快照成本，保留第三方JSON校验边界，不引入未经证明的跳过。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-015",
+      "verdict": "部分采纳",
+      "path": "harness-api/src/main/java/io/jharness/api/DirectoryIdentity.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "CREATE_NEW 到写完之间存在空锚窗口。采纳完整发布/明确恢复设计；ATOMIC_MOVE 不自动承诺不替换已有目标，禁止随意重建身份锚。",
+      "files": [
+        "harness-api/src/main/java/io/jharness/api/DirectoryIdentity.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.api.R123IdentityBoundaryTest"
+      ],
+      "limitations": [
+        "保留私有UUID和非合作进程限制；公开Windows根使用原生creationTime；预约残留必须离线核实，不构成OS目录句柄沙箱。"
+      ],
+      "implementation": "完整UUID以硬链接不覆盖发布，私有UUID保留，稳定key/anchor存在时忽略不可靠时间回退。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-016",
+      "verdict": "部分采纳",
+      "path": "harness-api/src/main/java/io/jharness/api/DirectoryIdentity.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "时间回退参与 identity 的风险成立；OpenJDK21 源码有 birthtime 分支，缺失时回退 mtime，非原文统一 ctime/整秒。不能宣称所有 Linux 必现；不删 UUID 锚保护。",
+      "files": [
+        "harness-api/src/main/java/io/jharness/api/DirectoryIdentity.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.api.R123IdentityBoundaryTest"
+      ],
+      "limitations": [
+        "保留私有UUID和非合作进程限制；公开Windows根使用原生creationTime；预约残留必须离线核实，不构成OS目录句柄沙箱。"
+      ],
+      "implementation": "完整UUID以硬链接不覆盖发布，私有UUID保留，稳定key/anchor存在时忽略不可靠时间回退。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-017",
+      "verdict": "部分采纳",
+      "path": "harness-api/src/main/java/io/jharness/api/FileSystemView.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "默认 readSnapshot 明确要求 SHA256，但接口总述仍允许普通身份，替换 provider 需覆写。应统一契约/能力；不能用非原子双读假装一致快照。",
+      "files": [
+        "harness-api/src/main/java/io/jharness/api/FileSystemView.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.ecosystem.R3SkillBoundaryTest"
+      ],
+      "limitations": [],
+      "implementation": "明确SHA256默认快照和opaque provider覆写契约，提供有界快照重载供worker复用。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-018",
+      "verdict": "不采纳",
+      "path": "harness-api/src/main/java/io/jharness/api/JsonSchema.java",
+      "status": "OUT_OF_SCOPE",
+      "adoptedScope": "checkSchema 对 oneOf/properties/items 同一递归路径先限深32，checkValue 路径不可能凭空超过64。探针的63层值加两层 oneOf 正常通过，原文混算了未遍历的值深度。",
+      "files": [],
+      "tests": [],
+      "limitations": []
+    },
+    {
+      "id": "R123R-019",
+      "verdict": "部分采纳",
+      "path": "harness-api/src/main/java/io/jharness/api/LlmClient.java",
+      "status": "CONTRACT_CLARIFIED",
+      "adoptedScope": "反射不能证明装饰器正确实现，显式能力更清楚；但可信 SPI 故意违约/转调默认实现不等于当前适配器重复发送。变更前需评估已有 overrides 兼容性。",
+      "files": [
+        "harness-api/src/main/java/io/jharness/api/LlmClient.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.testkit.R1CoreLifecycleTest"
+      ],
+      "limitations": [],
+      "implementation": "入口拒绝null展示observer；明确单次能力反射的兼容性及可信装饰器责任。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-020",
+      "verdict": "部分采纳",
+      "path": "harness-api/src/main/java/io/jharness/api/LlmClient.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "可在入口拒 null；展示异常隔离仍是实际 display 实现责任，不能仅由 null 推导必然中断生产模型链。",
+      "files": [
+        "harness-api/src/main/java/io/jharness/api/LlmClient.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.testkit.R1CoreLifecycleTest"
+      ],
+      "limitations": [],
+      "implementation": "入口拒绝null展示observer；明确单次能力反射的兼容性及可信装饰器责任。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-021",
+      "verdict": "部分采纳",
+      "path": "harness-api/src/main/java/io/jharness/api/ModelRejectedException.java",
+      "status": "CONTRACT_CLARIFIED",
+      "adoptedScope": "retryAfter 元数据尚未接入生产重试是事实，但并未承诺已支持提供方等待。若接入必须服从取消/总预算，不能无界延迟或扩大重试资格。",
+      "files": [
+        "harness-api/src/main/java/io/jharness/api/ModelRejectedException.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.api.R1CoreApiTest"
+      ],
+      "limitations": [],
+      "implementation": "retryAfter明确为建议元数据，当前生产仍按配置backoff，不伪称提供方等待已支持。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-022",
+      "verdict": "不采纳",
+      "path": "harness-api/src/main/java/io/jharness/api/ModelRejectedException.java",
+      "status": "OUT_OF_SCOPE",
+      "adoptedScope": "86400000 上限是异常对象的显式构造契约，越界由适配器规范化；当前生产并未解析该字段。假想违约适配器不能证明现有429路径损坏。",
+      "files": [],
+      "tests": [],
+      "limitations": []
+    },
+    {
+      "id": "R123R-023",
+      "verdict": "不采纳",
+      "path": "harness-api/src/main/java/io/jharness/api/PreparedToolCall.java",
+      "status": "OUT_OF_SCOPE",
+      "adoptedScope": "公共参数除显式可选外非空，reason 无默认空值承诺，现有宿主传稳定非空码。可文档化，不能把调用者违约推导成当前恢复缺陷。",
+      "files": [],
+      "tests": [],
+      "limitations": []
+    },
+    {
+      "id": "R123R-024",
+      "verdict": "不采纳",
+      "path": "harness-api/src/main/java/io/jharness/api/SessionProjection.java",
+      "status": "OUT_OF_SCOPE",
+      "adoptedScope": "旧失败记录没有未进入主体/效果已核实的证据时保守阻断合理。按缺字段直接清除 pending 会丢失副作用不确定性；需要提示和人工追加核实，不能自动视为完成。",
+      "files": [],
+      "tests": [],
+      "limitations": []
+    },
+    {
+      "id": "R123R-025",
+      "verdict": "部分采纳",
+      "path": "harness-api/src/main/java/io/jharness/api/SessionWriter.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "会改写事实的 SessionWriter 必须覆写 appendPrepared，默认实现仅适合原样 writer。DurableTaskCatalog 当前不作为模型 Loop writer，未证明当前路径泄漏；应明确约束/补契约测试。",
+      "files": [
+        "harness-api/src/main/java/io/jharness/api/SessionWriter.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.web.R1CatalogScanBoundaryTest"
+      ],
+      "limitations": [],
+      "implementation": "改写事实的writer必须返回真实appendPrepared事实，catalog已覆盖该接口。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-026",
+      "verdict": "不采纳",
+      "path": "harness-api/src/main/java/io/jharness/api/ToolBatchExecution.java",
+      "status": "OUT_OF_SCOPE",
+      "adoptedScope": "unknownOutcome 仅决定已知取消/超时的终态原因；stops 与 SessionProjection 仍保留 sideEffectUncertain 并阻止续跑。原文把终态 CANCELLED 等同允许重放不成立。",
+      "files": [],
+      "tests": [],
+      "limitations": []
+    },
+    {
+      "id": "R123R-027",
+      "verdict": "采纳",
+      "path": "harness-api/src/main/java/io/jharness/api/ToolResults.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "探针确认 sanitizer 给 SUCCESS 注入 error 会抛裸 IAE。需对称检查错误结构并统一 INVALID_SANITIZER_OUTPUT，保留未结算事实供核实。",
+      "files": [
+        "harness-api/src/main/java/io/jharness/api/ToolResults.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.api.R1CoreApiTest"
+      ],
+      "limitations": [],
+      "implementation": "拒绝sanitizer给无error的SUCCESS注入错误，统一INVALID_SANITIZER_OUTPUT。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-028",
+      "verdict": "采纳",
+      "path": "harness-api/src/test/java/io/jharness/api/R1CoreApiTest.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "收窄为实际构造契约异常合理，避免 RuntimeException 吞其他退化。",
+      "files": [
+        "harness-api/src/test/java/io/jharness/api/R1CoreApiTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.api.R1CoreApiTest"
+      ],
+      "limitations": [],
+      "implementation": "按采纳范围补充精确错误码、正向或故障后观察断言，保持原有业务和安全边界。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-029",
+      "verdict": "采纳",
+      "path": "harness-cli/src/main/java/io/jharness/cli/Arguments.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "非文本路径选项空串可落到 CWD。应按选项语义拒空，保留确有空值意义的正文/文本选项。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/Arguments.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.cli.R123CliBoundaryTest"
+      ],
+      "limitations": [],
+      "implementation": "非正文/理由选项拒绝空串，保留正文的有意空值。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-030",
+      "verdict": "部分采纳",
+      "path": "harness-cli/src/main/java/io/jharness/cli/CliConfig.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "config set 先读并验证旧文件，缺价格/ceiling 时无法逐键修复成立。修改候选后再完整验证或提供原子配置编辑；运行入口仍须发送前拒绝缺费用配置。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/CliConfig.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.cli.R123CliBoundaryTest"
+      ],
+      "limitations": [],
+      "implementation": "候选配置先改后验，可修复旧交叉字段；小context使用合法默认输出上限，运行前费用配置仍强制。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-031",
+      "verdict": "部分采纳",
+      "path": "harness-cli/src/main/java/io/jharness/cli/CliConfig.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "小 context 与默认4096输出的组合及 config set 自修复受阻成立。优先候选后验证/明确默认值，不建议静默钳制用户显式输出上限。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/CliConfig.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.cli.R123CliBoundaryTest"
+      ],
+      "limitations": [],
+      "implementation": "候选配置先改后验，可修复旧交叉字段；小context使用合法默认输出上限，运行前费用配置仍强制。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-032",
+      "verdict": "采纳",
+      "path": "harness-cli/src/main/java/io/jharness/cli/DryRunPipeline.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "FILE_LIMIT/PREVIEW_IO 未落入单调用不可预览处理；应区分可预期预览失败与必须整体拒绝的策略/契约错误。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/DryRunPipeline.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.cli.R1CliLifecycleTest"
+      ],
+      "limitations": [],
+      "implementation": "将FILE_LIMIT/PREVIEW_IO纳入单调用不可预览，其他策略/契约错误仍整体拒绝。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-033",
+      "verdict": "部分采纳",
+      "path": "harness-cli/src/main/java/io/jharness/cli/EcosystemCli.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "后缀无边界会误收 SSH_ASKPASS 等值，需精确环境变量命名规则。已确认是真实短秘密时仍须脱敏，不能用最小长度统一跳过。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/EcosystemCli.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.api.R123IdentityBoundaryTest"
+      ],
+      "limitations": [],
+      "implementation": "环境秘密识别改为完整后缀边界，明确短秘密仍脱敏。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-034",
+      "verdict": "部分采纳",
+      "path": "harness-cli/src/main/java/io/jharness/cli/EcosystemConfig.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "requireRead 的空白项导致永不可满足，值得提前拒绝；重复项可合理复用同一事实，不能不经契约就一律禁止。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/EcosystemConfig.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.cli.WorkbenchSettingsTest"
+      ],
+      "limitations": [],
+      "implementation": "requireRead空白项提前拒绝，允许同一读取事实有意复用。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-035",
+      "verdict": "不采纳",
+      "path": "harness-cli/src/main/java/io/jharness/cli/EvidenceCompletion.java",
+      "status": "OUT_OF_SCOPE",
+      "adoptedScope": "同一参数已在构造期验证，重复纯解析未产生已证实错误。假想未来抛异常和少量重复计算不足以成为本轮缺陷。",
+      "files": [],
+      "tests": [],
+      "limitations": []
+    },
+    {
+      "id": "R123R-036",
+      "verdict": "采纳",
+      "path": "harness-cli/src/main/java/io/jharness/cli/EvidenceCompletion.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "空串证据路径被规范化为点，用户无法定位错误，应在 criterion 入口按语义拒空。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/EvidenceCompletion.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.cli.EvidenceCompletionTest"
+      ],
+      "limitations": [],
+      "implementation": "证据路径入口拒空白，避免规范化成当前目录。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-037",
+      "verdict": "采纳",
+      "path": "harness-cli/src/main/java/io/jharness/cli/EvidenceReport.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "safeNarration 仍盲取 text，SecretRedactor 可改写键而导致 NPE。应有安全的 withheld 回退，不能回退原正文。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/EvidenceReport.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.cli.R1ApplicationNativeTest"
+      ],
+      "limitations": [],
+      "implementation": "缺失/非字符串sanitized text时返回WITHHELD，绝不回退原正文。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-038",
+      "verdict": "采纳",
+      "path": "harness-cli/src/main/java/io/jharness/cli/Json.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "严格UTF8解码失败目前逸出为 IOException；统一 INVALID_JSON 有助稳定输入错误分类。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/Json.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.cli.R123CliBoundaryTest"
+      ],
+      "limitations": [],
+      "implementation": "严格UTF8失败归为INVALID_JSON。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-039",
+      "verdict": "部分采纳",
+      "path": "harness-cli/src/main/java/io/jharness/cli/Metadata.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "两处身份读取错误分类不一致，应区分身份不匹配与普通IO；不能把所有权限/资源故障都包装为路径替换。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/Metadata.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.cli.R2RegistryTest"
+      ],
+      "limitations": [],
+      "implementation": "公开根身份与私有锚分离；非法锚/消失根拒绝为身份边界，普通IO保持IO原因域。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-040",
+      "verdict": "部分采纳",
+      "path": "harness-cli/src/main/java/io/jharness/cli/NativeCredentials.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "字节预检比内联字符限制更严，后者对写值冗余；实际生效限额并未放宽。统一实现可做，非功能阻断。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/NativeCredentials.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.cli.R1NativeWorkerTest"
+      ],
+      "limitations": [],
+      "implementation": "删除冗余字符计数，保持实际字节限额；畸形JSON归6，输出flush/checkError确认传输。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-041",
+      "verdict": "采纳",
+      "path": "harness-cli/src/main/java/io/jharness/cli/NativeCredentials.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "worker 公开入口的畸形JSON/非对象项会被归7而非6；父预检使正常内部路径不可达，优先级低。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/NativeCredentials.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.cli.R1NativeWorkerTest"
+      ],
+      "limitations": [],
+      "implementation": "删除冗余字符计数，保持实际字节限额；畸形JSON归6，输出flush/checkError确认传输。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-042",
+      "verdict": "采纳",
+      "path": "harness-cli/src/main/java/io/jharness/cli/NativeCredentials.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "PrintStream 写失败不抛IOException，应 flush/checkError，避免明确传输失败被当空凭据。须测试真实父子协议语义，不能宣称空值即一定泄漏。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/NativeCredentials.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.cli.R1NativeWorkerTest"
+      ],
+      "limitations": [],
+      "implementation": "删除冗余字符计数，保持实际字节限额；畸形JSON归6，输出flush/checkError确认传输。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-043",
+      "verdict": "采纳",
+      "path": "harness-cli/src/main/java/io/jharness/cli/StdioSdkServer.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "问答 callId/turnId 被套64字符字母数字约束，比既有关联/HTTP口径窄。保留 questionId/requestId 特定限制，其余按真实域校验。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/StdioSdkServer.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.cli.StdioSdkServerTest"
+      ],
+      "limitations": [],
+      "implementation": "question/request ID使用原限制，turn/call关联按256字符域校验。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-044",
+      "verdict": "采纳",
+      "path": "harness-cli/src/main/java/io/jharness/cli/SystemCredentials.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "mutating catch 会吞已知6/7分类，且整包JSON转义后上限未对齐。父先验实际字节、保留确定未执行码，通信失败仍UNKNOWN。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/SystemCredentials.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.cli.R1NativeWorkerTest"
+      ],
+      "limitations": [],
+      "implementation": "父端预检实际JSON字节，保留确定6/7分类；资源分配与数组擦除置于拥有者保护区，未知错误只给固定安全码。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-045",
+      "verdict": "部分采纳",
+      "path": "harness-cli/src/main/java/io/jharness/cli/SystemCredentials.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "start 后创建执行器/submit 在保护区外存在清理缺口；私有新执行器的普通拒绝不易触发，不能冒称常规必现。将资源归属及可擦数组清理移入外层 finally。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/SystemCredentials.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.cli.R1NativeWorkerTest"
+      ],
+      "limitations": [],
+      "implementation": "父端预检实际JSON字节，保留确定6/7分类；资源分配与数组擦除置于拥有者保护区，未知错误只给固定安全码。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-046",
+      "verdict": "采纳",
+      "path": "harness-cli/src/main/java/io/jharness/cli/SystemCredentials.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "可擦响应/解码数组可在finally缩短驻留；String及JVM副本无法保证清零，不承诺彻底擦除。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/SystemCredentials.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.cli.R1NativeWorkerTest"
+      ],
+      "limitations": [],
+      "implementation": "父端预检实际JSON字节，保留确定6/7分类；资源分配与数组擦除置于拥有者保护区，未知错误只给固定安全码。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-047",
+      "verdict": "采纳",
+      "path": "harness-cli/src/main/java/io/jharness/cli/WorkbenchSettings.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "设置提交及state切换后 cleanupCredentials 仍可抛，导致已提交却返回失败。必须区分提交成功与待清理，并核实清理意图在访问vault前已持久。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/WorkbenchSettings.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.cli.WorkbenchSettingsTest"
+      ],
+      "limitations": [],
+      "implementation": "提交成功与后续credential cleanup分开；损坏日志固定维护诊断，意图原件保留；环境秘密名称统一。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-048",
+      "verdict": "部分采纳",
+      "path": "harness-cli/src/main/java/io/jharness/cli/WorkbenchSettings.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "损坏清理日志阻断启动是真实恢复问题；不能不经可审计维护就隔离并忽略未知删除引用。保留原件、显式pending/维护模式，禁止伪称已清理。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/WorkbenchSettings.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.cli.WorkbenchSettingsTest"
+      ],
+      "limitations": [
+        "损坏事实仍阻断；本轮提供明确离线维护流程，不提供无证据自动修复/忽略。"
+      ],
+      "implementation": "提交成功与后续credential cleanup分开；损坏日志固定维护诊断，意图原件保留；环境秘密名称统一。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-049",
+      "verdict": "部分采纳",
+      "path": "harness-cli/src/main/java/io/jharness/cli/WorkbenchSettings.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "与033共用环境变量误识别根因。短值可能是真秘密，长度>=8不是安全修法；应改命名识别并说明误脱敏边界。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/WorkbenchSettings.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.cli.WorkbenchSettingsTest"
+      ],
+      "limitations": [],
+      "implementation": "提交成功与后续credential cleanup分开；损坏日志固定维护诊断，意图原件保留；环境秘密名称统一。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-050",
+      "verdict": "部分采纳",
+      "path": "harness-cli/src/main/java/io/jharness/cli/WorkbenchWorkspaces.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "合并016的时间回退风险；并非所有Linux都用ctime或整秒。首次建.jharness跨时间变化的条件要在具体FS/JDK复现，不可只比较fileKey而丢锚。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/WorkbenchWorkspaces.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.cli.R2RegistryTest"
+      ],
+      "limitations": [
+        "保留私有UUID和非合作进程限制；公开Windows根使用原生creationTime；预约残留必须离线核实，不构成OS目录句柄沙箱。"
+      ],
+      "implementation": "普通工作区不读取用户marker，使用公共根身份，私有元数据仍校验UUID。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-051",
+      "verdict": "部分采纳",
+      "path": "harness-cli/src/main/java/io/jharness/cli/WorkbenchWorkspaces.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "RootCheck 长持有完整身份确有条件风险，合并016；fileKey为空的平台只比null会失去身份保护，必须保留可靠锚/显式不支持。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/WorkbenchWorkspaces.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.cli.R2RegistryTest"
+      ],
+      "limitations": [
+        "保留私有UUID和非合作进程限制；公开Windows根使用原生creationTime；预约残留必须离线核实，不构成OS目录句柄沙箱。"
+      ],
+      "implementation": "普通工作区不读取用户marker，使用公共根身份，私有元数据仍校验UUID。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-052",
+      "verdict": "采纳",
+      "path": "harness-cli/src/main/java/io/jharness/cli/WorkbenchWorkspaces.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "工作区根上的用户可写.directory-identity也被解析，非法内容会让注册/启动裸IO失败。私有锚与普通工作区身份采集应分离，不能忽略私有根被篡改。",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/WorkbenchWorkspaces.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.cli.R2RegistryTest"
+      ],
+      "limitations": [],
+      "implementation": "普通工作区不读取用户marker，使用公共根身份，私有元数据仍校验UUID。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-053",
+      "verdict": "采纳",
+      "path": "harness-cli/src/test/java/io/jharness/cli/CredentialStoreProbe.java",
+      "status": "EXISTING_FIX_CONFIRMED",
+      "adoptedScope": "后续提交已增加按 HarnessException.code 固定分类，并有独立记录；不把本项继续列为待修，也不反推旧失败根因。",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/CredentialStoreProbe.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "native:7",
+        "java:io.jharness.cli.R1NativeWorkerTest"
+      ],
+      "limitations": [],
+      "implementation": "复核审查后的既有修复，保留现有保护，未把本编号重复计作新缺陷修复。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-054",
+      "verdict": "部分采纳",
+      "path": "harness-cli/src/test/java/io/jharness/cli/R1ApplicationNativeTest.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "原断言确实不能检出截断后的已知秘密前缀，当前仍是完整串不存在断言。应有能使先截断后脱敏旧策略失败的前缀断言；仅把完整秘密前移不足以证明跨边界保护。",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/R1ApplicationNativeTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.cli.R1ApplicationNativeTest"
+      ],
+      "limitations": [],
+      "implementation": "按采纳范围补充精确错误码、正向或故障后观察断言，保持原有业务和安全边界。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-055",
+      "verdict": "采纳",
+      "path": "harness-cli/src/test/java/io/jharness/cli/R1ApplicationNativeTest.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "用例名的失败输入仍登记未被方法体检验，应加真正登记后失败路径并检查后续输出。",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/R1ApplicationNativeTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.cli.R1ApplicationNativeTest"
+      ],
+      "limitations": [],
+      "implementation": "按采纳范围补充精确错误码、正向或故障后观察断言，保持原有业务和安全边界。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-056",
+      "verdict": "部分采纳",
+      "path": "harness-cli/src/test/java/io/jharness/cli/R1ApplicationNativeTest.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "防线回归可能触达真实vault，建议给进程启动/worker工厂做拒绝探针。仅替换SystemCredentials.update成空假实现会绕过待测父预检，不可如此修。",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/R1ApplicationNativeTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.cli.R1ApplicationNativeTest"
+      ],
+      "limitations": [],
+      "implementation": "按采纳范围补充精确错误码、正向或故障后观察断言，保持原有业务和安全边界。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-057",
+      "verdict": "采纳",
+      "path": "harness-cli/src/test/java/io/jharness/cli/R1ApplicationNativeTest.java",
+      "status": "EXISTING_FIX_CONFIRMED",
+      "adoptedScope": "当前类 BeforeEach 已toRealPath规范临时根；原审查时夹具问题成立，产品链接拒绝保持。",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/R1ApplicationNativeTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.cli.R1ApplicationNativeTest"
+      ],
+      "limitations": [],
+      "implementation": "复核审查后的既有修复，保留现有保护，未把本编号重复计作新缺陷修复。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-058",
+      "verdict": "采纳",
+      "path": "harness-cli/src/test/java/io/jharness/cli/R1ApplicationNativeTest.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "33个重复target被批大小先拒，不能独立证明重复delete规则；需规模内重复负例且隔离原生调用。",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/R1ApplicationNativeTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.cli.R1ApplicationNativeTest"
+      ],
+      "limitations": [],
+      "implementation": "按采纳范围补充精确错误码、正向或故障后观察断言，保持原有业务和安全边界。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-059",
+      "verdict": "采纳",
+      "path": "harness-cli/src/test/java/io/jharness/cli/R1CliLifecycleTest.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "close内AssertionError会被容器聚合，外层只断HarnessException可假通过；用观察值在关闭后断言。",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/R1CliLifecycleTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.cli.R1CliLifecycleTest"
+      ],
+      "limitations": [],
+      "implementation": "按采纳范围补充精确错误码、正向或故障后观察断言，保持原有业务和安全边界。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-060",
+      "verdict": "部分采纳",
+      "path": "harness-cli/src/test/java/io/jharness/cli/R1CredentialCleanupTest.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "异常类型/码可收窄；原文对Values.object非对象的异常归类需逐路径核实，不能把所有fixture统一写成IAE。",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/R1CredentialCleanupTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.cli.R1CredentialCleanupTest"
+      ],
+      "limitations": [],
+      "implementation": "按采纳范围补充精确错误码、正向或故障后观察断言，保持原有业务和安全边界。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-061",
+      "verdict": "采纳",
+      "path": "harness-cli/src/test/java/io/jharness/cli/R1CredentialCleanupTest.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "清理targets计算缺正向验证，抽纯解析可独立验证；结合069覆盖删除意图，不在评估中访问真vault。",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/R1CredentialCleanupTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.cli.R1CredentialCleanupTest"
+      ],
+      "limitations": [],
+      "implementation": "按采纳范围补充精确错误码、正向或故障后观察断言，保持原有业务和安全边界。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-062",
+      "verdict": "部分采纳",
+      "path": "harness-cli/src/test/java/io/jharness/cli/R1PreviewPolicyTest.java",
+      "status": "CONTRACT_CLARIFIED",
+      "adoptedScope": "当前测的是null decision，命名可澄清；context构造已拒null policy，不能据命名推导有可运行的null policy放行。",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/R1PreviewPolicyTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.cli.R1PreviewPolicyTest"
+      ],
+      "limitations": [],
+      "implementation": "明确历史用例验证null decision，不宣称null policy可构造或被执行放行；保留历史用例身份。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-063",
+      "verdict": "部分采纳",
+      "path": "harness-cli/src/test/java/io/jharness/cli/R1WorkbenchTransactionTest.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "替身仅未写就抛，不能证明可能写入后的补偿。补写后UNKNOWN场景；但现有确定失败场景仍有价值，不能删除。",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/R1WorkbenchTransactionTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.cli.R1WorkbenchTransactionTest"
+      ],
+      "limitations": [],
+      "implementation": "按采纳范围补充精确错误码、正向或故障后观察断言，保持原有业务和安全边界。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-064",
+      "verdict": "采纳",
+      "path": "harness-cli/src/test/java/io/jharness/cli/R1WorkbenchTransactionTest.java",
+      "status": "EXISTING_FIX_CONFIRMED",
+      "adoptedScope": "当前类BeforeEach已规范root，原审查夹具遗漏已修，非待修产品缺陷。",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/R1WorkbenchTransactionTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.cli.R1WorkbenchTransactionTest"
+      ],
+      "limitations": [],
+      "implementation": "复核审查后的既有修复，保留现有保护，未把本编号重复计作新缺陷修复。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-065",
+      "verdict": "部分采纳",
+      "path": "harness-cli/src/test/java/io/jharness/cli/R2RegistryTest.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "target存在前提在常规Maven生命周期成立，IDE/单独运行隔离可改TempDir；非正常CI稳定阻断证据。",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/R2RegistryTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.cli.R2RegistryTest"
+      ],
+      "limitations": [],
+      "implementation": "按采纳范围补充精确错误码、正向或故障后观察断言，保持原有业务和安全边界。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-066",
+      "verdict": "采纳",
+      "path": "harness-cli/src/test/java/io/jharness/cli/R2RegistryTest.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "POSIX现仅比较owner，无法验证mode/group保留；按可用视图补精确断言。",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/R2RegistryTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.cli.R2RegistryTest"
+      ],
+      "limitations": [
+        "本轮Windows实测；POSIX mode/group分支未在新的POSIX运行中复验。"
+      ],
+      "implementation": "按采纳范围补充精确错误码、正向或故障后观察断言，保持原有业务和安全边界。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-067",
+      "verdict": "不采纳",
+      "path": "harness-cli/src/test/java/io/jharness/cli/WorkbenchCredentialCleanup.java",
+      "status": "OUT_OF_SCOPE",
+      "adoptedScope": "清理工具有意只处理严格规范且位于.build-cache的凭据fixture，拒祖先别名避免误清理。没有授权任意别名fixture的产品兼容承诺，不能只检叶子放宽边界。",
+      "files": [],
+      "tests": [],
+      "limitations": []
+    },
+    {
+      "id": "R123R-068",
+      "verdict": "部分采纳",
+      "path": "harness-cli/src/test/java/io/jharness/cli/WorkbenchCredentialCleanup.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "组件缺失先toRealPath会裸异常，finally清理异常可能覆盖首失败。采纳固定分类及保留主异常；不能把缺少可核实设置当作已安全清理。",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/WorkbenchCredentialCleanup.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md",
+        "frontend/tests/settings.mjs",
+        "frontend/tests/cleanup.mjs",
+        "frontend/tests/cleanup.test.mjs"
+      ],
+      "tests": [
+        "java:io.jharness.cli.R1CredentialCleanupTest",
+        "gates:fixture-cleanup"
+      ],
+      "limitations": [],
+      "implementation": "先NOFOLLOW目录检查；合并合法live/pending refs，128模型上限与32操作分批，删除后回读；finally首异常由独立helper保留。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-069",
+      "verdict": "采纳",
+      "path": "harness-cli/src/test/java/io/jharness/cli/WorkbenchCredentialCleanup.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "清理工具忽略credential-cleanup.refs，可能空targets却报CLEAN，真实残留风险；需合并可信、合法、有界refs并实际删除回读。",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/WorkbenchCredentialCleanup.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.cli.R1CredentialCleanupTest"
+      ],
+      "limitations": [],
+      "implementation": "先NOFOLLOW目录检查；合并合法live/pending refs，128模型上限与32操作分批，删除后回读；finally首异常由独立helper保留。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-070",
+      "verdict": "部分采纳",
+      "path": "harness-cli/src/test/java/io/jharness/cli/WorkbenchCredentialCleanup.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "fixture专用16连接限制不等于产品故障，现浏览器fixture没17连接。可对齐或分批并文档化，不能把32操作直接等同32模型。",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/WorkbenchCredentialCleanup.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.cli.R1CredentialCleanupTest"
+      ],
+      "limitations": [],
+      "implementation": "先NOFOLLOW目录检查；合并合法live/pending refs，128模型上限与32操作分批，删除后回读；finally首异常由独立helper保留。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-071",
+      "verdict": "采纳",
+      "path": "harness-cli/src/test/java/io/jharness/cli/WorkbenchSettingsTest.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "钉住INVALID_ECOSYSTEM_CONFIG可排除revision或其他输入错误造成的假通过。",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/WorkbenchSettingsTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.cli.WorkbenchSettingsTest"
+      ],
+      "limitations": [],
+      "implementation": "按采纳范围补充精确错误码、正向或故障后观察断言，保持原有业务和安全边界。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-072",
+      "verdict": "采纳",
+      "path": "harness-cli/src/test/java/io/jharness/cli/WorkbenchWorkspacesTest.java",
+      "status": "EXISTING_FIX_CONFIRMED",
+      "adoptedScope": "当前整个类BeforeEach已规范temp，派生target随之规范；不要求每条Path重复toRealPath。",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/WorkbenchWorkspacesTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.cli.WorkbenchWorkspacesTest"
+      ],
+      "limitations": [],
+      "implementation": "复核审查后的既有修复，保留现有保护，未把本编号重复计作新缺陷修复。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-073",
+      "verdict": "部分采纳",
+      "path": "harness-ecosystem/src/main/java/io/jharness/ecosystem/CommandTransport.java",
+      "status": "CONTRACT_CLARIFIED",
+      "adoptedScope": "failureCode确实缺生产消费方；可用于安全诊断或收窄协议声明，不应因未消费就删除有兼容意义的字段。",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/CommandTransport.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.ecosystem.R1EnvironmentLifecycleTest"
+      ],
+      "limitations": [],
+      "implementation": "failureCode明确为可选传输遥测，不能替代started/uncertain/验证响应仲裁。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-074",
+      "verdict": "部分采纳",
+      "path": "harness-ecosystem/src/main/java/io/jharness/ecosystem/DockerExecutionEnvironment.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "catch RuntimeException确实吞worker明确error并关闭环境；但worker异常也可能来自已进入副作用后的写盘故障。仅对可证明发送前/执行前拒绝保留确定码，禁止一律重抛所有HarnessException作为安全失败。",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/DockerExecutionEnvironment.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.ecosystem.R1EnvironmentLifecycleTest"
+      ],
+      "limitations": [
+        "本轮使用本地/fake transport回归，未启动新的真实Docker验收。"
+      ],
+      "implementation": "保留已验证成功回执；仅dispatch前明确拒绝为安全失败，副作用后异常仍UNKNOWN；容器清理字段独立。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-075",
+      "verdict": "部分采纳",
+      "path": "harness-ecosystem/src/main/java/io/jharness/ecosystem/DockerExecutionEnvironment.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "有效成功回执可能因closed快照被覆盖；需明确关闭与回执接收的线性化点。不能不检清理/响应完整性就统一删closed条件。",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/DockerExecutionEnvironment.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.ecosystem.R1EnvironmentLifecycleTest"
+      ],
+      "limitations": [
+        "本轮使用本地/fake transport回归，未启动新的真实Docker验收。"
+      ],
+      "implementation": "保留已验证成功回执；仅dispatch前明确拒绝为安全失败，副作用后异常仍UNKNOWN；容器清理字段独立。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-076",
+      "verdict": "采纳",
+      "path": "harness-ecosystem/src/main/java/io/jharness/ecosystem/EnvironmentWorker.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "maxBytes整数已校验但范围未对齐，导致参数错误变WORKER_IO；应在dispatch前拒越界。",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/EnvironmentWorker.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.ecosystem.R3SkillBoundaryTest"
+      ],
+      "limitations": [],
+      "implementation": "dispatch前校验maxBytes和versions字段，正文/版本通过统一有界snapshot接口。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-077",
+      "verdict": "部分采纳",
+      "path": "harness-ecosystem/src/main/java/io/jharness/ecosystem/EnvironmentWorker.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "readText后再哈希/复读版本重复，可用provider一致快照消除；后一次变化拒绝是保守冲突，不是错误成功。不能直接去掉一致性校验。",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/EnvironmentWorker.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.ecosystem.R3SkillBoundaryTest"
+      ],
+      "limitations": [],
+      "implementation": "dispatch前校验maxBytes和versions字段，正文/版本通过统一有界snapshot接口。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-078",
+      "verdict": "采纳",
+      "path": "harness-ecosystem/src/main/java/io/jharness/ecosystem/EnvironmentWorker.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "versions为数组时走INVALID_JSON而非WORKER_INVALID_REQUEST，统一外部请求字段错误分类合理。",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/EnvironmentWorker.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.ecosystem.R3SkillBoundaryTest"
+      ],
+      "limitations": [],
+      "implementation": "dispatch前校验maxBytes和versions字段，正文/版本通过统一有界snapshot接口。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-079",
+      "verdict": "部分采纳",
+      "path": "harness-ecosystem/src/main/java/io/jharness/ecosystem/HarnessSdk.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "applied落盘后未开始Loop，重复hash仅返回CREATED/旧状态，缺明确未执行完成诊断。但snapshot不是COMPLETED承诺，不能称成功执行；应显式对账/阻断，不自动重发。",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/HarnessSdk.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.testkit.R2SdkPersistenceTest"
+      ],
+      "limitations": [],
+      "implementation": "applied未见turn.ended时重复提交明确阻断；旧binding按受控环境id归一，不删任意业务id。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-080",
+      "verdict": "采纳",
+      "path": "harness-ecosystem/src/main/java/io/jharness/ecosystem/HarnessSdk.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "TokenSessionSearch TYPES/body确实不处理sdk.input.applied.userMessage，提交正文可投影却不可搜索；应按兼容形状索引且避免重复。",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/HarnessSdk.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.testkit.R2SdkPersistenceTest"
+      ],
+      "limitations": [],
+      "implementation": "applied未见turn.ended时重复提交明确阻断；旧binding按受控环境id归一，不删任意业务id。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-081",
+      "verdict": "部分采纳",
+      "path": "harness-ecosystem/src/main/java/io/jharness/ecosystem/HarnessSdk.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "无指纹旧binding与新递归去id不对称，特定嵌套环境可能不兼容。契约明确旧binding严格比较；应有受控迁移，不泛化删任意业务id。",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/HarnessSdk.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.testkit.R2SdkPersistenceTest"
+      ],
+      "limitations": [],
+      "implementation": "applied未见turn.ended时重复提交明确阻断；旧binding按受控环境id归一，不删任意业务id。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-082",
+      "verdict": "部分采纳",
+      "path": "harness-ecosystem/src/main/java/io/jharness/ecosystem/McpIo.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "action抛Error路径已有primary=fatal，原文忽略这一分支；token或等待线程的额外Error/运行时异常仍可能被abort替换。补完整主异常记录，保留suppressed。",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/McpIo.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.ecosystem.R1EnvironmentLifecycleTest"
+      ],
+      "limitations": [],
+      "implementation": "等待/取消的RuntimeException或Error先保存主异常，abort失败仅附加。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-083",
+      "verdict": "不采纳",
+      "path": "harness-ecosystem/src/main/java/io/jharness/ecosystem/McpPlugin.java",
+      "status": "OUT_OF_SCOPE",
+      "adoptedScope": "validateArguments按契约纯且参数不可变，prepare成功后同输入重复校验不应新增失败；execute公共直调仍需保护。性能可测，不能为假想不纯扩展直接删安全预检。",
+      "files": [],
+      "tests": [],
+      "limitations": []
+    },
+    {
+      "id": "R123R-084",
+      "verdict": "部分采纳",
+      "path": "harness-ecosystem/src/main/java/io/jharness/ecosystem/PlanningPlugin.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "PLUGIN_CLOSED在append前仍因mutationAttempted被升级UNKNOWN，分类可更精确；仅把active检查移到flag前仍有stop竞态，需与写边界统一仲裁。",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/PlanningPlugin.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.ecosystem.R1EnvironmentLifecycleTest"
+      ],
+      "limitations": [],
+      "implementation": "mutationAttempted在活跃校验后紧贴append设置，已撤销且未append的拒绝保持确定。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-085",
+      "verdict": "采纳",
+      "path": "harness-ecosystem/src/main/java/io/jharness/ecosystem/ProcessCleanup.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "toHandle/流取得/isAlive存在保护区外调用，中断恢复未放finally；当前新ProcessExit仍未覆盖这些出口。应各项失败保守clean=false并最终恢复中断。",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/ProcessCleanup.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.ecosystem.R1RemainingOwnershipFaultTest"
+      ],
+      "limitations": [],
+      "implementation": "根句柄/流访问保护，任何采样或清理失败保守false，finally恢复中断。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-086",
+      "verdict": "部分采纳",
+      "path": "harness-ecosystem/src/main/java/io/jharness/ecosystem/RemoteWorkspace.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "补丁changes应与解析目标集合一致再缓存，防错误worker扩大观察授权。worker本身是可信宿主代码，不能表述为当前无条件安全绕过。",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/RemoteWorkspace.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.ecosystem.R3SkillBoundaryTest"
+      ],
+      "limitations": [
+        "本轮使用本地/fake transport回归，未启动新的真实Docker验收。"
+      ],
+      "implementation": "patch返回changes必须属于解析目标集，坏worker结果不扩大观察授权。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-087",
+      "verdict": "部分采纳",
+      "path": "harness-ecosystem/src/main/java/io/jharness/ecosystem/StdioMcpTransport.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "stderr线程close可抛未受控异常；应记录固定清理失败供owner读取。直接catch后丢弃UNKNOWN会掩盖资源证据，不采纳该具体修法。",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/StdioMcpTransport.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.ecosystem.R1RemainingOwnershipFaultTest"
+      ],
+      "limitations": [],
+      "implementation": "后台清理未知由owner读取，独立close锁防重复清理并持续报告未知，不静默吞掉。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-088",
+      "verdict": "采纳",
+      "path": "harness-ecosystem/src/main/java/io/jharness/ecosystem/UserQuestionsPlugin.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "respond没有recorded的指纹版本回退，旧答案重复requestId可能ANSWER_CONFLICT。需按原版本核对并保持正文脱敏比对。",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/UserQuestionsPlugin.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.testkit.M1055QuestionsTest"
+      ],
+      "limitations": [],
+      "implementation": "旧指纹按保存版本回退匹配；stop后实例撤销，幂等由宿主recorded事实对账。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-089",
+      "verdict": "部分采纳",
+      "path": "harness-ecosystem/src/main/java/io/jharness/ecosystem/UserQuestionsPlugin.java",
+      "status": "CONTRACT_CLARIFIED",
+      "adoptedScope": "stop后list拒绝使respond幂等分支不可达；宿主有静态recorded路径，作用域关闭后实例可用性需明确。不能直接重开已撤销能力。",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/UserQuestionsPlugin.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.testkit.M1055QuestionsTest"
+      ],
+      "limitations": [],
+      "implementation": "旧指纹按保存版本回退匹配；stop后实例撤销，幂等由宿主recorded事实对账。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-090",
+      "verdict": "部分采纳",
+      "path": "harness-ecosystem/src/main/java/io/jharness/ecosystem/WorkspaceContentInspection.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "缺path的INVALID_PROVIDER_RESULT确实被通用HarnessException catch吞。非Map的INVALID_JSON同样在try内被吞，原文相反描述错误；只捕预期路径拒绝。",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/WorkspaceContentInspection.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.testkit.M1056ContentTest"
+      ],
+      "limitations": [],
+      "implementation": "只忽略预期路径/能力拒绝，畸形provider结果继续失败。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-091",
+      "verdict": "采纳",
+      "path": "harness-ecosystem/src/test/java/io/jharness/ecosystem/R1EnvironmentLifecycleTest.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "containerCleanup与cleanupStatus是不同层级但诊断目前只拷后者，遗漏容器证据。推荐保留独立容器字段并更新消费者，不用同名覆盖命令进程清理状态。",
+      "files": [
+        "harness-ecosystem/src/test/java/io/jharness/ecosystem/R1EnvironmentLifecycleTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.ecosystem.R1EnvironmentLifecycleTest"
+      ],
+      "limitations": [
+        "本轮使用本地/fake transport回归，未启动新的真实Docker验收。"
+      ],
+      "implementation": "按采纳范围补充精确错误码、正向或故障后观察断言，保持原有业务和安全边界。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-092",
+      "verdict": "部分采纳",
+      "path": "harness-ecosystem/src/test/java/io/jharness/ecosystem/R1EnvironmentLifecycleTest.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "1秒自旋依赖调度，值得用明确屏障；现有测试本来就是检查stop撤销先于等待的窗口，不能用同步stop消除所测竞态。",
+      "files": [
+        "harness-ecosystem/src/test/java/io/jharness/ecosystem/R1EnvironmentLifecycleTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.ecosystem.R1EnvironmentLifecycleTest"
+      ],
+      "limitations": [],
+      "implementation": "按采纳范围补充精确错误码、正向或故障后观察断言，保持原有业务和安全边界。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-093",
+      "verdict": "采纳",
+      "path": "harness-ecosystem/src/test/java/io/jharness/ecosystem/R1EnvironmentLifecycleTest.java",
+      "status": "EXISTING_FIX_CONFIRMED",
+      "adoptedScope": "当前NativeProbe/ProcessProbe均写完整临时文件关闭后原子发布，并有旧策略负例；不要再加任意sleep/重试掩盖就绪协议。",
+      "files": [
+        "harness-ecosystem/src/test/java/io/jharness/ecosystem/R1EnvironmentLifecycleTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.ecosystem.R1EnvironmentLifecycleTest"
+      ],
+      "limitations": [],
+      "implementation": "复核审查后的既有修复，保留现有保护，未把本编号重复计作新缺陷修复。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-094",
+      "verdict": "采纳",
+      "path": "harness-ecosystem/src/test/java/io/jharness/ecosystem/R1EnvironmentLifecycleTest.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "suppressed数量可能受另一个清理超时影响；应锁定abort失败本身而非唯一计数。",
+      "files": [
+        "harness-ecosystem/src/test/java/io/jharness/ecosystem/R1EnvironmentLifecycleTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.ecosystem.R1EnvironmentLifecycleTest"
+      ],
+      "limitations": [],
+      "implementation": "按采纳范围补充精确错误码、正向或故障后观察断言，保持原有业务和安全边界。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-095",
+      "verdict": "部分采纳",
+      "path": "harness-ecosystem/src/test/java/io/jharness/ecosystem/R1RemainingOwnershipFaultTest.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "第2次取消检查确实耦合实现，建议真实sendAsync交接标记；现用例request计数会抓住提前取消，属于脆弱性而非已有假通过。",
+      "files": [
+        "harness-ecosystem/src/test/java/io/jharness/ecosystem/R1RemainingOwnershipFaultTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.ecosystem.R1RemainingOwnershipFaultTest"
+      ],
+      "limitations": [],
+      "implementation": "按采纳范围补充精确错误码、正向或故障后观察断言，保持原有业务和安全边界。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-096",
+      "verdict": "采纳",
+      "path": "harness-ecosystem/src/test/java/io/jharness/ecosystem/R3SkillBoundaryTest.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "目录名等于声明名会掩盖frontmatter解析退化，使用不同名称合理。",
+      "files": [
+        "harness-ecosystem/src/test/java/io/jharness/ecosystem/R3SkillBoundaryTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.ecosystem.R3SkillBoundaryTest"
+      ],
+      "limitations": [],
+      "implementation": "按采纳范围补充精确错误码、正向或故障后观察断言，保持原有业务和安全边界。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-097",
+      "verdict": "采纳",
+      "path": "harness-events/src/main/java/io/jharness/events/DefaultEventBus.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "notify队列饱和时barrier直接被拒，未使用等待预算；需要独立有界屏障机制，不可变为无界提交。",
+      "files": [
+        "harness-events/src/main/java/io/jharness/events/DefaultEventBus.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.events.R1EventSafetyTest"
+      ],
+      "limitations": [],
+      "implementation": "通知饱和barrier使用同一等待预算；未启动serial取消不毒化；外部诊断sink移出总线锁。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-098",
+      "verdict": "部分采纳",
+      "path": "harness-events/src/main/java/io/jharness/events/DefaultEventBus.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "取消未启动Future时finally不执行，可能误置serialUnconfirmed。采用started标志还要处理启动/取消竞争，不能仅看latch快照；真实未合作任务仍应阻断。",
+      "files": [
+        "harness-events/src/main/java/io/jharness/events/DefaultEventBus.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.events.R1EventSafetyTest"
+      ],
+      "limitations": [],
+      "implementation": "通知饱和barrier使用同一等待预算；未启动serial取消不毒化；外部诊断sink移出总线锁。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-099",
+      "verdict": "采纳",
+      "path": "harness-events/src/main/java/io/jharness/events/DefaultEventBus.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "publish持monitor同步report外部sink，可能阻断其他总线操作；应在锁外/有界诊断路径调用。",
+      "files": [
+        "harness-events/src/main/java/io/jharness/events/DefaultEventBus.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.events.R1EventSafetyTest"
+      ],
+      "limitations": [],
+      "implementation": "通知饱和barrier使用同一等待预算；未启动serial取消不毒化；外部诊断sink移出总线锁。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-100",
+      "verdict": "不采纳",
+      "path": "harness-events/src/test/java/io/jharness/events/R1EventSafetyTest.java",
+      "status": "OUT_OF_SCOPE",
+      "adoptedScope": "固定容量实现配固定边界断言可发现不经评估的容量变化，非当前缺陷；提常量可选，不因未来改512就判现测试错误。",
+      "files": [],
+      "tests": [],
+      "limitations": []
+    },
+    {
+      "id": "R123R-101",
+      "verdict": "部分采纳",
+      "path": "harness-llm/src/main/java/io/jharness/llm/LazyModelRouter.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "future发布与close的结果可统一；但select在注册client处可线性化先于close，任何返回后复查仍会竞态，无法保证借出对象永不被关闭。不能以再检查closed作为完整修复。",
+      "files": [
+        "harness-llm/src/main/java/io/jharness/llm/LazyModelRouter.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.llm.R3RouterBoundaryTest"
+      ],
+      "limitations": [],
+      "implementation": "在注册锁内完成future线性化；factory失败未返回client时移除FACTORY_PENDING，不重试未知资源close。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-102",
+      "verdict": "采纳",
+      "path": "harness-llm/src/main/java/io/jharness/llm/LazyModelRouter.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "factory失败无已注册client时FACTORY_PENDING未清除，残留证据会失真；部分构造的清理由factory负责，不能无证据宣称外部资源全清。",
+      "files": [
+        "harness-llm/src/main/java/io/jharness/llm/LazyModelRouter.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.llm.R3RouterBoundaryTest"
+      ],
+      "limitations": [],
+      "implementation": "在注册锁内完成future线性化；factory失败未返回client时移除FACTORY_PENDING，不重试未知资源close。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-103",
+      "verdict": "部分采纳",
+      "path": "harness-llm/src/main/java/io/jharness/llm/OpenAiCompatibleLlmClient.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "主动close期间CancellationException可错归transport；可保留CANCELLED原因，但模型已发送的不确定请求仍不得因此清除pending或重试。",
+      "files": [
+        "harness-llm/src/main/java/io/jharness/llm/OpenAiCompatibleLlmClient.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.llm.M6StreamingTest"
+      ],
+      "limitations": [],
+      "implementation": "主动close/token取消保留CANCELLED分类，已发送未知请求仍不自动清除或重试。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-104",
+      "verdict": "采纳",
+      "path": "harness-llm/src/main/java/io/jharness/llm/ProtocolCodec.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "请求stop非字符串/列表时应UNSUPPORTED_PARAMETER，非上游MODEL_BAD_RESPONSE。",
+      "files": [
+        "harness-llm/src/main/java/io/jharness/llm/ProtocolCodec.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.llm.R3ProtocolBoundaryTest"
+      ],
+      "limitations": [],
+      "implementation": "Anthropic stop类型错误归UNSUPPORTED_PARAMETER，空列表省略，明确本产品64项子集。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-105",
+      "verdict": "部分采纳",
+      "path": "harness-llm/src/main/java/io/jharness/llm/ProtocolCodec.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "官方Messages参考将stop_sequences声明为可选字符串数组，未支持将OpenAI四条规则直接套用。应明确本产品子集/归一空列表；未实际调用Anthropic认证任意长度。",
+      "files": [
+        "harness-llm/src/main/java/io/jharness/llm/ProtocolCodec.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.llm.R3ProtocolBoundaryTest"
+      ],
+      "limitations": [],
+      "implementation": "Anthropic stop类型错误归UNSUPPORTED_PARAMETER，空列表省略，明确本产品64项子集。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-106",
+      "verdict": "采纳",
+      "path": "harness-llm/src/main/java/io/jharness/llm/ProtocolStream.java",
+      "status": "EXISTING_FIX_CONFIRMED",
+      "adoptedScope": "当前models.mjs已补Responses output_item added/done；保留ProtocolStream完整终态校验，不为旧合成provider放宽。",
+      "files": [
+        "harness-llm/src/main/java/io/jharness/llm/ProtocolStream.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "gates:r3-provider",
+        "java:io.jharness.llm.R3ProtocolBoundaryTest"
+      ],
+      "limitations": [
+        "源码/本地协议或证据回归核对；未运行三浏览器完整矩阵。"
+      ],
+      "implementation": "复核审查后的既有修复，保留现有保护，未把本编号重复计作新缺陷修复。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-107",
+      "verdict": "部分采纳",
+      "path": "harness-plugin/src/main/java/io/jharness/plugin/PluginContainer.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "owned.close外层类名确实常为HarnessException，固定聚合码并非错误。可附安全根因类型，但不应序列化任意cause消息/堆栈。",
+      "files": [
+        "harness-plugin/src/main/java/io/jharness/plugin/PluginContainer.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.plugin.R1PluginRollbackTest"
+      ],
+      "limitations": [],
+      "implementation": "生命周期观测失败单列cleanupFailure；回滚未确认状态不被STOPPED覆盖；仅安全根因类名。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-108",
+      "verdict": "采纳",
+      "path": "harness-plugin/src/main/java/io/jharness/plugin/PluginContainer.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "仅lifecycle通知失败可STOP_FAILED而cleanupFailures空，应补观测失败分类，避免与资源残留混淆。",
+      "files": [
+        "harness-plugin/src/main/java/io/jharness/plugin/PluginContainer.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.plugin.R1PluginRollbackTest"
+      ],
+      "limitations": [],
+      "implementation": "生命周期观测失败单列cleanupFailure；回滚未确认状态不被STOPPED覆盖；仅安全根因类名。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-109",
+      "verdict": "采纳",
+      "path": "harness-plugin/src/main/java/io/jharness/plugin/PluginContainer.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "start回滚有cleanupFailures后close可覆盖为STOPPED，失败证据被状态隐藏。停止状态应保留未确认资源事实且不自动重试资源close。",
+      "files": [
+        "harness-plugin/src/main/java/io/jharness/plugin/PluginContainer.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.plugin.R1PluginRollbackTest"
+      ],
+      "limitations": [],
+      "implementation": "生命周期观测失败单列cleanupFailure；回滚未确认状态不被STOPPED覆盖；仅安全根因类名。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-110",
+      "verdict": "部分采纳",
+      "path": "harness-plugin/src/main/java/io/jharness/plugin/ScopedToolRegistry.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "name空白在try外抛IAE是事实，公共构造编程错误可IAE；若统一注册领域码需全声明一致并兼容现调用者，非安全放行。",
+      "files": [
+        "harness-plugin/src/main/java/io/jharness/plugin/ScopedToolRegistry.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.plugin.R3DeclarationTest"
+      ],
+      "limitations": [],
+      "implementation": "空白名称也在领域错误边界内处理，并保留合法声明名诊断。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-111",
+      "verdict": "部分采纳",
+      "path": "harness-policy/src/main/java/io/jharness/policy/DefaultPolicyEngine.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "策略对父目录尾空格别名未统一拒绝值得补强；LocalWorkspace在实际Windows worker二次拒绝，Docker Linux不按Win32解释，原文跨Docker直接越界推断不成立。",
+      "files": [
+        "harness-policy/src/main/java/io/jharness/policy/DefaultPolicyEngine.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.policy.PolicyApprovalTest"
+      ],
+      "limitations": [],
+      "implementation": "拒绝每个非点目录段的尾空格/点别名；复用CommandRequest构造校验并补NUL/空argv负例。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-112",
+      "verdict": "部分采纳",
+      "path": "harness-policy/src/main/java/io/jharness/policy/DefaultPolicyEngine.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "构造CommandRequest是刻意复用边界校验，不是死代码。可命名/注释并补负例，避免复制一套不完整规则。",
+      "files": [
+        "harness-policy/src/main/java/io/jharness/policy/DefaultPolicyEngine.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.policy.PolicyApprovalTest"
+      ],
+      "limitations": [],
+      "implementation": "拒绝每个非点目录段的尾空格/点别名；复用CommandRequest构造校验并补NUL/空argv负例。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-113",
+      "verdict": "部分采纳",
+      "path": "harness-policy/src/main/java/io/jharness/policy/InteractiveApprovalService.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "锁内调用可插拔CancellationToken可拖住answer/close。移出需保留准时接受仲裁和取消优先，不能用一次锁外旧快照放行。",
+      "files": [
+        "harness-policy/src/main/java/io/jharness/policy/InteractiveApprovalService.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.policy.R1ApprovalDeadlineTest"
+      ],
+      "limitations": [],
+      "implementation": "取消回调移出pending锁；回答与截止仍在锁内一次仲裁，采用结果前再检查取消。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-114",
+      "verdict": "部分采纳",
+      "path": "harness-policy/src/test/java/io/jharness/policy/R1ApprovalDeadlineTest.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "取消计数屏障确实脆弱；>=2并不能保证挂起点仍正确，优先可观测入队/仲裁屏障，保留真实截止窗口。",
+      "files": [
+        "harness-policy/src/test/java/io/jharness/policy/R1ApprovalDeadlineTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.policy.R1ApprovalDeadlineTest"
+      ],
+      "limitations": [],
+      "implementation": "按采纳范围补充精确错误码、正向或故障后观察断言，保持原有业务和安全边界。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-115",
+      "verdict": "部分采纳",
+      "path": "harness-policy/src/test/java/io/jharness/policy/R1ApprovalDeadlineTest.java",
+      "status": "CONTRACT_CLARIFIED",
+      "adoptedScope": "这是刻意构造monitor竞争的白盒故障窗口，不能因未来换锁就认定现缺陷。可封装测试接缝，必须保留超时竞争的确定性。",
+      "files": [
+        "harness-policy/src/test/java/io/jharness/policy/R1ApprovalDeadlineTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.policy.R1ApprovalDeadlineTest"
+      ],
+      "limitations": [],
+      "implementation": "白盒截止竞争仍通过pending/deadline接缝验证双方BLOCKED，明确实现变更须同步该接缝。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-116",
+      "verdict": "采纳",
+      "path": "harness-process/src/main/java/io/jharness/process/LocalPlanPreviewer.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "空白path绕过String守卫后ExecPath抛IAE，dry-run稳定错误域缺失；应纯参数阶段拒绝且不进行文件IO。",
+      "files": [
+        "harness-process/src/main/java/io/jharness/process/LocalPlanPreviewer.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.process.LocalPlanPreviewerTest"
+      ],
+      "limitations": [],
+      "implementation": "空白写入path在纯参数阶段归SCHEMA_MISMATCH，不进入文件IO。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-117",
+      "verdict": "采纳",
+      "path": "harness-process/src/main/java/io/jharness/process/LocalProcessRunner.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "一个读取线程未停会同时标记两条已采输出不完整，仍可能丢失完整stdout；当前根Process等待修复未改这一合取逻辑。",
+      "files": [
+        "harness-process/src/main/java/io/jharness/process/LocalProcessRunner.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.process.R1ProcessSafetyTest"
+      ],
+      "limitations": [],
+      "implementation": "stdout/stderr分别按各自reader的完成状态保留输出。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-118",
+      "verdict": "采纳",
+      "path": "harness-process/src/main/java/io/jharness/process/LocalRunControl.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "可选startInstant.orElseThrow会越过IOException清理出口；应转换固定可诊断启动/状态失败并关闭已拥有socket。",
+      "files": [
+        "harness-process/src/main/java/io/jharness/process/LocalRunControl.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.process.LocalRunControlTest"
+      ],
+      "limitations": [],
+      "implementation": "写version2并受控兼容带processStart的version1；未知6/不支持7独立，缺祖先/启动身份均受检失败。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-119",
+      "verdict": "部分采纳",
+      "path": "harness-process/src/main/java/io/jharness/process/LocalRunControl.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "独立OUTCOME_UNKNOWN退出码便于脚本区分；不能宣称所有UNREACHABLE都安全自动重试。新增码需同步CLI契约及原调用者。",
+      "files": [
+        "harness-process/src/main/java/io/jharness/process/LocalRunControl.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.process.LocalRunControlTest"
+      ],
+      "limitations": [],
+      "implementation": "写version2并受控兼容带processStart的version1；未知6/不支持7独立，缺祖先/启动身份均受检失败。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-120",
+      "verdict": "部分采纳",
+      "path": "harness-process/src/main/java/io/jharness/process/LocalRunControl.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "version1新增processStart要求造成旧运行记录拒绝；拒PID复用是必要保护。提升格式版本/诊断，不接受旧无身份字段并发送取消。",
+      "files": [
+        "harness-process/src/main/java/io/jharness/process/LocalRunControl.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.process.LocalRunControlTest"
+      ],
+      "limitations": [],
+      "implementation": "写version2并受控兼容带processStart的version1；未知6/不支持7独立，缺祖先/启动身份均受检失败。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-121",
+      "verdict": "采纳",
+      "path": "harness-process/src/main/java/io/jharness/process/LocalRunControl.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "无可访问祖先时existing可能变null，需受检失败而非NPE；不把目录不存在误认路径授权。",
+      "files": [
+        "harness-process/src/main/java/io/jharness/process/LocalRunControl.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.process.LocalRunControlTest"
+      ],
+      "limitations": [],
+      "implementation": "写version2并受控兼容带processStart的version1；未知6/不支持7独立，缺祖先/启动身份均受检失败。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-122",
+      "verdict": "部分采纳",
+      "path": "harness-process/src/main/java/io/jharness/process/LocalTerminalSession.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "未排空即标outputFailed与后续写成功的证据区分不足；不能为修可用性持久化可能含未脱敏秘密尾的前缀。保留安全截断/独立drain状态。",
+      "files": [
+        "harness-process/src/main/java/io/jharness/process/LocalTerminalSession.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.process.M6TerminalTest"
+      ],
+      "limitations": [],
+      "implementation": "安全排空pending与真实读取/持久化失败分离，不把未脱敏尾部写入产物。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-123",
+      "verdict": "不采纳",
+      "path": "harness-process/src/test/java/io/jharness/process/LocalProcessRunnerTest.java",
+      "status": "OUT_OF_SCOPE",
+      "adoptedScope": "测试计算期望再对独立产品字段比较不是恒真；修改cleanupStatus映射会使它失败。可收窄场景期望，但不能称该断言永远无法失败。",
+      "files": [],
+      "tests": [],
+      "limitations": []
+    },
+    {
+      "id": "R123R-124",
+      "verdict": "采纳",
+      "path": "harness-process/src/test/java/io/jharness/process/R1ProcessSafetyTest.java",
+      "status": "EXISTING_FIX_CONFIRMED",
+      "adoptedScope": "当前BeforeEach已规范root，原多平台fixture问题已修且不放宽LocalRunControl链接拒绝。",
+      "files": [
+        "harness-process/src/test/java/io/jharness/process/R1ProcessSafetyTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.process.R1ProcessSafetyTest"
+      ],
+      "limitations": [],
+      "implementation": "复核审查后的既有修复，保留现有保护，未把本编号重复计作新缺陷修复。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-125",
+      "verdict": "部分采纳",
+      "path": "harness-session/src/main/java/io/jharness/session/EventSessionProjection.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "显式contextEventId是R2要求，孤立context有意不提交。可检测同turn/step存在未引用最终上下文的坏事实；不能回退自动应用未提交envelope。",
+      "files": [
+        "harness-session/src/main/java/io/jharness/session/EventSessionProjection.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.session.R2PersistenceTest"
+      ],
+      "limitations": [],
+      "implementation": "孤立context不应用，匹配step已有context却漏引用的请求固定拒绝，旧无context事实仍兼容。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-126",
+      "verdict": "部分采纳",
+      "path": "harness-session/src/main/java/io/jharness/session/LocalArtifactStore.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "与016的时间回退同根因；仅缺birthtime的平台条件成立。应统一身份选择，不将所有POSIX主机判定必现。",
+      "files": [
+        "harness-session/src/main/java/io/jharness/session/LocalArtifactStore.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.session.R2PersistenceTest"
+      ],
+      "limitations": [
+        "保留私有UUID和非合作进程限制；公开Windows根使用原生creationTime；预约残留必须离线核实，不构成OS目录句柄沙箱。"
+      ],
+      "implementation": "创建后复核目录身份，fork通过目标预约所有权合作发布；冲突有固定分类，不将ATOMIC_MOVE当no-clobber。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-127",
+      "verdict": "部分采纳",
+      "path": "harness-session/src/main/java/io/jharness/session/LocalArtifactStore.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "与039相同错误域一致性；身份锚非法和普通IO应区分，不能把每个IOException都谎报根已替换。",
+      "files": [
+        "harness-session/src/main/java/io/jharness/session/LocalArtifactStore.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.session.R2PersistenceTest"
+      ],
+      "limitations": [],
+      "implementation": "创建后复核目录身份，fork通过目标预约所有权合作发布；冲突有固定分类，不将ATOMIC_MOVE当no-clobber。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-128",
+      "verdict": "部分采纳",
+      "path": "harness-session/src/main/java/io/jharness/session/LocalArtifactStore.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "与015锚半写窗口同根因。禁止自动重建锚或相信ATOMIC_MOVE默认no-clobber，需保留身份防替换语义。",
+      "files": [
+        "harness-session/src/main/java/io/jharness/session/LocalArtifactStore.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.session.R2PersistenceTest"
+      ],
+      "limitations": [
+        "保留私有UUID和非合作进程限制；公开Windows根使用原生creationTime；预约残留必须离线核实，不构成OS目录句柄沙箱。"
+      ],
+      "implementation": "创建后复核目录身份，fork通过目标预约所有权合作发布；冲突有固定分类，不将ATOMIC_MOVE当no-clobber。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-129",
+      "verdict": "部分采纳",
+      "path": "harness-session/src/main/java/io/jharness/session/LocalArtifactStore.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "创建session目录后复核可缩小具体竞态，值得加；契约已说明非合作进程父目录替换无法全消除。需目录句柄/可信私有根，不能把一次复查称完全沙箱。",
+      "files": [
+        "harness-session/src/main/java/io/jharness/session/LocalArtifactStore.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.session.R2PersistenceTest"
+      ],
+      "limitations": [
+        "保留私有UUID和非合作进程限制；公开Windows根使用原生creationTime；预约残留必须离线核实，不构成OS目录句柄沙箱。"
+      ],
+      "implementation": "创建后复核目录身份，fork通过目标预约所有权合作发布；冲突有固定分类，不将ATOMIC_MOVE当no-clobber。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-130",
+      "verdict": "部分采纳",
+      "path": "harness-session/src/main/java/io/jharness/session/LocalArtifactStore.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "ATOMIC_MOVE目标存在语义及异常映射需处理；增加发布后核对不能恢复已覆盖的空目录。需要可靠no-clobber/所有权方案，不能只catch冲突异常宣称覆盖竞态已修。",
+      "files": [
+        "harness-session/src/main/java/io/jharness/session/LocalArtifactStore.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.session.R2PersistenceTest"
+      ],
+      "limitations": [
+        "保留私有UUID和非合作进程限制；公开Windows根使用原生creationTime；预约残留必须离线核实，不构成OS目录句柄沙箱。"
+      ],
+      "implementation": "创建后复核目录身份，fork通过目标预约所有权合作发布；冲突有固定分类，不将ATOMIC_MOVE当no-clobber。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-131",
+      "verdict": "采纳",
+      "path": "harness-session/src/main/java/io/jharness/session/SessionRecovery.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "探针确认两个未决请求加assistant会使isRequestPending精确查询也抛歧义。应保留全部pending且允许按sourceEvent逐条核实，不放宽为整step结算。",
+      "files": [
+        "harness-session/src/main/java/io/jharness/session/SessionRecovery.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.session.R2PersistenceTest"
+      ],
+      "limitations": [],
+      "implementation": "多请求加assistant保留全部pending，精确sourceEvent核实仍可用，不整step清除。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-132",
+      "verdict": "部分采纳",
+      "path": "harness-session/src/test/java/io/jharness/session/R2PersistenceTest.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "10000次真实force成本大但测量未做，非已证实超时。纯事件预算专项可用注入barrier，另保留真实耐久用例。",
+      "files": [
+        "harness-session/src/test/java/io/jharness/session/R2PersistenceTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.session.R2PersistenceTest"
+      ],
+      "limitations": [
+        "预算测试采用注入barrier；真实耐久/失败毒化测试独立保留，不宣称已测10000次force生产延迟。"
+      ],
+      "implementation": "按采纳范围补充精确错误码、正向或故障后观察断言，保持原有业务和安全边界。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-133",
+      "verdict": "不采纳",
+      "path": "harness-testkit/src/test/java/io/jharness/testkit/M1053TurnsTest.java",
+      "status": "OUT_OF_SCOPE",
+      "adoptedScope": "SDK任务id为web-<catalog>-<hash>或web-UUID，catalog记录才是h-<hash>；并非同名h文件。当前fixture不满足原文两个h日志撞名的前提。",
+      "files": [],
+      "tests": [],
+      "limitations": []
+    },
+    {
+      "id": "R123R-134",
+      "verdict": "不采纳",
+      "path": "harness-testkit/src/test/java/io/jharness/testkit/M2WorkspaceIntegrationTest.java",
+      "status": "OUT_OF_SCOPE",
+      "adoptedScope": "artifact ID的UUID加摘要布局当前有明确契约；固定37可验证该格式，改格式需同步测试。不属于当前可复现错误。",
+      "files": [],
+      "tests": [],
+      "limitations": []
+    },
+    {
+      "id": "R123R-135",
+      "verdict": "不采纳",
+      "path": "harness-testkit/src/test/java/io/jharness/testkit/M7ClosureTest.java",
+      "status": "OUT_OF_SCOPE",
+      "adoptedScope": "R2契约明确同一成功事实可支持多个步骤，重复id在不同步骤位置复用是刻意行为；不能以自己的唯一性要求覆盖既定契约。",
+      "files": [],
+      "tests": [],
+      "limitations": []
+    },
+    {
+      "id": "R123R-136",
+      "verdict": "采纳",
+      "path": "harness-testkit/src/test/java/io/jharness/testkit/M7SubagentTest.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "等待closed循环超时后不失败会空泛通过，应验证迟到child确实结束后再检父日志未被补写。",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M7SubagentTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.testkit.M7SubagentTest"
+      ],
+      "limitations": [],
+      "implementation": "按采纳范围补充精确错误码、正向或故障后观察断言，保持原有业务和安全边界。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-137",
+      "verdict": "不采纳",
+      "path": "harness-testkit/src/test/java/io/jharness/testkit/M8FilterDockerProbe.java",
+      "status": "OUT_OF_SCOPE",
+      "adoptedScope": "真实存在且可读的外部哨兵是负例前提，不必让拒绝本身依赖存在。写后isReadable非逻辑恒真，权限仍可能不允许读；本项不足以认定中等缺陷。",
+      "files": [],
+      "tests": [],
+      "limitations": []
+    },
+    {
+      "id": "R123R-138",
+      "verdict": "不采纳",
+      "path": "harness-testkit/src/test/java/io/jharness/testkit/M8FilterDockerProbe.java",
+      "status": "OUT_OF_SCOPE",
+      "adoptedScope": "固定Temurin镜像有test并核实/etc/passwd；宿主先拒绝越界正是有效防线。任意distroless不在该探针契约，不能以未承诺镜像造成缺陷。",
+      "files": [],
+      "tests": [],
+      "limitations": []
+    },
+    {
+      "id": "R123R-139",
+      "verdict": "部分采纳",
+      "path": "harness-workspace/src/main/java/io/jharness/workspace/LocalWorkspace.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "readPage缺稳定缺失/类型预检及首轮快照取消检查成立；可在同一读取边界恢复检查。不要多读version作为修复，需保留内容/版本一致性。",
+      "files": [
+        "harness-workspace/src/main/java/io/jharness/workspace/LocalWorkspace.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.workspace.LocalWorkspaceTest"
+      ],
+      "limitations": [],
+      "implementation": "readPage稳定缺失/类型/大小与取消边界、有界精确快照；Git诊断超限优先且支持显式受信Git；保留Error主异常。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-140",
+      "verdict": "部分采纳",
+      "path": "harness-workspace/src/main/java/io/jharness/workspace/LocalWorkspace.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "stderr超限杀进程后先报Git不可用确有分类问题；后置重复长度检查只是冗余，不能作为独立功能缺陷。",
+      "files": [
+        "harness-workspace/src/main/java/io/jharness/workspace/LocalWorkspace.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.workspace.LocalWorkspaceTest"
+      ],
+      "limitations": [],
+      "implementation": "readPage稳定缺失/类型/大小与取消边界、有界精确快照；Git诊断超限优先且支持显式受信Git；保留Error主异常。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-141",
+      "verdict": "部分采纳",
+      "path": "harness-workspace/src/main/java/io/jharness/workspace/LocalWorkspace.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "可信Git路径支持有限，可补显式受信可执行配置。当前故意不信任任意PATH，不能把所有用户级/可写目录纳入自动搜索。",
+      "files": [
+        "harness-workspace/src/main/java/io/jharness/workspace/LocalWorkspace.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.workspace.LocalWorkspaceTest"
+      ],
+      "limitations": [],
+      "implementation": "readPage稳定缺失/类型/大小与取消边界、有界精确快照；Git诊断超限优先且支持显式受信Git；保留Error主异常。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-142",
+      "verdict": "不采纳",
+      "path": "harness-workspace/src/main/java/io/jharness/workspace/UnifiedPatch.java",
+      "status": "OUT_OF_SCOPE",
+      "adoptedScope": "R3明确无git标记同路径a/foo保留真实目录，仅a/foo到b/foo成对剥离。原建议会拒绝已支持合法路径，不能按旧启发式改回。",
+      "files": [],
+      "tests": [],
+      "limitations": []
+    },
+    {
+      "id": "R123R-143",
+      "verdict": "采纳",
+      "path": "harness-workspace/src/main/java/io/jharness/workspace/WorkspaceToolsPlugin.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "apply_patch已提交后artifact失败未保留changes版本证据，能补与write/edit一致的确定提交结果；必须只在确定提交完整且失败仅展示产物时使用。",
+      "files": [
+        "harness-workspace/src/main/java/io/jharness/workspace/WorkspaceToolsPlugin.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.workspace.R1WorkspaceSafetyTest"
+      ],
+      "limitations": [
+        "关联全量与关键故障回归通过，不表示本条所有异常调度/IO位置均已独立动态注入。"
+      ],
+      "implementation": "确定已提交patch的展示产物失败保留changes/版本/committed与安全截断，避免模型按假失败重做。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-144",
+      "verdict": "部分采纳",
+      "path": "scripts/test-r3-provider.py",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "_closed预设true断言确实冗余；用例刻意进入最终kill失败且已验证流全部关闭，不是整个测试无效。另补正常shutdown路径即可。",
+      "files": [
+        "scripts/test-r3-provider.py",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "gates:r3-provider"
+      ],
+      "limitations": [],
+      "implementation": "按采纳范围补充精确错误码、正向或故障后观察断言，保持原有业务和安全边界。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-145",
+      "verdict": "采纳",
+      "path": "harness-testkit/src/test/java/io/jharness/testkit/M10WebTest.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "goal未进入实际诊断事实，秘密不存在断言不证明redaction；应把合成秘密放进真正会展示的事件。",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M10WebTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.testkit.M10WebTest"
+      ],
+      "limitations": [],
+      "implementation": "按采纳范围补充精确错误码、正向或故障后观察断言，保持原有业务和安全边界。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-146",
+      "verdict": "部分采纳",
+      "path": "scripts/run-r1-supplemental.py",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "脚本声明真实本机Windows专项且.agent给了该Docker路径，非承诺通用运行；仍应改显式可配置路径和固定缺失分类，改善可复验。",
+      "files": [
+        "scripts/run-r1-supplemental.py",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "gates:r1-supplemental",
+        "gates:r123r-evidence",
+        "native:7",
+        "windows-compat:4"
+      ],
+      "limitations": [
+        "本轮使用本地/fake transport回归，未启动新的真实Docker验收。"
+      ],
+      "implementation": "显式Docker路径与运行前预检；native/兼容报告写入本次新目录并绑定摘要。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-147",
+      "verdict": "采纳",
+      "path": "scripts/run-r1-supplemental.py",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "已采原生/兼容报告留在共享固定路径会被后续运行覆盖，历史补充回执不自包含。采集后复制到本次新目录再绑定摘要，不改历史报告。",
+      "files": [
+        "scripts/run-r1-supplemental.py",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "gates:r1-supplemental",
+        "gates:r123r-evidence",
+        "native:7",
+        "windows-compat:4"
+      ],
+      "limitations": [],
+      "implementation": "显式Docker路径与运行前预检；native/兼容报告写入本次新目录并绑定摘要。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-148",
+      "verdict": "部分采纳",
+      "path": "scripts/run-r1-supplemental.py",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "前置检查失败可留下无results空目录，改善预检顺序或INCOMPLETE回执。fresh拒复用本身是安全设计，不能去掉唯一目录要求。",
+      "files": [
+        "scripts/run-r1-supplemental.py",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "gates:r1-supplemental",
+        "gates:r123r-evidence",
+        "native:7",
+        "windows-compat:4"
+      ],
+      "limitations": [],
+      "implementation": "显式Docker路径与运行前预检；native/兼容报告写入本次新目录并绑定摘要。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-149",
+      "verdict": "部分采纳",
+      "path": "scripts/verify-r1-implementation.py",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "passing_cases跳过已知node组导致不能引用其用例，新增NDJSON组也可能错解析。当前237项均Java未假通过，应按报告格式能力扩展而非按名字豁免。",
+      "files": [
+        "scripts/verify-r1-implementation.py",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "gates:r1-implementation"
+      ],
+      "limitations": [],
+      "implementation": "根据JSON/NDJSON格式读取真实Node用例，新增组不再按名字被跳过。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-150",
+      "verdict": "部分采纳",
+      "path": "harness-tools/src/main/java/io/jharness/tools/BoundedReadOnlyToolScheduler.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "相同UNKNOWN可重复写停止事件并重置grace，多个未完成任务可能逐个追加2秒，违反共享截止意图。reason优先级须明定，不能简单要求所有后续码覆盖取消或反之。",
+      "files": [
+        "harness-tools/src/main/java/io/jharness/tools/BoundedReadOnlyToolScheduler.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.testkit.R1CoreLifecycleTest"
+      ],
+      "limitations": [
+        "关联全量与关键故障回归通过，不表示本条所有异常调度/IO位置均已独立动态注入。"
+      ],
+      "implementation": "准备即跟踪；未运行与已进入主体分开结算，finish只尝试一次并记录失败；共享首次停止宽限期，UNKNOWN优先。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-151",
+      "verdict": "部分采纳",
+      "path": "harness-tools/src/main/java/io/jharness/tools/BoundedReadOnlyToolScheduler.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "与152同一结算缺口；建议以152更正为准。event可能已持久化，finish状态可已>=2，禁止在catch盲重试finish或重放body。",
+      "files": [
+        "harness-tools/src/main/java/io/jharness/tools/BoundedReadOnlyToolScheduler.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.testkit.R1CoreLifecycleTest"
+      ],
+      "limitations": [
+        "关联全量与关键故障回归通过，不表示本条所有异常调度/IO位置均已独立动态注入。"
+      ],
+      "implementation": "准备即跟踪；未运行与已进入主体分开结算，finish只尝试一次并记录失败；共享首次停止宽限期，UNKNOWN优先。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-152",
+      "verdict": "部分采纳",
+      "path": "harness-tools/src/main/java/io/jharness/tools/BoundedReadOnlyToolScheduler.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "pending在finish前移除会丢失owner结算跟踪，但写盘/通知失败不等于tool.completed从未存在。需显式settlement状态/失败事实及可检查恢复，不照搬把remove后移后重试。",
+      "files": [
+        "harness-tools/src/main/java/io/jharness/tools/BoundedReadOnlyToolScheduler.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.testkit.R1CoreLifecycleTest"
+      ],
+      "limitations": [
+        "关联全量与关键故障回归通过，不表示本条所有异常调度/IO位置均已独立动态注入。"
+      ],
+      "implementation": "准备即跟踪；未运行与已进入主体分开结算，finish只尝试一次并记录失败；共享首次停止宽限期，UNKNOWN优先。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-153",
+      "verdict": "采纳",
+      "path": "scripts/test-windows-credential-compat.py",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "Windows兼容报告父目录未创建，独立运行/自定义目的目录可丢结果。应在探针前准备本次输出目录并失败留证。",
+      "files": [
+        "scripts/test-windows-credential-compat.py",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "gates:r1-supplemental",
+        "gates:r123r-evidence",
+        "native:7",
+        "windows-compat:4"
+      ],
+      "limitations": [],
+      "implementation": "编译前建立本次输出目录并写INCOMPLETE，最后原子报告，父清理仍强制。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-154",
+      "verdict": "部分采纳",
+      "path": "harness-web/src/main/java/io/jharness/web/DurableTaskCatalog.java",
+      "status": "CONTRACT_CLARIFIED",
+      "adoptedScope": "header-only记录可阻断catalog启动，需保留证据且提供受控检查/恢复入口。R2明确空记录不能当不存在，禁止静默continue或据空日志自动重提副作用。",
+      "files": [
+        "harness-web/src/main/java/io/jharness/web/DurableTaskCatalog.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.web.R1CatalogScanBoundaryTest"
+      ],
+      "limitations": [
+        "损坏事实仍阻断；本轮提供明确离线维护流程，不提供无证据自动修复/忽略。"
+      ],
+      "implementation": "提供保留原件/备份/身份关联的离线检查恢复流程；header-only记录继续拒绝，不自动跳过或重提。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-155",
+      "verdict": "采纳",
+      "path": "harness-web/src/main/java/io/jharness/web/TurnQueue.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "TurnQueue先put再验证selection，畸形事实会改变内存队列后失败。应先校验构造完整候选再发布。",
+      "files": [
+        "harness-web/src/main/java/io/jharness/web/TurnQueue.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.web.R123TurnQueueBoundaryTest"
+      ],
+      "limitations": [],
+      "implementation": "先完整验证候选字段/selection再发布，畸形事实统一catalog错误且不污染hash。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-156",
+      "verdict": "不采纳",
+      "path": "harness-web/src/main/java/io/jharness/web/DurableTaskCatalog.java",
+      "status": "OUT_OF_SCOPE",
+      "adoptedScope": "Set.of常量化可选；原文重复分配计数/O事件影响无基准，不是本次必须修复的正确性问题。不改变有界历史严格验证。",
+      "files": [],
+      "tests": [],
+      "limitations": []
+    },
+    {
+      "id": "R123R-157",
+      "verdict": "部分采纳",
+      "path": "harness-testkit/src/test/java/io/jharness/testkit/R3ExtensionProtocolTest.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "marker未被脚本写入，单条文件断言确实不能证明未执行；start抛异常和空历史仍有价值。钉错误码并明确测试验证加载期拒绝，非执行期沙箱。",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/R3ExtensionProtocolTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.testkit.R3ExtensionProtocolTest"
+      ],
+      "limitations": [],
+      "implementation": "按采纳范围补充精确错误码、正向或故障后观察断言，保持原有业务和安全边界。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-158",
+      "verdict": "不采纳",
+      "path": "harness-testkit/src/test/java/io/jharness/testkit/R1CoreLifecycleTest.java",
+      "status": "OUT_OF_SCOPE",
+      "adoptedScope": "finishes缺项会NPE使测试失败，并不会假通过；可改null安全断言改善报错，非当前漏检缺陷。",
+      "files": [],
+      "tests": [],
+      "limitations": []
+    },
+    {
+      "id": "R123R-159",
+      "verdict": "不采纳",
+      "path": "harness-testkit/src/test/java/io/jharness/testkit/R2SdkPersistenceTest.java",
+      "status": "OUT_OF_SCOPE",
+      "adoptedScope": "协议升版导致replace未命中后assertThrows失败，是可见需更新夹具，非静默通过。动态取常量可做维护优化。",
+      "files": [],
+      "tests": [],
+      "limitations": []
+    },
+    {
+      "id": "R123R-160",
+      "verdict": "部分采纳",
+      "path": "harness-testkit/src/test/java/io/jharness/testkit/R1WebOwnershipTest.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "应给截止等待加独立最大预算；当前实际是Thread.sleep而非忙自旋，字段改名/Instant会立即反射失败，不会按原文全部情形死循环。",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/R1WebOwnershipTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.testkit.R1WebOwnershipTest"
+      ],
+      "limitations": [],
+      "implementation": "按采纳范围补充精确错误码、正向或故障后观察断言，保持原有业务和安全边界。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-161",
+      "verdict": "部分采纳",
+      "path": "scripts/test-windows-credential-compat.py",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "javac/启动前失败不覆盖旧PASS，独立脚本报告存在陈旧风险。严格父采集器仍检查命令退出码且不会将失败接受为PASS，不能夸大为现验收已被绕过。",
+      "files": [
+        "scripts/test-windows-credential-compat.py",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "gates:r1-supplemental",
+        "gates:r123r-evidence",
+        "native:7",
+        "windows-compat:4"
+      ],
+      "limitations": [],
+      "implementation": "编译前建立本次输出目录并写INCOMPLETE，最后原子报告，父清理仍强制。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-162",
+      "verdict": "采纳",
+      "path": "harness-testkit/src/test/java/io/jharness/testkit/M7WebTest.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "catalog先关lease后关，单探catalog可抢在lease释放前重开。需核对两种所有权或明确资源完成信号，并固定冲突码。",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M7WebTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.testkit.M7WebTest"
+      ],
+      "limitations": [],
+      "implementation": "按采纳范围补充精确错误码、正向或故障后观察断言，保持原有业务和安全边界。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-163",
+      "verdict": "部分采纳",
+      "path": "harness-tools/src/main/java/io/jharness/tools/BoundedReadOnlyToolScheduler.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "prepare成功后decision/launch/串行finish异常尚未纳入pending，确有兜底结算缺口。是否已进入body必须分开，不可一律abandon为确定未执行。",
+      "files": [
+        "harness-tools/src/main/java/io/jharness/tools/BoundedReadOnlyToolScheduler.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.testkit.R1CoreLifecycleTest"
+      ],
+      "limitations": [
+        "关联全量与关键故障回归通过，不表示本条所有异常调度/IO位置均已独立动态注入。"
+      ],
+      "implementation": "准备即跟踪；未运行与已进入主体分开结算，finish只尝试一次并记录失败；共享首次停止宽限期，UNKNOWN优先。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-164",
+      "verdict": "采纳",
+      "path": "harness-tools/src/main/java/io/jharness/tools/DefaultToolPipeline.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "finish只拦伪造成功，未拦把已确定成功降为FAILED。需与真实outcome对称校验并保留已发生副作用证据，避免模型基于假失败重做。",
+      "files": [
+        "harness-tools/src/main/java/io/jharness/tools/DefaultToolPipeline.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.testkit.R1CoreLifecycleTest"
+      ],
+      "limitations": [],
+      "implementation": "实际SUCCESS不得伪降为非SUCCESS，保留真实副作用事实。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-165",
+      "verdict": "部分采纳",
+      "path": "harness-workspace/src/main/java/io/jharness/workspace/LocalWorkspace.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "整文件快照新增峰值内存和锁占用可测，合并139；旧实现也在前后version整文件哈希，原文“旧仅按页读取”的成本对比不成立。不可恢复无一致版本的分页。",
+      "files": [
+        "harness-workspace/src/main/java/io/jharness/workspace/LocalWorkspace.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.workspace.LocalWorkspaceTest"
+      ],
+      "limitations": [],
+      "implementation": "readPage稳定缺失/类型/大小与取消边界、有界精确快照；Git诊断超限优先且支持显式受信Git；保留Error主异常。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-166",
+      "verdict": "部分采纳",
+      "path": "harness-workspace/src/main/java/io/jharness/workspace/LocalWorkspace.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "Error退出后cleanup异常可覆盖主异常，方向成立；只做主异常保存/附加，不承诺OOM下耐久写入和任意恢复成功。",
+      "files": [
+        "harness-workspace/src/main/java/io/jharness/workspace/LocalWorkspace.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.workspace.LocalWorkspaceTest"
+      ],
+      "limitations": [],
+      "implementation": "readPage稳定缺失/类型/大小与取消边界、有界精确快照；Git诊断超限优先且支持显式受信Git；保留Error主异常。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-167",
+      "verdict": "部分采纳",
+      "path": "sdk/python/jharness_sdk.py",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "OSError出口缺一次独立kill尝试值得补；__exit__保留已有主异常是有意行为，应附带固定清理诊断而非覆盖原错。",
+      "files": [
+        "sdk/python/jharness_sdk.py",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "gates:r3-provider",
+        "sdk:66"
+      ],
+      "limitations": [],
+      "implementation": "仅确实移除pending才登记超时墓碑；OSError尝试kill，context exit附固定清理诊断并保留主异常。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-168",
+      "verdict": "采纳",
+      "path": "sdk/tests/client.py",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "slowCalls不证明_pending未泄漏，应直接检查槽位或并发边界。",
+      "files": [
+        "sdk/tests/client.py",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "sdk:66"
+      ],
+      "limitations": [],
+      "implementation": "按采纳范围补充精确错误码、正向或故障后观察断言，保持原有业务和安全边界。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-169",
+      "verdict": "采纳",
+      "path": "sdk/tests/client.ts",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "同168的TS版本，stats成功不足以检出泄漏一个槽位。",
+      "files": [
+        "sdk/tests/client.ts",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "sdk:66"
+      ],
+      "limitations": [],
+      "implementation": "按采纳范围补充精确错误码、正向或故障后观察断言，保持原有业务和安全边界。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-170",
+      "verdict": "采纳",
+      "path": "harness-testkit/src/test/java/io/jharness/testkit/R1WebOwnershipTest.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "所有权占用应钉WRITE_CONFLICT，其他会话缺失/损坏不应被当busy轮询。",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/R1WebOwnershipTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.testkit.R1WebOwnershipTest"
+      ],
+      "limitations": [],
+      "implementation": "按采纳范围补充精确错误码、正向或故障后观察断言，保持原有业务和安全边界。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-171",
+      "verdict": "采纳",
+      "path": "harness-testkit/src/test/java/io/jharness/testkit/R1CoreLifecycleTest.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "关闭竞态已有body/finish计数，但错误原因未锁定，应断SCHEDULER_CLOSED排除busy等误因。",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/R1CoreLifecycleTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.testkit.R1CoreLifecycleTest"
+      ],
+      "limitations": [],
+      "implementation": "按采纳范围补充精确错误码、正向或故障后观察断言，保持原有业务和安全边界。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-172",
+      "verdict": "部分采纳",
+      "path": "harness-web/src/main/java/io/jharness/web/HarnessWebServer.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "多worker finally互见线程存活可能无人最终释放，源代码窗口成立；不能无条件closeResources释放仍运行worker的锁。应用受锁活动计数/完成所有者，一次性收尾并保留非合作worker占用。",
+      "files": [
+        "harness-web/src/main/java/io/jharness/web/HarnessWebServer.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.testkit.R1WebOwnershipTest"
+      ],
+      "limitations": [
+        "关联全量与关键故障回归通过，不表示本条所有异常调度/IO位置均已独立动态注入。"
+      ],
+      "implementation": "每个当前worker在完成必需收尾后发布cleanupComplete，最后拥有者一次关资源，非合作worker继续占用。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-173",
+      "verdict": "采纳",
+      "path": "harness-web/src/main/java/io/jharness/web/TurnQueue.java",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "字符串强转发生在Input构造校验前，坏事实可裸CCE；与155一起在发布前完整验证并用稳定catalog错误。",
+      "files": [
+        "harness-web/src/main/java/io/jharness/web/TurnQueue.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "java:io.jharness.web.R123TurnQueueBoundaryTest"
+      ],
+      "limitations": [],
+      "implementation": "先完整验证候选字段/selection再发布，畸形事实统一catalog错误且不污染hash。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    },
+    {
+      "id": "R123R-174",
+      "verdict": "采纳",
+      "path": "sdk/python/jharness_sdk.py",
+      "status": "IMPLEMENTED_LOCAL_VALIDATED",
+      "adoptedScope": "隔离时序探针确认响应已消费后仍可登记过期墓碑；只在确实移除pending时登记，保留真正未知/重复响应fail-closed和4096上限。",
+      "files": [
+        "sdk/python/jharness_sdk.py",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "tests": [
+        "gates:r3-provider",
+        "sdk:66"
+      ],
+      "limitations": [],
+      "implementation": "仅确实移除pending才登记超时墓碑；OSError尝试kill，context exit附固定清理诊断并保留主异常。",
+      "verificationLevel": "associated-regression-and-source-contract"
+    }
+  ],
+  "completedAt": "2026-10-25",
+  "counts": {
+    "EXISTING_FIX_CONFIRMED": 8,
+    "IMPLEMENTED_LOCAL_VALIDATED": 138,
+    "CONTRACT_CLARIFIED": 9,
+    "OUT_OF_SCOPE": 19
+  },
+  "validation": "docs/testing/OCR-R1-R3-implementation-2026-10-24-results.json"
+}

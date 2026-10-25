@@ -15,13 +15,18 @@ class R2RegistryTest {
 
     @Test
     void jsonReplacementKeepsExistingOwnerWithoutReassigningSameOwner() throws Exception {
-        Path directory =
-                Files.createDirectory(Path.of("target", "r2-owner-" + UUID.randomUUID()))
-                        .toRealPath();
+        Path directory = Files.createDirectory(temp.resolve("r2-owner")).toRealPath();
         Path file = directory.resolve("state.json");
         try {
             Json.write(file, "{\"before\":true}".getBytes(java.nio.charset.StandardCharsets.UTF_8));
             var owner = Files.getOwner(file);
+            var posix =
+                    Files.getFileAttributeView(
+                            file, java.nio.file.attribute.PosixFileAttributeView.class);
+            if (posix != null)
+                posix.setPermissions(
+                        java.nio.file.attribute.PosixFilePermissions.fromString("rw-------"));
+            var group = posix == null ? null : posix.readAttributes().group();
             var acl =
                     Files.getFileAttributeView(
                             file, java.nio.file.attribute.AclFileAttributeView.class);
@@ -30,6 +35,12 @@ class R2RegistryTest {
             assertEquals("{\"after\":true}", Files.readString(file));
             assertEquals(owner, Files.getOwner(file));
             if (acl != null) assertEquals(entries, acl.getAcl());
+            if (posix != null) {
+                assertEquals(
+                        java.nio.file.attribute.PosixFilePermissions.fromString("rw-------"),
+                        Files.getPosixFilePermissions(file));
+                assertEquals(group, posix.readAttributes().group());
+            }
         } finally {
             Files.deleteIfExists(file);
             Files.delete(directory);

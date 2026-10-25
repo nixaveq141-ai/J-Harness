@@ -47,23 +47,25 @@ public final class NativeCredentials {
                     String action = (String) op.get("action");
                     String target = (String) op.get("target");
                     String value = (String) op.get("value");
-                    if (!Set.of("read", "write", "delete", "probe").contains(action)
-                            || target == null
-                            || !target.startsWith("J-Harness/")
-                            || target.length() > 512
-                            || target.indexOf('\0') >= 0
-                            || value == null
-                            || value.length() > 1024
-                            || value.indexOf('\0') >= 0) throw new IllegalArgumentException();
                     mutationStarted |= action.equals("write") || action.equals("delete");
                     result = vault.run(action, target, value);
                 }
             }
             output.print(
                     Base64.getEncoder().encodeToString(result.getBytes(StandardCharsets.UTF_8)));
+            output.flush();
+            if (output.checkError())
+                throw new java.io.IOException("Credential response unavailable");
         } catch (Throwable failure) {
             // Native/service errors may contain secret material. Never print them.
-            exit = mutationStarted ? 8 : failure instanceof IllegalArgumentException ? 6 : 7;
+            exit =
+                    mutationStarted
+                            ? 8
+                            : failure instanceof IllegalArgumentException
+                                            || failure instanceof io.jharness.api.HarnessException h
+                                                    && "INVALID_JSON".equals(h.code())
+                                    ? 6
+                                    : 7;
         } finally {
             Arrays.fill(input, (byte) 0);
         }

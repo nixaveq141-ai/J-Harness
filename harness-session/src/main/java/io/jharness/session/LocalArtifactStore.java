@@ -24,13 +24,20 @@ public final class LocalArtifactStore implements ArtifactStore {
     }
 
     private void checkRoot() throws IOException {
+        DirectoryIdentity currentIdentity;
+        try {
+            currentIdentity = DirectoryIdentity.read(root);
+        } catch (DirectoryIdentity.InvalidAnchorException invalid) {
+            throw new HarnessException(
+                    "ARTIFACT_DENIED", "Invalid artifact root identity", invalid);
+        }
         var attributes =
                 Files.readAttributes(
                         root,
                         java.nio.file.attribute.BasicFileAttributes.class,
                         LinkOption.NOFOLLOW_LINKS);
         if (!attributes.isDirectory()
-                || !Objects.equals(rootKey, DirectoryIdentity.read(root))
+                || !Objects.equals(rootKey, currentIdentity)
                 || !root.toRealPath().equals(root))
             throw new HarnessException("ARTIFACT_DENIED", "Artifact root identity changed");
     }
@@ -47,6 +54,9 @@ public final class LocalArtifactStore implements ArtifactStore {
         if (create) Files.createDirectories(path);
         else if (!Files.isDirectory(path, LinkOption.NOFOLLOW_LINKS))
             throw new HarnessException("ARTIFACT_NOT_FOUND", "Unknown artifact scope");
+        if (!Files.isDirectory(path, LinkOption.NOFOLLOW_LINKS)
+                || !path.toRealPath().equals(path.toAbsolutePath().normalize()))
+            throw new HarnessException("ARTIFACT_DENIED", "Artifact directory identity changed");
         checkRoot();
         return path;
     }
@@ -119,6 +129,36 @@ public final class LocalArtifactStore implements ArtifactStore {
         validateScope(source);
         validateScope(target);
         checkRoot();
+        Path reservation = root.resolve(".fork-publish-" + target + ".lock");
+        FileChannel claim;
+        try {
+            claim =
+                    FileChannel.open(
+                            reservation,
+                            StandardOpenOption.CREATE_NEW,
+                            StandardOpenOption.WRITE,
+                            LinkOption.NOFOLLOW_LINKS);
+        } catch (FileAlreadyExistsException busy) {
+            throw new HarnessException(
+                    "ARTIFACT_SCOPE_EXISTS", "Fork destination is reserved", busy);
+        }
+        Throwable primary = null;
+        try (claim) {
+            copyReservedScope(source, target);
+        } catch (IOException | RuntimeException | Error failure) {
+            primary = failure;
+            throw failure;
+        } finally {
+            try {
+                Files.deleteIfExists(reservation);
+            } catch (IOException cleanup) {
+                if (primary != null) primary.addSuppressed(cleanup);
+                else throw cleanup;
+            }
+        }
+    }
+
+    private void copyReservedScope(String source, String target) throws IOException {
         Path targetPath = root.resolve(target);
         if (Files.exists(targetPath, LinkOption.NOFOLLOW_LINKS))
             throw new HarnessException("ARTIFACT_SCOPE_EXISTS", "Fork scope already exists");
@@ -159,7 +199,14 @@ public final class LocalArtifactStore implements ArtifactStore {
                 }
             }
             checkRoot();
-            Files.move(staged, targetPath, StandardCopyOption.ATOMIC_MOVE);
+            if (Files.exists(targetPath, LinkOption.NOFOLLOW_LINKS))
+                throw new HarnessException("ARTIFACT_SCOPE_EXISTS", "Fork scope already exists");
+            try {
+                Files.move(staged, targetPath, StandardCopyOption.ATOMIC_MOVE);
+            } catch (FileAlreadyExistsException | DirectoryNotEmptyException conflict) {
+                throw new HarnessException(
+                        "ARTIFACT_SCOPE_EXISTS", "Fork scope already exists", conflict);
+            }
         } finally {
             if (Files.exists(staged, LinkOption.NOFOLLOW_LINKS)) removeDirectory(staged);
         }

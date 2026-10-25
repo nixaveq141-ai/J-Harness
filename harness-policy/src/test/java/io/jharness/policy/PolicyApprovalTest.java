@@ -10,6 +10,21 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.junit.jupiter.api.Test;
 
 class PolicyApprovalTest {
+    @Test
+    void trustedTemplateReusesCommandConstructionValidation() {
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> new DefaultPolicyEngine.TrustedCommand(List.of(), "."));
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> new DefaultPolicyEngine.TrustedCommand(List.of("git", "bad\0argument"), "."));
+        assertThrows(
+                IllegalArgumentException.class,
+                () ->
+                        new DefaultPolicyEngine.TrustedCommand(
+                                List.of("git", "status"), "parent /child"));
+    }
+
     private final PluginScope scope = new PluginScope("s", "a");
 
     ToolInvocation command(Map<String, Object> args) {

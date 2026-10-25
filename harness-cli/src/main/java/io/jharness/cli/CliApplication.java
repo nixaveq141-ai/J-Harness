@@ -260,7 +260,11 @@ public final class CliApplication {
         String key = args.positional.get(2), value = args.positional.get(3);
         if (!CliConfig.KEYS.contains(key))
             throw new HarnessException("INVALID_CONFIG", "Unknown config field");
-        Map<String, Object> map = new LinkedHashMap<>(CliConfig.load(path).values);
+        Map<String, Object> map =
+                new LinkedHashMap<>(
+                        Files.exists(path, LinkOption.NOFOLLOW_LINKS)
+                                ? Json.read(path, 65536)
+                                : Map.of());
         Object parsed =
                 Set.of("baseUrl", "model", "apiKeyEnv", "currency").contains(key)
                         ? value

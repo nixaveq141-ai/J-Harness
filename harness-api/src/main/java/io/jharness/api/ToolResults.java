@@ -36,6 +36,7 @@ public final class ToolResults {
                 || !(payload.get("value") instanceof Map<?, ?>)
                 || !(payload.get("display") instanceof Map<?, ?>)
                 || !(payload.get("content") instanceof String)
+                || result.error().isEmpty() && payload.containsKey("error")
                 || result.error().isPresent() && !(payload.get("error") instanceof Map<?, ?>))
             throw new HarnessException(
                     "INVALID_SANITIZER_OUTPUT", "Sanitizer changed required result structure");

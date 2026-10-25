@@ -14,15 +14,18 @@ final class Metadata {
     private synchronized void verifyWorkspace() throws IOException {
         check(root.getParent());
         if (metadataIdentity != null) {
+            DirectoryIdentity currentIdentity;
             try {
-                if (!metadataIdentity.equals(DirectoryIdentity.read(root)))
-                    throw new IOException("Metadata identity changed");
-            } catch (IOException ex) {
+                currentIdentity = DirectoryIdentity.read(root);
+            } catch (DirectoryIdentity.InvalidAnchorException | NoSuchFileException invalid) {
                 throw new HarnessException(
-                        "METADATA_PATH_DENIED", "Metadata root identity changed", ex);
+                        "METADATA_PATH_DENIED", "Invalid private directory identity", invalid);
             }
+            if (!metadataIdentity.equals(currentIdentity))
+                throw new HarnessException(
+                        "METADATA_PATH_DENIED", "Metadata root identity changed");
         }
-        Object current = DirectoryIdentity.read(root.getParent());
+        Object current = DirectoryIdentity.readDirectory(root.getParent());
         if (bound && !java.util.Objects.equals(workspaceKey, current))
             throw new HarnessException(
                     "METADATA_PATH_DENIED", "Workspace directory identity changed");

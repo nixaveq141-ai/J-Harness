@@ -49,3 +49,7 @@ docs/testing/OCR-R3-2026-10-23-results.json -text
 docs/development/OCR-R1-R3-rereview-2026-10-24.json text eol=lf
 docs/testing/OCR-R1-R3-rereview-2026-10-24-results.json -text
 docs/testing/tools/check-r1r3-rereview.py text eol=lf
+
+# Follow-up ledgers use LF; verification receipts retain their exact execution bytes.
+docs/development/OCR-R1-R3-implementation-2026-10-24.json text eol=lf
+docs/testing/OCR-R1-R3-implementation-2026-10-24-results.json -text

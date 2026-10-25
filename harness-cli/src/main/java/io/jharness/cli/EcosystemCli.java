@@ -48,9 +48,8 @@ final class EcosystemCli {
                                                                 config.string(
                                                                         "apiKeyEnv",
                                                                         "JHARNESS_API_KEY"))
-                                                || e.getKey()
-                                                        .matches(
-                                                                "(?i).*(API_KEY|ACCESS_KEY_ID|SECRET_ACCESS_KEY|ACCESS_KEY|PRIVATE_KEY|CREDENTIALS|TOKEN|SECRET|PASSWORD|PASS)$")
+                                                || SecretRedactor.credentialEnvironmentName(
+                                                        e.getKey())
                                                 || e.getKey()
                                                         .equals(
                                                                 EcosystemConfig.text(

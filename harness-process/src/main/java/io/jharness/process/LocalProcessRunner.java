@@ -198,11 +198,11 @@ public final class LocalProcessRunner implements ProcessRunner, AutoCloseable {
                         && !tree.inspectionFailed
                         && !tree.exceeded;
         if (!readersStopped) {
-            if (stdout != null) {
+            if (stdout != null && outThread != null && outThread.isAlive()) {
                 stdout.truncated = true;
                 stdout.ioFailed = true;
             }
-            if (stderr != null) {
+            if (stderr != null && errThread != null && errThread.isAlive()) {
                 stderr.truncated = true;
                 stderr.ioFailed = true;
             }

@@ -21,6 +21,13 @@ public final class SecretRedactor implements DataSanitizer {
                     "privatekey");
     private final List<String> secrets;
 
+    /** Credential variable suffixes have a segment boundary; ASKPASS is not a password. */
+    public static boolean credentialEnvironmentName(String name) {
+        return name != null
+                && name.matches(
+                        "(?i)(?:.*_)?(?:API_KEY|ACCESS_KEY_ID|SECRET_ACCESS_KEY|ACCESS_KEY|PRIVATE_KEY|CREDENTIALS|TOKEN|SECRET|PASSWORD|PASS)");
+    }
+
     public SecretRedactor(List<String> secrets) {
         this.secrets =
                 secrets.stream()

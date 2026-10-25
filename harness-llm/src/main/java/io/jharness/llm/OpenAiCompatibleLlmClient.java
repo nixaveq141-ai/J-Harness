@@ -291,7 +291,10 @@ public final class OpenAiCompatibleLlmClient implements LlmClient {
                     Thread.currentThread().interrupt();
                     throw error("CANCELLED");
                 } catch (CancellationException ex) {
-                    throw error("MODEL_TRANSPORT_UNKNOWN");
+                    throw error(
+                            closed || cancellation.isCancelled()
+                                    ? "CANCELLED"
+                                    : "MODEL_TRANSPORT_UNKNOWN");
                 } catch (ExecutionException ex) {
                     if (ex.getCause() instanceof HarnessException h) throw error(h.code());
                     if (ex.getCause() instanceof HttpTimeoutException) throw error("MODEL_TIMEOUT");

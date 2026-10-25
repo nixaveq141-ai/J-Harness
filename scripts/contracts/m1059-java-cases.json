@@ -1,13 +1,24 @@
 {
   "schemaVersion": 1,
   "milestone": "M10.5.9",
-  "origin": "M10.5.9 current acceptance contract: preserves all 651 reviewed cases and adds the response-boundary mutation-ownership regression for settings and workspace registration. Contract only, not execution evidence.",
+  "origin": "Current local R1-R3 follow-up acceptance contract: preserves every prior 652 reviewed identity and adds bounded compaction, identity, CLI, queue, event, router, protocol, policy, settings and settlement regressions. Contract only; remote CI and M11 remain pending.",
   "suites": [
     {
       "module": "harness-agent",
       "name": "io.jharness.agent.R3CompactionBoundaryTest",
       "cases": [
+        "completedToolGroupsAndRemovalAuditMustStayAtomic",
+        "malformedOrDuplicateToolIdsUseCompactionError",
         "replacementCompactorCannotDropConfigOrProtectedMessages"
+      ]
+    },
+    {
+      "module": "harness-api",
+      "name": "io.jharness.api.R123IdentityBoundaryTest",
+      "cases": [
+        "concurrentBindingsPublishOneCompleteAnchorAndNeverOverwriteInvalidIdentity",
+        "environmentCredentialSuffixHasBoundaryWithoutIgnoringShortSecrets",
+        "stableKeysAndAnchorsDoNotDependOnFallbackModificationTime"
       ]
     },
     {
@@ -21,6 +32,7 @@
         "repeatedStreamingFramesRemainBoundedAndNeverExposeCrossBoundarySecret",
         "sanitizationShapeFailureHasStableCode",
         "sanitizerAliasesAndKeyCollisionsAreFailClosed",
+        "sanitizerCannotInjectAnErrorIntoSuccess",
         "streamingNeverSplitsReplacementAndRetainsOnlyPotentialSecretSuffix"
       ]
     },
@@ -131,6 +143,15 @@
     },
     {
       "module": "harness-cli",
+      "name": "io.jharness.cli.R123CliBoundaryTest",
+      "cases": [
+        "configurationCanBeRepairedBeforeCrossFieldValidation",
+        "credentialWorkerClassifiesMalformedInputAndOutputFailureWithoutUsingNativeVault",
+        "emptyPathOptionsAndInvalidUtf8HaveStableInputErrors"
+      ]
+    },
+    {
+      "module": "harness-cli",
       "name": "io.jharness.cli.R1ApplicationEvidenceTest",
       "cases": [
         "criteriaRejectAbsoluteAndParentTraversal",
@@ -175,6 +196,7 @@
       "cases": [
         "invalidArgumentsAndAbsentFixtureCannotClaimClean",
         "linkedMetadataCannotReadOrDeleteSiblingFixtureCredentials",
+        "liveAndPendingCleanupReferencesAreCombinedWithoutVaultAccess",
         "malformedModelsAndUnknownReferencesAreRejectedBeforeVaultAccess"
       ]
     },
@@ -246,6 +268,7 @@
       "name": "io.jharness.cli.WorkbenchSettingsTest",
       "cases": [
         "acceptedModelAndBudgetSnapshotSurvivesDefaultAndCapabilityChanges",
+        "corruptCleanupJournalIsPreservedWithMaintenanceDiagnostic",
         "explicitSkillRootsPersistDiscoverAndRejectTraversalWithoutNetwork",
         "explicitUserSkillRootAcceptsLocalAbsoluteAndRejectsRelativeOrUnc",
         "extensionsAndIndependentModelPricesReachRuntime",
@@ -353,10 +376,12 @@
       "name": "io.jharness.events.R1EventSafetyTest",
       "cases": [
         "barriersRejectNonpositiveTimeoutAndClosedBusWithStableCode",
+        "cancelledSerialTaskThatNeverStartedDoesNotPoisonTheBus",
         "closeReportsWorkerThatDidNotCooperateAndReturnsBeforeItsRelease",
         "failureSummaryOmitsCauseMessageAndFreeFormEventIdentity",
         "notificationSaturationIsBoundedAndDiagnosedWithoutRejectingPersistedFact",
         "recursiveSerialFailurePreservesExplicitRecursiveCause",
+        "saturatedDiagnosticDoesNotHoldBusMonitorAndBarrierWaitsForAdmission",
         "uncooperativeSerialTimeoutBlocksLaterDispatchUntilClose"
       ]
     },
@@ -415,6 +440,7 @@
       "module": "harness-llm",
       "name": "io.jharness.llm.R3ProtocolBoundaryTest",
       "cases": [
+        "anthropicStopUsesRequestErrorDomainAndExplicitProductBound",
         "configAcceptsCaseInsensitiveUrisAndRejectsUnsafeHeaderEarly",
         "sequenceFreeLegacyFramesCannotMixWithSequencedFrames",
         "terminalCannotIntroduceUnstreamedFunctionCall"
@@ -424,6 +450,7 @@
       "module": "harness-llm",
       "name": "io.jharness.llm.R3RouterBoundaryTest",
       "cases": [
+        "factoryFailureAfterCloseRemovesPendingMarkerWithoutClaimingClientCleanup",
         "factoryReentryCannotCorruptMapOrRecursivelyConstructSameRoute",
         "factoryRunsOutsideLockAndLateClientClosesAfterRouterClose"
       ]
@@ -477,7 +504,8 @@
       "cases": [
         "approvalPromptContainsFullCallAndSingleUserDecision",
         "cancellationRevokesPromptAndTimeoutAndCloseDeny",
-        "trustedCommandIsExactAndShellOrSuffixNeedsApproval"
+        "trustedCommandIsExactAndShellOrSuffixNeedsApproval",
+        "trustedTemplateReusesCommandConstructionValidation"
       ]
     },
     {
@@ -677,6 +705,7 @@
         "indexLocksCancellationTraversalAndResultCapacityAreEnforced",
         "modelRequestsAndConfigurationAreExcludedFromContent",
         "recomputedChecksumCannotForgeCacheTextOrLeakNewlyKnownSecrets",
+        "submissionUserMessageIsSearchableWithoutIndexingItsControlFields",
         "tokensAreAndWordsNotSubstringsAndPhraseKeepsOrderAndChinese"
       ]
     },
@@ -1117,6 +1146,7 @@
         "retryAuditFailurePreservesRejectionAndPreventsSecondSend",
         "routerCloseRetainsFailedRouteEvidenceWithoutRetryingResource",
         "schedulerCloseBeforeWorkerRegistrationPreventsLateBodyEntry",
+        "schedulerDoesNotRetryFailedSettlementAndStillSettlesOtherAcceptedCalls",
         "settlementBeforeWrapperEntryPreventsBodyAndRecordsSingleCompletion",
         "stoppedBarrierSettlesAlreadyPreparedCallWithoutEnteringItsBody",
         "waitingAuditDoesNotHoldMonitorNeededByActiveRequestExit",
@@ -1178,6 +1208,13 @@
         "fakeLlmCapturesRequestsHonorsCancellationAndFailsWhenExhausted",
         "temporaryProjectHasMavenFilesAndCleansOnlyItsOwnedDirectory",
         "toolRegistryIsolationDuplicatesAndOldHandleCannotRemoveNewRegistration"
+      ]
+    },
+    {
+      "module": "harness-testkit",
+      "name": "io.jharness.web.R123TurnQueueBoundaryTest",
+      "cases": [
+        "malformedAdmissionCannotPoisonItsHashOrPublishPartialSelection"
       ]
     },
     {
@@ -1295,6 +1332,10 @@
   "requiredSourcePaths": [
     ".gitattributes",
     ".github/workflows/ci.yml",
+    ".github/workflows/m1059-process-focused.yml",
+    ".github/workflows/m1059-sdk-focused.yml",
+    ".github/workflows/m1059-settings-focused.yml",
+    ".github/workflows/m1059-windows-focused.yml",
     ".github/workflows/native-credentials.yml",
     ".mvn/wrapper/maven-wrapper.properties",
     "LICENSE",
@@ -1321,6 +1362,7 @@
     "frontend/src/WorkspacePicker.tsx",
     "frontend/src/api.ts",
     "frontend/src/content.ts",
+    "frontend/src/lifecycle.ts",
     "frontend/src/main.tsx",
     "frontend/src/style.css",
     "frontend/src/upstream/AppFrame.module.css",
@@ -1344,14 +1386,20 @@
     "frontend/src/upstream/theme/focus.css",
     "frontend/src/upstream/theme/scrollbar.css",
     "frontend/tests/browser.mjs",
+    "frontend/tests/cleanup.mjs",
+    "frontend/tests/cleanup.test.mjs",
     "frontend/tests/client.test.ts",
     "frontend/tests/content.mjs",
     "frontend/tests/development.mjs",
     "frontend/tests/diagnosis.mjs",
+    "frontend/tests/diagnostics/webkit-navigation.mjs",
     "frontend/tests/extensions.mjs",
     "frontend/tests/history.mjs",
     "frontend/tests/models.mjs",
     "frontend/tests/questions.mjs",
+    "frontend/tests/r4-fixture.tsx",
+    "frontend/tests/r4.mjs",
+    "frontend/tests/runtime.d.mts",
     "frontend/tests/runtime.mjs",
     "frontend/tests/search.mjs",
     "frontend/tests/settings.mjs",
@@ -1380,6 +1428,7 @@
     "harness-api/src/main/java/io/jharness/api/ApiVersion.java",
     "harness-api/src/main/java/io/jharness/api/ApprovalService.java",
     "harness-api/src/main/java/io/jharness/api/ArtifactStore.java",
+    "harness-api/src/main/java/io/jharness/api/AtomicFileMetadata.java",
     "harness-api/src/main/java/io/jharness/api/Budget.java",
     "harness-api/src/main/java/io/jharness/api/CancellationToken.java",
     "harness-api/src/main/java/io/jharness/api/ChatRequest.java",
@@ -1393,6 +1442,7 @@
     "harness-api/src/main/java/io/jharness/api/ContentSearchProvider.java",
     "harness-api/src/main/java/io/jharness/api/ContextCompactor.java",
     "harness-api/src/main/java/io/jharness/api/DataSanitizer.java",
+    "harness-api/src/main/java/io/jharness/api/DirectoryIdentity.java",
     "harness-api/src/main/java/io/jharness/api/EventBus.java",
     "harness-api/src/main/java/io/jharness/api/EventLevel.java",
     "harness-api/src/main/java/io/jharness/api/EventSupport.java",
@@ -1457,7 +1507,9 @@
     "harness-api/src/main/java/io/jharness/api/Values.java",
     "harness-api/src/main/java/io/jharness/api/WorkspaceFiles.java",
     "harness-api/src/main/java/io/jharness/api/WriteOwnership.java",
+    "harness-api/src/test/java/io/jharness/api/R123IdentityBoundaryTest.java",
     "harness-api/src/test/java/io/jharness/api/R1CoreApiTest.java",
+    "harness-api/src/test/java/io/jharness/api/R2ArtifactContractTest.java",
     "harness-api/src/test/java/io/jharness/api/R3JsonBoundaryTest.java",
     "harness-api/src/test/java/io/jharness/api/SessionEventTest.java",
     "harness-cli/pom.xml",
@@ -1488,6 +1540,7 @@
     "harness-cli/src/test/java/io/jharness/cli/M8ResilienceConfigTest.java",
     "harness-cli/src/test/java/io/jharness/cli/M8SchedulingConfigTest.java",
     "harness-cli/src/test/java/io/jharness/cli/M9DistributionDoctorTest.java",
+    "harness-cli/src/test/java/io/jharness/cli/R123CliBoundaryTest.java",
     "harness-cli/src/test/java/io/jharness/cli/R1ApplicationEvidenceTest.java",
     "harness-cli/src/test/java/io/jharness/cli/R1ApplicationNativeTest.java",
     "harness-cli/src/test/java/io/jharness/cli/R1CliLifecycleTest.java",
@@ -1495,6 +1548,7 @@
     "harness-cli/src/test/java/io/jharness/cli/R1NativeWorkerTest.java",
     "harness-cli/src/test/java/io/jharness/cli/R1PreviewPolicyTest.java",
     "harness-cli/src/test/java/io/jharness/cli/R1WorkbenchTransactionTest.java",
+    "harness-cli/src/test/java/io/jharness/cli/R2RegistryTest.java",
     "harness-cli/src/test/java/io/jharness/cli/R3ConfigurationTest.java",
     "harness-cli/src/test/java/io/jharness/cli/StdioSdkServerTest.java",
     "harness-cli/src/test/java/io/jharness/cli/WorkbenchCredentialCleanup.java",
@@ -1532,8 +1586,11 @@
     "harness-ecosystem/src/main/java/io/jharness/ecosystem/WebFetchPlugin.java",
     "harness-ecosystem/src/main/java/io/jharness/ecosystem/WorkspaceContentInspection.java",
     "harness-ecosystem/src/test/java/io/jharness/ecosystem/R1EnvironmentLifecycleTest.java",
+    "harness-ecosystem/src/test/java/io/jharness/ecosystem/R1RemainingOwnershipFaultTest.java",
+    "harness-ecosystem/src/test/java/io/jharness/ecosystem/R2WorkspaceAndBudgetTest.java",
     "harness-ecosystem/src/test/java/io/jharness/ecosystem/R3McpProtocolTest.java",
     "harness-ecosystem/src/test/java/io/jharness/ecosystem/R3SkillBoundaryTest.java",
+    "harness-ecosystem/src/test/java/io/jharness/ecosystem/R4DisplayBufferTest.java",
     "harness-events/pom.xml",
     "harness-events/src/main/java/io/jharness/events/DefaultEventBus.java",
     "harness-events/src/main/java/io/jharness/events/EventFailure.java",
@@ -1555,6 +1612,7 @@
     "harness-llm/src/test/java/io/jharness/llm/OpenAiCompatibleLlmClientTest.java",
     "harness-llm/src/test/java/io/jharness/llm/R3ProtocolBoundaryTest.java",
     "harness-llm/src/test/java/io/jharness/llm/R3RouterBoundaryTest.java",
+    "harness-llm/src/test/java/io/jharness/llm/R4DisplayIsolationTest.java",
     "harness-plugin/pom.xml",
     "harness-plugin/src/main/java/io/jharness/plugin/DefaultServiceRegistry.java",
     "harness-plugin/src/main/java/io/jharness/plugin/FilteredToolRegistry.java",
@@ -1570,6 +1628,7 @@
     "harness-policy/src/main/java/io/jharness/policy/PolicyPlugin.java",
     "harness-policy/src/test/java/io/jharness/policy/PolicyApprovalTest.java",
     "harness-policy/src/test/java/io/jharness/policy/R1ApplicationPolicyTest.java",
+    "harness-policy/src/test/java/io/jharness/policy/R1ApprovalDeadlineTest.java",
     "harness-process/pom.xml",
     "harness-process/src/main/java/io/jharness/process/CancelMain.java",
     "harness-process/src/main/java/io/jharness/process/CommandInputs.java",
@@ -1588,6 +1647,7 @@
     "harness-process/src/test/java/io/jharness/process/M6TerminalTest.java",
     "harness-process/src/test/java/io/jharness/process/ProcessProbe.java",
     "harness-process/src/test/java/io/jharness/process/R1ProcessSafetyTest.java",
+    "harness-process/src/test/java/io/jharness/process/R1RemainingProcessFaultTest.java",
     "harness-process/src/test/java/io/jharness/process/R3CommandBoundaryTest.java",
     "harness-process/src/test/java/io/jharness/process/RunStatePermissionsTest.java",
     "harness-session/pom.xml",
@@ -1609,6 +1669,7 @@
     "harness-session/src/test/java/io/jharness/session/InMemorySessionTest.java",
     "harness-session/src/test/java/io/jharness/session/JsonlSessionRepositoryTest.java",
     "harness-session/src/test/java/io/jharness/session/M5SessionTest.java",
+    "harness-session/src/test/java/io/jharness/session/R2PersistenceTest.java",
     "harness-session/src/test/java/io/jharness/session/TokenSessionSearchTest.java",
     "harness-session/src/test/java/io/jharness/session/WriterProbe.java",
     "harness-testkit/pom.xml",
@@ -1664,9 +1725,12 @@
     "harness-testkit/src/test/java/io/jharness/testkit/R1CoreLifecycleTest.java",
     "harness-testkit/src/test/java/io/jharness/testkit/R1SdkLifecycleTest.java",
     "harness-testkit/src/test/java/io/jharness/testkit/R1WebOwnershipTest.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/R2SdkPersistenceTest.java",
     "harness-testkit/src/test/java/io/jharness/testkit/R3ExtensionProtocolTest.java",
     "harness-testkit/src/test/java/io/jharness/testkit/SdkTransportPeer.java",
     "harness-testkit/src/test/java/io/jharness/testkit/TestkitTest.java",
+    "harness-testkit/src/test/java/io/jharness/web/R123TurnQueueBoundaryTest.java",
+    "harness-testkit/src/test/java/io/jharness/web/R1CatalogScanBoundaryTest.java",
     "harness-testkit/src/test/java/io/jharness/web/WorkbenchContentSearchTest.java",
     "harness-tools/pom.xml",
     "harness-tools/src/main/java/io/jharness/tools/BoundedReadOnlyToolScheduler.java",
@@ -1685,6 +1749,7 @@
     "harness-web/src/main/java/io/jharness/web/WebJson.java",
     "harness-web/src/main/java/io/jharness/web/WorkbenchContentSearch.java",
     "harness-web/src/main/java/io/jharness/web/WorkspaceLease.java",
+    "harness-web/src/test/java/io/jharness/web/R2WebFactsTest.java",
     "harness-workspace/pom.xml",
     "harness-workspace/src/main/java/io/jharness/workspace/LocalWorkspace.java",
     "harness-workspace/src/main/java/io/jharness/workspace/UnifiedDiff.java",
@@ -1694,6 +1759,7 @@
     "harness-workspace/src/test/java/io/jharness/workspace/LocalWorkspaceTest.java",
     "harness-workspace/src/test/java/io/jharness/workspace/M8SearchFilterTest.java",
     "harness-workspace/src/test/java/io/jharness/workspace/R1WorkspaceSafetyTest.java",
+    "harness-workspace/src/test/java/io/jharness/workspace/R2WorkspaceSnapshotTest.java",
     "harness-workspace/src/test/java/io/jharness/workspace/R3PatchBoundaryTest.java",
     "harness-workspace/src/test/java/io/jharness/workspace/UnifiedPatchTest.java",
     "mvnw",
@@ -1722,6 +1788,9 @@
     "scripts/contracts/m1059-java-cases.json",
     "scripts/contracts/r0-validation-cases.json",
     "scripts/contracts/r1-validation-cases.json",
+    "scripts/contracts/r2-validation-cases.json",
+    "scripts/contracts/r3-validation-cases.json",
+    "scripts/diagnostics/WindowsExitSignalProbe.java",
     "scripts/evidence_checks.py",
     "scripts/evidence_io.py",
     "scripts/evidence_run.py",
@@ -1738,6 +1807,7 @@
     "scripts/run-r0-validation.py",
     "scripts/run-r1-supplemental.py",
     "scripts/run-r1-validation.py",
+    "scripts/run-r2-validation.py",
     "scripts/run-r3-validation.py",
     "scripts/run-workbench-matrix.mjs",
     "scripts/scan-osv.py",
@@ -1758,6 +1828,7 @@
     "scripts/test-r1-implementation.py",
     "scripts/test-r1-live-evidence.py",
     "scripts/test-r1-supplemental.py",
+    "scripts/test-r123r-evidence.py",
     "scripts/test-r3-provider.py",
     "scripts/test-release-tools.py",
     "scripts/test-sdk-inventory.py",
@@ -1768,6 +1839,7 @@
     "scripts/verify-m8-closure.py",
     "scripts/verify-ocr-review.mjs",
     "scripts/verify-r1-implementation.py",
+    "scripts/verify-r123r-implementation.py",
     "scripts/workbench-case-contract.json",
     "scripts/workbench-evidence.mjs",
     "sdk/README.md",
@@ -1779,6 +1851,7 @@
     "sdk/python/jharness_sdk.py",
     "sdk/tests/client.py",
     "sdk/tests/client.ts",
+    "sdk/tests/diagnostic.mjs",
     "sdk/tests/examples.mjs",
     "sdk/tests/run.mjs",
     "sdk/typescript/package.json",

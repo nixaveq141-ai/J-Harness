@@ -56,8 +56,7 @@ final class WorkbenchSettings implements HarnessWebServer.Settings, DataSanitize
                 (k, v) -> {
                     if (v != null
                             && !v.isBlank()
-                            && (k.matches(
-                                            "(?i).*(API_KEY|ACCESS_KEY_ID|SECRET_ACCESS_KEY|ACCESS_KEY|PRIVATE_KEY|CREDENTIALS|TOKEN|SECRET|PASSWORD|PASS)$")
+                            && (SecretRedactor.credentialEnvironmentName(k)
                                     || k.equals(base.string("apiKeyEnv", "JHARNESS_API_KEY"))))
                         registerSecret(v);
                 });
@@ -114,7 +113,15 @@ final class WorkbenchSettings implements HarnessWebServer.Settings, DataSanitize
         // Register all saved credentials before any data can be exposed by Web or SDK.
         for (var m : models(state)) keyAvailable(m);
         if (Files.exists(cleanupFile, LinkOption.NOFOLLOW_LINKS)) {
-            var saved = Json.read(cleanupFile, 32768);
+            Map<String, Object> saved;
+            try {
+                saved = Json.read(cleanupFile, 32768);
+            } catch (HarnessException invalid) {
+                throw new HarnessException(
+                        "CREDENTIAL_CLEANUP_INVALID",
+                        "Credential cleanup journal requires offline inspection",
+                        invalid);
+            }
             if (!(saved.get("refs") instanceof List<?> refs) || refs.size() > 128)
                 throw error("CREDENTIAL_CLEANUP_INVALID");
             for (var ref : refs) {
@@ -292,7 +299,12 @@ final class WorkbenchSettings implements HarnessWebServer.Settings, DataSanitize
         state = candidate;
         var obsolete = priorRefs.stream().filter(ref -> !nextRefs.contains(ref)).toList();
         pendingCleanup.addAll(obsolete);
-        cleanupCredentials();
+        try {
+            cleanupCredentials();
+        } catch (IOException | RuntimeException cleanup) {
+            // The settings and delete intents are already committed. Report cleanup separately.
+            credentialCleanupPending = true;
+        }
         return read();
     }
 

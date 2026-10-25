@@ -27,9 +27,9 @@ class R3SkillBoundaryTest {
                                                 Set.of(),
                                                 CancellationToken.NONE))
                         .code());
-        Files.writeString(skill.resolve("SKILL.md"), "---\nname: 'demo'\n---\nbody\n");
+        Files.writeString(skill.resolve("SKILL.md"), "---\nname: 'paired'\n---\nbody\n");
         assertEquals(
-                "demo",
+                "paired",
                 SkillCatalog.scan(
                                 List.of(new SkillCatalog.Root("project", root)),
                                 Set.of(),

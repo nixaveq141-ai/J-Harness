@@ -14,6 +14,8 @@ class R1CliLifecycleTest {
         var scope = new PluginScope("r1-policy", "test");
         var registry = new io.jharness.plugin.DefaultServiceRegistry();
         var closes = new AtomicInteger();
+        var approvalRevoked = new AtomicBoolean();
+        var policyPresent = new AtomicBoolean();
         class Approvals implements ApprovalService, AutoCloseable {
             public ApprovalDecision decide(ToolInvocation call, ToolContext context) {
                 return new ApprovalDecision(false, "fixture", "fixture");
@@ -21,8 +23,9 @@ class R1CliLifecycleTest {
 
             public void close() {
                 closes.incrementAndGet();
-                assertTrue(registry.find(ApprovalService.class, "default", scope).isEmpty());
-                assertTrue(registry.find(PolicyEngine.class, "default", scope).isPresent());
+                approvalRevoked.set(
+                        registry.find(ApprovalService.class, "default", scope).isEmpty());
+                policyPresent.set(registry.find(PolicyEngine.class, "default", scope).isPresent());
                 throw new IllegalStateException("synthetic close failure");
             }
         }
@@ -36,6 +39,8 @@ class R1CliLifecycleTest {
         assertThrows(HarnessException.class, container::stop);
         container.close();
         assertEquals(1, closes.get());
+        assertTrue(approvalRevoked.get());
+        assertTrue(policyPresent.get());
         assertTrue(registry.find(PolicyEngine.class, "default", scope).isEmpty());
         assertTrue(registry.find(ApprovalService.class, "default", scope).isEmpty());
     }

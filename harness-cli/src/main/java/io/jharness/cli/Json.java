@@ -48,6 +48,8 @@ final class Json {
                                     .newDecoder()
                                     .decode(java.nio.ByteBuffer.wrap(bytes))
                                     .toString()));
+        } catch (java.nio.charset.CharacterCodingException invalid) {
+            throw new HarnessException("INVALID_JSON", "Invalid UTF-8 JSON", invalid);
         }
     }
 

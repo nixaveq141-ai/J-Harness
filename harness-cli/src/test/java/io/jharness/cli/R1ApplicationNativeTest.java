@@ -44,7 +44,22 @@ class R1ApplicationNativeTest {
 
     @Test
     void conflictingAndOversizedBatchesNeverReachVault() {
-        var vault = new SystemCredentials();
+        var vault =
+                new SystemCredentials() {
+                    @Override
+                    synchronized boolean supported() {
+                        throw new AssertionError("Invalid batch touched native support");
+                    }
+                };
+        assertEquals(
+                "CREDENTIAL_BATCH_INVALID",
+                assertThrows(
+                                HarnessException.class,
+                                () ->
+                                        vault.update(
+                                                Map.of(),
+                                                List.of("J-Harness/test", "J-Harness/test")))
+                        .code());
         assertEquals(
                 "CREDENTIAL_BATCH_INVALID",
                 assertThrows(
@@ -102,6 +117,16 @@ class R1ApplicationNativeTest {
                 settings.sanitize(Map.of("value", "synthetic-aws-fixture"))
                         .toString()
                         .contains("synthetic-aws-fixture"));
+        var invalid = new HashMap<>(settings.read());
+        invalid.put("apiKeys", Map.of("default", "synthetic-failed-input"));
+        invalid.remove("selected");
+        assertEquals(
+                "INVALID_SETTINGS",
+                assertThrows(HarnessException.class, () -> settings.save(invalid)).code());
+        assertFalse(
+                settings.sanitize(Map.of("value", "synthetic-failed-input"))
+                        .toString()
+                        .contains("synthetic-failed-input"));
     }
 
     @Test
@@ -123,6 +148,7 @@ class R1ApplicationNativeTest {
                 EvidenceReport.build("fixture", List.of(event), new SecretRedactor(List.of(secret)))
                         .toString();
         assertFalse(report.contains("synthetic-boundary"));
+        assertFalse(report.contains("synt"), "A prefix leaked across the truncation boundary");
         assertTrue(report.contains("TRUNCATED"));
     }
 

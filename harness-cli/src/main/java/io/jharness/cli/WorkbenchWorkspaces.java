@@ -17,7 +17,7 @@ final class WorkbenchWorkspaces implements HarnessWebServer.Workspaces {
             this(
                     root,
                     owner,
-                    DirectoryIdentity.read(root),
+                    DirectoryIdentity.readDirectory(root),
                     Files.exists(root.resolve(".jharness"), LinkOption.NOFOLLOW_LINKS)
                             ? DirectoryIdentity.read(root.resolve(".jharness"))
                             : null);
@@ -48,7 +48,7 @@ final class WorkbenchWorkspaces implements HarnessWebServer.Workspaces {
                         || !current.toRealPath().equals(current.toAbsolutePath().normalize()))
                     throw error("WORKSPACE_PATH_DENIED");
             }
-            if (!java.util.Objects.equals(fileKey, DirectoryIdentity.read(root)))
+            if (!java.util.Objects.equals(fileKey, DirectoryIdentity.readDirectory(root)))
                 throw error("WORKSPACE_PATH_DENIED");
             if (!Files.getOwner(root).getName().equals(owner))
                 throw error("WORKSPACE_OWNER_MISMATCH");
@@ -197,9 +197,10 @@ final class WorkbenchWorkspaces implements HarnessWebServer.Workspaces {
         if (!Files.getOwner(path).getName().equals(owner)) throw error("WORKSPACE_OWNER_MISMATCH");
         Path real = path.toRealPath();
         if (!real.equals(path)) throw error("WORKSPACE_PATH_DENIED");
-        var before = DirectoryIdentity.read(real);
+        var before = DirectoryIdentity.readDirectory(real);
         new Metadata(real).directory("sessions");
-        if (!before.equals(DirectoryIdentity.read(real))) throw error("WORKSPACE_PATH_DENIED");
+        if (!before.equals(DirectoryIdentity.readDirectory(real)))
+            throw error("WORKSPACE_PATH_DENIED");
         new RootCheck(real, owner).verify();
         return real;
     }

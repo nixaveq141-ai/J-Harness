@@ -21,15 +21,23 @@ public final class EnvironmentWorker {
         if (argv.length != 1) throw new IllegalArgumentException("Workspace root required");
         Map<String, Object> response;
         WorkspaceSearchFilter acknowledged = null;
+        boolean dispatched = false;
         try {
             var request = BoundedJson.decode(System.in.readNBytes(BoundedJson.LIMIT + 1));
             var filter = WorkspaceSearchFilter.from(request.getOrDefault("searchFilter", Map.of()));
             acknowledged = filter;
+            validate(request);
+            dispatched = true;
             response =
                     new LinkedHashMap<>(
                             dispatch(new LocalWorkspace(Path.of(argv[0]), filter), request));
         } catch (Exception ex) {
-            response = Map.of("error", ex instanceof HarnessException h ? h.code() : "WORKER_IO");
+            response =
+                    Map.of(
+                            "error",
+                            ex instanceof HarnessException h ? h.code() : "WORKER_IO",
+                            "executionRejected",
+                            !dispatched);
         }
         if (acknowledged != null) {
             response = new LinkedHashMap<>(response);
@@ -48,26 +56,8 @@ public final class EnvironmentWorker {
                 switch (op) {
                     case "filter-info" -> Map.of();
                     case "read" -> {
-                        String text =
-                                files.readText(path, number(request, "maxBytes", 1024 * 1024));
-                        String version;
-                        try {
-                            version =
-                                    HexFormat.of()
-                                            .formatHex(
-                                                    java.security.MessageDigest.getInstance(
-                                                                    "SHA-256")
-                                                            .digest(
-                                                                    text.getBytes(
-                                                                            java.nio.charset
-                                                                                    .StandardCharsets
-                                                                                    .UTF_8)));
-                        } catch (java.security.NoSuchAlgorithmException ex) {
-                            throw new IllegalStateException(ex);
-                        }
-                        if (!version.equals(files.versionOf(path)))
-                            throw BoundedJson.error("FILE_CONFLICT");
-                        var snapshot = new FileSystemView.TextSnapshot(text, version);
+                        var snapshot =
+                                files.readSnapshot(path, number(request, "maxBytes", 1024 * 1024));
                         yield Map.of("text", snapshot.text(), "version", snapshot.version());
                     }
                     case "version" -> Map.of("version", files.versionOf(path));
@@ -198,6 +188,11 @@ public final class EnvironmentWorker {
                     && (!(request.get(key) instanceof List<?> values)
                             || values.stream().anyMatch(v -> !(v instanceof String))))
                 throw BoundedJson.error("WORKER_INVALID_REQUEST");
+        if (request.containsKey("maxBytes")) {
+            int maxBytes = Values.integer(request.get("maxBytes"), "WORKER_INVALID_REQUEST");
+            if (maxBytes < 1 || maxBytes > 1024 * 1024)
+                throw BoundedJson.error("WORKER_INVALID_REQUEST");
+        }
         if (request.containsKey("overwrite") && !(request.get("overwrite") instanceof Boolean))
             throw BoundedJson.error("WORKER_INVALID_REQUEST");
         String op = (String) request.get("op");
@@ -229,6 +224,8 @@ public final class EnvironmentWorker {
             }
         }
         if (op.equals("patch")) {
+            if (!(request.get("versions") instanceof Map<?, ?>))
+                throw BoundedJson.error("WORKER_INVALID_REQUEST");
             var versions = Values.object(request.get("versions"));
             if (versions.values().stream().anyMatch(v -> !(v instanceof String)))
                 throw BoundedJson.error("WORKER_INVALID_REQUEST");

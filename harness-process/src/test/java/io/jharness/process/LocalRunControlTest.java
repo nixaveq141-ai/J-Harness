@@ -86,9 +86,23 @@ class LocalRunControlTest {
         assertEquals(
                 LocalRunControl.CancelResult.INVALID_STATE,
                 LocalRunControl.cancel(root.resolve("runs"), "../escape"));
-        Files.writeString(state, original.replace("version=1", "version=2"));
+        assertTrue(original.startsWith("version=2\n"));
+        Files.writeString(state, original.replace("version=2", "version=3"));
         assertEquals(
-                LocalRunControl.CancelResult.INVALID_STATE,
+                LocalRunControl.CancelResult.UNSUPPORTED_STATE,
                 LocalRunControl.cancel(root.resolve("runs"), id));
+        Files.writeString(state, original.replace("version=2", "version=1"));
+        assertEquals(
+                LocalRunControl.CancelResult.UNREACHABLE,
+                LocalRunControl.cancel(root.resolve("runs"), id));
+        Files.writeString(
+                state,
+                original.replace("version=2", "version=1")
+                        .replaceAll("(?m)^processStart=.*\\n", ""));
+        assertEquals(
+                LocalRunControl.CancelResult.UNSUPPORTED_STATE,
+                LocalRunControl.cancel(root.resolve("runs"), id));
+        assertEquals(6, LocalRunControl.CancelResult.OUTCOME_UNKNOWN.exitCode());
+        assertEquals(7, LocalRunControl.CancelResult.UNSUPPORTED_STATE.exitCode());
     }
 }

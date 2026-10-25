@@ -315,9 +315,14 @@ class R1WebOwnershipTest {
             assertTrue(entered.await(2, TimeUnit.SECONDS));
             host.close();
             var catalog = new JsonlSessionRepository(root.resolve("catalog"));
-            assertThrows(
-                    HarnessException.class,
-                    () -> catalog.openWriter("web-catalog", WriteOwnership.EXCLUSIVE));
+            assertEquals(
+                    "WRITE_CONFLICT",
+                    assertThrows(
+                                    HarnessException.class,
+                                    () ->
+                                            catalog.openWriter(
+                                                    "web-catalog", WriteOwnership.EXCLUSIVE))
+                            .code());
             release.countDown();
             assertTrue(closed.await(4, TimeUnit.SECONDS));
             long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(4);
@@ -328,6 +333,7 @@ class R1WebOwnershipTest {
                     freed = true;
                     break;
                 } catch (HarnessException busy) {
+                    assertEquals("WRITE_CONFLICT", busy.code());
                     Thread.sleep(5);
                 }
             }
@@ -948,7 +954,12 @@ class R1WebOwnershipTest {
                                 "HTTP handler must contend for the held server monitor");
                     }
                     // Both contenders cannot acquire the monitor until the deadline is past.
-                    while (System.nanoTime() <= deadline) Thread.sleep(2);
+                    long expiryWaitLimit = System.nanoTime() + TimeUnit.SECONDS.toNanos(3);
+                    while (System.nanoTime() <= deadline && System.nanoTime() < expiryWaitLimit)
+                        Thread.sleep(2);
+                    assertTrue(
+                            System.nanoTime() > deadline,
+                            "Unexpected approval deadline representation or excessive wait");
                     if (acceptBeforeDeadline) release.countDown();
                 }
                 var outcome = owner.get(2, TimeUnit.SECONDS);

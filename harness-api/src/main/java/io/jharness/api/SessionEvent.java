@@ -75,7 +75,8 @@ public record SessionEvent(
                                     "approval.decided",
                                     "approval.requested",
                                     "tool.preview",
-                                    "tool.scheduled" ->
+                                    "tool.scheduled",
+                                    "tool.settlement.failed" ->
                             EventLevel.TOOL;
                     default ->
                             type.startsWith("plugin.") || type.startsWith("config.")

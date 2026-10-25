@@ -9,6 +9,7 @@ const phaseStatuses = new Set([
   'LOCAL_BASELINE_READY', 'LOCAL_BASELINE_WITH_CONFIRMED_GAPS',
   'IMPLEMENTATION_IN_PROGRESS', 'LOCAL_VALIDATED_CI_PENDING', 'COMPLETE',
 ])
+const snapshotStatuses = new Set(['LOCAL_IMPLEMENTATION_VALIDATED_CI_PENDING', 'LOCAL_VALIDATED_CI_PENDING'])
 const object = value => value !== null && typeof value === 'object' && !Array.isArray(value)
 const requireThat = (ok, message) => { if (!ok) throw Error(message) }
 
@@ -23,6 +24,20 @@ export function validateProgress(progress, knownTaskIds) {
     requireThat(object(row) && taskStatuses.has(row.status), `Invalid implementation task status ${id}`)
     requireThat(typeof row.description === 'string' && row.description.trim().length > 0 && row.description.length <= 2000,
       `Invalid implementation description ${id}`)
+  }
+  for (const id of ['r1', 'r2', 'r3']) {
+    if (!(id in progress)) continue
+    const row = progress[id]
+    requireThat(object(row) && snapshotStatuses.has(row.status), `Invalid snapshot status ${id}`)
+    requireThat(typeof row.runId === 'string' && /^[A-Za-z0-9_.-]{1,128}$/.test(row.runId), `Invalid snapshot runId ${id}`)
+    for (const key of ['adoptedScopes', 'implemented', 'contractClarified', 'existingGuardConfirmed'])
+      requireThat(Number.isSafeInteger(row[key]) && row[key] >= 0, `Invalid snapshot count ${id}.${key}`)
+    requireThat(row.implemented + row.contractClarified + row.existingGuardConfirmed === row.adoptedScopes, `Snapshot count mismatch ${id}`)
+    for (const key of ['implementationLedger', 'results'])
+      requireThat(typeof row[key] === 'string' && /^docs\/(development|testing)\/[A-Za-z0-9_.-]+\.json$/.test(row[key]), `Invalid snapshot evidence ${id}.${key}`)
+    requireThat(typeof row.nextPhase === 'string' && /^R[0-6]$/.test(row.nextPhase), `Invalid snapshot nextPhase ${id}`)
+    if ('implementedOrRegressionStrengthened' in row)
+      requireThat(row.implementedOrRegressionStrengthened === row.implemented, `Snapshot alias mismatch ${id}`)
   }
   return progress
 }

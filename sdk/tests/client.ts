@@ -62,7 +62,7 @@ try{
   check('sixty five expired replies remain known',(await client.call('flush')).lateReplies===65)
   await assert.rejects(client.call('ping',{value:1n} as any),e=>e instanceof RpcError&&e.code==='INVALID_REQUEST')
   const cyclic:any={};cyclic.self=cyclic;await assert.rejects(client.call('ping',cyclic),e=>e instanceof RpcError&&e.code==='INVALID_REQUEST')
-  check('invalid request rejects asynchronously without pending leak',(await client.call('stats')).slowCalls===1)
+  check('invalid request rejects asynchronously without pending leak',(client as any).pending.size===0&&(await client.call('stats')).slowCalls===1)
   await client.call('stderr');check('child diagnostic text never appears in API result')
   await assert.rejects(client.call('ping',{text:'x'.repeat(65537)}),e=>e instanceof RpcError&&e.code==='RPC_REQUEST_LIMIT');check('request byte bound rejects before sending')
   const pending=Array.from({length:32},()=>client!.call('hold').then(()=>false,()=>true))

@@ -15,6 +15,7 @@ public interface LlmClient extends AutoCloseable {
     }
 
     default LlmClient withDisplayUpdates(java.util.function.Consumer<ModelDisplay.Update> display) {
+        java.util.Objects.requireNonNull(display, "display");
         return withDisplay(text -> display.accept(new ModelDisplay.Update(text, false)));
     }
 
@@ -24,7 +25,11 @@ public interface LlmClient extends AutoCloseable {
 
     ChatResponse complete(ChatRequest request, CancellationToken cancellation);
 
-    /** Query before journaling; existing explicit overrides retain their single-send contract. */
+    /**
+     * Query before journaling. Reflection preserves compatibility with existing explicit overrides;
+     * it does not verify delegation. Decorators must explicitly propagate the delegate's capability
+     * and must never invoke a retrying complete() from completeSingleAttempt().
+     */
     default boolean supportsSingleAttempt() {
         try {
             return getClass()

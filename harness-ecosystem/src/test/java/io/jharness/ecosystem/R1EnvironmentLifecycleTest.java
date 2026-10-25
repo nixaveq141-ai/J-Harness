@@ -29,7 +29,12 @@ class R1EnvironmentLifecycleTest {
                                             throw new IllegalStateException("abort failed");
                                         }));
         assertEquals("MCP_OUTCOME_UNKNOWN", failure.code());
-        assertEquals(1, failure.getSuppressed().length);
+        assertTrue(
+                Arrays.stream(failure.getSuppressed())
+                        .anyMatch(
+                                error ->
+                                        error instanceof IllegalStateException
+                                                && "abort failed".equals(error.getMessage())));
     }
 
     @Test
@@ -453,26 +458,29 @@ class R1EnvironmentLifecycleTest {
                         return () -> {};
                     }
                 });
-        var running = new java.util.concurrent.CompletableFuture<Throwable>();
+        var running = new java.util.concurrent.CompletableFuture<Object>();
         var owner =
                 Thread.ofVirtual()
                         .start(
                                 () -> {
                                     try {
-                                        tools.require("plan_update", scope)
-                                                .execute(
-                                                        new ToolInvocation(
-                                                                "plan",
-                                                                "plan_update",
-                                                                Map.of(
-                                                                        "revision",
-                                                                        0,
-                                                                        "steps",
-                                                                        List.of("inspect")),
-                                                                SideEffectLevel.SYSTEM_IMPACT),
-                                                        new ToolContext(
-                                                                scope, CancellationToken.NONE));
-                                        running.complete(null);
+                                        var result =
+                                                tools.require("plan_update", scope)
+                                                        .execute(
+                                                                new ToolInvocation(
+                                                                        "plan",
+                                                                        "plan_update",
+                                                                        Map.of(
+                                                                                "revision",
+                                                                                0,
+                                                                                "steps",
+                                                                                List.of("inspect")),
+                                                                        SideEffectLevel
+                                                                                .SYSTEM_IMPACT),
+                                                                new ToolContext(
+                                                                        scope,
+                                                                        CancellationToken.NONE));
+                                        running.complete(result);
                                     } catch (Throwable ex) {
                                         running.complete(ex);
                                     }
@@ -483,11 +491,16 @@ class R1EnvironmentLifecycleTest {
         // Stop must revoke before it waits for the blocked preparation owner.
         var activeField = PlanningPlugin.class.getDeclaredField("active");
         activeField.setAccessible(true);
-        while (activeField.getBoolean(plugin) && System.nanoTime() < until) Thread.onSpinWait();
+        while (activeField.getBoolean(plugin) && System.nanoTime() < until) Thread.sleep(1);
         assertFalse(activeField.getBoolean(plugin));
         release.countDown();
-        assertInstanceOf(
-                HarnessException.class, running.get(3, java.util.concurrent.TimeUnit.SECONDS));
+        var rejection =
+                assertInstanceOf(
+                        ToolResult.class, running.get(3, java.util.concurrent.TimeUnit.SECONDS));
+        assertEquals(ToolStatus.FAILED, rejection.status());
+        assertEquals("PLUGIN_CLOSED", rejection.error().orElseThrow().code());
+        assertEquals(false, rejection.value().get("sideEffectUncertain"));
+        assertEquals(true, rejection.value().get("executionRejected"));
         stopping.get(3, java.util.concurrent.TimeUnit.SECONDS);
         owner.join(1000);
         assertEquals(0, writes.get());

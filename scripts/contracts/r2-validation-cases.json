@@ -201,7 +201,8 @@
         "implementation artifact hashes are separate from the static review inputs",
         "read-only verifier rejects changed progress without rewriting historical data",
         "read-only verifier rejects changed markdown without rewriting historical data",
-        "read-only verifier rejects changed manifest without rewriting historical data"
+        "read-only verifier rejects changed manifest without rewriting historical data",
+        "phase snapshots validate counters, run identity and aliases"
       ]
     },
     {
@@ -252,7 +253,8 @@
         "r0_test_r1_implementation.R1ImplementationEvidenceTest.test_original_partial_scope_and_assignment_cannot_be_changed",
         "r0_test_r1_implementation.R1ImplementationEvidenceTest.test_partial_verification_requires_an_explicit_limitation",
         "r0_test_r1_implementation.R1ImplementationEvidenceTest.test_validation_is_read_only",
-        "r0_test_r1_implementation.R1ImplementationEvidenceTest.test_work_in_progress_is_not_completion_even_with_a_test_reference"
+        "r0_test_r1_implementation.R1ImplementationEvidenceTest.test_work_in_progress_is_not_completion_even_with_a_test_reference",
+        "r0_test_r1_implementation.R1ImplementationEvidenceTest.test_passing_cases_reads_node_ndjson_by_format_including_new_groups"
       ]
     },
     {

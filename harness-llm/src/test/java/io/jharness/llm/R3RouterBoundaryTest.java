@@ -76,6 +76,39 @@ class R3RouterBoundaryTest {
         assertEquals(2, closes.get());
     }
 
+    @Test
+    void factoryFailureAfterCloseRemovesPendingMarkerWithoutClaimingClientCleanup()
+            throws Exception {
+        var entered = new CountDownLatch(1);
+        var release = new CountDownLatch(1);
+        var router =
+                new LazyModelRouter(
+                        Map.of(
+                                "base",
+                                () -> {
+                                    entered.countDown();
+                                    try {
+                                        assertTrue(release.await(3, TimeUnit.SECONDS));
+                                    } catch (InterruptedException e) {
+                                        throw new AssertionError(e);
+                                    }
+                                    throw new IllegalStateException(
+                                            "factory failed before returning a client");
+                                }));
+        try (var pool = Executors.newVirtualThreadPerTaskExecutor()) {
+            var selecting = pool.submit(() -> router.select("base"));
+            assertTrue(entered.await(2, TimeUnit.SECONDS));
+            router.close();
+            assertEquals(Map.of("base", "FACTORY_PENDING"), router.unconfirmedClosures());
+            release.countDown();
+            assertThrows(ExecutionException.class, () -> selecting.get(2, TimeUnit.SECONDS));
+            assertTrue(router.unconfirmedClosures().isEmpty());
+        } finally {
+            release.countDown();
+            router.close();
+        }
+    }
+
     private static final class Client implements LlmClient {
         private final AtomicInteger closes;
 

@@ -1885,6 +1885,7 @@ public final class HarnessWebServer implements AutoCloseable {
             task.recovered = false;
             occupied.add(task.binding);
             task.worker = new Thread(() -> execute(task, content, input), "jharness-web-turn");
+            task.cleanupComplete = false;
             task.worker.setDaemon(true);
             task.worker.start();
         } catch (IOException | RuntimeException ex) {
@@ -2166,15 +2167,19 @@ public final class HarnessWebServer implements AutoCloseable {
                     task.phase = "UNKNOWN";
                     task.error = "QUEUE_CHECKPOINT_FAILED";
                 } finally {
+                    if (task.worker == Thread.currentThread()) task.cleanupComplete = true;
                     notifyAll();
                     if (closed
                             && tasks.values().stream()
-                                    .noneMatch(
-                                            t ->
-                                                    t.worker != null
-                                                            && t.worker != Thread.currentThread()
-                                                            && t.worker.isAlive()))
-                        closeResources();
+                                    .noneMatch(t -> t.worker != null && !t.cleanupComplete)) {
+                        try {
+                            closeResources();
+                        } catch (RuntimeException failure) {
+                            broken = true;
+                            task.phase = "UNKNOWN";
+                            task.error = "RESOURCE_CLEANUP_UNKNOWN";
+                        }
+                    }
                 }
             }
         }
@@ -2619,6 +2624,7 @@ public final class HarnessWebServer implements AutoCloseable {
         HarnessSdk sdk;
         Map<String, Object> display = Map.of();
         Thread worker;
+        boolean cleanupComplete;
 
         Task(String id, String profile, String requestHash, String goalHash, String binding) {
             if (id == null
@@ -2790,7 +2796,8 @@ public final class HarnessWebServer implements AutoCloseable {
             if (worker.isAlive()) worker.interrupt();
         }
         synchronized (this) {
-            if (workers.stream().noneMatch(Thread::isAlive)) closeResources();
+            if (tasks.values().stream().noneMatch(t -> t.worker != null && !t.cleanupComplete))
+                closeResources();
             // A noncooperating worker retains the ownership locks until its mandatory cleanup
             // exits.
             // Its acceptance pointer remains unresolved; a new host must not replay it.

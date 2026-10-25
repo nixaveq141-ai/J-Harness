@@ -32,11 +32,7 @@ public record SessionRecovery(
                 if (requests.values().stream()
                                 .filter(step -> Objects.equals(step, e.stepId()))
                                 .count()
-                        > 1)
-                    throw new HarnessException(
-                            "AMBIGUOUS_MODEL_REQUEST",
-                            "Response matches multiple unresolved attempts");
-                requests.values().removeIf(step -> Objects.equals(step, e.stepId()));
+                        == 1) requests.values().removeIf(step -> Objects.equals(step, e.stepId()));
             }
             if (e.type().equals("model.rejected") && "HTTP_429".equals(e.payload().get("reason")))
                 requests.remove(e.payload().get("requestEventId"), e.stepId());

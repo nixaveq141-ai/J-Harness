@@ -4,6 +4,8 @@ import importlib.util
 from pathlib import Path
 import tempfile
 import unittest
+import json
+from unittest.mock import patch
 
 spec=importlib.util.spec_from_file_location('r1_ledger',Path(__file__).with_name('verify-r1-implementation.py'))
 gate=importlib.util.module_from_spec(spec);spec.loader.exec_module(gate)
@@ -58,6 +60,17 @@ class R1ImplementationEvidenceTest(unittest.TestCase):
         before=copy.deepcopy(self.data);source=(self.root/'source.py').read_bytes()
         self.check(complete=True,passed={'Suite#regression'})
         self.assertEqual(before,self.data);self.assertEqual(source,(self.root/'source.py').read_bytes())
+
+    def test_passing_cases_reads_node_ndjson_by_format_including_new_groups(self):
+        events=[dict(type='case',caseId='new > node case',outcome='PASS'),
+                dict(type='summary',counts=dict(tests=1,passed=1,failed=0,cancelled=0,skipped=0,todo=0))]
+        (self.root/'cases.ndjson').write_text('\n'.join(json.dumps(e) for e in events),encoding='utf-8')
+        with patch.object(gate,'ROOT',self.root):
+            self.assertEqual({'new > node case'},gate.passing_cases(dict(commands=[dict(name='new-node-group',cases='cases.ndjson')])))
+        events[-1]['counts']['failed']=1
+        (self.root/'cases.ndjson').write_text('\n'.join(json.dumps(e) for e in events),encoding='utf-8')
+        with patch.object(gate,'ROOT',self.root),self.assertRaisesRegex(ValueError,'did not fully pass'):
+            gate.passing_cases(dict(commands=[dict(name='new-node-group',cases='cases.ndjson')]))
 
 
 if __name__=='__main__':

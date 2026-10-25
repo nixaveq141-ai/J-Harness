@@ -176,7 +176,7 @@ public final class HarnessSdk implements AutoCloseable {
                 previous.putIfAbsent("agentId", "default");
                 Object fingerprint = created.get().payload().get("bindingFingerprint");
                 if (fingerprint == null
-                        ? !previous.equals(binding)
+                        ? !stableBinding(previous).equals(binding)
                         : !bindingFingerprint.equals(fingerprint))
                     throw BoundedJson.error("ENVIRONMENT_MISMATCH");
             }
@@ -450,6 +450,15 @@ public final class HarnessSdk implements AutoCloseable {
                         || !bindingFingerprint(Map.of("content", goal))
                                 .equals(applied.get().payload().get("inputContentHash")))
                     throw BoundedJson.error("SUBMISSION_CONFLICT");
+                var history = reader.events();
+                int boundary = history.indexOf(applied.get());
+                boolean ended = false;
+                for (int i = boundary + 1; i < history.size(); i++) {
+                    var event = history.get(i);
+                    if (event.type().equals("sdk.input.applied")) break;
+                    if (event.type().equals("turn.ended")) ended = true;
+                }
+                if (!ended) throw BoundedJson.error("SUBMISSION_NOT_CONFIRMED");
                 return snapshot();
             }
         }

@@ -117,7 +117,7 @@ try:
     check("sixty five expired replies remain known", client.call("flush")["lateReplies"] == 65)
     cycle = {}; cycle["self"] = cycle
     rejects(lambda: client.call("ping", cycle), "INVALID_REQUEST")
-    check("invalid request rejects without pending leak", client.call("stats")["slowCalls"] == 1)
+    check("invalid request rejects without pending leak", not client._pending and client.call("stats")["slowCalls"] == 1)
     client.call('stderr')
     check('child diagnostic text never appears in API result')
     rejects(lambda: client.call('ping', {'text':'x'*65537}), 'RPC_REQUEST_LIMIT')

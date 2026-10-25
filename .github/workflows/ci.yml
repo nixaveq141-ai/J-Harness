@@ -161,7 +161,6 @@ jobs:
             target/*candidate.zip
             target/candidate-sha256.txt
             .build-cache/M10.5.9/
-            .build-cache/R0/
             .build-cache/R1/
             .build-cache/M10.5.4-native-*.json
             .build-cache/M10-browser-results.json

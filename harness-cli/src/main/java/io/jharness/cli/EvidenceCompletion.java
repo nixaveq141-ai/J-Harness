@@ -118,6 +118,8 @@ final class EvidenceCompletion implements CompletionEvaluator {
     }
 
     private static String criterion(String path) {
+        if (path == null || path.isBlank())
+            throw new HarnessException("CLI_USAGE", "Evidence path is required");
         String normalized = normalize(path);
         if (normalized == null)
             throw new HarnessException(

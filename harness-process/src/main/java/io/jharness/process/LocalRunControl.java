@@ -18,7 +18,8 @@ public final class LocalRunControl implements AutoCloseable {
         NOT_FOUND(2),
         ALREADY_EXITED(3),
         UNREACHABLE(4),
-        OUTCOME_UNKNOWN(4),
+        OUTCOME_UNKNOWN(6),
+        UNSUPPORTED_STATE(7),
         INVALID_STATE(5);
         private final int exitCode;
 
@@ -140,12 +141,16 @@ public final class LocalRunControl implements AutoCloseable {
 
     private void writeState(String status, String credential) throws IOException {
         String body =
-                "version=1\nrunId="
+                "version=2\nrunId="
                         + runId
                         + "\npid="
                         + ProcessHandle.current().pid()
                         + "\nprocessStart="
-                        + ProcessHandle.current().info().startInstant().orElseThrow()
+                        + ProcessHandle.current()
+                                .info()
+                                .startInstant()
+                                .orElseThrow(
+                                        () -> new IOException("Process start identity unavailable"))
                         + "\nport="
                         + server.getLocalPort()
                         + "\nhost=127.0.0.1\nstatus="
@@ -177,7 +182,8 @@ public final class LocalRunControl implements AutoCloseable {
     private static FileAttribute<?>[] privateAttributes(Path path, boolean directory)
             throws IOException {
         Path existing = path.toAbsolutePath();
-        while (!Files.exists(existing)) existing = existing.getParent();
+        while (existing != null && !Files.exists(existing)) existing = existing.getParent();
+        if (existing == null) throw new IOException("Owner-only state permissions unsupported");
         if (Files.getFileStore(existing).supportsFileAttributeView("posix"))
             return new FileAttribute<?>[] {
                 PosixFilePermissions.asFileAttribute(
@@ -266,9 +272,9 @@ public final class LocalRunControl implements AutoCloseable {
                 if (bytes.length > 4096) return CancelResult.INVALID_STATE;
                 properties.load(new StringReader(new String(bytes, StandardCharsets.UTF_8)));
             }
-            if (!"1".equals(properties.getProperty("version"))
-                    || !runId.equals(properties.getProperty("runId")))
-                return CancelResult.INVALID_STATE;
+            if (!Set.of("1", "2").contains(properties.getProperty("version", "")))
+                return CancelResult.UNSUPPORTED_STATE;
+            if (!runId.equals(properties.getProperty("runId"))) return CancelResult.INVALID_STATE;
             if ("EXITED".equals(properties.getProperty("status")))
                 return CancelResult.ALREADY_EXITED;
             String token = properties.getProperty("token", "");
@@ -280,13 +286,13 @@ public final class LocalRunControl implements AutoCloseable {
             var process = ProcessHandle.of(pid);
             if (process.isEmpty() || !process.get().isAlive()) return CancelResult.ALREADY_EXITED;
             String started = properties.getProperty("processStart");
-            if (started == null
-                    || !process.get()
-                            .info()
-                            .startInstant()
-                            .map(Object::toString)
-                            .orElse("")
-                            .equals(started)) return CancelResult.INVALID_STATE;
+            if (started == null) return CancelResult.UNSUPPORTED_STATE;
+            if (!process.get()
+                    .info()
+                    .startInstant()
+                    .map(Object::toString)
+                    .orElse("")
+                    .equals(started)) return CancelResult.INVALID_STATE;
             int port = Integer.parseInt(properties.getProperty("port"));
             if (port < 1 || port > 65535) return CancelResult.INVALID_STATE;
             try (Socket socket = new Socket()) {

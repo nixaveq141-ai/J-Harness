@@ -13,6 +13,23 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.io.TempDir;
 
 class TokenSessionSearchTest {
+    @Test
+    void submissionUserMessageIsSearchableWithoutIndexingItsControlFields() throws Exception {
+        try (var writer = repository.openWriter("s", WriteOwnership.EXCLUSIVE)) {
+            writer.append(
+                    SessionEvent.session(
+                            "s",
+                            "sdk.input.applied",
+                            Map.of(
+                                    "requestHash",
+                                    "a".repeat(64),
+                                    "userMessage",
+                                    Map.of("role", "user", "content", "searchable submission"))));
+        }
+        assertEquals(1, query("searchable submission", "phrase").hits().size());
+        assertTrue(query("requestHash", "tokens").hits().isEmpty());
+    }
+
     @TempDir Path root;
     JsonlSessionRepository repository;
     TokenSessionSearch search;

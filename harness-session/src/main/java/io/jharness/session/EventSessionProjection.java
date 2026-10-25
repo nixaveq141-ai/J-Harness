@@ -25,6 +25,17 @@ public final class EventSessionProjection implements SessionProjection {
         for (var event : events) {
             if (event.type().equals("request.context")) contexts.put(event.eventId(), event);
             if (event.type().equals("model.requested")
+                    && !(event.payload().get("contextEventId") instanceof String)
+                    && contexts.values().stream()
+                            .anyMatch(
+                                    c ->
+                                            c.sessionId().equals(event.sessionId())
+                                                    && Objects.equals(c.turnId(), event.turnId())
+                                                    && Objects.equals(c.stepId(), event.stepId())))
+                throw new HarnessException(
+                        "REQUEST_CONTEXT_MISSING",
+                        "Request omits its matching final context reference");
+            if (event.type().equals("model.requested")
                     && event.payload().get("contextEventId") instanceof String id) {
                 var context = contexts.get(id);
                 if (context == null

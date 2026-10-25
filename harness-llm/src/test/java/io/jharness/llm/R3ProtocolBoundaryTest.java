@@ -78,4 +78,52 @@ class R3ProtocolBoundaryTest {
                 0,
                 new ModelCapabilities(true, true, false, false, 4096));
     }
+
+    @Test
+    void anthropicStopUsesRequestErrorDomainAndExplicitProductBound() {
+        var codec = new ProtocolCodec(ModelProtocol.ANTHROPIC, "fixture", new ObjectMapper());
+        var request =
+                new ChatRequest(
+                        List.of(Map.of("role", "user", "content", "hello")), List.of(), Map.of());
+        for (Object invalid :
+                List.of(7, Map.of("bad", true), List.of(7), Collections.nCopies(65, "stop")))
+            assertEquals(
+                    "UNSUPPORTED_PARAMETER",
+                    assertThrows(
+                                    HarnessException.class,
+                                    () ->
+                                            codec.encode(
+                                                    Map.of(
+                                                            "stop",
+                                                            invalid,
+                                                            "max_tokens",
+                                                            16,
+                                                            "messages",
+                                                            request.messages()),
+                                                    request))
+                            .code());
+        assertFalse(
+                codec.encode(
+                                Map.of(
+                                        "stop",
+                                        List.of(),
+                                        "max_tokens",
+                                        16,
+                                        "messages",
+                                        request.messages()),
+                                request)
+                        .containsKey("stop_sequences"));
+        assertEquals(
+                List.of("end"),
+                codec.encode(
+                                Map.of(
+                                        "stop",
+                                        List.of("end"),
+                                        "max_tokens",
+                                        16,
+                                        "messages",
+                                        request.messages()),
+                                request)
+                        .get("stop_sequences"));
+    }
 }

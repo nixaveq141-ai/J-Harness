@@ -62,7 +62,11 @@ ConfiguredTokenCostGuard 要求明确模型、已验证输入 token 上界、输
 | NOT_FOUND | 2 | 状态目录不存在该 runId |
 | ALREADY_EXITED | 3 | 记录已退出，幂等无动作 |
 | UNREACHABLE | 4 | 本机端点不可达/状态读取 I/O 失败，可能是崩溃后的过期记录 |
-| INVALID_STATE | 5 | 标识、版本、端口、凭据格式或认证不合法 |
+| INVALID_STATE | 5 | 标识、端口、凭据格式或认证不合法 |
+| OUTCOME_UNKNOWN | 6 | 已发送取消但响应/交付结果未确认，不代表可以自动重试 |
+| UNSUPPORTED_STATE | 7 | 未知记录版本，或旧记录缺可验证进程身份；不发送取消 |
+
+2026-10-25复审核实：新写运行记录 version=2；version1 仅带 processStart 时兼容，禁止凭 PID 发送取消。审批的可插拔取消查询在 pending 锁外执行，回答/到期仍在锁内一次仲裁；采用回答前再次检查取消。详见 [R1–R3复审实施与维护边界](OCR-R1-R3-implementation-2026-10-24.md)。
 
 discover 最多列举 1,000 个状态 ID，包括已退出记录；保留/轮转由后续存储/CLI 管理。CancelMain 提供跨 JVM 可执行入口，Windows 构建后使用 `scripts/jharness-cancel.ps1 -RunId <id> -StateDirectory <专用目录>`。完整 `jharness cancel --run` 命令解析及默认全局状态目录在 M4 接入，本阶段已实现并测试其底层发现/控制/返回码通路。
 

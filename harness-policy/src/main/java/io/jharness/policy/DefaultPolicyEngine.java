@@ -11,6 +11,8 @@ public final class DefaultPolicyEngine implements PolicyEngine {
             cwd = Values.required(cwd, "cwd");
             if (forbiddenPath(cwd))
                 throw new IllegalArgumentException("Invalid trusted command cwd");
+            // Reuse the public command boundary: empty argv, NUL and oversized arguments
+            // must not become trusted templates through a weaker duplicate validator.
             new CommandRequest(
                     "trusted-command",
                     CommandRequest.Mode.ARGV,
@@ -75,6 +77,10 @@ public final class DefaultPolicyEngine implements PolicyEngine {
                 .anyMatch(
                         part ->
                                 part.equals("..")
+                                        || !part.equals(".")
+                                                && (part.endsWith(" ") || part.endsWith("."))
+                                        || part.startsWith("..")
+                                                && part.substring(2).matches("[. ]+")
                                         || part.replaceAll("[. ]+$", "").equalsIgnoreCase(".git")
                                         || part.replaceAll("[. ]+$", "")
                                                 .equalsIgnoreCase(".jharness")

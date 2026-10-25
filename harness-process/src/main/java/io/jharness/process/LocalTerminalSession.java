@@ -237,6 +237,7 @@ public final class LocalTerminalSession implements TerminalSession {
         final Map<Long, ProcessHandle> observed = new ConcurrentHashMap<>();
         volatile String state = "RUNNING";
         volatile boolean outputFailed;
+        volatile boolean outputPending, persistenceFailed;
         volatile boolean terminationUnconfirmed;
         volatile long dropped;
         Thread reader, watcher;
@@ -407,14 +408,16 @@ public final class LocalTerminalSession implements TerminalSession {
 
         synchronized void persist() {
             if (reader != null && reader.isAlive()) {
-                outputFailed = true;
+                outputPending = true;
                 return;
             }
+            outputPending = false;
             if (artifact != null || artifacts == null) return;
             try {
                 artifact = artifacts.put(session, output.toString());
+                persistenceFailed = false;
             } catch (IOException | RuntimeException ex) {
-                outputFailed = true;
+                persistenceFailed = true;
             }
         }
 
@@ -456,7 +459,8 @@ public final class LocalTerminalSession implements TerminalSession {
             if (terminationUnconfirmed && !residualPids.contains(process.pid()))
                 residualPids.add(process.pid());
             result.put("residualPids", residualPids.stream().sorted().toList());
-            result.put("outputFailed", outputFailed);
+            result.put("outputFailed", outputFailed || persistenceFailed);
+            result.put("outputPending", outputPending);
             result.put("outputDrained", reader == null || !reader.isAlive());
             result.put("firstOffset", dropped);
             return Map.copyOf(result);

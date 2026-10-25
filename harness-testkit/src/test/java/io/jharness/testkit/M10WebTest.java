@@ -38,6 +38,29 @@ class M10WebTest {
                                     object(request(host, "GET", "/v1/tasks/" + id, null, true))
                                             .get("phase"))) Thread.sleep(20);
             String path = "/v1/tasks/" + id + "/diagnosis";
+            // Put the secret in a field the diagnosis actually projects, rather than only goal.
+            var facts =
+                    new io.jharness.session.JsonlSessionRepository(
+                            root.resolve("unknown-sessions"));
+            try (var writer = facts.openWriter(id, io.jharness.api.WriteOwnership.EXCLUSIVE)) {
+                writer.append(
+                        new io.jharness.api.SessionEvent(
+                                UUID.randomUUID().toString(),
+                                id,
+                                "turn.ended",
+                                java.time.Instant.now(),
+                                1,
+                                io.jharness.api.EventLevel.TURN,
+                                "diagnostic-fixture-turn",
+                                null,
+                                null,
+                                Map.of(
+                                        "status",
+                                        "FAILED",
+                                        "reason",
+                                        "fixture-secret-do-not-display")));
+                writer.flush();
+            }
             assertEquals(401, request(host, "GET", path, null, false).statusCode());
             var diagnosis = request(host, "GET", path, null, true);
             assertEquals(200, diagnosis.statusCode());
@@ -46,6 +69,7 @@ class M10WebTest {
             assertEquals(id, ((Map<?, ?>) object(diagnosis).get("association")).get("sessionId"));
             assertFalse(diagnosis.body().contains(M10BrowserHost.TOKEN));
             assertFalse(diagnosis.body().contains("fixture-secret-do-not-display"));
+            assertTrue(diagnosis.body().contains("[REDACTED]"));
             assertEquals(405, request(host, "POST", path, Map.of(), true).statusCode());
             assertEquals(
                     "UNKNOWN",

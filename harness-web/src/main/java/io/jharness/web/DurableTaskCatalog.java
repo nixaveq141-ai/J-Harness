@@ -334,6 +334,11 @@ final class DurableTaskCatalog implements SessionWriter {
 
     @Override
     public synchronized String append(SessionEvent event) {
+        return appendPrepared(event).eventId();
+    }
+
+    @Override
+    public synchronized SessionEvent appendPrepared(SessionEvent event) {
         owner.flush();
         validate(event);
         String id = (String) event.payload().get("taskId");
@@ -348,10 +353,11 @@ final class DurableTaskCatalog implements SessionWriter {
             if (history.isEmpty()) throw error("TASK_NOT_FOUND");
             hash = (String) history.getFirst().payload().get("requestHash");
         }
+        SessionEvent persisted = rehome(event, recordId(hash));
         try {
             check();
             try (var writer = records.openWriter(recordId(hash), WriteOwnership.EXCLUSIVE)) {
-                writer.append(rehome(event, recordId(hash)));
+                writer.append(persisted);
                 writer.flush();
             }
         } catch (IOException ex) {
@@ -360,7 +366,7 @@ final class DurableTaskCatalog implements SessionWriter {
         recent.put(id, hash);
         if (recent.size() > 32) recent.remove(recent.keySet().iterator().next());
         if (accepted) count++;
-        return event.eventId();
+        return persisted;
     }
 
     @Override

@@ -20,7 +20,7 @@ class R1WorkbenchTransactionTest {
 
     class Vault extends SystemCredentials {
         final Map<String, String> values = new HashMap<>();
-        boolean failWrite, failDelete, sabotage;
+        boolean failWrite, failBeforeWrite, failDelete, sabotage;
 
         boolean supported() {
             return true;
@@ -31,8 +31,9 @@ class R1WorkbenchTransactionTest {
         }
 
         void write(String target, String value) throws IOException {
-            if (failWrite) throw new IOException("unavailable");
+            if (failBeforeWrite) throw new IOException("known failure before write");
             values.put(target, value);
+            if (failWrite) throw new IOException("CREDENTIAL_UPDATE_UNKNOWN");
         }
 
         void delete(String target) throws IOException {
@@ -72,6 +73,14 @@ class R1WorkbenchTransactionTest {
         var settings = manager(vault);
         settings.save(input(settings, "synthetic-original-secret"));
         byte[] before = Files.readAllBytes(root.resolve(".jharness/settings/workbench.json"));
+        vault.failBeforeWrite = true;
+        assertThrows(
+                IOException.class,
+                () -> settings.save(input(settings, "synthetic-rejected-before-write")));
+        assertArrayEquals(
+                before, Files.readAllBytes(root.resolve(".jharness/settings/workbench.json")));
+        assertEquals(Set.of("synthetic-original-secret"), new HashSet<>(vault.values.values()));
+        vault.failBeforeWrite = false;
         vault.failWrite = true;
         assertThrows(
                 IOException.class,

@@ -10,7 +10,7 @@ import evidence_run
 ROOT = Path(__file__).resolve().parents[1]
 JAR = 'harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar'
 IMAGE = 'eclipse-temurin@sha256:ccbad9e7cb84c27092b12c40a4143e5733e050db9c3784d84f632dcf423fb2ef'
-DOCKER = 'C:/Users/Lenovo/AppData/Local/Programs/DockerDesktop/resources/bin/docker.exe'
+DOCKER = os.environ.get('JHARNESS_DOCKER', '')
 GROUPS = ('native', 'windows-compat', 'docker-subagent', 'web-docker')
 NATIVE = ('available', 'missing', 'writeRestartRead', 'rotateRestartRead', 'deleteRestartRead', 'deleteMissing', 'cleanup')
 COMPAT = ('oldWriteNewRead', 'newRotateOldRead', 'newDeleteOldRead', 'cleanup')
@@ -34,21 +34,18 @@ def runtime():
     require(os.name == 'nt', 'R1 supplemental requires real local Windows; unsupported is not PASS')
     java = Path(os.environ['JAVA_HOME']) / 'bin/java.exe'
     require(java.is_absolute() and java.is_file(), 'Missing explicit Java runtime')
+    require(Path(DOCKER).is_absolute() and Path(DOCKER).is_file(), 'Missing explicit JHARNESS_DOCKER executable')
     return {str(p.resolve()): stream_sha256(p) for p in (Path(sys.executable), java, Path(DOCKER))}
 
 
 def report_path(name, destination):
-    if name == 'native':
-        return ROOT / '.build-cache/M10.5.4-native-credentials.json'
-    if name == 'windows-compat':
-        return ROOT / '.build-cache/R1/windows-compat.json'
     return destination / (name + '.json')
 
 
 def command_for(name, destination):
     if name in ('native', 'windows-compat'):
         script = 'test-native-credentials.py' if name == 'native' else 'test-windows-credential-compat.py'
-        return [sys.executable, 'scripts/' + script]
+        return [sys.executable, 'scripts/' + script, '--output', report_path(name, destination).relative_to(ROOT).as_posix()]
     probe = 'M7SubagentDockerProbe' if name == 'docker-subagent' else 'M7WebDockerProbe'
     java = str(Path(os.environ['JAVA_HOME']) / 'bin/java.exe')
     cp = os.pathsep.join([str(ROOT / 'harness-testkit/target/test-classes'), str(ROOT / 'harness-testkit/target/classes'), str(ROOT / JAR)])
@@ -152,9 +149,9 @@ def collect(relative, run_id):
     require(evidence_run.valid_run_id(run_id), 'Explicit safe run ID required')
     destination = bounded_path(ROOT, relative, must_exist=False)
     require(not destination.exists(), 'Supplemental destination must be fresh')
-    destination.mkdir(parents=True)
     report = dict(schemaVersion=1, runId=run_id, status='INCOMPLETE', m11Eligible=False,
                   sourceSha256=evidence_run.inputs(ROOT), artifacts=artifacts(), runtime=runtime(), commands=[], passingCases=[])
+    destination.mkdir(parents=True)
     output = destination / 'results.json'
     atomic_write_json(output, report)
     try:

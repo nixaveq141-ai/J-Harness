@@ -201,7 +201,9 @@ class R1RemainingOwnershipFaultTest {
         assertEquals(64, process.children.stream().filter(value -> !value.get()).count());
         assertTrue(process.children.get(64).get(), "unretained child must not be reported killed");
         assertEquals(3, process.streamCloses.get());
-        transport.close();
+        assertEquals(
+                "MCP_CLEANUP_UNKNOWN",
+                assertThrows(HarnessException.class, transport::close).code());
         assertEquals(3, process.streamCloses.get());
     }
 
@@ -269,11 +271,11 @@ class R1RemainingOwnershipFaultTest {
         field.setAccessible(true);
         ((HttpClient) field.get(plugin)).shutdownNow();
         field.set(plugin, client);
-        var checks = new AtomicInteger();
+        var cancellationHandoff = new AtomicBoolean();
         var cancelled = new AtomicBoolean();
         CancellationToken token =
                 () -> {
-                    if (checks.incrementAndGet() == 2) {
+                    if (requests.get() == 1 && cancellationHandoff.compareAndSet(false, true)) {
                         // The callback sees false before the await owner sees cancellation. Thus
                         // pending is complete while active never acquires ownership of its body.
                         if (beforeCancellation) pending.complete(response);

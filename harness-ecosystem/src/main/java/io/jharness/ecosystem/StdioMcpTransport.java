@@ -17,6 +17,8 @@ public final class StdioMcpTransport implements McpTransport {
     private final OutputStream output;
     private final Duration timeout;
     private final AtomicBoolean closed = new AtomicBoolean();
+    private boolean cleanupUnknown;
+    private final Object closeLock = new Object();
 
     public StdioMcpTransport(List<String> command, Path cwd, Duration timeout) throws IOException {
         this(() -> start(command, cwd, timeout), timeout);
@@ -62,7 +64,11 @@ public final class StdioMcpTransport implements McpTransport {
                                     int count;
                                     while ((count = errors.read(buffer)) != -1)
                                         if ((size += count) > 8 * 1024 * 1024) {
-                                            close();
+                                            try {
+                                                close();
+                                            } catch (HarnessException unavailable) {
+                                                /* Owner close reports retained cleanupUnknown. */
+                                            }
                                             break;
                                         }
                                 } catch (IOException ignored) {
@@ -117,7 +123,9 @@ public final class StdioMcpTransport implements McpTransport {
 
     @Override
     public void close() {
-        if (!closed.compareAndSet(false, true)) return;
-        if (!ProcessCleanup.stop(process)) throw BoundedJson.error("MCP_CLEANUP_UNKNOWN");
+        synchronized (closeLock) {
+            if (closed.compareAndSet(false, true)) cleanupUnknown = !ProcessCleanup.stop(process);
+            if (cleanupUnknown) throw BoundedJson.error("MCP_CLEANUP_UNKNOWN");
+        }
     }
 }

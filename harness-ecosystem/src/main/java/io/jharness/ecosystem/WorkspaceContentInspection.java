@@ -97,6 +97,8 @@ public final class WorkspaceContentInspection implements ContentInspection {
                                             pathAllowed(itemPath);
                                             return true;
                                         } catch (HarnessException denied) {
+                                            if (!Set.of("PATH_DENIED", "INSPECTION_DENIED")
+                                                    .contains(denied.code())) throw denied;
                                             return false;
                                         }
                                     })

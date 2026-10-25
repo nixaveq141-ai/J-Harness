@@ -201,7 +201,8 @@
         "implementation artifact hashes are separate from the static review inputs",
         "read-only verifier rejects changed progress without rewriting historical data",
         "read-only verifier rejects changed markdown without rewriting historical data",
-        "read-only verifier rejects changed manifest without rewriting historical data"
+        "read-only verifier rejects changed manifest without rewriting historical data",
+        "phase snapshots validate counters, run identity and aliases"
       ]
     },
     {
@@ -252,7 +253,8 @@
         "r0_test_r1_implementation.R1ImplementationEvidenceTest.test_original_partial_scope_and_assignment_cannot_be_changed",
         "r0_test_r1_implementation.R1ImplementationEvidenceTest.test_partial_verification_requires_an_explicit_limitation",
         "r0_test_r1_implementation.R1ImplementationEvidenceTest.test_validation_is_read_only",
-        "r0_test_r1_implementation.R1ImplementationEvidenceTest.test_work_in_progress_is_not_completion_even_with_a_test_reference"
+        "r0_test_r1_implementation.R1ImplementationEvidenceTest.test_work_in_progress_is_not_completion_even_with_a_test_reference",
+        "r0_test_r1_implementation.R1ImplementationEvidenceTest.test_passing_cases_reads_node_ndjson_by_format_including_new_groups"
       ]
     },
     {
@@ -327,7 +329,36 @@
         "r0_test_r3_provider.ClientCleanupTest.test_context_exit_preserves_primary_exception_on_cleanup_failure",
         "r0_test_r3_provider.ProviderBoundaryTest.test_invalid_length_and_json_shape_have_controlled_errors",
         "r0_test_r3_provider.ProviderBoundaryTest.test_partial_body_times_out_and_releases_connection",
-        "r0_test_r3_provider.ProviderBoundaryTest.test_valid_messages_produce_complete_local_tool_response"
+        "r0_test_r3_provider.ProviderBoundaryTest.test_valid_messages_produce_complete_local_tool_response",
+        "r0_test_r3_provider.ClientCleanupTest.test_consumed_response_does_not_create_a_permanent_timeout_tombstone",
+        "r0_test_r3_provider.ClientCleanupTest.test_oserror_attempts_kill_and_preserves_primary_diagnostic"
+      ]
+    },
+    {
+      "name": "r123r-evidence",
+      "kind": "python",
+      "role": "gate",
+      "path": "scripts/test-r123r-evidence.py",
+      "caseIds": [
+        "r0_test_r123r_evidence.R123EvidenceTest.test_coverage_rejects_incomplete_duplicate_or_changed_original",
+        "r0_test_r123r_evidence.R123EvidenceTest.test_coverage_requires_passed_identity_and_real_bounded_source",
+        "r0_test_r123r_evidence.R123EvidenceTest.test_native_and_compat_reports_are_owned_by_each_fresh_run",
+        "r0_test_r123r_evidence.R123EvidenceTest.test_native_launch_failure_replaces_stale_pass_before_start",
+        "r0_test_r123r_evidence.R123EvidenceTest.test_native_output_parent_is_created_before_child_launch",
+        "r0_test_r123r_evidence.R123EvidenceTest.test_rejected_scope_cannot_be_promoted"
+      ]
+    },
+    {
+      "name": "fixture-cleanup",
+      "kind": "node",
+      "role": "gate",
+      "cwd": "frontend",
+      "path": "tests/cleanup.test.mjs",
+      "caseIds": [
+        "fixture cleanup preserves primary and attempts every remaining owner",
+        "cleanup failure without a primary prevents a success result",
+        "frozen primary and failing diagnostic still preserve the original failure",
+        "successful cleanup does not diagnose or alter the primary"
       ]
     }
   ]

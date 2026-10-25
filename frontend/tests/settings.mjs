@@ -5,6 +5,7 @@ import { mkdir, writeFile, readFile, readdir } from 'node:fs/promises'
 import { join, resolve, delimiter, relative } from 'node:path'
 import { createHash, randomUUID } from 'node:crypto'
 import assert from 'node:assert/strict'
+import { cleanupFixture } from './cleanup.mjs'
 
 const stoppedOrigins=new Set(),transportDiagnostics=[]
 const root = resolve(import.meta.dirname, '../..'), out = join(root, '.build-cache')
@@ -13,7 +14,7 @@ const jar = join(root, 'harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar')
 const java = join(process.env.JAVA_HOME, process.platform==='win32'?'bin/java.exe':'bin/java')
 const token = 'settings_browser_0123456789_ABCDEFGHIJKLMNOPQRSTUVWXYZ', secret = `synthetic-${randomUUID()}`
 const checks = [], wire = [], screenshots = [], pageErrors = []
-let host, hostOutput = '', base, browser, page, context, held, block = true, toolSent = false, permissionProbe = false, result
+let host, hostOutput = '', base, browser, page, context, held, block = true, toolSent = false, permissionProbe = false, result, primaryFailure
 const wait = ms => new Promise(r => setTimeout(r, ms))
 async function until(predicate, timeout = 20000) { const start = Date.now(); while (Date.now() - start < timeout) { if (await predicate()) return; await wait(100) } throw new Error('Timed out awaiting fixture condition') }
 function check(name, condition = true) { assert.ok(condition, name); checks.push({ name, passed: true }); console.log('PASS', name) }
@@ -155,6 +156,7 @@ try {
   check('no unexpected browser runtime errors', pageErrors.length === 0)
   result = { date: new Date().toISOString(), platform: process.platform, browser: browser.version(), checks, screenshots,transportDiagnostics, modelRequests: wire.length, paidRequests: 0, jarSha256: createHash('sha256').update(await readFile(jar)).digest('hex') }
 } catch (error) {
+  primaryFailure = error
   if (page && !page.isClosed()) console.error('SETTINGS_FAILURE_STATE', JSON.stringify(await page.evaluate(() => ({
     goal: document.querySelector('textarea[aria-label="任务目标"]')?.value ?? null,
     createDisabled: document.querySelector('button[aria-label="创建任务"]')?.disabled ?? null,
@@ -164,12 +166,17 @@ try {
   })).catch(() => ({ unavailable: true }))))
   throw error
 } finally {
-  block = false; held?.()
-  await stop().catch(() => { host?.kill() })
-  await browser?.close()
-  provider.closeAllConnections(); await new Promise(r => provider.close(r))
-  const cleanup = spawn(java, ['-cp', [join(root, 'harness-cli/target/test-classes'), jar].join(delimiter), 'io.jharness.cli.WorkbenchCredentialCleanup', workspace], { cwd: root, stdio: 'pipe', windowsHide: true })
-  let cleanupOutput = ''; cleanup.stdout.on('data', d => { cleanupOutput += d }); cleanup.stderr.on('data', d => { cleanupOutput += d })
-  const code = await new Promise(r => cleanup.on('exit', r)); assert.equal(code, 0, 'Credential cleanup failed'); console.log('FIXTURE_CREDENTIALS_CLEAN')
+  await cleanupFixture(primaryFailure, [
+    () => { block = false; held?.() },
+    () => stop().catch(() => { host?.kill() }),
+    () => browser?.close(),
+    async () => { provider.closeAllConnections(); await new Promise(r => provider.close(r)) },
+    async () => {
+      const cleanup = spawn(java, ['-cp', [join(root, 'harness-cli/target/test-classes'), jar].join(delimiter), 'io.jharness.cli.WorkbenchCredentialCleanup', workspace], { cwd: root, stdio: 'pipe', windowsHide: true })
+      cleanup.stdout.resume(); cleanup.stderr.resume()
+      const code = await new Promise((resolve, reject) => { cleanup.once('error', () => reject(new Error('CREDENTIAL_CLEANUP_START_FAILED'))); cleanup.once('exit', resolve) })
+      assert.equal(code, 0, 'Credential cleanup failed'); console.log('FIXTURE_CREDENTIALS_CLEAN')
+    },
+  ])
 }
 await writeFile(join(out, 'M10-settings-browser-results.json'), JSON.stringify({ ...result, fixtureCredentialsCleaned: true }, null, 2))

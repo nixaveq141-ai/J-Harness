@@ -167,7 +167,6 @@ public final class CliConfig {
             if (values.containsKey(price) && decimal(price).signum() < 0)
                 throw new HarnessException("INVALID_CONFIG", "Negative model price");
         if (values.containsKey("inputTokenCeiling")) integer("inputTokenCeiling", 0, 1, 1000000);
-        if (values.containsKey("maxCost")) costs();
         if (values.containsKey("maxCost") && decimal("maxCost").signum() <= 0)
             throw new HarnessException("INVALID_CONFIG", "maxCost must be positive");
     }
@@ -226,7 +225,7 @@ public final class CliConfig {
     }
 
     int maxOutputTokens() {
-        return integer("maxOutputTokens", 4096, 1, 32768);
+        return integer("maxOutputTokens", Math.min(4096, contextTokens()), 1, 32768);
     }
 
     String currency() {
@@ -280,7 +279,9 @@ public final class CliConfig {
 
     ApiCostGuard costs() {
         if (!values.containsKey("maxCost")) return ApiCostGuard.unavailable();
-        if (!values.containsKey("inputPerMillion") || !values.containsKey("outputPerMillion"))
+        if (!values.containsKey("inputPerMillion")
+                || !values.containsKey("outputPerMillion")
+                || !values.containsKey("inputTokenCeiling"))
             throw new HarnessException(
                     "COST_BUDGET_UNAVAILABLE",
                     "Configure verified model prices and inputTokenCeiling");

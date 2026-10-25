@@ -9,7 +9,10 @@ public interface SessionWriter extends AutoCloseable {
 
     String append(SessionEvent event);
 
-    /** Append and return the exact safe event persisted, for identical observer publication. */
+    /**
+     * Append and return the exact safe event persisted, for identical observer publication. Writers
+     * that sanitize, rehome or otherwise transform events MUST override this method.
+     */
     default SessionEvent appendPrepared(SessionEvent event) {
         append(event);
         return event;

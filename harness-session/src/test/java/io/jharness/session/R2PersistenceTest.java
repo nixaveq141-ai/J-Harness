@@ -115,14 +115,16 @@ class R2PersistenceTest {
                         "p",
                         null,
                         Map.of("role", "assistant", "content", "ambiguous"));
-        assertEquals(
-                "AMBIGUOUS_MODEL_REQUEST",
-                assertThrows(
-                                HarnessException.class,
-                                () -> SessionRecovery.inspect(List.of(a, b, reply)))
-                        .code());
-        assertTrue(SessionRecovery.isRequestPending(List.of(a, b), "a"));
-        assertTrue(SessionRecovery.isRequestPending(List.of(a, b), "b"));
+        var ambiguous = List.of(a, b, reply);
+        assertFalse(SessionRecovery.inspect(ambiguous).ready());
+        assertTrue(SessionRecovery.isRequestPending(ambiguous, "a"));
+        assertTrue(SessionRecovery.isRequestPending(ambiguous, "b"));
+        var verified = new ArrayList<>(ambiguous);
+        verified.add(
+                SessionEvent.session(
+                        "s", "model.verified", Map.of("sourceEvent", "a", "stepId", "p")));
+        assertFalse(SessionRecovery.isRequestPending(verified, "a"));
+        assertTrue(SessionRecovery.isRequestPending(verified, "b"));
     }
 
     private String seed(JsonlSessionRepository repository, String id) {
@@ -207,13 +209,22 @@ class R2PersistenceTest {
 
     @Test
     void eventBudgetIsCheckedBeforeArtifactPreparation() throws Exception {
-        var repo = new JsonlSessionRepository(root);
+        // This case checks the event budget, not 10000 physical durability barriers.
+        // JsonlSessionRepositoryTest separately exercises real force and failure poisoning.
+        var barriers = new java.util.concurrent.atomic.AtomicInteger();
+        var repo =
+                new JsonlSessionRepository(
+                        root,
+                        JsonlSessionRepository.TailPolicy.REJECT,
+                        channel -> barriers.incrementAndGet(),
+                        code -> {});
         String last = "";
         try (var writer = repo.openWriter("source", WriteOwnership.EXCLUSIVE)) {
             for (int i = 0; i < 10000; i++)
                 last = writer.append(SessionEvent.session("source", "fact", Map.of()));
         }
         String end = last;
+        assertTrue(barriers.get() >= 10000);
         var prepared = new AtomicBoolean();
         assertEquals(
                 "SESSION_LIMIT",
@@ -354,6 +365,27 @@ class R2PersistenceTest {
                                 "parameters",
                                 Map.of()));
         assertTrue(new EventSessionProjection(List.of(context)).messages().isEmpty());
+        var requestWithoutReference =
+                new SessionEvent(
+                        "omitted",
+                        "s",
+                        "model.requested",
+                        Instant.EPOCH,
+                        1,
+                        EventLevel.STEP,
+                        "t",
+                        "p",
+                        null,
+                        Map.of());
+        assertEquals(
+                "REQUEST_CONTEXT_MISSING",
+                assertThrows(
+                                HarnessException.class,
+                                () ->
+                                        new EventSessionProjection(
+                                                List.of(context, requestWithoutReference)))
+                        .code());
+        assertDoesNotThrow(() -> new EventSessionProjection(List.of(requestWithoutReference)));
         assertEquals(
                 "INVALID_EVENT",
                 assertThrows(

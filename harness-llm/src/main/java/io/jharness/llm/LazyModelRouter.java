@@ -61,7 +61,10 @@ public final class LazyModelRouter implements ModelRouter {
             synchronized (this) {
                 abandoned = closed;
                 creating.remove(route, creation);
-                if (!abandoned) clients.put(route, client);
+                if (!abandoned) {
+                    clients.put(route, client);
+                    creation.future().complete(client);
+                }
             }
             if (abandoned) {
                 var failure =
@@ -81,11 +84,11 @@ public final class LazyModelRouter implements ModelRouter {
                 }
                 throw failure;
             }
-            creation.future().complete(client);
             return client;
         } catch (RuntimeException | Error failure) {
             synchronized (this) {
                 creating.remove(route, creation);
+                if (!clients.containsKey(route)) closeFailures.remove(route, "FACTORY_PENDING");
             }
             creation.future().completeExceptionally(failure);
             throw failure;

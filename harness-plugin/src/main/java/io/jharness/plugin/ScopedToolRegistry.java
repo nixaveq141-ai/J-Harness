@@ -11,15 +11,21 @@ public final class ScopedToolRegistry implements ToolRegistry {
     public Registration register(AgentTool tool, PluginScope scope) {
         Objects.requireNonNull(tool);
         Objects.requireNonNull(scope);
-        Key key = new Key(Values.required(tool.name(), "tool name"), scope);
+        Key key;
+        String declarationName = null;
         try {
+            declarationName = Values.required(tool.name(), "tool name");
+            key = new Key(declarationName, scope);
             Objects.requireNonNull(tool.description(), "tool description");
             Objects.requireNonNull(tool.sideEffectLevel(), "tool sideEffectLevel");
             new JsonSchema().checkSchema(tool.inputSchema());
             new JsonSchema().checkSchema(tool.outputSchema());
         } catch (RuntimeException ex) {
             throw new HarnessException(
-                    "INVALID_TOOL_DECLARATION", "Invalid declaration for tool: " + key.name, ex);
+                    "INVALID_TOOL_DECLARATION",
+                    "Invalid declaration for tool: "
+                            + (declarationName == null ? "[unnamed]" : declarationName),
+                    ex);
         }
         synchronized (this) {
             if (tools.containsKey(key))

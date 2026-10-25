@@ -60,6 +60,8 @@ final class DryRunPipeline implements ToolPipeline {
                             "FILE_NOT_FOUND",
                             "FILE_CONFLICT",
                             "EDIT_MATCH_CONFLICT",
+                            "FILE_LIMIT",
+                            "PREVIEW_IO",
                             "INVALID_EDIT")
                     .contains(ex.code())) throw ex;
             plan = Map.of("previewable", false, "executed", false, "reason", ex.code());

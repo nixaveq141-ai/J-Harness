@@ -63,10 +63,11 @@ public final class BoundedModelExecution implements ModelExecution, AutoCloseabl
                         check(bounded, cancellation, start);
                         active = true;
                         acquired = true;
+                        waiters--;
                     }
                 } finally {
                     synchronized (this) {
-                        waiters--;
+                        if (!acquired) waiters--;
                     }
                 }
             }

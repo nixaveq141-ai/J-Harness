@@ -2,7 +2,7 @@
 import argparse
 import importlib.util
 from pathlib import Path
-from evidence_io import bounded_path, read_json_snapshot
+from evidence_io import bounded_path, read_json_snapshot, strict_json_loads
 
 ROOT = Path(__file__).resolve().parents[1]
 LEDGER = 'docs/development/OCR-R1-implementation-2026-10-21.json'
@@ -51,18 +51,30 @@ def validate_ledger(data, expected, *, root=ROOT, passed=None, complete=False):
 
 
 def passing_cases(report):
+    spec = importlib.util.spec_from_file_location('_r1_case_reader', Path(__file__).with_name('run-r0-validation.py'))
+    common = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(common)
     result = set()
     for entry in report['commands']:
         name = entry['name']
-        snapshot = read_json_snapshot(ROOT, entry['cases']) if name not in ('workbench-evidence', 'ocr-progress', 'client') else None
+        path = bounded_path(ROOT, entry['cases'])
+        with path.open('rb') as stream:
+            raw = stream.read(16 * 1024 * 1024 + 1)
+        require(len(raw) <= 16 * 1024 * 1024, 'R1 case report exceeds limit')
+        try:
+            data = strict_json_loads(raw)
+        except ValueError:
+            data = common.node_cases(raw)
+        if isinstance(data, dict) and data.get('type') in ('case', 'summary'):
+            data = common.node_cases(raw)
         if name == 'java':
-            for suite in snapshot.data['suites']:
+            for suite in data['suites']:
                 result.add(suite['name'])
                 for case in suite['cases']:
                     result.add(suite['name'] + '#' + case)
                     result.add(suite['module'] + '/src/test/java/' + suite['name'].replace('.', '/') + '.java#' + case)
-        elif snapshot is not None:
-            result.update(c['caseId'] for c in snapshot.data['cases'] if c['outcome'] == 'PASS')
+        else:
+            result.update(c['caseId'] for c in data['cases'] if c['outcome'] == 'PASS')
     return result
 
 

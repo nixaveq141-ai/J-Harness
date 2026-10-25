@@ -89,6 +89,7 @@ public final class TaskDiagnosis {
                     value,
                     row,
                     "cleanupStatus",
+                    "containerCleanup",
                     "observedClean",
                     "timedOut",
                     "cancelled",
@@ -152,6 +153,7 @@ public final class TaskDiagnosis {
                 project(
                         object(source.get("value")),
                         "cleanupStatus",
+                        "containerCleanup",
                         "sideEffectsMayHaveOccurred",
                         "sideEffectUncertain",
                         "observedClean",

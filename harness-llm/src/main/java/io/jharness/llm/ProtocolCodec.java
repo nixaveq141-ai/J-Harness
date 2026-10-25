@@ -104,13 +104,14 @@ final class ProtocolCodec {
                 result.put("thinking", Map.of("type", "disabled"));
             if (result.containsKey("stop")) {
                 Object stop = result.remove("stop");
+                if (!(stop instanceof String) && !(stop instanceof List<?>))
+                    throw error("UNSUPPORTED_PARAMETER");
                 List<?> stops = stop instanceof String ? List.of(stop) : list(stop);
-                if (stops.isEmpty()
-                        || stops.size() > 4
+                if (stops.size() > 64
                         || stops.stream()
                                 .anyMatch(v -> !(v instanceof String text) || text.isEmpty()))
                     throw error("UNSUPPORTED_PARAMETER");
-                result.put("stop_sequences", stops);
+                if (!stops.isEmpty()) result.put("stop_sequences", stops);
             }
             if (!result.containsKey("max_tokens")) throw error("UNSUPPORTED_PARAMETER");
             var messages = new ArrayList<Map<String, Object>>();

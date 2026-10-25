@@ -11,6 +11,87 @@ import org.junit.jupiter.api.Timeout;
 
 @Timeout(10)
 class R1EventSafetyTest {
+    @Test
+    void saturatedDiagnosticDoesNotHoldBusMonitorAndBarrierWaitsForAdmission() throws Exception {
+        var listenerEntered = new CountDownLatch(1);
+        var releaseListener = new CountDownLatch(1);
+        var diagnosticEntered = new CountDownLatch(1);
+        var releaseDiagnostic = new CountDownLatch(1);
+        try (var workers = Executors.newVirtualThreadPerTaskExecutor();
+                var bus =
+                        new DefaultEventBus(
+                                failure -> {
+                                    diagnosticEntered.countDown();
+                                    try {
+                                        releaseDiagnostic.await();
+                                    } catch (InterruptedException interrupted) {
+                                        Thread.currentThread().interrupt();
+                                    }
+                                })) {
+            bus.notify(
+                    "*",
+                    event -> {
+                        listenerEntered.countDown();
+                        try {
+                            releaseListener.await();
+                        } catch (InterruptedException interrupted) {
+                            Thread.currentThread().interrupt();
+                        }
+                    });
+            bus.publish(event());
+            assertTrue(listenerEntered.await(1, TimeUnit.SECONDS));
+            for (int i = 0; i < 256; i++) bus.publish(event());
+            var saturated = workers.submit(() -> bus.publish(event()));
+            try {
+                assertTrue(diagnosticEntered.await(1, TimeUnit.SECONDS));
+                var registration = workers.submit(() -> bus.notify("other", event -> {}));
+                registration.get(1, TimeUnit.SECONDS).close();
+                var barrier = workers.submit(() -> bus.awaitNotifications(Duration.ofSeconds(3)));
+                releaseListener.countDown();
+                barrier.get(3, TimeUnit.SECONDS);
+            } finally {
+                releaseListener.countDown();
+                releaseDiagnostic.countDown();
+                saturated.get(2, TimeUnit.SECONDS);
+            }
+        }
+    }
+
+    @Test
+    void cancelledSerialTaskThatNeverStartedDoesNotPoisonTheBus() throws Exception {
+        var release = new CountDownLatch(1);
+        var entered = new CountDownLatch(1);
+        try (var bus = new DefaultEventBus(failure -> {})) {
+            var field = DefaultEventBus.class.getDeclaredField("serialWorker");
+            field.setAccessible(true);
+            ((ExecutorService) field.get(bus)).close();
+            var executor = Executors.newSingleThreadExecutor();
+            field.set(bus, executor);
+            executor.submit(
+                    () -> {
+                        entered.countDown();
+                        try {
+                            release.await();
+                        } catch (InterruptedException ex) {
+                            Thread.currentThread().interrupt();
+                        }
+                    });
+            try {
+                assertTrue(entered.await(1, TimeUnit.SECONDS));
+                bus.serial("*", event -> {}, 0, Duration.ofMillis(300));
+                assertEquals(
+                        "SERIAL_TIMEOUT",
+                        assertThrows(HarnessException.class, () -> bus.publishSerial(event()))
+                                .code());
+                release.countDown();
+                executor.submit(() -> {}).get(2, TimeUnit.SECONDS);
+                assertDoesNotThrow(() -> bus.publishSerial(event()));
+            } finally {
+                release.countDown();
+            }
+        }
+    }
+
     static SessionEvent event() {
         return SessionEvent.session("s", "fixture", Map.of());
     }

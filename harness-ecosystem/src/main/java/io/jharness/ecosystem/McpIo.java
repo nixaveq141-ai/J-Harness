@@ -65,6 +65,9 @@ final class McpIo {
         } catch (HarnessException ex) {
             primary = ex;
             throw ex;
+        } catch (RuntimeException | Error ex) {
+            primary = ex;
+            throw ex;
         } finally {
             if (primary != null || !result.isDone() || result.isCompletedExceptionally()) {
                 try {

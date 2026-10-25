@@ -107,6 +107,13 @@ class SystemCredentials {
     private String invoke(List<Map<String, String>> operations) throws IOException {
         try {
             NativeCredentials.validateOperations(operations);
+            byte[] encoded = Json.text(operations).getBytes(StandardCharsets.UTF_8);
+            try {
+                if (encoded.length > 65536)
+                    throw new IllegalArgumentException("Credential request limit");
+            } finally {
+                Arrays.fill(encoded, (byte) 0);
+            }
         } catch (IllegalArgumentException | HarnessException invalid) {
             throw new HarnessException(
                     "CREDENTIAL_OPERATION_INVALID", "Invalid credential operation");
@@ -138,20 +145,27 @@ class SystemCredentials {
         boolean mutating =
                 operations.stream()
                         .anyMatch(op -> Set.of("write", "delete").contains(op.get("action")));
-        byte[] request = Json.text(operations).getBytes(StandardCharsets.UTF_8);
-        var workers = java.util.concurrent.Executors.newVirtualThreadPerTaskExecutor();
-        var sent =
-                workers.submit(
-                        () -> {
-                            try (var input = process.getOutputStream()) {
-                                input.write(request);
-                            } finally {
-                                Arrays.fill(request, (byte) 0);
-                            }
-                            return true;
-                        });
-        var received = workers.submit(() -> process.getInputStream().readNBytes(2049));
+        byte[] request = null;
+        java.util.concurrent.ExecutorService workers = null;
+        java.util.concurrent.Future<Boolean> sent = null;
+        java.util.concurrent.Future<byte[]> received = null;
+        byte[] bytes = null, decoded = null;
         try {
+            request = Json.text(operations).getBytes(StandardCharsets.UTF_8);
+            if (request.length > 65536) throw new IOException("CREDENTIAL_OPERATION_INVALID");
+            byte[] sending = request;
+            workers = java.util.concurrent.Executors.newVirtualThreadPerTaskExecutor();
+            sent =
+                    workers.submit(
+                            () -> {
+                                try (var input = process.getOutputStream()) {
+                                    input.write(sending);
+                                } finally {
+                                    Arrays.fill(sending, (byte) 0);
+                                }
+                                return true;
+                            });
+            received = workers.submit(() -> process.getInputStream().readNBytes(2049));
             if (!process.waitFor(7, TimeUnit.SECONDS))
                 throw new IOException(
                         mutating ? "CREDENTIAL_UPDATE_UNKNOWN" : "CREDENTIAL_WORKER_TIMEOUT");
@@ -163,10 +177,11 @@ class SystemCredentials {
                                         ? "CREDENTIAL_OPERATION_INVALID"
                                         : "CREDENTIAL_STORE_UNAVAILABLE");
             sent.get(1, TimeUnit.SECONDS);
-            byte[] bytes = received.get(1, TimeUnit.SECONDS);
+            bytes = received.get(1, TimeUnit.SECONDS);
             if (bytes.length > 2048) throw new IOException("Credential store response limit");
             try {
-                return new String(Base64.getDecoder().decode(bytes), StandardCharsets.UTF_8);
+                decoded = Base64.getDecoder().decode(bytes);
+                return new String(decoded, StandardCharsets.UTF_8);
             } catch (IllegalArgumentException invalid) {
                 throw new IOException("Credential store response invalid");
             }
@@ -179,13 +194,19 @@ class SystemCredentials {
             throw new IOException(
                     mutating ? "CREDENTIAL_UPDATE_UNKNOWN" : "CREDENTIAL_WORKER_FAILED");
         } catch (IOException failure) {
-            if (mutating) throw new IOException("CREDENTIAL_UPDATE_UNKNOWN");
+            if (mutating
+                    && !Set.of("CREDENTIAL_OPERATION_INVALID", "CREDENTIAL_STORE_UNAVAILABLE")
+                            .contains(String.valueOf(failure.getMessage())))
+                throw new IOException("CREDENTIAL_UPDATE_UNKNOWN");
             throw failure;
         } finally {
+            if (request != null) Arrays.fill(request, (byte) 0);
+            if (bytes != null) Arrays.fill(bytes, (byte) 0);
+            if (decoded != null) Arrays.fill(decoded, (byte) 0);
             process.destroyForcibly();
-            sent.cancel(true);
-            received.cancel(true);
-            workers.shutdownNow();
+            if (sent != null) sent.cancel(true);
+            if (received != null) received.cancel(true);
+            if (workers != null) workers.shutdownNow();
             try {
                 process.getOutputStream().close();
             } catch (IOException ignored) {

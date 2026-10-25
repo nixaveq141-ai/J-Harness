@@ -182,6 +182,15 @@ class R1CoreLifecycleTest {
             var prepared = f.prepare();
             var result = prepared.run();
             assertEquals(
+                    "RESULT_STATUS_MISMATCH",
+                    assertThrows(
+                                    HarnessException.class,
+                                    () ->
+                                            prepared.finish(
+                                                    ToolResults.failure(
+                                                            "id", ToolStatus.FAILED, "invented")))
+                            .code());
+            assertEquals(
                     "RESULT_CALL_MISMATCH",
                     assertThrows(HarnessException.class, () -> prepared.finish(ok("other")))
                             .code());
@@ -738,7 +747,9 @@ class R1CoreLifecycleTest {
             release.countDown();
             var error =
                     assertThrows(ExecutionException.class, () -> future.get(4, TimeUnit.SECONDS));
-            assertInstanceOf(HarnessException.class, error.getCause());
+            assertEquals(
+                    "SCHEDULER_CLOSED",
+                    assertInstanceOf(HarnessException.class, error.getCause()).code());
             assertEquals(0, bodies.get());
             assertEquals(1, finishes.get());
         }
@@ -940,6 +951,81 @@ class R1CoreLifecycleTest {
                 assertTrue(ToolBatchExecution.unknownOutcome(result));
                 assertFalse(new EventSessionProjection(f.events()).uncertainCalls().isEmpty());
             }
+        }
+    }
+
+    @Test
+    void schedulerDoesNotRetryFailedSettlementAndStillSettlesOtherAcceptedCalls() {
+        try (var f = new Fixture();
+                var scheduler =
+                        new BoundedReadOnlyToolScheduler(
+                                new ToolSchedulingOptions(
+                                        2, Set.of("fixture"), Duration.ofSeconds(1)))) {
+            f.tools.register(tool(SideEffectLevel.READ_ONLY, c -> ok(c.callId())), SCOPE);
+            var bodies = new AtomicInteger();
+            var firstFinishes = new AtomicInteger();
+            var secondFinishes = new AtomicInteger();
+            ToolPipeline pipeline =
+                    new ToolPipeline() {
+                        public ToolResult execute(ToolInvocation call, ToolPipelineContext c) {
+                            throw new AssertionError();
+                        }
+
+                        public Optional<PreparedToolCall> prepare(
+                                ToolInvocation call, ToolPipelineContext c, Runnable barrier) {
+                            return Optional.of(
+                                    new PreparedToolCall() {
+                                        public boolean parallelAllowed() {
+                                            return true;
+                                        }
+
+                                        public ToolResult run() {
+                                            bodies.incrementAndGet();
+                                            return ok(call.callId());
+                                        }
+
+                                        public ToolResult finish(ToolResult result) {
+                                            if (call.callId().equals("first")) {
+                                                firstFinishes.incrementAndGet();
+                                                throw new HarnessException(
+                                                        "INJECTED_FINISH_FAILURE",
+                                                        "fixture after completion may have persisted");
+                                            }
+                                            secondFinishes.incrementAndGet();
+                                            return result;
+                                        }
+                                    });
+                        }
+                    };
+            assertEquals(
+                    "INJECTED_FINISH_FAILURE",
+                    assertThrows(
+                                    HarnessException.class,
+                                    () ->
+                                            scheduler.execute(
+                                                    List.of(
+                                                            new ToolInvocation(
+                                                                    "first",
+                                                                    "fixture",
+                                                                    Map.of(),
+                                                                    SideEffectLevel.READ_ONLY),
+                                                            new ToolInvocation(
+                                                                    "second",
+                                                                    "fixture",
+                                                                    Map.of(),
+                                                                    SideEffectLevel.READ_ONLY)),
+                                                    f.context(),
+                                                    pipeline))
+                            .code());
+            assertEquals(2, bodies.get());
+            assertEquals(1, firstFinishes.get());
+            assertEquals(1, secondFinishes.get());
+            var failures =
+                    f.events().stream()
+                            .filter(e -> e.type().equals("tool.settlement.failed"))
+                            .toList();
+            assertEquals(1, failures.size());
+            assertEquals(false, failures.getFirst().payload().get("retryPermitted"));
         }
     }
 }

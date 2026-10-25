@@ -458,6 +458,7 @@ class M7SubagentTest {
             child.release.countDown();
             long until = System.nanoTime() + Duration.ofSeconds(3).toNanos();
             while (child.closed.get() == 0 && System.nanoTime() < until) Thread.sleep(10);
+            assertTrue(child.closed.get() > 0, "Late child cleanup did not finish");
             assertEquals(
                     completed,
                     repository.openReader("parent").events().stream()

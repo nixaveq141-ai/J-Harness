@@ -31,6 +31,8 @@ public final class LocalPlanPreviewer implements PlanPreviewer {
                     "reason",
                     "无法预览：任意命令或未支持工具的实际副作用不可预测");
         var args = call.arguments();
+        if (!(args.get("path") instanceof String pathValue) || pathValue.isBlank())
+            throw new HarnessException("SCHEMA_MISMATCH", "Preview path is required");
         for (String key :
                 call.tool().equals("write_file")
                         ? List.of("path", "content")

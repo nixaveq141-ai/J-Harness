@@ -29,6 +29,8 @@ public final class AtomicFileMetadata {
             var destination =
                     Files.getFileAttributeView(
                             target, PosixFileAttributeView.class, LinkOption.NOFOLLOW_LINKS);
+            if (destination == null)
+                throw new IOException("POSIX access mode unsupported by target");
             try {
                 if (!destination.readAttributes().owner().equals(attributes.owner()))
                     destination.setOwner(attributes.owner());
@@ -64,9 +66,20 @@ public final class AtomicFileMetadata {
             var destination =
                     Files.getFileAttributeView(
                             target, AclFileAttributeView.class, LinkOption.NOFOLLOW_LINKS);
-            if (!destination.getOwner().equals(acl.getOwner()))
-                destination.setOwner(acl.getOwner());
+            if (destination == null) throw new IOException("ACL access mode unsupported by target");
+            try {
+                if (!destination.getOwner().equals(acl.getOwner()))
+                    destination.setOwner(acl.getOwner());
+            } catch (IOException failure) {
+                if (!reportOwnership) throw failure;
+                notes.put("ownerPreserved", false);
+                notes.put(
+                        "ownershipNote",
+                        "ACL ownership reassignment unavailable; creating identity retained");
+            }
             destination.setAcl(acl.getAcl());
+            if (!destination.getAcl().equals(acl.getAcl()))
+                throw new IOException("ACL access mode could not be preserved");
         }
         return java.util.Map.copyOf(notes);
     }

@@ -6,10 +6,17 @@ from pathlib import Path
 import subprocess
 import sys
 import uuid
+import argparse
+from evidence_io import atomic_write_json, bounded_path
 
 if os.name != 'nt':
     raise SystemExit('Windows required; other platforms are not counted as a pass')
 root = Path(__file__).resolve().parents[1]
+parser = argparse.ArgumentParser(description=__doc__)
+parser.add_argument('--output', default='.build-cache/R1/windows-compat.json')
+args = parser.parse_args()
+output = bounded_path(root, args.output, must_exist=False)
+atomic_write_json(output, dict(passed=False, status='INCOMPLETE', exitCode=1, parentCleanup=False))
 cache = root / '.build-cache/windows-credential-compat'
 source = cache / 'src'
 classes = cache / 'classes'
@@ -72,14 +79,14 @@ try:
     result = subprocess.run(command, capture_output=True, text=True, cwd=root, timeout=120)
     exit_code = result.returncode
     report = json.loads(result.stdout)
-except (subprocess.TimeoutExpired, ValueError):
+except (subprocess.SubprocessError, ValueError, OSError):
     report['failureCode'] = 'COMPATIBILITY_UNCERTAIN'
 finally:
     try:
         cleanup = subprocess.run(command + ['cleanup'], capture_output=True, text=True,
                                  cwd=root, timeout=30)
         cleaned = cleanup.returncode == 0 and json.loads(cleanup.stdout).get('cleanup') is True
-    except (subprocess.TimeoutExpired, ValueError):
+    except (subprocess.SubprocessError, ValueError, OSError):
         cleaned = False
     report['parentCleanup'] = cleaned
     if not cleaned:
@@ -88,6 +95,6 @@ finally:
 report.update(legacyCommit='fdd326b', legacySourceSha256=hashlib.sha256(legacy).hexdigest(),
               currentJarSha256=hashlib.sha256(jar.read_bytes()).hexdigest(),
               fixtureSha256=hashlib.sha256(probe.encode()).hexdigest(), exitCode=exit_code)
-(root / '.build-cache/R1/windows-compat.json').write_bytes((json.dumps(report, indent=2) + '\n').encode())
+atomic_write_json(output, report)
 print(json.dumps(report))
 sys.exit(0 if exit_code == 0 and report.get('passed') and report.get('parentCleanup') else 1)

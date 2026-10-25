@@ -30,12 +30,15 @@ class R1ApprovalDeadlineTest {
         var held = new CountDownLatch(1);
         var release = new CountDownLatch(1);
         var ownerThread = new AtomicReference<Thread>();
-        var ownerChecks = new AtomicInteger();
+        var serviceReference = new AtomicReference<InteractiveApprovalService>();
+        var heldOnce = new AtomicBoolean();
         var cancelled = new AtomicBoolean();
         CancellationToken token =
                 () -> {
                     if (Thread.currentThread() == ownerThread.get()
-                            && ownerChecks.incrementAndGet() == 2) {
+                            && serviceReference.get() != null
+                            && !serviceReference.get().prompts().isEmpty()
+                            && heldOnce.compareAndSet(false, true)) {
                         held.countDown();
                         await(release);
                     }
@@ -43,6 +46,7 @@ class R1ApprovalDeadlineTest {
                 };
         try (var service = new InteractiveApprovalService(Duration.ofMillis(800));
                 var executor = Executors.newVirtualThreadPerTaskExecutor()) {
+            serviceReference.set(service);
             var owner =
                     executor.submit(
                             () -> {
@@ -89,11 +93,14 @@ class R1ApprovalDeadlineTest {
         var release = new CountDownLatch(1);
         var ownerThread = new AtomicReference<Thread>();
         var answerThread = new AtomicReference<Thread>();
-        var ownerChecks = new AtomicInteger();
+        var serviceReference = new AtomicReference<InteractiveApprovalService>();
+        var heldOnce = new AtomicBoolean();
         CancellationToken token =
                 () -> {
                     if (Thread.currentThread() == ownerThread.get()
-                            && ownerChecks.incrementAndGet() == 2) {
+                            && serviceReference.get() != null
+                            && !serviceReference.get().prompts().isEmpty()
+                            && heldOnce.compareAndSet(false, true)) {
                         held.countDown();
                         await(release);
                     }
@@ -101,6 +108,7 @@ class R1ApprovalDeadlineTest {
                 };
         try (var service = new InteractiveApprovalService(Duration.ofMillis(800));
                 var executor = Executors.newVirtualThreadPerTaskExecutor()) {
+            serviceReference.set(service);
             var owner =
                     executor.submit(
                             () -> {

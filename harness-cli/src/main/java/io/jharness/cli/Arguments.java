@@ -69,6 +69,7 @@ final class Arguments {
                     if (++i >= argv.length || argv[i].startsWith("--")) fail();
                     value = argv[i];
                 }
+                if (!Set.of("text", "reason").contains(name) && value.isBlank()) fail();
             }
             if (options.containsKey(name)
                     && !Set.of("require-read", "expect-file", "bundle").contains(name)) fail();

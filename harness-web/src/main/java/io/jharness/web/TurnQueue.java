@@ -60,19 +60,31 @@ final class TurnQueue {
                 || event.type().equals("web.turn.interrupted")) {
             if (inputs.size() >= 256 || inputs.containsKey(hash))
                 throw new IllegalArgumentException("Submission quota or duplicate");
-            inputs.put(
-                    hash,
-                    new Input(
-                            hash,
-                            (String) p.get("goalHash"),
-                            (String) p.get("kind"),
-                            (String) p.getOrDefault("content", ""),
-                            event.type().equals("web.turn.interrupted") ? "UNKNOWN" : "PAUSED"));
-            inputs.get(hash).selection = Values.object(p.getOrDefault("selection", Map.of()));
-            var selection = inputs.get(hash).selection;
+            if (!(p.get("goalHash") instanceof String goalHash)
+                    || !(p.get("kind") instanceof String kind)
+                    || !(p.getOrDefault("content", "") instanceof String content))
+                throw new HarnessException("INVALID_WEB_CATALOG", "Invalid submission fields");
+            Input candidate;
+            try {
+                candidate =
+                        new Input(
+                                hash,
+                                goalHash,
+                                kind,
+                                content,
+                                event.type().equals("web.turn.interrupted") ? "UNKNOWN" : "PAUSED");
+            } catch (IllegalArgumentException invalid) {
+                throw new HarnessException(
+                        "INVALID_WEB_CATALOG", "Invalid submission fact", invalid);
+            }
+            if (!(p.getOrDefault("selection", Map.of()) instanceof Map<?, ?>))
+                throw new HarnessException("INVALID_WEB_CATALOG", "Invalid selection");
+            var selection = Values.object(p.getOrDefault("selection", Map.of()));
             if (selection.containsKey("modelRoute")
                     && !(selection.get("modelRoute") instanceof String))
                 throw new HarnessException("INVALID_WEB_CATALOG", "Invalid model route");
+            candidate.selection = selection;
+            inputs.put(hash, candidate);
             return;
         }
         var input = inputs.get(hash);

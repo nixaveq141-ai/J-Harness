@@ -8,6 +8,7 @@ import queue
 import subprocess
 from types import SimpleNamespace
 import threading
+import concurrent.futures
 import time
 import unittest
 from http.server import ThreadingHTTPServer
@@ -23,6 +24,36 @@ sdk_spec.loader.exec_module(sdk)
 
 
 class ClientCleanupTest(unittest.TestCase):
+    def test_consumed_response_does_not_create_a_permanent_timeout_tombstone(self):
+        client = self.client()
+        client._closed = False
+        client._expired = {}
+        class BoundaryFuture(concurrent.futures.Future):
+            def result(self, timeout=None):
+                try:
+                    return super().result(timeout=0)
+                except concurrent.futures.TimeoutError:
+                    with client._lock:
+                        request_id = next(iter(client._pending))
+                        client._pending.pop(request_id).set_result({})
+                    raise
+        with patch.object(sdk.concurrent.futures, "Future", BoundaryFuture):
+            with self.assertRaises(sdk.RpcError) as error:
+                client.call("ping", timeout=.1)
+        self.assertEqual("REQUEST_TIMEOUT_ACCEPTANCE_UNKNOWN", error.exception.code)
+        self.assertEqual({}, client._pending)
+        self.assertEqual({}, client._expired)
+
+    def test_oserror_attempts_kill_and_preserves_primary_diagnostic(self):
+        client = self.client()
+        killed = []
+        client._process.wait = lambda **_: (_ for _ in ()).throw(OSError())
+        client._process.kill = lambda: killed.append(True)
+        primary = RuntimeError("primary")
+        client.__exit__(type(primary), primary, None)
+        self.assertEqual([True], killed)
+        self.assertIn("PROCESS_CLEANUP_UNKNOWN", primary.__notes__[0])
+
     def client(self):
         client = sdk.JHarnessClient.__new__(sdk.JHarnessClient)
         client._lock = threading.RLock()
@@ -42,7 +73,7 @@ class ClientCleanupTest(unittest.TestCase):
             client.close()
         self.assertEqual("PROCESS_CLEANUP_UNKNOWN", failure.exception.code)
         self.assertTrue(all(stream.closed for stream in (client._process.stdin, client._process.stdout, client._process.stderr)))
-        self.assertTrue(client._closed)
+        self.assertTrue(client._closing)
 
     def test_context_exit_preserves_primary_exception_on_cleanup_failure(self):
         client = self.client()

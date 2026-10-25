@@ -119,7 +119,12 @@
     "locallyValidatedScopes": 237,
     "limitedVerificationScopes": 0,
     "implementationLedger": "docs/development/OCR-R1-implementation-2026-10-21.json",
-    "results": "docs/testing/OCR-R1-fault18-2026-10-22-results.json"
+    "results": "docs/testing/OCR-R1-fault18-2026-10-22-results.json",
+    "contractClarified": 0,
+    "existingGuardConfirmed": 0,
+    "implemented": 237,
+    "runId": "r1-20261022-fault18-b",
+    "nextPhase": "R2"
   },
   "r2": {
     "status": "LOCAL_IMPLEMENTATION_VALIDATED_CI_PENDING",
@@ -145,7 +150,9 @@
     "contractClarified": 121,
     "implementationLedger": "docs/development/OCR-R3-implementation-2026-10-23.json",
     "results": "docs/testing/OCR-R3-2026-10-23-results.json",
-    "nextPhase": "R4"
+    "nextPhase": "R4",
+    "existingGuardConfirmed": 0,
+    "implemented": 183
   },
   "remoteAuthorization": {
     "date": "2026-10-23",

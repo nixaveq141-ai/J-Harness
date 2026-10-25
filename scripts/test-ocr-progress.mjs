@@ -12,6 +12,19 @@ const valid = () => ({ updatedAt: '2026-10-21', status: 'IMPLEMENTATION_IN_PROGR
 } })
 const known = ['R0-01', 'R0-02']
 
+test('phase snapshots validate counters, run identity and aliases', () => {
+  const progress = valid()
+  progress.r3 = {status:'LOCAL_IMPLEMENTATION_VALIDATED_CI_PENDING',runId:'r3-current',adoptedScopes:3,
+    implemented:2,contractClarified:1,existingGuardConfirmed:0,nextPhase:'R4',
+    implementationLedger:'docs/development/ledger.json',results:'docs/testing/result.json'}
+  assert.doesNotThrow(() => validateProgress(progress, known))
+  for (const mutation of [p=>{p.r3.status='TYPO'},p=>{p.r3.runId=''},p=>{p.r3.implemented=9},
+    p=>{p.r3.results='../escape.json'},p=>{p.r3.implementedOrRegressionStrengthened=1}]) {
+    const changed = structuredClone(progress); mutation(changed)
+    assert.throws(() => validateProgress(changed, known))
+  }
+})
+
 test('progress schema accepts an explicit current state and normalizes multiline descriptions', () => {
   const progress = valid()
   progress.tasks['R0-01'].description = 'pending\r\n### heading\n追溯：not a new paragraph'

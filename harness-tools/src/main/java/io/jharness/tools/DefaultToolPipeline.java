@@ -306,6 +306,11 @@ public final class DefaultToolPipeline implements ToolPipeline {
             if (raw.status() == ToolStatus.SUCCESS && (!bodyEntered || !raw.equals(outcome)))
                 throw new HarnessException(
                         "EXECUTION_BYPASSED", "Scheduler cannot fabricate body success");
+            if (outcome != null
+                    && outcome.status() == ToolStatus.SUCCESS
+                    && raw.status() != ToolStatus.SUCCESS)
+                throw new HarnessException(
+                        "RESULT_STATUS_MISMATCH", "Scheduler cannot discard body success");
             if ((outcome != null
                             && (outcome.status() == ToolStatus.UNKNOWN
                                     || Boolean.TRUE.equals(

@@ -188,10 +188,12 @@ public final class RemoteWorkspace implements WorkspaceFiles {
     public synchronized Map<String, Object> applyPatch(
             String patch, Map<String, String> versions, CancellationToken cancellation) {
         var all = new LinkedHashMap<String, String>();
+        var targets = new HashSet<String>();
         for (var entry : versions.entrySet())
             all.put(safe(new ExecPath(entry.getKey())), entry.getValue());
         for (var file : io.jharness.workspace.UnifiedPatch.parse(patch)) {
             String key = safe(new ExecPath(file.path()));
+            targets.add(key);
             if (!all.containsKey(key) && observed.containsKey(key)) all.put(key, observed.get(key));
         }
         var result = call("patch", root(), Map.of("patch", patch, "versions", all), cancellation);
@@ -201,8 +203,11 @@ public final class RemoteWorkspace implements WorkspaceFiles {
             for (Object raw : changes) {
                 var change = Values.object(raw);
                 if (change.get("path") instanceof String path
-                        && change.get("afterVersion") instanceof String version)
+                        && change.get("afterVersion") instanceof String version) {
+                    if (!targets.contains(safe(new ExecPath(path))))
+                        throw BoundedJson.error("INVALID_PROVIDER_RESULT");
                     remember(safe(new ExecPath(path)), version);
+                }
             }
         return result;
     }

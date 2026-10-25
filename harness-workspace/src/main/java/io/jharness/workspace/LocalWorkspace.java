@@ -368,17 +368,30 @@ public final class LocalWorkspace implements WorkspaceFiles {
         CancellationToken token = bounded(cancellation);
         Path target = resolve(path);
         checkSegments(target);
-        byte[] snapshot;
+        if (!Files.exists(target, LinkOption.NOFOLLOW_LINKS))
+            throw new HarnessException("FILE_NOT_FOUND", "File not found");
+        if (!Files.isRegularFile(target, LinkOption.NOFOLLOW_LINKS))
+            throw new HarnessException("NOT_TEXT_FILE", "Expected regular file");
+        long size = Files.size(target);
+        if (size > SCAN_LIMIT) throw new HarnessException("FILE_LIMIT", "Read scan bound exceeded");
+        byte[] snapshot = new byte[(int) size];
         try (InputStream input = Files.newInputStream(target, LinkOption.NOFOLLOW_LINKS)) {
-            snapshot = input.readNBytes(SCAN_LIMIT + 1);
+            int offset = 0;
+            while (offset < snapshot.length) {
+                token.throwIfCancelled();
+                int count = input.read(snapshot, offset, Math.min(8192, snapshot.length - offset));
+                if (count < 0)
+                    throw new HarnessException("FILE_CONFLICT", "File changed during snapshot");
+                offset += count;
+            }
+            token.throwIfCancelled();
+            if (input.read() != -1)
+                throw new HarnessException("FILE_CONFLICT", "File changed during snapshot");
         }
-        if (snapshot.length > SCAN_LIMIT)
-            throw new HarnessException("FILE_LIMIT", "Read scan bound exceeded");
         String before = HexFormat.of().formatHex(sha().digest(snapshot));
         StringBuilder out = new StringBuilder();
         int line = 1;
         boolean truncated = false;
-        int scan = 0;
         boolean beginning = true;
         CharsetDecoder decoder =
                 StandardCharsets.UTF_8.newDecoder().onMalformedInput(CodingErrorAction.REPORT);
@@ -388,9 +401,6 @@ public final class LocalWorkspace implements WorkspaceFiles {
             outer:
             while ((count = reader.read(buffer)) >= 0) {
                 token.throwIfCancelled();
-                scan += count;
-                if (scan > SCAN_LIMIT)
-                    throw new HarnessException("FILE_LIMIT", "Read scan bound exceeded");
                 for (int index = 0; index < count; index++) {
                     char value = buffer[index];
                     if (value == 0)
@@ -546,7 +556,7 @@ public final class LocalWorkspace implements WorkspaceFiles {
                     afterVersion,
                     UnifiedDiff.between(relative(target), before, after),
                     metadata);
-        } catch (IOException | RuntimeException ex) {
+        } catch (IOException | RuntimeException | Error ex) {
             primary =
                     committed
                             ? new HarnessException(
@@ -555,6 +565,7 @@ public final class LocalWorkspace implements WorkspaceFiles {
                                     ex)
                             : ex;
             if (primary instanceof IOException io) throw io;
+            if (primary instanceof Error fatal) throw fatal;
             throw (RuntimeException) primary;
         } finally {
             if (!committed) {
@@ -947,7 +958,7 @@ public final class LocalWorkspace implements WorkspaceFiles {
                                     gitOutput(
                                             process,
                                             process.getErrorStream(),
-                                            4096,
+                                            64 * 1024,
                                             diagnosticOverflow));
             try {
                 while (!process.waitFor(20, TimeUnit.MILLISECONDS)) {
@@ -957,14 +968,12 @@ public final class LocalWorkspace implements WorkspaceFiles {
                 stderr.get(1, TimeUnit.SECONDS);
                 if (overflow.get())
                     throw new HarnessException("OUTPUT_LIMIT", "Git diff exceeds output bound");
-                if (process.exitValue() != 0)
-                    throw new HarnessException(
-                            "GIT_DIFF_UNAVAILABLE", "No supported Git diff for this workspace");
                 if (diagnosticOverflow.get())
                     throw new HarnessException(
                             "OUTPUT_LIMIT", "Git diagnostics exceed output bound");
-                if (output.length > 2 * WRITE_LIMIT)
-                    throw new HarnessException("OUTPUT_LIMIT", "Git diff exceeds output bound");
+                if (process.exitValue() != 0)
+                    throw new HarnessException(
+                            "GIT_DIFF_UNAVAILABLE", "No supported Git diff for this workspace");
                 return new String(output, StandardCharsets.UTF_8);
             } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
@@ -996,6 +1005,14 @@ public final class LocalWorkspace implements WorkspaceFiles {
     }
 
     private static String trustedGit() throws IOException {
+        String explicit = System.getenv("JHARNESS_GIT");
+        if (explicit != null) {
+            Path selected = Path.of(explicit);
+            if (!selected.isAbsolute() || !Files.isRegularFile(selected, LinkOption.NOFOLLOW_LINKS))
+                throw new HarnessException(
+                        "GIT_DIFF_UNAVAILABLE", "Invalid explicit trusted Git executable");
+            return selected.toRealPath().toString();
+        }
         boolean windows = System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("win");
         List<Path> candidates = new ArrayList<>();
         if (windows) {

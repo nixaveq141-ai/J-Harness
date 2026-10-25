@@ -165,6 +165,7 @@ final class EcosystemConfig {
                         throw invalid();
                     var required = strings(child.getOrDefault("requireRead", List.of()));
                     if (required.isEmpty()
+                            || required.stream().anyMatch(String::isBlank)
                             || !strings(child.getOrDefault("tools", List.of("read_file")))
                                     .contains("read_file")) throw invalid();
                     if (number(child, "maxSteps", 4, 64) < 1

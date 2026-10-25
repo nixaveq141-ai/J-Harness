@@ -60,8 +60,12 @@ public final class PlanningPlugin implements HarnessPlugin {
                 .orElse(Map.of("revision", 0, "state", "NONE", "steps", List.of()));
     }
 
-    private void save(String type, Map<String, Object> state) {
+    private void save(
+            String type,
+            Map<String, Object> state,
+            java.util.concurrent.atomic.AtomicBoolean attempted) {
         if (!active) throw BoundedJson.error("PLUGIN_CLOSED");
+        attempted.set(true);
         writer.append(SessionEvent.session(scope.sessionId(), type, state));
         writer.flush();
     }
@@ -171,7 +175,7 @@ public final class PlanningPlugin implements HarnessPlugin {
 
         public ToolResult execute(ToolInvocation call, ToolContext context) {
             operation.lock();
-            boolean mutationAttempted = false;
+            var mutationAttempted = new java.util.concurrent.atomic.AtomicBoolean();
             try {
                 if (!active || !scope.equals(context.scope()))
                     throw BoundedJson.error("SCOPE_DENIED");
@@ -196,8 +200,7 @@ public final class PlanningPlugin implements HarnessPlugin {
                     }
                     result = new LinkedHashMap<>(args);
                     result.put("revision", ((Number) args.get("revision")).intValue() + 1);
-                    mutationAttempted = true;
-                    save("todo.changed", result);
+                    save("todo.changed", result, mutationAttempted);
                 } else {
                     var current = plan();
                     revision(current, args);
@@ -228,8 +231,7 @@ public final class PlanningPlugin implements HarnessPlugin {
                         result.put("evidence", args.get("evidence"));
                     }
                     result.put("revision", ((Number) args.get("revision")).intValue() + 1);
-                    mutationAttempted = true;
-                    save("plan.changed", result);
+                    save("plan.changed", result, mutationAttempted);
                 }
                 return new ToolResult(
                         call.callId(),
@@ -241,7 +243,7 @@ public final class PlanningPlugin implements HarnessPlugin {
             } catch (HarnessException rejection) {
                 // Validation failures before the append boundary are known non-executions.
                 // A failed append/flush may already have committed and remains uncertain.
-                if (mutationAttempted) throw rejection;
+                if (mutationAttempted.get()) throw rejection;
                 return new ToolResult(
                         call.callId(),
                         ToolStatus.FAILED,

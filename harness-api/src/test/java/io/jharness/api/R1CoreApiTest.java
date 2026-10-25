@@ -7,6 +7,27 @@ import org.junit.jupiter.api.Test;
 
 class R1CoreApiTest {
     @Test
+    void sanitizerCannotInjectAnErrorIntoSuccess() {
+        var result =
+                new ToolResult("id", ToolStatus.SUCCESS, Map.of(), "", Map.of(), Optional.empty());
+        assertEquals(
+                "INVALID_SANITIZER_OUTPUT",
+                assertThrows(
+                                HarnessException.class,
+                                () ->
+                                        ToolResults.sanitized(
+                                                result,
+                                                input -> {
+                                                    var changed = new LinkedHashMap<>(input);
+                                                    changed.put(
+                                                            "error",
+                                                            Map.of("code", "X", "message", "X"));
+                                                    return changed;
+                                                }))
+                        .code());
+    }
+
+    @Test
     void checkpointRejectsNullBeforeFlush() {
         var writes = new int[1];
         SessionWriter writer =
@@ -30,7 +51,8 @@ class R1CoreApiTest {
         assertThrows(
                 IllegalArgumentException.class, () -> new ToolResult.ErrorInfo(" ", "failure"));
         assertThrows(
-                RuntimeException.class, () -> ToolResults.failure("id", ToolStatus.FAILED, null));
+                IllegalArgumentException.class,
+                () -> ToolResults.failure("id", ToolStatus.FAILED, null));
         assertThrows(
                 IllegalArgumentException.class,
                 () ->

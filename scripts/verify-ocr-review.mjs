@@ -129,7 +129,8 @@ const markdownPath = 'docs/requirements/OCR-remediation-plan-2026-10-20.md';
 const manifestPath = 'docs/development/OCR-implementation-artifacts.json';
 const markdown = renderImplementationPlan();
 const artifacts = implementationArtifacts({ progressPath, progressBytes, assignmentPath: 'docs/development/ocr-verification-2026-10-20/plan.json', assignmentBytes: Buffer.from(JSON.stringify(plan, null, 2) + '\n'), markdownPath, markdown, hash });
-if (process.argv.includes('--write')) {
+if (process.argv.includes('--write') || process.argv.includes('--write-current')) {
+  if (process.argv.includes('--write')) {
   fs.writeFileSync(path.join(dir, 'review.json'), JSON.stringify({ ...result, verdicts: rows }, null, 2) + '\n');
   fs.writeFileSync(path.join(dir, 'plan.json'), JSON.stringify(plan, null, 2) + '\n');
   fs.writeFileSync(path.join(root, 'docs/testing/OCR-verification-2026-10-20-results.json'), JSON.stringify(result, null, 2) + '\n');
@@ -141,6 +142,7 @@ if (process.argv.includes('--write')) {
       text.push(`## ${row.id} · ${labels[row.status]}`, '', `- 位置：${opinion.path}:${opinion.start_line}；OCR原严重度：${opinion.severity}`, `- 计划：${row.taskId || '无'}${row.priority ? ` / ${row.priority}` : ''}`, `- 原意见：${opinion.content.replace(/\r?\n/g, ' ')}`, `- 判断：${row.reason}`, `- 证据：${row.evidence.join('；')}`, '');
     }
     fs.writeFileSync(path.join(dir, `ledger-${module}.md`), text.map(line => line.trimEnd()).join('\n').trimEnd() + '\n');
+  }
   }
   fs.writeFileSync(path.join(root, markdownPath), markdown);
   fs.writeFileSync(path.join(root, manifestPath), JSON.stringify(artifacts, null, 2) + '\n');

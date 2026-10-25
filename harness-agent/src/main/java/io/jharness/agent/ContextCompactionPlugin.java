@@ -94,21 +94,12 @@ public final class ContextCompactionPlugin implements HarnessPlugin {
         for (int index : result.removedMessageIndices())
             if (index < 0 || index >= request.messages().size() || !removed.add(index))
                 throw new HarnessException("INVALID_COMPACTION", "Invalid original message index");
-        Set<String> pending = new HashSet<>();
-        for (var message : request.messages()) {
-            if (message.get("tool_calls") instanceof List<?> calls)
-                for (Object raw : calls) pending.add((String) Values.object(raw).get("id"));
-            if ("tool".equals(message.get("role"))) pending.remove(message.get("tool_call_id"));
-        }
+        validateGroups(request.messages(), removed);
         int latestUser = -1;
         for (int i = 0; i < request.messages().size(); i++) {
             var message = request.messages().get(i);
             if ("user".equals(message.get("role"))) latestUser = i;
             boolean protectedMessage = "system".equals(message.get("role"));
-            if (message.get("tool_calls") instanceof List<?> calls)
-                protectedMessage |=
-                        calls.stream()
-                                .anyMatch(raw -> pending.contains(Values.object(raw).get("id")));
             if (protectedMessage
                     && (removed.contains(i) || !result.request().messages().contains(message)))
                 throw new HarnessException(
@@ -120,6 +111,55 @@ public final class ContextCompactionPlugin implements HarnessPlugin {
                                 .messages()
                                 .contains(request.messages().get(latestUser))))
             throw new HarnessException("INVALID_COMPACTION", "Latest user message removed");
+        var retained = new ArrayList<Map<String, Object>>();
+        for (int i = 0; i < request.messages().size(); i++)
+            if (!removed.contains(i)) retained.add(request.messages().get(i));
+        var actual = result.request().messages();
+        boolean identical = retained.equals(actual);
+        if (!identical && !removed.isEmpty() && !result.summary().isBlank()) {
+            var summary = Map.<String, Object>of("role", "user", "content", result.summary());
+            for (int i = 0; i < actual.size(); i++) {
+                if (!summary.equals(actual.get(i))) continue;
+                var withoutSummary = new ArrayList<>(actual);
+                withoutSummary.remove(i);
+                if (retained.equals(withoutSummary)) {
+                    identical = true;
+                    break;
+                }
+            }
+        }
+        if (!identical) throw invalidCompaction();
+        validateGroups(actual, Set.of());
+    }
+
+    private static HarnessException invalidCompaction() {
+        return new HarnessException(
+                "INVALID_COMPACTION", "Inconsistent compaction protocol or audit");
+    }
+
+    private static void validateGroups(List<Map<String, Object>> messages, Set<Integer> removed) {
+        for (int i = 0; i < messages.size(); i++) {
+            var message = messages.get(i);
+            if ("tool".equals(message.get("role"))) throw invalidCompaction();
+            if (!message.containsKey("tool_calls")) continue;
+            if (!"assistant".equals(message.get("role"))
+                    || !(message.get("tool_calls") instanceof List<?> calls)
+                    || calls.isEmpty()) throw invalidCompaction();
+            var pending = new HashSet<String>();
+            for (Object raw : calls) {
+                if (!(raw instanceof Map<?, ?> call)
+                        || !(call.get("id") instanceof String id)
+                        || id.isBlank()
+                        || !pending.add(id)) throw invalidCompaction();
+            }
+            boolean drop = removed.contains(i);
+            while (i + 1 < messages.size() && "tool".equals(messages.get(i + 1).get("role"))) {
+                i++;
+                if (!pending.remove(messages.get(i).get("tool_call_id"))
+                        || drop != removed.contains(i)) throw invalidCompaction();
+            }
+            if (!pending.isEmpty() && (drop || i + 1 < messages.size())) throw invalidCompaction();
+        }
     }
 
     @Override

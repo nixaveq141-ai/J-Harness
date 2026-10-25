@@ -7,11 +7,16 @@ import os
 from pathlib import Path
 import subprocess
 import sys
+from evidence_io import atomic_write_json, bounded_path
 
 root = Path(__file__).resolve().parents[1]
 parser = argparse.ArgumentParser()
 parser.add_argument('--case', choices=['credentials', 'missing-service', 'locked-service'], default='credentials')
-case = parser.parse_args().case
+parser.add_argument('--output')
+args = parser.parse_args()
+case = args.case
+output = bounded_path(root, args.output or f'.build-cache/M10.5.4-native-{case}.json', must_exist=False)
+atomic_write_json(output, dict(passed=False, expectationMet=False, status='INCOMPLETE', exitCode=1))
 jar = root / "harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar"
 java = Path(os.environ["JAVA_HOME"]) / "bin" / ("java.exe" if os.name == "nt" else "java")
 classpath = os.pathsep.join([str(root / "harness-cli/target/test-classes"), str(jar)])
@@ -33,8 +38,6 @@ report.update({"sourceSha256": source_manifest, "probeScriptSha256": hashlib.sha
                "jarSha256": hashlib.sha256(jar.read_bytes()).hexdigest(),
                "exitCode": result.returncode, "expectedUnavailable": expected_unavailable,
                "expectationMet": expectation_met})
-output = root / f".build-cache/M10.5.4-native-{case}.json"
-output.parent.mkdir(exist_ok=True)
-output.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+atomic_write_json(output, report)
 print(json.dumps({k: v for k, v in report.items() if k != "sourceSha256"} | {"sourceFiles": len(source_manifest)}))
 sys.exit(0 if expectation_met else 1)

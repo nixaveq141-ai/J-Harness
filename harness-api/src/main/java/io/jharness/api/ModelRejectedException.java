@@ -23,6 +23,7 @@ public final class ModelRejectedException extends RuntimeException {
         return 429;
     }
 
+    /** Advisory metadata. The bounded host retry policy currently uses configured backoff only. */
     public java.util.OptionalLong retryAfterMillis() {
         return retryAfterMillis < 0
                 ? java.util.OptionalLong.empty()

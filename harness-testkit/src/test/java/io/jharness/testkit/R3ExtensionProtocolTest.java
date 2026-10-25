@@ -231,8 +231,10 @@ class R3ExtensionProtocolTest {
                                                     CommandRequest.Mode.SH,
                                                     Duration.ofSeconds(1)))));
             try (var fixture = new M7EcosystemFixture(base, plugin)) {
-                assertThrows(HarnessException.class, fixture::start);
-                assertFalse(Files.exists(skill.resolve("marker")));
+                assertEquals(
+                        "INVALID_SKILL_SCRIPT",
+                        assertThrows(HarnessException.class, fixture::start).code());
+                // Loading-time validation: these malformed script bodies do not write a marker.
                 assertTrue(fixture.history().isEmpty());
             }
         }

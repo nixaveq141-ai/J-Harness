@@ -244,8 +244,9 @@ final class StdioSdkServer {
                         "selected",
                         "text",
                         "skip");
-                for (String key : List.of("questionId", "turnId", "callId", "requestId"))
-                    identifier(p, key);
+                for (String key : List.of("questionId", "requestId")) identifier(p, key);
+                field(p, "turnId", 256);
+                field(p, "callId", 256);
                 if (!(p.get("skip") instanceof Boolean)
                         || !(p.get("text") instanceof String text)
                         || text.length() > 16384

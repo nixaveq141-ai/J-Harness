@@ -434,8 +434,27 @@ public final class WorkspaceToolsPlugin implements HarnessPlugin {
             try {
                 result = compact(result, scope.sessionId());
             } catch (IOException | RuntimeException artifactFailure) {
-                if (!Set.of("write_file", "edit_file").contains(name)) throw artifactFailure;
+                if (!Set.of("write_file", "edit_file", "apply_patch").contains(name))
+                    throw artifactFailure;
                 var committed = new LinkedHashMap<>(result);
+                if (committed.get("changes") instanceof List<?> changes) {
+                    committed.put(
+                            "changes",
+                            changes.stream()
+                                    .map(
+                                            raw -> {
+                                                var change =
+                                                        new LinkedHashMap<>(Values.object(raw));
+                                                if (change.get("diff") instanceof String diff)
+                                                    change.put(
+                                                            "diff",
+                                                            diff.substring(
+                                                                    0,
+                                                                    Math.min(4096, diff.length())));
+                                                return Values.snapshot(change);
+                                            })
+                                    .toList());
+                }
                 if (committed.get("diff") instanceof String diff)
                     committed.put("diff", diff.substring(0, Math.min(4096, diff.length())));
                 committed.put("outputTruncated", true);

@@ -8,12 +8,30 @@ import org.junit.jupiter.api.Test;
 
 class R1CredentialCleanupTest {
     @Test
+    void liveAndPendingCleanupReferencesAreCombinedWithoutVaultAccess() {
+        String a = "a".repeat(64), b = "b".repeat(64);
+        var targets =
+                WorkbenchCredentialCleanup.targets(
+                        Map.of("models", List.of(Map.of("credentialRef", a))),
+                        Map.of("refs", List.of(a, b)),
+                        "J-Harness/fixture");
+        assertEquals(List.of("J-Harness/fixture/" + a, "J-Harness/fixture/" + b), targets);
+        assertThrows(
+                IllegalArgumentException.class,
+                () ->
+                        WorkbenchCredentialCleanup.targets(
+                                Map.of("models", List.of(Map.of("credentialRef", a))),
+                                Map.of("refs", List.of("bad")),
+                                "J-Harness/fixture"));
+    }
+
+    @Test
     void invalidArgumentsAndAbsentFixtureCannotClaimClean() {
         assertThrows(
                 IllegalArgumentException.class,
                 () -> WorkbenchCredentialCleanup.main(new String[0]));
         assertThrows(
-                Exception.class,
+                NoSuchFileException.class,
                 () ->
                         WorkbenchCredentialCleanup.main(
                                 new String[] {
@@ -36,9 +54,21 @@ class R1CredentialCleanupTest {
                             "{\"models\":[7]}",
                             "{\"models\":[{\"credentialRef\":\"unknown\"}]}")) {
                 Files.writeString(file, invalid);
-                assertThrows(
-                        Exception.class,
-                        () -> WorkbenchCredentialCleanup.main(new String[] {fixture.toString()}));
+                if (invalid.contains("[7]"))
+                    assertEquals(
+                            "INVALID_JSON",
+                            assertThrows(
+                                            io.jharness.api.HarnessException.class,
+                                            () ->
+                                                    WorkbenchCredentialCleanup.main(
+                                                            new String[] {fixture.toString()}))
+                                    .code());
+                else
+                    assertThrows(
+                            IllegalArgumentException.class,
+                            () ->
+                                    WorkbenchCredentialCleanup.main(
+                                            new String[] {fixture.toString()}));
             }
         } finally {
             Files.deleteIfExists(file);

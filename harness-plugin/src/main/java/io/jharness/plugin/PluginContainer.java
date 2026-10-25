@@ -184,12 +184,17 @@ public final class PluginContainer implements AutoCloseable {
             } catch (RuntimeException | Error ex) {
                 cleanupFailures.add(
                         new CleanupFailure(
-                                item.descriptor.id, "owned.close", ex.getClass().getName()));
+                                item.descriptor.id, "owned.close", cleanupCauseType(ex)));
                 failure = accumulate(failure, ex);
             }
             try {
                 lifecycle("plugin.stopped", item.descriptor.id);
             } catch (RuntimeException | Error notification) {
+                cleanupFailures.add(
+                        new CleanupFailure(
+                                item.descriptor.id,
+                                "plugin.stopped",
+                                notification.getClass().getName()));
                 failure = accumulate(failure, notification);
             }
         }
@@ -204,11 +209,21 @@ public final class PluginContainer implements AutoCloseable {
         return previous;
     }
 
+    private static String cleanupCauseType(Throwable failure) {
+        var visited =
+                java.util.Collections.newSetFromMap(
+                        new java.util.IdentityHashMap<Throwable, Boolean>());
+        while (failure instanceof HarnessException
+                && failure.getCause() != null
+                && visited.add(failure)) failure = failure.getCause();
+        return failure.getClass().getName();
+    }
+
     /** Stop contributions but leave observers available to inspect lifecycle facts. */
     public synchronized void stop() {
         if (state == State.STOPPED || state == State.STOP_FAILED) return;
         RuntimeException failure = cleanup();
-        state = failure == null ? State.STOPPED : State.STOP_FAILED;
+        state = failure == null && cleanupFailures.isEmpty() ? State.STOPPED : State.STOP_FAILED;
         if (failure != null) throw failure;
     }
 

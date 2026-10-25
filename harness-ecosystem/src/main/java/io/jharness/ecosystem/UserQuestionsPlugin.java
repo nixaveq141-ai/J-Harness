@@ -310,8 +310,10 @@ public final class UserQuestionsPlugin implements HarnessPlugin, UserQuestionSer
         String hash = fingerprint(input);
         if (row.containsKey("requestId")) {
             if (requestId.equals(row.get("requestId"))
-                    && hash.equals(row.get("answerHash"))
-                    && sameText(input, row, sanitizer)) return row;
+                    && (row.get("answerFingerprintVersion") instanceof Number version
+                                    && version.intValue() == 2
+                            ? hash.equals(row.get("answerHash")) && sameText(input, row, sanitizer)
+                            : legacyFingerprint(input).equals(row.get("answerHash")))) return row;
             var p = pending.get(id);
             if (p != null
                     && p.answer != null

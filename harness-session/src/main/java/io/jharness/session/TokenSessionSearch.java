@@ -18,6 +18,7 @@ public final class TokenSessionSearch implements ContentSearchProvider {
     private static final Set<String> TYPES =
             Set.of(
                     "user.message",
+                    "sdk.input.applied",
                     "assistant.message",
                     "tool.completed",
                     "question.requested",
@@ -225,6 +226,12 @@ public final class TokenSessionSearch implements ContentSearchProvider {
     }
 
     private static String body(Map<String, Object> payload, String type) throws IOException {
+        if ("sdk.input.applied".equals(type)) {
+            Object message = payload.get("userMessage");
+            return message instanceof Map<?, ?> row && row.get("content") instanceof String text
+                    ? text
+                    : "";
+        }
         if (Set.of("user.message", "assistant.message").contains(type)) {
             Object content = payload.get("content");
             return content instanceof String text ? text : "";

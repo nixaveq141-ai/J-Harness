@@ -21,9 +21,21 @@ public interface FileSystemView {
         return text;
     }
 
-    /** Text and SHA-256 version from the same UTF-8 content snapshot. */
+    /**
+     * Text and version from one content snapshot. This compatibility default requires SHA-256
+     * identities of UTF-8 content. Providers using opaque versions must override it with their own
+     * atomic snapshot operation; a version from a separate unrelated read is insufficient.
+     */
     default TextSnapshot readSnapshot(ExecPath path) throws IOException {
-        String text = readText(path);
+        return checkedSnapshot(path, readText(path));
+    }
+
+    /** Same snapshot contract with a caller supplied bounded text limit. */
+    default TextSnapshot readSnapshot(ExecPath path, int maxBytes) throws IOException {
+        return checkedSnapshot(path, readText(path, maxBytes));
+    }
+
+    private TextSnapshot checkedSnapshot(ExecPath path, String text) throws IOException {
         try {
             String version =
                     java.util.HexFormat.of()

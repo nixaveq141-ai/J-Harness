@@ -115,7 +115,7 @@ public final class DockerExecutionEnvironment implements ExecutionEnvironment {
                                             () -> closed || cancellation.isCancelled());
                             boolean mutating =
                                     Set.of("write", "edit", "patch").contains(request.get("op"));
-                            if (answer.uncertain() || answer.exitCode() != 0 || closed) {
+                            if (answer.uncertain() || answer.exitCode() != 0) {
                                 if (!mutating || !answer.started())
                                     throw BoundedJson.error(
                                             answer.uncertain()
@@ -230,7 +230,7 @@ public final class DockerExecutionEnvironment implements ExecutionEnvironment {
                                 BoundedJson.encode(payload),
                                 request.timeout().plusSeconds(5),
                                 () -> closed || cancellation.isCancelled());
-                if (reply.uncertain() || reply.exitCode() != 0 && reply.started() || closed) {
+                if (reply.uncertain() || reply.exitCode() != 0 && reply.started()) {
                     String cleanup = cleanupForUnknown();
                     return new ToolResult(
                             request.callId(),
@@ -249,6 +249,15 @@ public final class DockerExecutionEnvironment implements ExecutionEnvironment {
                 if (reply.exitCode() != 0) throw BoundedJson.error("ENVIRONMENT_IO");
                 try {
                     var envelope = BoundedJson.decode(reply.stdout());
+                    if (envelope.get("error") instanceof String code
+                            && Boolean.TRUE.equals(envelope.get("executionRejected")))
+                        return new ToolResult(
+                                request.callId(),
+                                ToolStatus.FAILED,
+                                Map.of("executionRejected", true, "sideEffectUncertain", false),
+                                code,
+                                Map.of(),
+                                Optional.of(new ToolResult.ErrorInfo(code, code)));
                     if (envelope.get("error") instanceof String code) throw BoundedJson.error(code);
                     var result = Values.object(envelope.get("value"));
                     var value = new LinkedHashMap<>(Values.object(result.get("value")));

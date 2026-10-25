@@ -128,7 +128,7 @@ class R1PluginRollbackTest {
         assertEquals(2, original.getSuppressed().length);
         assertEquals("BUS_CLOSED", ((HarnessException) original.getSuppressed()[0]).code());
         assertEquals(
-                List.of("stop", "owned.close"),
+                List.of("stop", "owned.close", "plugin.stopped"),
                 container.cleanupFailures().stream()
                         .map(PluginContainer.CleanupFailure::stage)
                         .toList());

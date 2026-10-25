@@ -38,9 +38,9 @@ public final class InteractiveApprovalService implements ApprovalService, AutoCl
         if (promptId == null || promptId.isBlank()) return false;
         Pending value = pending.get(promptId);
         if (value == null) return false;
+        if (value.cancellation().isCancelled()) return false;
         synchronized (value) {
             if (closed.get()
-                    || value.cancellation().isCancelled()
                     || System.nanoTime() - value.deadline() >= 0
                     || value.answer().isDone()) return false;
             return value.answer().complete(new ApprovalDecision(approved, reason, actor));
@@ -79,7 +79,6 @@ public final class InteractiveApprovalService implements ApprovalService, AutoCl
             while (true) {
                 context.cancellation().throwIfCancelled();
                 synchronized (value) {
-                    context.cancellation().throwIfCancelled();
                     if (closed.get())
                         return new ApprovalDecision(false, "Approval interface closed", "system");
                     // answer() and expiry settle once under the same pending monitor.
@@ -95,8 +94,8 @@ public final class InteractiveApprovalService implements ApprovalService, AutoCl
                 }
                 try {
                     var decision = value.answer().get(20, TimeUnit.MILLISECONDS);
+                    context.cancellation().throwIfCancelled();
                     synchronized (value) {
-                        context.cancellation().throwIfCancelled();
                         if (closed.get())
                             return new ApprovalDecision(
                                     false, "Approval interface closed", "system");

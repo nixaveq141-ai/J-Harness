@@ -41,4 +41,4 @@ try{
  }
  requireThat(!failures.length,'One or more browser fixtures failed')
  await atomicJson(matrixPath,matrix('PASS'))
-}catch(error){failures.push({error:error.message});await atomicJson(matrixPath,matrix('FAILED'));throw error}
+}catch(error){failures.push({scope:'matrix',error:error.message});await atomicJson(matrixPath,matrix('FAILED'));throw error}

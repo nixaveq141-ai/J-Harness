@@ -116,37 +116,43 @@ public final class DefaultEventBus implements EventBus, AutoCloseable {
     }
 
     @Override
-    public synchronized void publish(SessionEvent event) {
-        ensureOpen();
-        rejectRecursive();
-        Objects.requireNonNull(event);
-        List<NotifyEntry> snapshot =
-                notifications.stream().filter(e -> matches(e.type, event)).toList();
-        try {
-            notificationWorker.execute(
-                    () -> {
-                        callback.set(true);
-                        try {
-                            for (NotifyEntry entry : snapshot) {
-                                if (!entry.active.get()) continue;
-                                try {
-                                    entry.listener.accept(event);
-                                } catch (Exception ex) {
-                                    report(
-                                            new EventFailure(
-                                                    "NOTIFY_FAILED",
-                                                    event.eventId(),
-                                                    event.type(),
-                                                    ex));
+    public void publish(SessionEvent event) {
+        EventFailure failure = null;
+        synchronized (this) {
+            ensureOpen();
+            rejectRecursive();
+            Objects.requireNonNull(event);
+            List<NotifyEntry> snapshot =
+                    notifications.stream().filter(e -> matches(e.type, event)).toList();
+            try {
+                notificationWorker.execute(
+                        () -> {
+                            callback.set(true);
+                            try {
+                                for (NotifyEntry entry : snapshot) {
+                                    if (!entry.active.get()) continue;
+                                    try {
+                                        entry.listener.accept(event);
+                                    } catch (Exception ex) {
+                                        report(
+                                                new EventFailure(
+                                                        "NOTIFY_FAILED",
+                                                        event.eventId(),
+                                                        event.type(),
+                                                        ex));
+                                    }
                                 }
+                            } finally {
+                                callback.remove();
                             }
-                        } finally {
-                            callback.remove();
-                        }
-                    });
-        } catch (RejectedExecutionException saturated) {
-            report(new EventFailure("NOTIFY_QUEUE_FULL", event.eventId(), event.type(), saturated));
+                        });
+            } catch (RejectedExecutionException saturated) {
+                failure =
+                        new EventFailure(
+                                "NOTIFY_QUEUE_FULL", event.eventId(), event.type(), saturated);
+            }
         }
+        if (failure != null) report(failure);
     }
 
     @Override
@@ -169,12 +175,14 @@ public final class DefaultEventBus implements EventBus, AutoCloseable {
             for (SerialEntry entry : snapshot) {
                 if (!entry.active.get()) continue;
                 CountDownLatch exited = new CountDownLatch(1);
+                var phase = new java.util.concurrent.atomic.AtomicInteger();
                 Future<?> task;
                 synchronized (this) {
                     ensureOpen();
                     task =
                             serialWorker.submit(
                                     () -> {
+                                        if (!phase.compareAndSet(0, 1)) return;
                                         callback.set(true);
                                         try {
                                             if (entry.active.get()) entry.listener.accept(event);
@@ -189,11 +197,13 @@ public final class DefaultEventBus implements EventBus, AutoCloseable {
                 try {
                     task.get(entry.timeout.toNanos(), TimeUnit.NANOSECONDS);
                 } catch (TimeoutException ex) {
+                    if (phase.compareAndSet(0, 2)) exited.countDown();
                     task.cancel(true);
                     confirmSerialExit(exited);
                     throw new HarnessException(
                             "SERIAL_TIMEOUT", "Serial listener timed out: " + event.type(), ex);
                 } catch (InterruptedException ex) {
+                    if (phase.compareAndSet(0, 2)) exited.countDown();
                     task.cancel(true);
                     confirmSerialExit(exited);
                     Thread.currentThread().interrupt();
@@ -258,18 +268,33 @@ public final class DefaultEventBus implements EventBus, AutoCloseable {
         rejectRecursive();
         if (timeout == null || timeout.isNegative() || timeout.isZero())
             throw new IllegalArgumentException("timeout");
-        Future<?> barrier;
-        synchronized (this) {
-            ensureOpen();
-            try {
-                barrier = notificationWorker.submit(() -> {});
-            } catch (RejectedExecutionException ex) {
-                throw new HarnessException(
-                        "NOTIFY_QUEUE_FULL", "Notification queue is saturated", ex);
+        Future<?> barrier = null;
+        long deadline = System.nanoTime() + timeout.toNanos();
+        while (barrier == null) {
+            synchronized (this) {
+                ensureOpen();
+                try {
+                    barrier = notificationWorker.submit(() -> {});
+                } catch (RejectedExecutionException saturated) {
+                    if (System.nanoTime() - deadline >= 0)
+                        throw new HarnessException(
+                                "NOTIFY_BARRIER_FAILED",
+                                "Notification barrier admission timed out",
+                                saturated);
+                }
+            }
+            if (barrier == null) {
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException interrupted) {
+                    Thread.currentThread().interrupt();
+                    throw new HarnessException(
+                            "CANCELLED", "Notification barrier interrupted", interrupted);
+                }
             }
         }
         try {
-            barrier.get(timeout.toNanos(), TimeUnit.NANOSECONDS);
+            barrier.get(Math.max(0, deadline - System.nanoTime()), TimeUnit.NANOSECONDS);
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
             throw new HarnessException("CANCELLED", "Notification barrier interrupted", ex);

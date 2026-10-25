@@ -101,7 +101,9 @@ class WorkbenchSettingsTest {
                                             "project",
                                             "directory",
                                             path))));
-            assertThrows(HarnessException.class, () -> manager.save(invalid));
+            assertEquals(
+                    "INVALID_ECOSYSTEM_CONFIG",
+                    assertThrows(HarnessException.class, () -> manager.save(invalid)).code());
         }
         assertEquals(
                 1, ((List<?>) manager.skills(temp.toRealPath().toString()).get("skills")).size());
@@ -138,7 +140,9 @@ class WorkbenchSettingsTest {
                     Map.of(
                             "skillRoots",
                             List.of(Map.of("id", "user", "kind", "user", "directory", directory))));
-            assertThrows(HarnessException.class, () -> manager.save(invalid));
+            assertEquals(
+                    "INVALID_ECOSYSTEM_CONFIG",
+                    assertThrows(HarnessException.class, () -> manager.save(invalid)).code());
         }
         assertEquals(
                 1, ((List<?>) manager.skills(temp.toRealPath().toString()).get("skills")).size());
@@ -284,6 +288,18 @@ class WorkbenchSettingsTest {
                 Map.of(),
                 new Metadata(temp.toRealPath()),
                 vault);
+    }
+
+    @Test
+    void corruptCleanupJournalIsPreservedWithMaintenanceDiagnostic() throws Exception {
+        var vault = new MemoryVault();
+        manager(vault);
+        Path journal = temp.resolve(".jharness/settings/credential-cleanup.json");
+        Files.writeString(journal, "{broken");
+        assertEquals(
+                "CREDENTIAL_CLEANUP_INVALID",
+                assertThrows(HarnessException.class, () -> manager(vault)).code());
+        assertEquals("{broken", Files.readString(journal));
     }
 
     private static Map<String, Object> input(Map<String, Object> read, Map<String, String> keys) {
