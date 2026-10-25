@@ -1,6 +1,12 @@
-name: M10.5.9 WebKit focused diagnostics (not acceptance)
+name: M10.5.9 browser focused diagnostics (not acceptance)
 on:
   workflow_dispatch:
+    inputs:
+      scope:
+        type: choice
+        description: Selected browser diagnostic scope
+        default: turns
+        options: [turns, extensions]
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -11,14 +17,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - os: ubuntu-latest
-            fixture: turns
+        include: ${{ fromJSON(inputs.scope == 'extensions' && '[{"os":"ubuntu-latest","fixture":"extensions"},{"os":"macos-latest","fixture":"extensions"}]' || '[{"os":"ubuntu-latest","fixture":"turns"}]') }}
     runs-on: ${{ matrix.os }}
     timeout-minutes: 20
     env:
       JHARNESS_EVIDENCE_RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}-${{ github.sha }}
-      JHARNESS_MATRIX_ENGINES: webkit
+      JHARNESS_MATRIX_ENGINES: ${{ inputs.scope == 'extensions' && 'chromium' || 'webkit' }}
       JHARNESS_MATRIX_FIXTURES: ${{ matrix.fixture }}
     steps:
       - uses: actions/checkout@v4
@@ -37,13 +41,15 @@ jobs:
           npm --prefix frontend ci
           npm --prefix frontend run build
           sh ./mvnw -B -DskipTests package > focused-build.log 2>&1 || { tail -n 80 focused-build.log; exit 1; }
-      - name: Install WebKit
+      - name: Install selected browser
         working-directory: frontend
-        run: node node_modules/playwright/cli.js install --with-deps webkit
-      - name: Verify original selected WebKit checks (stop at first failure)
+        run: node node_modules/playwright/cli.js install --with-deps ${{ env.JHARNESS_MATRIX_ENGINES }}
+      - name: Verify original selected browser checks (stop at first failure)
         run: |
           set -euo pipefail
-          for round in 1 2 3; do
+          rounds=3
+          if [[ "${{ inputs.scope }}" == 'extensions' ]]; then rounds=1; fi
+          for round in $(seq 1 "$rounds"); do
             if node scripts/run-workbench-matrix.mjs; then fixture_exit=0; else fixture_exit=$?; fi
             snapshot=".build-cache/M10.5.9/focused-attempt-$round/.build-cache/M10.5.9"
             mkdir -p "$snapshot"
@@ -54,7 +60,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: m1059-webkit-focused-${{ matrix.os }}
+          name: m1059-browser-focused-${{ matrix.os }}
           include-hidden-files: true
           path: |
             focused-build.log

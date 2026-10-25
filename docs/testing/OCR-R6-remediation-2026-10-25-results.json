@@ -13,33 +13,6 @@
     "clarified": 20
   },
   "independentFaultInjectionClaimed": false,
-  "jarSha256": "3904ed4a895e2827a49b02443bbcd82dde4cea2f72b76e200526b04b115c5ee7",
-  "additionalLocal": {
-    "native": {
-      "path": ".build-cache/R6-2026-10-25/native-closing.json",
-      "sha256": "a821d9b557ebc9c63f34b61b01e0ca142958dc03c58ad724a29ac6cd26345d50",
-      "status": "PASS",
-      "checks": 7
-    },
-    "launcher": {
-      "path": ".build-cache/M10-launcher-results.json",
-      "sha256": "540512802b30bde152d6fbf66c3d1d33eb038a331b86cbdba59ead762d9db9d1",
-      "status": "PASS",
-      "checks": 8
-    },
-    "sdk": {
-      "path": ".build-cache/M10.5.8-sdk-results.json",
-      "sha256": "b9cfdf8e124f6cb250efa629345c1032e5083a6f14bda630d601651c00fc851d",
-      "status": "PASS",
-      "checks": 66
-    },
-    "examples": {
-      "path": ".build-cache/M10.5.8-examples-results.json",
-      "sha256": "638773d84f1b62c63d10caa02986adcde93ef2f59f541819c82532eea1a70d8d",
-      "status": "PASS",
-      "checks": 2
-    }
-  },
   "docker": {
     "status": "UNAVAILABLE",
     "probeExecution": false,
@@ -53,7 +26,7 @@
   ],
   "implementationCommit": "73cb12513bc257b39739aab20a66bcac647c5e89",
   "remoteValidation": {
-    "status": "CANONICAL_FIXTURE_FOCUSED_PENDING",
+    "status": "IDENTITY_AND_TOGGLE_FIX_FOCUSED_PENDING",
     "pushExecuted": true,
     "authorization": "Current user explicit confirmation",
     "nativeRunId": "40178201805",
@@ -63,9 +36,40 @@
     "nativeChecks": 7,
     "nativePlatform": "Windows Server 2025",
     "ciDispatched": true,
-    "ciRunId": "40178732629",
-    "ciCommit": "c40c90815ed4d6fa254d236b774f95765de7abd1",
-    "url": "https://github.com/nixaveq141-ai/J-Harness/actions/runs/40178732629"
+    "ciRunId": "40179342004",
+    "ciCommit": "45587cfd15d79568529418589fb0c4f2c80ac76a",
+    "url": "https://github.com/nixaveq141-ai/J-Harness/actions/runs/40178732629",
+    "canonicalFixtureFocused": {
+      "status": "PASS",
+      "runId": "40179167159",
+      "commit": "45587cfd15d79568529418589fb0c4f2c80ac76a",
+      "reports": [
+        {
+          "archive": ".build-cache/R6-2026-10-25/focused-session-0.zip",
+          "sha256": "9c4195e95e584ab62b7a1d781a4e353fea49857f36a1effbd7879b149ead18f6",
+          "checks": 5,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "archive": ".build-cache/R6-2026-10-25/focused-session-1.zip",
+          "sha256": "a2cfa5e6e7707128b1dfd43ac8e3f0e0884cf5c3145dece4445e9fff716c7aef",
+          "checks": 5,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "archive": ".build-cache/R6-2026-10-25/focused-session-2.zip",
+          "sha256": "5481f6ec56041473b610ff80a0718b61d9cf0b6cb7350fa810489ea4fbefa64d",
+          "checks": 5,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      ]
+    }
   },
   "localFrozen": {
     "commit": "73cb12513bc257b39739aab20a66bcac647c5e89",
@@ -133,7 +137,7 @@
     },
     "boundary": "Earlier local candidate before final5; not mixed with final current CI evidence."
   },
-  "finalCodeCommit": "c40c90815ed4d6fa254d236b774f95765de7abd1",
+  "finalCodeCommit": "45587cfd15d79568529418589fb0c4f2c80ac76a",
   "remoteAttempts": [
     {
       "runId": "40178732629",
@@ -146,6 +150,74 @@
       "windowsZipSha256": "e85c05ed92b3479b3e34cefd15ac234653223df3bec0b4db6684c341e69af4ba",
       "macArtifactId": 12593024592,
       "macZipSha256": "796495a9aa3a3d22cc1e2947a74434633fd6efb53d6f341a0c8b9371df1b60d8"
+    },
+    {
+      "runId": "40179342004",
+      "commit": "45587cfd15d79568529418589fb0c4f2c80ac76a",
+      "status": "FAILED",
+      "windows": {
+        "test": "R5SessionBoundsTest.directoryReplacementCannotReuseAnExistingIndexInstance",
+        "failure": "Expected IOException, nothing thrown",
+        "artifactId": 12593435807,
+        "zipSha256": "aba2a25dfa15f56e6ef4601cfd644bd4ea1c946a59c4071712d8b6db7fb7a676"
+      },
+      "macos": {
+        "browserPassedGroups": 32,
+        "browserPassedChecks": 778,
+        "failed": "chromium/extensions immediate snapshot visibility",
+        "artifactId": 12594326531,
+        "zipSha256": "c0546f6a152c305c990cca2815daecbe909e5ad15da26ab96c83f539286d2012"
+      },
+      "linux": {
+        "browserPassedGroups": 32,
+        "browserPassedChecks": 778,
+        "failed": "chromium/extensions immediate snapshot visibility",
+        "artifactId": 12593882740,
+        "zipSha256": "123b3253566615c65bc36f29ad7755dfe13126dac15d5a36806189e05722dee6"
+      }
     }
-  ]
+  ],
+  "rootCauseFollowup": {
+    "identity": "Windows missing fileKey + reused creationTime can compare equal after replacement; deterministic old-policy counterexample failed, private cache UUID anchors now checked",
+    "identityNegativeLog": ".build-cache/R6-2026-10-25/identity-old-policy.log",
+    "sessionTests": 55,
+    "localExtensionsChecks": {
+      "chromium": 35,
+      "webkit": 35
+    },
+    "extensions": "Native details toggle queues React rendering. Both original failure body captures already contain the expected snapshot SHA and text; wait for the actual DOM and verify exact snapshot bytes.",
+    "limitations": "Private cache anchor boundary check; public workspace identity semantics and unresolved parent replacement races remain unchanged",
+    "currentJarSha256": "4a8c54f3f255a11bef7d18e4c98045fd5e750d0816d2cf68eb07333c9ac7cbfa",
+    "localBrowserMatrix": {
+      "path": ".build-cache/M10.5.9/browser/matrix.json",
+      "sha256": "e5cff53e88ae92256900a73021f006ba52c73356237e10f11c2515f983e35131"
+    }
+  },
+  "localPreIdentityFixJarSha256": "3904ed4a895e2827a49b02443bbcd82dde4cea2f72b76e200526b04b115c5ee7",
+  "preIdentityFixLocal": {
+    "native": {
+      "path": ".build-cache/R6-2026-10-25/native-closing.json",
+      "sha256": "a821d9b557ebc9c63f34b61b01e0ca142958dc03c58ad724a29ac6cd26345d50",
+      "status": "PASS",
+      "checks": 7
+    },
+    "launcher": {
+      "path": ".build-cache/M10-launcher-results.json",
+      "sha256": "540512802b30bde152d6fbf66c3d1d33eb038a331b86cbdba59ead762d9db9d1",
+      "status": "PASS",
+      "checks": 8
+    },
+    "sdk": {
+      "path": ".build-cache/M10.5.8-sdk-results.json",
+      "sha256": "b9cfdf8e124f6cb250efa629345c1032e5083a6f14bda630d601651c00fc851d",
+      "status": "PASS",
+      "checks": 66
+    },
+    "examples": {
+      "path": ".build-cache/M10.5.8-examples-results.json",
+      "sha256": "638773d84f1b62c63d10caa02986adcde93ef2f59f541819c82532eea1a70d8d",
+      "status": "PASS",
+      "checks": 2
+    }
+  }
 }

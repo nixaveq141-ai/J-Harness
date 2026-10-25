@@ -126,7 +126,12 @@ try {
   const catalog=await api('/v1/skills?profile=default');assert.equal(catalog.status,200,JSON.stringify(catalog.body));assert.ok(catalog.body.skills.some(s=>s.id==='guide'),JSON.stringify(catalog.body))
   await page.getByLabel('任务目标').fill('/gu')
   await page.getByRole('button', { name: '使用 /guide', exact: true }).waitFor(); check('slash prefix offers matching scanned skills', await page.getByRole('button', { name: '使用 /userguide', exact: true }).count() === 0)
-  await page.getByText('查看技能快照', { exact: true }).click(); check('frontmatter snapshot is viewable without model request', await page.getByText('不可信技能文本 · SHA256', { exact: false }).isVisible() && !wire.length)
+  await page.getByText('查看技能快照', { exact: true }).click()
+  // details' toggle event is queued; React mounts this snapshot from onToggle.
+  const snapshot = page.getByText('不可信技能文本 · SHA256', { exact: false })
+  await snapshot.waitFor({ state: 'visible' })
+  const guide = catalog.body.skills.find(s => s.id === 'guide')
+  check('frontmatter snapshot is viewable without model request', await snapshot.isVisible() && (await snapshot.innerText()).includes(guide.sha256) && await page.locator('.skill-entry pre').innerText() === guide.text && !wire.length)
   await page.getByRole('button', { name: '使用 /guide', exact: true }).click(); check('candidate only inserts draft', await page.getByLabel('任务目标').inputValue() === '/guide ' && !wire.length)
   await page.getByRole('button', { name: '技能目录', exact: true }).click(); await page.getByRole('button', { name: '使用 /explicit', exact: true }).waitFor(); await page.getByRole('button', { name: '使用 /userguide', exact: true }).waitFor(); check('explicit and user skills are available in catalog', await page.getByRole('button', { name: '使用 /explicit', exact: true }).isVisible() && await page.getByRole('button', { name: '使用 /userguide', exact: true }).isVisible())
   await shot('skills-desktop'); await page.getByRole('button', { name: '技能目录', exact: true }).click()

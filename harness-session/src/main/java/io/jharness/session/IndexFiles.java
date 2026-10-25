@@ -31,8 +31,7 @@ final class IndexFiles {
     }
 
     static void check(Path root, DirectoryIdentity identity) throws IOException {
-        if (!root.toRealPath().equals(root)
-                || !identity.equals(DirectoryIdentity.readDirectory(root)))
+        if (!root.toRealPath().equals(root) || !identity.equals(DirectoryIdentity.read(root)))
             throw new IOException("Search directory identity changed");
     }
 

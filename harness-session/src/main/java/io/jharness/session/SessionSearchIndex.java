@@ -35,7 +35,9 @@ public final class SessionSearchIndex {
         root = directory.toRealPath();
         if (!root.equals(directory.toAbsolutePath().normalize()))
             throw new IOException("Search directory must not be a link");
-        identity = DirectoryIdentity.readDirectory(root);
+        // Cache roots are private metadata, so bind an anchor rather than trusting
+        // a Windows creation timestamp that can be reused for a replaced name.
+        identity = DirectoryIdentity.bind(root);
         this.repository = Objects.requireNonNull(repository);
     }
 

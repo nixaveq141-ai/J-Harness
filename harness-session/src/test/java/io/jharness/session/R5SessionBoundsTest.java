@@ -192,9 +192,29 @@ class R5SessionBoundsTest {
         repo.events = List.of();
         Path directory = Files.createDirectory(root.resolve("index")).toRealPath();
         var index = new SessionSearchIndex(directory, repo);
+        var token = new TokenSessionSearch(directory, repo, new SecretRedactor(List.of()));
+        var created =
+                Files.readAttributes(directory, java.nio.file.attribute.BasicFileAttributes.class)
+                        .creationTime();
         Files.move(directory, root.resolve("saved"));
         Files.createDirectory(directory);
+        if (System.getProperty("os.name").startsWith("Windows")) {
+            // Windows can preserve/reuse creation time for a replaced name. Reproduce that
+            // identity collision deterministically instead of relying on filesystem timing.
+            Files.getFileAttributeView(
+                            directory, java.nio.file.attribute.BasicFileAttributeView.class)
+                    .setTimes(null, null, created);
+            assertEquals(
+                    created,
+                    Files.readAttributes(
+                                    directory, java.nio.file.attribute.BasicFileAttributes.class)
+                            .creationTime());
+        }
         assertThrows(java.io.IOException.class, () -> index.search("s", "alpha", 0, 10, false));
+        assertThrows(
+                java.io.IOException.class,
+                () -> token.search("s", "alpha", "tokens", 10, false, CancellationToken.NONE));
         assertFalse(Files.exists(directory.resolve("s.search.json")));
+        assertFalse(Files.exists(directory.resolve("s.content.json")));
     }
 }

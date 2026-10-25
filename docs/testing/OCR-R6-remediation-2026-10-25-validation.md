@@ -43,3 +43,11 @@ JAR SHA256：`21f93ac6209c4a3a1226f020ded011b5b4197e5db400c887d45ec6f076de2bb3`�
 40178732629@c40c908 的Windows/macOS均在R5SessionBoundsTest.bothSearchSnippetsUseOriginalUnicodeCoordinates失败：TokenSessionSearch拒绝非真实路径祖先，未进入浏览器。夹具一处使用root.resolve(token)，同方法raw索引及其他token夹具已用toRealPath；改这一处真实路径，不改变索引链接拒绝策略、Unicode片段断言、原702身份或生产代码。Windows本地原5项通过，新增手动session-r5三平台5项定点入口。旧轮余下Linux已取消，未执行部分不算通过，修复定点通过前不重开完整矩阵。
 
 原Windows ZIP e85c05ed92b3、macOS ZIP796495a9aa3a，原失败/元数据保留；不会用专项替代最终同提交三侧完整原包。
+
+## 完整CI第23轮根因与定点
+
+40179342004@45587cf三侧未通过。Windows目录替换负例没有抛异常；原实现的Windows fileKey缺失，仅比较创建时间。构造同一创建时间的替换目录后，旧策略确定性失败（identity-old-policy.log），当前两个私有索引改用既有DirectoryIdentity.bind UUID锚并在每次边界读取锚；session原55项通过。公共工作区身份没有改用用户文件，父目录替换竞态/不合作修改仍是保留边界，不能宣称OS目录句柄保证。
+
+Mac/Linux各32/33组778项通过，唯一Chromium/extensions在点击快照后立即isVisible失败。原失败文本稍后已包含正确SHA及完整技能正文；SkillSnapshot由异步details toggle驱动React挂载，断言早于渲染。改为等待实际可见，再同时校验目录快照SHA和正文，保持“无模型请求”及原35身份。本机Chrome/WebKit各35通过；第一次本机缺Playwright Chromium没有进入测试，随后使用既有Chrome通道，未安装/运行本机Firefox。
+
+三份原ZIP均已下载并与GitHub摘要一致：Mac c0546f6a152c、Linux123b32535666、Windowsaba2a25dfa15。先三平台session原5项及Mac/Linux Chromium扩展35项专项，定点通过并核对原包前不重开完整CI。
