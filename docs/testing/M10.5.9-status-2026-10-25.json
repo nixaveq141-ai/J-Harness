@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "date": "2026-10-25",
   "milestone": "M10.5.9",
-  "status": "PUBLIC_FULL_CI_IN_PROGRESS",
+  "status": "PUBLIC_FULL_CI_FAILED_FOCUSED_DIAGNOSTICS_PENDING",
   "m11Eligible": false,
   "codeCommit": "11e4024c090bf1c63c0adecc823de8a86c541d69",
   "sourceSha256": {
@@ -749,5 +749,13 @@
     "commit": "11e4024c090bf1c63c0adecc823de8a86c541d69",
     "url": "https://github.com/nixaveq141-ai/J-Harness/actions/runs/40195474698",
     "status": "IN_PROGRESS"
+  },
+  "publicFullRun40195474698": {
+    "commit": "11e4024c090bf1c63c0adecc823de8a86c541d69",
+    "linux": "PASS; original full-0.zip SHA256 687e63decc7b7e0008915982636c7534071af0d2130dfc88110db7495e18ae7a",
+    "macos": "32/33 browser groups; WebKit models follow-up send disabled timeout; root cause not established",
+    "windows": "32/33 browser groups; WebKit history final combined error/secret assertion failed; cause not recorded",
+    "m11Eligible": false,
+    "next": "Diagnostic-only fixed schema; one macOS WebKit models22 and one Windows WebKit history19. No invariant relaxed. No new full CI until evidence reviewed."
   }
 }

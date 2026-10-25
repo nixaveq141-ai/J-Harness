@@ -6,7 +6,7 @@ on:
         type: choice
         description: Selected browser diagnostic scope
         default: turns
-        options: [turns, extensions]
+        options: [turns, extensions, models]
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include: ${{ fromJSON(inputs.scope == 'extensions' && '[{"os":"ubuntu-latest","fixture":"extensions"},{"os":"macos-latest","fixture":"extensions"}]' || '[{"os":"ubuntu-latest","fixture":"turns"}]') }}
+        include: ${{ fromJSON(inputs.scope == 'models' && '[{"os":"macos-latest","fixture":"models"}]' || inputs.scope == 'extensions' && '[{"os":"ubuntu-latest","fixture":"extensions"},{"os":"macos-latest","fixture":"extensions"}]' || '[{"os":"ubuntu-latest","fixture":"turns"}]') }}
     runs-on: ${{ matrix.os }}
     timeout-minutes: 20
     env:
@@ -48,7 +48,7 @@ jobs:
         run: |
           set -euo pipefail
           rounds=3
-          if [[ "${{ inputs.scope }}" == 'extensions' ]]; then rounds=1; fi
+          if [[ "${{ inputs.scope }}" != 'turns' ]]; then rounds=1; fi
           for round in $(seq 1 "$rounds"); do
             if node scripts/run-workbench-matrix.mjs; then fixture_exit=0; else fixture_exit=$?; fi
             snapshot=".build-cache/M10.5.9/focused-attempt-$round/.build-cache/M10.5.9"
@@ -69,3 +69,4 @@ jobs:
             .build-cache/M10-settings-*.png
             .build-cache/M10.5.3-turns-*.png
             .build-cache/M10.5.3-turns-failure.txt
+            .build-cache/M10.5.4-models-failure.txt

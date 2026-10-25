@@ -133,6 +133,16 @@ try {
   const version = browser.version(); await stop()
   await writeFile(join(out, 'M10.5.2-history-results.json'), JSON.stringify({ status: 'PASS', capturedAt: new Date().toISOString(), browserEngine:process.env.JHARNESS_BROWSER_ENGINE??'chromium',browserVersion: version, checks, screenshots,transportDiagnostics, completedCycles: ids.length, modelRequests: wire.length, paidRequests: 0, hostStopped: host.exitCode === 0, jarSha256: createHash('sha256').update(await readFile(jar)).digest('hex') }, null, 2))
 } catch (e) {
+  // Bounded fixed-schema diagnostic; no raw exception text, DOM, credentials or payloads.
+  const diagnostic={checksCompleted:checks.length,pageErrorCount:errors.length,hostContainsKey:hostOutput.includes(key),unauthenticatedRequests:wire.filter(w=>!w.authenticated).length};
+  diagnostic.pageErrors=errors.slice(0,8).map(message=>{
+    const match=/^(?:Fetch API cannot load )?((?:http: ?\/{1,2}|\/)127\.0\.0\.1:\d+\/[^ ]+) due to access control checks\.$/.exec(message);
+    const item={length:message.length,sha256:createHash('sha256').update(message).digest('hex'),accessControl:!!match};
+    if(match)try{const url=new URL(match[1].startsWith('/')?'http:/'+match[1]:match[1].replace(/^http: ?\/{1,2}/,'http://'));item.stoppedOrigin=stoppedOrigins.has(url.origin);item.currentOrigin=url.origin===base;item.route=['/v1/workspaces','/v1/models','/v1/tasks'].includes(url.pathname)?url.pathname:/^\/v1\/tasks\/[A-Za-z0-9_-]+(?:\/[a-z]+)?$/.test(url.pathname)?'/v1/tasks/:id/'+(url.pathname.split('/')[4]??''):'OTHER';}catch{item.parseFailed=true}
+    return item;
+  });
+  try{diagnostic.storageContainsKey=JSON.stringify(await page.evaluate(()=>({localStorage,sessionStorage}))).includes(key)}catch{diagnostic.storageUnavailable=true}
+  await writeFile(join(out,'M10.5.2-history-diagnostic.json'),JSON.stringify(diagnostic,null,2)).catch(()=>{});
   if (page && !page.isClosed()) console.log('HISTORY_STATE',JSON.stringify(await page.evaluate(()=>({selected:sessionStorage.getItem('jh-selected'),pending:!!sessionStorage.getItem('jh-pending'),cutoff:document.querySelector('input[aria-label="分叉截止事件"]')?.value,status:[...document.querySelectorAll('[role="alert"],[role="status"]')].map(e=>e.textContent)}))).replaceAll(key,'[REDACTED]').replaceAll(token,'[REDACTED]'))
   if (page && !page.isClosed()) await page.screenshot({ path: join(out, 'M10.5.2-history-failure.png') })
   await writeFile(join(out, 'M10.5.2-history-failure.txt'), String(e.stack) + '\n' + hostOutput.replaceAll(key, '[REDACTED]').replaceAll(token, '[REDACTED]'))

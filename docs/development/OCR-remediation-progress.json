@@ -4,7 +4,7 @@
   "status": "LOCAL_VALIDATED_CI_PENDING",
   "details": "docs/development/OCR-R6-remediation-2026-10-25.md",
   "productMilestone": "M10.5.9",
-  "productStatus": "PUBLIC_FULL_CI_IN_PROGRESS",
+  "productStatus": "PUBLIC_FULL_CI_FAILED_FOCUSED_DIAGNOSTICS_PENDING",
   "m11Eligible": false,
   "r0Rereview": {
     "sessionId": "eed6a134-1d3b-4e89-adaa-a0e9b2ba1f19",
@@ -239,6 +239,6 @@
     "runId": "40195474698",
     "commit": "11e4024c090bf1c63c0adecc823de8a86c541d69",
     "url": "https://github.com/nixaveq141-ai/J-Harness/actions/runs/40195474698",
-    "status": "IN_PROGRESS"
+    "status": "FAILED; Linux passed; macOS models / Windows history need focused diagnostics"
   }
 }

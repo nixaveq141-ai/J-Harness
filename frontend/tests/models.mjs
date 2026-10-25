@@ -10,7 +10,7 @@ const stoppedOrigins=new Set(),transportDiagnostics=[]
 const root = resolve(import.meta.dirname, '../..'), out = join(root,'.build-cache'), workspace = join(out,`M10.5.4-models-${Date.now()}`)
 const jar = join(root,'harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar'), java = join(process.env.JAVA_HOME,process.platform==='win32'?'bin/java.exe':'bin/java')
 const token = 'models_browser_0123456789_ABCDEFGHIJKLMNOPQRSTUVWXYZ', key = `synthetic-model-${randomUUID()}`, checks = [], wire = [], screenshots = [], errors = []
-let host, base, output = '', browser, context, page, hold, result
+let host, base, output = '', browser, context, page, hold, result, diagnosticTaskId
 const wait = ms => new Promise(r => setTimeout(r,ms))
 async function until(test, timeout=30000) { const begin=Date.now(); while(Date.now()-begin<timeout) { if(await test()) return; await wait(70) } throw new Error('Model fixture timeout') }
 function check(name,value=true) { assert.ok(value,name); checks.push({name,passed:true}); console.log('PASS',name) }
@@ -70,7 +70,7 @@ const config=join(workspace,'config.json'), endpoint=`http://127.0.0.1:${provide
 await writeFile(config,JSON.stringify({baseUrl:endpoint,model:'model-a',apiKeyEnv:'JHARNESS_MODELS_KEY',maxSteps:3,durationSeconds:90,requestTimeoutSeconds:80,ecosystem:{web:{port:0}}}))
 async function start() { base=undefined;output='';host=spawn(java,['-Dfile.encoding=UTF-8','-jar',jar,'--workspace',workspace,'--config',config,'--require-read','note.txt','serve'],{cwd:root,env:{...process.env,JHARNESS_WEB_TOKEN:token,JHARNESS_MODELS_KEY:key},stdio:['pipe','pipe','pipe'],windowsHide:true});host.stdout.on('data',d=>{output+=d;base=output.match(/WEB (http:[/][/]127[.]0[.]0[.]1:[0-9]+)/)?.[1]});host.stderr.on('data',d=>output+=d);await until(()=>base||host.exitCode!==null);assert.ok(base,output) }
 async function stop() { if(host&&host.exitCode===null) { stoppedOrigins.add(base);host.stdin.end(':quit\n'); await until(()=>host.exitCode!==null);assert.equal(host.exitCode,0) } }
-async function api(path,body) { const r=await context.request.fetch(base+path,{method:body===undefined?'GET':'POST',headers:{Authorization:`Bearer ${token}`,...(body===undefined?{}:{'Content-Type':'application/json'})},...(body===undefined?{}:{data:body})});return {status:r.status(),body:await r.json()} }
+async function api(path,body,timeout=30000) { const r=await context.request.fetch(base+path,{timeout,method:body===undefined?'GET':'POST',headers:{Authorization:`Bearer ${token}`,...(body===undefined?{}:{'Content-Type':'application/json'})},...(body===undefined?{}:{data:body})});return {status:r.status(),body:await r.json()} }
 async function save(change) { const current=(await api('/v1/settings')).body;const r=await api('/v1/settings',{revision:current.revision,models:current.models,selected:current.selected,extensions:current.extensions,policy:current.policy,apiKeys:{},...change});assert.equal(r.status,200,JSON.stringify(r.body));return r.body }
 async function settled(id,model) { await until(async()=>{const t=(await api(`/v1/tasks/${id}`)).body;return t.phase==='FINISHED'&&t.modelName===model});const t=(await api(`/v1/tasks/${id}`)).body;assert.equal(t.status,'COMPLETED',JSON.stringify(t)) }
 async function events(id) { let after='',rows=[];do{const p=(await api(`/v1/tasks/${id}/events?limit=100${after?'&after='+after:''}`)).body;rows.push(...p.events);after=p.more?p.next:''}while(after);return rows }
@@ -85,7 +85,7 @@ try {
   await page.getByLabel('模型',{exact:true}).selectOption('a');check('input exposes three trusted model connections',await page.getByLabel('模型',{exact:true}).locator('option').count()===3)
   const count=wire.length;const local=await api('/v1/models/check',{modelId:'b'});check('configuration check performs no provider request',local.body.networkChecked===false&&local.body.requestSent===false&&wire.length===count)
   await page.getByLabel('任务目标',{exact:true}).fill('slow-first');await page.getByRole('button',{name:'创建任务',exact:true}).click();await until(()=>!!hold)
-  const list=(await api('/v1/tasks?view=all&limit=32')).body;const id=list.tasks[0].taskId
+  const list=(await api('/v1/tasks?view=all&limit=32')).body;const id=list.tasks[0].taskId;diagnosticTaskId=id
   await page.getByLabel('下一条消息模型',{exact:true}).selectOption('b');await page.getByLabel('后续消息',{exact:true}).fill('second-responses');await page.getByRole('button',{name:'发送后续消息',exact:true}).click();await until(async()=>((await api(`/v1/tasks/${id}/turns`)).body.submissions.length===1))
   check('next model selection leaves active request unchanged',wire.length===1&&wire[0].body.model==='model-a')
   const busy=(await api('/v1/settings')).body;check('settings mutation blocked during active round',(await api('/v1/settings',{revision:busy.revision,models:busy.models,selected:'c',extensions:busy.extensions,policy:busy.policy,apiKeys:{}})).status===409)
@@ -111,5 +111,19 @@ try {
   check('accepted queued inputs retain immutable nonsecret snapshot',facts.includes('"settingsRevision"')&&facts.includes('"maxOutputTokens":256')&&facts.includes('"modelRoute":"b"')&&!facts.includes(key))
   check('saved settings and session events contain no API key',!(await readFile(join(workspace,'.jharness/settings/workbench.json'),'utf8')).includes(key)&&!JSON.stringify(history).includes(key))
   result={status:'PASS',date:new Date().toISOString(),checks,screenshots,transportDiagnostics,browser:browser.version(),paidRequests:0,modelRequests:wire.length,jarSha256:createHash('sha256').update(await readFile(jar)).digest('hex')}
+} catch (primary) {
+  // Fixed schema only: never dump environment, request bodies, task payloads or credentials.
+  const diagnostic={checksCompleted:checks.length,modelRequests:wire.length,pageErrors:errors.length,hostExited:host?.exitCode!==null};
+  const state=(value,allowed)=>allowed.includes(value)?value:'OTHER';
+  try {
+    const message=page.getByLabel('后续消息',{exact:true}),send=page.getByRole('button',{name:'发送后续消息',exact:true});
+    diagnostic.messageCount=await message.count();diagnostic.sendCount=await send.count();
+    if(diagnostic.messageCount===1){const text=await message.inputValue({timeout:1000});diagnostic.draftLength=text.length;diagnostic.firstDraftMatches=text==='second-responses';diagnostic.messageDisabled=await message.isDisabled();}
+    if(diagnostic.sendCount===1)diagnostic.sendDisabled=await send.isDisabled();
+    diagnostic.pendingMarkers=await page.getByText('本次消息待核对，不会自动重发。',{exact:false}).count();
+    if(diagnosticTaskId){const response=await api(`/v1/tasks/${diagnosticTaskId}`,undefined,2000),t=response.body;diagnostic.taskHttpStatus=response.status;diagnostic.phase=state(t.phase,['QUEUED','RUNNING','CLOSING','FINISHED','UNKNOWN','VERIFIED']);diagnostic.status=state(t.status,['RUNNING','COMPLETED','FAILED','UNKNOWN','CANCELLED','TIMEOUT','DENIED']);diagnostic.archived=t.archived===true;diagnostic.cancelRequested=t.cancelRequested===true;}
+  }catch{diagnostic.captureIncomplete=true}
+  await writeFile(join(out,'M10.5.4-models-failure.txt'),JSON.stringify(diagnostic,null,2)).catch(()=>{});
+  throw primary;
 } finally { if(browser)await browser.close();await stop();await new Promise(r=>provider.close(r)) }
 await writeFile(join(out,'M10.5.4-models-results.json'),JSON.stringify({...result,hostStopped:host.exitCode===0},null,2))
