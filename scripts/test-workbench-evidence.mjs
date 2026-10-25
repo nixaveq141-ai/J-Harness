@@ -102,6 +102,11 @@ test('R0R-026 complete matrix and readonly CLI reject identity, subset, duplicat
   const matrix={schemaVersion:1,status:'PASS',runId:'matrix-run',capturedAt:'2020-01-02T00:00:00.000Z',platform:process.platform,paidRequests:0,engines:['chromium'],fixtures:Object.keys(contracts),records},path='.build-cache/M10.5.9/browser/matrix.json'
   await atomicJson(join(root,path),matrix);assert.equal((await validateMatrix(root)).runId,'matrix-run')
   const original=await readFile(join(root,path)),cli=spawnSync(process.execPath,[join(root,'scripts/workbench-evidence.mjs'),path],{encoding:'utf8',timeout:15000});assert.equal(cli.status,0,cli.stderr);assert.equal(JSON.parse(cli.stdout).records,11);assert.deepEqual(await readFile(join(root,path)),original)
+  if(process.platform==='win32'){
+   const caseRoot=(root[0]===root[0].toUpperCase()?root[0].toLowerCase():root[0].toUpperCase())+root.slice(1)
+   const caseCli=spawnSync(process.execPath,[join(caseRoot,'scripts/workbench-evidence.mjs'),path],{encoding:'utf8',timeout:15000})
+   assert.equal(caseCli.status,0,caseCli.stderr);assert.equal(JSON.parse(caseCli.stdout).records,11);assert.deepEqual(await readFile(join(root,path)),original)
+  }
   const aliasParent=await mkdtemp(join(tmpdir(),'jh-cli-entry-'))
   try{
    const alias=join(aliasParent,'root');await symlink(root,alias,process.platform==='win32'?'junction':'dir')

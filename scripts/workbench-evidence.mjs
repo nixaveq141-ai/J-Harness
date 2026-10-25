@@ -4,7 +4,7 @@ import {constants} from 'node:fs'
 import {resolve,relative,dirname,isAbsolute,join} from 'node:path'
 import {createHash,randomUUID} from 'node:crypto'
 import {execFileSync,spawn} from 'node:child_process'
-import {pathToFileURL} from 'node:url'
+import {fileURLToPath} from 'node:url'
 export const sha=b=>createHash('sha256').update(b).digest('hex')
 export function strictJson(bytes){
   const text=bytes.toString('utf8');let cursor=0
@@ -148,7 +148,10 @@ export async function validateMatrix(root,name='.build-cache/M10.5.9/browser/mat
   return matrix
 }
 const entryPath=process.argv[1]?await realpath(resolve(process.argv[1])).catch(()=>null):null
-if(entryPath&&import.meta.url===pathToFileURL(entryPath).href){
+// Canonicalize both sides through the same filesystem API: Windows module URLs
+// can retain drive/directory casing or short aliases that realpath normalizes.
+const modulePath=await realpath(fileURLToPath(import.meta.url))
+if(entryPath&&modulePath===entryPath){
   requireThat(process.argv.length===3,'Usage: node scripts/workbench-evidence.mjs <repository-relative matrix.json>')
   const matrix=await validateMatrix(resolve(import.meta.dirname,'..'),process.argv[2]);console.log(JSON.stringify({status:'PASS',runId:matrix.runId,records:matrix.records.length}))
 }

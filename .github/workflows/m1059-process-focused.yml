@@ -6,7 +6,7 @@ on:
         type: choice
         description: Selected diagnostic scope
         default: process
-        options: [process, session-r5]
+        options: [process, session-r5, evidence]
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -14,7 +14,7 @@ permissions:
   contents: read
 jobs:
   ownership:
-    if: inputs.scope != 'session-r5'
+    if: inputs.scope != 'session-r5' && inputs.scope != 'evidence'
     strategy:
       fail-fast: false
       matrix:
@@ -101,3 +101,26 @@ jobs:
           name: m1059-session-focused-${{ matrix.os }}
           path: harness-session/target/surefire-reports/
           if-no-files-found: error
+
+  evidence:
+    if: inputs.scope == 'evidence'
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Verify original 25 evidence cases including Windows path aliases
+        shell: bash
+        run: node --test --test-reporter=tap scripts/test-workbench-evidence.mjs > focused-evidence.log 2>&1
+      - name: Preserve evidence test log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: m1059-evidence-focused-${{ matrix.os }}
+          path: focused-evidence.log

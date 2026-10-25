@@ -4,7 +4,7 @@
   "status": "LOCAL_VALIDATED_CI_PENDING",
   "details": "docs/development/OCR-R6-remediation-2026-10-25.md",
   "productMilestone": "M10.5.9",
-  "productStatus": "PUBLIC_FULL_CI_FAILED_FOCUSED_DIAGNOSTICS_PENDING",
+  "productStatus": "PUBLIC_FULL_CI_FAILED_EVIDENCE_CLI_FOCUSED_PENDING",
   "m11Eligible": false,
   "r0Rereview": {
     "sessionId": "eed6a134-1d3b-4e89-adaa-a0e9b2ba1f19",
@@ -236,9 +236,54 @@
     "anonymousVerified": true
   },
   "currentFullCi": {
+    "runId": "40197868436",
+    "commit": "f3d73052d8ccef52bfb20b3e10776a8315a2348c",
+    "status": "FAILED",
+    "linux": "PASS",
+    "macOS": "PASS",
+    "Windows": "Java702/119, client42, SDK66, native7, browser33/813 passed; release gate workbench-evidence failed R0R-026 with empty CLI stdout",
+    "rootCause": "CLI compared raw import.meta.url with canonical argv URL. Windows case/short aliases can differ; old behavior deterministically returns 0 with no JSON on case variants."
+  },
+  "previousPublicFullCi": {
     "runId": "40195474698",
     "commit": "11e4024c090bf1c63c0adecc823de8a86c541d69",
-    "url": "https://github.com/nixaveq141-ai/J-Harness/actions/runs/40195474698",
-    "status": "FAILED; Linux passed; macOS models / Windows history need focused diagnostics"
+    "status": "FAILED",
+    "linux": "PASS",
+    "macOS": "WebKit models follow-up send disabled timeout; 32/33 groups",
+    "Windows": "WebKit history final combined error/leak assertion; 32/33 groups",
+    "rootCauseEstablished": false
+  },
+  "publicWebKitFocusedEvidence": {
+    "status": "PASS",
+    "commit": "f3d73052d8ccef52bfb20b3e10776a8315a2348c",
+    "history": {
+      "runId": "40197608570",
+      "artifactId": 12600508327,
+      "sha256": "65d807a524dce59a57c9e6a1b828494c97eec940a78b2dff51a1f7e3f2a075b8",
+      "platform": "Windows",
+      "engine": "webkit",
+      "checks": 19
+    },
+    "models": {
+      "runId": "40197604446",
+      "artifactId": 12600657959,
+      "sha256": "f15156761511eec233337c10d87a8b05d802807de4eaa31936e0da26e6edb17c",
+      "platform": "macOS",
+      "engine": "webkit",
+      "checks": 22
+    },
+    "audit": ".build-cache/publication-2026-10-25/diagnostic-audited.json",
+    "rootCauseEstablished": false,
+    "productionBehaviorChanged": false,
+    "assertionsRelaxed": false,
+    "boundary": "Both original failures did not reproduce in focused runs; passing reruns do not establish a root-cause fix."
+  },
+  "evidenceCliFollowup": {
+    "status": "LOCAL_25_PASS_REMOTE_PENDING",
+    "sameCaseIdentities": true,
+    "oldPolicyNegative": "Original R0R-026 plus drive-case alias fails with Unexpected end of JSON input",
+    "fix": "Compare realpath on BOTH module filename and argv filename; retain all original validation and readonly byte assertions.",
+    "validation": "Windows original25 passed; isolated restored old policy R0R-026 failed deterministically.",
+    "source": "docs/testing/M10.5.9-evidence-cli-2026-10-25.md"
   }
 }

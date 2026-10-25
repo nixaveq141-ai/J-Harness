@@ -142,7 +142,7 @@ try {
     return item;
   });
   try{diagnostic.storageContainsKey=JSON.stringify(await page.evaluate(()=>({localStorage,sessionStorage}))).includes(key)}catch{diagnostic.storageUnavailable=true}
-  await writeFile(join(out,'M10.5.2-history-diagnostic.json'),JSON.stringify(diagnostic,null,2)).catch(()=>{});
+  await writeFile(join(out,'M10.5.2-history-diagnostic-failure.txt'),JSON.stringify(diagnostic,null,2)).catch(()=>{});
   if (page && !page.isClosed()) console.log('HISTORY_STATE',JSON.stringify(await page.evaluate(()=>({selected:sessionStorage.getItem('jh-selected'),pending:!!sessionStorage.getItem('jh-pending'),cutoff:document.querySelector('input[aria-label="分叉截止事件"]')?.value,status:[...document.querySelectorAll('[role="alert"],[role="status"]')].map(e=>e.textContent)}))).replaceAll(key,'[REDACTED]').replaceAll(token,'[REDACTED]'))
   if (page && !page.isClosed()) await page.screenshot({ path: join(out, 'M10.5.2-history-failure.png') })
   await writeFile(join(out, 'M10.5.2-history-failure.txt'), String(e.stack) + '\n' + hostOutput.replaceAll(key, '[REDACTED]').replaceAll(token, '[REDACTED]'))

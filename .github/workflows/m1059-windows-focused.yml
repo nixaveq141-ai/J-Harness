@@ -81,7 +81,7 @@ jobs:
             .build-cache/M10.5.2-*.png
             .build-cache/M10.5.6-*.png
             .build-cache/M10.5.7-*.png
-            .build-cache/M10.5.2-history-diagnostic.json
+            .build-cache/M10.5.2-history-diagnostic-failure.txt
             .build-cache/M10.5.2-history-failure.txt
             .build-cache/M10.5.7-failure.txt
             .build-cache/M10.5.8-search-failure.txt

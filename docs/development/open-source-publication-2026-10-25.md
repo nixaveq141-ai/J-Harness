@@ -10,4 +10,6 @@
 
 原始元数据、扫描和专项证据在忽略目录.build-cache/publication-2026-10-25保留。依据：[GitHub可见性后果](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/managing-repository-settings/setting-repository-visibility)、[标准公开runner规则](https://docs.github.com/en/actions/reference/runners/github-hosted-runners)。
 
-公开后唯一完整运行：[40195474698](https://github.com/nixaveq141-ai/J-Harness/actions/runs/40195474698)，提交11e4024，当前进行中。
+公开后首轮完整运行40195474698@11e4024：Linux成功，macOS/Windows各32/33浏览器组，分别WebKit models禁用按钮超时和history最后异常/泄漏联合断言失败，原包保留。未宣称已定位根因。
+
+保留原断言补充固定诊断后，f3d7305的macOS WebKit models专项40197604446共22项和Windows WebKit history专项40197608570共19项通过；两份原ZIP摘要、检查身份与截图已核对，原故障未复现。随后仅运行一次同提交完整验收：[40197868436](https://github.com/nixaveq141-ai/J-Harness/actions/runs/40197868436)，当前进行中。
