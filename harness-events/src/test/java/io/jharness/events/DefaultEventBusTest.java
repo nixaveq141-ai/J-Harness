@@ -39,6 +39,7 @@ class DefaultEventBusTest {
             release.countDown();
             bus.awaitNotifications(Duration.ofSeconds(2));
             assertEquals(1, healthy.get());
+            assertEquals(1, errors.size(), "Exactly one observer diagnostic expected");
             assertEquals("NOTIFY_FAILED", errors.getFirst().code());
         } finally {
             release.countDown();

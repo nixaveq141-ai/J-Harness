@@ -29,11 +29,14 @@ class StdioSdkServerTest {
     }
 
     private static String error(String line) {
-        return (String)
-                Values.object(
-                                Values.object(Values.object(Json.parse(line)).get("error"))
-                                        .get("data"))
-                        .get("code");
+        var envelope = Values.object(Json.parse(line));
+        assertTrue(envelope.get("error") instanceof Map<?, ?>, "Expected JSON-RPC error object");
+        var error = Values.object(envelope.get("error"));
+        assertTrue(error.get("data") instanceof Map<?, ?>, "Expected error data object");
+        return assertInstanceOf(
+                String.class,
+                Values.object(error.get("data")).get("code"),
+                "Expected fixed error code");
     }
 
     @Test

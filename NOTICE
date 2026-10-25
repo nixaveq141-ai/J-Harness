@@ -13,3 +13,8 @@ Copyright (c) 2026 DeepSeek. Source attribution is in frontend/upstream.json;
 the original license is in frontend/LICENSE-DeepSeek-Harness.txt. Distributed
 browser runtime dependency licenses are included at /ui-license.txt and in
 the packaged JAR under ui/ui-license.txt.
+
+The frontend/ paths above apply to the source checkout. Candidate ZIP legal
+materials are under third-party/, LICENSE and NOTICE; the shaded JAR retains
+those materials under META-INF/jharness/ and the UI licenses under ui/.
+The source wrapper launchers are modified to use J-Harness's verified bootstrap.

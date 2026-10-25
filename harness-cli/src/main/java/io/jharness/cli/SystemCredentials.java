@@ -10,6 +10,12 @@ import java.util.concurrent.TimeUnit;
 /** Current-user native vault. No secret in argv, environment or temporary files. */
 class SystemCredentials {
     private Boolean available;
+    private String availabilityFailure = "";
+
+    synchronized String availabilityFailure() {
+        supported();
+        return availabilityFailure;
+    }
 
     synchronized boolean supported() {
         if (available == null) {
@@ -27,6 +33,18 @@ class SystemCredentials {
                                                                 "value",
                                                                 ""))));
             } catch (IOException | RuntimeException failure) {
+                String code =
+                        failure instanceof HarnessException h ? h.code() : failure.getMessage();
+                availabilityFailure =
+                        Set.of(
+                                                "CREDENTIAL_WORKER_TIMEOUT",
+                                                "CREDENTIAL_WORKER_INTERRUPTED",
+                                                "CREDENTIAL_WORKER_FAILED",
+                                                "CREDENTIAL_STORE_UNAVAILABLE",
+                                                "CREDENTIAL_OPERATION_INVALID")
+                                        .contains(String.valueOf(code))
+                                ? code
+                                : "CREDENTIAL_PROBE_FAILED";
                 available = false;
             }
         }

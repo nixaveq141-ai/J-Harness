@@ -89,27 +89,38 @@ class M6CompactionTest {
     void unresolvedCallsAndOversizedProtectedContextRefuseCompaction() {
         var messages = messages();
         messages.add(assistant("pending"));
-        assertThrows(
-                HarnessException.class,
-                () ->
-                        new ExtractiveContextCompactor()
-                                .compact(new ChatRequest(messages, List.of(), Map.of()), 2000));
-        assertThrows(
-                HarnessException.class,
-                () ->
-                        new ExtractiveContextCompactor()
-                                .compact(
-                                        new ChatRequest(
-                                                List.of(
-                                                        Map.of(
-                                                                "role",
-                                                                "system",
-                                                                "content",
-                                                                "x".repeat(3000)),
-                                                        Map.of("role", "user", "content", "goal")),
-                                                List.of(),
-                                                Map.of()),
-                                        2000));
+        assertEquals(
+                "CONTEXT_LIMIT",
+                assertThrows(
+                                HarnessException.class,
+                                () ->
+                                        new ExtractiveContextCompactor()
+                                                .compact(
+                                                        new ChatRequest(
+                                                                messages, List.of(), Map.of()),
+                                                        2000))
+                        .code());
+        assertEquals(
+                "CONTEXT_LIMIT",
+                assertThrows(
+                                HarnessException.class,
+                                () ->
+                                        new ExtractiveContextCompactor()
+                                                .compact(
+                                                        new ChatRequest(
+                                                                List.of(
+                                                                        Map.of(
+                                                                                "role",
+                                                                                "system",
+                                                                                "content",
+                                                                                "x".repeat(3000)),
+                                                                        Map.of(
+                                                                                "role", "user",
+                                                                                "content", "goal")),
+                                                                List.of(),
+                                                                Map.of()),
+                                                        2000))
+                        .code());
     }
 
     @Test

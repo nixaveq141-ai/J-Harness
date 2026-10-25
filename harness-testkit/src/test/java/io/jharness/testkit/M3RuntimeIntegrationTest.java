@@ -359,7 +359,7 @@ class M3RuntimeIntegrationTest {
             Files.createDirectories(source.getParent());
             Files.writeString(source, "class Broken { invalid java }\n");
             String version = f.files.versionOf(new ExecPath("src/main/java/Broken.java"));
-            Path repo = Path.of("..").toRealPath();
+            Path repo = Path.of(System.getProperty("basedir")).toRealPath().getParent();
             boolean windows = System.getProperty("os.name").startsWith("Windows");
             if (windows) {
                 // Verify the offline prerequisite using the real existing Wrapper distribution.
@@ -394,7 +394,23 @@ class M3RuntimeIntegrationTest {
                     String diagnostic = new String(preparationBytes, diagnosticEncoding);
                     assertEquals(0, ready.exitValue(), diagnostic);
                     assertTrue(diagnostic.contains("Apache Maven 3.9.9"), diagnostic);
-                    assertTrue(diagnostic.contains("found existing MAVEN_HOME"), diagnostic);
+                    var homeLine =
+                            diagnostic
+                                    .lines()
+                                    .filter(line -> line.startsWith("Maven home: "))
+                                    .findFirst()
+                                    .orElseThrow();
+                    Path home = Path.of(homeLine.substring("Maven home: ".length()).trim());
+                    assertTrue(home.getFileName().toString().startsWith("verified-"));
+                    var properties = new java.util.Properties();
+                    try (var input =
+                            Files.newInputStream(
+                                    repo.resolve(".mvn/wrapper/maven-wrapper.properties"))) {
+                        properties.load(input);
+                    }
+                    String checksum = properties.getProperty("distributionSha256Sum");
+                    assertEquals(checksum, Files.readString(home.resolve(".complete")));
+                    assertEquals(checksum, ProbeSupport.hash(home.resolve(".distribution.zip")));
                 } finally {
                     ready.destroyForcibly();
                 }

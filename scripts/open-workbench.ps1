@@ -12,6 +12,31 @@ $projectRoot = Split-Path -Parent $PSScriptRoot
 $hostProcess = $null
 $exitCode = 0
 
+# Background pumps never retain unbounded stdout/stderr or stop consuming after readiness.
+Add-Type -TypeDefinition @"
+using System;
+using System.IO;
+using System.Threading.Tasks;
+using System.Collections.Concurrent;
+public sealed class HarnessLauncherPump {
+  public readonly Task Completion;
+  readonly ConcurrentQueue<string> lines=new ConcurrentQueue<string>();
+  public HarnessLauncherPump(TextReader reader, bool capture) {
+    Completion=Task.Run(async () => { var buffer=new char[1024]; var line=new System.Text.StringBuilder();
+      int count; while((count=await reader.ReadAsync(buffer,0,buffer.Length))>0) {
+        if(!capture) continue;
+        for(int i=0;i<count;i++){ char c=buffer[i];
+          if(c=='\n'){ if(lines.Count>=64){string old;lines.TryDequeue(out old);} lines.Enqueue(line.ToString().TrimEnd('\r'));line.Clear(); }
+          else if(line.Length<4096)line.Append(c);
+        }
+      }
+    });
+  }
+  public bool TryLine(out string value){return lines.TryDequeue(out value);}
+  public static Task<string> Input(){return Task.Run(()=>Console.ReadLine());}
+}
+"@
+
 function Quote-ProcessArgument([string]$Value) {
     # Windows CreateProcess quoting: escape embedded quotes and trailing backslashes.
     return '"' + [regex]::Replace([regex]::Replace($Value, '(\\*)"', '$1$1\"'), '(\\+)$', '$1$1') + '"'
@@ -39,10 +64,14 @@ function Resolve-Java {
         $probe.StartInfo = $probeInfo
         try {
             [void]$probe.Start()
-            $version = $probe.StandardError.ReadToEndAsync()
-            if (-not $probe.WaitForExit(5000)) { $probe.Kill(); continue }
-            if ($version.Result -match 'version "21(?:\.|\+|")') { return $candidate }
-        } finally { $probe.Dispose() }
+            $versionPump=New-Object HarnessLauncherPump($probe.StandardError,$true)
+            $discard=New-Object HarnessLauncherPump($probe.StandardOutput,$false)
+            if (-not $probe.WaitForExit(5000)) { $probe.Kill(); [void]$probe.WaitForExit(1000); continue }
+            [void]$versionPump.Completion.Wait(1000)
+            $versionLine='';$version=''
+            while($versionPump.TryLine([ref]$versionLine)){ $version+=$versionLine }
+            if($version -match 'version "21(?:\.|\+|")'){return $candidate}
+        } catch { continue } finally { $probe.Dispose() }
     }
     throw 'Java 21 was not found. Set JAVA_HOME to your JDK 21 directory, then reopen the workbench.'
 }
@@ -86,7 +115,7 @@ try {
     }
     if ($tokenName -notmatch '^[A-Za-z_][A-Za-z0-9_]*$') { throw 'Invalid web token environment variable name.' }
     $modelKeyName = if ($settings.apiKeyEnv) { [string]$settings.apiKeyEnv } else { 'JHARNESS_API_KEY' }
-    if ($tokenName -ieq $modelKeyName -or @('PATH', 'JAVA_HOME', 'HOME', 'CODEX_HOME', 'SystemRoot', 'ComSpec', 'TEMP', 'TMP') -contains $tokenName) {
+    if ($tokenName -ieq $modelKeyName -or @('PATH', 'PATHEXT', 'JAVA_HOME', 'HOME', 'CODEX_HOME', 'USERPROFILE', 'APPDATA', 'LOCALAPPDATA', 'SystemRoot', 'WINDIR', 'ComSpec', 'TEMP', 'TMP', 'PSModulePath') -contains $tokenName) {
         throw 'Web token and model API key must use different environment variable names.'
     }
     $token = [Environment]::GetEnvironmentVariable($tokenName)
@@ -112,35 +141,34 @@ try {
     $hostProcess = New-Object System.Diagnostics.Process
     $hostProcess.StartInfo = $startInfo
     [void]$hostProcess.Start()
-    # Drain stderr without exposing provider messages, paths from configs or credentials.
-    $errors = $hostProcess.StandardError.ReadToEndAsync()
-    $line = $hostProcess.StandardOutput.ReadLineAsync()
-    $deadline = [DateTime]::UtcNow.AddSeconds(30)
-    $address = $null
-    while ([DateTime]::UtcNow -lt $deadline) {
-        if ($line.IsCompleted) {
-            $text = $line.Result
-            if ($null -eq $text) { break }
-            if ($text -match '^WEB (http://127\.0\.0\.1:[0-9]{1,5}) PROFILE default;') {
-                $address = [uri]($Matches[1] + '/')
-                if (Test-Ready $address $token) { break }
-                $address = $null
-            }
-            $line = $hostProcess.StandardOutput.ReadLineAsync()
+    $errors=New-Object HarnessLauncherPump($hostProcess.StandardError,$false)
+    $lines=New-Object HarnessLauncherPump($hostProcess.StandardOutput,$true)
+    $deadline=[DateTime]::UtcNow.AddSeconds(30)
+    $address=$null;$ready=$false
+    while([DateTime]::UtcNow -lt $deadline){
+        $text=''
+        while($lines.TryLine([ref]$text)){
+            if($text -match '^WEB (http://127\.0\.0\.1:[0-9]{1,5}) PROFILE default;'){$address=[uri]($Matches[1]+'/')}
         }
-        if ($hostProcess.HasExited) { break }
+        if($address -and (Test-Ready $address $token)){$ready=$true;break}
+        if($hostProcess.HasExited){break}
         Start-Sleep -Milliseconds 80
     }
-    if (-not $address) {
-        throw 'Workbench did not become ready. Check that the UI is built, configuration is valid, and this workspace is not already served in another window. No existing process was stopped.'
-    }
+    if(-not $ready){throw 'Workbench did not become ready. Check that the UI is built, configuration is valid, and this workspace is not already served in another window. No existing process was stopped.'}
     if (-not $NoBrowser) { Start-Process -FilePath $address.AbsoluteUri -ErrorAction Stop | Out-Null }
     Write-Host ('WORKBENCH_READY ' + $address.AbsoluteUri)
     Write-Host 'Workbench opens directly. Keep this window open. Enter :quit to stop.'
-    while (-not $hostProcess.HasExited) {
-        $inputLine = [Console]::ReadLine()
-        if ($null -eq $inputLine -or $inputLine -eq ':quit') { break }
+    $pendingInput=[HarnessLauncherPump]::Input()
+    while(-not $hostProcess.HasExited){
+        if($pendingInput.IsCompleted){
+            $inputLine=$pendingInput.Result
+            if($null -eq $inputLine -or $inputLine -eq ':quit'){break}
+            $pendingInput=[HarnessLauncherPump]::Input()
+        }
+        Start-Sleep -Milliseconds 80
     }
+    if($hostProcess.HasExited -and $hostProcess.ExitCode -ne 0){$exitCode=1}
+
 } catch {
     # Messages from PowerShell/.NET can contain untrusted configuration text; keep failures bounded.
     $known = @('Java 21 was not found.', 'Packaged JAR is missing.', 'Workspace must be a directory.',
@@ -163,7 +191,10 @@ try {
                 }
             }
         } catch { Write-Host 'Host cleanup was not confirmed. Inspect the workspace before restarting.'; $exitCode = 1 }
-        finally { $hostProcess.Dispose() }
+        finally {
+            if($hostProcess.HasExited -and $hostProcess.ExitCode -ne 0){$exitCode=1}
+            $hostProcess.Dispose()
+        }
     }
     $token = $null
 }

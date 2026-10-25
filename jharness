@@ -1,7 +1,11 @@
 #!/bin/sh
 set -eu
+if [ -L "$0" ]; then echo "Use the original checkout launcher path; symlink launchers are unsupported." >&2; exit 5; fi
 script_dir=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 jar="$script_dir/harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar"
 if [ ! -f "$jar" ]; then echo "Build first with sh ./mvnw -B package." >&2; exit 5; fi
-if [ -n "${JAVA_HOME:-}" ]; then exec "$JAVA_HOME/bin/java" -jar "$jar" "$@"; fi
+if [ -n "${JAVA_HOME:-}" ]; then
+  [ -x "$JAVA_HOME/bin/java" ] || { echo "JAVA_HOME must contain a JDK 21 java executable." >&2; exit 5; }
+  exec "$JAVA_HOME/bin/java" -jar "$jar" "$@"
+fi
 exec java -jar "$jar" "$@"

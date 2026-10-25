@@ -1,13 +1,9 @@
 name: M10.5.9 Windows focused diagnostics (not acceptance)
 on:
-  push:
-    branches: [codex/m1059-full-validation]
-    paths:
-      - frontend/tests/content.mjs
-      - frontend/tests/search.mjs
-      - frontend/tests/runtime.mjs
-      - .github/workflows/m1059-windows-focused.yml
   workflow_dispatch:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: read
 jobs:

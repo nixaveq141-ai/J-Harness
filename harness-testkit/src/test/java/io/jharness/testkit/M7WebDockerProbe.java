@@ -11,7 +11,6 @@ import java.net.*;
 import java.net.http.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
-import java.security.MessageDigest;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.*;
@@ -26,12 +25,14 @@ public final class M7WebDockerProbe {
     private M7WebDockerProbe() {}
 
     public static void main(String[] args) throws Exception {
+        ProbeSupport.begin(args);
         if (args.length != 5)
             throw new IllegalArgumentException("docker image baseDir workerJar outputJson");
         Path base = Path.of(args[2]).toAbsolutePath().resolve("web-" + UUID.randomUUID());
         Files.createDirectories(base);
         Path jar = Path.of(args[3]).toRealPath();
         var cases = new LinkedHashMap<String, Object>();
+        ProbeSupport.track(cases);
         cases.put("local", run(args[0], args[1], base.resolve("local"), jar, false));
         cases.put("docker", run(args[0], args[1], base.resolve("docker"), jar, true));
         var report = new LinkedHashMap<String, Object>();
@@ -43,13 +44,8 @@ public final class M7WebDockerProbe {
         report.put("result", "SUCCESS");
         report.put("cleanupVerified", true);
         report.put("capturedAt", java.time.Instant.now().toString());
-        report.put(
-                "jarSha256",
-                HexFormat.of()
-                        .formatHex(
-                                MessageDigest.getInstance("SHA-256")
-                                        .digest(Files.readAllBytes(jar))));
-        JSON.writerWithDefaultPrettyPrinter().writeValue(Path.of(args[4]).toFile(), report);
+        report.put("jarSha256", ProbeSupport.hash(jar));
+        ProbeSupport.publish(Path.of(args[4]), report);
         System.out.println("M7 packaged CLI Web/local/Docker probe SUCCESS");
     }
 
@@ -75,16 +71,21 @@ public final class M7WebDockerProbe {
             throws Exception {
         Files.createDirectories(root);
         Files.writeString(root.resolve("input.txt"), "before");
+        if (container) ProbeSupport.fixtureWritable(root);
         var count = new AtomicInteger();
         var captured = new CopyOnWriteArrayList<Map<String, Object>>();
         var model = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
         model.createContext(
                 "/v1/chat/completions",
                 exchange -> {
+                    byte[] incoming = exchange.getRequestBody().readNBytes(1024 * 1024 + 1);
+                    if (incoming.length > 1024 * 1024) {
+                        exchange.sendResponseHeaders(413, -1);
+                        exchange.close();
+                        return;
+                    }
                     captured.add(
-                            JSON.readValue(
-                                    exchange.getRequestBody().readNBytes(1024 * 1024),
-                                    new TypeReference<Map<String, Object>>() {}));
+                            JSON.readValue(incoming, new TypeReference<Map<String, Object>>() {}));
                     int wireIndex = count.getAndIncrement();
                     if (resilience && wireIndex == 0) {
                         byte[] rejected = "{}".getBytes(java.nio.charset.StandardCharsets.UTF_8);
@@ -282,8 +283,17 @@ public final class M7WebDockerProbe {
                                         } catch (IOException ignored) {
                                         }
                                     });
-            String startup = lines.poll(15, TimeUnit.SECONDS);
-            require(startup != null && startup.startsWith("WEB "), "CLI Web startup: " + startup);
+            String startup = null;
+            long startupDeadline = System.nanoTime() + Duration.ofSeconds(15).toNanos();
+            while (System.nanoTime() < startupDeadline) {
+                String candidate = lines.poll(100, TimeUnit.MILLISECONDS);
+                if (candidate != null && candidate.startsWith("WEB ")) {
+                    startup = candidate;
+                    break;
+                }
+                if (!process.isAlive() && lines.isEmpty()) break;
+            }
+            require(startup != null, "CLI Web startup line missing before deadline");
             URI address = URI.create(startup.split(" ")[1]);
             require(
                     http(client, address, "GET", "/v1/tasks", null, false).statusCode() == 401,
@@ -510,6 +520,10 @@ public final class M7WebDockerProbe {
                     "SUCCESS".equals(closed.payload().get("status")),
                     "Environment close confirmed");
             if (container) {
+                require(
+                        closed.payload().get("environmentId") instanceof String owner
+                                && owner.matches("[A-Za-z0-9_-]{1,128}"),
+                        "Closed environment owner missing");
                 var verify =
                         new ProcessBuilder(
                                         docker,

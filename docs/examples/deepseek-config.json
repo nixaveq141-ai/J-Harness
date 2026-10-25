@@ -5,7 +5,7 @@
   "disableThinking": true,
   "contextTokens": 65536,
   "maxOutputTokens": 4096,
-  "inputTokenCeiling": 1000000,
+  "inputTokenCeiling": 65536,
   "currency": "CNY",
   "maxCost": "2.50",
   "inputPerMillion": "2",

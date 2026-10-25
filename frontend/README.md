@@ -16,7 +16,7 @@ React 18 / TypeScript / Vite。视觉与基础控件沿用用户指定的 DeepSe
 
 Windows已构建后的便捷入口：双击仓库根目录`web-ui.cmd`，自动打开浏览器并直接进入工作台；不显示凭据输入框、不改剪贴板。无需手动生成token或复制端口。说明与自定义工作区参数见docs/examples/web-ui-launcher.md。
 
-需要 Node 22.20.1+ 或24、npm、JDK21；先在本目录执行 `npm ci`、`npm test`、`npm run build`，再在仓库根目录执行 `./mvnw -B clean verify`（Windows使用mvnw.cmd）。Maven将dist内容嵌入harness-web和CLI JAR；运行二进制不需要Node。
+需要 Node 24.x、npm、JDK21；先在本目录执行 `npm ci`、`npm test`、`npm run build`，再在仓库根目录执行 `./mvnw -B clean verify`（Windows使用mvnw.cmd）。Maven将dist内容嵌入harness-web和CLI JAR；运行二进制不需要Node。
 
 按docs/examples/m7-cli.md配置模型/工具/工作区；设置JHARNESS_WEB_TOKEN后运行 `jharness serve`（Windows使用jharness.cmd）。在浏览器打开输出的 `http://127.0.0.1:端口/`，页面通过同源自动会话连接；刷新自动重连，无需输入Web token。会话只驻留页面内存，不进入URL或Web Storage。
 
@@ -29,3 +29,5 @@ Windows已构建后的便捷入口：双击仓库根目录`web-ui.cmd`，自动�
 `npm run test:browser` 需要先编译harness-testkit测试类并打包CLI JAR，且Playwright Chromium已安装（`npx playwright install chromium`）。也可设置JHARNESS_BROWSER_CHANNEL=chrome使用已安装Chrome。该脚本自行启动/关闭专用Java FakeLlm宿主与独立浏览器，不使用付费API；临时文件和截图保存在.build-cache。适用于源码验收，不是产品内置模拟模式。
 
 构建时校验原始移植文件哈希，并收集实际浏览器运行依赖React/ReactDOM/scheduler/clsx的许可，供/ui-license.txt读取。npm锁文件固定传递依赖；tsx的esbuild限定为0.28.1修复公告，Vite保留自己支持的版本，不采用全局覆盖。
+
+候选打包使用 dist/ui-build.json 绑定本次前端输入和每份输出摘要；改动输入后必须重新 npm run build。普通后端构建仍可没有 dist，但候选发布门禁拒绝缺失或陈旧 UI。

@@ -125,15 +125,18 @@ class M1056ContentTest {
     void previewDoesNotGrantModelVersionObservation() throws Exception {
         Files.writeString(work.resolve("source.txt"), "old");
         service.file("source.txt", 0, 0, "", CancellationToken.NONE);
-        assertThrows(
-                HarnessException.class,
-                () ->
-                        files.write(
-                                new ExecPath("source.txt"),
-                                "new",
-                                true,
-                                null,
-                                CancellationToken.NONE));
+        assertEquals(
+                "FILE_CONFLICT",
+                assertThrows(
+                                HarnessException.class,
+                                () ->
+                                        files.write(
+                                                new ExecPath("source.txt"),
+                                                "new",
+                                                true,
+                                                null,
+                                                CancellationToken.NONE))
+                        .code());
         assertEquals("old", Files.readString(work.resolve("source.txt")));
     }
 
@@ -267,13 +270,24 @@ class M1056ContentTest {
         var page = service.file("lines.txt", 0, 2, "", CancellationToken.NONE);
         assertEquals("second\nthird\n", page.get("text"));
         assertEquals(2L, page.get("startLine"));
-        assertThrows(
-                HarnessException.class,
-                () -> service.file("lines.txt", -1, 0, "", CancellationToken.NONE));
-        assertThrows(
-                HarnessException.class,
-                () -> service.file("lines.txt", 1, 2, "", CancellationToken.NONE));
-        assertThrows(HarnessException.class, () -> ContentPages.page("new", 0, "0".repeat(64)));
+        assertEquals(
+                "INVALID_RANGE",
+                assertThrows(
+                                HarnessException.class,
+                                () -> service.file("lines.txt", -1, 0, "", CancellationToken.NONE))
+                        .code());
+        assertEquals(
+                "INVALID_RANGE",
+                assertThrows(
+                                HarnessException.class,
+                                () -> service.file("lines.txt", 1, 2, "", CancellationToken.NONE))
+                        .code());
+        assertEquals(
+                "CONTENT_CHANGED",
+                assertThrows(
+                                HarnessException.class,
+                                () -> ContentPages.page("new", 0, "0".repeat(64)))
+                        .code());
     }
 
     @Test
@@ -292,7 +306,9 @@ class M1056ContentTest {
                                 HarnessException.class,
                                 () -> denied.file("source.txt", 0, 0, "", CancellationToken.NONE))
                         .code());
-        assertThrows(HarnessException.class, () -> service.list(".", () -> true));
+        assertEquals(
+                "CANCELLED",
+                assertThrows(HarnessException.class, () -> service.list(".", () -> true)).code());
         var replaced =
                 new WorkspaceContentInspection(
                         files,
@@ -302,6 +318,11 @@ class M1056ContentTest {
                         () -> {
                             throw new HarnessException("WORKSPACE_OWNER_MISMATCH", "replaced");
                         });
-        assertThrows(HarnessException.class, () -> replaced.list(".", CancellationToken.NONE));
+        assertEquals(
+                "WORKSPACE_OWNER_MISMATCH",
+                assertThrows(
+                                HarnessException.class,
+                                () -> replaced.list(".", CancellationToken.NONE))
+                        .code());
     }
 }

@@ -242,6 +242,10 @@ public final class M10BrowserHost implements AutoCloseable {
     }
 
     public static void main(String[] args) throws Exception {
+        if (args.length != 3)
+            throw new IllegalArgumentException("Expected WORKSPACE ADDRESS_FILE EVIDENCE_FILE");
+        for (int i = 1; i < 3; i++)
+            Files.createDirectories(Path.of(args[i]).toAbsolutePath().getParent());
         try (var host = new M10BrowserHost(Files.createDirectories(Path.of(args[0])))) {
             Files.writeString(Path.of(args[1]), host.server.address().toString());
             System.out.println("M10 keyless browser host ready");

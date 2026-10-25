@@ -1,12 +1,10 @@
 package io.jharness.testkit;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jharness.api.*;
 import io.jharness.ecosystem.*;
 import io.jharness.policy.DefaultPolicyEngine;
 import io.jharness.session.*;
 import java.nio.file.*;
-import java.security.MessageDigest;
 import java.time.Duration;
 import java.util.*;
 
@@ -15,14 +13,17 @@ public final class M7SubagentDockerProbe {
     private M7SubagentDockerProbe() {}
 
     public static void main(String[] args) throws Exception {
+        ProbeSupport.begin(args);
         Path root = Path.of(args[2]).toAbsolutePath().resolve("subagent-" + UUID.randomUUID());
         Path localRoot = root.resolve("local"), dockerRoot = root.resolve("docker");
         for (Path workspace : List.of(localRoot, dockerRoot)) {
             Files.createDirectories(workspace);
             Files.writeString(workspace.resolve("input.txt"), "before");
         }
+        ProbeSupport.fixtureWritable(dockerRoot);
         var transport = new NativeCommandTransport();
         var result = new LinkedHashMap<String, Object>();
+        ProbeSupport.track(result);
         result.put("milestone", "M7");
         result.put("slice", "read-only-subagent");
         result.put("actualDocker", true);
@@ -240,27 +241,22 @@ public final class M7SubagentDockerProbe {
                                 "ps",
                                 "--all",
                                 "--filter",
-                                "name=" + owner,
+                                "label=io.jharness.owner=" + owner,
                                 "--format",
                                 "{{.Names}}"),
                         new byte[0],
                         Duration.ofSeconds(10),
                         CancellationToken.NONE);
         require(
-                remaining.exitCode() == 0 && remaining.stdout().length == 0,
+                remaining.exitCode() == 0
+                        && !remaining.uncertain()
+                        && remaining.stdout().length == 0,
                 "owned container cleanup");
         result.put("cleanupVerified", true);
         result.put("result", "SUCCESS");
         result.put("capturedAt", java.time.Instant.now().toString());
-        result.put(
-                "jarSha256",
-                HexFormat.of()
-                        .formatHex(
-                                MessageDigest.getInstance("SHA-256")
-                                        .digest(Files.readAllBytes(Path.of(args[3])))));
-        new ObjectMapper()
-                .writerWithDefaultPrettyPrinter()
-                .writeValue(Path.of(args[4]).toFile(), result);
+        result.put("jarSha256", ProbeSupport.hash(Path.of(args[3])));
+        ProbeSupport.publish(Path.of(args[4]), result);
         System.out.println("M7 actual Docker Subagent/SDK probe SUCCESS");
     }
 

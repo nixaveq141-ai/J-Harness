@@ -4,6 +4,9 @@ import json
 from pathlib import Path
 import subprocess
 import zipfile
+import importlib.util
+from evidence_io import bounded_path
+from evidence_run import inputs
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -11,6 +14,13 @@ ROOT = Path(__file__).resolve().parents[1]
 def digest(data):
     return hashlib.sha256(data).hexdigest()
 
+
+def checked(name,limit=256*1024*1024):
+    path=bounded_path(ROOT,name)
+    if not path.is_file() or path.stat().st_size>limit:raise ValueError('Candidate source size/type')
+    with path.open('rb') as stream:data=stream.read(limit+1)
+    if len(data)>limit:raise ValueError('Candidate source byte limit')
+    return data
 
 def main():
     bom = (ROOT / "target/bom.json").read_bytes()
@@ -28,18 +38,20 @@ def main():
         if item["jarSha256"] != hashes["SHA-256"]:
             raise ValueError("BOM / original JAR mismatch: " + item["coordinate"])
         for legal in item["legal"]:
-            if digest((ROOT / "third-party" / legal["file"]).read_bytes()) != legal["sha256"]:
+            if digest(checked("third-party/"+legal["file"],4*1024*1024)) != legal["sha256"]:
                 raise ValueError("Legal resource mismatch: " + legal["file"])
     for upstream in json.loads((ROOT / "third-party/upstream/sources.json").read_bytes()):
-        if digest((ROOT / "third-party/upstream" / upstream["file"]).read_bytes()) != upstream["sha256"]:
+        if digest(checked("third-party/upstream/"+upstream["file"],4*1024*1024)) != upstream["sha256"]:
             raise ValueError("Upstream legal resource mismatch")
     jar = ROOT / "harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar"
-    files = {"lib/jharness.jar": jar.read_bytes(), "bom.json": bom, "osv-results.json": scan}
+    spec=importlib.util.spec_from_file_location('ui_bundle',ROOT/'scripts/ui-bundle.py');ui=importlib.util.module_from_spec(spec);spec.loader.exec_module(ui)
+    ui_hashes=ui.verify(ROOT,jar)
+    files = {"lib/jharness.jar": checked(jar.relative_to(ROOT).as_posix()), "bom.json": bom, "osv-results.json": scan}
     for name in ["LICENSE", "NOTICE", "docs/examples/deepseek-config.json", "docs/examples/m7-cli.md"]:
         files[name] = (ROOT / name).read_bytes()
     for path in sorted((ROOT / "third-party").rglob("*")):
         if path.is_file():
-            files[path.relative_to(ROOT).as_posix()] = path.read_bytes()
+            files[path.relative_to(ROOT).as_posix()] = checked(path.relative_to(ROOT).as_posix(),4*1024*1024)
     sdk_bom = json.loads((ROOT / "target/sdk-source-inventory.json").read_bytes())
     if sdk_bom["bomSha256"] != digest((ROOT / "target/sdk-bom.json").read_bytes()):
         raise ValueError("SDK BOM/source inventory mismatch")
@@ -48,7 +60,7 @@ def main():
     for name, expected in sdk_bom["sourceSha256"].items():
         if not name.startswith("sdk/") or ".." in Path(name).parts:
             raise ValueError("Invalid SDK source path")
-        data = (ROOT / name).read_bytes()
+        data = checked(name,4*1024*1024)
         if digest(data) != expected:
             raise ValueError("SDK inventory/source mismatch")
         files[name] = data
@@ -79,13 +91,11 @@ if "%JAVA_HOME%"=="" (\r
 exit /b %ERRORLEVEL%\r
 '''
     files["README.md"] = (ROOT / "docs/examples/m1059-distribution.md").read_bytes()
-    tracked = subprocess.check_output(["git", "ls-files", "-z"], cwd=ROOT).decode().split("\0")
-    sources = {name: digest((ROOT / name).read_bytes()) for name in tracked if name and
-               (name.endswith((".java", "pom.xml")) or name.startswith(("scripts/", ".github/", "sdk/", "frontend/src/")))}
+    sources=inputs(ROOT)
     manifest = {"version": "0.1.0-SNAPSHOT", "candidateOnly": True,
                 "gitCommit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT).decode().strip(),
                 "workingTreeDirty": bool(subprocess.check_output(["git", "status", "--porcelain"], cwd=ROOT)),
-                "sourceSha256": sources,
+                "sourceSha256": sources, "uiSha256": ui_hashes,
                 "files": {name: digest(data) for name, data in sorted(files.items())}}
     files["manifest.json"] = (json.dumps(manifest, indent=2) + "\n").encode()
     output = ROOT / "target/jharness-0.1.0-SNAPSHOT-candidate.zip"

@@ -4,6 +4,9 @@ on:
     branches-ignore: [codex/m1054-native-validation, codex/m1059-full-validation]
   pull_request:
   workflow_dispatch:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: read
 jobs:
@@ -81,23 +84,17 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y dbus-x11 libsecret-1-0 gnome-keyring
-          npx playwright install --with-deps chromium firefox webkit
+          node node_modules/playwright/cli.js install --with-deps chromium firefox webkit
       - name: Install browsers on Windows and macOS
         if: runner.os != 'Linux'
         working-directory: frontend
-        run: npx playwright install chromium firefox webkit
+        run: node node_modules/playwright/cli.js install chromium firefox webkit
       - name: Prepare isolated macOS test keychain
         if: runner.os == 'macOS'
         shell: bash
         run: |
           set -euo pipefail
-          keychain="$RUNNER_TEMP/jharness-m1059.keychain-db"
-          password="$(python -c 'import secrets; print(secrets.token_hex(32))')"
-          security create-keychain -p "$password" "$keychain"
-          security set-keychain-settings -lut 3600 "$keychain"
-          security unlock-keychain -p "$password" "$keychain"
-          security default-keychain -d user -s "$keychain"
-          security list-keychains -d user -s "$keychain"
+          python scripts/ci-keychain.py setup
       - name: Verify full SDK and three-browser matrix on Windows and macOS
         if: runner.os != 'Linux'
         run: python scripts/run-m1059-platform.py
@@ -109,14 +106,17 @@ jobs:
           env -u DBUS_SESSION_BUS_ADDRESS -u XDG_RUNTIME_DIR -u DISPLAY python scripts/test-native-credentials.py --case missing-service
           dbus-run-session -- bash -eu -c '
             python -c "import secrets; print(secrets.token_hex(32))" | gnome-keyring-daemon --unlock --components=secrets >/dev/null
+            python scripts/ci-secret-service.py ready
             python scripts/run-m1059-platform.py
             dbus-send --session --print-reply --dest=org.freedesktop.secrets /org/freedesktop/secrets org.freedesktop.Secret.Service.Lock array:objpath:/org/freedesktop/secrets/collection/login >/dev/null
+            python scripts/ci-secret-service.py locked
             python scripts/test-native-credentials.py --case locked-service
           '
       - name: Validate release gates and install candidate
         shell: bash
         run: |
           set -euo pipefail
+          python scripts/test-r6-release.py
           python scripts/test-release-tools.py
           python scripts/test-sdk-inventory.py
           python scripts/test-r3-provider.py
@@ -138,8 +138,7 @@ jobs:
         if: always() && runner.os == 'macOS'
         shell: bash
         run: |
-          keychain="$RUNNER_TEMP/jharness-m1059.keychain-db"
-          if [[ -f "$keychain" ]]; then security delete-keychain "$keychain"; fi
+          python scripts/ci-keychain.py cleanup
       - name: Upload test evidence
         if: always()
         uses: actions/upload-artifact@v4

@@ -419,7 +419,7 @@ class M7McpTest {
                         public Map<String, Object> exchange(
                                 Map<String, Object> message, CancellationToken token) {
                             String method = (String) message.get("method");
-                            if (method.equals("notifications/initialized")) return Map.of();
+                            if (!message.containsKey("id")) return Map.of();
                             Map<String, Object> result;
                             if (method.equals("initialize"))
                                 result =
@@ -428,7 +428,7 @@ class M7McpTest {
                                                 "2025-11-25",
                                                 "capabilities",
                                                 Map.of("tools", Map.of()));
-                            else {
+                            else if (method.equals("tools/list")) {
                                 int page = pages.incrementAndGet();
                                 var values = new LinkedHashMap<String, Object>();
                                 values.put(
@@ -441,7 +441,7 @@ class M7McpTest {
                                                         M7McpServer.schema())));
                                 if (page == 1 || repeat) values.put("nextCursor", "next");
                                 result = values;
-                            }
+                            } else throw new AssertionError("Unexpected fixture MCP method");
                             return Map.of(
                                     "jsonrpc", "2.0", "id", message.get("id"), "result", result);
                         }

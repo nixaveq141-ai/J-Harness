@@ -619,7 +619,6 @@ class M8SchedulingTest {
         var closed = new AtomicBoolean();
         var invoked = new AtomicInteger();
         var scope = new PluginScope("s", "default");
-        var registry = new DefaultServiceRegistry();
         ToolScheduler replacement =
                 new ToolScheduler() {
                     public List<ToolResult> execute(

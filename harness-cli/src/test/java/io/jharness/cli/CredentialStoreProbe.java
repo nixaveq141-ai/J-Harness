@@ -18,7 +18,7 @@ public final class CredentialStoreProbe {
         String failureCode = "";
         String cleanupFailureCode = "";
         try {
-            require(vault.supported());
+            if (!vault.supported()) throw new IOException(vault.availabilityFailure());
             checks.put("available", true);
             require(new SystemCredentials().read(target).isEmpty());
             checks.put("missing", true);
@@ -49,21 +49,22 @@ public final class CredentialStoreProbe {
                 if (failureCode.isEmpty()) failureCode = cleanupFailureCode;
                 checks.put("cleanup", false);
             }
-            System.out.println(
-                    Json.text(
-                            Map.of(
-                                    "platform",
-                                    System.getProperty("os.name"),
-                                    "credentialStore",
-                                    vault.description(),
-                                    "passed",
-                                    succeeded,
-                                    "failureCode",
-                                    failureCode,
-                                    "cleanupFailureCode",
-                                    cleanupFailureCode,
-                                    "checks",
-                                    checks)));
+            new java.io.PrintStream(System.out, true, java.nio.charset.StandardCharsets.UTF_8)
+                    .println(
+                            Json.text(
+                                    Map.of(
+                                            "platform",
+                                            System.getProperty("os.name"),
+                                            "credentialStore",
+                                            vault.description(),
+                                            "passed",
+                                            succeeded,
+                                            "failureCode",
+                                            failureCode,
+                                            "cleanupFailureCode",
+                                            cleanupFailureCode,
+                                            "checks",
+                                            checks)));
         }
         if (!succeeded) throw new IllegalStateException("Native credential validation failed");
     }

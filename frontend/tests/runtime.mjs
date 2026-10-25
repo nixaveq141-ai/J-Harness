@@ -1,3 +1,4 @@
+import { existsSync, statSync, realpathSync } from 'node:fs'
 import { chromium, firefox, webkit } from 'playwright'
 // Fixture hosts receive only their explicit synthetic credentials. Unrelated runner
 // credentials can redact fixture vocabulary and protocol keys (for example root).
@@ -32,6 +33,10 @@ export const browserType = {
   launch(options = {}) {
     if (engine !== 'chromium' && options.channel) throw Error('A Chromium channel cannot select another engine')
     const executable = engine === 'firefox' ? process.env.JHARNESS_FIREFOX_EXECUTABLE : undefined
+    if(executable){
+      if(!existsSync(executable)||!statSync(executable).isFile())throw Error('Configured Firefox executable is unavailable')
+      if(options.executablePath&&realpathSync(options.executablePath)!==realpathSync(executable))throw Error('Conflicting Firefox executable override')
+    }
     return selected.launch({...options,...(executable?{executablePath:executable}:{})})
   }
 }

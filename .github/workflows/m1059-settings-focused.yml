@@ -1,12 +1,9 @@
 name: M10.5.9 WebKit focused diagnostics (not acceptance)
 on:
-  push:
-    branches: [codex/m1059-full-validation]
-    paths:
-      - frontend/tests/runtime.mjs
-      - frontend/tests/turns.mjs
-      - .github/workflows/m1059-settings-focused.yml
   workflow_dispatch:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: read
 jobs:

@@ -130,9 +130,12 @@ def collect(log):
         files=archive.read('ui/ui-files.txt').decode().splitlines();require(bool(files) and len(files)==len(set(files)),'Empty or duplicate UI files')
         for p in files:bounded_path(ROOT/'frontend/dist',p)
         ui={p:hashlib.sha256(archive.read('ui/'+p)).hexdigest() for p in files}
-        require({n for n in archive.namelist() if n.startswith('ui/') and not n.endswith('/')}=={'ui/'+p for p in files}|{'ui/ui-files.txt'},'Stale UI resource')
+        require({n for n in archive.namelist() if n.startswith('ui/') and not n.endswith('/')}=={'ui/'+p for p in files}|{'ui/ui-files.txt','ui/ui-build.json'},'Stale UI resource')
         require(all(sha(ROOT/'frontend/dist'/p)==h for p,h in ui.items()),'UI/JAR mismatch')
         require('Copyright (c) 2026 DeepSeek' in archive.read('ui/ui-license.txt').decode(),'Missing UI attribution')
+    import importlib.util
+    spec=importlib.util.spec_from_file_location('ui_bundle',ROOT/'scripts/ui-bundle.py');ui_module=importlib.util.module_from_spec(spec);spec.loader.exec_module(ui_module)
+    ui=ui_module.verify(ROOT,jar)
     for item in load(ROOT/'frontend/upstream.json')['files']:
         require(sha(bounded_path(ROOT/'frontend',item['destination']))==item['sha256'],'Copied upstream source changed')
     with zipfile.ZipFile(ROOT/'target/jharness-0.1.0-SNAPSHOT-candidate.zip') as archive:

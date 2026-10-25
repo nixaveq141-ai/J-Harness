@@ -1,6 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"><modelVersion>4.0.0</modelVersion>
 <parent><groupId>io.jharness</groupId><artifactId>j-harness</artifactId><version>0.1.0-SNAPSHOT</version></parent>
 <artifactId>harness-cli</artifactId><dependencies>
+<dependency><groupId>org.slf4j</groupId><artifactId>slf4j-nop</artifactId><scope>runtime</scope></dependency>
 <dependency><groupId>net.java.dev.jna</groupId><artifactId>jna</artifactId><version>5.14.0</version></dependency>
 <dependency><groupId>io.jharness</groupId><artifactId>harness-web</artifactId><version>${project.version}</version></dependency>
 <dependency><groupId>io.jharness</groupId><artifactId>harness-api</artifactId><version>${project.version}</version></dependency>
@@ -16,7 +17,7 @@
 <dependency><groupId>io.jharness</groupId><artifactId>harness-ecosystem</artifactId><version>${project.version}</version></dependency>
 </dependencies><build><resources>
 <resource><directory>src/main/resources</directory></resource>
-<resource><directory>${project.basedir}/../third-party</directory><targetPath>META-INF/jharness/third-party</targetPath></resource>
+<resource><directory>${project.basedir}/../third-party</directory><targetPath>META-INF/jharness/third-party</targetPath><includes><include>inventory.json</include><include>README.md</include><include>upstream/*LICENSE*</include><include>upstream/*NOTICE*</include><include>upstream/sources.json</include><include>artifacts/**/*LICENSE*</include><include>artifacts/**/*NOTICE*</include><include>artifacts/**/*COPYING*</include></includes></resource>
 <resource><directory>${project.basedir}/..</directory><targetPath>META-INF/jharness</targetPath><includes><include>LICENSE</include><include>NOTICE</include></includes></resource>
 </resources><plugins><plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-shade-plugin</artifactId><version>3.6.0</version>
 <executions><execution><phase>package</phase><goals><goal>shade</goal></goals><configuration><createDependencyReducedPom>false</createDependencyReducedPom>

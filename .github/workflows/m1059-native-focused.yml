@@ -1,0 +1,50 @@
+name: M10.5.9 Windows native gate
+on:
+  push:
+    branches: [codex/m1059-full-validation]
+    paths: [.github/workflows/m1059-native-focused.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  native:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    env:
+      JHARNESS_EVIDENCE_RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}-${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Build current packaged input
+        shell: pwsh
+        run: |
+          npm.cmd --prefix frontend ci
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          npm.cmd --prefix frontend run build
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          .\mvnw.cmd -B -pl harness-cli -am -DskipTests package
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Verify real current-user credential persistence
+        run: python scripts/test-native-credentials.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: m1059-windows-native
+          include-hidden-files: true
+          path: .build-cache/M10.5.4-native-credentials.json
+          if-no-files-found: error

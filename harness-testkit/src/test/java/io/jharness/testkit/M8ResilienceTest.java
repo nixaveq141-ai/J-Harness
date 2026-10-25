@@ -468,9 +468,15 @@ class M8ResilienceTest {
             assertEquals(OK, execution.execute((s, t) -> OK, CancellationToken.NONE));
             assertEquals(1, calls.get());
             f.container.stop();
-            assertThrows(
-                    HarnessException.class,
-                    () -> execution.execute((s, t) -> fail("revoked"), CancellationToken.NONE));
+            assertEquals(
+                    "CONTEXT_CLOSED",
+                    assertThrows(
+                                    HarnessException.class,
+                                    () ->
+                                            execution.execute(
+                                                    (s, t) -> fail("revoked"),
+                                                    CancellationToken.NONE))
+                            .code());
         }
     }
 

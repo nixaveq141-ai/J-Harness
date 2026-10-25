@@ -33,3 +33,18 @@ the operating system/JDK. OSV scanning has the same declared coverage boundary.
 
 Rebuild the inventory with `python scripts/prepare-legal.py` after generating the
 aggregate SBOM. Review changed coordinates and supplemental sources before release.
+
+R6 provenance clarification (2026-10-25): the wrapper launchers retain their Apache
+headers but now invoke J-Harness's JDK-only verified bootstrap. Wrapper 3.3.4's
+Apache-2.0 license text is the root LICENSE (also packaged at
+META-INF/jharness/LICENSE); wrapper-NOTICE remains the verbatim upstream notice.
+Maven 3.9.9 ZIP and extracted files are verified on every bootstrap invocation.
+Only public HTTPS mirrors without URL credentials are supported.
+
+Original Jackson 2.21.7 FastDoubleParser notices contain differing copyright
+years and upstream bigint/fast_float revision references. They are preserved
+verbatim per artifact, not merged into an invented single attribution. Original
+JNA notices abbreviate the LGPL SPDX choice while their text says 2.1 or later;
+this distribution chooses Apache-2.0. The preserved terminal-NOTICE repeats
+"utf8.c and utf8.c"; no unsupported replacement filename has been invented.
+Source-only frontend paths in NOTICE are not paths inside the runtime JAR.

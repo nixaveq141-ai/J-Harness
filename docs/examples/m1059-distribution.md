@@ -9,3 +9,7 @@
 `sdk/`包含TypeScript/Python源码与只访问loopback的零费用示例，协议和使用见 `sdk/README.md`。可设置JAVA_HOME、JHARNESS_SDK_JAR为本包 `lib/jharness.jar` 绝对路径、JHARNESS_SDK_WORKSPACE为专用目录，在其中放入README.md，再按示例说明运行本机provider及客户端。相同示例requestId命中原受理记录；超时/断线先核对受理，UNKNOWN禁止自动重试，回答问题不等于工具审批。
 
 manifest.json列出文件摘要；Maven、前端与SDK分别附bom.json、frontend-bom.json、sdk-bom.json，Maven扫描附osv-results.json。SDK没有第三方运行依赖，采用根LICENSE中的Apache-2.0；UI移植及其他依赖版权/许可证原样保存在JAR和third-party中。候选安装冒烟仅用本机模型替身，不产生付费请求。
+
+持久性边界：文件 force(true) 与原子替换保证的是已检查的文件内容/进程崩溃路径；当前没有对所有平台父目录执行 fsync 的统一保证，不能据此承诺断电后目录项持久。Windows、Linux、macOS 的实际验收范围按本轮 runner/CPU 记录；pty4j 原生文件不等于所有 CPU 均已实测。
+
+基础 base 路由与 models.primary 是独立可选路线，修改其中一项不会联动修改另一项。示例费用预留按 inputTokenCeiling/maxOutputTokens 的单次保守上界计算，不承诺 maxSteps 步一定可运行；示例不代表当前服务商报价。

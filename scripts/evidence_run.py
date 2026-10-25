@@ -19,7 +19,7 @@ IS_WINDOWS = os.name == 'nt'
 MAX_LOG_BYTES = 128 * 1024 * 1024  # monitored every 250ms; not an OS disk quota
 FOLDERS = ('frontend/src', 'frontend/tests', 'frontend/scripts', 'frontend/public', 'sdk', 'scripts',
            '.github/workflows', '.mvn', 'third-party')
-FILES = ('pom.xml', 'mvnw', 'mvnw.cmd', 'frontend/package.json',
+FILES = ('.gitignore', 'jharness', 'jharness.cmd', 'pom.xml', 'mvnw', 'mvnw.cmd', 'frontend/package.json',
          'frontend/package-lock.json', 'frontend/tsconfig.json', 'frontend/vite.config.ts',
          'frontend/index.html', 'frontend/upstream.json', 'frontend/LICENSE-DeepSeek-Harness.txt', 'LICENSE', 'NOTICE', 'web-ui.cmd',
          'docs/examples/m1059-distribution.md', '.gitattributes')

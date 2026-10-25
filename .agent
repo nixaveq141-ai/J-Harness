@@ -4,6 +4,8 @@
 
 ## 当前接续状态
 
+- 2026-10-25按用户要求推进R6与M10.5.9收尾，基线e5fd815。186条范围保留：146实施/验证补强、18既有防护、22契约澄清，不等于独立缺陷/逐项动态故障注入。Wrapper固定ZIP缓存校验、UI来源/制品绑定、legal/SBOM/SDK/秘密门禁、启动器与CI资源所有权已实施；Java契约保留700新增2为702/119，客户端42。最终本地与当前Windows原生专项及三平台完整CI待核对，不宣称M10.5.9/M11完成；原失败、边界见OCR-R6-remediation-2026-10-25及scope/validation。沿用专用分支推送和Actions授权，无本机Firefox/裸npx/付费/main合并/Release，用户原扫描段和background草稿保留不纳提交。
+
 - 2026-10-25按用户要求推进R5本地修复，基线7f5b9bf；原64条台账中51本轮实施/回归补强、2有限实施、11后续，不等于51个独立缺陷或64条逐项关闭。编码写出预算、命令泵失败UNKNOWN、工具JSON/预览、部分patch事实、索引缩短/损坏/Unicode/并发、会话配额/锁、分页停止和压缩组/预算/来源审计已补强。最终r5-20261025-final-frozen2同输入18组926项：Java700/117套件、客户端42、门禁16组184；SDK66，Chrome/WebKit各检索28+内容45通过，最终JAR71ae2754dd54。证据/原失败/限制见OCR-R5-remediation-2026-10-25及scope/validation/results。来源歧义不猜测；目录能力/父目录替换竞态、内容安全快照等后续保留，R5/M10.5.9/M11仍未完成。未运行本机Firefox/裸npx/新远端CI/付费/推送/发布，原用户扫描段和background草稿保留不纳提交。按长期授权完成本地提交。
 
 - 2026-10-25按用户要求完成一批R4本地修复与回归补强，基线11ea9112；115范围索引保留：32本轮实施/补强、1契约澄清、82前轮实现保留，不是32个独立缺陷且没有逐条关闭115。扩展ID/类型/超时/URL、旧响应与内容分页隔离、路由/独立展示观察者、报告独立预算及截断前脱敏、诊断来源、真实键盘/触屏已补强。最终r4-20261025-final-frozen同输入18组903项：Java677/110套件、客户端42、门禁16组184；SDK66、Chrome/WebKit各29组件+19真实历史通过，最终JAR9a27eda34733。结果/原失败/限制见OCR-R4-remediation-2026-10-25及scope台账/validation/results。全部写后丢响应、存储/损坏与观察器等精确窗口及完整三平台三引擎仍待，R4保持进行中/M10.5.9和M11不准入；不运行本机Firefox/裸npx/付费/推送/发布，用户原扫描段和background草稿保留不纳提交。本轮按长期授权本地提交。
@@ -143,9 +145,10 @@
 5. docs/testing/M7-docker-results.json、M7-skills-docker-results.json、M7-subagent-docker-results.json、M7-web-docker-results.json：四类最终打包实机结果；必须核对最终 JAR SHA 一致。
 6. docs/requirements/upstream-capabilities.md、docs/testing/M7-upstream-review.json：固定提交的范围取舍及 19 个源码入口 SHA。
 7. docs/examples/m7-cli.md、m7-config.json、m7-extensions.md、m7-web.md：可信配置与公共入口。
-8. docs/development/M8-contracts.md、docs/testing/M8-validation.md、M8-closure.md与M8-closure-results.json：M8支持范围/当前门禁；M8-results.json（slice=M8.4）及M8-linux-results.json为当前全量，M8.4-*-results.json为七组最终制品/冒烟/审计/校验器证据。M8.1/M8.2/M8.3-results.json和旧实机JSON保留历史；配置见m8-search-filter.md、m8-tool-scheduling.md、m8-model-resilience.md。
+8. 历史M8快照（非当前门禁）：docs/development/M8-contracts.md、docs/testing/M8-validation.md、M8-closure.md与M8-closure-results.json：M8支持范围/当前门禁；M8-results.json（slice=M8.4）及M8-linux-results.json为当前全量，M8.4-*-results.json为七组最终制品/冒烟/审计/校验器证据。M8.1/M8.2/M8.3-results.json和旧实机JSON保留历史；配置见m8-search-filter.md、m8-tool-scheduling.md、m8-model-resilience.md。
 9. docs/requirements/JHarness-next-plan-v1.0.md与M10.5-workbench-improvement-plan.md：M7之后的任务顺序、M11前九切片、依赖/验收条件与下一次执行入口；M8～M12及M10.5属于新增实施编号。
-10. docs/development/M9-contracts.md、docs/testing/M9-validation.md：当前发布准备、候选/供应链证据与远端CI门禁。
+10. docs/development/M9-contracts.md、docs/testing/M9-validation.md：历史M9发布准备和门禁。
+11. 当前M10.5.9入口：docs/development/M10.5.9-contracts.md、docs/testing/M10.5.9-validation.md及R6最新验收记录；以当前精确契约和同提交原CI制品为准。
 
 修改存储/恢复再读 M5；文件/进程/审批/CLI 对照 M2～M4，流式/压缩/配置读 M6 契约及测试。旧阶段记录是历史快照。
 
@@ -180,6 +183,8 @@
 ## 验证流程
 
 明确 FR/NFR/AC，核对源码/契约/既有测试；先相关专项再全量，不跳过或削弱断言掩盖失败。实质进展同步 .agent、README、契约与验收文档，只有实际实现和证据才标记完成。
+
+以下命令仅保留M8.4历史采集示例；当前验证使用scripts/run-r6-validation.py，完整CI使用ci.yml及run-m1059-platform.py。不得向旧M8验收文件写入当前结果。
 
 ```powershell
 .\mvnw.cmd -B spotless:apply

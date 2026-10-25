@@ -12,7 +12,7 @@
 
 ## 可运行的零费用示例
 
-准备专用目录，放入README.md。先在一个终端运行 `python sdk/examples/loopback_provider.py`，它只监听127.0.0.1:8089且不会转发请求。在另一终端设置 `JAVA_HOME`、`JHARNESS_SDK_JAR`（当前打包JAR绝对路径）、`JHARNESS_SDK_WORKSPACE`（专用目录）及 `JHARNESS_API_KEY=synthetic-demo-key`，然后运行：
+准备专用目录，放入README.md。先在一个终端运行 `python sdk/examples/loopback_provider.py`，它只监听127.0.0.1:8089且不会转发请求。在另一终端设置 `JAVA_HOME`、`JHARNESS_SDK_JAR`（当前打包JAR绝对路径）、`JHARNESS_SDK_WORKSPACE`（专用目录）及 `JHARNESS_SDK_DEMO_KEY=synthetic-demo-key`，然后运行：
 
 ```powershell
 node --experimental-strip-types sdk/examples/run.ts

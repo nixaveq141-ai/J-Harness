@@ -4,5 +4,5 @@
 <dependency><groupId>io.jharness</groupId><artifactId>harness-api</artifactId><version>${project.version}</version></dependency>
 <dependency><groupId>io.jharness</groupId><artifactId>harness-workspace</artifactId><version>${project.version}</version></dependency>
 <dependency><groupId>org.jetbrains.pty4j</groupId><artifactId>pty4j</artifactId><version>0.13.12</version></dependency>
-<dependency><groupId>org.slf4j</groupId><artifactId>slf4j-nop</artifactId><version>2.0.13</version><scope>runtime</scope></dependency>
+
 </dependencies></project>

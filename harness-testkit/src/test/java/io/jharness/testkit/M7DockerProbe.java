@@ -14,6 +14,7 @@ public final class M7DockerProbe {
     private M7DockerProbe() {}
 
     public static void main(String[] args) throws Exception {
+        ProbeSupport.begin(args);
         Path root = Path.of(args[2]).toAbsolutePath().resolve("run-" + UUID.randomUUID());
         Files.createDirectories(root);
         Path localRoot = root.resolve("local"), dockerRoot = root.resolve("docker");
@@ -21,8 +22,10 @@ public final class M7DockerProbe {
         Files.createDirectories(dockerRoot.resolve("sub"));
         for (Path dir : List.of(localRoot, dockerRoot))
             Files.writeString(dir.resolve("sub/input.txt"), "before\n");
+        ProbeSupport.fixtureWritable(dockerRoot);
         var transport = new NativeCommandTransport();
         Map<String, Object> result = new LinkedHashMap<>();
+        ProbeSupport.track(result);
         result.put("milestone", "M7");
         result.put("slice", "execution-environment");
         result.put("image", args[1]);
@@ -43,11 +46,15 @@ public final class M7DockerProbe {
                 var command =
                         new CommandRequest(
                                 "probe-command",
-                                docker ? CommandRequest.Mode.SH : CommandRequest.Mode.CMD,
+                                docker || !System.getProperty("os.name").startsWith("Windows")
+                                        ? CommandRequest.Mode.SH
+                                        : CommandRequest.Mode.CMD,
                                 List.of(
                                         docker
-                                                ? "printf shell > shell.txt; cat input.txt; pwd"
-                                                : "echo shell>shell.txt & type input.txt & cd"),
+                                                        || !System.getProperty("os.name")
+                                                                .startsWith("Windows")
+                                                ? "printf shell > shell.txt && cat input.txt && pwd"
+                                                : "echo shell>shell.txt && type input.txt && cd"),
                                 new ExecPath("sub"),
                                 Duration.ofSeconds(15));
                 var answer = environment.processes().execute(command, CancellationToken.NONE);
@@ -71,8 +78,17 @@ public final class M7DockerProbe {
             var host = actual.get("HostConfig");
             require(host.get("NetworkMode").asText().equals("none"), "network");
             require(host.get("ReadonlyRootfs").asBoolean(), "readonly root");
-            require(host.get("CapDrop").toString().contains("ALL"), "caps");
-            require(host.get("SecurityOpt").toString().contains("no-new-privileges"), "privileges");
+            require(
+                    host.get("CapDrop").isArray()
+                            && host.get("CapDrop").size() == 1
+                            && host.get("CapDrop").get(0).asText().equals("ALL"),
+                    "caps");
+            require(
+                    host.get("SecurityOpt").isArray()
+                            && host.get("SecurityOpt").size() == 1
+                            && Set.of("no-new-privileges", "no-new-privileges=true")
+                                    .contains(host.get("SecurityOpt").get(0).asText()),
+                    "privileges");
             require(actual.get("Config").get("User").asText().equals("65534:65534"), "nonroot");
             require(
                     host.get("Memory").asLong() == 512L * 1024 * 1024
@@ -86,7 +102,7 @@ public final class M7DockerProbe {
                                             "isolation",
                                             CommandRequest.Mode.SH,
                                             List.of(
-                                                    "test ! -S /var/run/docker.sock && test ! -e /host && test \"$(id -u)\" = 65534 && ! touch /forbidden"),
+                                                    "test ! -S /var/run/docker.sock && test ! -e /host && test \"$(id -u)\" = 65534 && command -v touch >/dev/null && ! touch /forbidden"),
                                             new ExecPath("."),
                                             Duration.ofSeconds(10)),
                                     CancellationToken.NONE);
@@ -228,27 +244,22 @@ public final class M7DockerProbe {
                                 "ps",
                                 "--all",
                                 "--filter",
-                                "name=" + owner,
+                                "label=io.jharness.owner=" + owner,
                                 "--format",
                                 "{{.Names}}"),
                         new byte[0],
                         Duration.ofSeconds(10),
                         CancellationToken.NONE);
         require(
-                remaining.exitCode() == 0 && remaining.stdout().length == 0,
+                remaining.exitCode() == 0
+                        && !remaining.uncertain()
+                        && remaining.stdout().length == 0,
                 "owned container removed");
         result.put("cleanupVerified", true);
         result.put("result", "SUCCESS");
         result.put("capturedAt", java.time.Instant.now().toString());
-        result.put(
-                "jarSha256",
-                HexFormat.of()
-                        .formatHex(
-                                java.security.MessageDigest.getInstance("SHA-256")
-                                        .digest(Files.readAllBytes(Path.of(args[3])))));
-        new ObjectMapper()
-                .writerWithDefaultPrettyPrinter()
-                .writeValue(Path.of(args[4]).toFile(), result);
+        result.put("jarSha256", ProbeSupport.hash(Path.of(args[3])));
+        ProbeSupport.publish(Path.of(args[4]), result);
         System.out.println("M7 Docker environment probe SUCCESS");
     }
 

@@ -1,6 +1,9 @@
 name: M10.5.9 process ownership diagnostics (not acceptance)
 on:
   workflow_dispatch:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: read
 jobs:

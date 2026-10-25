@@ -11,6 +11,7 @@ public final class M7McpServer {
     private M7McpServer() {}
 
     public static void main(String[] args) throws Exception {
+        if (args.length != 3) throw new IllegalArgumentException("Expected TRACE MARKER MODE");
         Path trace = Path.of(args[0]), marker = Path.of(args[1]);
         String mode = args[2];
         Files.writeString(
@@ -27,7 +28,7 @@ public final class M7McpServer {
                         trace, line + "\n", StandardOpenOption.CREATE, StandardOpenOption.APPEND);
                 if (!(request.get("method") instanceof String method)) continue;
                 Object id = request.get("id");
-                if (method.equals("notifications/initialized")) continue;
+                if (id == null) continue;
                 if (method.equals("initialize")) {
                     send(
                             Map.of(
@@ -202,7 +203,9 @@ public final class M7McpServer {
     }
 
     private static void send(Map<String, Object> value) throws Exception {
-        System.out.println(JSON.writeValueAsString(value));
+        System.out.write(
+                (JSON.writeValueAsString(value) + "\n")
+                        .getBytes(java.nio.charset.StandardCharsets.UTF_8));
         System.out.flush();
     }
 }

@@ -1,8 +1,8 @@
 {
   "updatedAt": "2026-10-25",
-  "phase": "R5",
+  "phase": "R6",
   "status": "IMPLEMENTATION_IN_PROGRESS",
-  "details": "docs/development/OCR-R5-remediation-2026-10-25.md",
+  "details": "docs/development/OCR-R6-remediation-2026-10-25.md",
   "productMilestone": "M10.5.9",
   "productStatus": "LOCAL_PARTIAL_CI_PENDING",
   "m11Eligible": false,
@@ -121,6 +121,22 @@
     "R5-03": {
       "status": "IN_PROGRESS",
       "description": "2026-10-25 R5 本地修复增量：64条范围中51条本轮实施/补强、2条有限实施、11条后续；相关套件不等于逐条精确窗口或整阶段通过。详见OCR-R5-remediation-2026-10-25及scope台账。"
+    },
+    "R6-01": {
+      "status": "IN_PROGRESS",
+      "description": "R6采纳范围实施/门禁补强与契约澄清见186条独立台账；最终本地702/119及当前原生专项、三平台完整CI待核对，不将意见数视为独立缺陷或逐项故障注入。"
+    },
+    "R6-02": {
+      "status": "IN_PROGRESS",
+      "description": "R6采纳范围实施/门禁补强与契约澄清见186条独立台账；最终本地702/119及当前原生专项、三平台完整CI待核对，不将意见数视为独立缺陷或逐项故障注入。"
+    },
+    "R6-03": {
+      "status": "IN_PROGRESS",
+      "description": "R6采纳范围实施/门禁补强与契约澄清见186条独立台账；最终本地702/119及当前原生专项、三平台完整CI待核对，不将意见数视为独立缺陷或逐项故障注入。"
+    },
+    "R6-04": {
+      "status": "IN_PROGRESS",
+      "description": "R6采纳范围实施/门禁补强与契约澄清见186条独立台账；最终本地702/119及当前原生专项、三平台完整CI待核对，不将意见数视为独立缺陷或逐项故障注入。"
     }
   },
   "r1": {

@@ -18,13 +18,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 class M1052HistoryTest {
-    private static String sha(String text) throws Exception {
-        return HexFormat.of()
-                .formatHex(
-                        MessageDigest.getInstance("SHA-256")
-                                .digest(text.getBytes(java.nio.charset.StandardCharsets.UTF_8)));
-    }
-
     @Test
     void interruptedAdmissionIsRecoveredFromWorkspacePointerWithoutExecuting() throws Exception {
         var sessions = new JsonlSessionRepository(root.resolve("sessions"));
@@ -449,19 +442,22 @@ class M1052HistoryTest {
                         Duration.ofSeconds(1))) {
             id = submit(server.address(), "local", "one");
             assertEquals("UNKNOWN", finished(server.address(), id).get("phase"));
-            assertThrows(
-                    HarnessException.class,
-                    () ->
-                            new HarnessWebServer(
-                                    0,
-                                    M10BrowserHost.TOKEN,
-                                    Map.of("local", profile),
-                                    catalog,
-                                    "two",
-                                    new SecretRedactor(),
-                                    1,
-                                    32,
-                                    Duration.ofSeconds(1)));
+            assertEquals(
+                    "WRITE_CONFLICT",
+                    assertThrows(
+                                    HarnessException.class,
+                                    () ->
+                                            new HarnessWebServer(
+                                                    0,
+                                                    M10BrowserHost.TOKEN,
+                                                    Map.of("local", profile),
+                                                    catalog,
+                                                    "two",
+                                                    new SecretRedactor(),
+                                                    1,
+                                                    32,
+                                                    Duration.ofSeconds(1)))
+                            .code());
         }
         try (var server =
                 new HarnessWebServer(
@@ -483,17 +479,20 @@ class M1052HistoryTest {
                             .statusCode());
             assertEquals(1, opens.get());
         }
-        assertThrows(
-                HarnessException.class,
-                () ->
-                        HarnessWebServer.verifyTask(
-                                catalog,
-                                "two",
-                                sessions,
-                                id,
-                                "workspace",
-                                "checked original resources",
-                                new SecretRedactor()));
+        assertEquals(
+                "ENVIRONMENT_MISMATCH",
+                assertThrows(
+                                HarnessException.class,
+                                () ->
+                                        HarnessWebServer.verifyTask(
+                                                catalog,
+                                                "two",
+                                                sessions,
+                                                id,
+                                                "workspace",
+                                                "checked original resources",
+                                                new SecretRedactor()))
+                        .code());
         HarnessWebServer.verifyTask(
                 catalog,
                 "one",
@@ -523,12 +522,16 @@ class M1052HistoryTest {
     @Test
     void legacyCatalogKeepsExactByteBackupAndMigrationFailureNeverExecutes() throws Exception {
         var fail = new AtomicBoolean();
+        var injected = new AtomicInteger();
         var catalog =
                 new JsonlSessionRepository(
                         root.resolve("catalog"),
                         JsonlSessionRepository.TailPolicy.REJECT,
                         channel -> {
-                            if (fail.get()) throw new java.io.IOException("injected marker force");
+                            if (fail.get()) {
+                                injected.incrementAndGet();
+                                throw new java.io.IOException("injected backup force");
+                            }
                             channel.force(true);
                         },
                         code -> {});
@@ -576,20 +579,25 @@ class M1052HistoryTest {
                             throw new IllegalStateException();
                         });
         fail.set(true);
-        assertThrows(
-                HarnessException.class,
-                () ->
-                        new HarnessWebServer(
-                                0,
-                                M10BrowserHost.TOKEN,
-                                Map.of("local", profile),
-                                catalog,
-                                "old",
-                                new SecretRedactor(),
-                                1,
-                                32,
-                                Duration.ofSeconds(1)));
+        assertEquals(
+                "SESSION_BACKUP_FAILED",
+                assertThrows(
+                                HarnessException.class,
+                                () ->
+                                        new HarnessWebServer(
+                                                0,
+                                                M10BrowserHost.TOKEN,
+                                                Map.of("local", profile),
+                                                catalog,
+                                                "old",
+                                                new SecretRedactor(),
+                                                1,
+                                                32,
+                                                Duration.ofSeconds(1)))
+                        .code());
         assertEquals(0, opens.get());
+        assertEquals(1, injected.get());
+        assertArrayEquals(original, Files.readAllBytes(root.resolve("catalog/old.jsonl")));
         try (var backups = Files.newDirectoryStream(root.resolve("catalog"), "old.backup-*.bak")) {
             assertArrayEquals(original, Files.readAllBytes(backups.iterator().next()));
         }

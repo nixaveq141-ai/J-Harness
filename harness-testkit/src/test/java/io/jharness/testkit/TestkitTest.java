@@ -56,10 +56,12 @@ class TestkitTest {
             bus.awaitNotifications(Duration.ofSeconds(2));
             assertEquals(List.of(one, two), recorder.events());
             assertEquals(List.of("one", "two"), recorder.types());
+            var snapshot = recorder.events();
             recorder.close();
             bus.publish(SessionEvent.session("s", "three", Map.of()));
             bus.awaitNotifications(Duration.ofSeconds(2));
-            assertEquals(2, recorder.events().size());
+            assertEquals(List.of(one, two), recorder.events());
+            assertEquals(List.of(one, two), snapshot);
         }
     }
 
@@ -148,11 +150,17 @@ class TestkitTest {
         assertEquals(
                 "DUPLICATE_TOOL",
                 assertThrows(HarnessException.class, () -> registry.register(tool, parent)).code());
+        Registration childRegistration = registry.register(tool, child);
+        assertEquals(tool, registry.require("read", child));
         old.close();
+        assertEquals(tool, registry.require("read", child));
         Registration replacement = registry.register(tool, parent);
         old.close();
         assertEquals(tool, registry.require("read", parent));
         replacement.close();
         assertTrue(registry.visibleTools(parent).isEmpty());
+        assertEquals(tool, registry.require("read", child));
+        childRegistration.close();
+        assertTrue(registry.visibleTools(child).isEmpty());
     }
 }

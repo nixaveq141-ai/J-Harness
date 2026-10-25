@@ -1,0 +1,3028 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-25",
+  "baseline": "e5fd815739bd185210735cd6b718897b864420dc",
+  "status": "IMPLEMENTATION_LOCAL_VALIDATION_CI_PENDING",
+  "originalScopeCount": 186,
+  "counts": {
+    "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED": 146,
+    "CONTRACT_CLARIFIED": 22,
+    "EXISTING_GUARD_RETAINED": 18
+  },
+  "boundary": "Original adopted scopes include shared causes and diagnostic/contract suggestions. Counts are not independent bug counts or 186 dynamic reproductions. Original legal texts and historical receipts are not rewritten.",
+  "items": [
+    {
+      "id": "OCR-0334",
+      "taskId": "R6-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "CredentialStoreProbe通过message精确匹配超时脆弱，可改结构错误码；当前消息匹配有效，不宣称现有超时全被误分类。",
+      "sourceReferences": [
+        "harness-cli/src/test/java/io/jharness/cli/CredentialStoreProbe.java:37"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-0365",
+      "taskId": "R6-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "仅构造CliConfig证明构造期拒绝，可重命名精准说明；不必为简单配置负例引入全套模型环境装配。",
+      "sourceReferences": [
+        "harness-cli/src/test/java/io/jharness/cli/M8FilterConfigTest.java:50"
+      ],
+      "state": "CONTRACT_CLARIFIED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-0370",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "doctor总体ready确依赖git，测试应明确构建环境前置且聚焦Maven非必需；不能以git缺失skip正式发行门禁。",
+      "sourceReferences": [
+        "harness-cli/src/test/java/io/jharness/cli/M9DistributionDoctorTest.java:43"
+      ],
+      "state": "EXISTING_GUARD_RETAINED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-0402",
+      "taskId": "R6-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "error helper的缺字段会异常使测试失败，采纳类型/层次断言提升消息，不称会假绿。",
+      "sourceReferences": [
+        "harness-cli/src/test/java/io/jharness/cli/StdioSdkServerTest.java:31"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-0564",
+      "taskId": "R6-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "getFirst/强转在缺诊断时本来也会失败，只采纳数量/类型断言提升定位；不称其产生假通过。",
+      "sourceReferences": [
+        "harness-events/src/test/java/io/jharness/events/DefaultEventBusTest.java:42"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-0794",
+      "taskId": "R6-04",
+      "originalVerdict": "partial",
+      "adoptedScope": "文件force未包含父目录落盘，不可宣称断电目录项保证；明确平台持久化层级，支持时目录fsync并实机验证，不能无条件FileChannel开目录声称Windows等价保证。",
+      "sourceReferences": [
+        "harness-session/src/main/java/io/jharness/session/JsonlSessionRepository.java:396"
+      ],
+      "state": "CONTRACT_CLARIFIED",
+      "validationGroups": [
+        "legal input/original artifact hashes and candidate/JAR equality",
+        "current source/receipts and explicit durability/CPU boundaries"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-0813",
+      "taskId": "R6-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "scope.sessionId恒s条件只是触发halt，简化为显式故障注入可改善可读性；不能删除用于崩溃场景的halt本身。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/CrashWriteProbe.java:56"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-0820",
+      "taskId": "R6-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "FakeLlm先取消/耗尽再request非空属于确定错误优先级，可具名校验优化但不改变请求计数；不是漏执行保护。",
+      "sourceReferences": [
+        "harness-testkit/src/main/java/io/jharness/testkit/FakeLlm.java:41"
+      ],
+      "state": "CONTRACT_CLARIFIED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-0844",
+      "taskId": "R6-01",
+      "originalVerdict": "accepted",
+      "adoptedScope": "catalog归属/绑定负例仅HarnessException，增加预期code及无任务执行断言防错误校验假通过。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M1052HistoryTest.java:452"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-0845",
+      "taskId": "R6-01",
+      "originalVerdict": "accepted",
+      "adoptedScope": "迁移force注入测试仅HarnessException，可先确认注入命中再断言迁移失败code/opens=0。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M1052HistoryTest.java:579"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-0846",
+      "taskId": "R6-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "sha helper未用可删除/复用属低优先清理，不作为安全或功能问题。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M1052HistoryTest.java:21"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-0849",
+      "taskId": "R6-01",
+      "originalVerdict": "accepted",
+      "adoptedScope": "迁移失败仅比较备份，需同时确认线上old.jsonl原始字节不变，避免先改活跃文件后失败。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M1052HistoryTest.java:593"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-0864",
+      "taskId": "R6-01",
+      "originalVerdict": "accepted",
+      "adoptedScope": "预览不写observed测试仅异常类型，应锁定FILE_CONFLICT并确认原文件无变化。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M1056ContentTest.java:127"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-0865",
+      "taskId": "R6-01",
+      "originalVerdict": "accepted",
+      "adoptedScope": "负offset/offset+line/过期hash均仅异常类型，分别锁定INVALID_RANGE/CONTENT_CHANGED避免无关失败蒙混。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M1056ContentTest.java:240"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-0866",
+      "taskId": "R6-01",
+      "originalVerdict": "accepted",
+      "adoptedScope": "取消与替换根保护均只HarnessException，补CANCELLED/OWNER_MISMATCH及read未进入的计数。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M1056ContentTest.java:265"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-0877",
+      "taskId": "R6-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "夹具args[0]和未知mode成功可给明确usage，降低脚手架误配置排查；父测试受控argv且非预期退出已有断言。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M3CommandFixture.java:9"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-0880",
+      "taskId": "R6-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "浏览器host入口可提前校验3参数/输出目录提升错误定位，属测试工具UX，不是生产副作用缺陷。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M10BrowserHost.java:244"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-0883",
+      "taskId": "R6-02",
+      "originalVerdict": "accepted",
+      "adoptedScope": "shell case确实硬编码cmd.exe而其余java按平台选择，新三平台浏览器门禁需OS对应Shell但保留命令审批含义。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M10BrowserHost.java:67"
+      ],
+      "state": "EXISTING_GUARD_RETAINED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-0886",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "SkillCatalog严格real路径，@TempDir在macOS可能别名，采纳fixture显式toRealPath；需真实CI确认，不修改产品链接拒绝。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M1057ExtensionsTest.java:13"
+      ],
+      "state": "EXISTING_GUARD_RETAINED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-0911",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "Path.of(..)依赖Surefire CWD，应从basedir确定repo并显式检查固定Wrapper缓存；Maven3.9.9是固定发行契约不能随意移除版本断言。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M3RuntimeIntegrationTest.java:340"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-0924",
+      "taskId": "R6-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "captured下标越界本来也失败但诊断弱，先断言请求数再对应逐条相等，合并0921不单列重构。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M1AgentLoopTest.java:518"
+      ],
+      "state": "EXISTING_GUARD_RETAINED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-0926",
+      "taskId": "R6-01",
+      "originalVerdict": "accepted",
+      "adoptedScope": "compactor两个负例只HarnessException，应断CONTEXT_LIMIT并核对未完成协议组未被拆分。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M6CompactionTest.java:76"
+      ],
+      "state": "EXISTING_GUARD_RETAINED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-0950",
+      "taskId": "R6-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "两轮测试未计输入读取器，若保留方法强命名可加可观察工厂/线程计数；主要same-session和轮次断言不因此无效。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M4CliIntegrationTest.java:256"
+      ],
+      "state": "CONTRACT_CLARIFIED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-0953",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "测试peer只实现受测initialized通知，新增通用无id通知应忽略/计数而不回复；无需将故障peer改成完整生产MCP服务器。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M7McpServer.java:29"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-0954",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "受控peer缺params会异常关闭，补负场景的明确协议错误仅在准备测该行为时，别把整个fixture升成产品服务。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M7McpServer.java:81"
+      ],
+      "state": "EXISTING_GUARD_RETAINED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-0957",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "System.out默认编码可在显式非UTF8启动下非ASCII失真，采纳UTF8输出；CRLF按readLine是合法跨平台换行，不是必然帧违规。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M7McpServer.java:204"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-0970",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "探针args和输出父目录预检可提前明确失败；显式输出路径本来由授权脚本选择，不叫任意路径写漏洞。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M7DockerProbe.java:17"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-0971",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "M7DockerProbe本地分支固定CMD使新Linux/macOS执行不适用，采纳按平台脚本；历史仅Windows宿主Docker证据不因此作废。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M7DockerProbe.java:48"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-0972",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "串联命令最后exit可能掩盖cat失败，采纳&&及期望stdout；已有shell.txt内容验证不能被忽略，非所有子命令都无验证。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M7DockerProbe.java:54"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-0974",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "cap/security字段字符串contains过宽，补结构化ALL唯一与no-new-privileges true；不能单靠presence证明运行时加固。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M7DockerProbe.java:74"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-0975",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "!touch失败可能因工具缺失，先确认touch存在并核实只读挂载/创建errno；原建议再test不存在也不能区分缺touch，不照搬。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M7DockerProbe.java:89"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-0976",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "Docker name过滤未锚定可误命中，优先精确owner label并检查uncertain/exit；空stdout仍需有成功ps。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M7DockerProbe.java:230"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-0978",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "inspect返回合法数组需断schema再取index0，改善错误定位；字段缺失导致NPE本来也失败不会假通过。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M7DockerProbe.java:70"
+      ],
+      "state": "EXISTING_GUARD_RETAINED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-0979",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "bind挂载宿主权限与uid65534在Linux不同，采纳fixture定向准备可写目录并验证non-root，不chmod真实工作区或削弱容器user限制。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M7DockerProbe.java:20"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-0983",
+      "taskId": "R6-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "RuntimeException过宽可无关NPE通过，应各负例断实际信任配置码，不将所有异常统一猜成一个code。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M7ClosureTest.java:357"
+      ],
+      "state": "CONTRACT_CLARIFIED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-0987",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "入口5参数/父目录预检有益，失败报告应保留工作根；不把受控args缺失算生产代码缺陷。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M7SkillsDockerProbe.java:18"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-0988",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "本地skill脚本固定CMD，仅支持Windows当前运行，新多平台探针应显式选择平台脚本，保持命令审批/marker证据不弱化。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M7SkillsDockerProbe.java:48"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-0989",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "name子串过滤改精确owner label并显式uncertain=false，保证验证的是本探针资源。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M7SkillsDockerProbe.java:161"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-0990",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "Linux nobody写host-owned skills目录可能权限失败，fixture需明确准备容器可写子目录；不能为通过改root执行。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M7SkillsDockerProbe.java:23"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-0991",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "COMPLETED应同时核实关键脚本SUCCESS与无未知调用，采纳工具事件/标记关联；不能假设已有Loop UNKNOWN门禁失效。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M7SkillsDockerProbe.java:124"
+      ],
+      "state": "EXISTING_GUARD_RETAINED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-0992",
+      "taskId": "R6-02",
+      "originalVerdict": "accepted",
+      "adoptedScope": "jar哈希readAllBytes可用流式摘要固定内存，统一探针工具并实际绑定同一制品。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M7SkillsDockerProbe.java:179"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-0993",
+      "taskId": "R6-02",
+      "originalVerdict": "accepted",
+      "adoptedScope": "自动批准器不计调用漏ASK回归，补审批计数及exact call；模型伪READ_ONLY不应当修成可信权限来源。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M7SkillsDockerProbe.java:98"
+      ],
+      "state": "EXISTING_GUARD_RETAINED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-0994",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "通知和未知method回到tools/list可错注入，按明确method匹配且无id通知不造响应；限所测MCP功能避免实现全协议。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M7McpTest.java:414"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1000",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "subagent probe入口args[0..4]可校验用法/目标父目录，属于受控验收工具诊断，不提升安全严重度。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M7SubagentDockerProbe.java:18"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1001",
+      "taskId": "R6-02",
+      "originalVerdict": "accepted",
+      "adoptedScope": "worker jar一次性读哈希可统一流式摘要并保留size/SHA与实际挂载身份。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M7SubagentDockerProbe.java:224"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1003",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "硬编码4/2前面确有reconstruct==4/2 require，非无证据成功；可复用实际返回值减少未来漂移，不称现有证据伪造。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M7SubagentDockerProbe.java:192"
+      ],
+      "state": "EXISTING_GUARD_RETAINED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1004",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "childId强转可加类型断言；SessionRecovery.ready只尾完整并非settled，另查pendingRequests/uncertainCalls保证报告措辞有依据。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M7SubagentDockerProbe.java:151"
+      ],
+      "state": "EXISTING_GUARD_RETAINED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1006",
+      "taskId": "R6-02",
+      "originalVerdict": "accepted",
+      "adoptedScope": "韧性probe读整jar求SHA可统一流式，不依赖任意100MB阈值推断必OOM。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M8ResilienceDockerProbe.java:39"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1007",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "子run已通过require才返回SUCCESS有依据，但cleanupVerified覆盖范围应明示仅受管资源、派生实际检查结果；专用证据目录保留不等于清理失败。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M8ResilienceDockerProbe.java:35"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1008",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "先校验输出目录并原子落盘可避免完整执行后报告写失败/截断；解析失败不能当完整证据，保留失败报告状态。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M8ResilienceDockerProbe.java:45"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1009",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "仅全成功时出JSON使失败摘要缺失，可始终写result=FAILED及已完成case，不覆盖原始日志，不冒称未执行case通过。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M8ResilienceDockerProbe.java:25"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1010",
+      "taskId": "R6-02",
+      "originalVerdict": "accepted",
+      "adoptedScope": "执行后才算jarSHA不能确认执行期间同制品，前后哈希/路径/尺寸核对并要求一致，绑定新验收证据。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M8ResilienceDockerProbe.java:19"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1011",
+      "taskId": "R6-02",
+      "originalVerdict": "accepted",
+      "adoptedScope": "调度probe同readAllBytes jar问题，统一流式摘要固定缓冲。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M8SchedulingDockerProbe.java:41"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1012",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "actualDocker由显式container=true调用、run内已真实docker cleanup判定，不必每个返回再复制全部字段；采纳报告中显式记录环境身份/验证依据，拒绝无证据常量推断。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M8SchedulingDockerProbe.java:29"
+      ],
+      "state": "EXISTING_GUARD_RETAINED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1013",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "JSON报告直接写可截断，采纳预检父目录/同目录原子替换，不把不可解析文件视成功。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M8SchedulingDockerProbe.java:42"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1014",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "单case异常应写失败摘要及确认受管进程容器释放；base为证据目录不默认删，不让清理覆盖主失败。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M8SchedulingDockerProbe.java:20"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1017",
+      "taskId": "R6-02",
+      "originalVerdict": "accepted",
+      "adoptedScope": "lines队列128满即break关闭stdout会让host输出受阻/丢失启动诊断，持续排空并用有界环形摘要/超限失败。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M7WebDockerProbe.java:275"
+      ],
+      "state": "EXISTING_GUARD_RETAINED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1018",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "stderr合并首行必须WEB可因JVM警告假失败，按有界deadline搜索唯一合法启动行并保留前置诊断，不能无限跳过真实错误。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M7WebDockerProbe.java:280"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1019",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "HTTP fixture readNBytes1MB后直接parse超限会连接异常，显式检测+1字节并回受控错误，保持请求前缀等价验证。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M7WebDockerProbe.java:83"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1021",
+      "taskId": "R6-02",
+      "originalVerdict": "accepted",
+      "adoptedScope": "environment.closed id缺失拼label=null可能ps空而假清理，应断合法owner/id并精确匹配已创建环境。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M7WebDockerProbe.java:490"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1022",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "审批callId等缺字段Map.of会NPE，先schema断言提升排查，仍不应在字段缺失时造批准请求。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M7WebDockerProbe.java:326"
+      ],
+      "state": "EXISTING_GUARD_RETAINED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1040",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "actualDocker来源显式DockerExecutionEnvironment，历史外部docker二进制本为可信工具；采纳镜像ID/digest/daemon记录提高可复现性，不宣称替换恶意docker桩是产品漏洞。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M8FilterDockerProbe.java:110"
+      ],
+      "state": "CONTRACT_CLARIFIED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1041",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "源码已经拒绝uncertain，原文遗漏该检查；inspect确定非零仍可能daemon错误而非不存在，改成功ps按精确owner空集验证。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M8FilterDockerProbe.java:104"
+      ],
+      "state": "EXISTING_GUARD_RETAINED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1042",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "容器close已try-with-resources，断言失败不会跳过close本身；采纳finally保留残留检测/失败报告，不称完全无人回收。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M8FilterDockerProbe.java:97"
+      ],
+      "state": "EXISTING_GUARD_RETAINED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1050",
+      "taskId": "R6-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "unused registry可清理减少误导，但没有功能/安全影响，不单独占高优修复阶段。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M8SchedulingTest.java:613"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1056",
+      "taskId": "R6-01",
+      "originalVerdict": "accepted",
+      "adoptedScope": "撤销订阅后只计数2无法发现历史被替换，断完整one/two及之前快照保持。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/TestkitTest.java:60"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1057",
+      "taskId": "R6-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "owned directory清理可加外部哨兵/根内链接不跟随验证，严格限制自己临时目录并保留失败证据。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/TestkitTest.java:105"
+      ],
+      "state": "EXISTING_GUARD_RETAINED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1058",
+      "taskId": "R6-01",
+      "originalVerdict": "accepted",
+      "adoptedScope": "仅子scope查空不能证明两边可注册同名并独立回滚，补子工具正例及分别关闭只移除本scope。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/TestkitTest.java:145"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1092",
+      "taskId": "R6-01",
+      "originalVerdict": "accepted",
+      "adoptedScope": "ui-files仅readNBytes16384未探测超限，清单截断会缺后部入口；读取LIMIT+1且超限明确拒发布/诊断，构建端同步限额。",
+      "sourceReferences": [
+        "harness-web/src/main/java/io/jharness/web/UiResources.java:19"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1093",
+      "taskId": "R6-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "UiResources.serve对空path substring可抛500，先规范空请求目标/拒绝非斜杠；实际JDK HttpServer绝对form空path需原始HTTP回归确认。",
+      "sourceReferences": [
+        "harness-web/src/main/java/io/jharness/web/UiResources.java:33"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1108",
+      "taskId": "R6-04",
+      "originalVerdict": "partial",
+      "adoptedScope": "指针rename仅force文件缺目录项持久性保证，需文档明确断电范围及支持平台fsync策略；进程崩溃通常不同于断电，不混为必然失指针。",
+      "sourceReferences": [
+        "harness-web/src/main/java/io/jharness/web/WorkspaceLease.java:77"
+      ],
+      "state": "CONTRACT_CLARIFIED",
+      "validationGroups": [
+        "legal input/original artifact hashes and candidate/JAR equality",
+        "current source/receipts and explicit durability/CPU boundaries"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1176",
+      "taskId": "R6-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "本地核对 models.primary=对象(5键)。base和primary是不同可选路由，重复字段有维护误改风险，采纳文档明确base/primary互不联动。不可直接按建议删除顶层配置，需先保持基础路由配置契约。",
+      "sourceReferences": [
+        "docs/examples/m6-config.json:2",
+        "harness-cli/src/main/java/io/jharness/cli/ConfigurationSelection.java",
+        "docs/examples/m6-config.json:7"
+      ],
+      "state": "CONTRACT_CLARIFIED",
+      "validationGroups": [
+        "real launcher eight identities with saved-model/browser marker/owned process/port checks",
+        "two real SDK examples",
+        "full current platform matrix"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1177",
+      "taskId": "R6-03",
+      "originalVerdict": "accepted",
+      "adoptedScope": "本地核对 \"rules\": [\"cache/\", \"generated/**\", \"!target/\", \"target/*\", \"!target/report.txt\"]   } }。规则匹配实现先去前导/再按anchored或含/决定匹配整个前缀；!target/匹配任意层target，target/*却仅匹配根前缀。示例描述只保留根target/report.txt时确会重新暴露嵌套target内容。应锚定示例规则并补嵌套反例。",
+      "sourceReferences": [
+        "docs/examples/m8-filter-config.json:8",
+        "harness-workspace/src/main/java/io/jharness/workspace/LocalWorkspace.java:628"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "real launcher eight identities with saved-model/browser marker/owned process/port checks",
+        "two real SDK examples",
+        "full current platform matrix"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1182",
+      "taskId": "R6-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "本地核对 \"inputTokenCeiling\": 1000000,   \"currency\": \"CNY\",   \"maxCost\": \"2.50\",。按示例数字单次上界确为2.032768 CNY，远高于65536上下文对应的预留。采纳说明预算的保守预留语义并评估合理示例上界；不能承诺20步一定用满，也不据此判断真实服务商上下文/价格。",
+      "sourceReferences": [
+        "docs/examples/deepseek-config.json:8",
+        "docs/examples/deepseek-config.json:6"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "real launcher eight identities with saved-model/browser marker/owned process/port checks",
+        "two real SDK examples",
+        "full current platform matrix"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1210",
+      "taskId": "R6-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "本地核对 capturedAt=\"2026-10-16T15:22:59.211266+00:00\"；status=\"PASS\"。原测试确核对第二启动器非零退出和旧服务仍200，未保存两次PID/startInstant。采纳在重复启动/退出收据中登记自有实例标识与进程存活对照，不以无PID字段推定误杀已发生。",
+      "sourceReferences": [
+        "docs/testing/M10-settings-launcher-results.json:6",
+        "scripts/test-open-workbench.py:92"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "real launcher eight identities with saved-model/browser marker/owned process/port checks",
+        "two real SDK examples",
+        "full current platform matrix"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1227",
+      "taskId": "R6-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "本地核对 capturedAt=\"2026-10-17T01:28:57.519091+00:00\"；status=\"PASS\"。自动化明确传-NoBrowser/-NoClipboard，生产默认打开浏览器的分支不属于这8项实测。采纳把静态生产说明与自动化结果分开，增加可控浏览器调用替身验证；不要求每次验收真实改用户剪贴板。",
+      "sourceReferences": [
+        "docs/testing/M10.5.1-launcher-results.json:14",
+        "scripts/test-open-workbench.py:82",
+        "scripts/test-open-workbench.py:137",
+        "scripts/open-workbench.ps1"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "real launcher eight identities with saved-model/browser marker/owned process/port checks",
+        "two real SDK examples",
+        "full current platform matrix"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1231",
+      "taskId": "R6-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "本地核对 capturedAt=\"2026-10-17T01:28:57.519091+00:00\"；status=\"PASS\"。自动化明确传-NoBrowser/-NoClipboard，生产默认打开浏览器的分支不属于这8项实测。采纳把静态生产说明与自动化结果分开，增加可控浏览器调用替身验证；不要求每次验收真实改用户剪贴板。",
+      "sourceReferences": [
+        "docs/testing/M10.5.1-launcher-results.json:14",
+        "scripts/test-open-workbench.py:82",
+        "scripts/test-open-workbench.py:137",
+        "scripts/open-workbench.ps1"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "real launcher eight identities with saved-model/browser marker/owned process/port checks",
+        "two real SDK examples",
+        "full current platform matrix"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1232",
+      "taskId": "R6-03",
+      "originalVerdict": "accepted",
+      "adoptedScope": "本地核对 capturedAt=\"2026-10-16T14:40:07.229035+00:00\"；status=\"PASS\"。saved配置分支只验证首页200及旧token401；若回退默认配置也生成新token，两断言仍通过。需在保存配置植入唯一可观察model/profile并断言实际选中。",
+      "sourceReferences": [
+        "docs/testing/M10-launcher-results.json:9",
+        "scripts/test-open-workbench.py:110"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "real launcher eight identities with saved-model/browser marker/owned process/port checks",
+        "two real SDK examples",
+        "full current platform matrix"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1233",
+      "taskId": "R6-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "本地核对 capturedAt=\"2026-10-16T14:40:07.229035+00:00\"；status=\"PASS\"。当前负例仅tokenEnv=PATH，能证明这一变量拒绝，不能证明所有敏感变量均受保护。采纳补变量名边界反例并核对专用命名契约，不能把产品命令环境白名单与启动器tokenEnv混为同一机制。",
+      "sourceReferences": [
+        "docs/testing/M10-launcher-results.json:11",
+        "scripts/test-open-workbench.py:128",
+        "scripts/open-workbench.ps1"
+      ],
+      "state": "CONTRACT_CLARIFIED",
+      "validationGroups": [
+        "real launcher eight identities with saved-model/browser marker/owned process/port checks",
+        "two real SDK examples",
+        "full current platform matrix"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1234",
+      "taskId": "R6-03",
+      "originalVerdict": "accepted",
+      "adoptedScope": "本地核对 capturedAt=\"2026-10-16T14:40:07.229035+00:00\"；status=\"PASS\"。stop先等待启动器退出但端口只靠HTTP失败判断，URLError/TimeoutError均视为通过；存活但无响应的Java监听可能漏检。需核对所拥有Java进程终止与端口可重绑，不能杀无关进程。",
+      "sourceReferences": [
+        "docs/testing/M10-launcher-results.json:7",
+        "scripts/test-open-workbench.py:62"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "real launcher eight identities with saved-model/browser marker/owned process/port checks",
+        "two real SDK examples",
+        "full current platform matrix"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1284",
+      "taskId": "R6-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "本地核对 capturedAt=\"2026-10-17T05:51:07.983695+00:00\"；status=\"PASS\"。自动化明确传-NoBrowser/-NoClipboard，生产默认打开浏览器的分支不属于这8项实测。采纳把静态生产说明与自动化结果分开，增加可控浏览器调用替身验证；不要求每次验收真实改用户剪贴板。",
+      "sourceReferences": [
+        "docs/testing/M10.5.3-launcher-results.json:14",
+        "scripts/test-open-workbench.py:82",
+        "scripts/test-open-workbench.py:137",
+        "scripts/open-workbench.ps1"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "real launcher eight identities with saved-model/browser marker/owned process/port checks",
+        "two real SDK examples",
+        "full current platform matrix"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1304",
+      "taskId": "R6-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "本地核对 capturedAt=\"2026-10-18T01:10:20.550960+00:00\"；status=\"PASS\"。自动化明确传-NoBrowser/-NoClipboard，生产默认打开浏览器的分支不属于这8项实测。采纳把静态生产说明与自动化结果分开，增加可控浏览器调用替身验证；不要求每次验收真实改用户剪贴板。",
+      "sourceReferences": [
+        "docs/testing/M10.5.4-launcher-results.json:14",
+        "scripts/test-open-workbench.py:82",
+        "scripts/test-open-workbench.py:137",
+        "scripts/open-workbench.ps1"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "real launcher eight identities with saved-model/browser marker/owned process/port checks",
+        "two real SDK examples",
+        "full current platform matrix"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1332",
+      "taskId": "R6-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "本地核对 capturedAt=\"2026-10-18T01:53:23.132226+00:00\"；status=\"PASS\"。自动化明确传-NoBrowser/-NoClipboard，生产默认打开浏览器的分支不属于这8项实测。采纳把静态生产说明与自动化结果分开，增加可控浏览器调用替身验证；不要求每次验收真实改用户剪贴板。",
+      "sourceReferences": [
+        "docs/testing/M10.5.5-launcher-results.json:14",
+        "scripts/test-open-workbench.py:82",
+        "scripts/test-open-workbench.py:137",
+        "scripts/open-workbench.ps1"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "real launcher eight identities with saved-model/browser marker/owned process/port checks",
+        "two real SDK examples",
+        "full current platform matrix"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1460",
+      "taskId": "R6-03",
+      "originalVerdict": "accepted",
+      "adoptedScope": "本地核对 capturedAt=\"2026-10-18T12:22:57.007227+00:00\"；status=\"PASS\"。stop先等待启动器退出但端口只靠HTTP失败判断，URLError/TimeoutError均视为通过；存活但无响应的Java监听可能漏检。需核对所拥有Java进程终止与端口可重绑，不能杀无关进程。",
+      "sourceReferences": [
+        "docs/testing/M10.5.8-launcher-results.json:7",
+        "scripts/test-open-workbench.py:62"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "real launcher eight identities with saved-model/browser marker/owned process/port checks",
+        "two real SDK examples",
+        "full current platform matrix"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1583",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "本地核对 \"externalRuntimeDependencyCount\": 0,   \"pythonImports\": [     \"__future__\",。本地库存确哈希示例但import统计只解析核心实现；新增示例外部导入可能漏计。采纳按声明分发范围解析所有Python/TS文件（测试另列）并加未知外部导入反例。",
+      "sourceReferences": [
+        "docs/testing/M10.5.9-sdk-source-inventory.json:3",
+        "docs/testing/M10.5.9-sdk-source-inventory.json:19",
+        "scripts/sdk-inventory.py"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1815",
+      "taskId": "R6-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "demo默认JHARNESS_API_KEY而地址固定8089，开发者手动运行可误用已有真实provider key；示例测试实际覆写synthetic-demo-key。采纳演示专用apiKeyEnv并文档同步，不认测试已泄露真实key。",
+      "sourceReferences": [
+        "sdk/examples/demo.json:2"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "real launcher eight identities with saved-model/browser marker/owned process/port checks",
+        "two real SDK examples",
+        "full current platform matrix"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1816",
+      "taskId": "R6-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "demo省略requestTimeout而轮预算30秒/示例轮询35秒，配置可更清楚设较短请求时限；示例finally/with会关闭自有JVM，并非必然残留。采纳合理预算与未完成输出。",
+      "sourceReferences": [
+        "sdk/examples/demo.json:5"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "real launcher eight identities with saved-model/browser marker/owned process/port checks",
+        "two real SDK examples",
+        "full current platform matrix"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1817",
+      "taskId": "R6-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "tsx依赖范围与esbuild override确实不一致；超范围不等于已发生API故障，已有客户端验收。采纳升级声明兼容组合并保留npm ci/build/client验证。",
+      "sourceReferences": [
+        "frontend/package.json:5"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1818",
+      "taskId": "R6-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "前端package未声明Node engines，而CI/tsx/Vite有版本要求；补明确版本和前置诊断合理，无需默认全局engine-strict。",
+      "sourceReferences": [
+        "frontend/package.json:4"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1819",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "upstream.json仅有项目/commit/files，单独不含可重取地址；仓库已有M10来源证据，因此不是来源完全缺失。采纳补URL及归档摘要。",
+      "sourceReferences": [
+        "frontend/upstream.json:3"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1821",
+      "taskId": "R6-04",
+      "originalVerdict": "partial",
+      "adoptedScope": "sources.json确只有wrapper-NOTICE/annotations-LICENSE，Wrapper官方3.3.4 LICENSE确为Apache-2.0且本地根LICENSE随包。只采纳在第三方来源映射明确Wrapper共用根LICENSE/官方来源的低优先说明，不宣告正文缺失或违法。annotations额外NOTICE是否存在，固定tag/NOTICE官方读取均Cache miss，未证明的子主张不采纳、不凭空补文件。",
+      "sourceReferences": [
+        "third-party/upstream/sources.json:28",
+        "third-party/README.md:27",
+        "LICENSE",
+        "https://raw.githubusercontent.com/apache/maven-wrapper/maven-wrapper-3.3.4/LICENSE"
+      ],
+      "state": "CONTRACT_CLARIFIED",
+      "validationGroups": [
+        "legal input/original artifact hashes and candidate/JAR equality",
+        "current source/receipts and explicit durability/CPU boundaries"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1822",
+      "taskId": "R6-01",
+      "originalVerdict": "accepted",
+      "adoptedScope": "清单固定添加index.html但未确认存在，忽略dist根额外文件，assets表达式还拒绝含点的合法chunk名。应按真实输出精确枚举与验证。",
+      "sourceReferences": [
+        "frontend/scripts/package-ui.mjs:24"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1823",
+      "taskId": "R6-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "new URL(destination,root)接受绝对/上跳并跟随软链；清单来自受版本控制本地仓库，不等同远程读取漏洞。采纳schema、真实路径与根边界约束。",
+      "sourceReferences": [
+        "frontend/scripts/package-ui.mjs:7"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1824",
+      "taskId": "R6-01",
+      "originalVerdict": "accepted",
+      "adoptedScope": "for-of provenance.files没有非空/完整集/唯一性约束，files=[]会完全跳过上游字节校验。应核对受管文件完整集合。",
+      "sourceReferences": [
+        "frontend/scripts/package-ui.mjs:5"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1825",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "许可证列表写死四包，无新增生产闭包差异门禁；尚未证明当前漏证。采纳将实际锁文件生产闭包与许可证集合对比。",
+      "sourceReferences": [
+        "frontend/scripts/package-ui.mjs:15"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1826",
+      "taskId": "R6-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "ui-license先写后校验输出白名单，失败留部分构建输出；失败构建不会成功候选。采纳全部校验后临时写入和替换。",
+      "sourceReferences": [
+        "frontend/scripts/package-ui.mjs:23"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1905",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "env executable有意指定私有Firefox副本覆盖默认，但若调用者同时提供不同executablePath应显式冲突拒绝/记录优先级；采纳身份和路径存在性记录，不改变prepare分支验收口径。",
+      "sourceReferences": [
+        "frontend/tests/runtime.mjs:9"
+      ],
+      "state": "CONTRACT_CLARIFIED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1973",
+      "taskId": "R6-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "cancel脚本仅查JAVA_HOME非空，缺java可执行/版本前置；可补明确诊断但不应对错误JDK静默回退到另一安装。",
+      "sourceReferences": [
+        "scripts/jharness-cancel.ps1:8"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "real launcher eight identities with saved-model/browser marker/owned process/port checks",
+        "two real SDK examples",
+        "full current platform matrix"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1986",
+      "taskId": "R6-03",
+      "originalVerdict": "accepted",
+      "adoptedScope": "open-workbench解析一次WEB后首次Test-Ready失败便清address，WEB不再输出导致不重试；应保留候选origin并在截止前轮询。Content-Type缺失能否视就绪需保持严格资源校验，不宜无条件放宽。",
+      "sourceReferences": [
+        "scripts/open-workbench.ps1:126"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "real launcher eight identities with saved-model/browser marker/owned process/port checks",
+        "two real SDK examples",
+        "full current platform matrix"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1987",
+      "taskId": "R6-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "就绪后stdout停止消费、stderr ReadToEndAsync无界留存属实；当前serve通常安静，但长期诊断输出可阻塞/增长。采纳持续有界丢弃或尾日志读取。",
+      "sourceReferences": [
+        "scripts/open-workbench.ps1:116"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "real launcher eight identities with saved-model/browser marker/owned process/port checks",
+        "two real SDK examples",
+        "full current platform matrix"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1988",
+      "taskId": "R6-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "tokenEnv允许自定义且黑名单漏USERPROFILE等，生成token会覆盖该子环境槽；用户显式config是受信启动输入，非无鉴权注入。采纳限制危险宿主槽或固定专用token槽，同时兼容已有合法配置迁移。",
+      "sourceReferences": [
+        "scripts/open-workbench.ps1:1"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "real launcher eight identities with saved-model/browser marker/owned process/port checks",
+        "two real SDK examples",
+        "full current platform matrix"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1989",
+      "taskId": "R6-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "Resolve-Java候选probe某些Start/Kill/Task异常可提前退出整个候选枚举，采纳逐候选捕获和有界双流读取；不能无条件无限WaitForExit。",
+      "sourceReferences": [
+        "scripts/open-workbench.ps1:41"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "real launcher eight identities with saved-model/browser marker/owned process/port checks",
+        "two real SDK examples",
+        "full current platform matrix"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1990",
+      "taskId": "R6-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "Console.ReadLine阻塞会延迟检测host退出；重定向EOF关闭宿主是保守有意生命周期，不能让无控制台后台永驻。采纳输入与host退出竞争，保留EOF安全关闭。",
+      "sourceReferences": [
+        "scripts/open-workbench.ps1:140"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "real launcher eight identities with saved-model/browser marker/owned process/port checks",
+        "two real SDK examples",
+        "full current platform matrix"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-1991",
+      "taskId": "R6-03",
+      "originalVerdict": "accepted",
+      "adoptedScope": "host自然非零退出未并入exitCode，launcher可能返0；应回收前传播自有host退出失败，处理stdin关闭竞态并保持脱敏诊断。",
+      "sourceReferences": [
+        "scripts/open-workbench.ps1:156"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "real launcher eight identities with saved-model/browser marker/owned process/port checks",
+        "two real SDK examples",
+        "full current platform matrix"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2047",
+      "taskId": "R6-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "third-party目录/清单路径read_bytes会跟链接且未统一真实根约束，采纳常规文件/边界与合法相对条目校验。输入为本地受管资源，不标远程任意读漏洞。",
+      "sourceReferences": [
+        "scripts/build-candidate.py:40"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2049",
+      "taskId": "R6-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "third-party目录/清单路径read_bytes会跟链接且未统一真实根约束，采纳常规文件/边界与合法相对条目校验。输入为本地受管资源，不标远程任意读漏洞。",
+      "sourceReferences": [
+        "scripts/build-candidate.py:31"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2113",
+      "taskId": "R6-02",
+      "originalVerdict": "accepted",
+      "adoptedScope": "probe仅捕OSError，TimeoutExpired/Node路径解析失败等发生在报告写入前，留旧availability。采纳全部前置/探测异常形成明确失败记录及有界调用，不把启动失败计浏览器验收通过。",
+      "sourceReferences": [
+        "scripts/probe-firefox.py:15"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2114",
+      "taskId": "R6-02",
+      "originalVerdict": "accepted",
+      "adoptedScope": "probe仅捕OSError，TimeoutExpired/Node路径解析失败等发生在报告写入前，留旧availability。采纳全部前置/探测异常形成明确失败记录及有界调用，不把启动失败计浏览器验收通过。",
+      "sourceReferences": [
+        "scripts/probe-firefox.py:10"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2115",
+      "taskId": "R6-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "生成器明确拒绝链接且要求SHA512/license，只支持受审npm registry lock条目；缺metadata应清晰拒绝而非建议跳过integrity掩盖来源。采纳缺version/integrity/resolved诊断和受支持来源说明，非必须支持git/file依赖。",
+      "sourceReferences": [
+        "scripts/frontend-sbom.py:42"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2116",
+      "taskId": "R6-01",
+      "originalVerdict": "accepted",
+      "adoptedScope": "ref只由npm name@version生成，runtime按安装路径逐项输出，同版本双安装路径会重复bom-ref且边可不同。应按实例唯一ref或明确合并组件/边并校验ref唯一；当前6依赖没有重复不否定生成器处理合法lock的缺陷。",
+      "sourceReferences": [
+        "scripts/frontend-sbom.py:26"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2117",
+      "taskId": "R6-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "edges无条件合并optionalDependencies与所有peers后resolve缺失即抛错，合法未安装optional会被错误拒绝。采纳区分必需/可选并核对实际安装边；原例vite是dev已被runtime过滤，不证明当前锁文件因此构建失败。",
+      "sourceReferences": [
+        "scripts/frontend-sbom.py:51"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2118",
+      "taskId": "R6-01",
+      "originalVerdict": "accepted",
+      "adoptedScope": "根只连接dependencies而runtime包含非dev optional，新增根optional后component可成为孤儿；将实际安装的根optional纳入根边并验证可达性。不能要求未安装可选组件必有条目。",
+      "sourceReferences": [
+        "scripts/frontend-sbom.py:54"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2119",
+      "taskId": "R6-01",
+      "originalVerdict": "accepted",
+      "adoptedScope": "license.id直接接受任意license字符串，表达式/SEE LICENSE文本会被错标为单SPDX标识。按已知ID、SPDX expression或name分类并校验BOM schema；保留原许可文本不猜归类。",
+      "sourceReferences": [
+        "scripts/frontend-sbom.py:47"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2124",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "scan-osv的BOM解析/参数错误在report try外会非零且不覆盖旧报告；采纳参数schema错误也输出INCOMPLETE失败记录并失效旧PASS。并非网络失败会静默PASS。",
+      "sourceReferences": [
+        "scripts/scan-osv.py:79"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2125",
+      "taskId": "R6-02",
+      "originalVerdict": "accepted",
+      "adoptedScope": "bomFormat用assert运行时校验，-O剥离后非CycloneDX但同字段JSON可扫描并PASS。换显式require并加优化模式负例。",
+      "sourceReferences": [
+        "scripts/scan-osv.py:28"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2126",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "scan-osv的BOM解析/参数错误在report try外会非零且不覆盖旧报告；采纳参数schema错误也输出INCOMPLETE失败记录并失效旧PASS。并非网络失败会静默PASS。",
+      "sourceReferences": [
+        "scripts/scan-osv.py:29"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2129",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "OSV响应json.load无字节上限且vuln详情串行无总deadline；采纳字节/记录/总体时间预算，失败仍INCOMPLETE，当前18包无已发生资源耗尽证据。",
+      "sourceReferences": [
+        "scripts/scan-osv.py:63"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2130",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "prepare仅is_symlink，Windows junction/reparse及源根别名需更完整检测；采纳真实源/目标边界与常规文件/目录校验。只复制专用缓存，不修改全局安装。",
+      "sourceReferences": [
+        "scripts/prepare-test-browsers.py:44"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2132",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "copied摘要在copy后读取source，能证明目标等于该后读源但不能证明源从未变；采纳复制前后源清单一致、目标精确集合与明确措辞，不把originalFilesUnchanged常量当完整证明。",
+      "sourceReferences": [
+        "scripts/prepare-test-browsers.py:54"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2133",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "prepare中途失败临时私有目录残留且旧runtime报告未失效；采纳失败收据/有界清理自己创建的目录。诊断保留可选，但不能误当成功运行时。",
+      "sourceReferences": [
+        "scripts/prepare-test-browsers.py:46"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2134",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "prepare-legal对本地BOM坐标/JAR/POM条目缺统一路径和大小预算；采纳坐标语法/真实根、压缩项限额、先验证再输出。依赖源受管，非已证明远程利用。",
+      "sourceReferences": [
+        "scripts/prepare-legal.py:43"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2135",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "prepare-legal对本地BOM坐标/JAR/POM条目缺统一路径和大小预算；采纳坐标语法/真实根、压缩项限额、先验证再输出。依赖源受管，非已证明远程利用。",
+      "sourceReferences": [
+        "scripts/prepare-legal.py:30"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2138",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "supplemental按artifact名匹配而非完整group:name，当前库存固定可用但同名不同group会误配。采纳完整坐标键和不允许未知项默用补充来源。",
+      "sourceReferences": [
+        "scripts/prepare-legal.py:56"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2139",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "AST只拒裸Name动态导入，importlib/builtins等可绕过标准库声明检查；这是源码模式门禁不是恶意Python沙箱。采纳明确支持静态进口策略/拒已知动态形式并声明限制，不能声称能证明任意Python无隐藏执行。",
+      "sourceReferences": [
+        "scripts/sdk-inventory.py:24"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2140",
+      "taskId": "R6-02",
+      "originalVerdict": "accepted",
+      "adoptedScope": "TS只提取from说明符，side-effect import 'x'不进modules且不触import(正则，确漏运行依赖。补语法级静态导入/导出扫描与负例。",
+      "sourceReferences": [
+        "scripts/sdk-inventory.py:29"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2141",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "SDK BOM版本写死当前与package相同，未来升级易漂移；采纳读取唯一版本并检查两份package一致，不是当前版本错误。",
+      "sourceReferences": [
+        "scripts/sdk-inventory.py:33"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2142",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "Python依赖检查只覆盖库主文件，而候选分发examples也执行；采纳所有分发执行源静态导入检查并明确README非可执行不扫描。",
+      "sourceReferences": [
+        "scripts/sdk-inventory.py:19"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2143",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "git ls-files可含软链，read_bytes跟随目标且只按后缀筛选；采纳拒链接/非普通文件及真实根检查，输出仅path/line本不会直接泄漏匹配秘密原文。",
+      "sourceReferences": [
+        "scripts/scan-source-secrets.py:25"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2144",
+      "taskId": "R6-02",
+      "originalVerdict": "accepted",
+      "adoptedScope": "16MiB上限在read_bytes后才判断，无法限制读取峰值；删除tracked文件也可在报告前抛错留旧PASS。应流式限读/先stat并受控错误回执。",
+      "sourceReferences": [
+        "scripts/scan-source-secrets.py:27"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2145",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "git原始路径decode UTF8对POSIX非UTF8名可失败，当前仓库名UTF8有效；采纳filesystem解码/显式拒绝并输出失败记录，不把decode异常算通过。",
+      "sourceReferences": [
+        "scripts/scan-source-secrets.py:21"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2146",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "每匹配data[:start]计行复制前缀，重复命中多时二次成本；采纳count start/end或一次换行索引，当前文件上限有限但仍可减少峰值。",
+      "sourceReferences": [
+        "scripts/scan-source-secrets.py:18"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2161",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "test-native前置/Timeout异常与JSON非object未形成结构化失败报告，可能留旧文件；采纳输入shape/启动失败/超时回执与旧PASS失效，保持不包含秘密。",
+      "sourceReferences": [
+        "scripts/test-native-credentials.py:16"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2163",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "test-native前置/Timeout异常与JSON非object未形成结构化失败报告，可能留旧文件；采纳输入shape/启动失败/超时回执与旧PASS失效，保持不包含秘密。",
+      "sourceReferences": [
+        "scripts/test-native-credentials.py:21"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2178",
+      "taskId": "R6-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "示例直接取前置环境，缺失裸KeyError/路径TypeError；README要求前置但补缺项/文件存在诊断更清楚，无需改SDK协议。",
+      "sourceReferences": [
+        "sdk/examples/run.py:8"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "real launcher eight identities with saved-model/browser marker/owned process/port checks",
+        "two real SDK examples",
+        "full current platform matrix"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2179",
+      "taskId": "R6-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "示例仅FINISHED/UNKNOWN，35秒后不检查终态便打印报告；finally/with会close所以非永久残留。采纳VERIFIED及明确未完成/取消提示。",
+      "sourceReferences": [
+        "sdk/examples/run.py:15"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "real launcher eight identities with saved-model/browser marker/owned process/port checks",
+        "two real SDK examples",
+        "full current platform matrix"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2180",
+      "taskId": "R6-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "可复用循环终态快照减少多次取样；UNKNOWN仍允许只读search/report，不是重放。仅采纳UNKNOWN恢复提示，不阻止事实读取。",
+      "sourceReferences": [
+        "sdk/examples/run.py:17"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "real launcher eight identities with saved-model/browser marker/owned process/port checks",
+        "two real SDK examples",
+        "full current platform matrix"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2181",
+      "taskId": "R6-03",
+      "originalVerdict": "accepted",
+      "adoptedScope": "注释request.get没有对应高层方法，应明确client.call('request.get',参数)和保留requestId；底层call已有能力。",
+      "sourceReferences": [
+        "sdk/examples/run.py:11"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "real launcher eight identities with saved-model/browser marker/owned process/port checks",
+        "two real SDK examples",
+        "full current platform matrix"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2184",
+      "taskId": "R6-01",
+      "originalVerdict": "accepted",
+      "adoptedScope": "ZIP名称做边界检查但manifest.files名称未经同等验证直接install/name读文件，也未要求manifest覆盖全部安装文件；可逃逸读并让启动器未被摘要约束。规范化所有manifest路径、拒绝越界/重复并验证完整集合。",
+      "sourceReferences": [
+        "scripts/smoke-candidate.py:70"
+      ],
+      "state": "EXISTING_GUARD_RETAINED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2205",
+      "taskId": "R6-03",
+      "originalVerdict": "accepted",
+      "adoptedScope": "readiness超时分支关stdin后wait15若TimeoutExpired，未清理自有PowerShell/Java，可能残留占用锁/端口。补有界自有进程树清理并保留原超时诊断，不能按旧PID误杀无关实例。",
+      "sourceReferences": [
+        "scripts/test-open-workbench.py:52"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "real launcher eight identities with saved-model/browser marker/owned process/port checks",
+        "two real SDK examples",
+        "full current platform matrix"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2219",
+      "taskId": "R6-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "示例直接取前置环境，缺失裸KeyError/路径TypeError；README要求前置但补缺项/文件存在诊断更清楚，无需改SDK协议。",
+      "sourceReferences": [
+        "sdk/examples/run.ts:4"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "real launcher eight identities with saved-model/browser marker/owned process/port checks",
+        "two real SDK examples",
+        "full current platform matrix"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2220",
+      "taskId": "R6-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "示例仅FINISHED/UNKNOWN，35秒后不检查终态便打印报告；finally/with会close所以非永久残留。采纳VERIFIED及明确未完成/取消提示。",
+      "sourceReferences": [
+        "sdk/examples/run.ts:9"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "real launcher eight identities with saved-model/browser marker/owned process/port checks",
+        "two real SDK examples",
+        "full current platform matrix"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2221",
+      "taskId": "R6-03",
+      "originalVerdict": "accepted",
+      "adoptedScope": "TS示例String(handle/sessionId)会把undefined/null转为合法字符串继续RPC，应验证必需字段并明确协议错误。",
+      "sourceReferences": [
+        "sdk/examples/run.ts:6"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "real launcher eight identities with saved-model/browser marker/owned process/port checks",
+        "two real SDK examples",
+        "full current platform matrix"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2223",
+      "taskId": "R6-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "示例RpcError直接抛出但finally关闭且错误码无密钥；UNKNOWN应补保留requestId/会话id对账说明，不自动重发。",
+      "sourceReferences": [
+        "sdk/examples/run.ts:13"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "real launcher eight identities with saved-model/browser marker/owned process/port checks",
+        "two real SDK examples",
+        "full current platform matrix"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2354",
+      "taskId": "R6-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "三子模块Jackson当前均2.21.7无版本漂移，统一根属性/management可降低将来漏升级风险；不宣称当前NoSuchMethodError或漏洞。",
+      "sourceReferences": [
+        "harness-llm/pom.xml:7"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2357",
+      "taskId": "R6-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "根和示例部分生命周期插件依赖Maven默认版本，影响长期可重复性；当前wrapper固定3.9.9。采纳固定实际使用构建插件，不为未使用deploy/site引入额外执行。",
+      "sourceReferences": [
+        "examples/calculator/pom.xml:6"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2358",
+      "taskId": "R6-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "与2354同源重复固定版本，接受集中约束及依赖收敛门禁；M9已有2.21.7实际构建/扫描证据，不重查发布存在性制造待办。",
+      "sourceReferences": [
+        "harness-ecosystem/pom.xml:61"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2362",
+      "taskId": "R6-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "third-party整目录资源无includes，采纳限制为已审计法律文件/清单并验证包内清单与输入SHA；当前目录本就是法律材料，无现有任意二进制分发证据。",
+      "sourceReferences": [
+        "harness-cli/pom.xml:19"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2364",
+      "taskId": "R6-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "第三处Jackson重复归同修复组；compile依赖本身正常，不因可传递即缺陷。",
+      "sourceReferences": [
+        "harness-session/pom.xml:7"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2365",
+      "taskId": "R6-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "pty4j仅一处版本不存在当前重复冲突；保留原生架构实机矩阵与缺支持诊断，三平台当前验收范围按历史证据，不新承诺所有CPU。",
+      "sourceReferences": [
+        "harness-process/pom.xml:6"
+      ],
+      "state": "CONTRACT_CLARIFIED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2366",
+      "taskId": "R6-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "库模块runtime传递slf4j-nop可抢外部宿主日志provider，绑定应移可执行宿主/测试层；pty4j实际API版本需锁闭包核实，不能据“若1.7”认定当前不兼容。",
+      "sourceReferences": [
+        "harness-process/pom.xml:7"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2367",
+      "taskId": "R6-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "Maven缺dist仍可打包且clean不删旧dist，README明确前置npm构建/根503；需要候选发布门禁校验前端输入/包内hash，不必强制所有纯后端构建依赖Node。",
+      "sourceReferences": [
+        "harness-web/pom.xml:11"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2368",
+      "taskId": "R6-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "testkit main只需api，其余大量集成依赖可设test缩小发布闭包；需核对下游实际依赖testkit transitive用途后迁移，非生产循环漏洞。",
+      "sourceReferences": [
+        "harness-testkit/pom.xml:7"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2369",
+      "taskId": "R6-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "JDK21前置由release和CI保证，老JDK当前失败非误通过；补enforcer/清晰工具版本诊断合理，避免重复下载/副作用。",
+      "sourceReferences": [
+        "pom.xml:28"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2370",
+      "taskId": "R6-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "根和示例部分生命周期插件依赖Maven默认版本，影响长期可重复性；当前wrapper固定3.9.9。采纳固定实际使用构建插件，不为未使用deploy/site引入额外执行。",
+      "sourceReferences": [
+        "pom.xml:48"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2375",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "工作流缺concurrency，重复推送可并跑三平台消耗资源；采纳按workflow+ref分组取消过期执行，不能把不同host临时keychain并发视作当前互踩。",
+      "sourceReferences": [
+        ".github/workflows/ci.yml:4"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2378",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "macOS确替换默认keychain/搜索列表而只删临时keychain，采纳保存并恢复旧值再删除。GitHub托管runner是临时机器，未证实用户keychain被永久破坏。",
+      "sourceReferences": [
+        ".github/workflows/ci.yml:74"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2379",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "ci.yml无条件always删除路径，创建前失败会添清理失败；采纳存在性检查与恢复动作，不吞真正清理失败。",
+      "sourceReferences": [
+        ".github/workflows/ci.yml:113"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2380",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "启动/Lock后无明确服务就绪/collection锁状态确认，missing与locked可能同样不可用；采纳总线owner及属性有界等待，锁定前必须凭据正例，保证区分服务缺失。",
+      "sourceReferences": [
+        ".github/workflows/ci.yml:86"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2381",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "macOS确替换默认keychain/搜索列表而只删临时keychain，采纳保存并恢复旧值再删除。GitHub托管runner是临时机器，未证实用户keychain被永久破坏。",
+      "sourceReferences": [
+        ".github/workflows/native-credentials.yml:60"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2382",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "macOS确替换默认keychain/搜索列表而只删临时keychain，采纳保存并恢复旧值再删除。GitHub托管runner是临时机器，未证实用户keychain被永久破坏。",
+      "sourceReferences": [
+        ".github/workflows/native-credentials.yml:91"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2383",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "启动/Lock后无明确服务就绪/collection锁状态确认，missing与locked可能同样不可用；采纳总线owner及属性有界等待，锁定前必须凭据正例，保证区分服务缺失。",
+      "sourceReferences": [
+        ".github/workflows/native-credentials.yml:73"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2385",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "工作流缺concurrency，重复推送可并跑三平台消耗资源；采纳按workflow+ref分组取消过期执行，不能把不同host临时keychain并发视作当前互踩。",
+      "sourceReferences": [
+        ".github/workflows/native-credentials.yml:6"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2387",
+      "taskId": "R6-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "cmd行尾策略确不统一；但LF对当前简单批处理不必然失败，web-ui -text有字节保留原因。采纳逐脚本运行验证后统一显式CRLF，保留已绑定历史字节摘要，不盲重写证据。",
+      "sourceReferences": [
+        ".editorconfig:15"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "real launcher eight identities with saved-model/browser marker/owned process/port checks",
+        "two real SDK examples",
+        "full current platform matrix"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2389",
+      "taskId": "R6-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "仓库jharness按$0目录找构建JAR，软链PATH启动确不支持；当前文档用sh ./jharness而分发包另生成launcher。可补明确不支持软链/解析链接，属入口扩展非现有包损坏。",
+      "sourceReferences": [
+        "jharness:3"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "real launcher eight identities with saved-model/browser marker/owned process/port checks",
+        "two real SDK examples",
+        "full current platform matrix"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2390",
+      "taskId": "R6-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "JAVA_HOME坏路径直接exec失败，采纳明确可执行/Java版本诊断，不静默回退到不同JDK以免环境不可复现。",
+      "sourceReferences": [
+        "jharness:6"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "real launcher eight identities with saved-model/browser marker/owned process/port checks",
+        "two real SDK examples",
+        "full current platform matrix"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2393",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": ".gitignore仅.env未覆盖.env.*，与产品秘密路径范围不同，补环境变体及明确模板例外合理。不要盲目credentials*/*.key广泛屏蔽合法fixture，按真实材料分类加模式并用git check-ignore负例。",
+      "sourceReferences": [
+        ".gitignore:12"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2394",
+      "taskId": "R6-04",
+      "originalVerdict": "partial",
+      "adoptedScope": "本地核对 bigint, Copyright 2020 Tim Buktu. 2-clause BSD License. https://github.com/tbuktu/bigint/tree/floatfft https://github.com/tbu。本地保留材料内确有不同年份/fast_float commit引用；都是第三方原JAR提取文本，不证明本仓库修改归因。采纳在法律库存记录上游材料差异并核实相应构件/版本，保留原文，不能猜一个年份/commit覆盖所有材料。",
+      "sourceReferences": [
+        "third-party/artifacts/com.fasterxml.jackson.core/jackson-core/2.21.7/META-INF/FastDoubleParser-ThirdParty-LICENSE:61",
+        "third-party/artifacts/com.fasterxml.jackson.core/jackson-core/2.21.7/META-INF/FastDoubleParser-LICENSE:48",
+        "third-party/artifacts/com.fasterxml.jackson.core/jackson-core/2.21.7/META-INF/FastDoubleParser-ThirdParty-LICENSE:69",
+        "third-party/README.md:8"
+      ],
+      "state": "CONTRACT_CLARIFIED",
+      "validationGroups": [
+        "legal input/original artifact hashes and candidate/JAR equality",
+        "current source/receipts and explicit durability/CPU boundaries"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2396",
+      "taskId": "R6-04",
+      "originalVerdict": "partial",
+      "adoptedScope": "本地核对 MIT License Copyright (c) 2024 Werner Randelshofer, Switzerland.。本地保留材料内确有不同年份/fast_float commit引用；都是第三方原JAR提取文本，不证明本仓库修改归因。采纳在法律库存记录上游材料差异并核实相应构件/版本，保留原文，不能猜一个年份/commit覆盖所有材料。",
+      "sourceReferences": [
+        "third-party/artifacts/com.fasterxml.jackson.core/jackson-core/2.21.7/META-INF/FastDoubleParser-LICENSE:1",
+        "third-party/artifacts/com.fasterxml.jackson.core/jackson-core/2.21.7/META-INF/FastDoubleParser-LICENSE:48",
+        "third-party/artifacts/com.fasterxml.jackson.core/jackson-core/2.21.7/META-INF/FastDoubleParser-ThirdParty-LICENSE:69",
+        "third-party/README.md:8"
+      ],
+      "state": "CONTRACT_CLARIFIED",
+      "validationGroups": [
+        "legal input/original artifact hashes and candidate/JAR equality",
+        "current source/receipts and explicit durability/CPU boundaries"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2398",
+      "taskId": "R6-04",
+      "originalVerdict": "partial",
+      "adoptedScope": "本地核对 MIT License Copyright (c) 2024 Werner Randelshofer, Switzerland.。本地保留材料内确有不同年份/fast_float commit引用；都是第三方原JAR提取文本，不证明本仓库修改归因。采纳在法律库存记录上游材料差异并核实相应构件/版本，保留原文，不能猜一个年份/commit覆盖所有材料。",
+      "sourceReferences": [
+        "third-party/artifacts/com.fasterxml.jackson.core/jackson-core/2.21.7/META-INF/FastDoubleParser-LICENSE:1",
+        "third-party/artifacts/com.fasterxml.jackson.core/jackson-core/2.21.7/META-INF/FastDoubleParser-LICENSE:48",
+        "third-party/artifacts/com.fasterxml.jackson.core/jackson-core/2.21.7/META-INF/FastDoubleParser-ThirdParty-LICENSE:69",
+        "third-party/README.md:8"
+      ],
+      "state": "CONTRACT_CLARIFIED",
+      "validationGroups": [
+        "legal input/original artifact hashes and candidate/JAR equality",
+        "current source/receipts and explicit durability/CPU boundaries"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2399",
+      "taskId": "R6-04",
+      "originalVerdict": "partial",
+      "adoptedScope": "本地核对 MIT License Copyright (c) 2024 Werner Randelshofer, Switzerland.。本地保留材料内确有不同年份/fast_float commit引用；都是第三方原JAR提取文本，不证明本仓库修改归因。采纳在法律库存记录上游材料差异并核实相应构件/版本，保留原文，不能猜一个年份/commit覆盖所有材料。",
+      "sourceReferences": [
+        "third-party/artifacts/com.fasterxml.jackson.core/jackson-core/2.21.7/META-INF/FastDoubleParser-LICENSE:1",
+        "third-party/artifacts/com.fasterxml.jackson.core/jackson-core/2.21.7/META-INF/FastDoubleParser-LICENSE:48",
+        "third-party/artifacts/com.fasterxml.jackson.core/jackson-core/2.21.7/META-INF/FastDoubleParser-ThirdParty-LICENSE:69",
+        "third-party/README.md:8"
+      ],
+      "state": "CONTRACT_CLARIFIED",
+      "validationGroups": [
+        "legal input/original artifact hashes and candidate/JAR equality",
+        "current source/receipts and explicit durability/CPU boundaries"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2400",
+      "taskId": "R6-04",
+      "originalVerdict": "partial",
+      "adoptedScope": "本地核对 SPDX-License-Identifier: Apache-2.0 OR LGPL-2.1 Java Native Access (JNA) is licensed under the LGPL, version 2.1。保留的上游SPDX仅LGPL-2.1而正文说2.1 or later且有Apache选项，局部文本不一致确实可记录；本分发已选择Apache-2.0，不能直接手改上游LICENSE。采纳在库存/附加说明声明所选许可和原文差异。",
+      "sourceReferences": [
+        "third-party/artifacts/net.java.dev.jna/jna-platform/5.14.0/META-INF/LICENSE:1",
+        "third-party/artifacts/net.java.dev.jna/jna/5.14.0/META-INF/LICENSE:1",
+        "third-party/README.md:23"
+      ],
+      "state": "CONTRACT_CLARIFIED",
+      "validationGroups": [
+        "legal input/original artifact hashes and candidate/JAR equality",
+        "current source/receipts and explicit durability/CPU boundaries"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2403",
+      "taskId": "R6-04",
+      "originalVerdict": "partial",
+      "adoptedScope": "本地核对 SPDX-License-Identifier: Apache-2.0 OR LGPL-2.1 Java Native Access (JNA) is licensed under the LGPL, version 2.1。保留的上游SPDX仅LGPL-2.1而正文说2.1 or later且有Apache选项，局部文本不一致确实可记录；本分发已选择Apache-2.0，不能直接手改上游LICENSE。采纳在库存/附加说明声明所选许可和原文差异。",
+      "sourceReferences": [
+        "third-party/artifacts/net.java.dev.jna/jna/5.14.0/META-INF/LICENSE:1",
+        "third-party/README.md:23"
+      ],
+      "state": "CONTRACT_CLARIFIED",
+      "validationGroups": [
+        "legal input/original artifact hashes and candidate/JAR equality",
+        "current source/receipts and explicit durability/CPU boundaries"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2405",
+      "taskId": "R6-04",
+      "originalVerdict": "partial",
+      "adoptedScope": "本地核对 J-Harness Copyright 2026 J-Harness contributors。根NOTICE指向frontend来源文件属于源码分发路径，运行JAR的许可已另指ui/ui-license.txt。采纳标明哪些路径仅源分发可用并给ZIP/JAR各自精确资源路径，不认定版权声明全缺。",
+      "sourceReferences": [
+        "NOTICE:1",
+        "NOTICE:11",
+        "scripts/prepare-legal.py"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "legal input/original artifact hashes and candidate/JAR equality",
+        "current source/receipts and explicit durability/CPU boundaries"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2407",
+      "taskId": "R6-04",
+      "originalVerdict": "accepted",
+      "adoptedScope": "本地核对 .\\scripts\\collect-test-evidence.ps1 -Milestone M8 -Slice M8.4 -VerificationLog .build-cache/M8.4-verify.log & \"$env:JAVA_HOME。验证流程通用示例仍用Milestone M8/Slice M8.4，当前顶部却为M10.5.9；直接复制可能误标当次证据。需改成当前入口链接或参数占位并显式标历史命令。",
+      "sourceReferences": [
+        ".agent:105",
+        ".agent:验证流程"
+      ],
+      "state": "CONTRACT_CLARIFIED",
+      "validationGroups": [
+        "legal input/original artifact hashes and candidate/JAR equality",
+        "current source/receipts and explicit durability/CPU boundaries"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2408",
+      "taskId": "R6-04",
+      "originalVerdict": "partial",
+      "adoptedScope": "本地核对 ## 历史验收与接续快照（M7/M8；当前入口见顶部和最新M9接续） 最终 Windows 命令 .\\mvnw.cmd -B clean verify，Linux 命令见 M7-linux-results.json；两侧各 260 项通过，236 个。历史小节仍写最新M9接续，与顶部M10.5.9实际入口不一致；采纳修正历史章节导航，历史逐日快照本身不重写。",
+      "sourceReferences": [
+        ".agent:117",
+        ".agent:历史验收与接续快照"
+      ],
+      "state": "CONTRACT_CLARIFIED",
+      "validationGroups": [
+        "legal input/original artifact hashes and candidate/JAR equality",
+        "current source/receipts and explicit durability/CPU boundaries"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2415",
+      "taskId": "R6-04",
+      "originalVerdict": "partial",
+      "adoptedScope": "本地原文确重复utf8.c and utf8.c，可记录为上游说明文字缺陷；没有证据证明正确替换是utf8.h。只采纳在归因差异清单标记、未来按固定上游修订同步，不直接改受hash约束的第三方文件。",
+      "sourceReferences": [
+        "third-party/upstream/terminal-NOTICE:369",
+        "third-party/upstream/sources.json:39"
+      ],
+      "state": "CONTRACT_CLARIFIED",
+      "validationGroups": [
+        "legal input/original artifact hashes and candidate/JAR equality",
+        "current source/receipts and explicit durability/CPU boundaries"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2417",
+      "taskId": "R6-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "cmd行尾策略确不统一；但LF对当前简单批处理不必然失败，web-ui -text有字节保留原因。采纳逐脚本运行验证后统一显式CRLF，保留已绑定历史字节摘要，不盲重写证据。",
+      "sourceReferences": [
+        ".gitattributes:7"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "real launcher eight identities with saved-model/browser marker/owned process/port checks",
+        "two real SDK examples",
+        "full current platform matrix"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2421",
+      "taskId": "R6-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "Wrapper缓存只查目录且安装race可接受半目录，采纳可执行入口/完成标记与同文件系统原子安装；checksum加入缓存身份合理，不能直接使用非跨平台mv -T。",
+      "sourceReferences": [
+        "mvnw:153"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2422",
+      "taskId": "R6-01",
+      "originalVerdict": "accepted",
+      "adoptedScope": "固定distributionSha256Sum为zip，缺unzip改tar.gz但仍用同摘要必然拒绝。应明确要求unzip或配置对应tar摘要，绝不采纳跳过校验告警的方案。",
+      "sourceReferences": [
+        "mvnw:179"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2423",
+      "taskId": "R6-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "Java Authenticator无host/requestor约束且openStream无超时预算；采纳精确下载主机/挑战范围和有界读取。私库认证/恶意代理是前提，当前官方公开URL无此凭据输入，不直接P0。",
+      "sourceReferences": [
+        "mvnw:209"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2424",
+      "taskId": "R6-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "MVNW_REPOURL含userinfo时日志/cache会保留URL，采纳拒凭据URL或脱敏/权限最小化；当前配置无userinfo，未证明已发生泄漏。",
+      "sourceReferences": [
+        "mvnw:175"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2425",
+      "taskId": "R6-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "仅Java认证下载但set_java_home失败后无明确else，后续报校验/解压错误；采纳前置清晰失败和下载退出码处理，不改变摘要门禁。",
+      "sourceReferences": [
+        "mvnw:200"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2426",
+      "taskId": "R6-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "MVNW_REPOURL替换假定原URL含Maven坐标路径，无pattern时会拼非法URL；当前固定官方URL满足。采纳显式pattern检查/明确配置拒绝。",
+      "sourceReferences": [
+        "mvnw:141"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2435",
+      "taskId": "R6-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "旧ModelExecution句柄吊销负例锁定CONTEXT_CLOSED等实测码；容器one-shot不能stop后再start，原文补重启建议违反容器合同。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M8ResilienceTest.java:470"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2438",
+      "taskId": "R6-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "跨测试类static纯报文helper可提取稳定fixture工具减少耦合；静态纯方法不依赖JUnit执行顺序，原文执行顺序影响错误。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M8ResilienceTest.java:61"
+      ],
+      "state": "CONTRACT_CLARIFIED",
+      "validationGroups": [
+        "Java exact 702/119, retained 700 identities",
+        "R6ReleaseTest cache/UI/SBOM faults",
+        "npm ci/build/audit and current candidate gate"
+      ],
+      "individualFaultInjectionClaimed": false
+    },
+    {
+      "id": "OCR-2444",
+      "taskId": "R6-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "PrintStream默认charset与UTF8解码应显式对齐；Java21默认UTF8已降低平台差异，不声称所有Windows默认GBK。",
+      "sourceReferences": [
+        "harness-cli/src/test/java/io/jharness/cli/M5CliTest.java:27"
+      ],
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
+      "validationGroups": [
+        "R6ReleaseTest strict scanner/import faults",
+        "ProbeSupport failure/JAR drift regression",
+        "current runner/browser/native evidence only; optional Docker is separate"
+      ],
+      "individualFaultInjectionClaimed": false
+    }
+  ]
+}

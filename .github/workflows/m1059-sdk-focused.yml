@@ -1,9 +1,9 @@
 name: M10.5.9 Windows SDK diagnosis (not acceptance)
 on:
-  push:
-    branches: [codex/m1059-full-validation]
-    paths: [.github/workflows/m1059-sdk-focused.yml]
   workflow_dispatch:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: read
 jobs:

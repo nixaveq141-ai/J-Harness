@@ -5,6 +5,7 @@ from pathlib import Path
 import re
 import subprocess
 import sys
+from evidence_io import bounded_path, atomic_write_json
 
 ROOT=Path(__file__).resolve().parents[1]
 PATTERNS={
@@ -15,22 +16,30 @@ PATTERNS={
 }
 
 def findings(data):
-    return [{'pattern':name,'line':data[:m.start()].count(b'\n')+1} for name,pattern in PATTERNS.items() for m in pattern.finditer(data)]
+    return [{'pattern':name,'line':data.count(b'\n',0,m.start())+1} for name,pattern in PATTERNS.items() for m in pattern.finditer(data)]
 
 def main():
-    paths=subprocess.check_output(['git','ls-files','--cached','--others','--exclude-standard','-z'],cwd=ROOT).decode('utf-8').split('\0')
+    paths=subprocess.check_output(['git','ls-files','--cached','--others','--exclude-standard','-z'],cwd=ROOT).decode(sys.getfilesystemencoding(),errors='surrogateescape').split('\0')
     excluded={'docs/development/code-review-2026-10-17.md','docs/testing/code-review-2026-10-17-results.json'}
     hits=[];manifest={}
+    failures=[]
     for name in sorted(set(paths)-excluded-{''}):
         path=ROOT/name
         if path.suffix not in ['.java','.py','.mjs','.ts','.tsx','.json','.yml','.md','.xml','.cmd','.ps1','.css'] and name!='.agent':continue
-        data=path.read_bytes()
-        if len(data)>16*1024*1024:raise ValueError('Source too large: '+name)
+        try:
+            name.encode('utf-8',errors='strict')
+            path=bounded_path(ROOT,name)
+            if not path.is_file() or path.stat().st_size>16*1024*1024:raise ValueError('Source size/type')
+            with path.open('rb') as stream:data=stream.read(16*1024*1024+1)
+            if len(data)>16*1024*1024:raise ValueError('Source size')
+        except (OSError,ValueError,UnicodeError) as failure:
+            failures.append(dict(path=repr(name),type=type(failure).__name__))
+            continue
         manifest[name]=hashlib.sha256(data).hexdigest()
         hits.extend(dict(path=name,**f) for f in findings(data))
-    report=dict(status='FINDINGS' if hits else 'PASS',sourceFiles=len(manifest),patterns=sorted(PATTERNS),findings=hits,excludedPreexistingDrafts=sorted(excluded),sourceSha256=manifest)
-    output=ROOT/'target/source-secrets.json';output.parent.mkdir(exist_ok=True);output.write_text(json.dumps(report,indent=2)+'\n',encoding='utf-8')
+    report=dict(status='INCOMPLETE' if failures else 'FINDINGS' if hits else 'PASS',errors=failures,sourceFiles=len(manifest),patterns=sorted(PATTERNS),findings=hits,excludedPreexistingDrafts=sorted(excluded),sourceSha256=manifest)
+    output=ROOT/'target/source-secrets.json';output.parent.mkdir(exist_ok=True);atomic_write_json(output,report)
     print(report['status'],'files=',len(manifest),'findings=',len(hits))
-    return bool(hits)
+    return bool(hits or failures)
 
 if __name__=='__main__':raise SystemExit(main())

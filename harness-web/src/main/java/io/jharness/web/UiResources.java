@@ -4,7 +4,6 @@ import com.sun.net.httpserver.HttpExchange;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /** Serves only build-manifest resources; never resolves a user filesystem path. */
 final class UiResources {
@@ -16,21 +15,31 @@ final class UiResources {
     private static Set<String> loadFiles() {
         try (var input = UiResources.class.getResourceAsStream("/ui/ui-files.txt")) {
             if (input == null) return Set.of();
-            return new String(input.readNBytes(16384), StandardCharsets.UTF_8)
-                    .lines()
-                    .filter(
-                            s ->
-                                    s.matches(
-                                            "(?:index\\.html|ui-license\\.txt|assets/[A-Za-z0-9_-]+\\.(?:js|css))"))
-                    .collect(Collectors.toUnmodifiableSet());
+            return parseManifest(input.readNBytes(16385));
         } catch (IOException ex) {
             throw new ExceptionInInitializerError(ex);
         }
     }
 
+    static Set<String> parseManifest(byte[] bytes) throws IOException {
+        if (bytes.length > 16384) throw new IOException("UI manifest byte limit");
+        var files = new java.util.HashSet<String>();
+        for (String name : new String(bytes, StandardCharsets.UTF_8).split("\n")) {
+            if (!name.matches(
+                            "(?:index\\.html|ui-license\\.txt|assets/[A-Za-z0-9_.-]+\\.(?:js|css))")
+                    || !files.add(name)) throw new IOException("Invalid UI manifest");
+        }
+        if (!files.containsAll(Set.of("index.html", "ui-license.txt")))
+            throw new IOException("Incomplete UI manifest");
+        return Set.copyOf(files);
+    }
+
     static void serve(HttpExchange exchange) throws IOException {
         String path = exchange.getRequestURI().getPath();
-        String file = path.equals("/") ? "index.html" : path.substring(1);
+        String file =
+                (path == null || path.isEmpty() || path.equals("/"))
+                        ? "index.html"
+                        : path.substring(1);
         int code = 200;
         byte[] bytes;
         if (!exchange.getRequestMethod().equals("GET")

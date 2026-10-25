@@ -4,18 +4,18 @@
   <parent><groupId>io.jharness</groupId><artifactId>j-harness</artifactId><version>0.1.0-SNAPSHOT</version></parent>
   <artifactId>harness-testkit</artifactId>
   <dependencies>
-    <dependency><groupId>io.jharness</groupId><artifactId>harness-web</artifactId><version>${project.version}</version></dependency>
-    <dependency><groupId>io.jharness</groupId><artifactId>harness-cli</artifactId><version>${project.version}</version></dependency>
-    <dependency><groupId>io.jharness</groupId><artifactId>harness-process</artifactId><version>${project.version}</version></dependency>
-    <dependency><groupId>io.jharness</groupId><artifactId>harness-policy</artifactId><version>${project.version}</version></dependency>
-    <dependency><groupId>io.jharness</groupId><artifactId>harness-workspace</artifactId><version>${project.version}</version></dependency>
-    <dependency><groupId>io.jharness</groupId><artifactId>harness-tools</artifactId><version>${project.version}</version></dependency>
-    <dependency><groupId>io.jharness</groupId><artifactId>harness-agent</artifactId><version>${project.version}</version></dependency>
-    <dependency><groupId>io.jharness</groupId><artifactId>harness-llm</artifactId><version>${project.version}</version></dependency>
+    <dependency><groupId>io.jharness</groupId><artifactId>harness-web</artifactId><version>${project.version}</version><scope>test</scope></dependency>
+    <dependency><groupId>io.jharness</groupId><artifactId>harness-cli</artifactId><version>${project.version}</version><scope>test</scope></dependency>
+    <dependency><groupId>io.jharness</groupId><artifactId>harness-process</artifactId><version>${project.version}</version><scope>test</scope></dependency>
+    <dependency><groupId>io.jharness</groupId><artifactId>harness-policy</artifactId><version>${project.version}</version><scope>test</scope></dependency>
+    <dependency><groupId>io.jharness</groupId><artifactId>harness-workspace</artifactId><version>${project.version}</version><scope>test</scope></dependency>
+    <dependency><groupId>io.jharness</groupId><artifactId>harness-tools</artifactId><version>${project.version}</version><scope>test</scope></dependency>
+    <dependency><groupId>io.jharness</groupId><artifactId>harness-agent</artifactId><version>${project.version}</version><scope>test</scope></dependency>
+    <dependency><groupId>io.jharness</groupId><artifactId>harness-llm</artifactId><version>${project.version}</version><scope>test</scope></dependency>
     <dependency><groupId>io.jharness</groupId><artifactId>harness-api</artifactId><version>${project.version}</version></dependency>
-    <dependency><groupId>io.jharness</groupId><artifactId>harness-events</artifactId><version>${project.version}</version></dependency>
-    <dependency><groupId>io.jharness</groupId><artifactId>harness-session</artifactId><version>${project.version}</version></dependency>
-    <dependency><groupId>io.jharness</groupId><artifactId>harness-plugin</artifactId><version>${project.version}</version></dependency>
-  <dependency><groupId>io.jharness</groupId><artifactId>harness-ecosystem</artifactId><version>${project.version}</version></dependency>
+    <dependency><groupId>io.jharness</groupId><artifactId>harness-events</artifactId><version>${project.version}</version><scope>test</scope></dependency>
+    <dependency><groupId>io.jharness</groupId><artifactId>harness-session</artifactId><version>${project.version}</version><scope>test</scope></dependency>
+    <dependency><groupId>io.jharness</groupId><artifactId>harness-plugin</artifactId><version>${project.version}</version><scope>test</scope></dependency>
+  <dependency><groupId>io.jharness</groupId><artifactId>harness-ecosystem</artifactId><version>${project.version}</version><scope>test</scope></dependency>
 </dependencies>
 </project>

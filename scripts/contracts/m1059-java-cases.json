@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "milestone": "M10.5.9",
-  "origin": "Current local R5 contract: preserves all 677 prior case identities, adds 23 bounded encoding, Unicode, cache/source shortening, memory quotas, process output failure, compaction audit and concurrent search regressions. Contract only; R5 and remote platform acceptance remain open.",
+  "origin": "R6 final contract preserves all 700 prior case identities, adds UI manifest and probe failure/JAR drift regressions; current CI must prove its exact set.",
   "suites": [
     {
       "module": "harness-agent",
@@ -1261,6 +1261,13 @@
     },
     {
       "module": "harness-testkit",
+      "name": "io.jharness.testkit.R6ProbeEvidenceTest",
+      "cases": [
+        "failedProbeAndChangedJarRevokeOldSuccessWithoutClaimingCleanup"
+      ]
+    },
+    {
+      "module": "harness-testkit",
       "name": "io.jharness.testkit.TestkitTest",
       "cases": [
         "checkpointRecorderAndFailureInjectorExposeBoundaries",
@@ -1330,6 +1337,13 @@
         "queueLifetimeAndPendingLimitsAreBoundedWithoutDroppingIdempotence",
         "replacementDurableRepositoryRestoresMetadataAndPausedTurnProjection",
         "startedQueueDropsExecutableTextAndRejectsNullOutcome"
+      ]
+    },
+    {
+      "module": "harness-web",
+      "name": "io.jharness.web.R6UiManifestTest",
+      "cases": [
+        "completeManifestSupportsDottedChunksButRejectsOversizeDuplicateAndMalformedNames"
       ]
     },
     {
@@ -1409,11 +1423,15 @@
   "requiredSourcePaths": [
     ".gitattributes",
     ".github/workflows/ci.yml",
+    ".github/workflows/m1059-native-focused.yml",
     ".github/workflows/m1059-process-focused.yml",
     ".github/workflows/m1059-sdk-focused.yml",
     ".github/workflows/m1059-settings-focused.yml",
     ".github/workflows/m1059-windows-focused.yml",
     ".github/workflows/native-credentials.yml",
+    ".gitignore",
+    ".mvn/wrapper/Bootstrap.java",
+    ".mvn/wrapper/launch.ps1",
     ".mvn/wrapper/maven-wrapper.properties",
     "LICENSE",
     "NOTICE",
@@ -1423,6 +1441,7 @@
     "frontend/package-lock.json",
     "frontend/package.json",
     "frontend/scripts/package-ui.mjs",
+    "frontend/scripts/ui-contract.mjs",
     "frontend/src/App.tsx",
     "frontend/src/ContentPanel.tsx",
     "frontend/src/ContentSearch.tsx",
@@ -1809,12 +1828,14 @@
     "harness-testkit/src/test/java/io/jharness/testkit/M8ResilienceTest.java",
     "harness-testkit/src/test/java/io/jharness/testkit/M8SchedulingDockerProbe.java",
     "harness-testkit/src/test/java/io/jharness/testkit/M8SchedulingTest.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/ProbeSupport.java",
     "harness-testkit/src/test/java/io/jharness/testkit/R1CoreLifecycleTest.java",
     "harness-testkit/src/test/java/io/jharness/testkit/R1SdkLifecycleTest.java",
     "harness-testkit/src/test/java/io/jharness/testkit/R1WebOwnershipTest.java",
     "harness-testkit/src/test/java/io/jharness/testkit/R2SdkPersistenceTest.java",
     "harness-testkit/src/test/java/io/jharness/testkit/R3ExtensionProtocolTest.java",
     "harness-testkit/src/test/java/io/jharness/testkit/R5CompactionAuditTest.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/R6ProbeEvidenceTest.java",
     "harness-testkit/src/test/java/io/jharness/testkit/SdkTransportPeer.java",
     "harness-testkit/src/test/java/io/jharness/testkit/TestkitTest.java",
     "harness-testkit/src/test/java/io/jharness/web/R123TurnQueueBoundaryTest.java",
@@ -1839,6 +1860,7 @@
     "harness-web/src/main/java/io/jharness/web/WorkbenchContentSearch.java",
     "harness-web/src/main/java/io/jharness/web/WorkspaceLease.java",
     "harness-web/src/test/java/io/jharness/web/R2WebFactsTest.java",
+    "harness-web/src/test/java/io/jharness/web/R6UiManifestTest.java",
     "harness-workspace/pom.xml",
     "harness-workspace/src/main/java/io/jharness/workspace/LocalWorkspace.java",
     "harness-workspace/src/main/java/io/jharness/workspace/UnifiedDiff.java",
@@ -1852,12 +1874,16 @@
     "harness-workspace/src/test/java/io/jharness/workspace/R3PatchBoundaryTest.java",
     "harness-workspace/src/test/java/io/jharness/workspace/R5WorkspaceBoundsTest.java",
     "harness-workspace/src/test/java/io/jharness/workspace/UnifiedPatchTest.java",
+    "jharness",
+    "jharness.cmd",
     "mvnw",
     "mvnw.cmd",
     "pom.xml",
     "scripts/aggregate-m1059-ci.py",
     "scripts/archive-m1059-local.py",
     "scripts/build-candidate.py",
+    "scripts/ci-keychain.py",
+    "scripts/ci-secret-service.py",
     "scripts/collect-m10-auto-evidence.py",
     "scripts/collect-m10-evidence.py",
     "scripts/collect-m10-settings-evidence.py",
@@ -1880,6 +1906,7 @@
     "scripts/contracts/r1-validation-cases.json",
     "scripts/contracts/r2-validation-cases.json",
     "scripts/contracts/r3-validation-cases.json",
+    "scripts/contracts/r6-validation-cases.json",
     "scripts/diagnostics/WindowsExitSignalProbe.java",
     "scripts/evidence_checks.py",
     "scripts/evidence_io.py",
@@ -1899,6 +1926,7 @@
     "scripts/run-r1-validation.py",
     "scripts/run-r2-validation.py",
     "scripts/run-r3-validation.py",
+    "scripts/run-r6-validation.py",
     "scripts/run-workbench-matrix.mjs",
     "scripts/scan-osv.py",
     "scripts/scan-source-secrets.py",
@@ -1920,12 +1948,15 @@
     "scripts/test-r1-supplemental.py",
     "scripts/test-r123r-evidence.py",
     "scripts/test-r3-provider.py",
+    "scripts/test-r6-release.py",
     "scripts/test-release-tools.py",
     "scripts/test-sdk-inventory.py",
     "scripts/test-smoke-evidence.py",
     "scripts/test-source-secrets.py",
     "scripts/test-windows-credential-compat.py",
     "scripts/test-workbench-evidence.mjs",
+    "scripts/ts-runtime-imports.mjs",
+    "scripts/ui-bundle.py",
     "scripts/verify-m8-closure.py",
     "scripts/verify-ocr-review.mjs",
     "scripts/verify-r1-implementation.py",

@@ -1,6 +1,5 @@
 package io.jharness.testkit;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jharness.api.*;
 import io.jharness.ecosystem.*;
 import io.jharness.policy.DefaultPolicyEngine;
@@ -16,9 +15,14 @@ public final class M7SkillsDockerProbe {
     private M7SkillsDockerProbe() {}
 
     public static void main(String[] args) throws Exception {
+        ProbeSupport.begin(args);
         Path root = Path.of(args[2]).toAbsolutePath().resolve("skills-" + UUID.randomUUID());
         Path localRoot = root.resolve("local"), dockerRoot = root.resolve("docker");
-        String localScript = "echo skill-approved>marker.txt",
+        String
+                localScript =
+                        System.getProperty("os.name").startsWith("Windows")
+                                ? "echo skill-approved>marker.txt"
+                                : "printf '%s' 'skill-approved' > marker.txt",
                 dockerScript = "printf '%s' 'skill-approved' > marker.txt";
         for (Path workspace : List.of(localRoot, dockerRoot)) {
             Files.createDirectories(workspace.resolve("skills/demo"));
@@ -31,8 +35,10 @@ public final class M7SkillsDockerProbe {
                     workspace.resolve("skills/demo/run.txt"),
                     workspace.equals(localRoot) ? localScript : dockerScript);
         }
+        ProbeSupport.fixtureWritable(dockerRoot);
         var transport = new NativeCommandTransport();
         var result = new LinkedHashMap<String, Object>();
+        ProbeSupport.track(result);
         result.put("milestone", "M7");
         result.put("slice", "skills-sdk");
         result.put("actualDocker", true);
@@ -45,7 +51,10 @@ public final class M7SkillsDockerProbe {
                 var local = new LocalExecutionEnvironment("skills-local", localRoot, List.of())) {
             for (ExecutionEnvironment environment : List.of(local, docker)) {
                 boolean container = environment == docker;
-                var mode = container ? CommandRequest.Mode.SH : CommandRequest.Mode.CMD;
+                var mode =
+                        container || !System.getProperty("os.name").startsWith("Windows")
+                                ? CommandRequest.Mode.SH
+                                : CommandRequest.Mode.CMD;
                 String script = container ? dockerScript : localScript;
                 var arguments =
                         Map.<String, Object>of(
@@ -159,27 +168,22 @@ public final class M7SkillsDockerProbe {
                                 "ps",
                                 "--all",
                                 "--filter",
-                                "name=" + owner,
+                                "label=io.jharness.owner=" + owner,
                                 "--format",
                                 "{{.Names}}"),
                         new byte[0],
                         Duration.ofSeconds(10),
                         CancellationToken.NONE);
         require(
-                remaining.exitCode() == 0 && remaining.stdout().length == 0,
+                remaining.exitCode() == 0
+                        && !remaining.uncertain()
+                        && remaining.stdout().length == 0,
                 "owned container cleanup");
         result.put("cleanupVerified", true);
         result.put("result", "SUCCESS");
         result.put("capturedAt", java.time.Instant.now().toString());
-        result.put(
-                "jarSha256",
-                HexFormat.of()
-                        .formatHex(
-                                MessageDigest.getInstance("SHA-256")
-                                        .digest(Files.readAllBytes(Path.of(args[3])))));
-        new ObjectMapper()
-                .writerWithDefaultPrettyPrinter()
-                .writeValue(Path.of(args[4]).toFile(), result);
+        result.put("jarSha256", ProbeSupport.hash(Path.of(args[3])));
+        ProbeSupport.publish(Path.of(args[4]), result);
         System.out.println("M7 actual Docker Skills/SDK probe SUCCESS");
     }
 

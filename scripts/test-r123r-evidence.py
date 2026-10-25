@@ -52,13 +52,17 @@ class R123EvidenceTest(unittest.TestCase):
             output = Path(directory) / 'nested' / 'native.json'
             output.parent.mkdir()
             output.write_text('{"passed":true,"expectationMet":true}', encoding='utf-8')
+            java_home=Path(directory)/'fake-jdk';(java_home/'bin').mkdir(parents=True)
+            (java_home/'bin'/('java.exe' if os.name=='nt' else 'java')).write_bytes(b'fixture-only; subprocess is mocked')
             with patch.object(sys, 'argv', ['test-native-credentials.py', '--output', output.relative_to(ROOT).as_posix()]), \
-                    patch.dict(os.environ, JAVA_HOME=str(Path(directory) / 'missing-jdk')), \
+                    patch.dict(os.environ, JAVA_HOME=str(java_home)), \
                     patch('subprocess.run', side_effect=OSError('injected launch failure')) as launch:
-                with self.assertRaises(OSError):
+                with self.assertRaises(SystemExit) as stopped:
                     runpy.run_path(str(ROOT / 'scripts/test-native-credentials.py'), run_name='__main__')
+            self.assertEqual(1, stopped.exception.code)
             self.assertEqual(1, launch.call_count)
             report = json.loads(output.read_text())
+            self.assertEqual('OSError',report['failureType'])
             self.assertEqual('INCOMPLETE', report['status'])
             self.assertIs(False, report['passed'])
             self.assertIs(False, report['expectationMet'])
@@ -70,11 +74,16 @@ class R123EvidenceTest(unittest.TestCase):
                 self.assertTrue(output.is_file())
                 self.assertIs(False, json.loads(output.read_text())['passed'])
                 raise OSError('injected launch failure')
+            java_home=Path(directory)/'fake-jdk';(java_home/'bin').mkdir(parents=True)
+            (java_home/'bin'/('java.exe' if os.name=='nt' else 'java')).write_bytes(b'fixture-only; subprocess is mocked')
             with patch.object(sys, 'argv', ['test-native-credentials.py', '--output', output.relative_to(ROOT).as_posix()]), \
-                    patch.dict(os.environ, JAVA_HOME=str(Path(directory) / 'missing-jdk')), \
-                    patch('subprocess.run', side_effect=reject_launch):
-                with self.assertRaises(OSError):
+                    patch.dict(os.environ, JAVA_HOME=str(java_home)), \
+                    patch('subprocess.run', side_effect=reject_launch) as launch:
+                with self.assertRaises(SystemExit) as stopped:
                     runpy.run_path(str(ROOT / 'scripts/test-native-credentials.py'), run_name='__main__')
+            self.assertEqual(1,stopped.exception.code)
+            self.assertEqual(1,launch.call_count)
+            self.assertEqual('OSError',json.loads(output.read_bytes())['failureType'])
 
     def test_native_and_compat_reports_are_owned_by_each_fresh_run(self):
         for name in ('native', 'windows-compat'):

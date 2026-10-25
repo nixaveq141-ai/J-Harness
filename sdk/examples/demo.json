@@ -3,5 +3,7 @@
   "model": "sdk-demo",
   "maxSteps": 3,
   "durationSeconds": 30,
-  "policy": "read-only"
+  "policy": "read-only",
+  "apiKeyEnv": "JHARNESS_SDK_DEMO_KEY",
+  "requestTimeoutSeconds": 10
 }

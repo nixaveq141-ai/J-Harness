@@ -5,6 +5,6 @@
   "searchFilter": {
     "useDefaultExcludes": true,
     "useGitignore": true,
-    "rules": ["cache/", "generated/**", "!target/", "target/*", "!target/report.txt"]
+    "rules": ["cache/", "generated/**", "!/target/", "/target/*", "!/target/report.txt"]
   }
 }

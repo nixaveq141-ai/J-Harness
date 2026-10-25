@@ -53,7 +53,7 @@ public final class CrashWriteProbe {
                             false,
                             null,
                             CancellationToken.NONE);
-            if (scope.sessionId().equals("s")) Runtime.getRuntime().halt(17);
+            Runtime.getRuntime().halt(17); // Explicit controlled crash after the side effect.
         }
     }
 }

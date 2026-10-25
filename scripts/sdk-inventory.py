@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 import re
 import sys
+import subprocess
 
 ROOT = Path(__file__).resolve().parents[1]
 FILES = ['sdk/README.md', 'sdk/package.json', 'sdk/typescript/package.json', 'sdk/typescript/src/index.ts',
@@ -16,22 +17,38 @@ def build(root=ROOT):
         package = json.loads((root/name).read_bytes())
         if any(package.get(k) for k in ['dependencies','optionalDependencies','peerDependencies']):
             raise ValueError('Unexpected SDK runtime dependency')
-    tree = ast.parse((root/'sdk/python/jharness_sdk.py').read_text(encoding='utf-8'))
-    imports = set()
-    for node in ast.walk(tree):
-        if isinstance(node,ast.Import): imports.update(n.name.split('.')[0] for n in node.names)
-        elif isinstance(node,ast.ImportFrom): imports.add((node.module or '').split('.')[0])
-        elif isinstance(node,ast.Call) and isinstance(node.func,ast.Name) and node.func.id in ['__import__','eval','exec']:
-            raise ValueError('Unsupported dynamic SDK import or execution')
-    if not imports <= sys.stdlib_module_names:
-        raise ValueError('Nonstandard Python import')
-    text = (root/'sdk/typescript/src/index.ts').read_text(encoding='utf-8')
-    modules = re.findall(r"from\s+['\"]([^'\"]+)",text)
-    if not modules or any(not m.startswith('node:') for m in modules) or re.search(r'\b(?:require|import)\s*\(',text):
-        raise ValueError('Nonstandard or dynamic TypeScript runtime import')
+    package=json.loads((root/'sdk/package.json').read_bytes())
+    other=json.loads((root/'sdk/typescript/package.json').read_bytes())
+    if not isinstance(package.get('version'),str) or package['version']!=other.get('version'):raise ValueError('SDK package version mismatch')
+    imports=set();modules=[]
+    for name in FILES:
+        if name.endswith('.py'):
+            tree=ast.parse((root/name).read_text(encoding='utf-8'))
+            for node in ast.walk(tree):
+                if isinstance(node,ast.Import):imports.update(n.name.split('.')[0] for n in node.names)
+                elif isinstance(node,ast.ImportFrom):
+                    imports.add((node.module or '').split('.')[0])
+                    if node.module in ['importlib','builtins'] and any(n.name in ['import_module','__import__','eval','exec'] for n in node.names):raise ValueError('Dynamic execution alias')
+                elif isinstance(node,ast.Call):
+                    function=node.func
+                    if isinstance(function,ast.Name) and function.id in ['__import__','eval','exec'] or isinstance(function,ast.Attribute) and function.attr in ['import_module','__import__','eval','exec']:
+                        raise ValueError('Unsupported dynamic SDK import or execution')
+        if name.endswith('.ts'):
+            try:found=json.loads(subprocess.check_output(['node',str(ROOT/'scripts/ts-runtime-imports.mjs'),str(root/name)],timeout=15,stderr=subprocess.PIPE))
+            except subprocess.SubprocessError as failure:raise ValueError('Invalid TypeScript runtime imports') from failure
+            for module in found:
+                if module.startswith('node:'):modules.append(module)
+                elif module.startswith('.'):
+                    dependency=(root/name).parent/module
+                    if dependency.resolve() not in {(root/p).resolve() for p in FILES if p.endswith('.ts')}:raise ValueError('Undistributed SDK relative import')
+                    modules.append(module)
+                else:raise ValueError('Nonstandard TypeScript import')
+    # This is a static source policy, not a sandbox or proof about arbitrary computed execution.
+    if not imports <= sys.stdlib_module_names|{'jharness_sdk'}:raise ValueError('Nonstandard Python import')
+    if not modules:raise ValueError('Missing TypeScript imports')
     digest=lambda p:hashlib.sha256((root/p).read_bytes()).hexdigest()
     sbom=dict(bomFormat='CycloneDX',specVersion='1.5',version=1,
-              metadata={'component':{'type':'application','name':'jharness-stdio-sdk','version':'1.0.0','licenses':[{'license':{'id':'Apache-2.0'}}]}},components=[],dependencies=[])
+              metadata={'component':{'type':'application','name':'jharness-stdio-sdk','version':package['version'],'licenses':[{'license':{'id':'Apache-2.0'}}]}},components=[],dependencies=[])
     return dict(format='jharness-sdk-source-inventory-1',sbom=sbom,externalRuntimeDependencyCount=0,
                 pythonImports=sorted(imports),typescriptImports=sorted(modules),
                 sourceSha256={p:digest(p) for p in FILES},licenseSha256=digest('LICENSE'),protocolVersion='1.0')

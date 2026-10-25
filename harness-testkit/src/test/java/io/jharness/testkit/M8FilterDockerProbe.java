@@ -1,11 +1,9 @@
 package io.jharness.testkit;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jharness.api.*;
 import io.jharness.ecosystem.*;
 import io.jharness.workspace.WorkspaceSearchFilter;
 import java.nio.file.*;
-import java.security.MessageDigest;
 import java.time.*;
 import java.util.*;
 
@@ -14,6 +12,7 @@ public final class M8FilterDockerProbe {
     private M8FilterDockerProbe() {}
 
     public static void main(String[] args) throws Exception {
+        ProbeSupport.begin(args);
         if (args.length != 5) throw new IllegalArgumentException("DOCKER IMAGE BASE JAR OUTPUT");
         Path base = Path.of(args[2]).toAbsolutePath().resolve("filter-" + UUID.randomUUID());
         var configurations =
@@ -51,6 +50,7 @@ public final class M8FilterDockerProbe {
                 }
                 Files.writeString(root.resolve(".gitignore"), "hidden.txt\ncache/\n");
             }
+            ProbeSupport.fixtureWritable(dockerRoot);
             Map<String, Object> localResult, dockerResult;
             Files.writeString(
                     localRoot.getParent().resolve("outside.txt"), "outside-boundary-sentinel");
@@ -126,15 +126,8 @@ public final class M8FilterDockerProbe {
         report.put("cleanupVerified", true);
         report.put("evidenceDirectory", base.toString());
         report.put("capturedAt", Instant.now().toString());
-        report.put(
-                "jarSha256",
-                HexFormat.of()
-                        .formatHex(
-                                MessageDigest.getInstance("SHA-256")
-                                        .digest(Files.readAllBytes(Path.of(args[3])))));
-        new ObjectMapper()
-                .writerWithDefaultPrettyPrinter()
-                .writeValue(Path.of(args[4]).toFile(), report);
+        report.put("jarSha256", ProbeSupport.hash(Path.of(args[3])));
+        ProbeSupport.publish(Path.of(args[4]), report);
         System.out.println("M8.1 actual Docker filtering probe SUCCESS");
     }
 

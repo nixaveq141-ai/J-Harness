@@ -7,7 +7,7 @@
   "searchFilter": {
     "useDefaultExcludes": true,
     "useGitignore": true,
-    "rules": ["cache/", "!target/", "target/*", "!target/report.txt"]
+    "rules": ["cache/", "!/target/", "/target/*", "!/target/report.txt"]
   }
 }
 ```
@@ -25,3 +25,5 @@ useDefaultExcludes=false可以关闭target/node_modules默认层；useGitignore=
 SDK宿主使用`new LocalWorkspace(root, filter)`，或LocalExecutionEnvironment/DockerExecutionEnvironment新增的最后一个WorkspaceSearchFilter参数。旧构造仍使用默认配置。子任务视图继承配置但保持独立版本观察缓存。非默认过滤进入环境descriptor，SDK续跑修改它会ENVIRONMENT_MISMATCH，应建立新会话；根.gitignore内容则在每次检索时读取。
 
 Docker需使用包含M8.1 worker的当前打包JAR；非默认配置先握手并检查配置回显，旧worker明确ENVIRONMENT_FILTER_MISMATCH并清理容器，不回退本地。
+
+此例只重新包含根目录 `/target/report.txt`；`nested/target/anything` 仍由默认排除层剪枝。

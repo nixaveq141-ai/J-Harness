@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "scope": "Current implementation artifacts only; original review conclusions are unchanged",
   "inputs": {
-    "docs/development/OCR-remediation-progress.json": "ec7cb5eed5077965769d81c47e34cb475f47d9ccc93e2918a830a7d7a1911608",
+    "docs/development/OCR-remediation-progress.json": "b4173fb1e2f1d2c1c14e894b0d83fb4024a69b17706fa863894e0fb39e7534e8",
     "docs/development/ocr-verification-2026-10-20/plan.json": "2a9131841ddc2fa4119a98398f9152c7cb7f6786053ae3f7cf27f42e8ae334b7"
   },
   "outputs": {
-    "docs/requirements/OCR-remediation-plan-2026-10-20.md": "bf6134e324cc00e875d563b13d1fbff53bad7ffa94b92d75ab8240153c9a4015"
+    "docs/requirements/OCR-remediation-plan-2026-10-20.md": "766b9e7927eac27989c0b0503198ac21ecf09c56d5c7e4d934ddbb95e1edab46"
   }
 }

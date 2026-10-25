@@ -24,8 +24,9 @@ class M5CliTest {
                         .execute(
                                 all.toArray(String[]::new),
                                 InputStream.nullInputStream(),
-                                new PrintStream(out),
-                                new PrintStream(out));
+                                new PrintStream(out, true, java.nio.charset.StandardCharsets.UTF_8),
+                                new PrintStream(
+                                        out, true, java.nio.charset.StandardCharsets.UTF_8));
         output = out.toString(java.nio.charset.StandardCharsets.UTF_8);
         return status;
     }

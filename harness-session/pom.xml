@@ -4,7 +4,7 @@
   <parent><groupId>io.jharness</groupId><artifactId>j-harness</artifactId><version>0.1.0-SNAPSHOT</version></parent>
   <artifactId>harness-session</artifactId>
   <dependencies>
-    <dependency><groupId>com.fasterxml.jackson.core</groupId><artifactId>jackson-databind</artifactId><version>2.21.7</version></dependency>
+    <dependency><groupId>com.fasterxml.jackson.core</groupId><artifactId>jackson-databind</artifactId></dependency>
     <dependency><groupId>io.jharness</groupId><artifactId>harness-api</artifactId><version>${project.version}</version></dependency>
   </dependencies>
 </project>
