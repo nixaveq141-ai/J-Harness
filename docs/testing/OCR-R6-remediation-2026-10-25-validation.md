@@ -37,3 +37,9 @@ JAR SHA256：`21f93ac6209c4a3a1226f020ded011b5b4197e5db400c887d45ec6f076de2bb3`�
 当前JAR3904ed4a895e与Windows原生专项实际JAR完全一致，SDK66、示例2、本机原生7及扩展启动器8重新通过。两处补强只改测试，不改运行时Java/POM/UI；台账更正为148实施/验证补强、18既有保留、20契约澄清。
 
 原始用户历史授权经审批拒绝后，当前对话已再次明确授权推送与CI，73cb125已推送。Windows专项40178201805真实7项通过，原ZIP473f697d9a8e与GitHub摘要一致；补强提交后才启动最终完整CI，专项不替代收尾。
+
+## 完整CI第22轮与定点修正
+
+40178732629@c40c908 的Windows/macOS均在R5SessionBoundsTest.bothSearchSnippetsUseOriginalUnicodeCoordinates失败：TokenSessionSearch拒绝非真实路径祖先，未进入浏览器。夹具一处使用root.resolve(token)，同方法raw索引及其他token夹具已用toRealPath；改这一处真实路径，不改变索引链接拒绝策略、Unicode片段断言、原702身份或生产代码。Windows本地原5项通过，新增手动session-r5三平台5项定点入口。旧轮余下Linux已取消，未执行部分不算通过，修复定点通过前不重开完整矩阵。
+
+原Windows ZIP e85c05ed92b3、macOS ZIP796495a9aa3a，原失败/元数据保留；不会用专项替代最终同提交三侧完整原包。

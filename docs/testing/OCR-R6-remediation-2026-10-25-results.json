@@ -53,7 +53,7 @@
   ],
   "implementationCommit": "73cb12513bc257b39739aab20a66bcac647c5e89",
   "remoteValidation": {
-    "status": "NATIVE_PASS_FULL_CI_PENDING",
+    "status": "CANONICAL_FIXTURE_FOCUSED_PENDING",
     "pushExecuted": true,
     "authorization": "Current user explicit confirmation",
     "nativeRunId": "40178201805",
@@ -62,7 +62,10 @@
     "nativeArchiveSha256": "473f697d9a8e259f7076d5e84b71e899321a7cdcf0d3210dfc2cbf389834b0ee",
     "nativeChecks": 7,
     "nativePlatform": "Windows Server 2025",
-    "ciDispatched": false
+    "ciDispatched": true,
+    "ciRunId": "40178732629",
+    "ciCommit": "c40c90815ed4d6fa254d236b774f95765de7abd1",
+    "url": "https://github.com/nixaveq141-ai/J-Harness/actions/runs/40178732629"
   },
   "localFrozen": {
     "commit": "73cb12513bc257b39739aab20a66bcac647c5e89",
@@ -129,5 +132,20 @@
       }
     },
     "boundary": "Earlier local candidate before final5; not mixed with final current CI evidence."
-  }
+  },
+  "finalCodeCommit": "c40c90815ed4d6fa254d236b774f95765de7abd1",
+  "remoteAttempts": [
+    {
+      "runId": "40178732629",
+      "commit": "c40c90815ed4d6fa254d236b774f95765de7abd1",
+      "status": "FAILED_WINDOWS_MACOS_REMAINDER_CANCELLED",
+      "test": "io.jharness.session.R5SessionBoundsTest.bothSearchSnippetsUseOriginalUnicodeCoordinates",
+      "error": "Index ancestors must not be links",
+      "resolution": "Canonicalize the dedicated test fixture path consistently; production rejection unchanged",
+      "windowsArtifactId": 12593510248,
+      "windowsZipSha256": "e85c05ed92b3479b3e34cefd15ac234653223df3bec0b4db6684c341e69af4ba",
+      "macArtifactId": 12593024592,
+      "macZipSha256": "796495a9aa3a3d22cc1e2947a74434633fd6efb53d6f341a0c8b9371df1b60d8"
+    }
+  ]
 }

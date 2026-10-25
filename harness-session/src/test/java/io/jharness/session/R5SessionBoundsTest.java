@@ -80,7 +80,8 @@ class R5SessionBoundsTest {
                                 Map.of("content", "İ".repeat(500) + "😀needle" + "z".repeat(900))));
         var raw = new SessionSearchIndex(root.toRealPath().resolve("raw"), repo);
         var token =
-                new TokenSessionSearch(root.resolve("token"), repo, new SecretRedactor(List.of()));
+                new TokenSessionSearch(
+                        root.toRealPath().resolve("token"), repo, new SecretRedactor(List.of()));
         var match =
                 Values.object(
                         ((List<?>) raw.search("s", "needle", 0, 10, false).get("matches"))
