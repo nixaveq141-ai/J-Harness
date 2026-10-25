@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "date": "2026-10-25",
   "baseline": "e5fd815739bd185210735cd6b718897b864420dc",
-  "status": "IMPLEMENTATION_LOCAL_VALIDATION_CI_PENDING",
+  "status": "LOCAL_VALIDATED_REMOTE_CI_QUOTA_BLOCKED",
   "originalScopeCount": 186,
   "counts": {
     "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED": 148,
@@ -3020,5 +3020,8 @@
       ],
       "individualFaultInjectionClaimed": false
     }
-  ]
+  ],
+  "currentLocalRun": "r6-20261025-final6",
+  "finalCodeCommit": "11e4024c090bf1c63c0adecc823de8a86c541d69",
+  "m11Eligible": false
 }

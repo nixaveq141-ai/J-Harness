@@ -1,6 +1,6 @@
 # J-Harness
 
-2026-10-25：[R6 发布门禁修复](docs/development/OCR-R6-remediation-2026-10-25.md)覆盖 Wrapper 缓存校验、UI 来源/制品绑定、法律材料与 SBOM、SDK 源码清单、启动器和 CI 证据。原186条范围逐项保留；当前正在执行最终本地和三平台验收，结果见[验证记录](docs/testing/OCR-R6-remediation-2026-10-25-validation.md)。
+2026-10-25：[R6 发布门禁修复](docs/development/OCR-R6-remediation-2026-10-25.md)覆盖 Wrapper 缓存校验、UI 来源/制品绑定、法律材料与 SBOM、SDK 源码清单、启动器和 CI 证据。原186条范围逐项保留；当前修复本地19组936及SDK/安装验收已通过；GitHub Actions 套餐分钟已用满，当前拒绝启动，M10.5.9仍待完整CI收口，结果见[验证记录](docs/testing/OCR-R6-remediation-2026-10-25-validation.md)。
 
 2026-10-25：[R5 本地修复增量](docs/development/OCR-R5-remediation-2026-10-25.md)覆盖有界编码、检索索引与并发、工具预览/分页和压缩审计；64 条台账中 51 条本轮补强、2 条有限实施、11 条后续项，R5 仍在进行中。验证与限制见[验收记录](docs/testing/OCR-R5-remediation-2026-10-25-validation.md)。
 

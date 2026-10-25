@@ -51,3 +51,19 @@ JAR SHA256：`21f93ac6209c4a3a1226f020ded011b5b4197e5db400c887d45ec6f076de2bb3`�
 Mac/Linux各32/33组778项通过，唯一Chromium/extensions在点击快照后立即isVisible失败。原失败文本稍后已包含正确SHA及完整技能正文；SkillSnapshot由异步details toggle驱动React挂载，断言早于渲染。改为等待实际可见，再同时校验目录快照SHA和正文，保持“无模型请求”及原35身份。本机Chrome/WebKit各35通过；第一次本机缺Playwright Chromium没有进入测试，随后使用既有Chrome通道，未安装/运行本机Firefox。
 
 三份原ZIP均已下载并与GitHub摘要一致：Mac c0546f6a152c、Linux123b32535666、Windowsaba2a25dfa15。先三平台session原5项及Mac/Linux Chromium扩展35项专项，定点通过并核对原包前不重开完整CI。
+
+## 当前外部阻塞
+
+11e4024的目录身份专项40192469338、扩展专项40192471748于启动前被GitHub拒绝。Checks注释原文：The job was not started because recent account payments have failed or your spending limit needs to be increased. 所有5个job无执行步骤，两个run制品列表为空；未执行的测试不能写成失败断言、通过或阶段收口。
+
+原注释121166206777、121166213876及SHA已保存在结果索引；付款失败与支出上限这两种原因没有进一步账户证据，不能只断言“免费分钟耗尽”。当前用户已收到阻塞信息。恢复条件是账户允许Actions启动，再依次完成两个原专项、同提交完整三平台和原ZIP严格审计，不合并旧轮成功项。
+
+## 当前最终本地证据与费用控制
+
+11e4024的r6-20261025-final6同输入19组936通过并独立verify：Java702/119、客户端42、门禁192。最终JAR4a8c54f3f255的SDK66、示例2、Windows原生7、启动器8及16环境名、Chrome/WebKit扩展各35、候选真实安装5均过；法律原件18份无差异、OSV18零发现、npm零漏洞、前端生产BOM6、SDK零外部运行依赖。原JSON、日志、截图、XML与候选ZIP在final6-frozen-components冻结并逐项摘要核对。候选ZIP046e27f3fead来自本地工作树，不冒充远端clean发布；选定70项扩展不等于813项完整矩阵。
+
+用户提供的GitHub邮件确认：本周期3000分钟已用100%，邮件显示2026-11-01重置。是否已有实际扣费没有账单证据。仓库只读库存显示累计51次工作流（主ci.yml28次）、116份现存制品约935.33MiB；这些数值不等于账户计费分钟、存储GB-hours或金额。旧timing API返回0但官方标注停用中，不能据它宣称免费或零费用。
+
+多轮完整CI消耗控制不足已向用户说明；当前停止新云端CI，未改动任何预算、付款设置、仓库可见性或远端历史证据。建议先确认$0预算等避免额外支出，等待邮件所示额度重置；继续远端前需用户明确确认可用额度/预算。本地已完成的验证保留，M10.5.9及M11不标完成。
+
+规则依据：[GitHub Actions计费官方说明](https://docs.github.com/en/billing/concepts/product-billing/github-actions)。本次费用相关记录仅用于解释阻塞，没有进行付费购买或代替用户作预算决定。

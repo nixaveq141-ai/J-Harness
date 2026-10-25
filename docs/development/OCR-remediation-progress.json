@@ -4,7 +4,7 @@
   "status": "LOCAL_VALIDATED_CI_PENDING",
   "details": "docs/development/OCR-R6-remediation-2026-10-25.md",
   "productMilestone": "M10.5.9",
-  "productStatus": "LOCAL_PARTIAL_CI_PENDING",
+  "productStatus": "CI_BLOCKED_INCLUDED_MINUTES_EXHAUSTED",
   "m11Eligible": false,
   "r0Rereview": {
     "sessionId": "eed6a134-1d3b-4e89-adaa-a0e9b2ba1f19",
@@ -124,19 +124,19 @@
     },
     "R6-01": {
       "status": "LOCAL_VALIDATED_PIPELINE_PENDING",
-      "description": "R6原186条范围：148实施/验证补强、18既有保留、20契约澄清；冻结73cb125本地19组936通过，随后7配置断言及启动器变量补强定点；Windows Server2025原生7过，当前三平台完整CI及原ZIP独立核对仍待，不计逐项186动态注入。"
+      "description": "R6原186条：148实施/验证补强、18既有保留、20契约澄清；11e4024同输入final6本地19组936（Java702/119、客户端42、门禁192）过，同JAR SDK66/示例2/Windows原生7/启动器8与16环境变体、Chrome/WebKit扩展各35及安装5过，原证据已冻结。用户截图确认GitHub套餐3000分钟用满、11月1日重置；远端专项未启动，M10.5.9/M11未准入。"
     },
     "R6-02": {
       "status": "LOCAL_VALIDATED_PIPELINE_PENDING",
-      "description": "R6原186条范围：148实施/验证补强、18既有保留、20契约澄清；冻结73cb125本地19组936通过，随后7配置断言及启动器变量补强定点；Windows Server2025原生7过，当前三平台完整CI及原ZIP独立核对仍待，不计逐项186动态注入。"
+      "description": "R6原186条：148实施/验证补强、18既有保留、20契约澄清；11e4024同输入final6本地19组936（Java702/119、客户端42、门禁192）过，同JAR SDK66/示例2/Windows原生7/启动器8与16环境变体、Chrome/WebKit扩展各35及安装5过，原证据已冻结。用户截图确认GitHub套餐3000分钟用满、11月1日重置；远端专项未启动，M10.5.9/M11未准入。"
     },
     "R6-03": {
       "status": "LOCAL_VALIDATED_PIPELINE_PENDING",
-      "description": "R6原186条范围：148实施/验证补强、18既有保留、20契约澄清；冻结73cb125本地19组936通过，随后7配置断言及启动器变量补强定点；Windows Server2025原生7过，当前三平台完整CI及原ZIP独立核对仍待，不计逐项186动态注入。"
+      "description": "R6原186条：148实施/验证补强、18既有保留、20契约澄清；11e4024同输入final6本地19组936（Java702/119、客户端42、门禁192）过，同JAR SDK66/示例2/Windows原生7/启动器8与16环境变体、Chrome/WebKit扩展各35及安装5过，原证据已冻结。用户截图确认GitHub套餐3000分钟用满、11月1日重置；远端专项未启动，M10.5.9/M11未准入。"
     },
     "R6-04": {
       "status": "LOCAL_VALIDATED_PIPELINE_PENDING",
-      "description": "R6原186条范围：148实施/验证补强、18既有保留、20契约澄清；冻结73cb125本地19组936通过，随后7配置断言及启动器变量补强定点；Windows Server2025原生7过，当前三平台完整CI及原ZIP独立核对仍待，不计逐项186动态注入。"
+      "description": "R6原186条：148实施/验证补强、18既有保留、20契约澄清；11e4024同输入final6本地19组936（Java702/119、客户端42、门禁192）过，同JAR SDK66/示例2/Windows原生7/启动器8与16环境变体、Chrome/WebKit扩展各35及安装5过，原证据已冻结。用户截图确认GitHub套餐3000分钟用满、11月1日重置；远端专项未启动，M10.5.9/M11未准入。"
     }
   },
   "r1": {
@@ -183,13 +183,14 @@
     "implemented": 183
   },
   "remoteAuthorization": {
-    "date": "2026-10-23",
+    "date": "2026-10-25",
     "validationBranchPush": true,
     "githubActions": true,
     "mergeMain": false,
     "publishRelease": false,
     "paidModelCalls": false,
-    "executed": false
+    "executed": true,
+    "confirmedInCurrentChat": true
   },
   "r4Increment": {
     "status": "LOCAL_INCREMENT_VALIDATED_R4_OPEN",
@@ -211,5 +212,22 @@
     "scope": "docs/development/OCR-R5-scope-2026-10-25.json",
     "results": "docs/testing/OCR-R5-remediation-2026-10-25-results.json",
     "individualOpinionsAllClosed": false
+  },
+  "currentR6LocalValidation": {
+    "runId": "r6-20261025-final6",
+    "codeCommit": "11e4024c090bf1c63c0adecc823de8a86c541d69",
+    "groups": 19,
+    "checks": 936,
+    "java": 702,
+    "suites": 119,
+    "client": 42,
+    "gates": 192,
+    "sdk": 66,
+    "native": 7,
+    "launcher": 8,
+    "examples": 2,
+    "selectedBrowserChecks": 70,
+    "smoke": 5,
+    "completeRemoteAcceptance": false
   }
 }

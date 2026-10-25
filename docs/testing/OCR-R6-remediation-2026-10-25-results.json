@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "date": "2026-10-25",
-  "status": "LOCAL_VALIDATED_CI_PENDING",
+  "status": "LOCAL_VALIDATED_REMOTE_QUOTA_BLOCKED",
   "milestone": "M10.5.9",
   "m11Eligible": false,
   "baseline": "e5fd815739bd185210735cd6b718897b864420dc",
@@ -26,7 +26,7 @@
   ],
   "implementationCommit": "73cb12513bc257b39739aab20a66bcac647c5e89",
   "remoteValidation": {
-    "status": "IDENTITY_AND_TOGGLE_FIX_FOCUSED_PENDING",
+    "status": "BLOCKED_INCLUDED_ACTIONS_MINUTES_EXHAUSTED",
     "pushExecuted": true,
     "authorization": "Current user explicit confirmation",
     "nativeRunId": "40178201805",
@@ -35,9 +35,9 @@
     "nativeArchiveSha256": "473f697d9a8e259f7076d5e84b71e899321a7cdcf0d3210dfc2cbf389834b0ee",
     "nativeChecks": 7,
     "nativePlatform": "Windows Server 2025",
-    "ciDispatched": true,
+    "ciDispatched": false,
     "ciRunId": "40179342004",
-    "ciCommit": "45587cfd15d79568529418589fb0c4f2c80ac76a",
+    "ciCommit": "11e4024c090bf1c63c0adecc823de8a86c541d69",
     "url": "https://github.com/nixaveq141-ai/J-Harness/actions/runs/40178732629",
     "canonicalFixtureFocused": {
       "status": "PASS",
@@ -69,21 +69,32 @@
           "skipped": 0
         }
       ]
-    }
-  },
-  "localFrozen": {
-    "commit": "73cb12513bc257b39739aab20a66bcac647c5e89",
-    "runId": "r6-20261025-final5",
-    "path": ".build-cache/R6-2026-10-25/final5/results.json",
-    "sha256": "1cc0db0f7b39dfed50ced9540c561e2ab1e3799d747b59ca385e9aa077a27c79",
-    "groups": 19,
-    "checks": 936,
-    "java": 702,
-    "suites": 119,
-    "client": 42,
-    "gates": 192,
-    "originalXmlArchiveSha256": "b53dfbe9d80533f885bf3e24ad1a70e75145fd251246a51db6b007cdaa43d413",
-    "independentlyVerifiedBeforeFollowup": true
+    },
+    "jobsStarted": false,
+    "reason": "User-provided GitHub alert confirms included3000 minutes used100%; reset shown as2026-11-01. Actual monetary charges are unknown.",
+    "focusedRuns": [
+      "40192469338",
+      "40192471748"
+    ],
+    "annotations": [
+      {
+        "checkRunId": 121166206777,
+        "path": ".build-cache/R6-2026-10-25/billing-121166206777.json",
+        "sha256": "7a324b6c11e4a1505f241695a284f1840ae8c68cc29ac91c43d1f691653e89cc"
+      },
+      {
+        "checkRunId": 121166213876,
+        "path": ".build-cache/R6-2026-10-25/billing-121166213876.json",
+        "sha256": "e1b3318ae3dda7e9796ba0ec0a2f404e9a194e7e4927784f5654b7adad7d4a4c"
+      }
+    ],
+    "lastCompleteAttempt": "40179342004",
+    "includedMinutes": 3000,
+    "usedMinutes": 3000,
+    "resetDateShown": "2026-11-01",
+    "actualChargesKnown": false,
+    "budgetSettingsChanged": false,
+    "additionalCloudRunsOnHold": true
   },
   "localFollowup": {
     "javaTest": "M7ClosureTest",
@@ -135,9 +146,10 @@
         "scope": "Local smoke before source commit; remote clean candidate still required"
       }
     },
-    "boundary": "Earlier local candidate before final5; not mixed with final current CI evidence."
+    "boundary": "Earlier local candidate before final5; not mixed with final current CI evidence.",
+    "pathsMayHaveBeenReused": true
   },
-  "finalCodeCommit": "45587cfd15d79568529418589fb0c4f2c80ac76a",
+  "finalCodeCommit": "11e4024c090bf1c63c0adecc823de8a86c541d69",
   "remoteAttempts": [
     {
       "runId": "40178732629",
@@ -195,29 +207,148 @@
   },
   "localPreIdentityFixJarSha256": "3904ed4a895e2827a49b02443bbcd82dde4cea2f72b76e200526b04b115c5ee7",
   "preIdentityFixLocal": {
-    "native": {
-      "path": ".build-cache/R6-2026-10-25/native-closing.json",
-      "sha256": "a821d9b557ebc9c63f34b61b01e0ca142958dc03c58ad724a29ac6cd26345d50",
-      "status": "PASS",
-      "checks": 7
-    },
-    "launcher": {
-      "path": ".build-cache/M10-launcher-results.json",
-      "sha256": "540512802b30bde152d6fbf66c3d1d33eb038a331b86cbdba59ead762d9db9d1",
-      "status": "PASS",
-      "checks": 8
-    },
-    "sdk": {
-      "path": ".build-cache/M10.5.8-sdk-results.json",
-      "sha256": "b9cfdf8e124f6cb250efa629345c1032e5083a6f14bda630d601651c00fc851d",
-      "status": "PASS",
-      "checks": 66
-    },
-    "examples": {
-      "path": ".build-cache/M10.5.8-examples-results.json",
-      "sha256": "638773d84f1b62c63d10caa02986adcde93ef2f59f541819c82532eea1a70d8d",
-      "status": "PASS",
-      "checks": 2
+    "historicalIndexOnly": true,
+    "pathsMayHaveBeenReused": true,
+    "note": "Earlier shared SDK/example/launcher paths were reused; they are not current acceptance evidence. Current originals are frozen separately.",
+    "records": {
+      "native": {
+        "path": ".build-cache/R6-2026-10-25/native-closing.json",
+        "sha256": "a821d9b557ebc9c63f34b61b01e0ca142958dc03c58ad724a29ac6cd26345d50",
+        "status": "PASS",
+        "checks": 7
+      },
+      "launcher": {
+        "path": ".build-cache/M10-launcher-results.json",
+        "sha256": "540512802b30bde152d6fbf66c3d1d33eb038a331b86cbdba59ead762d9db9d1",
+        "status": "PASS",
+        "checks": 8
+      },
+      "sdk": {
+        "path": ".build-cache/M10.5.8-sdk-results.json",
+        "sha256": "b9cfdf8e124f6cb250efa629345c1032e5083a6f14bda630d601651c00fc851d",
+        "status": "PASS",
+        "checks": 66
+      },
+      "examples": {
+        "path": ".build-cache/M10.5.8-examples-results.json",
+        "sha256": "638773d84f1b62c63d10caa02986adcde93ef2f59f541819c82532eea1a70d8d",
+        "status": "PASS",
+        "checks": 2
+      }
     }
+  },
+  "earlierLocalFrozen": {
+    "commit": "73cb12513bc257b39739aab20a66bcac647c5e89",
+    "runId": "r6-20261025-final5",
+    "path": ".build-cache/R6-2026-10-25/final5/results.json",
+    "sha256": "1cc0db0f7b39dfed50ced9540c561e2ab1e3799d747b59ca385e9aa077a27c79",
+    "groups": 19,
+    "checks": 936,
+    "java": 702,
+    "suites": 119,
+    "client": 42,
+    "gates": 192,
+    "originalXmlArchiveSha256": "b53dfbe9d80533f885bf3e24ad1a70e75145fd251246a51db6b007cdaa43d413",
+    "independentlyVerifiedBeforeFollowup": true
+  },
+  "localFrozen": {
+    "path": ".build-cache/R6-2026-10-25/final6/results.json",
+    "sha256": "5ee64a062d138d0efcd7fa379f10464f098f52b4e503a22aacdf7703a170c548",
+    "groups": 19,
+    "checks": 936,
+    "java": 702,
+    "suites": 119,
+    "client": 42,
+    "gates": 192,
+    "runId": "r6-20261025-final6",
+    "codeCommit": "11e4024c090bf1c63c0adecc823de8a86c541d69",
+    "independentlyVerified": true
+  },
+  "currentFrozenComponents": {
+    "path": ".build-cache/R6-2026-10-25/final6-frozen-components/manifest.json",
+    "sha256": "826b07ea2ceba8b5a3afd649e4a5357c8cd3b6a05a799b8497da41260905c479",
+    "jarSha256": "4a8c54f3f255a11bef7d18e4c98045fd5e750d0816d2cf68eb07333c9ac7cbfa",
+    "sdkChecks": 66,
+    "examples": 2,
+    "native": 7,
+    "launcher": 8,
+    "protectedEnvVariants": 16,
+    "paidRequests": 0,
+    "m11Eligible": false,
+    "records": {
+      "sdk": {
+        "path": ".build-cache/R6-2026-10-25/final6-frozen-components/sdk.json",
+        "sha256": "9b67737ad8feec7a301461fdb765e0b837d6e53d7de17917cc02ec54711080dd"
+      },
+      "examples": {
+        "path": ".build-cache/R6-2026-10-25/final6-frozen-components/examples.json",
+        "sha256": "b3ef0ca9885ae4116bbf3df74352febc806b2385539edfcd2c1818dd3008af1f"
+      },
+      "native": {
+        "path": ".build-cache/R6-2026-10-25/final6-frozen-components/native.json",
+        "sha256": "28715a0e064057799db48e1db36957d3261604ad6f2096325768e30a53f1d8a6"
+      },
+      "launcher": {
+        "path": ".build-cache/R6-2026-10-25/final6-frozen-components/launcher.json",
+        "sha256": "bc76f227aec199c28a4541837c6454703b581a32f83e4dbcdfe4d6f897fbdb33"
+      },
+      "smoke": {
+        "path": ".build-cache/R6-2026-10-25/final6-frozen-components/smoke.json",
+        "sha256": "e5669d75c10dd5f0c58b86d375678f20185d91e4a2e25f9614c097e5bea61469"
+      },
+      "npmAudit": {
+        "path": ".build-cache/R6-2026-10-25/final6-frozen-components/npmAudit.json",
+        "sha256": "b7f124aa78fd1df2460c1300bcdc0d97d94515b53ba07d52efea45436299f7bb"
+      },
+      "osv": {
+        "path": ".build-cache/R6-2026-10-25/final6-frozen-components/osv.json",
+        "sha256": "b71d74aae7b5f19df5ec08f90722a4cfdf5994319a9097a0de124b21843b70d6"
+      },
+      "frontendBom": {
+        "path": ".build-cache/R6-2026-10-25/final6-frozen-components/frontendBom.json",
+        "sha256": "a04e6f5a5a8bd41ec722e3518208a1e6b01bbe96b3c93e393e94744ba0a6a051"
+      },
+      "sdkInventory": {
+        "path": ".build-cache/R6-2026-10-25/final6-frozen-components/sdkInventory.json",
+        "sha256": "4ff8fbaa1bbcb9b3760b2dc1feda0fb55038591add6ef20657cd877dead5931a"
+      },
+      "sdkBom": {
+        "path": ".build-cache/R6-2026-10-25/final6-frozen-components/sdkBom.json",
+        "sha256": "61b7e460d708e5e40dcc3137e772d3461184da988a4b5410c28be40d49b8b7e3"
+      },
+      "mavenBom": {
+        "path": ".build-cache/R6-2026-10-25/final6-frozen-components/mavenBom.json",
+        "sha256": "1d05a3daf1e356f94aaebbd0dd168c3a9a55a246743192de4835b62378b1b986"
+      },
+      "browserAudit": {
+        "path": ".build-cache/R6-2026-10-25/final6-frozen-components/browserAudit.json",
+        "sha256": "7aca44a09a75a4b88b115452791079949d0b4d9e943c5c8e6e64c3c7e4bd1365"
+      },
+      "candidate": {
+        "path": ".build-cache/R6-2026-10-25/final6-frozen-components/candidate.zip",
+        "sha256": "046e27f3feaddc2bdaf991f06e3e65a417ad96d40ca6e42ead8a0ee6a7975abe",
+        "workingTreeDirty": true,
+        "scope": "Local installed candidate; remote clean acceptance still required"
+      },
+      "selectedBrowserArchive": {
+        "path": ".build-cache/R6-2026-10-25/final6-frozen-components/browser-selected.zip",
+        "sha256": "c19adfa402bf88f1a832b9c9a79ff22ca45133182878f52ca396ee2091f985a8",
+        "checks": 70,
+        "scope": "Chrome/WebKit extensions35 each, not the complete browser matrix"
+      },
+      "javaOriginalXml": {
+        "path": ".build-cache/R6-2026-10-25/final6-frozen-components/java-original-xml.zip",
+        "sha256": "c4efaae0f3051b23ee11cf71f00688e5594e324f3bdbf1d13ca42a9d14a6f53a"
+      }
+    }
+  },
+  "repositoryUsageInventory": {
+    "path": ".build-cache/R6-2026-10-25/repository-usage-inventory.json",
+    "sha256": "725e1b23ac52cc9f7de1d60489ee4286be9340877128769c7460233cb69cc5d5",
+    "workflowRuns": 51,
+    "mainWorkflowRuns": 28,
+    "currentArtifacts": 116,
+    "currentArtifactMiB": 935.33,
+    "scope": "Repository cumulative inventory, excludes other repositories and cache; not an account bill"
   }
 }
