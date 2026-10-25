@@ -109,6 +109,11 @@ class CliContractsTest {
         assertEquals(List.of(), facts.get("changes"));
         assertEquals(List.of(), facts.get("commands"));
         assertTrue(report.get("modelExplanation").toString().contains("fake.java"));
+        assertTrue(
+                report.get("unexecutedValidation")
+                        .toString()
+                        .contains("model prose is not test evidence"));
+        assertFalse(Json.text(facts).contains("fake.java"));
         assertTrue(EvidenceReport.markdown(report).contains("不作为执行证据"));
     }
 

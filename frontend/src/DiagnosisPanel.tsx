@@ -51,6 +51,7 @@ export function DiagnosisPanel({ api, task, refresh }: { api: Api; task: Task; r
       return Array.isArray(values) && values.length > 0 ? <div key={key}><strong>{label}</strong><pre>{values.join('\n')}</pre></div> : null
     })}{data.sdkFactsSettled && <p>底层 SDK 当前无未决事实，Web 目录仍待离线核实；这不证明旧执行者已停止。</p>}
       {data.pending.limited && <p>未决列表已限长，请通过 CLI inspect 查看完整集合。</p>}
+      {data.unsettledSources.length>0&&<details><summary>未结算调用的来源关联</summary><pre>{json(data.unsettledSources)}</pre><p className="muted">来源只说明调用声明所属事件、轮次和步骤，不授予执行或重放权限。</p></details>}
       <details className="verification-guide"><summary>打开安全核实向导</summary>
         <ol>{steps.map(step => <li key={step}>{step}</li>)}</ol>
         <p>只读检查命令片段（在原工作区使用 J-Harness CLI）：</p><pre>{`sessions inspect --session ${data.task.taskId}`}</pre>

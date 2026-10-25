@@ -1,0 +1,1626 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-25",
+  "baseline": "11ea9112da3d976f4336eda60569a4262082404d",
+  "status": "LOCAL_INCREMENT_R4_OPEN",
+  "originalScopeCount": 115,
+  "counts": {
+    "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED": 32,
+    "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED": 82,
+    "CONTRACT_CLARIFIED": 1
+  },
+  "acceptanceBoundary": "Index and implementation/regression mapping only. No blanket 115-opinion or platform closure.",
+  "items": [
+    {
+      "id": "OCR-0001",
+      "taskId": "R4-04",
+      "originalVerdict": "partial",
+      "adoptedScope": "interactive:hover特异性高于active，但选中box-shadow仍在，hover视觉本身可为设计选择；采纳选中+hover状态明确化/视觉回归，不接受选中逻辑被破坏的高严重度结论。",
+      "sourceReferences": [
+        "frontend/src/upstream/Pill.module.css:20"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0002",
+      "taskId": "R4-04",
+      "originalVerdict": "partial",
+      "adoptedScope": "全局focus.css保留原生outline，Pill并非必然无键盘焦点；disabled仍可命中hover/cursor属实。仅采纳禁用视觉及验证现有focus，不盲加重复ring。",
+      "sourceReferences": [
+        "frontend/src/upstream/Pill.module.css:16"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0003",
+      "taskId": "R4-04",
+      "originalVerdict": "partial",
+      "adoptedScope": "active边界只靠box-shadow，在forced-colors可能丢选中区别；采纳高对比模式的真实边界/选中指示。保持上游文件字节约束，以适配层或有来源更新实现。",
+      "sourceReferences": [
+        "frontend/src/upstream/Pill.module.css:27"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0005",
+      "taskId": "R4-04",
+      "originalVerdict": "partial",
+      "adoptedScope": "outline tone独加0.5px border使外部尺寸相差1px属CSS事实，但没有证实当前混排视觉破坏。可统一透明边界后做截图，需保留移植来源，优先级低。",
+      "sourceReferences": [
+        "frontend/src/upstream/Tag.module.css:7"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0006",
+      "taskId": "R4-04",
+      "originalVerdict": "partial",
+      "adoptedScope": "Tag nowrap无内部溢出保护，但受控调用多为短状态标签；采纳长动态状态在窄屏的截断/完整可访问名，不能假定所有调用不受限。",
+      "sourceReferences": [
+        "frontend/src/upstream/Tag.module.css:13"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0007",
+      "taskId": "R4-04",
+      "originalVerdict": "partial",
+      "adoptedScope": "Input outline:none仅靠0.5px focus-within边框且placeholder使用dimmed低强调token。采纳实际键盘/高对比/placeholder对比度验证及适配层修正；OCR未提供本机截图测量，不直接照抄其各引擎对比度数字。",
+      "sourceReferences": [
+        "frontend/src/upstream/Input.module.css:29"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0008",
+      "taskId": "R4-04",
+      "originalVerdict": "partial",
+      "adoptedScope": "Input outline:none仅靠0.5px focus-within边框且placeholder使用dimmed低强调token。采纳实际键盘/高对比/placeholder对比度验证及适配层修正；OCR未提供本机截图测量，不直接照抄其各引擎对比度数字。",
+      "sourceReferences": [
+        "frontend/src/upstream/Input.module.css:36"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0009",
+      "taskId": "R4-04",
+      "originalVerdict": "partial",
+      "adoptedScope": "Input原生disabled生效但wrapper没有状态视觉，采纳一致禁用提示，与2301合并，不是能编辑禁用字段。",
+      "sourceReferences": [
+        "frontend/src/upstream/Input.module.css:33"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0010",
+      "taskId": "R4-04",
+      "originalVerdict": "partial",
+      "adoptedScope": "SegmentedTabs focus-visible以underline替代outline，当前纯文本仍有指示；图标label无法可靠显示underline。采纳统一可见焦点和forced-colors检查，不宣称当前所有tab无焦点。",
+      "sourceReferences": [
+        "frontend/src/upstream/SegmentedTabs.module.css:43"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0011",
+      "taskId": "R4-04",
+      "originalVerdict": "partial",
+      "adoptedScope": "hover与selected同色但indicator/字体粗细仍区分选中；采纳触屏hover限定和交互回归，不认定必有两个选中项。",
+      "sourceReferences": [
+        "frontend/src/upstream/SegmentedTabs.module.css:33"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0012",
+      "taskId": "R4-04",
+      "originalVerdict": "partial",
+      "adoptedScope": "tab固定34px且文字可换行，窄列可超盒；采纳长中文标签/缩放时不溢出布局。当前移动布局已有外层限制，仍需针对最窄支持宽度验证。",
+      "sourceReferences": [
+        "frontend/src/upstream/SegmentedTabs.module.css:23"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0015",
+      "taskId": "R4-04",
+      "originalVerdict": "partial",
+      "adoptedScope": "固定按钮height与icon默认shrink在长标签窄容器存在可用性风险；采纳实际支持视口/长中文用例后以min-height或受控ellipsis及图标flex:none适配，未证明现有固定标签溢出。",
+      "sourceReferences": [
+        "frontend/src/upstream/Button.module.css:24"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0016",
+      "taskId": "R4-04",
+      "originalVerdict": "partial",
+      "adoptedScope": "固定按钮height与icon默认shrink在长标签窄容器存在可用性风险；采纳实际支持视口/长中文用例后以min-height或受控ellipsis及图标flex:none适配，未证明现有固定标签溢出。",
+      "sourceReferences": [
+        "frontend/src/upstream/Button.module.css:72"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0018",
+      "taskId": "R4-04",
+      "originalVerdict": "partial",
+      "adoptedScope": "全局corner-shape通配会影响style.css未声明round的50%圆点/按钮；采纳适配层显式圆形opt-out及支持该属性引擎截图，保持移植来源。",
+      "sourceReferences": [
+        "frontend/src/upstream/theme/corner-shape.css:24"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0033",
+      "taskId": "R4-01",
+      "originalVerdict": "accepted",
+      "adoptedScope": "style.css基础display:none!important仅collapsed或<=760覆盖；桌面初始展开无收起入口，小屏收起后桌面可展开却不能再收起。应让同一控件双向可用并验证草稿保持。",
+      "sourceReferences": [
+        "frontend/src/style.css:297"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0035",
+      "taskId": "R4-04",
+      "originalVerdict": "partial",
+      "adoptedScope": "data-input-modality仅CSS无发布方，指针抑制分支未激活；浏览器原生focus-visible仍区分部分模态。仅采纳清楚记录当前范围或按真实需求补发布方，非所有焦点行为失效。",
+      "sourceReferences": [
+        "frontend/src/upstream/theme/focus.css:18"
+      ],
+      "state": "CONTRACT_CLARIFIED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0041",
+      "taskId": "R4-04",
+      "originalVerdict": "partial",
+      "adoptedScope": "scrollbar局部变量只在body而root不继承，视口溢出场景可能退化；App主要滚动容器内部受控。采纳浏览器缩放/根溢出下的可见滑块验证和适配层root兜底，不宣称当前全部滚动条不可见。",
+      "sourceReferences": [
+        "frontend/src/upstream/theme/scrollbar.css:56"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0283",
+      "taskId": "R4-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "plan在preview/value/content多份保存，采纳统一有界快照和测量；value/content分别供机器和模型使用，不能一律删除。",
+      "sourceReferences": [
+        "harness-cli/src/main/java/io/jharness/cli/DryRunPipeline.java:66"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "validationGroups": [
+        "final 677-case Java contract; associated suite only"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0345",
+      "taskId": "R4-03",
+      "originalVerdict": "accepted",
+      "adoptedScope": "模型叙述不作为事实已有changes/commands空，补unexecutedValidation与modelExplanation分区明确证明不冒充测试证据。",
+      "sourceReferences": [
+        "harness-cli/src/test/java/io/jharness/cli/CliContractsTest.java:102"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "validationGroups": [
+        "final 677-case Java contract; associated suite only"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0462",
+      "taskId": "R4-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "节流return可丢临时流末尾，持久assistant.message仍完整且UI应切换最终消息；接受末帧flush/快照pending，不能称最终答复永久丢失。",
+      "sourceReferences": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/ModelDisplayBuffer.java:45"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "final 677-case Java contract; associated suite only"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0463",
+      "taskId": "R4-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "ModelDisplayBuffer明确累积快照而LlmClient公开display约定不充分；应统一累积语义和回退规则，不能自动拼接不明delta造成重复。",
+      "sourceReferences": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/ModelDisplayBuffer.java:48"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "final 677-case Java contract; associated suite only"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0465",
+      "taskId": "R4-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "临时展示callback reader/sanitizer异常可终止模型流；允许失败时清空展示并留诊断，禁止展示未脱敏原文，需保留模型调用真实未知事实。",
+      "sourceReferences": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/ModelDisplayBuffer.java:49"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "validationGroups": [
+        "final 677-case Java contract; associated suite only"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0582",
+      "taskId": "R4-03",
+      "originalVerdict": "accepted",
+      "adoptedScope": "RoutedLlmClient未转withDisplay，SDK展示观察被接口默认吞掉；冻结route后转发显示装饰并验证实际路由流式展示。",
+      "sourceReferences": [
+        "harness-llm/src/main/java/io/jharness/llm/RoutedLlmClient.java:26"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "validationGroups": [
+        "final 677-case Java contract; associated suite only"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0586",
+      "taskId": "R4-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "stream直接透传为低层原始接口，需明确公开脱敏契约或安全包装；标准complete会经redactor，当前低层frame泄露到日志未证实。",
+      "sourceReferences": [
+        "harness-llm/src/main/java/io/jharness/llm/StreamingLlmClient.java:85"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "final 677-case Java contract; associated suite only"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0587",
+      "taskId": "R4-03",
+      "originalVerdict": "accepted",
+      "adoptedScope": "safe.substring(length-hold)未防切中高代理，能给展示孤立UTF16；复用streamingText统一尾窗/非BMP边界。",
+      "sourceReferences": [
+        "harness-llm/src/main/java/io/jharness/llm/StreamingLlmClient.java:69"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "final 677-case Java contract; associated suite only"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0588",
+      "taskId": "R4-03",
+      "originalVerdict": "accepted",
+      "adoptedScope": "display.accept未隔离异常，可让SSE订阅结束为MODEL_BAD_RESPONSE；仅展示降级应清空并诊断，不能影响主执行或输出未脱敏文本。",
+      "sourceReferences": [
+        "harness-llm/src/main/java/io/jharness/llm/StreamingLlmClient.java:68"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "validationGroups": [
+        "final 677-case Java contract; associated suite only"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0589",
+      "taskId": "R4-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "finalResponse自定义null缺明确完整性错误，补SPI契约检查；累积最终全文回调是既有快照语义，不能改为delta破坏消费者。",
+      "sourceReferences": [
+        "harness-llm/src/main/java/io/jharness/llm/StreamingLlmClient.java:71"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "final 677-case Java contract; associated suite only"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0647",
+      "taskId": "R4-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "两协议预览尾窗substring未防代理对，接受统一streamingText；固定hold保护秘密，不是尾部永久丢失（最终响应仍完整）。",
+      "sourceReferences": [
+        "harness-llm/src/main/java/io/jharness/llm/OpenAiCompatibleLlmClient.java:547"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "final 677-case Java contract; associated suite only"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0872",
+      "taskId": "R4-03",
+      "originalVerdict": "accepted",
+      "adoptedScope": "所谓取消竞争仅一个SUCCESS completed无cancel事实，补真实cancel先后事件序列断言已完成结果保持。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M105DiagnosisTest.java:232"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "validationGroups": [
+        "final 677-case Java contract; associated suite only"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0873",
+      "taskId": "R4-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "只断言第一个保留call不足以锁定12条顺序/集合，补完整有序id列表并验证截断计数。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M105DiagnosisTest.java:208"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "final 677-case Java contract; associated suite only"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0876",
+      "taskId": "R4-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "平面列表不能保证错误step关联，补unsettled call到确切step/request结构断言，不自动将诊断显示当执行授权。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M105DiagnosisTest.java:170"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "validationGroups": [
+        "final 677-case Java contract; associated suite only"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0932",
+      "taskId": "R4-03",
+      "originalVerdict": "accepted",
+      "adoptedScope": "仅报告2个文件数不足以证明义务满足/引用哈希和脱敏，读取JSON/MD并核验证据及哨兵。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M7CliEcosystemTest.java:149"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "validationGroups": [
+        "final 677-case Java contract; associated suite only"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-1116",
+      "taskId": "R4-03",
+      "originalVerdict": "accepted",
+      "adoptedScope": "effects先not_started再uncertain，冲突证据可被诊断断言未执行；未知优先并保留矛盾标记，诊断不授予恢复执行权限。",
+      "sourceReferences": [
+        "harness-web/src/main/java/io/jharness/web/TaskDiagnosis.java:69"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "final 677-case Java contract; associated suite only"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-1117",
+      "taskId": "R4-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "全事件sanitize并保留整requested/decisions payload仅用少字段有重复开销；字段投影/受限索引，日志总32MB不能按每事件8MB乘10000夸大实际输入。",
+      "sourceReferences": [
+        "harness-web/src/main/java/io/jharness/web/TaskDiagnosis.java:36"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "final 677-case Java contract; associated suite only"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-1119",
+      "taskId": "R4-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "category默认FAILED在信息缺失时过度确定，可增UNKNOWN/UNCLASSIFIED且按uncertain优先；该分类不是恢复状态，不据此断言工具会被重放。",
+      "sourceReferences": [
+        "harness-web/src/main/java/io/jharness/web/TaskDiagnosis.java:139"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "final 677-case Java contract; associated suite only"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-1120",
+      "taskId": "R4-03",
+      "originalVerdict": "accepted",
+      "adoptedScope": "value.mode覆盖未截断且空值可抹原args.mode，统一安全截断/非空优先规则并保留来源。",
+      "sourceReferences": [
+        "harness-web/src/main/java/io/jharness/web/TaskDiagnosis.java:92"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "final 677-case Java contract; associated suite only"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-1121",
+      "taskId": "R4-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "turns先全ArrayList后limited64，可先limit减少中间分配；输入已10000事件限不称无界OOM，归并诊断有界投影。",
+      "sourceReferences": [
+        "harness-web/src/main/java/io/jharness/web/TaskDiagnosis.java:115"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "final 677-case Java contract; associated suite only"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-1157",
+      "taskId": "R4-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "SSE预算return缺明确more终止提示，客户端应GET after对账而非推断流EOF全部结束；增加有界尾帧/续读说明，不因此自动重连重发工具。",
+      "sourceReferences": [
+        "harness-web/src/main/java/io/jharness/web/HarnessWebServer.java:2248"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "final 677-case Java contract; associated suite only"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-1158",
+      "taskId": "R4-03",
+      "originalVerdict": "accepted",
+      "adoptedScope": "Instant字符串变精度时字典序与时间序不同，创建整秒/小数混排可破游标；统一Instant排序及cursor边界，保留stable id次序。",
+      "sourceReferences": [
+        "harness-web/src/main/java/io/jharness/web/HarnessWebServer.java:511"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "final 677-case Java contract; associated suite only"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-1602",
+      "taskId": "R4-04",
+      "originalVerdict": "accepted",
+      "adoptedScope": "本地核对 capturedAt=\"2026-10-19T09:07:27.183Z\"；status=\"PASS\"。该项只验证tagName为SELECT，不能证明元素disabled/tabindex或实际Tab/focus可达。需要真实键盘聚焦并核对document.activeElement。",
+      "sourceReferences": [
+        "docs/testing/M10.5.9-webkit-history-results.json:64",
+        "frontend/tests/history.mjs:112"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "validationGroups": [
+        "real Java history fixture: workspace picker is keyboard focusable; Chrome/WebKit"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2225",
+      "taskId": "R4-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "无扩展名相对文件确实被拒；盘符绝对路径拒绝是有意工作区限制，百分号经encodedPath再编码且服务端查真实根，不能据此证明越界。仅采纳受控无扩展名引用支持。",
+      "sourceReferences": [
+        "frontend/src/content.ts:5"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2226",
+      "taskId": "R4-03",
+      "originalVerdict": "accepted",
+      "adoptedScope": "fileReference只Math.min限制行号上界，:0会生成line=0；应约束1-based正整数。",
+      "sourceReferences": [
+        "frontend/src/content.ts:6"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2248",
+      "taskId": "R4-03",
+      "originalVerdict": "accepted",
+      "adoptedScope": "merge测试只验证4000长度，不锁截断方向；与2251合并，先明确有限历史窗口与最新进度策略，再断首尾ID/游标及回读行为，不能先假定slice(-4000)唯一正确。",
+      "sourceReferences": [
+        "frontend/tests/client.test.ts:103"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2251",
+      "taskId": "R4-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "mergeEvents确实保留最旧4000项；App还有历史上限/截断行为，不能简单slice(-4000)破坏分页。采纳明确事件窗口语义，达到上限仍展示新进度并保留历史回读，补4001条边界验证。",
+      "sourceReferences": [
+        "frontend/src/api.ts:114"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2252",
+      "taskId": "R4-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "readJson catch不优先signal/expired，底层流错误可能被归INVALID_RESPONSE；但reader.cancel通常使done=true，成功路径expired检查并非必不可达。采纳统一取消/超时归类并分别模拟done与reject路径。",
+      "sourceReferences": [
+        "frontend/src/api.ts:288"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2255",
+      "taskId": "R4-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "turns offset确直接插URL，当前调用仅受控0/32分页数字，服务端仍校范围；采纳输入安全整数/配额校验，JS绕类型值不得注入额外query。不是用户可达权限绕过。",
+      "sourceReferences": [
+        "frontend/src/api.ts:162"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2257",
+      "taskId": "R4-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "searchContent limit在本地用于响应上限但未先验证整数1-32，当前UI固定20且服务器会拒非法JSON值。采纳调用边界校验以使NaN不能削弱客户端结果预算，不认当前UI已无界。",
+      "sourceReferences": [
+        "frontend/src/api.ts:174"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2258",
+      "taskId": "R4-01",
+      "originalVerdict": "accepted",
+      "adoptedScope": "ModelPicker effect只依赖api但读取启动时value，Settings关闭后setModelId空串也不会重新选择。采用最新value与请求代次，明确刷新后的可用选择。",
+      "sourceReferences": [
+        "frontend/src/ModelPicker.tsx:11"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2259",
+      "taskId": "R4-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "models的selected未在客户端验证集合成员；正常服务端应一致，尚非已证实正常响应错误。采纳边界成员校验和无匹配时显式错误。",
+      "sourceReferences": [
+        "frontend/src/ModelPicker.tsx:9"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2260",
+      "taskId": "R4-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "失败只setError不清models，无models时空option和非空受控value失配。采纳清旧列表/正确占位；App常规重连会重挂载，风险限同实例复用。",
+      "sourceReferences": [
+        "frontend/src/ModelPicker.tsx:7"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2261",
+      "taskId": "R4-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "失败只setError不清models，无models时空option和非空受控value失配。采纳清旧列表/正确占位；App常规重连会重挂载，风险限同实例复用。",
+      "sourceReferences": [
+        "frontend/src/ModelPicker.tsx:15"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2262",
+      "taskId": "R4-03",
+      "originalVerdict": "accepted",
+      "adoptedScope": "CodeBlock notice不随text重置且copy Promise无代次，按行号key复用后旧复制提示可能挂到新代码上。采纳文本变更重置及异步结果代次。",
+      "sourceReferences": [
+        "frontend/src/Markdown.tsx:8"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2263",
+      "taskId": "R4-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "只判断clipboard对象不判断writeText，缺方法实现可同步抛出跳过链式catch；localhost标准实现通常完整。采纳函数检测和统一try/catch。",
+      "sourceReferences": [
+        "frontend/src/Markdown.tsx:9"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2264",
+      "taskId": "R4-03",
+      "originalVerdict": "accepted",
+      "adoptedScope": "列表循环吞入混合有序无序行，仅第一行决定ol/ul，且不保留ol起始号。应按标记分组并保留start。",
+      "sourceReferences": [
+        "frontend/src/Markdown.tsx:34"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2266",
+      "taskId": "R4-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "65536字符上限仍允许上万短列表节点，块/节点无总预算；非无限输入。采纳节点预算/截断及最大合法文本主线程响应测量。",
+      "sourceReferences": [
+        "frontend/src/Markdown.tsx:27"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2268",
+      "taskId": "R4-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "ToolCard先序列化全value再截4000，折叠details也构造；API已有响应上限，非无界。采纳惰性展开与预览预算以减少上限内峰值。",
+      "sourceReferences": [
+        "frontend/src/Conversation.tsx:40"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2270",
+      "taskId": "R4-01",
+      "originalVerdict": "accepted",
+      "adoptedScope": "LiveDisplay对PERSISTED/IDLE/UNAVAILABLE直接return null，后续请求失败error被隐藏。隐去临时正文时应保留读取失败反馈，不能仅因显示状态停止后续轮轮询。",
+      "sourceReferences": [
+        "frontend/src/Conversation.tsx:65"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2273",
+      "taskId": "R4-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "导出完整性失败INVALID_RESPONSE未映射，显示写操作核对语义。采纳精准完整性错误提示；局域网明文HTTP不属loopback托管支持范围。",
+      "sourceReferences": [
+        "frontend/src/SessionActions.tsx:27"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2274",
+      "taskId": "R4-01",
+      "originalVerdict": "accepted",
+      "adoptedScope": "SessionActions重读仅busy禁用，dirty新名称会被setName服务端值无提示覆盖。应明确丢弃确认或未保存时禁重读。",
+      "sourceReferences": [
+        "frontend/src/SessionActions.tsx:23"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2275",
+      "taskId": "R4-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "同taskId父级名称更新不会同步输入，dirty可误判；只在无本地编辑时同步，不可直接加依赖导致本地草稿被覆盖。",
+      "sourceReferences": [
+        "frontend/src/SessionActions.tsx:10"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2276",
+      "taskId": "R4-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "原生eventId为UUID36不触64限制，但导入历史API允许较长identifier，UI字段64应与支持的导入事件范围一致并本地校验。采纳明确eventId契约/上限，避免盲目按通用identifier放宽不受支持事件。",
+      "sourceReferences": [
+        "frontend/src/SessionActions.tsx:30"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2277",
+      "taskId": "R4-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "ContentSearch api依赖清理仅abort，finally因aborted不解锁，同实例换api可卡死。App常规重连可能卸载，仍采纳按controller身份复位安全复用。",
+      "sourceReferences": [
+        "frontend/src/ContentSearch.tsx:26"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2278",
+      "taskId": "R4-01",
+      "originalVerdict": "accepted",
+      "adoptedScope": "分页未验证累计matches<=total或more空页前进，损坏响应可显示40/25。补跨页总数一致与进度保护。",
+      "sourceReferences": [
+        "frontend/src/ContentSearch.tsx:20"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2279",
+      "taskId": "R4-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "single不随currentSession空值复位，UI仍勾选disabled而sessionId空串按范围查；App搜索通常固定会话，但应使用有效single派生条件保持范围语义。",
+      "sourceReferences": [
+        "frontend/src/ContentSearch.tsx:36"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2280",
+      "taskId": "R4-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "INVALID_RESPONSE落通用重试文案，采纳协议/版本不符提示；Api.object(null)已转ApiError，不能宣称必然TypeError。",
+      "sourceReferences": [
+        "frontend/src/ContentSearch.tsx:25"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2284",
+      "taskId": "R4-03",
+      "originalVerdict": "accepted",
+      "adoptedScope": "DiagnosisPanel提前隐藏条件未考虑task.error/cancelRequested，后面提示分支可能永远不展示；SDK结算无issues也应保留宿主错误/取消事实。",
+      "sourceReferences": [
+        "frontend/src/DiagnosisPanel.tsx:26"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2285",
+      "taskId": "R4-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "Number('')变0、中间NaN序列化null，后端仍拒绝而非绕过门禁。应保留字符串编辑态并就地校验，不能静默clamp改变用户参数。",
+      "sourceReferences": [
+        "frontend/src/ExtensionEditor.tsx:1"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2286",
+      "taskId": "R4-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "表单仅subagents校验重复，数组id和空id可写草稿；后端仍有校验。采纳统一非空/格式/唯一性提示及生成碰撞检查，不能据前端缺检断言后端覆盖。",
+      "sourceReferences": [
+        "frontend/src/ExtensionEditor.tsx:30"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2287",
+      "taskId": "R4-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "string/lines把非法类型显示空值，后续编辑替换原JSON；array trim会改变argv首尾空格。应显式提示类型异常并保留原数据，不随意规范化命令参数。",
+      "sourceReferences": [
+        "frontend/src/ExtensionEditor.tsx:39"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2288",
+      "taskId": "R4-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "EcosystemConfig已强制MCP id/env名/transport及仅HTTPS或loopback HTTP，HTTP还禁止cwd；本机显式tokenEnv允许引用用户选定变量不是越权。只采纳表单同构格式错误提示，不限制JHARNESS前缀或泛拒合法随机名字。",
+      "sourceReferences": [
+        "frontend/src/ExtensionEditor.tsx:76"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2290",
+      "taskId": "R4-02",
+      "originalVerdict": "accepted",
+      "adoptedScope": "error仅commit成功清空，高级JSON外部修正value后旧冲突错误仍驻留。应按value重新验证或清除陈旧错误。",
+      "sourceReferences": [
+        "frontend/src/ExtensionEditor.tsx:14"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2292",
+      "taskId": "R4-04",
+      "originalVerdict": "partial",
+      "adoptedScope": "显式type=submit是当前表单Button必要能力，不能禁用透传；仅type:undefined可能覆盖button默认。采纳解构默认type并保留显式submit。",
+      "sourceReferences": [
+        "frontend/src/upstream/Button.tsx:31"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2295",
+      "taskId": "R4-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "at(-1)定位新注册项依赖服务端追加顺序，当前行为需契约化。采纳明确返回注册id/前后差集及空列表保护，而非一律认定当前排序错误。",
+      "sourceReferences": [
+        "frontend/src/WorkspacePicker.tsx:15"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2296",
+      "taskId": "R4-02",
+      "originalVerdict": "accepted",
+      "adoptedScope": "register await后无api身份/卸载校验而onProfiles/onSelect会改父状态；旧连接响应可覆盖新上下文，应请求代次保护。",
+      "sourceReferences": [
+        "frontend/src/WorkspacePicker.tsx:13"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2297",
+      "taskId": "R4-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "当前onProfiles只用稳定setState，旧闭包尚无实际错；列表失败确无本组件重试。采纳重试/最新回调ref，避免依赖内联回调循环拉取。",
+      "sourceReferences": [
+        "frontend/src/WorkspacePicker.tsx:9"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2298",
+      "taskId": "R4-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "面板不按16项容量禁用，后端WORKSPACE_LIMIT仍正确拒绝；采纳容量提示，非权限问题。",
+      "sourceReferences": [
+        "frontend/src/WorkspacePicker.tsx:25"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2301",
+      "taskId": "R4-04",
+      "originalVerdict": "partial",
+      "adoptedScope": "disabled透传原生input仍阻止编辑，但wrapper/icon无禁用视觉；采纳一致禁用表现，非安全门禁缺失。",
+      "sourceReferences": [
+        "frontend/src/upstream/Input.tsx:21"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2302",
+      "taskId": "R4-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "waiting已有marker会阻止常规超时再提交，非每次超时必换id；显式清标记流程应保留原幂等id，并将UUID创建置异常处理内。非loopback HTTP不在支持范围。",
+      "sourceReferences": [
+        "frontend/src/Questions.tsx:62"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2303",
+      "taskId": "R4-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "核对固定第一页8条确会找不到后页问题；采纳按questionId/全分页核实。清标记后后端仍按question状态保护，不能直接宣称工具执行重放；应保留原id并基于事实核对。",
+      "sourceReferences": [
+        "frontend/src/Questions.tsx:77"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2304",
+      "taskId": "R4-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "marker吞storage异常把不可保存当无标记，采纳显式失败与内存pending及刷新提示；不采纳切会话无条件清未知marker，那会破坏对账。",
+      "sourceReferences": [
+        "frontend/src/Questions.tsx:7"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2305",
+      "taskId": "R4-01",
+      "originalVerdict": "accepted",
+      "adoptedScope": "350ms内提交导致waiting重跑effect并取消排队的草稿保存，若响应丢失就无服务端草稿恢复。应先保留待核对答案快照或flush草稿。",
+      "sourceReferences": [
+        "frontend/src/Questions.tsx:44"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2307",
+      "taskId": "R4-01",
+      "originalVerdict": "accepted",
+      "adoptedScope": "answer成功receipt只setNotice不清dirty，SUBMITTED时未保存标记/beforeunload仍可能存在，应区分已接收答案与未存编辑。",
+      "sourceReferences": [
+        "frontend/src/Questions.tsx:63"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2308",
+      "taskId": "R4-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "固定700ms请求对失败和隐藏页无退避属实际开销；Api已有响应界限，不能凭组件无Abort推断永挂。采纳失败退避/可见性暂停。",
+      "sourceReferences": [
+        "frontend/src/Questions.tsx:23"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2310",
+      "taskId": "R4-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "slash自动effect未守卫空profile/disabled，空profile导致本地INVALID_RESPONSE却提示技能根错误；UNKNOWN下只读查询不等同重放。采纳条件守卫/准确错误。",
+      "sourceReferences": [
+        "frontend/src/SkillsPicker.tsx:17"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2311",
+      "taskId": "R4-02",
+      "originalVerdict": "accepted",
+      "adoptedScope": "重扫描不清旧skills/loaded且候选不按busy禁用，失败后旧条目可继续选。应原子切换快照或读取中禁用旧候选并标记陈旧。",
+      "sourceReferences": [
+        "frontend/src/SkillsPicker.tsx:12"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2312",
+      "taskId": "R4-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "details折叠仍挂所有技能正文，但响应已有480KiB限制；采纳惰性DOM展开优化，非无界内存漏洞。",
+      "sourceReferences": [
+        "frontend/src/SkillsPicker.tsx:25"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2313",
+      "taskId": "R4-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "ToolInventory复用alive在api/taskId变化又为true，旧请求可写回；TurnComposer按会话key已限跨会话风险，api重用仍需代次保护/清旧value。",
+      "sourceReferences": [
+        "frontend/src/SkillsPicker.tsx:34"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2316",
+      "taskId": "R4-04",
+      "originalVerdict": "partial",
+      "adoptedScope": "静态Pill span丢rest但props仍接受button属性，title/aria可静默失效。采纳静态/交互类型区分及安全属性透传，并按上游来源约束维护。",
+      "sourceReferences": [
+        "frontend/src/upstream/Pill.tsx:24"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2322",
+      "taskId": "R4-01",
+      "originalVerdict": "accepted",
+      "adoptedScope": "taskPage整页setTasks/setDetailTask与approvals独立轮询直接setState，无动作响应代次保护，早发晚返可覆盖新动作。采纳按会话请求序号/本地写回屏障，服务端STALE仍兜底。",
+      "sourceReferences": [
+        "frontend/src/App.tsx:139"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2323",
+      "taskId": "R4-01",
+      "originalVerdict": "accepted",
+      "adoptedScope": "taskPage整页setTasks/setDetailTask与approvals独立轮询直接setState，无动作响应代次保护，早发晚返可覆盖新动作。采纳按会话请求序号/本地写回屏障，服务端STALE仍兜底。",
+      "sourceReferences": [
+        "frontend/src/App.tsx:257"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2324",
+      "taskId": "R4-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "ContentSearch已onOpen(...).catch设置错误，因此未处理拒绝主张不成立；App回调未看navigationGuard，采纳守卫一致性并核对搜索页打开时原草稿生命周期。",
+      "sourceReferences": [
+        "frontend/src/App.tsx:303"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2325",
+      "taskId": "R4-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "submit/fork/reconcile先清storage pending再检查currentApi，旧连接响应可能丢本页受理对账标记。采纳连接身份绑定；服务端事实仍可从列表核实，不是执行事实丢失。",
+      "sourceReferences": [
+        "frontend/src/App.tsx:231"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2327",
+      "taskId": "R4-04",
+      "originalVerdict": "partial",
+      "adoptedScope": "失配value可令tabIndex全-1，后代querySelector也依赖标签无嵌套tab；当前App静态联合类型/纯文本保证正常。采纳组件边界安全校验/直接子项/null守卫，非已证实当前导航故障。",
+      "sourceReferences": [
+        "frontend/src/upstream/SegmentedTabs.tsx:31"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2328",
+      "taskId": "R4-04",
+      "originalVerdict": "partial",
+      "adoptedScope": "失配value可令tabIndex全-1，后代querySelector也依赖标签无嵌套tab；当前App静态联合类型/纯文本保证正常。采纳组件边界安全校验/直接子项/null守卫，非已证实当前导航故障。",
+      "sourceReferences": [
+        "frontend/src/upstream/SegmentedTabs.tsx:48"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2331",
+      "taskId": "R4-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "对所有4xx清pending过宽，应按本机服务明确未受理错误码白名单处理；反向代理不是当前拓扑。采纳确定拒绝/丢响应对账边界回归。",
+      "sourceReferences": [
+        "frontend/src/TurnComposer.tsx:50"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2333",
+      "taskId": "R4-01",
+      "originalVerdict": "accepted",
+      "adoptedScope": "TurnComposer poll与submit/start/cancel响应无代次，旧detail可onUpdated覆盖新状态；采纳请求序号与动作后重新取样。",
+      "sourceReferences": [
+        "frontend/src/TurnComposer.tsx:28"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2334",
+      "taskId": "R4-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "队首判断只本页，offset>0可误启用start但后端QUEUE_ORDER_CONFLICT拒绝；采纳全局队首或翻页保守禁用，不是队列绕过。",
+      "sourceReferences": [
+        "frontend/src/TurnComposer.tsx:66"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2336",
+      "taskId": "R4-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "read成功未清旧error会残留瞬时错误；采纳独立poll错误状态及401暂停，detail失败统称队列属文案改善。",
+      "sourceReferences": [
+        "frontend/src/TurnComposer.tsx:29"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2338",
+      "taskId": "R4-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "取消排队丢回执，界面靠下次poll更新；已开始后端会报错而非成功。采纳校验回执state与即时task写回。",
+      "sourceReferences": [
+        "frontend/src/TurnComposer.tsx:66"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2339",
+      "taskId": "R4-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "ContentPanel同实例切mode保留target，文件路径可能被当artifact id。App虽给artifacts selection=null，state仍在；采纳mode重置，selection.serial为刻意重复定位不删。",
+      "sourceReferences": [
+        "frontend/src/ContentPanel.tsx:64"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2340",
+      "taskId": "R4-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "download catch只setError不清notice，异常留正在校验；Stop已setNotice已停止，原意见Stop部分不成立。采纳异常收尾。",
+      "sourceReferences": [
+        "frontend/src/ContentPanel.tsx:48"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2341",
+      "taskId": "R4-03",
+      "originalVerdict": "accepted",
+      "adoptedScope": "failure缺RESPONSE_LIMIT/FILE_NOT_FOUND/ARTIFACT_DENIED/INVALID_RANGE，确定错误描述为检查连接，需精确映射。",
+      "sourceReferences": [
+        "frontend/src/ContentPanel.tsx:15"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2342",
+      "taskId": "R4-03",
+      "originalVerdict": "accepted",
+      "adoptedScope": "列表开始不清limited，重新读内容不清notice/page，旧截断/已校验下载提示可留在新请求中；采纳按请求重置陈旧状态。",
+      "sourceReferences": [
+        "frontend/src/ContentPanel.tsx:66"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2343",
+      "taskId": "R4-03",
+      "originalVerdict": "accepted",
+      "adoptedScope": "列表开始不清limited，重新读内容不清notice/page，旧截断/已校验下载提示可留在新请求中；采纳按请求重置陈旧状态。",
+      "sourceReferences": [
+        "frontend/src/ContentPanel.tsx:23"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2344",
+      "taskId": "R4-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "循环已有513页与8MiB限制，非无界；采纳具名常量及nextOffset前进检查，不能仅因魔数说协议错。",
+      "sourceReferences": [
+        "frontend/src/ContentPanel.tsx:35"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2347",
+      "taskId": "R4-04",
+      "originalVerdict": "partial",
+      "adoptedScope": "嵌套TextShimmer忽略active符合文档，contentClassName丢失与说明不一致；采纳说明仅顶层或保留布局类，维护来源记录。",
+      "sourceReferences": [
+        "frontend/src/upstream/TextShimmer.tsx:39"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2349",
+      "taskId": "R4-02",
+      "originalVerdict": "accepted",
+      "adoptedScope": "save在await前setKeys({})，失败局部pendingKeys丢失但dirty保留，第二次可无新key保存却提示成功。应成功后清或失败明确重新输入并阻止误成功。",
+      "sourceReferences": [
+        "frontend/src/Settings.tsx:74"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2350",
+      "taskId": "R4-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "同实例api变化时alive又true而lock吞新load，旧响应可apply新上下文；App通常失联卸载，但组件重用仍需请求代次/取消。",
+      "sourceReferences": [
+        "frontend/src/Settings.tsx:51"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2351",
+      "taskId": "R4-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "明确编辑可信连接URL后保留key是当前设置能力，不是未授权秘密外发；但跨origin使用原凭据及非loopback明文HTTP易误操作，采纳保存前清晰origin/密钥复用提示与HTTP告警。不要静默清key或禁止合法代理迁移，受理快照仍绑定原endpoint。",
+      "sourceReferences": [
+        "frontend/src/Settings.tsx:102"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2353",
+      "taskId": "R4-02",
+      "originalVerdict": "accepted",
+      "adoptedScope": "apply总把editing改默认selected，保存非默认B后编辑器跳A；应保留仍存在的editing，仅初次/删除回退默认。",
+      "sourceReferences": [
+        "frontend/src/Settings.tsx:52"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "client 42 and component browser 29 per engine; related regression, not individual fault injection"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2427",
+      "taskId": "R4-03",
+      "originalVerdict": "accepted",
+      "adoptedScope": "tool.completed非SUCCESS时Map.of(status,error)遇显式null必NPE，应验证事件schema并报告无效/未验证，不默认成功或吞掉不确定事实。",
+      "sourceReferences": [
+        "harness-cli/src/main/java/io/jharness/cli/EvidenceReport.java:83"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "validationGroups": [
+        "final 677-case Java contract; associated suite only"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2428",
+      "taskId": "R4-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "批量changes分支无SUCCESS门槛，UNKNOWN部分patch仍进入changes；reference已有toolStatus，不是完全无标识，但应明确已确认/部分未知分区避免误称完成。",
+      "sourceReferences": [
+        "harness-cli/src/main/java/io/jharness/cli/EvidenceReport.java:75"
+      ],
+      "state": "PRIOR_IMPLEMENTATION_RETAINED_NOT_INDIVIDUALLY_RECLOSED",
+      "validationGroups": [
+        "final 677-case Java contract; associated suite only"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2429",
+      "taskId": "R4-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "String.valueOf(null)写字面量null确实误导状态/费用，采用UNKNOWN/未验证和类型校验；缺费用不能默认0伪造零成本。",
+      "sourceReferences": [
+        "harness-cli/src/main/java/io/jharness/cli/EvidenceReport.java:47"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "validationGroups": [
+        "final 677-case Java contract; associated suite only"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2430",
+      "taskId": "R4-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "预览/模型/终端事实列表完整复制可能接近32MiB日志上限、报告无自己输出预算，采纳有界引用/分页；不得静默丢证据却仍称完整报告。",
+      "sourceReferences": [
+        "harness-cli/src/main/java/io/jharness/cli/EvidenceReport.java:59"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "validationGroups": [
+        "final 677-case Java contract; associated suite only"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-2431",
+      "taskId": "R4-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "terminal.snapshot选整会话最后一条，需说明这是历史最后已知状态及来源/时刻，或仅当前turn新快照；显示历史UNKNOWN不等于执行重放，原文违规则过度。",
+      "sourceReferences": [
+        "harness-cli/src/main/java/io/jharness/cli/EvidenceReport.java:36"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "validationGroups": [
+        "final 677-case Java contract; associated suite only"
+      ],
+      "individualAcceptanceClosed": false
+    }
+  ]
+}

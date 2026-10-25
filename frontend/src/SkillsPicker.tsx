@@ -24,10 +24,15 @@ export function SkillsPicker({ api, profile, draft, onChange, disabled }: { api:
       <p className="muted">来自已保存的显式允许根。选择只填入草稿；发送后由模型调用受控加载工具，仍需原有策略和审批。当前运行轮次保留装配时的快照。</p>
       {error && <p role="status" className="inline-error">{error}</p>}
       {loaded && !candidates.length && <p className="muted">{skills.length ? '没有匹配的技能。' : '尚无可用技能，请在设置中配置 Skills 或技能目录发现。'}</p>}
-      {candidates.map(s => <div className="skill-entry" key={s.id}><Button disabled={disabled || busy || !loaded} onClick={() => { onChange(`/${s.id} ${draft.replace(/^\/[A-Za-z0-9_-]*\s*/, '')}`); setOpen(false) }}>使用 /{s.id}</Button><p>{s.description || '未提供描述'}</p><small className="muted">{s.root} / {s.directory} · {s.tool}</small><details><summary>查看技能快照</summary><p className="muted">不可信技能文本 · SHA256 {s.sha256}</p><pre>{s.text}</pre></details></div>)}
+      {candidates.map(s => <div className="skill-entry" key={s.id}><Button disabled={disabled || busy || !loaded} onClick={() => { onChange(`/${s.id} ${draft.replace(/^\/[A-Za-z0-9_-]*\s*/, '')}`); setOpen(false) }}>使用 /{s.id}</Button><p>{s.description || '未提供描述'}</p><small className="muted">{s.root} / {s.directory} · {s.tool}</small><SkillSnapshot skill={s}/></div>)}
       <Button disabled={busy || disabled} onClick={() => void load()}>重新扫描已保存目录</Button>
     </div>}
   </div>
+}
+
+function SkillSnapshot({skill}:{skill:SkillEntry}) {
+  const [open,setOpen]=useState(false)
+  return <details onToggle={event=>setOpen(event.currentTarget.open)}><summary>查看技能快照</summary>{open&&<><p className="muted">不可信技能文本 · SHA256 {skill.sha256}</p><pre>{skill.text}</pre></>}</details>
 }
 
 export function ToolInventory({ api, taskId }: { api: Api; taskId: string }) {

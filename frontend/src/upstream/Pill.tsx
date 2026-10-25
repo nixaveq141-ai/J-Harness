@@ -3,7 +3,7 @@
 // exit status is the read-only case. The 11px read-only badge is `Tag`; size
 // separates the two as much as interactivity does.
 
-import type { ButtonHTMLAttributes, ReactNode } from 'react'
+import type { ButtonHTMLAttributes, HTMLAttributes, ReactNode } from 'react'
 import clsx from 'clsx'
 import css from './Pill.module.css'
 
@@ -13,24 +13,18 @@ import css from './Pill.module.css'
  * @param props.active - selected/active visual state.
  * @returns pill element.
  */
-export function Pill({ active = false, className, children, onClick, ...rest }: {
+type PillProps = {
   active?: boolean
   // `| undefined` so a caller can forward an optional class straight through
   // under exactOptionalPropertyTypes (a CSS-module lookup is string|undefined).
   className?: string | undefined
   children?: ReactNode
-} & ButtonHTMLAttributes<HTMLButtonElement>) {
-  if (!onClick) {
-    return <span className={clsx(css.pill, active && css.active, className)} title={rest.title} id={rest.id} role={rest.role} aria-label={rest['aria-label']} aria-describedby={rest['aria-describedby']}>{children}</span>
+} & ((Omit<HTMLAttributes<HTMLSpanElement>, 'onClick'> & { onClick?: never }) | (ButtonHTMLAttributes<HTMLButtonElement> & { onClick: NonNullable<ButtonHTMLAttributes<HTMLButtonElement>['onClick']> }))
+export function Pill(props: PillProps) {
+  if (props.onClick) {
+    const { active = false, className, children, onClick, type = 'button', ...rest } = props
+    return <button type={type} className={clsx(css.pill, css.interactive, active && css.active, className)} onClick={onClick} {...rest}>{children}</button>
   }
-  return (
-    <button
-      type="button"
-      className={clsx(css.pill, css.interactive, active && css.active, className)}
-      onClick={onClick}
-      {...rest}
-    >
-      {children}
-    </button>
-  )
+  const { active = false, className, children, onClick: _onClick, ...rest } = props
+  return <span className={clsx(css.pill, active && css.active, className)} {...rest}>{children}</span>
 }

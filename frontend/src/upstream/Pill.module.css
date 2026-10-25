@@ -17,8 +17,10 @@
   cursor: pointer;
 }
 
-.interactive:hover:not(:disabled):not(.active) {
-  background: var(--dsw-alias-interactive-bg-hover);
+@media (hover: hover) {
+  .interactive:hover:not(:disabled):not(.active) {
+    background: var(--dsw-alias-interactive-bg-hover);
+  }
 }
 
 .active {

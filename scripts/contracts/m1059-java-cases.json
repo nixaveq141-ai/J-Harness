@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "milestone": "M10.5.9",
-  "origin": "Current local R1-R3 follow-up acceptance contract: preserves every prior 652 reviewed identity and adds bounded compaction, identity, CLI, queue, event, router, protocol, policy, settings and settlement regressions. Contract only; remote CI and M11 remain pending.",
+  "origin": "Current local R4 acceptance contract: preserves all 671 prior identities and adds six report-budget, redaction and independent/routed display regressions. Contract only; remote CI and M11 remain pending.",
   "suites": [
     {
       "module": "harness-agent",
@@ -256,6 +256,16 @@
     },
     {
       "module": "harness-cli",
+      "name": "io.jharness.cli.R4ReportBudgetTest",
+      "cases": [
+        "completeSecretsAreRedactedBeforeAnyReportTruncation",
+        "largeFactsHaveIndependentBudgetCoverageAndRetainedSourceIdentity",
+        "malformedContainersAndCostsDoNotCreateFalseSuccessOrZeroCost",
+        "previewProjectionHasNodeCharacterAndSurrogateBoundaries"
+      ]
+    },
+    {
+      "module": "harness-cli",
       "name": "io.jharness.cli.StdioSdkServerTest",
       "cases": [
         "duplicateFieldsRejectRatherThanSelectingLastValue",
@@ -460,6 +470,8 @@
       "name": "io.jharness.llm.R4DisplayIsolationTest",
       "cases": [
         "failingDisplayCannotChangeValidatedCompletion",
+        "frozenRouteAndFutureRouteBothForwardDisplayObservers",
+        "independentObserversStillReceiveFramesWhenEarlierSinksFail",
         "missingFinalResponseHasExplicitProtocolFailure"
       ]
     },
@@ -1362,6 +1374,7 @@
     "frontend/src/WorkspacePicker.tsx",
     "frontend/src/api.ts",
     "frontend/src/content.ts",
+    "frontend/src/extensions.ts",
     "frontend/src/lifecycle.ts",
     "frontend/src/main.tsx",
     "frontend/src/style.css",
@@ -1526,6 +1539,7 @@
     "harness-cli/src/main/java/io/jharness/cli/Main.java",
     "harness-cli/src/main/java/io/jharness/cli/Metadata.java",
     "harness-cli/src/main/java/io/jharness/cli/NativeCredentials.java",
+    "harness-cli/src/main/java/io/jharness/cli/ReportProjection.java",
     "harness-cli/src/main/java/io/jharness/cli/StdioSdkServer.java",
     "harness-cli/src/main/java/io/jharness/cli/SystemCredentials.java",
     "harness-cli/src/main/java/io/jharness/cli/TerminalInput.java",
@@ -1550,6 +1564,7 @@
     "harness-cli/src/test/java/io/jharness/cli/R1WorkbenchTransactionTest.java",
     "harness-cli/src/test/java/io/jharness/cli/R2RegistryTest.java",
     "harness-cli/src/test/java/io/jharness/cli/R3ConfigurationTest.java",
+    "harness-cli/src/test/java/io/jharness/cli/R4ReportBudgetTest.java",
     "harness-cli/src/test/java/io/jharness/cli/StdioSdkServerTest.java",
     "harness-cli/src/test/java/io/jharness/cli/WorkbenchCredentialCleanup.java",
     "harness-cli/src/test/java/io/jharness/cli/WorkbenchSettingsTest.java",

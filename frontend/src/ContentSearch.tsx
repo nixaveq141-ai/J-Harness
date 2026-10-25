@@ -17,6 +17,8 @@ export function ContentSearch({ api, profile, view, currentSession, workspaces, 
     try {
       const value=await api.searchContent({text:query,mode,profile:selectedProfile,view:selectedView,sessionId:single&&currentSession?currentSession:'',cursor:more&&result?result.next:'',limit:20,rebuild},controller.signal)
       if(controller.signal.aborted)return
+      const cumulative=(more&&result?result.matches.length:0)+value.matches.length
+      if(cumulative>value.total||!value.more&&cumulative!==value.total||value.more&&(cumulative>=value.total||!value.matches.length||!value.next))throw new ApiError('INVALID_RESPONSE')
       if(more&&result&&(value.snapshotId!==result.snapshotId||value.total!==result.total||value.matches.length+result.matches.length>value.total||value.more&&value.next===result.next||value.matches.some(h=>result.matches.some(old=>old.eventId===h.eventId&&old.sessionId===h.sessionId))))throw new ApiError('INVALID_RESPONSE')
       setResult(more&&result?{...value,matches:[...result.matches,...value.matches]}:value)
     } catch(e) {

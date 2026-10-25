@@ -1,3 +1,4 @@
+import { useLifetime } from './lifecycle'
 import { ContentSearch } from './ContentSearch'
 import { ContentReader } from './ContentPanel'
 import { Conversation } from './Conversation'
@@ -304,7 +305,7 @@ export function App() {
       <header className="topbar"><div className="task-heading"><h1>{searchOpen?'内容检索':taskTitle}</h1>{active && !searchOpen && <Status value={active} />}</div><div className="top-actions"><span className="local-badge">本机工作台</span><Button aria-label={inspectorOpen ? '关闭任务详情' : '打开任务详情'} title="任务详情" onClick={() => setInspectorOpen(v => !v)}><Icon name="panel" /></Button></div></header>
       {error && <div className="error-banner" role="alert"><span>{error}</span><button aria-label="关闭提示" onClick={() => setError('')}><Icon name="close" /></button></div>}
       {!api ? <section className="welcome connection-page"><div className="intro-symbol">J</div><h2>{connecting ? '正在打开工作台…' : '本机服务暂时无法连接'}</h2><p>请保持启动窗口运行。</p><Button variant="primary" disabled={connecting} onClick={() => void connect()}>重新连接</Button></section>
-        : searchOpen ? <ContentSearch api={api} profile={viewProfile} view={viewMode} currentSession={selected} workspaces={workspaceNames} onBack={()=>setSearchOpen(false)} onOpen={async id=>{const task=await api.detail(id);showTask(task);setFocusedEvent(null);setInspectorOpen(false);setSearchOpen(false)}}/> : settingsOpen ? <Settings api={api} onBack={() => { setModelId(''); setSettingsOpen(false) }} onGuardChange={setSettingsGuard} /> : <>
+        : searchOpen ? <ContentSearch api={api} profile={viewProfile} view={viewMode} currentSession={selected} workspaces={workspaceNames} onBack={()=>setSearchOpen(false)} onOpen={async id=>{if(navigationGuard)return;const task=await api.detail(id);if(currentApi.current!==api)return;showTask(task);setFocusedEvent(null);setInspectorOpen(false);setSearchOpen(false)}}/> : settingsOpen ? <Settings api={api} onBack={() => { setModelId(''); setSettingsOpen(false) }} onGuardChange={setSettingsGuard} /> : <>
           {pending && <div className="pending-banner" role="status"><div><strong>本次提交待核对</strong><p>为避免重复执行，已暂停创建。核对操作只读取后台记录。</p></div><Button variant="outline" disabled={!!busy || submitting} onClick={() => void reconcile()}>核对提交状态</Button>
             <button className="text-button" disabled={submitting || !!busy} onClick={() => { if (window.confirm('这只清除本页待核对记录，后台任务可能仍在执行。确定已检查任务列表并清除？')) { storage('jh-pending', ''); setPending('') } }}>清除本页记录</button></div>}
           {!selected ? <section className="welcome"><div className="intro-symbol">J</div><h2>今天，想完成什么？</h2><p>描述目标，让 J-Harness 在你的工作区中协助完成。</p><div className="suggestions">{['阅读项目结构，梳理模块职责', '检查最近的修改，指出潜在问题', '分析一个问题，并提出修复方案'].map(s => <button key={s} onClick={() => setGoal(s)}><Icon name="file" />{s}<Icon name="chevron" /></button>)}</div></section>
@@ -353,8 +354,8 @@ function EventRow({ event, onSelect }: { event: SessionEvent; onSelect: () => vo
 function InspectorPanel({ api, task, tab, event, fileSelection,onFile }: { api: Api | null; task?: Task; tab: Inspector; event: SessionEvent | null; fileSelection:FileSelection|null;onFile:(path:string,line:number)=>void }) {
   const [data, setData] = useState<unknown>(null), [error, setError] = useState(''), [loading, setLoading] = useState(false)
   const [query, setQuery] = useState(''), [result, setResult] = useState<Page | null>(null)
-  const mounted = useRef(true), searchLock = useRef(false)
-  useEffect(() => { mounted.current = true; return () => { mounted.current = false } }, [])
+  const life=useLifetime(api,task?.taskId,tab),searchLock=useRef(false)
+  useEffect(()=>{searchLock.current=false;setLoading(false);setError('');setData(null);setResult(null)},[api,task?.taskId,tab])
   useEffect(() => {
     if (!api || !task || !['report', 'diff'].includes(tab)) return
     let cancelled = false
@@ -367,9 +368,9 @@ function InspectorPanel({ api, task, tab, event, fileSelection,onFile }: { api: 
   async function search(more = false) {
     if (!api || !task || !query.trim() || searchLock.current) return
     searchLock.current = true; setLoading(true); setError('')
-    try { const p = await api.search(task.taskId, query.trim(), more ? result?.next : ''); if (mounted.current) setResult(more && result ? { ...p, events: mergeEvents(result.events, p.events) } : p) }
-    catch (e) { if (mounted.current) setError(errorText(e)) }
-    finally { searchLock.current = false; if (mounted.current) setLoading(false) }
+    try { const p = await api.search(task.taskId, query.trim(), more ? result?.next : ''); if (life.alive) setResult(more && result ? { ...p, events: mergeEvents(result.events, p.events) } : p) }
+    catch (e) { if (life.alive) setError(errorText(e)) }
+    finally { if(life.alive){searchLock.current = false;setLoading(false)} }
   }
   return <section className="inspector-body" role="tabpanel" id={`panel-${tab}`} aria-labelledby={`tab-${tab}`}>
     {!api || !task ? <p className="empty-detail">选择一个已连接的任务，查看执行详情。</p> : <>

@@ -8,11 +8,12 @@ public final class EvidenceReport {
 
     public static Map<String, Object> build(
             String goal, List<SessionEvent> events, DataSanitizer sanitizer) {
-        List<Map<String, Object>> changes = new ArrayList<>(),
-                commands = new ArrayList<>(),
-                partialChanges = new ArrayList<>(),
-                issues = new ArrayList<>(),
-                previews = new ArrayList<>();
+        var budget = new ReportProjection(131072, 8192, 4096);
+        FactList changes = new FactList(budget, sanitizer),
+                commands = new FactList(budget, sanitizer),
+                partialChanges = new FactList(budget, sanitizer),
+                issues = new FactList(budget, sanitizer),
+                previews = new FactList(budget, sanitizer);
         String narration = "",
                 status = "INCOMPLETE",
                 reason = "NO_TERMINAL_EVENT",
@@ -29,16 +30,18 @@ public final class EvidenceReport {
             if (event.type().equals("model.requested")
                     && Objects.equals(latestTurn, event.turnId()))
                 currentRequests.add(event.eventId());
-        List<Map<String, Object>> models = new ArrayList<>(), terminals = new ArrayList<>();
+        FactList models = new FactList(budget, sanitizer),
+                terminals = new FactList(budget, sanitizer);
+        SessionEvent lastTerminal = null;
         for (var event : events) {
             if (event.type().equals("model.observed")
                     && currentRequests.contains(event.payload().get("sourceEvent")))
                 models.add(reference(event, event.payload()));
             if (event.type().equals("terminal.snapshot")) {
-                terminals.clear();
-                terminals.add(reference(event, event.payload()));
+                lastTerminal = event;
             }
         }
+        if (lastTerminal != null) terminals.add(reference(lastTerminal, lastTerminal.payload()));
         for (var e : events) {
             if (latestTurn != null
                     && e.level() != EventLevel.SESSION
@@ -46,11 +49,11 @@ public final class EvidenceReport {
             if (e.type().equals("assistant.message")
                     && e.payload().get("content") instanceof String text) narration = text;
             if (e.type().equals("turn.ended")) {
-                status = factText(e.payload().get("status"));
-                reason = factText(e.payload().get("reason"));
-                currency = factText(e.payload().get("currency"));
+                status = safeFact(e.payload().get("status"), sanitizer);
+                reason = safeFact(e.payload().get("reason"), sanitizer);
+                currency = safeFact(e.payload().get("currency"), sanitizer);
                 cost =
-                        factText(
+                        costText(
                                 e.payload()
                                         .getOrDefault(
                                                 "reservedApiCost",
@@ -58,10 +61,10 @@ public final class EvidenceReport {
             }
             if (e.type().equals("tool.preview")) previews.add(reference(e, e.payload()));
             if (!e.type().equals("tool.completed")) continue;
-            var value = Values.object(e.payload().getOrDefault("value", Map.of()));
-            var display = Values.object(e.payload().getOrDefault("display", Map.of()));
+            var value = objectOrEmpty(e.payload().get("value"));
+            var display = objectOrEmpty(e.payload().get("display"));
             if ("execute_command".equals(e.payload().get("tool")) && value.containsKey("argv"))
-                commands.add(reference(e, commandSummary(value)));
+                commands.add(reference(e, value));
             if ("SUCCESS".equals(e.payload().get("status"))
                     && "WORKSPACE_WRITE".equals(e.payload().get("sideEffectLevel"))
                     && display.containsKey("path")
@@ -77,10 +80,10 @@ public final class EvidenceReport {
                             instanceof List<?> entries)
                 for (Object change : entries)
                     if (!Objects.equals(
-                            Values.object(change).get("beforeVersion"),
-                            Values.object(change).get("afterVersion")))
+                            objectOrEmpty(change).get("beforeVersion"),
+                            objectOrEmpty(change).get("afterVersion")))
                         ("SUCCESS".equals(e.payload().get("status")) ? changes : partialChanges)
-                                .add(reference(e, Values.object(change)));
+                                .add(reference(e, objectOrEmpty(change)));
             if (!"SUCCESS".equals(e.payload().get("status")))
                 issues.add(
                         reference(
@@ -93,51 +96,151 @@ public final class EvidenceReport {
                                                 ? error
                                                 : Map.of("code", "UNVERIFIED_EVENT"))));
         }
-        return sanitizer.sanitize(
+        var report =
+                new LinkedHashMap<String, Object>(
+                        Map.of(
+                                "goal",
+                                ReportProjection.text(
+                                        sanitizer.sanitize(Map.of("text", goal)).get("text")
+                                                        instanceof String safeGoal
+                                                ? safeGoal
+                                                : "[WITHHELD]",
+                                        4096),
+                                "status",
+                                status,
+                                "reason",
+                                reason,
+                                "recordedFacts",
+                                Map.of(
+                                        "changes",
+                                        changes,
+                                        "commands",
+                                        commands,
+                                        "partialOrUncertainChanges",
+                                        partialChanges,
+                                        "issues",
+                                        issues,
+                                        "previews",
+                                        previews,
+                                        "models",
+                                        models,
+                                        "terminals",
+                                        terminals),
+                                "modelExplanation",
+                                safeNarration(narration, sanitizer),
+                                "unresolvedProblems",
+                                status.equals("COMPLETED")
+                                        ? List.of(
+                                                "No failed declared acceptance criterion; historical issues remain in recordedFacts")
+                                        : List.of(reason),
+                                "unexecutedValidation",
+                                commands.isEmpty()
+                                        ? List.of(
+                                                "No command execution is recorded; model prose is not test evidence")
+                                        : List.of(
+                                                "Only the recorded commands were executed; other checks are unverified"),
+                                "cost",
+                                Map.of(
+                                        "currency",
+                                        currency,
+                                        "upperBound",
+                                        cost,
+                                        "billing",
+                                        "provider usage at configured worst-case rates, or retained reservation; not an invoice")));
+        var lists =
                 Map.of(
-                        "goal",
-                        goal,
-                        "status",
-                        status,
-                        "reason",
-                        reason,
-                        "recordedFacts",
-                        Map.of(
-                                "changes",
-                                changes,
-                                "commands",
-                                commands,
-                                "partialOrUncertainChanges",
-                                partialChanges,
-                                "issues",
-                                issues,
-                                "previews",
-                                previews,
-                                "models",
-                                models,
-                                "terminals",
-                                terminals),
-                        "modelExplanation",
-                        safeNarration(narration, sanitizer),
-                        "unresolvedProblems",
-                        status.equals("COMPLETED")
-                                ? List.of(
-                                        "No failed declared acceptance criterion; historical issues remain in recordedFacts")
-                                : List.of(reason),
-                        "unexecutedValidation",
-                        commands.isEmpty()
-                                ? List.of(
-                                        "No command execution is recorded; model prose is not test evidence")
-                                : List.of(
-                                        "Only the recorded commands were executed; other checks are unverified"),
-                        "cost",
-                        Map.of(
-                                "currency",
-                                currency,
-                                "upperBound",
-                                cost,
-                                "billing",
-                                "provider usage at configured worst-case rates, or retained reservation; not an invoice")));
+                        "changes",
+                        changes,
+                        "commands",
+                        commands,
+                        "partialOrUncertainChanges",
+                        partialChanges,
+                        "issues",
+                        issues,
+                        "previews",
+                        previews,
+                        "models",
+                        models,
+                        "terminals",
+                        terminals);
+        var coverage = new LinkedHashMap<String, Object>();
+        lists.forEach(
+                (name, list) ->
+                        coverage.put(
+                                name,
+                                Map.of(
+                                        "observed",
+                                        list.observed,
+                                        "included",
+                                        list.size(),
+                                        "omitted",
+                                        list.observed - list.size())));
+        report.put(
+                "reportCoverage",
+                Map.of(
+                        "complete",
+                        !budget.truncated()
+                                && goal.length() <= 4096
+                                && narration.length() <= 16384
+                                && lists.values().stream().allMatch(l -> l.observed == l.size()),
+                        "sections",
+                        coverage,
+                        "source",
+                        "Original session event log; retained entries carry eventId, callId, turnId and timestamp. Omitted entries require reading that log.",
+                        "maxEntriesPerSection",
+                        128,
+                        "payloadCharacterBudget",
+                        131072));
+        return sanitizer.sanitize(report);
+    }
+
+    private static final class FactList extends ArrayList<Map<String, Object>> {
+        private static final long serialVersionUID = 1L;
+        private final transient ReportProjection budget;
+        private final transient DataSanitizer sanitizer;
+        private int observed;
+
+        FactList(ReportProjection budget, DataSanitizer sanitizer) {
+            this.budget = budget;
+            this.sanitizer = sanitizer;
+        }
+
+        @Override
+        public boolean add(Map<String, Object> value) {
+            observed++;
+            if (size() >= 128) return false;
+            var safe = sanitizer.sanitize(value);
+            var projected = new LinkedHashMap<>(objectOrEmpty(budget.project(safe)));
+            for (String key :
+                    List.of("eventId", "callId", "turnId", "timestamp", "scope", "toolStatus"))
+                if (safe.containsKey(key))
+                    projected.put(
+                            key,
+                            safe.get(key) instanceof String text
+                                    ? ReportProjection.text(text, 256)
+                                    : safe.get(key));
+            return super.add(projected);
+        }
+
+        @Override
+        public void clear() {
+            super.clear();
+            observed = 0;
+        }
+    }
+
+    private static Map<String, Object> objectOrEmpty(Object value) {
+        return value instanceof Map<?, ?> ? Values.object(value) : Map.of();
+    }
+
+    private static String costText(Object value) {
+        String text = factText(value);
+        if (text.length() > 128) return "UNKNOWN";
+        try {
+            return new java.math.BigDecimal(text).signum() >= 0 ? text : "UNKNOWN";
+        } catch (NumberFormatException invalid) {
+            return "UNKNOWN";
+        }
     }
 
     private static String safeNarration(String narration, DataSanitizer sanitizer) {
@@ -166,14 +269,9 @@ public final class EvidenceReport {
         return value instanceof String s && !s.isBlank() ? s : "UNKNOWN";
     }
 
-    private static Map<String, Object> commandSummary(Map<String, Object> value) {
-        Map<String, Object> summary = new LinkedHashMap<>(value);
-        for (String key : List.of("stdout", "stderr"))
-            if (summary.get(key) instanceof String text && text.length() > 2048) {
-                summary.put(key, text.substring(0, 2048));
-                summary.put(key + "ReportTruncated", true);
-            }
-        return summary;
+    private static String safeFact(Object value, DataSanitizer sanitizer) {
+        var safe = sanitizer.sanitize(Map.of("fact", value == null ? "" : value));
+        return ReportProjection.text(factText(safe.get("fact")), 128);
     }
 
     public static String markdown(Map<String, Object> report) {
@@ -194,6 +292,8 @@ public final class EvidenceReport {
                 + report.get("unresolvedProblems")
                 + "\n\n费用上界："
                 + report.get("cost")
+                + "\n\n报告覆盖范围（截断不改变执行结果，完整证据须回读来源日志）："
+                + report.get("reportCoverage")
                 + "\n";
     }
 }

@@ -52,34 +52,34 @@
     {
       "source": "packages/client/ui-primitives/src/Pill.tsx",
       "destination": "src/upstream/Pill.tsx",
-      "sha256": "bc474f93aeed215445d180c637c1aaefbbbd2ff13d8f17d1dd506defbe2cff8d",
+      "sha256": "888d98313742251ce4b91f560cbee92f88347f3a79c30dd32a40b03c24115205",
       "modified": true,
       "upstreamSha256": "851727b4f745755f8553a92bc5881e54d0479ea680d1686533ba210cb943ca2f",
-      "modification": "R4: keyboard, disabled, overflow and controlled component boundary fixes; upstream appearance retained."
+      "modification": "R4: typed static span/button props, complete span attributes, hover-capable pointer feedback and explicit keyboard event type; incumbent appearance retained."
     },
     {
       "source": "packages/client/ui-primitives/src/Pill.module.css",
       "destination": "src/upstream/Pill.module.css",
-      "sha256": "a6258eff405b10351daf33fd2da222253b17a576ce49753d22ebf813a14e6f4b",
+      "sha256": "45d6c1d41416e5e7fa3cb2599b25485ed3a26c3e815f88ff3cbc0666eef2053d",
       "modified": true,
       "upstreamSha256": "8059dd46e4a5340c00e6758278b6afb4f480c4dd2d11c7b555d914e52bd06f82",
-      "modification": "R4: keyboard, disabled, overflow and controlled component boundary fixes; upstream appearance retained."
+      "modification": "R4: typed static span/button props, complete span attributes, hover-capable pointer feedback and explicit keyboard event type; incumbent appearance retained."
     },
     {
       "source": "packages/client/ui-primitives/src/SegmentedTabs.tsx",
       "destination": "src/upstream/SegmentedTabs.tsx",
-      "sha256": "78a75bc091194b5d71209cae614ad579b5296c944ffae06dee6e62d122533f16",
+      "sha256": "20e5a9e28a4b98c12fb2bb26a30c1bbe084ef3d1c013b3c204dae1724da48c35",
       "modified": true,
       "upstreamSha256": "c069e4bf6d76170420cf27b160b3e7d8f9f36669ef53702182459d57ba3637fd",
-      "modification": "R4: keyboard, disabled, overflow and controlled component boundary fixes; upstream appearance retained."
+      "modification": "R4: typed static span/button props, complete span attributes, hover-capable pointer feedback and explicit keyboard event type; incumbent appearance retained."
     },
     {
       "source": "packages/client/ui-primitives/src/SegmentedTabs.module.css",
       "destination": "src/upstream/SegmentedTabs.module.css",
-      "sha256": "8431c0f499466f6eff09e3db72994284c026e2fbda060d05d6aec31a478bfb77",
+      "sha256": "5baeada50fcd38ff3279523fc877b654dd78f8cf1d752b67410a5a3eb1b48389",
       "modified": true,
       "upstreamSha256": "022efca5f83f640c83afcf472ef64b2776b2b20bfa351adda347171ba5cc4c18",
-      "modification": "R4: keyboard, disabled, overflow and controlled component boundary fixes; upstream appearance retained."
+      "modification": "R4: typed static span/button props, complete span attributes, hover-capable pointer feedback and explicit keyboard event type; incumbent appearance retained."
     },
     {
       "source": "packages/client/ui-primitives/src/TextShimmer.tsx",

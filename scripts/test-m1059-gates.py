@@ -29,7 +29,7 @@ class CiGateTest(unittest.TestCase):
                          jarSha256='b'*64, sourceSha256={p:'c'*64 for p in contract['requiredSourcePaths']},
                          uiSha256={p:'d'*64 for p in ['index.html','ui-license.txt','assets/index.js','assets/index.css']},
                          suites=self.suites, java=dict(tests=sum(len(s['cases']) for s in self.suites),failures=0,errors=0,skipped=0),
-                         browserChecks=813,sdkChecks=66,frontendClientChecks=38)
+                         browserChecks=813,sdkChecks=66,frontendClientChecks=42)
 
     def write_reports(self, change=None):
         for os_name in ['Windows','Linux','macOS']:

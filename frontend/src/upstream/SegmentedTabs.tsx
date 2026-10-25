@@ -71,7 +71,7 @@ export function SegmentedTabs<Value extends string>({ items, value, onChange, la
           aria-controls={item.panelId}
           tabIndex={selectedIndex === index ? 0 : -1}
           onClick={() => { onChange(item.value) }}
-          onKeyDown={(event) => { onKeyDown(event, index) }}
+          onKeyDown={(event: KeyboardEvent<HTMLButtonElement>) => { onKeyDown(event, index) }}
         >
           {item.label}
         </Pill>

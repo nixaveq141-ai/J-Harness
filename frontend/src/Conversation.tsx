@@ -52,6 +52,7 @@ function ToolCard({api,id,request,result,onInspect,onFile}:{api:Api;id:string;re
 function LiveDisplay({api,task}:{api:Api;task:Task}) {
   const [value,setValue]=useState<{state:string;text:string;sourceEvent:string;truncated:boolean}|null>(null),[paused,setPaused]=useState(false),[error,setError]=useState('')
   const block=useRef<HTMLElement>(null)
+  useEffect(()=>{setValue(null);setPaused(false);setError('')},[api,task.taskId])
   useEffect(()=>{
     if(paused)return
     const c=new AbortController();let reading=false
@@ -62,7 +63,7 @@ function LiveDisplay({api,task}:{api:Api;task:Task}) {
   },[api,task.taskId,task.phase,paused])
   useEffect(()=>{const node=block.current,scroll=node?.closest('.timeline');if(node&&scroll&&scroll.scrollHeight-scroll.scrollTop-scroll.clientHeight<180)node.scrollIntoView({block:'nearest'})},[value?.text])
   if(!value&&!error)return null
-  if(value?.state==='PERSISTED'||value?.state==='IDLE'||value?.state==='UNAVAILABLE')return error?<p role="status">{error}</p>:null
+  if(value?.state==='PERSISTED'||value?.state==='IDLE'||value?.state==='UNAVAILABLE')return error?<p role="status">{error}</p>:value?.state==='UNAVAILABLE'?<p role="status">临时显示不可用，任务状态与完整回答以持久记录为准；不会重发模型请求。</p>:null
   return <section className="stream-display" ref={block} aria-label="临时流式输出"><div className="content-heading"><strong>{value?.state==='INTERRUPTED'?'输出已中断':'正在生成'}</strong><Button onClick={()=>setPaused(v=>!v)}>{paused?'恢复显示':'停止显示'}</Button></div>
     <p className="muted small">{value?.state==='INTERRUPTED'?'以下片段不是完整答案，不会自动重发请求。':'临时文本尚未成为完整持久回答。停止显示不取消任务。'}</p>{value?.text?<pre>{value.text}</pre>:<p className="muted small">尚无可安全展示的文本，以完整持久记录为准。</p>}{value?.truncated&&<p>临时显示已达65536字符，完整结果请等待持久记录。</p>}{error&&<p role="status">{error}</p>}<details><summary>流来源</summary><code>{value?.sourceEvent}</code></details></section>
 }

@@ -34,8 +34,8 @@ public final class StreamingLlmClient implements LlmClient, ModelRouter {
         return new StreamingLlmClient(
                 delegate,
                 text -> {
-                    display.accept(text);
-                    observer.accept(text);
+                    notifySink(display, text, "");
+                    notifySink(observer, text, "");
                 },
                 secrets,
                 updates);
@@ -49,9 +49,22 @@ public final class StreamingLlmClient implements LlmClient, ModelRouter {
                 display,
                 secrets,
                 update -> {
-                    updates.accept(update);
-                    observer.accept(update);
+                    var empty = new ModelDisplay.Update("", false);
+                    notifySink(updates, update, empty);
+                    notifySink(observer, update, empty);
                 });
+    }
+
+    private static <T> void notifySink(Consumer<T> sink, T value, T empty) {
+        try {
+            sink.accept(value);
+        } catch (RuntimeException ignored) {
+            try {
+                sink.accept(empty);
+            } catch (RuntimeException unavailable) {
+                /* Other sinks still run. */
+            }
+        }
     }
 
     private void display(String cumulative) {

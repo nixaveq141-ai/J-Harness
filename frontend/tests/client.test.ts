@@ -132,6 +132,11 @@ test('diagnosis is read only and rejects incompatible or excessive facts', async
   const calls: string[] = []
   const api = new Api(token, (async (url, init) => { assert.equal(init?.method, 'GET'); calls.push(String(url)); return json(payload) }) as typeof fetch)
   assert.equal((await api.diagnosis('task_1')).sdkFactsSettled, false)
+  const source={callId:'call',eventId:'reply',turnId:'turn',stepId:'other-step'}
+  payload={...data,pending:{...data.pending,unsettledSources:[source]}}
+  assert.deepEqual((await api.diagnosis('task_1')).unsettledSources,[source])
+  payload={...data,pending:{...data.pending,unsettledSources:Array(65).fill(source)}}
+  await assert.rejects(api.diagnosis('task_1'),ApiError)
   payload = { ...data, schemaVersion: 2 }; await assert.rejects(api.diagnosis('task_1'), ApiError)
   payload = { ...data, issues: Array.from({ length: 13 }, () => ({})) }; await assert.rejects(api.diagnosis('task_1'), ApiError)
   payload = { ...data, pending: { ...data.pending, pendingRequests: Array(65).fill('step') } }; await assert.rejects(api.diagnosis('task_1'), ApiError)
@@ -368,4 +373,41 @@ test('content search rejects duplicate matches and nonprogressing pagination', a
     body={source:'sanitized-session-content',snapshotId:'snapshot_1',reusedEvents:0,rebuiltSessions:0,...value}
     await assert.rejects(api.searchContent(input),ApiError)
   }
+})
+
+
+test('extension feedback matches kind-specific host ids and preserves valid argv whitespace', async()=>{
+  const {extensionErrors,freshExtensionId}=await import('../src/extensions.ts')
+  const stdio={id:'x'.repeat(16),transport:'stdio',command:['tool','  exact argument  '],cwd:'.'}
+  assert.deepEqual(extensionErrors('mcp',[stdio]),[])
+  assert.ok(extensionErrors('mcp',[{...stdio,id:'x'.repeat(17)}]).length)
+  assert.ok(extensionErrors('mcp',[stdio,stdio]).length)
+  assert.deepEqual(extensionErrors('subagents',{['r'.repeat(32)]:{tools:['read_file'],requireRead:['README.md']}}),[])
+  assert.equal(freshExtensionId('item',['item-1','item-2']), 'item-3')
+  assert.deepEqual(stdio.command,['tool','  exact argument  '])
+})
+test('extension feedback rejects null types numeric drafts invalid modes and empty required reads',async()=>{
+  const {extensionErrors}=await import('../src/extensions.ts')
+  const skill={id:'guide',directory:'skills',scripts:{run:{path:'run.sh',mode:'SH',timeoutSeconds:10}}}
+  assert.deepEqual(extensionErrors('skills',[skill]),[])
+  for(const value of ['',null,0,1.5,61,'10'])assert.ok(extensionErrors('skills',[{...skill,scripts:{run:{path:'run.sh',mode:'SH',timeoutSeconds:value}}}]).length,String(value))
+  for(const change of [{directory:42},{resources:null},{scripts:{run:{path:'run.sh',mode:'ARGV'}}},{id:'settings'}])assert.ok(extensionErrors('skills',[{...skill,...change}]).length)
+  assert.ok(extensionErrors('subagents',{role:{requireRead:[]}}).length)
+})
+test('MCP URL transport and credential variable feedback accepts host-selected names',async()=>{
+  const {extensionErrors}=await import('../src/extensions.ts')
+  const mcp={id:'docs',transport:'http',url:'https://example.test/mcp',tokenEnv:'MY_RANDOM_NAME'}
+  for(const url of ['https://example.test/mcp','http://localhost:3000/mcp','http://[::1]:3000/mcp'])assert.deepEqual(extensionErrors('mcp',[{...mcp,url}]),[])
+  for(const change of [{url:'http://example.test/mcp'},{url:'http://127.1/mcp'},{url:'https://user:pass@example.test/mcp'},{url:'https://example.test/mcp#x'},{tokenEnv:'wrong-name'},{cwd:'.'},{effects:{tool:[]}}])assert.ok(extensionErrors('mcp',[{...mcp,...change}]).length)
+})
+
+test('event and search pages reject duplicate identities empty continuation and unchanged cursor',async()=>{
+  const event={eventId:'e1',type:'user.message',timestamp:'2026-10-25T00:00:00Z',payload:{}}
+  let body:unknown
+  const api=new Api(token,(async()=>json(body)) as typeof fetch)
+  for(const invalid of [{events:[event,event],next:'e1',more:false},{events:[],next:'cursor',more:true},{events:[event],next:'cursor',more:true}]) {
+    body=invalid;await assert.rejects(api.events('task_1','cursor'),ApiError);await assert.rejects(api.search('task_1','needle','cursor'),ApiError)
+  }
+  body={events:[{...event,eventId:'e'.repeat(128)}],next:'e'.repeat(128),more:false}
+  assert.equal((await api.events('task_1')).next.length,128)
 })

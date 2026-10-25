@@ -104,10 +104,12 @@ function event(value: unknown): SessionEvent {
   return { eventId: identifier(v.eventId), type: text(v.type, 128), timestamp: text(v.timestamp),
     callId: v.callId == null ? null : text(v.callId), ...(v.turnId===undefined?{}:{turnId:v.turnId===null?null:identifier(v.turnId)}),...(v.stepId===undefined?{}:{stepId:v.stepId===null?null:identifier(v.stepId)}), payload: object(v.payload) }
 }
-function page(value: unknown): Page {
+function page(value: unknown, after = ''): Page {
   const v = object(value)
   if (!Array.isArray(v.events) || v.events.length > 100 || typeof v.more !== 'boolean') throw new ApiError('INVALID_RESPONSE')
-  return { events: v.events.map(event), next: text(v.next, 64), more: v.more }
+  const events = v.events.map(event), next = text(v.next, 128)
+  if (new Set(events.map(e=>e.eventId)).size!==events.length || v.more&&(!events.length||!next||next===after)) throw new ApiError('INVALID_RESPONSE')
+  return { events, next, more: v.more }
 }
 export function mergeEvents(old: SessionEvent[], incoming: SessionEvent[]): SessionEvent[] {
   const seen = new Set(old.map(e => e.eventId))
@@ -219,7 +221,9 @@ export class Api {
     const params = new URLSearchParams({ limit: '32', view, ...(profile ? { profile: identifier(profile) } : {}), ...(after ? { after: identifier(after) } : {}) })
     const v = object(await this.json(`/v1/tasks?${params}`, undefined, signal))
     if (!Array.isArray(v.tasks) || v.tasks.length > 32 || typeof v.more !== 'boolean') throw new ApiError('INVALID_RESPONSE')
-    return { tasks: v.tasks.map(task), next: text(v.next, 64), more: v.more }
+    const tasks=v.tasks.map(task), next=text(v.next,64)
+    if(new Set(tasks.map(t=>t.taskId)).size!==tasks.length||v.more&&(!tasks.length||!next||next===after))throw new ApiError('INVALID_RESPONSE')
+    return { tasks, next, more:v.more }
   }
   async metadata(value: Task, patch: { name: string; pinned: boolean; archived: boolean }) {
     return task(await this.json(`/v1/tasks/${identifier(value.taskId)}/metadata`, { revision: value.revision, ...patch }))
@@ -338,7 +342,7 @@ export class Api {
       { approved, reason: reason.trim() || (approved ? '用户批准本次操作' : '用户拒绝本次操作'), callId: approval.callId })
   }
   async events(id: string, after = '', signal?: AbortSignal) {
-    return page(await this.json(`/v1/tasks/${identifier(id)}/events?limit=100${after ? `&after=${identifier(after)}` : ''}`, undefined, signal))
+    return page(await this.json(`/v1/tasks/${identifier(id)}/events?limit=100${after ? `&after=${identifier(after)}` : ''}`, undefined, signal), after)
   }
   async stream(id: string, after: string, receive: (e: SessionEvent) => void, signal: AbortSignal) {
     // A stream is a bounded GET. It never shares a retry path with task creation.
@@ -374,7 +378,7 @@ export class Api {
   async report(id: string) { return this.json(`/v1/tasks/${identifier(id)}/report`) }
   async diagnosis(id: string, signal?: AbortSignal) { return diagnosis(await this.json(`/v1/tasks/${identifier(id)}/diagnosis`, undefined, signal)) }
   async diff(id: string) { return this.json(`/v1/tasks/${identifier(id)}/diff`) }
-  async search(id: string, text: string, after = '') { return page(await this.json(`/v1/tasks/${identifier(id)}/search`, { text, after, limit: 20 })) }
+  async search(id: string, text: string, after = '') { return page(await this.json(`/v1/tasks/${identifier(id)}/search`, { text, after, limit: 20 }), after) }
 }
 
 export interface Workspace { id: string; name: string; path: string; busy: boolean }
@@ -391,6 +395,7 @@ export interface Diagnosis {
   schemaVersion: number; source: string; eventCount: number; task: Task
   association: Record<string, unknown>; configuration: Record<string, unknown>; turnIds: string[]
   issues: Record<string, unknown>[]; issuesLimited: boolean; sdkFactsSettled: boolean
+  unsettledSources: {callId:string;eventId:string;turnId:string;stepId:string}[]
   pending: { uncertainCalls: string[]; unsettledCalls: string[]; pendingRequests: string[]; pendingTerminals: string[]; limited: boolean }
 }
 function diagnosis(value: unknown): Diagnosis {
@@ -402,9 +407,12 @@ function diagnosis(value: unknown): Diagnosis {
     if (!Array.isArray(raw) || raw.length > 64) throw new ApiError('INVALID_RESPONSE')
     return raw.map(x => text(x))
   }
+  const rawSources=p.unsettledSources===undefined?[]:p.unsettledSources
+  if(!Array.isArray(rawSources)||rawSources.length>64)throw new ApiError('INVALID_RESPONSE')
+  const unsettledSources=rawSources.map(raw=>{const source=object(raw);return{callId:text(source.callId),eventId:text(source.eventId),turnId:text(source.turnId),stepId:text(source.stepId)}})
   return { schemaVersion: 1, source: 'session-events', eventCount: v.eventCount as number, task: task(v.task),
     association: object(v.association), configuration: object(v.configuration), turnIds: ids(v.turnIds),
-    issues: v.issues.map(object), issuesLimited: v.issuesLimited, sdkFactsSettled: v.sdkFactsSettled,
+    issues: v.issues.map(object), issuesLimited: v.issuesLimited, sdkFactsSettled: v.sdkFactsSettled,unsettledSources,
     pending: { uncertainCalls: ids(p.uncertainCalls), unsettledCalls: ids(p.unsettledCalls), pendingRequests: ids(p.pendingRequests), pendingTerminals: ids(p.pendingTerminals), limited: p.limited } }
 }
 

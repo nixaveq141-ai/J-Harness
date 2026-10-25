@@ -108,6 +108,29 @@ public final class TaskDiagnosis {
         pending.put("unsettledCalls", limited(recovery.unsettledCalls(), sanitizer));
         pending.put("pendingRequests", limited(recovery.pendingRequests(), sanitizer));
         pending.put("pendingTerminals", limited(recovery.pendingTerminals(), sanitizer));
+        var unsettledSources = new ArrayList<Map<String, Object>>();
+        var sourceCalls = new HashSet<Object>();
+        for (var event : events.reversed()) {
+            if (!event.type().equals("assistant.message")
+                    || !(event.payload().get("tool_calls") instanceof List<?> calls)) continue;
+            for (var call : calls) {
+                var id = object(call).get("id");
+                if (!recovery.unsettledCalls().contains(id)
+                        || unsettledSources.size() >= 64
+                        || !sourceCalls.add(id)) continue;
+                unsettledSources.add(
+                        Map.of(
+                                "callId",
+                                safeString(id, sanitizer),
+                                "eventId",
+                                safeString(event.eventId(), sanitizer),
+                                "turnId",
+                                safeString(event.turnId(), sanitizer),
+                                "stepId",
+                                safeString(event.stepId(), sanitizer)));
+            }
+        }
+        pending.put("unsettledSources", unsettledSources);
         pending.put(
                 "limited",
                 recovery.uncertainCalls().size() > 64

@@ -157,6 +157,51 @@ class M7CliEcosystemTest {
             try (var reports = Files.list(root.resolve(".jharness/reports"))) {
                 assertEquals(2, reports.count());
             }
+            var delivery =
+                    parent.stream()
+                            .filter(event -> event.type().equals("delivery.registered"))
+                            .findFirst()
+                            .orElseThrow();
+            Path reportPath = root.resolve((String) delivery.payload().get("path"));
+            Path markdownPath = root.resolve((String) delivery.payload().get("markdownPath"));
+            assertEquals(
+                    delivery.payload().get("sha256"),
+                    HexFormat.of()
+                            .formatHex(
+                                    java.security.MessageDigest.getInstance("SHA-256")
+                                            .digest(Files.readAllBytes(reportPath))));
+            assertEquals(
+                    delivery.payload().get("markdownSha256"),
+                    HexFormat.of()
+                            .formatHex(
+                                    java.security.MessageDigest.getInstance("SHA-256")
+                                            .digest(Files.readAllBytes(markdownPath))));
+            var report =
+                    Values.object(
+                            new com.fasterxml.jackson.databind.ObjectMapper()
+                                    .readValue(Files.readString(reportPath), Object.class));
+            assertEquals("COMPLETED", report.get("status"));
+            assertTrue(
+                    parent.stream()
+                            .anyMatch(
+                                    event ->
+                                            event.type().equals("tool.completed")
+                                                    && "SUCCESS"
+                                                            .equals(event.payload().get("status"))
+                                                    && "input.txt"
+                                                            .equals(
+                                                                    Values.object(
+                                                                                    event.payload()
+                                                                                            .getOrDefault(
+                                                                                                    "value",
+                                                                                                    Map
+                                                                                                            .of()))
+                                                                            .get("path"))));
+            assertTrue(
+                    report.get("unexecutedValidation")
+                            .toString()
+                            .contains("model prose is not test evidence"));
+            assertEquals(List.of(), Values.object(report.get("recordedFacts")).get("commands"));
             for (String secret : List.of("fixture-only", "mcp-secret-token")) {
                 assertFalse(output.toString(StandardCharsets.UTF_8).contains(secret));
                 assertFalse(server.requests.toString().contains(secret));

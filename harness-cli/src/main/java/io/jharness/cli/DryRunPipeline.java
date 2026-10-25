@@ -70,6 +70,10 @@ final class DryRunPipeline implements ToolPipeline {
         plan.put("policyDecision", decision == null ? "INVALID_PROVIDER_RESULT" : decision.name());
         plan.put("approvalRequired", decision == PolicyEngine.Decision.ASK);
         plan = sanitizer.sanitize(plan);
+        var projection = new ReportProjection(16384, 1024, 8192);
+        plan = new LinkedHashMap<>(Values.object(projection.project(plan)));
+        plan.put("executed", false);
+        if (projection.truncated()) plan.put("previewTruncated", true);
         EventSupport.append(
                 context.session(),
                 context.events(),

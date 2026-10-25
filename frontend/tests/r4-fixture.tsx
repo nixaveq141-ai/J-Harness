@@ -10,13 +10,16 @@ import { SessionActions } from '../src/SessionActions'
 import { Markdown, CodeBlock } from '../src/Markdown'
 import { SegmentedTabs } from '../src/upstream/SegmentedTabs'
 import { Button } from '../src/upstream/Button'
+import { Pill } from '../src/upstream/Pill'
 import { Input } from '../src/upstream/Input'
+import { ExtensionEditor } from '../src/ExtensionEditor'
+import { Conversation } from '../src/Conversation'
 import '../src/upstream/theme/base.css'
 import '../src/upstream/theme/design-platform.css'
 import '../src/upstream/theme/focus.css'
 import '../src/upstream/theme/scrollbar.css'
 import '../src/upstream/theme/corner-shape.css'
 import '../src/style.css'
-const components={ModelPicker,Settings,ContentSearch,ContentReader,WorkspacePicker,Questions,SessionActions,Markdown,CodeBlock,SegmentedTabs,Button,Input}
+const components={ModelPicker,Settings,ContentSearch,ContentReader,WorkspacePicker,Questions,SessionActions,Markdown,CodeBlock,SegmentedTabs,Button,Input,ExtensionEditor,Conversation,Pill}
 const root=createRoot(document.getElementById('root')!)
 Object.assign(window,{r4:{mount:(name:keyof typeof components,props:object)=>root.render(React.createElement(components[name] as React.ComponentType<any>,props)),clear:()=>root.render(null)}})

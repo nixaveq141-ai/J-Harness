@@ -236,6 +236,18 @@ class M105DiagnosisTest {
         assertEquals(List.of("pending-step"), pending.get("pendingRequests"));
         assertEquals(List.of("unsettled"), pending.get("unsettledCalls"));
         assertEquals(List.of("terminal"), pending.get("pendingTerminals"));
+        assertEquals(
+                List.of(
+                        Map.of(
+                                "callId",
+                                "unsettled",
+                                "eventId",
+                                "reply",
+                                "turnId",
+                                "turn",
+                                "stepId",
+                                "other-step")),
+                pending.get("unsettledSources"));
     }
 
     @Test
@@ -300,15 +312,33 @@ class M105DiagnosisTest {
         assertEquals("Approval expired", row.get("approvalReason"));
         assertEquals("DENIED", row.get("category"));
         // Cancellation requested by a host must not override a completed result in this projection.
-        assertTrue(
-                ((List<?>)
-                                TaskDiagnosis.inspect(
-                                                List.of(
-                                                        tool(
-                                                                "tool.completed",
-                                                                "won",
-                                                                Map.of("status", "SUCCESS"))))
-                                        .get("issues"))
-                        .isEmpty());
+        var completed = tool("tool.completed", "won", Map.of("status", "SUCCESS"));
+        var cancelled =
+                new SessionEvent(
+                        "cancelled",
+                        "session",
+                        "turn.ended",
+                        Instant.now(),
+                        1,
+                        EventLevel.TURN,
+                        completed.turnId(),
+                        null,
+                        null,
+                        Map.of("status", "CANCELLED", "reason", "USER_CANCELLED"));
+        for (var events : List.of(List.of(cancelled, completed), List.of(completed, cancelled))) {
+            var diagnosis = TaskDiagnosis.inspect(events);
+            assertEquals(1, ((List<?>) diagnosis.get("issues")).size());
+            assertTrue(
+                    ((List<?>) diagnosis.get("issues"))
+                            .stream()
+                                    .noneMatch(
+                                            candidate ->
+                                                    "won"
+                                                            .equals(
+                                                                    Values.object(candidate)
+                                                                            .get("callId"))));
+            assertEquals(List.of(), Values.object(diagnosis.get("pending")).get("uncertainCalls"));
+            assertEquals("SUCCESS", completed.payload().get("status"));
+        }
     }
 }

@@ -1,0 +1,2 @@
+# Local validation receipts bind exact bytes, including JSON line endings.
+OCR-R4-remediation-2026-10-25-results.json -text

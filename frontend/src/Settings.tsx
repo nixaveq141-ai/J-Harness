@@ -10,6 +10,7 @@ import { Input } from './upstream/Input'
 import { Tag } from './upstream/Tag'
 import { SegmentedTabs, type SegmentedTab } from './upstream/SegmentedTabs'
 import { ExtensionEditor } from './ExtensionEditor'
+import { extensionErrors } from './extensions'
 import { useLifetime } from './lifecycle'
 
 type Tab = 'models' | 'plugins' | 'permissions'
@@ -73,6 +74,10 @@ export function Settings({ api, onBack, onGuardChange }: { api: Api; onBack: () 
     let extensions: Record<string, unknown>
     try { extensions = { ...data.extensions, ...Object.fromEntries(extensionTypes.map(x => [x.key, JSON.parse(drafts[x.key] ?? '{}')])) } }
     catch { setError('扩展配置不是有效 JSON，请检查后再保存。'); setTab('plugins'); return }
+    for (const kind of ['mcp','skills','skillRoots','subagents'] as const) {
+      const errors = extensionErrors(kind, extensions[kind])
+      if (errors.length) { setError(errors.join(' ')); setTab('plugins'); return }
+    }
     const pendingKeys = Object.fromEntries(Object.entries(keys).filter(([, value]) => value !== ''))
     if (Object.keys(pendingKeys).length > 4) { setError('一次最多更新 4 个连接的密钥，请分次保存。'); return }
     lock.current = true; setBusy(true); setError(''); setNotice('')

@@ -282,6 +282,11 @@
         "stopped-host event diagnostic is scoped to the deliberately stopped origin",
         "live-host CORS writes and JavaScript errors remain failures",
         "browser connection obtains an in-memory session without user input",
+        "turn offsets and content search limits reject unsafe numbers before fetching",
+        "aborting JSON reads classifies both rejected and completed reader cancellation",
+        "model catalog rejects a default outside the validated connection set",
+        "question reconciliation finds an older question across bounded pages without posting",
+        "mutation barrier changes before and after a lost response for read reconciliation",
         "diagnosis is read only and rejects incompatible or excessive facts",
         "history pagination has bounded rows and explicit workspace filters",
         "session metadata uses revision and fork has an independent submission identity",
@@ -311,7 +316,11 @@
         "skill catalog validates names hashes tool association and never posts",
         "actual tool inventory rejects duplicate names invalid effects and false records",
         "content search validates source and exact workspace session archive scope",
-        "content search rejects duplicate matches and nonprogressing pagination"
+        "content search rejects duplicate matches and nonprogressing pagination",
+        "extension feedback matches kind-specific host ids and preserves valid argv whitespace",
+        "extension feedback rejects null types numeric drafts invalid modes and empty required reads",
+        "MCP URL transport and credential variable feedback accepts host-selected names",
+        "event and search pages reject duplicate identities empty continuation and unchanged cursor"
       ],
       "cwd": "frontend",
       "nodeArgs": [

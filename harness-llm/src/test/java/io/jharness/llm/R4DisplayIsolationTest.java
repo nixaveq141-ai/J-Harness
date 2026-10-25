@@ -75,4 +75,66 @@ class R4DisplayIsolationTest {
                                         CancellationToken.NONE));
         assertEquals("MODEL_BAD_RESPONSE", error.code());
     }
+
+    @Test
+    void independentObserversStillReceiveFramesWhenEarlierSinksFail() {
+        var text = new ArrayList<String>();
+        var updates = new ArrayList<ModelDisplay.Update>();
+        var client =
+                new StreamingLlmClient(
+                                provider(false),
+                                value -> {
+                                    throw new IllegalStateException();
+                                },
+                                List.of())
+                        .withDisplay(
+                                value -> {
+                                    throw new IllegalStateException();
+                                })
+                        .withDisplay(text::add)
+                        .withDisplayUpdates(
+                                value -> {
+                                    throw new IllegalStateException();
+                                })
+                        .withDisplayUpdates(updates::add);
+        assertEquals(
+                "final answer",
+                client.complete(
+                                new ChatRequest(List.of(), List.of(), Map.of()),
+                                CancellationToken.NONE)
+                        .text());
+        assertTrue(text.contains("final answer"));
+        assertTrue(updates.stream().anyMatch(update -> update.text().equals("final answer")));
+    }
+
+    @Test
+    void frozenRouteAndFutureRouteBothForwardDisplayObservers() {
+        var texts = new ArrayList<String>();
+        var updates = new ArrayList<ModelDisplay.Update>();
+        ModelRouter router =
+                new ModelRouter() {
+                    public Set<String> routes() {
+                        return Set.of("a", "b");
+                    }
+
+                    public LlmClient select(String route) {
+                        return new StreamingLlmClient(provider(false), value -> {}, List.of());
+                    }
+
+                    public void close() {}
+                };
+        var frozen =
+                new RoutedLlmClient(router, "a")
+                        .withDisplay(texts::add)
+                        .withDisplayUpdates(updates::add);
+        var request = new ChatRequest(List.of(), List.of(), Map.of());
+        frozen.complete(request, CancellationToken.NONE);
+        assertTrue(texts.contains("final answer"));
+        assertTrue(updates.stream().anyMatch(update -> update.text().equals("final answer")));
+        texts.clear();
+        updates.clear();
+        ((ModelRouter) frozen).select("b").complete(request, CancellationToken.NONE);
+        assertTrue(texts.contains("final answer"));
+        assertTrue(updates.stream().anyMatch(update -> update.text().equals("final answer")));
+    }
 }

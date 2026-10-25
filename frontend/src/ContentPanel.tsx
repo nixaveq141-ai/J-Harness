@@ -18,7 +18,13 @@ function failure(e:unknown) {
   }
   return '读取未完成，请检查连接后重新读取。'
 }
-export function ContentReader({api,id,kind,target,line=0,onClose}:{api:Api;id:string;kind:'file'|'artifacts'|'content';target:string;line?:number;onClose?:()=>void}) {
+type ContentReaderProps = {api:Api;id:string;kind:'file'|'artifacts'|'content';target:string;line?:number;onClose?:()=>void}
+export function ContentReader(props:ContentReaderProps) {
+  const identity=useRef({api:props.api,epoch:0})
+  if(identity.current.api!==props.api)identity.current={api:props.api,epoch:identity.current.epoch+1}
+  return <ContentReaderBody key={JSON.stringify([identity.current.epoch,props.id,props.kind,props.target,props.line??0])} {...props}/>
+}
+function ContentReaderBody({api,id,kind,target,line=0,onClose}:ContentReaderProps) {
   const [page,setPage]=useState<ContentPage|null>(null),[error,setError]=useState(''),[busy,setBusy]=useState(false),[notice,setNotice]=useState('')
   const [request,setRequest]=useState({offset:0,version:'',line,serial:0}),[past,setPast]=useState<number[]>([])
   const abort=useRef<AbortController|null>(null),downloading=useRef(false)

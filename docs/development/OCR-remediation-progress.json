@@ -1,8 +1,8 @@
 {
-  "updatedAt": "2026-10-23",
+  "updatedAt": "2026-10-25",
   "phase": "R4",
   "status": "IMPLEMENTATION_IN_PROGRESS",
-  "details": "docs/development/OCR-R4-progress-2026-10-23.md",
+  "details": "docs/development/OCR-R4-remediation-2026-10-25.md",
   "productMilestone": "M10.5.9",
   "productStatus": "LOCAL_PARTIAL_CI_PENDING",
   "m11Eligible": false,
@@ -96,19 +96,19 @@
     },
     "R4-01": {
       "status": "IN_PROGRESS",
-      "description": "已交付部分实现和回归；原115条采纳范围仍需逐项复核，不标记整包完成。"
+      "description": "2026-10-25继续R4本地修复：本轮115索引中32条实施或回归补强、1条契约澄清、82条保留前轮实现；详见OCR-R4-remediation-2026-10-25与逐项scope台账。最终回执独立归档，不把相关套件通过视为115条精确窗口或整包/三平台三引擎验收完成。"
     },
     "R4-02": {
       "status": "IN_PROGRESS",
-      "description": "已交付部分实现和回归；原115条采纳范围仍需逐项复核，不标记整包完成。"
+      "description": "2026-10-25继续R4本地修复：本轮115索引中32条实施或回归补强、1条契约澄清、82条保留前轮实现；详见OCR-R4-remediation-2026-10-25与逐项scope台账。最终回执独立归档，不把相关套件通过视为115条精确窗口或整包/三平台三引擎验收完成。"
     },
     "R4-03": {
       "status": "IN_PROGRESS",
-      "description": "已交付部分实现和回归；原115条采纳范围仍需逐项复核，不标记整包完成。"
+      "description": "2026-10-25继续R4本地修复：本轮115索引中32条实施或回归补强、1条契约澄清、82条保留前轮实现；详见OCR-R4-remediation-2026-10-25与逐项scope台账。最终回执独立归档，不把相关套件通过视为115条精确窗口或整包/三平台三引擎验收完成。"
     },
     "R4-04": {
       "status": "IN_PROGRESS",
-      "description": "已交付部分实现和回归；原115条采纳范围仍需逐项复核，不标记整包完成。"
+      "description": "2026-10-25继续R4本地修复：本轮115索引中32条实施或回归补强、1条契约澄清、82条保留前轮实现；详见OCR-R4-remediation-2026-10-25与逐项scope台账。最终回执独立归档，不把相关套件通过视为115条精确窗口或整包/三平台三引擎验收完成。"
     }
   },
   "r1": {
@@ -162,5 +162,15 @@
     "publishRelease": false,
     "paidModelCalls": false,
     "executed": false
+  },
+  "r4Increment": {
+    "status": "LOCAL_INCREMENT_VALIDATED_R4_OPEN",
+    "scopeOpinions": 115,
+    "incrementImplementedOrStrengthened": 32,
+    "contractClarified": 1,
+    "priorImplementationRetained": 82,
+    "individualAcceptanceClosed": 0,
+    "ledger": "docs/development/OCR-R4-scope-2026-10-25.json",
+    "results": "docs/testing/OCR-R4-remediation-2026-10-25-results.json"
   }
 }
