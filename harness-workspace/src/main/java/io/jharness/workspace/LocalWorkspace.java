@@ -390,7 +390,7 @@ public final class LocalWorkspace implements WorkspaceFiles {
         }
         String before = HexFormat.of().formatHex(sha().digest(snapshot));
         StringBuilder out = new StringBuilder();
-        int line = 1;
+        int line = 1, lastIncludedLine = 0;
         boolean truncated = false;
         boolean beginning = true;
         CharsetDecoder decoder =
@@ -402,6 +402,10 @@ public final class LocalWorkspace implements WorkspaceFiles {
             while ((count = reader.read(buffer)) >= 0) {
                 token.throwIfCancelled();
                 for (int index = 0; index < count; index++) {
+                    if (line > endLine) {
+                        truncated = true;
+                        break outer;
+                    }
                     char value = buffer[index];
                     if (value == 0)
                         throw new HarnessException("BINARY_FILE", "Binary file is not text");
@@ -413,11 +417,9 @@ public final class LocalWorkspace implements WorkspaceFiles {
                             break outer;
                         }
                         out.append(value);
+                        lastIncludedLine = line;
                     }
-                    if (value == '\n' && ++line > endLine) {
-                        truncated = true;
-                        break outer;
-                    }
+                    if (value == '\n') line++;
                 }
             }
         } catch (CharacterCodingException ex) {
@@ -444,7 +446,11 @@ public final class LocalWorkspace implements WorkspaceFiles {
                 "startLine",
                 startLine,
                 "nextLine",
-                Math.min(line, endLine + 1),
+                Math.max(startLine, lastIncludedLine > 0 ? lastIncludedLine + 1 : line),
+                "more",
+                truncated,
+                "eof",
+                !truncated,
                 "truncated",
                 truncated);
     }
@@ -681,10 +687,21 @@ public final class LocalWorkspace implements WorkspaceFiles {
 
     private void walk(Path directory, int depth, CancellationToken token, Visit visitor)
             throws IOException {
-        if (depth <= 0) return;
+        walk(directory, depth, token, visitor, () -> false);
+    }
+
+    private void walk(
+            Path directory,
+            int depth,
+            CancellationToken token,
+            Visit visitor,
+            java.util.function.BooleanSupplier stopped)
+            throws IOException {
+        if (depth <= 0 || stopped.getAsBoolean()) return;
         checkSegments(directory);
         try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory)) {
             for (Path candidate : stream) {
+                if (stopped.getAsBoolean()) break;
                 token.throwIfCancelled();
                 try {
                     checkSegments(candidate, false);
@@ -694,7 +711,7 @@ public final class LocalWorkspace implements WorkspaceFiles {
                 }
                 if (visitor.accept(candidate)
                         && Files.isDirectory(candidate, LinkOption.NOFOLLOW_LINKS))
-                    walk(candidate, depth - 1, token, visitor);
+                    walk(candidate, depth - 1, token, visitor, stopped);
             }
         }
         checkSegments(directory);
@@ -805,7 +822,8 @@ public final class LocalWorkspace implements WorkspaceFiles {
                         else truncated[0] = true;
                     }
                     return true;
-                });
+                },
+                () -> truncated[0]);
         return Map.of("paths", found, "truncated", truncated[0]);
     }
 
@@ -823,8 +841,14 @@ public final class LocalWorkspace implements WorkspaceFiles {
         List<Map<String, Object>> matches = new ArrayList<>();
         List<String> rules = ignoreRules(token);
         boolean truncated = false;
+        int scannedPaths = 0;
         for (ExecPath path : paths) {
+            if (matches.size() >= limit) {
+                truncated = true;
+                break;
+            }
             token.throwIfCancelled();
+            scannedPaths++;
             Path target = resolve(path);
             if (ignored(target, rules)) continue;
             int priorCount = matches.size();
@@ -897,7 +921,15 @@ public final class LocalWorkspace implements WorkspaceFiles {
                 matches.subList(priorCount, matches.size()).clear();
             }
         }
-        return Map.of("matches", matches, "truncated", truncated, "mode", "literal");
+        return Map.of(
+                "matches",
+                matches,
+                "truncated",
+                truncated,
+                "mode",
+                "literal",
+                "scannedPaths",
+                scannedPaths);
     }
 
     @Override

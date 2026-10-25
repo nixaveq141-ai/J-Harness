@@ -339,20 +339,14 @@ public final class DefaultAgentLoop implements AgentLoop {
                 terminal = TaskStatus.FAILED;
                 reason = code;
             }
+            Set<String> completedCalls = new HashSet<>(), startedCalls = new HashSet<>();
+            for (var event : runtime.reader().events()) {
+                if (event.type().equals("tool.completed")) completedCalls.add(event.callId());
+                if (event.type().equals("tool.started")) startedCalls.add(event.callId());
+            }
             for (ToolInvocation call : unresolved) {
-                boolean settled =
-                        runtime.reader().events().stream()
-                                .anyMatch(
-                                        e ->
-                                                call.callId().equals(e.callId())
-                                                        && e.type().equals("tool.completed"));
-                if (settled) continue;
-                boolean bodyMayHaveStarted =
-                        runtime.reader().events().stream()
-                                .anyMatch(
-                                        e ->
-                                                call.callId().equals(e.callId())
-                                                        && e.type().equals("tool.started"));
+                if (completedCalls.contains(call.callId())) continue;
+                boolean bodyMayHaveStarted = startedCalls.contains(call.callId());
                 SideEffectLevel effect =
                         core.tools()
                                 .resolve(call.tool(), runtime.scope())

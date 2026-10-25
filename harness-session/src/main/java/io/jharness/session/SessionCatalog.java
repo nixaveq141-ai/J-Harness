@@ -24,7 +24,6 @@ public final class SessionCatalog {
         for (String id : repo.list()) {
             try {
                 var events = repo.openReader(id).events();
-                var recovery = SessionRecovery.inspect(events);
                 if (workspace != null
                         && events.stream()
                                 .noneMatch(
@@ -55,11 +54,12 @@ public final class SessionCatalog {
                                                                                         .get(
                                                                                                 "parameters"))
                                                                         .get("model")))) continue;
-                if (status != null && !status.equals(recovery.status().name())) continue;
                 if ((after != null || before != null || tool != null)
                         && new SessionQuery(after, before, null, tool, null, 0, 1)
                                 .apply(events)
                                 .isEmpty()) continue;
+                var recovery = SessionRecovery.inspect(events);
+                if (status != null && !status.equals(recovery.status().name())) continue;
                 if (matched++ < offset) continue;
                 result.add(
                         Map.of(

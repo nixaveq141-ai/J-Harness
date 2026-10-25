@@ -31,6 +31,9 @@ public interface CommandTransport {
 
         public Reply {
             java.util.Objects.requireNonNull(failureCode, "failureCode");
+            if (stdout.length > 4 * 1024 * 1024 || stderr.length > 65536)
+                throw new HarnessException(
+                        "CONTROL_OUTPUT_LIMIT", "Transport reply exceeds public bound");
             stdout = stdout.clone();
             stderr = stderr.clone();
         }

@@ -25,41 +25,7 @@ final class BoundedJson {
                     .enable(DeserializationFeature.FAIL_ON_TRAILING_TOKENS);
 
     static byte[] encode(Object value) {
-        boolean[] exceeded = {false};
-        var output =
-                new ByteArrayOutputStream() {
-                    private void check(int count) throws IOException {
-                        if (count > LIMIT - size()) {
-                            exceeded[0] = true;
-                            throw new IOException("Bounded JSON output limit");
-                        }
-                    }
-
-                    @Override
-                    public synchronized void write(int b) {
-                        if (size() >= LIMIT) {
-                            exceeded[0] = true;
-                            throw error("PAYLOAD_LIMIT");
-                        }
-                        super.write(b);
-                    }
-
-                    @Override
-                    public synchronized void write(byte[] bytes, int offset, int length) {
-                        try {
-                            check(length);
-                        } catch (IOException ex) {
-                            throw error("PAYLOAD_LIMIT");
-                        }
-                        super.write(bytes, offset, length);
-                    }
-                };
-        try {
-            MAPPER.writeValue(output, value);
-            return output.toByteArray();
-        } catch (IOException ex) {
-            throw error(exceeded[0] ? "PAYLOAD_LIMIT" : "INVALID_JSON");
-        }
+        return io.jharness.api.JsonEncoding.encode(value, LIMIT, 100000, 64, "PAYLOAD_LIMIT");
     }
 
     static Map<String, Object> decode(byte[] bytes) {

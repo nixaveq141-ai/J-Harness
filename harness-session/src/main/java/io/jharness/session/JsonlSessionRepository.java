@@ -27,7 +27,8 @@ public final class JsonlSessionRepository implements SessionRepository {
 
     private static final int RECORD_LIMIT = 8 * 1024 * 1024;
     private static final int LOG_LIMIT = 32 * 1024 * 1024;
-    private static final Map<Path, Object> GATES = new ConcurrentHashMap<>();
+    private static final Object[] GATES =
+            java.util.stream.IntStream.range(0, 1024).mapToObj(i -> new Object()).toArray();
     // POSIX locks are process-wide: closing even a failed contender's channel can drop the owner.
     private static final Set<Path> OWNERS = ConcurrentHashMap.newKeySet();
     private final Path root;
@@ -95,7 +96,7 @@ public final class JsonlSessionRepository implements SessionRepository {
     }
 
     private static Object gate(Path path) {
-        return GATES.computeIfAbsent(path, ignored -> new Object());
+        return GATES[(path.hashCode() & Integer.MAX_VALUE) % GATES.length];
     }
 
     @Override

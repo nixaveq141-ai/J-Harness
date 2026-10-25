@@ -1,8 +1,8 @@
 {
   "updatedAt": "2026-10-25",
-  "phase": "R4",
+  "phase": "R5",
   "status": "IMPLEMENTATION_IN_PROGRESS",
-  "details": "docs/development/OCR-R4-remediation-2026-10-25.md",
+  "details": "docs/development/OCR-R5-remediation-2026-10-25.md",
   "productMilestone": "M10.5.9",
   "productStatus": "LOCAL_PARTIAL_CI_PENDING",
   "m11Eligible": false,
@@ -109,6 +109,18 @@
     "R4-04": {
       "status": "IN_PROGRESS",
       "description": "2026-10-25继续R4本地修复：本轮115索引中32条实施或回归补强、1条契约澄清、82条保留前轮实现；详见OCR-R4-remediation-2026-10-25与逐项scope台账。最终回执独立归档，不把相关套件通过视为115条精确窗口或整包/三平台三引擎验收完成。"
+    },
+    "R5-01": {
+      "status": "IN_PROGRESS",
+      "description": "2026-10-25 R5 本地修复增量：64条范围中51条本轮实施/补强、2条有限实施、11条后续；相关套件不等于逐条精确窗口或整阶段通过。详见OCR-R5-remediation-2026-10-25及scope台账。"
+    },
+    "R5-02": {
+      "status": "IN_PROGRESS",
+      "description": "2026-10-25 R5 本地修复增量：64条范围中51条本轮实施/补强、2条有限实施、11条后续；相关套件不等于逐条精确窗口或整阶段通过。详见OCR-R5-remediation-2026-10-25及scope台账。"
+    },
+    "R5-03": {
+      "status": "IN_PROGRESS",
+      "description": "2026-10-25 R5 本地修复增量：64条范围中51条本轮实施/补强、2条有限实施、11条后续；相关套件不等于逐条精确窗口或整阶段通过。详见OCR-R5-remediation-2026-10-25及scope台账。"
     }
   },
   "r1": {
@@ -172,5 +184,16 @@
     "individualAcceptanceClosed": 0,
     "ledger": "docs/development/OCR-R4-scope-2026-10-25.json",
     "results": "docs/testing/OCR-R4-remediation-2026-10-25-results.json"
+  },
+  "r5Increment": {
+    "date": "2026-10-25",
+    "status": "IMPLEMENTATION_IN_PROGRESS",
+    "opinions": 64,
+    "implementedOrStrengthened": 51,
+    "partial": 2,
+    "pending": 11,
+    "scope": "docs/development/OCR-R5-scope-2026-10-25.json",
+    "results": "docs/testing/OCR-R5-remediation-2026-10-25-results.json",
+    "individualOpinionsAllClosed": false
   }
 }

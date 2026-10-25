@@ -10,6 +10,7 @@ public final class EventSessionProjection implements SessionProjection {
     private final List<SessionEvent> approvals;
     private final TaskStatus status;
     private final String latestTurn;
+    private final List<String> uncertain;
 
     public EventSessionProjection(List<SessionEvent> events) {
         List<Map<String, Object>> messageList = new ArrayList<>();
@@ -156,6 +157,12 @@ public final class EventSessionProjection implements SessionProjection {
         approvals = List.copyOf(approvalList);
         status = current;
         latestTurn = turn;
+        uncertain = SessionProjection.super.uncertainCalls();
+    }
+
+    @Override
+    public List<String> uncertainCalls() {
+        return uncertain;
     }
 
     @Override

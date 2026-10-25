@@ -23,10 +23,28 @@ final class WebJson {
                     .enable(DeserializationFeature.FAIL_ON_TRAILING_TOKENS);
 
     static byte[] encode(Object value) throws IOException {
-        return MAPPER.writeValueAsBytes(value);
+        return encode(value, 8 * 1024 * 1024);
+    }
+
+    static byte[] encode(Object value, int limit) throws IOException {
+        try {
+            return io.jharness.api.JsonEncoding.encode(value, limit, 100000, 24, "RESPONSE_LIMIT");
+        } catch (io.jharness.api.HarnessException invalid) {
+            throw new IOException("Bounded JSON output", invalid);
+        }
+    }
+
+    static byte[] encodeState(Object value) throws IOException {
+        try {
+            return io.jharness.api.JsonEncoding.encode(
+                    value, REQUEST_LIMIT, 8192, 24, "RESPONSE_LIMIT");
+        } catch (io.jharness.api.HarnessException invalid) {
+            throw new IOException("Bounded state output", invalid);
+        }
     }
 
     static Map<String, Object> decode(byte[] bytes) throws IOException {
+        if (bytes.length > REQUEST_LIMIT) throw new IOException("JSON request byte limit");
         try (var parser = MAPPER.getFactory().createParser(bytes)) {
             int nodes = 0;
             while (parser.nextToken() != null)

@@ -1,5 +1,6 @@
 package io.jharness.ecosystem;
 
+import io.jharness.api.JsonEncoding;
 import io.jharness.api.Values;
 import java.util.*;
 
@@ -41,7 +42,15 @@ public record SdkConfiguration(
         Objects.requireNonNull(scheduling);
         Objects.requireNonNull(resilience);
         if (prompt.length() > 32768) throw new IllegalArgumentException("Prompt limit");
-        if (tools != null) tools = Set.copyOf(tools);
+        if (tools != null) {
+            if (tools.size() > 256
+                    || tools.stream()
+                            .anyMatch(
+                                    name -> name == null || !name.matches("[A-Za-z0-9_-]{1,128}")))
+                throw new IllegalArgumentException("Tool allowlist limit");
+            tools = Set.copyOf(tools);
+        }
+        JsonEncoding.encode(parameters, 65536, 8192, 24, "CONFIG_LIMIT");
         parameters = Values.snapshot(parameters);
     }
 }

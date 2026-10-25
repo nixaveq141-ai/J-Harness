@@ -43,7 +43,17 @@ public final class EnvironmentWorker {
             response = new LinkedHashMap<>(response);
             response.put("searchFilter", acknowledged.configuration());
         }
-        System.out.write(BoundedJson.encode(response));
+        byte[] encoded;
+        try {
+            encoded = BoundedJson.encode(response);
+        } catch (RuntimeException outputFailure) {
+            var fallback = new LinkedHashMap<String, Object>();
+            fallback.put("error", "WORKER_OUTPUT_LIMIT");
+            fallback.put("executionRejected", !dispatched);
+            if (acknowledged != null) fallback.put("searchFilter", acknowledged.configuration());
+            encoded = BoundedJson.encode(fallback);
+        }
+        System.out.write(encoded);
         System.out.flush();
     }
 

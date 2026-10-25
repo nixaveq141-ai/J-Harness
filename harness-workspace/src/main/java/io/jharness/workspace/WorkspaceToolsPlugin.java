@@ -254,22 +254,35 @@ public final class WorkspaceToolsPlugin implements HarnessPlugin {
                                             cancellation);
                     case "grep" -> {
                         List<ExecPath> paths;
+                        boolean pathsTruncated = false;
                         if (args.get("paths") instanceof List<?> list)
                             paths = list.stream().map(item -> new ExecPath((String) item)).toList();
-                        else
-                            paths =
-                                    ((List<?>)
-                                                    files.search("**/*", 1000, cancellation)
-                                                            .get("paths"))
-                                            .stream()
-                                                    .map(item -> new ExecPath((String) item))
-                                                    .toList();
-                        result =
-                                files.grep(
-                                        (String) args.get("pattern"),
-                                        paths,
-                                        number(args, "limit", 100),
-                                        cancellation);
+                        else {
+                            var discovery = files.search("**/*", 1000, cancellation);
+                            if (!(discovery.get("paths") instanceof List<?> list)
+                                    || list.size() > 1000
+                                    || !(discovery.get("truncated") instanceof Boolean))
+                                throw new HarnessException(
+                                        "INVALID_SEARCH_RESULT", "Invalid path discovery");
+                            if (list.stream().anyMatch(item -> !(item instanceof String)))
+                                throw new HarnessException(
+                                        "INVALID_SEARCH_RESULT", "Invalid path discovery");
+                            paths = list.stream().map(item -> new ExecPath((String) item)).toList();
+                            pathsTruncated = Boolean.TRUE.equals(discovery.get("truncated"));
+                        }
+                        var searched =
+                                new LinkedHashMap<String, Object>(
+                                        files.grep(
+                                                (String) args.get("pattern"),
+                                                paths,
+                                                number(args, "limit", 100),
+                                                cancellation));
+                        searched.put("pathsTruncated", pathsTruncated);
+                        searched.put("selectedPaths", paths.size());
+                        searched.put(
+                                "truncated",
+                                pathsTruncated || Boolean.TRUE.equals(searched.get("truncated")));
+                        result = searched;
                     }
                     case "write_file", "edit_file" -> {
                         FileSystemView.FileChange change =
@@ -375,17 +388,6 @@ public final class WorkspaceToolsPlugin implements HarnessPlugin {
                                                     "INVALID_WORKSPACE_RESULT",
                                                     "Invalid patch result")));
                         }
-                        if (Boolean.TRUE.equals(result.get("partial")))
-                            return new ToolResult(
-                                    call.callId(),
-                                    ToolStatus.UNKNOWN,
-                                    result,
-                                    result.toString(),
-                                    display,
-                                    Optional.of(
-                                            new ToolResult.ErrorInfo(
-                                                    "PATCH_PARTIAL",
-                                                    "Some files committed; inspect changes before retry")));
                     }
                     case "read_artifact" ->
                             result =
@@ -445,40 +447,41 @@ public final class WorkspaceToolsPlugin implements HarnessPlugin {
                                             raw -> {
                                                 var change =
                                                         new LinkedHashMap<>(Values.object(raw));
-                                                if (change.get("diff") instanceof String diff)
-                                                    change.put(
-                                                            "diff",
-                                                            diff.substring(
-                                                                    0,
-                                                                    Math.min(4096, diff.length())));
+                                                change.remove("diff");
                                                 return Values.snapshot(change);
                                             })
                                     .toList());
                 }
-                if (committed.get("diff") instanceof String diff)
-                    committed.put("diff", diff.substring(0, Math.min(4096, diff.length())));
+                committed.remove("diff");
                 committed.put("outputTruncated", true);
                 committed.put("artifactError", "ARTIFACT_WRITE_FAILED");
-                committed.put("sideEffectUncertain", false);
+                boolean partial = Boolean.TRUE.equals(result.get("partial"));
+                committed.put("sideEffectUncertain", partial);
                 committed.put("committed", true);
                 return new ToolResult(
                         call.callId(),
-                        ToolStatus.FAILED,
+                        partial ? ToolStatus.UNKNOWN : ToolStatus.FAILED,
                         committed,
-                        "File committed; artifact publication failed",
+                        "File changes recorded; artifact publication failed; inspect before retry",
                         display,
                         Optional.of(
                                 new ToolResult.ErrorInfo(
-                                        "ARTIFACT_WRITE_FAILED",
-                                        "File committed; inspect recorded versions")));
+                                        partial ? "PATCH_PARTIAL" : "ARTIFACT_WRITE_FAILED",
+                                        "File changes recorded; inspect versions and pending paths")));
             }
+            boolean partial = Boolean.TRUE.equals(result.get("partial"));
             return new ToolResult(
                     call.callId(),
-                    ToolStatus.SUCCESS,
+                    partial ? ToolStatus.UNKNOWN : ToolStatus.SUCCESS,
                     result,
-                    result.toString(),
+                    JsonEncoding.text(result, 65536, "WORKSPACE_RESULT_LIMIT"),
                     display,
-                    Optional.empty());
+                    partial
+                            ? Optional.of(
+                                    new ToolResult.ErrorInfo(
+                                            "PATCH_PARTIAL",
+                                            "Inspect changes and pending paths before retry"))
+                            : Optional.empty());
         }
     }
 
@@ -488,29 +491,53 @@ public final class WorkspaceToolsPlugin implements HarnessPlugin {
         for (String key : List.of("text", "diff"))
             if (compact.get(key) instanceof String text && text.length() > 8192) {
                 ArtifactStore.Artifact artifact = artifacts.put(sessionId, text);
-                compact.put(key, text.substring(0, 4096));
+                compact.put(key, artifacts.read(sessionId, artifact.id(), 0, 4096));
                 compact.put("artifactRef", artifact.id());
                 compact.put("artifactBytes", artifact.bytes());
                 compact.put("artifactSha256", artifact.sha256());
                 compact.put("outputTruncated", true);
                 compact.put("readBackTool", "read_artifact");
             }
-        String structured = compact.toString();
+        String structured = JsonEncoding.text(compact, 4 * 1024 * 1024, "WORKSPACE_RESULT_LIMIT");
         if (structured.length() > 8192) {
             ArtifactStore.Artifact artifact = artifacts.put(sessionId, structured);
-            return Map.of(
-                    "preview",
-                    structured.substring(0, 4096),
-                    "artifactRef",
-                    artifact.id(),
-                    "artifactBytes",
-                    artifact.bytes(),
-                    "artifactSha256",
-                    artifact.sha256(),
-                    "outputTruncated",
-                    true,
-                    "readBackTool",
-                    "read_artifact");
+            var preview = new LinkedHashMap<String, Object>();
+            for (String key :
+                    List.of(
+                            "partial",
+                            "error",
+                            "failedPath",
+                            "pendingPaths",
+                            "sideEffectUncertain",
+                            "path",
+                            "beforeVersion",
+                            "afterVersion"))
+                if (compact.containsKey(key)) preview.put(key, compact.get(key));
+            if (compact.get("changes") instanceof List<?> changes)
+                preview.put(
+                        "changes",
+                        changes.stream()
+                                .map(
+                                        raw -> {
+                                            var row = Values.object(raw);
+                                            var identity = new LinkedHashMap<String, Object>();
+                                            for (String key :
+                                                    List.of(
+                                                            "path",
+                                                            "beforeVersion",
+                                                            "afterVersion"))
+                                                if (row.containsKey(key))
+                                                    identity.put(key, row.get(key));
+                                            return identity;
+                                        })
+                                .toList());
+            preview.put("preview", artifacts.read(sessionId, artifact.id(), 0, 4096));
+            preview.put("artifactRef", artifact.id());
+            preview.put("artifactBytes", artifact.bytes());
+            preview.put("artifactSha256", artifact.sha256());
+            preview.put("outputTruncated", true);
+            preview.put("readBackTool", "read_artifact");
+            return Values.snapshot(preview);
         }
         return Values.snapshot(compact);
     }

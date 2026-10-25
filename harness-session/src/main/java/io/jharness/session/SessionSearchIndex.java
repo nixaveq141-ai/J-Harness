@@ -27,6 +27,7 @@ public final class SessionSearchIndex {
                                     .build())
                     .enable(DeserializationFeature.FAIL_ON_TRAILING_TOKENS);
     private final Path root;
+    private final DirectoryIdentity identity;
     private final SessionRepository repository;
 
     public SessionSearchIndex(Path directory, SessionRepository repository) throws IOException {
@@ -34,15 +35,18 @@ public final class SessionSearchIndex {
         root = directory.toRealPath();
         if (!root.equals(directory.toAbsolutePath().normalize()))
             throw new IOException("Search directory must not be a link");
+        identity = DirectoryIdentity.readDirectory(root);
         this.repository = Objects.requireNonNull(repository);
     }
 
     private Path file(String id, String suffix) throws IOException {
-        if (!id.matches("[A-Za-z0-9][A-Za-z0-9_-]{0,127}")
+        if (id == null
+                || !id.matches("[A-Za-z0-9][A-Za-z0-9_-]{0,127}")
                 || id.matches("(?i)(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])"))
             throw new HarnessException("INVALID_SESSION_ID", "Invalid search session");
         if (!Files.isDirectory(root, LinkOption.NOFOLLOW_LINKS) || !root.toRealPath().equals(root))
             throw new IOException("Search root changed");
+        IndexFiles.check(root, identity);
         Path path = root.resolve(id + suffix);
         if (Files.exists(path, LinkOption.NOFOLLOW_LINKS)
                 && !Files.isRegularFile(path, LinkOption.NOFOLLOW_LINKS))
@@ -50,7 +54,7 @@ public final class SessionSearchIndex {
         return path;
     }
 
-    public synchronized Map<String, Object> search(
+    public Map<String, Object> search(
             String id, String text, int offset, int limit, boolean rebuild) throws IOException {
         if (text == null
                 || text.isBlank()
@@ -80,8 +84,22 @@ public final class SessionSearchIndex {
                                 JSON.readValue(bytes, new TypeReference<Map<String, Object>>() {});
                         var data = Values.object(envelope.get("data"));
                         if (Integer.valueOf(1).equals(data.get("version"))
-                                && hash(JSON.writeValueAsBytes(data))
-                                        .equals(envelope.get("sha256"))) cached = data;
+                                && IndexFiles.digest(data, LIMIT).equals(envelope.get("sha256"))) {
+                            if (!(data.get("documents") instanceof List<?> rows))
+                                throw new IOException("Index rows");
+                            for (Object raw : rows) {
+                                var row = Values.object(raw);
+                                if (!(row.get("eventId") instanceof String)
+                                        || !(row.get("type") instanceof String)
+                                        || !(row.get("timestamp") instanceof String)
+                                        || !(row.get("text") instanceof String body)
+                                        || !hash(body.getBytes(
+                                                        java.nio.charset.StandardCharsets.UTF_8))
+                                                .equals(row.get("sourceSha256")))
+                                    throw new IOException("Index row");
+                            }
+                            cached = data;
+                        }
                     }
                 } catch (IOException | RuntimeException ignored) {
                     /* Derived corruption is rebuilt, never repaired into the fact log. */
@@ -90,18 +108,30 @@ public final class SessionSearchIndex {
             var documents = new ArrayList<Map<String, Object>>();
             if (cached.get("documents") instanceof List<?> rows)
                 rows.forEach(row -> documents.add(Values.object(row)));
+            int cachedCount = documents.size();
             int reused = 0;
             while (reused < documents.size() && reused < events.size()) {
                 var event = events.get(reused);
-                if (!event.eventId().equals(documents.get(reused).get("eventId"))
-                        || !hash(JSON.writeValueAsBytes(event.payload()))
+                if (!event.type().equals(documents.get(reused).get("type"))
+                        || !event.timestamp()
+                                .toString()
+                                .equals(documents.get(reused).get("timestamp"))
+                        || !event.eventId().equals(documents.get(reused).get("eventId"))
+                        || !hash(io.jharness.api.JsonEncoding.encode(
+                                        event.payload(),
+                                        8 * 1024 * 1024,
+                                        100000,
+                                        32,
+                                        "SEARCH_INDEX_LIMIT"))
                                 .equals(documents.get(reused).get("sourceSha256"))) break;
                 reused++;
             }
             while (documents.size() > reused) documents.removeLast();
             for (int i = reused; i < events.size(); i++) {
                 var event = events.get(i);
-                byte[] content = JSON.writeValueAsBytes(event.payload());
+                byte[] content =
+                        io.jharness.api.JsonEncoding.encode(
+                                event.payload(), 8 * 1024 * 1024, 100000, 32, "SEARCH_INDEX_LIMIT");
                 documents.add(
                         Map.of(
                                 "eventId",
@@ -115,34 +145,14 @@ public final class SessionSearchIndex {
                                 "text",
                                 new String(content, java.nio.charset.StandardCharsets.UTF_8)));
             }
-            if (rebuild || reused != events.size() || cached.isEmpty()) {
-                var data = Map.of("version", 1, "documents", documents);
-                byte[] bytes =
-                        JSON.writeValueAsBytes(
-                                Map.of("data", data, "sha256", hash(JSON.writeValueAsBytes(data))));
-                if (bytes.length > LIMIT)
-                    throw new HarnessException("SEARCH_INDEX_LIMIT", "Derived index limit");
-                Path temp = root.resolve("index-" + UUID.randomUUID() + ".tmp");
-                try {
-                    try (var out =
-                            FileChannel.open(
-                                    temp,
-                                    StandardOpenOption.CREATE_NEW,
-                                    StandardOpenOption.WRITE)) {
-                        var buffer = java.nio.ByteBuffer.wrap(bytes);
-                        while (buffer.hasRemaining()) out.write(buffer);
-                        out.force(true);
-                    }
-                    file(id, ".search.json");
-                    Files.move(
-                            temp,
-                            index,
-                            StandardCopyOption.ATOMIC_MOVE,
-                            StandardCopyOption.REPLACE_EXISTING);
-                } finally {
-                    Files.deleteIfExists(temp);
-                }
-            }
+            boolean changed =
+                    rebuild
+                            || reused != events.size()
+                            || cached.isEmpty()
+                            || cachedCount != events.size();
+            if (changed)
+                IndexFiles.publish(
+                        root, identity, index, Map.of("version", 1, "documents", documents), LIMIT);
             String needle = text.toLowerCase(Locale.ROOT);
             var matches = new ArrayList<Map<String, Object>>();
             int total = 0;
@@ -151,7 +161,6 @@ public final class SessionSearchIndex {
                 int found = content.toLowerCase(Locale.ROOT).indexOf(needle);
                 if (found < 0) continue;
                 if (total++ < offset || matches.size() >= limit) continue;
-                int start = Math.max(0, Math.min(found, content.length()) - 80);
                 matches.add(
                         Map.of(
                                 "eventId",
@@ -161,7 +170,7 @@ public final class SessionSearchIndex {
                                 "timestamp",
                                 document.get("timestamp"),
                                 "snippet",
-                                content.substring(start, Math.min(content.length(), start + 512))));
+                                UnicodeSearch.snippet(content, found, 80, 512)));
             }
             return Map.of(
                     "sessionId",
@@ -177,7 +186,7 @@ public final class SessionSearchIndex {
                     "reusedEvents",
                     reused,
                     "rebuilt",
-                    cached.isEmpty() || rebuild);
+                    changed);
         } catch (OverlappingFileLockException ex) {
             throw new HarnessException("SEARCH_BUSY", "Index writer occupied");
         } finally {

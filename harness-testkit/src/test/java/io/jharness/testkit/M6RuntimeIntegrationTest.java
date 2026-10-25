@@ -426,28 +426,34 @@ class M6RuntimeIntegrationTest {
                                     if (requests.size() == 5)
                                         return textStream("second turn finished");
                                     var messages = (List<?>) requests.getLast().get("messages");
-                                    String toolText =
+                                    var terminal =
                                             messages.stream()
                                                     .map(Values::object)
                                                     .filter(m -> "tool".equals(m.get("role")))
-                                                    .map(m -> (String) m.get("content"))
-                                                    .filter(t -> t.contains("pty="))
+                                                    .map(
+                                                            m ->
+                                                                    terminalJson(
+                                                                            (String)
+                                                                                    m.get(
+                                                                                            "content")))
+                                                    .filter(value -> value.containsKey("pty"))
                                                     .findFirst()
                                                     .orElseThrow();
-                                    var matcher =
-                                            Pattern.compile("[0-9a-f]{8}-[0-9a-f-]{27}")
-                                                    .matcher(toolText);
-                                    if (!matcher.find()) throw new IllegalStateException(toolText);
+                                    String terminalId = (String) terminal.get("id");
+                                    if (terminalId == null
+                                            || !terminalId.matches("[0-9a-f]{8}-[0-9a-f-]{27}"))
+                                        throw new IllegalStateException(
+                                                "Missing terminal identity");
                                     return tool(
                                             requests.size() == 3 ? "status-live" : "stop-live",
                                             requests.size() == 3
                                                     ? "terminal_status"
                                                     : "terminal_stop",
-                                            Map.of("id", matcher.group()));
+                                            Map.of("id", terminalId));
                                 });
+                var executor = java.util.concurrent.Executors.newVirtualThreadPerTaskExecutor();
                 var input = new PipedInputStream();
-                var feed = new PipedOutputStream(input);
-                var executor = java.util.concurrent.Executors.newVirtualThreadPerTaskExecutor()) {
+                var feed = new PipedOutputStream(input)) {
             Path path = config(server, Map.of());
             var output = new ByteArrayOutputStream();
             var executing =
@@ -495,6 +501,14 @@ class M6RuntimeIntegrationTest {
                             .orElseThrow();
             assertEquals("RUNNING", Values.object(status.payload().get("value")).get("state"));
             assertTrue(SessionRecovery.inspect(history).ready());
+        }
+    }
+
+    private static Map<String, Object> terminalJson(String text) {
+        try {
+            return Values.object(JSON.readValue(text, Map.class));
+        } catch (IOException invalid) {
+            throw new UncheckedIOException(invalid);
         }
     }
 

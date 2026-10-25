@@ -82,7 +82,7 @@ final class WorkspaceLease implements AutoCloseable {
     private void save(Map<String, Object> next) throws IOException {
         owner.flush();
         check();
-        byte[] bytes = WebJson.encode(Map.of("version", 1, "pending", next));
+        byte[] bytes = WebJson.encodeState(Map.of("version", 1, "pending", next));
         if (bytes.length > 65536) throw new IOException("Lease state limit");
         Path temp = Files.createTempFile(directory, ".workspace-lease-", ".tmp");
         try {

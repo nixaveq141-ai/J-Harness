@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "milestone": "M10.5.9",
-  "origin": "Current local R4 acceptance contract: preserves all 671 prior identities and adds six report-budget, redaction and independent/routed display regressions. Contract only; remote CI and M11 remain pending.",
+  "origin": "Current local R5 contract: preserves all 677 prior case identities, adds 23 bounded encoding, Unicode, cache/source shortening, memory quotas, process output failure, compaction audit and concurrent search regressions. Contract only; R5 and remote platform acceptance remain open.",
   "suites": [
     {
       "module": "harness-agent",
@@ -10,6 +10,15 @@
         "completedToolGroupsAndRemovalAuditMustStayAtomic",
         "malformedOrDuplicateToolIdsUseCompactionError",
         "replacementCompactorCannotDropConfigOrProtectedMessages"
+      ]
+    },
+    {
+      "module": "harness-agent",
+      "name": "io.jharness.agent.R5CompactionTest",
+      "cases": [
+        "latestAssistantToolGroupSurvivesTailUserAndExactFitNeedsNoSummary",
+        "removedInstructionsRemainQuotedUserDataAndRecursiveExtractIsExplicitlyLossy",
+        "toolDeclarationsCountTowardBudgetAndProtectedOverflowRejects"
       ]
     },
     {
@@ -51,6 +60,16 @@
         "cyclicListsAndSharedDagAreBoundedBeforeRedaction",
         "exactDepthAndEventLevelsHaveSingleFactorNegatives",
         "jsonKeysAndDeepSnapshotsPreserveJsonDomain"
+      ]
+    },
+    {
+      "module": "harness-api",
+      "name": "io.jharness.api.R5EncodingTest",
+      "cases": [
+        "exactBytesTokensDepthAndStreamingHaveTheSameBoundary",
+        "hostileValuesNeverCallArbitraryToStringAndInvalidNumbersAreRejected",
+        "lowercaseExpansionOffsetsAndSnippetEdgesStayInOriginalUnicodeCoordinates",
+        "utf8AndDisplayMetricsHandleExpansionWithoutMaterializingDisplayCopies"
       ]
     },
     {
@@ -366,6 +385,17 @@
       "cases": [
         "rapidFinalSnapshotIsVisibleWithoutASecondFrame",
         "sanitizerAndReaderFailureClearPresentationWithoutThrowing"
+      ]
+    },
+    {
+      "module": "harness-ecosystem",
+      "name": "io.jharness.ecosystem.R5TransportBoundsTest",
+      "cases": [
+        "configurationIsBoundedAndContentOffsetsExplicitlyUseUtf16",
+        "encodedOutputAlwaysFitsTheDecoderTokenAndDepthBudgets",
+        "failedOutputPumpStopsTheLaunchedChildBeforeItsDeadlineAndRetainsUnknown",
+        "invalidTimeoutsAreRejectedBeforeAnyCommandLaunch",
+        "replyRejectsOversizeBeforeCloningAndKeepsSnapshotOwnership"
       ]
     },
     {
@@ -706,6 +736,17 @@
         "orphanContextIsNotComposedAndMalformedCoreMessagesFailClosed",
         "replacedArtifactRootIdentityIsRejectedBeforeScopeCreation",
         "terminalVerificationRejectsStaleSnapshotsButNewObservedActivityRemainsUnknown"
+      ]
+    },
+    {
+      "module": "harness-session",
+      "name": "io.jharness.session.R5SessionBoundsTest",
+      "cases": [
+        "bothSearchSnippetsUseOriginalUnicodeCoordinates",
+        "differentSessionsReadConcurrentlyWhileSanitizerCallsStaySerialized",
+        "directoryReplacementCannotReuseAnExistingIndexInstance",
+        "memoryCountAndByteRejectionsDoNotConsumeEventIdsOrPublishFailedForks",
+        "shortenedSourcePersistsBothIndexesAndMalformedCachedRowsAreDisposable"
       ]
     },
     {
@@ -1213,6 +1254,13 @@
     },
     {
       "module": "harness-testkit",
+      "name": "io.jharness.testkit.R5CompactionAuditTest",
+      "cases": [
+        "auditCapsAssociationsAndDoesNotGuessAmbiguousSourceEvents"
+      ]
+    },
+    {
+      "module": "harness-testkit",
       "name": "io.jharness.testkit.TestkitTest",
       "cases": [
         "checkpointRecorderAndFailureInjectorExposeBoundaries",
@@ -1234,6 +1282,15 @@
       "name": "io.jharness.web.R1CatalogScanBoundaryTest",
       "cases": [
         "flatTenThousandRecordScanIsBoundedAndDoesNotHoldCatalogMonitor"
+      ]
+    },
+    {
+      "module": "harness-testkit",
+      "name": "io.jharness.web.R5ContentSearchTest",
+      "cases": [
+        "exactPagesBindEveryQueryFieldAndRemovedProfilesAreNotAuthorized",
+        "maximumScopeListsMembershipOnceAndInvalidProviderTimeHasFixedError",
+        "twoProviderQueriesCanProgressAndThirdIsRejectedWithoutGlobalMonitor"
       ]
     },
     {
@@ -1328,6 +1385,14 @@
         "gitCreateSupportsOnlyRegularNonExecutableMetadata",
         "hunkCountsDisambiguateHeaderLikeContentAndRealADirectory",
         "malformedCountsDeletionAndNoNewlineAreExplicitlyRejected"
+      ]
+    },
+    {
+      "module": "harness-workspace",
+      "name": "io.jharness.workspace.R5WorkspaceBoundsTest",
+      "cases": [
+        "finalLineWithOrWithoutNewlineHasExplicitEofAndNonRepeatingNextLine",
+        "searchStopsAfterAnExtraMatchAndGrepDoesNotOpenSubsequentPaths"
       ]
     },
     {
@@ -1431,6 +1496,7 @@
     "harness-agent/src/main/java/io/jharness/agent/ExtractiveContextCompactor.java",
     "harness-agent/src/main/java/io/jharness/agent/ModelResiliencePlugin.java",
     "harness-agent/src/test/java/io/jharness/agent/R3CompactionBoundaryTest.java",
+    "harness-agent/src/test/java/io/jharness/agent/R5CompactionTest.java",
     "harness-api/pom.xml",
     "harness-api/src/main/java/io/jharness/api/AgentLoop.java",
     "harness-api/src/main/java/io/jharness/api/AgentLoopDependencies.java",
@@ -1466,6 +1532,7 @@
     "harness-api/src/main/java/io/jharness/api/HarnessException.java",
     "harness-api/src/main/java/io/jharness/api/HarnessPlugin.java",
     "harness-api/src/main/java/io/jharness/api/Interceptor.java",
+    "harness-api/src/main/java/io/jharness/api/JsonEncoding.java",
     "harness-api/src/main/java/io/jharness/api/JsonSchema.java",
     "harness-api/src/main/java/io/jharness/api/LlmClient.java",
     "harness-api/src/main/java/io/jharness/api/ModelAttempt.java",
@@ -1516,6 +1583,7 @@
     "harness-api/src/main/java/io/jharness/api/ToolScheduler.java",
     "harness-api/src/main/java/io/jharness/api/ToolSchedulingOptions.java",
     "harness-api/src/main/java/io/jharness/api/ToolStatus.java",
+    "harness-api/src/main/java/io/jharness/api/UnicodeSearch.java",
     "harness-api/src/main/java/io/jharness/api/UserQuestionService.java",
     "harness-api/src/main/java/io/jharness/api/Values.java",
     "harness-api/src/main/java/io/jharness/api/WorkspaceFiles.java",
@@ -1524,6 +1592,7 @@
     "harness-api/src/test/java/io/jharness/api/R1CoreApiTest.java",
     "harness-api/src/test/java/io/jharness/api/R2ArtifactContractTest.java",
     "harness-api/src/test/java/io/jharness/api/R3JsonBoundaryTest.java",
+    "harness-api/src/test/java/io/jharness/api/R5EncodingTest.java",
     "harness-api/src/test/java/io/jharness/api/SessionEventTest.java",
     "harness-cli/pom.xml",
     "harness-cli/src/main/java/io/jharness/cli/Arguments.java",
@@ -1606,6 +1675,7 @@
     "harness-ecosystem/src/test/java/io/jharness/ecosystem/R3McpProtocolTest.java",
     "harness-ecosystem/src/test/java/io/jharness/ecosystem/R3SkillBoundaryTest.java",
     "harness-ecosystem/src/test/java/io/jharness/ecosystem/R4DisplayBufferTest.java",
+    "harness-ecosystem/src/test/java/io/jharness/ecosystem/R5TransportBoundsTest.java",
     "harness-events/pom.xml",
     "harness-events/src/main/java/io/jharness/events/DefaultEventBus.java",
     "harness-events/src/main/java/io/jharness/events/EventFailure.java",
@@ -1670,6 +1740,7 @@
     "harness-session/src/main/java/io/jharness/session/EventRequestJournal.java",
     "harness-session/src/main/java/io/jharness/session/EventSessionProjection.java",
     "harness-session/src/main/java/io/jharness/session/InMemorySessionRepository.java",
+    "harness-session/src/main/java/io/jharness/session/IndexFiles.java",
     "harness-session/src/main/java/io/jharness/session/JsonlSessionPlugin.java",
     "harness-session/src/main/java/io/jharness/session/JsonlSessionRepository.java",
     "harness-session/src/main/java/io/jharness/session/LocalArtifactStore.java",
@@ -1685,6 +1756,7 @@
     "harness-session/src/test/java/io/jharness/session/JsonlSessionRepositoryTest.java",
     "harness-session/src/test/java/io/jharness/session/M5SessionTest.java",
     "harness-session/src/test/java/io/jharness/session/R2PersistenceTest.java",
+    "harness-session/src/test/java/io/jharness/session/R5SessionBoundsTest.java",
     "harness-session/src/test/java/io/jharness/session/TokenSessionSearchTest.java",
     "harness-session/src/test/java/io/jharness/session/WriterProbe.java",
     "harness-testkit/pom.xml",
@@ -1742,10 +1814,12 @@
     "harness-testkit/src/test/java/io/jharness/testkit/R1WebOwnershipTest.java",
     "harness-testkit/src/test/java/io/jharness/testkit/R2SdkPersistenceTest.java",
     "harness-testkit/src/test/java/io/jharness/testkit/R3ExtensionProtocolTest.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/R5CompactionAuditTest.java",
     "harness-testkit/src/test/java/io/jharness/testkit/SdkTransportPeer.java",
     "harness-testkit/src/test/java/io/jharness/testkit/TestkitTest.java",
     "harness-testkit/src/test/java/io/jharness/web/R123TurnQueueBoundaryTest.java",
     "harness-testkit/src/test/java/io/jharness/web/R1CatalogScanBoundaryTest.java",
+    "harness-testkit/src/test/java/io/jharness/web/R5ContentSearchTest.java",
     "harness-testkit/src/test/java/io/jharness/web/WorkbenchContentSearchTest.java",
     "harness-tools/pom.xml",
     "harness-tools/src/main/java/io/jharness/tools/BoundedReadOnlyToolScheduler.java",
@@ -1776,6 +1850,7 @@
     "harness-workspace/src/test/java/io/jharness/workspace/R1WorkspaceSafetyTest.java",
     "harness-workspace/src/test/java/io/jharness/workspace/R2WorkspaceSnapshotTest.java",
     "harness-workspace/src/test/java/io/jharness/workspace/R3PatchBoundaryTest.java",
+    "harness-workspace/src/test/java/io/jharness/workspace/R5WorkspaceBoundsTest.java",
     "harness-workspace/src/test/java/io/jharness/workspace/UnifiedPatchTest.java",
     "mvnw",
     "mvnw.cmd",

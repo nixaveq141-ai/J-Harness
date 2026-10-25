@@ -13,6 +13,11 @@ public final class NativeCommandTransport implements CommandTransport {
     public Reply call(
             List<String> command, byte[] stdin, Duration timeout, CancellationToken cancellation) {
         if (stdin.length > BoundedJson.LIMIT) throw BoundedJson.error("PAYLOAD_LIMIT");
+        Objects.requireNonNull(timeout);
+        Objects.requireNonNull(cancellation);
+        if (timeout.isZero() || timeout.isNegative() || timeout.compareTo(Duration.ofHours(1)) > 0)
+            throw new IllegalArgumentException("Transport timeout must be in (0, 1h]");
+        final long deadline = System.nanoTime() + timeout.toNanos();
         cancellation.throwIfCancelled();
         Process process = null;
         CompletableFuture<byte[]> out = null, err = null;
@@ -22,6 +27,16 @@ public final class NativeCommandTransport implements CommandTransport {
             builder.environment().putAll(LocalProcessRunner.buildEnvironment());
             process = builder.start();
             final Process child = process;
+            if (System.nanoTime() > deadline || cancellation.isCancelled()) {
+                ProcessCleanup.stop(child);
+                return new Reply(
+                        exit(child),
+                        new byte[0],
+                        new byte[0],
+                        true,
+                        true,
+                        cancellation.isCancelled() ? "CANCELLED" : "TIMEOUT");
+            }
             out = read(child.getInputStream(), BoundedJson.LIMIT);
             err = read(child.getErrorStream(), 65536);
             CompletableFuture<Void> sent = new CompletableFuture<>();
@@ -35,8 +50,19 @@ public final class NativeCommandTransport implements CommandTransport {
                                     sent.completeExceptionally(ex);
                                 }
                             });
-            long deadline = System.nanoTime() + timeout.toNanos();
             while (child.isAlive() || !out.isDone() || !err.isDone() || !sent.isDone()) {
+                if (out.isCompletedExceptionally()
+                        || err.isCompletedExceptionally()
+                        || sent.isCompletedExceptionally()) {
+                    ProcessCleanup.stop(child);
+                    return new Reply(
+                            exit(child),
+                            observed(out),
+                            observed(err),
+                            true,
+                            true,
+                            "CONTROL_EXCHANGE_FAILED");
+                }
                 if (cancellation.isCancelled() || System.nanoTime() > deadline) {
                     ProcessCleanup.stop(child);
                     return new Reply(

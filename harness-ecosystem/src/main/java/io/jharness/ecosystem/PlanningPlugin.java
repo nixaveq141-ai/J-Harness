@@ -44,16 +44,16 @@ public final class PlanningPlugin implements HarnessPlugin {
         operation.unlock();
     }
 
-    private Map<String, Object> todos() {
+    private Map<String, Object> todos(List<SessionEvent> events) {
         var result = new LinkedHashMap<String, Object>();
-        reader.events().stream()
+        events.stream()
                 .filter(e -> e.type().equals("todo.changed"))
                 .forEach(e -> result.put((String) e.payload().get("id"), e.payload()));
         return result;
     }
 
-    private Map<String, Object> plan() {
-        return reader.events().reversed().stream()
+    private Map<String, Object> plan(List<SessionEvent> events) {
+        return events.reversed().stream()
                 .filter(e -> e.type().equals("plan.changed"))
                 .map(SessionEvent::payload)
                 .findFirst()
@@ -78,27 +78,23 @@ public final class PlanningPlugin implements HarnessPlugin {
             throw BoundedJson.error("REVISION_CONFLICT");
     }
 
-    private void evidence(List<?> ids, int required, Map<String, Object> current) {
+    private void evidence(
+            List<?> ids, int required, Map<String, Object> current, List<SessionEvent> events) {
         if (ids.size() != required) throw BoundedJson.error("EVIDENCE_REQUIRED");
-        var events = reader.events();
         int boundary = -1;
         for (int i = 0; i < events.size(); i++)
             if (Set.of("todo.changed", "plan.changed").contains(events.get(i).type())
                     && events.get(i).payload().equals(current)) boundary = i;
         if (boundary < 0) throw BoundedJson.error("EVIDENCE_REQUIRED");
-        var relevant = events.subList(boundary + 1, events.size());
-        for (Object id : ids)
-            if (relevant.stream()
-                    .noneMatch(
-                            e ->
-                                    e.eventId().equals(id)
-                                            && e.type().equals("tool.completed")
-                                            && "SUCCESS".equals(e.payload().get("status"))
-                                            && !String.valueOf(e.payload().get("tool"))
-                                                    .startsWith("todo_")
-                                            && !String.valueOf(e.payload().get("tool"))
-                                                    .startsWith("plan_")))
-                throw BoundedJson.error("EVIDENCE_REQUIRED");
+        Set<String> successes = new HashSet<>();
+        for (var event : events.subList(boundary + 1, events.size()))
+            if (event.type().equals("tool.completed")
+                    && "SUCCESS".equals(event.payload().get("status"))
+                    && !String.valueOf(event.payload().get("tool")).startsWith("todo_")
+                    && !String.valueOf(event.payload().get("tool")).startsWith("plan_"))
+                successes.add(event.eventId());
+        if (ids.stream().anyMatch(id -> !successes.contains(id)))
+            throw BoundedJson.error("EVIDENCE_REQUIRED");
     }
 
     private final class Tool implements AgentTool {
@@ -181,11 +177,12 @@ public final class PlanningPlugin implements HarnessPlugin {
                     throw BoundedJson.error("SCOPE_DENIED");
                 context.cancellation().throwIfCancelled();
                 var args = call.arguments();
+                var events = reader.events();
                 Map<String, Object> result;
-                if (name.equals("todo_list")) result = Map.of("todos", todos());
-                else if (name.equals("plan_view")) result = plan();
+                if (name.equals("todo_list")) result = Map.of("todos", todos(events));
+                else if (name.equals("plan_view")) result = plan(events);
                 else if (name.equals("todo_update")) {
-                    var all = todos();
+                    var all = todos(events);
                     String id = (String) args.get("id");
                     if (!id.matches("[A-Za-z0-9_-]{1,32}"))
                         throw BoundedJson.error("INVALID_TODO_ID");
@@ -196,13 +193,13 @@ public final class PlanningPlugin implements HarnessPlugin {
                     if (args.get("state").equals("DONE")) {
                         if (!Objects.equals(args.get("title"), current.get("title")))
                             throw BoundedJson.error("EVIDENCE_REQUIRED");
-                        evidence((List<?>) args.get("evidence"), 1, current);
+                        evidence((List<?>) args.get("evidence"), 1, current, events);
                     }
                     result = new LinkedHashMap<>(args);
                     result.put("revision", ((Number) args.get("revision")).intValue() + 1);
                     save("todo.changed", result, mutationAttempted);
                 } else {
-                    var current = plan();
+                    var current = plan(events);
                     revision(current, args);
                     result = new LinkedHashMap<>(current);
                     if (name.equals("plan_update")) {
@@ -226,7 +223,8 @@ public final class PlanningPlugin implements HarnessPlugin {
                             evidence(
                                     (List<?>) args.get("evidence"),
                                     ((List<?>) current.get("steps")).size(),
-                                    current);
+                                    current,
+                                    events);
                         result.put("state", state);
                         result.put("evidence", args.get("evidence"));
                     }

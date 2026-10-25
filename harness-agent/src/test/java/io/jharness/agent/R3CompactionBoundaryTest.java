@@ -44,7 +44,8 @@ class R3CompactionBoundaryTest {
                                                 new ContextCompactor.Compaction(
                                                         retained, List.of(), "")))
                         .code());
-        assertDoesNotThrow(
+        assertThrows(
+                HarnessException.class,
                 () ->
                         ContextCompactionPlugin.validateCompaction(
                                 request,
@@ -57,7 +58,8 @@ class R3CompactionBoundaryTest {
                                 messages.getLast()),
                         List.of(),
                         Map.of());
-        assertDoesNotThrow(
+        assertThrows(
+                HarnessException.class,
                 () ->
                         ContextCompactionPlugin.validateCompaction(
                                 request,

@@ -3,7 +3,6 @@ package io.jharness.session;
 import com.fasterxml.jackson.core.type.TypeReference;
 import io.jharness.api.*;
 import java.io.*;
-import java.nio.ByteBuffer;
 import java.nio.channels.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
@@ -24,6 +23,8 @@ public final class TokenSessionSearch implements ContentSearchProvider {
                     "question.requested",
                     "question.resolved");
     private final Path root;
+    private final DirectoryIdentity identity;
+    private final Object sanitizerLock = new Object();
     private final SessionRepository repository;
     private final DataSanitizer sanitizer;
     private static final com.fasterxml.jackson.databind.ObjectMapper JSON =
@@ -55,6 +56,7 @@ public final class TokenSessionSearch implements ContentSearchProvider {
         root = directory.toRealPath();
         if (!root.equals(directory.toAbsolutePath().normalize()))
             throw new IOException("Index root must not be a link");
+        identity = DirectoryIdentity.readDirectory(root);
         this.repository = Objects.requireNonNull(repository);
         this.sanitizer = Objects.requireNonNull(sanitizer);
     }
@@ -66,6 +68,7 @@ public final class TokenSessionSearch implements ContentSearchProvider {
             throw error("INVALID_SESSION_ID");
         if (!Files.isDirectory(root, LinkOption.NOFOLLOW_LINKS) || !root.toRealPath().equals(root))
             throw error("SEARCH_PATH_DENIED");
+        IndexFiles.check(root, identity);
         Path target = root.resolve(id + suffix);
         if (Files.exists(target, LinkOption.NOFOLLOW_LINKS)
                 && !Files.isRegularFile(target, LinkOption.NOFOLLOW_LINKS))
@@ -74,7 +77,7 @@ public final class TokenSessionSearch implements ContentSearchProvider {
     }
 
     @Override
-    public synchronized Result search(
+    public Result search(
             String id,
             String text,
             String mode,
@@ -111,8 +114,8 @@ public final class TokenSessionSearch implements ContentSearchProvider {
                                 JSON.readValue(bytes, new TypeReference<Map<String, Object>>() {});
                         var data = Values.object(envelope.get("data"));
                         if (Integer.valueOf(1).equals(data.get("version"))
-                                && hash(JSON.writeValueAsBytes(data))
-                                        .equals(envelope.get("sha256"))) cached = data;
+                                && IndexFiles.digest(data, LIMIT).equals(envelope.get("sha256")))
+                            cached = data;
                     }
                 } catch (IOException | RuntimeException ignored) {
                     /* Disposable corruption is rebuilt. */
@@ -126,9 +129,15 @@ public final class TokenSessionSearch implements ContentSearchProvider {
             for (var event : events) {
                 cancellation.throwIfCancelled();
                 if (!TYPES.contains(event.type())) continue;
-                String content = body(sanitizer.sanitize(event.payload()), event.type());
+                Map<String, Object> sanitized;
+                synchronized (sanitizerLock) {
+                    sanitized = sanitizer.sanitize(event.payload());
+                }
+                String content = body(sanitized, event.type());
                 if (content.isBlank()) continue;
-                bytes += content.getBytes(StandardCharsets.UTF_8).length;
+                bytes +=
+                        io.jharness.api.JsonEncoding.utf8Length(
+                                content, 4 * 1024 * 1024, "SEARCH_INDEX_LIMIT");
                 if (bytes > 4 * 1024 * 1024 || documents.size() >= 20000)
                     throw error("SEARCH_INDEX_LIMIT");
                 var row =
@@ -158,27 +167,8 @@ public final class TokenSessionSearch implements ContentSearchProvider {
                             || rebuild;
             if (changed) {
                 cancellation.throwIfCancelled();
-                var data = Map.of("version", 1, "documents", documents);
-                byte[] encoded =
-                        JSON.writeValueAsBytes(
-                                Map.of("data", data, "sha256", hash(JSON.writeValueAsBytes(data))));
-                if (encoded.length > LIMIT) throw error("SEARCH_INDEX_LIMIT");
-                Path temp = Files.createTempFile(root, "content-", ".tmp");
-                try {
-                    try (var output = FileChannel.open(temp, StandardOpenOption.WRITE)) {
-                        var buffer = ByteBuffer.wrap(encoded);
-                        while (buffer.hasRemaining()) output.write(buffer);
-                        output.force(true);
-                    }
-                    file(id, ".content.json");
-                    Files.move(
-                            temp,
-                            index,
-                            StandardCopyOption.ATOMIC_MOVE,
-                            StandardCopyOption.REPLACE_EXISTING);
-                } finally {
-                    Files.deleteIfExists(temp);
-                }
+                IndexFiles.publish(
+                        root, identity, index, Map.of("version", 1, "documents", documents), LIMIT);
             }
             var hits = new ArrayList<Hit>();
             String phrase = text.toLowerCase(Locale.ROOT);
@@ -201,23 +191,16 @@ public final class TokenSessionSearch implements ContentSearchProvider {
                 }
                 if (score == 0) continue;
                 if (hits.size() >= limit) throw error("SEARCH_RESULT_LIMIT");
-                int start = Math.max(0, Math.min(found, content.length()) - 80);
                 hits.add(
                         new Hit(
                                 (String) document.get("eventId"),
                                 (String) document.get("type"),
                                 (String) document.get("timestamp"),
                                 (String) document.get("turnId"),
-                                content.substring(start, Math.min(content.length(), start + 400)),
+                                UnicodeSearch.snippet(content, found, 80, 400),
                                 score));
             }
-            return new Result(
-                    hits,
-                    documents.size(),
-                    reused,
-                    cached.isEmpty()
-                            || rebuild
-                            || reused < Math.min(previous.size(), documents.size()));
+            return new Result(hits, documents.size(), reused, changed);
         } catch (OverlappingFileLockException ex) {
             throw error("SEARCH_BUSY");
         } finally {
@@ -236,13 +219,16 @@ public final class TokenSessionSearch implements ContentSearchProvider {
             Object content = payload.get("content");
             return content instanceof String text ? text : "";
         }
-        return JSON.writeValueAsString(payload);
+        return io.jharness.api.JsonEncoding.text(payload, 4 * 1024 * 1024, "SEARCH_INDEX_LIMIT");
     }
 
     private static Map<String, Integer> tokens(String text) {
         var result = new LinkedHashMap<String, Integer>();
         var word = new StringBuilder();
-        for (int cp : text.toLowerCase(Locale.ROOT).codePoints().toArray()) {
+        String lower = text.toLowerCase(Locale.ROOT);
+        for (int i = 0; i < lower.length(); ) {
+            int cp = lower.codePointAt(i);
+            i += Character.charCount(cp);
             if (Character.UnicodeScript.of(cp) == Character.UnicodeScript.HAN) {
                 flush(word, result);
                 result.merge(new String(Character.toChars(cp)), 1, Integer::sum);

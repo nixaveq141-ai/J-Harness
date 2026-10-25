@@ -48,7 +48,8 @@ public final class EventRequestJournal implements RequestJournal {
 
     @Override
     public ChatRequest reconstruct(List<SessionEvent> events, String requestedEventId) {
-        Map<String, SessionEvent> prefix = new LinkedHashMap<>();
+        Map<String, SessionEvent> contexts = new HashMap<>();
+        Set<String> seen = new HashSet<>();
         String sessionId = null;
         for (SessionEvent event : events) {
             if (sessionId == null) sessionId = event.sessionId();
@@ -57,13 +58,14 @@ public final class EventRequestJournal implements RequestJournal {
             if (event.schemaVersion() != 1)
                 throw new HarnessException(
                         "FUTURE_VERSION_READ_ONLY", "Unsupported request schema");
-            if (prefix.putIfAbsent(event.eventId(), event) != null)
+            if (!seen.add(event.eventId()))
                 throw new HarnessException("DUPLICATE_EVENT", "Duplicate request event");
+            if (event.type().equals("request.context")) contexts.put(event.eventId(), event);
             if (!event.eventId().equals(requestedEventId)) continue;
             if (!event.type().equals("model.requested"))
                 throw new HarnessException("INVALID_EVENT", "Target is not a model request");
             Object id = event.payload().get("contextEventId");
-            SessionEvent context = id instanceof String text ? prefix.get(text) : null;
+            SessionEvent context = id instanceof String text ? contexts.get(text) : null;
             if (context == null
                     || !context.type().equals("request.context")
                     || !Objects.equals(context.turnId(), event.turnId())

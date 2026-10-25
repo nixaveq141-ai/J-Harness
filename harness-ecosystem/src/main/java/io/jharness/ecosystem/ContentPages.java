@@ -31,7 +31,8 @@ public final class ContentPages {
         out.put("totalCharacters", clean.length());
         out.put("contentSha256", sha);
         out.put("sanitized", true);
-        out.put("startLine", 1 + clean.substring(0, offset).chars().filter(c -> c == '\n').count());
+        out.put("offsetUnit", "UTF-16 code units");
+        out.put("startLine", 1 + clean.chars().limit(offset).filter(c -> c == '\n').count());
         return out;
     }
 

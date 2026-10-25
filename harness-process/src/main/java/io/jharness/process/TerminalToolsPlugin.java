@@ -195,12 +195,23 @@ public final class TerminalToolsPlugin implements HarnessPlugin {
                                             case "stop" -> terminal.stop(id);
                                             default -> throw new IllegalStateException();
                                         };
+                                var preview = new LinkedHashMap<String, Object>(value);
+                                if (value.get("text") instanceof String text
+                                        && text.length() > 2048) {
+                                    preview.put("text", JsonEncoding.prefix(text, 2048));
+                                    preview.put("modelPreviewTruncated", true);
+                                    preview.put("readBackTool", "terminal_log");
+                                    preview.put("readBackOffset", args.getOrDefault("offset", 0));
+                                    preview.put(
+                                            "readBackHint",
+                                            "Use the same byte offset and a smaller limit");
+                                }
                                 return new ToolResult(
                                         call.callId(),
                                         ToolStatus.SUCCESS,
                                         value,
-                                        value.toString(),
-                                        value,
+                                        JsonEncoding.text(preview, 16384, "TERMINAL_RESULT_LIMIT"),
+                                        preview,
                                         Optional.empty());
                             } catch (HarnessException ex) {
                                 return ToolResults.failure(

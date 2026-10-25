@@ -288,8 +288,8 @@ public final class McpPlugin implements HarnessPlugin {
                             throw BoundedJson.error("MCP_RESOURCE_TEXT_ONLY");
                     }
                 }
-                if (BoundedJson.encode(result).length > 256 * 1024)
-                    throw BoundedJson.error("MCP_RESOURCE_LIMIT");
+                io.jharness.api.JsonEncoding.encode(
+                        result, 256 * 1024, 16384, 32, "MCP_RESOURCE_LIMIT");
                 var source =
                         Map.<String, Object>of(
                                 "type",
@@ -424,6 +424,8 @@ public final class McpPlugin implements HarnessPlugin {
                                 "tools/call",
                                 Map.of("name", name, "arguments", args.arguments()),
                                 context.cancellation());
+                io.jharness.api.JsonEncoding.encode(
+                        result, 256 * 1024, 16384, 32, "MCP_RESULT_LIMIT");
                 if (!(result.get("content") instanceof List<?> content)
                         || content.size() > 128
                         || result.containsKey("isError")

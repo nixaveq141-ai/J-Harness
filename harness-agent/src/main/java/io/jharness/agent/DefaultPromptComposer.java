@@ -16,6 +16,21 @@ public final class DefaultPromptComposer implements PromptComposer {
         this.parameters = Values.snapshot(parameters);
     }
 
+    private static Map<String, Object> stable(Map<String, Object> source) {
+        var out = new LinkedHashMap<String, Object>();
+        source.keySet().stream()
+                .sorted()
+                .forEach(key -> out.put(key, stableValue(source.get(key))));
+        return out;
+    }
+
+    private static Object stableValue(Object value) {
+        if (value instanceof Map<?, ?>) return stable(Values.object(value));
+        if (value instanceof List<?> list)
+            return list.stream().map(DefaultPromptComposer::stableValue).toList();
+        return value;
+    }
+
     @Override
     public ChatRequest compose(SessionProjection projection) {
         List<Map<String, Object>> declarations =
@@ -24,17 +39,18 @@ public final class DefaultPromptComposer implements PromptComposer {
                                 tool -> {
                                     try {
                                         new JsonSchema().checkSchema(tool.inputSchema());
-                                        return Map.<String, Object>of(
-                                                "type",
-                                                "function",
-                                                "function",
-                                                Map.of(
-                                                        "name",
-                                                        tool.name(),
-                                                        "description",
-                                                        tool.description(),
-                                                        "parameters",
-                                                        tool.inputSchema()));
+                                        return stable(
+                                                Map.<String, Object>of(
+                                                        "type",
+                                                        "function",
+                                                        "function",
+                                                        Map.of(
+                                                                "name",
+                                                                tool.name(),
+                                                                "description",
+                                                                tool.description(),
+                                                                "parameters",
+                                                                tool.inputSchema())));
                                     } catch (RuntimeException ex) {
                                         throw new HarnessException(
                                                 "INVALID_TOOL_DECLARATION",
@@ -43,6 +59,7 @@ public final class DefaultPromptComposer implements PromptComposer {
                                     }
                                 })
                         .toList();
+        JsonEncoding.encode(declarations, 4 * 1024 * 1024, 100000, 64, "TOOL_DECLARATION_LIMIT");
         return new ChatRequest(projection.messages(), declarations, parameters);
     }
 }

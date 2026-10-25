@@ -2539,8 +2539,10 @@ public final class HarnessWebServer implements AutoCloseable {
 
     private PreparedResponse prepareResponse(int status, Map<String, Object> value)
             throws IOException {
-        byte[] bytes = WebJson.encode(sanitizer.sanitize(value));
-        if (bytes.length > WebJson.RESPONSE_LIMIT) {
+        byte[] bytes;
+        try {
+            bytes = WebJson.encode(sanitizer.sanitize(value), WebJson.RESPONSE_LIMIT);
+        } catch (IOException oversized) {
             status = 413;
             bytes = WebJson.encode(Map.of("error", "RESPONSE_LIMIT"));
         }

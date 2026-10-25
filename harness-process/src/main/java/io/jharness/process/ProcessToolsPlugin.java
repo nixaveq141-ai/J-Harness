@@ -149,7 +149,9 @@ public final class ProcessToolsPlugin implements HarnessPlugin {
                                 "cleanupStatus",
                                 "observedClean",
                                 "residualPids",
-                                "sideEffectUncertain"))
+                                "sideEffectUncertain",
+                                "reason",
+                                "limitations"))
                     if (value.containsKey(key)) model.put(key, value.get(key));
                 result.error().ifPresent(error -> model.put("error", error.code()));
                 for (String key : List.of("stdout", "stderr")) {
@@ -158,7 +160,8 @@ public final class ProcessToolsPlugin implements HarnessPlugin {
                                 key,
                                 text.length() <= 1024
                                         ? text
-                                        : text.substring(0, 1024) + "[MODEL PREVIEW TRUNCATED]");
+                                        : JsonEncoding.prefix(text, 1024)
+                                                + "[MODEL PREVIEW TRUNCATED]");
                         if (text.length() > 1024) {
                             ArtifactStore.Artifact artifact;
                             try {
@@ -187,7 +190,7 @@ public final class ProcessToolsPlugin implements HarnessPlugin {
                         result.callId(),
                         result.status(),
                         value,
-                        model.toString(),
+                        JsonEncoding.text(model, 16384, "PROCESS_RESULT_LIMIT"),
                         result.display(),
                         result.error());
             } catch (IllegalArgumentException ex) {

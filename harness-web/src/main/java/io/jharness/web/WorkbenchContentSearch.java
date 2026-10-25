@@ -15,9 +15,10 @@ final class WorkbenchContentSearch {
             int reused,
             int rebuilt) {}
 
+    private final java.util.concurrent.Semaphore searches = new java.util.concurrent.Semaphore(2);
     private final Map<String, Snapshot> snapshots = new LinkedHashMap<>();
 
-    synchronized Map<String, Object> search(
+    Map<String, Object> search(
             Map<String, Object> input,
             List<Map<String, Object>> candidates,
             Map<String, HarnessWebServer.Profile> profiles)
@@ -42,7 +43,9 @@ final class WorkbenchContentSearch {
                 candidates.stream()
                         .filter(
                                 row ->
-                                        (profile.isEmpty() || profile.equals(row.get("profile")))
+                                        profiles.containsKey(row.get("profile"))
+                                                && (profile.isEmpty()
+                                                        || profile.equals(row.get("profile")))
                                                 && (session.isEmpty()
                                                         || session.equals(row.get("sessionId")))
                                                 && (view.equals("all")
@@ -79,66 +82,91 @@ final class WorkbenchContentSearch {
                                                 session,
                                                 "limit",
                                                 limit)));
-        snapshots.entrySet().removeIf(entry -> entry.getValue().expires < System.nanoTime());
+        synchronized (snapshots) {
+            snapshots.entrySet().removeIf(entry -> entry.getValue().expires < System.nanoTime());
+        }
         String id;
         int offset;
         Snapshot snapshot;
         if (cursor.isEmpty()) {
-            long deadline = System.nanoTime() + Duration.ofSeconds(5).toNanos();
-            CancellationToken cancellation =
-                    () -> System.nanoTime() >= deadline || Thread.currentThread().isInterrupted();
-            var matches = new ArrayList<Map<String, Object>>();
-            int reused = 0, rebuilt = 0;
-            for (var row : scope) {
-                cancellation.throwIfCancelled();
-                var selected = profiles.get(row.get("profile"));
-                if (selected.search() == null) throw error("SEARCH_UNAVAILABLE");
-                // Missing log means admission has not yet produced any content, never a guessed
-                // result.
-                if (!selected.sessions().list().contains(row.get("sessionId"))) continue;
-                var result =
-                        selected.search()
-                                .search(
-                                        (String) row.get("sessionId"),
-                                        text,
-                                        mode,
-                                        4096,
-                                        rebuild,
-                                        cancellation);
-                reused += result.reusedEvents();
-                if (result.rebuilt()) rebuilt++;
-                for (var hit : result.hits()) {
-                    if (matches.size() >= 4096) throw error("SEARCH_RESULT_LIMIT");
-                    var value = new LinkedHashMap<>(row);
-                    value.put("eventId", hit.eventId());
-                    value.put("turnId", hit.turnId());
-                    value.put("type", hit.type());
-                    value.put("timestamp", hit.timestamp());
-                    value.put("snippet", hit.snippet());
-                    value.put("score", hit.score());
-                    matches.add(Map.copyOf(value));
+            if (!searches.tryAcquire()) throw error("SEARCH_BUSY");
+            try {
+                long deadline = System.nanoTime() + Duration.ofSeconds(5).toNanos();
+                CancellationToken cancellation =
+                        () ->
+                                System.nanoTime() >= deadline
+                                        || Thread.currentThread().isInterrupted();
+                var matches = new ArrayList<Map<String, Object>>();
+                int reused = 0, rebuilt = 0;
+                var memberships = new HashMap<String, Set<String>>();
+                var timestamps = new HashMap<String, Instant>();
+                for (var row : scope) {
+                    cancellation.throwIfCancelled();
+                    var selected = profiles.get(row.get("profile"));
+                    if (selected == null || selected.search() == null)
+                        throw error("SEARCH_UNAVAILABLE");
+                    // Missing log means admission has not yet produced any content, never a guessed
+                    // result.
+                    if (!memberships
+                            .computeIfAbsent(
+                                    (String) row.get("profile"),
+                                    ignored -> Set.copyOf(selected.sessions().list()))
+                            .contains(row.get("sessionId"))) continue;
+                    var result =
+                            selected.search()
+                                    .search(
+                                            (String) row.get("sessionId"),
+                                            text,
+                                            mode,
+                                            4096,
+                                            rebuild,
+                                            cancellation);
+                    reused += result.reusedEvents();
+                    if (result.rebuilt()) rebuilt++;
+                    for (var hit : result.hits()) {
+                        if (matches.size() >= 4096) throw error("SEARCH_RESULT_LIMIT");
+                        try {
+                            timestamps.computeIfAbsent(hit.timestamp(), Instant::parse);
+                        } catch (RuntimeException invalid) {
+                            throw error("SEARCH_UNAVAILABLE");
+                        }
+                        var value = new LinkedHashMap<>(row);
+                        value.put("eventId", hit.eventId());
+                        value.put("turnId", hit.turnId());
+                        value.put("type", hit.type());
+                        value.put("timestamp", hit.timestamp());
+                        value.put("snippet", hit.snippet());
+                        value.put("score", hit.score());
+                        matches.add(Map.copyOf(value));
+                    }
                 }
+                matches.sort(
+                        Comparator.<Map<String, Object>>comparingInt(
+                                        row -> (Integer) row.get("score"))
+                                .reversed()
+                                .thenComparing(
+                                        row -> timestamps.get((String) row.get("timestamp")),
+                                        Comparator.reverseOrder())
+                                .thenComparing(row -> (String) row.get("sessionId"))
+                                .thenComparing(row -> (String) row.get("eventId")));
+                id = UUID.randomUUID().toString();
+                offset = 0;
+                snapshot =
+                        new Snapshot(
+                                query,
+                                scopeHash,
+                                System.nanoTime() + Duration.ofMinutes(2).toNanos(),
+                                List.copyOf(matches),
+                                reused,
+                                rebuilt);
+                synchronized (snapshots) {
+                    if (snapshots.size() >= 4)
+                        snapshots.remove(snapshots.keySet().iterator().next());
+                    snapshots.put(id, snapshot);
+                }
+            } finally {
+                searches.release();
             }
-            matches.sort(
-                    Comparator.<Map<String, Object>>comparingInt(row -> (Integer) row.get("score"))
-                            .reversed()
-                            .thenComparing(
-                                    row -> Instant.parse((String) row.get("timestamp")),
-                                    Comparator.reverseOrder())
-                            .thenComparing(row -> (String) row.get("sessionId"))
-                            .thenComparing(row -> (String) row.get("eventId")));
-            id = UUID.randomUUID().toString();
-            offset = 0;
-            snapshot =
-                    new Snapshot(
-                            query,
-                            scopeHash,
-                            System.nanoTime() + Duration.ofMinutes(2).toNanos(),
-                            List.copyOf(matches),
-                            reused,
-                            rebuilt);
-            if (snapshots.size() >= 4) snapshots.remove(snapshots.keySet().iterator().next());
-            snapshots.put(id, snapshot);
         } else {
             int separator = cursor.lastIndexOf('_');
             if (separator < 0) throw error("SEARCH_CURSOR_EXPIRED");
@@ -148,7 +176,9 @@ final class WorkbenchContentSearch {
             } catch (NumberFormatException ex) {
                 throw error("SEARCH_CURSOR_EXPIRED");
             }
-            snapshot = snapshots.get(id);
+            synchronized (snapshots) {
+                snapshot = snapshots.get(id);
+            }
             if (rebuild
                     || snapshot == null
                     || !snapshot.query.equals(query)

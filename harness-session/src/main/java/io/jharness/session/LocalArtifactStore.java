@@ -63,12 +63,13 @@ public final class LocalArtifactStore implements ArtifactStore {
 
     @Override
     public Artifact put(String session, String content) throws IOException {
+        JsonEncoding.utf8Length(content, LIMIT, "ARTIFACT_LIMIT");
         var sanitized = sanitizer.sanitize(Map.of("content", content));
         if (sanitized == null || !(sanitized.get("content") instanceof String))
             throw new HarnessException(
                     "INVALID_SANITIZER_RESULT", "Sanitizer must return text content");
         String clean = (String) sanitized.get("content");
-        byte[] bytes = clean.getBytes(StandardCharsets.UTF_8);
+        byte[] bytes = JsonEncoding.utf8(clean, LIMIT, "ARTIFACT_LIMIT");
         if (bytes.length > LIMIT)
             throw new HarnessException("ARTIFACT_LIMIT", "Artifact exceeds bound");
         String digest = hash(bytes), id = UUID.randomUUID() + "-" + digest;
@@ -95,9 +96,16 @@ public final class LocalArtifactStore implements ArtifactStore {
                 || limit > 256 * 1024)
             throw new HarnessException("ARTIFACT_DENIED", "Invalid reference or page");
         String text = readText(session, id);
-        return text.substring(
-                Math.min(offset, text.length()),
-                (int) Math.min(text.length(), (long) offset + limit));
+        int start = Math.min(offset, text.length()),
+                end = (int) Math.min(text.length(), (long) offset + limit);
+        if (start > 0 && start < text.length() && Character.isLowSurrogate(text.charAt(start)))
+            throw new HarnessException("ARTIFACT_DENIED", "Offset splits UTF-16 character");
+        if (end < text.length() && end > start && Character.isHighSurrogate(text.charAt(end - 1)))
+            end--;
+        if (end == start && start < text.length())
+            throw new HarnessException(
+                    "ARTIFACT_DENIED", "Page cannot hold a full Unicode character");
+        return text.substring(start, end);
     }
 
     @Override

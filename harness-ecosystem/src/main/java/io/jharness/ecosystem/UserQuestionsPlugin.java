@@ -182,9 +182,13 @@ public final class UserQuestionsPlugin implements HarnessPlugin, UserQuestionSer
     }
 
     public synchronized List<Map<String, Object>> list() {
+        return list(reader.events());
+    }
+
+    private List<Map<String, Object>> list(List<SessionEvent> events) {
         if (!active) throw error("QUESTION_SCOPE_CLOSED");
         var rows = new LinkedHashMap<String, Map<String, Object>>();
-        for (var view : project(reader.events())) rows.put((String) view.get("questionId"), view);
+        for (var view : project(events)) rows.put((String) view.get("questionId"), view);
         for (var entry : pending.entrySet()) {
             var p = entry.getValue();
             // Once a resolution is durable, it wins even before pending cleanup completes.
@@ -298,8 +302,9 @@ public final class UserQuestionsPlugin implements HarnessPlugin, UserQuestionSer
                 || !(input.get("requestId") instanceof String requestId))
             throw error("INVALID_ANSWER");
         if (!requestId.matches("[A-Za-z0-9_-]{1,64}")) throw error("INVALID_ANSWER");
+        var events = reader.events();
         var row =
-                list().stream()
+                list(events).stream()
                         .filter(v -> id.equals(v.get("questionId")))
                         .findFirst()
                         .orElseThrow(() -> error("QUESTION_NOT_FOUND"));
@@ -330,7 +335,7 @@ public final class UserQuestionsPlugin implements HarnessPlugin, UserQuestionSer
         if (pending.values().stream()
                 .anyMatch(p -> p.answer != null && requestId.equals(p.answer.get("requestId"))))
             throw error("ANSWER_CONFLICT");
-        if (reader.events().stream()
+        if (events.stream()
                 .anyMatch(
                         e ->
                                 e.type().equals("question.resolved")
@@ -338,7 +343,7 @@ public final class UserQuestionsPlugin implements HarnessPlugin, UserQuestionSer
             throw error("ANSWER_CONFLICT");
         wait.answer = Values.snapshot(sanitizer.sanitize(answer));
         wait.fingerprint = hash;
-        return list().stream()
+        return list(events).stream()
                 .filter(v -> id.equals(v.get("questionId")))
                 .findFirst()
                 .orElseThrow();

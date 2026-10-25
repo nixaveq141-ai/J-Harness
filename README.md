@@ -1,5 +1,7 @@
 # J-Harness
 
+2026-10-25：[R5 本地修复增量](docs/development/OCR-R5-remediation-2026-10-25.md)覆盖有界编码、检索索引与并发、工具预览/分页和压缩审计；64 条台账中 51 条本轮补强、2 条有限实施、11 条后续项，R5 仍在进行中。验证与限制见[验收记录](docs/testing/OCR-R5-remediation-2026-10-25-validation.md)。
+
 2026-10-25：[R4 本地修复增量](docs/development/OCR-R4-remediation-2026-10-25.md)补强扩展表单、旧响应隔离、路由展示、报告独立预算与截断前脱敏。原115条索引已保留；R4仍在进行中，最终本地证据见[验收记录](docs/testing/OCR-R4-remediation-2026-10-25-validation.md)，不替代M10.5.9/M11准入。
 
 2026-10-24当前任务：独立推进[M10.5.9整阶段验收](docs/testing/M10.5.9-validation.md)，按原始契约执行当前版本跨平台、三浏览器及制品门禁。OCR R4～R6整体完成不作为本次前置；已获专用分支推送和Actions授权，实际结果归档后再更新完成状态。

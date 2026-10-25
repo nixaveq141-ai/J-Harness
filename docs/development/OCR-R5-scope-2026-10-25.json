@@ -1,0 +1,1222 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-25",
+  "baseline": "7f5b9bf66f7c63d6960e2f50cd05afe652ba4136",
+  "status": "LOCAL_INCREMENT_R5_OPEN",
+  "originalScopeCount": 64,
+  "counts": {
+    "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED": 51,
+    "PARTIAL_IMPLEMENTATION_LIMITED": 2,
+    "PENDING_FOLLOWUP": 11
+  },
+  "acceptanceBoundary": "Implementation/regression mapping only; no blanket 64-opinion closure or remote platform acceptance.",
+  "items": [
+    {
+      "id": "OCR-0051",
+      "taskId": "R5-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "声明使用Map.of，键序不保证；接受稳定序列化以便证据比较，provider缓存受影响未有测量证据，不按缓存故障立项。",
+      "sourceReferences": [
+        "harness-agent/src/main/java/io/jharness/agent/DefaultPromptComposer.java:25"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5CompactionTest",
+        "R5CompactionAuditTest",
+        "R3CompactionBoundaryTest",
+        "M6CompactionTest"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0059",
+      "taskId": "R5-03",
+      "originalVerdict": "accepted",
+      "adoptedScope": "压缩时reader.events全读并把所有命中ID写进sourceEvents，长会话来源列表无界，需来源窗口/索引和写出上限，保留溯源与持久化前置。",
+      "sourceReferences": [
+        "harness-agent/src/main/java/io/jharness/agent/ContextCompactionPlugin.java:67"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5CompactionTest",
+        "R5CompactionAuditTest",
+        "R3CompactionBoundaryTest",
+        "M6CompactionTest"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0060",
+      "taskId": "R5-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "sourceEvents收集全会话而非移除消息，关联粒度过宽；应明确来源集合语义并建立移除消息到事件的映射，不能据此认定恢复重放错误。",
+      "sourceReferences": [
+        "harness-agent/src/main/java/io/jharness/agent/ContextCompactionPlugin.java:76"
+      ],
+      "state": "PARTIAL_IMPLEMENTATION_LIMITED",
+      "implementationBoundary": "新增唯一值精确来源关联和歧义未映射计数；历史重复消息/合成消息不猜来源，未宣称全部消息可逆映射。",
+      "validationGroups": [
+        "R5CompactionTest",
+        "R5CompactionAuditTest",
+        "R3CompactionBoundaryTest",
+        "M6CompactionTest"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0062",
+      "taskId": "R5-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "日志字符数只算messages，压缩判定同时算tools；接受统一测量并避免全量toString临时分配，现有字段不承担恢复权威。",
+      "sourceReferences": [
+        "harness-agent/src/main/java/io/jharness/agent/ContextCompactionPlugin.java:62"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5CompactionTest",
+        "R5CompactionAuditTest",
+        "R3CompactionBoundaryTest",
+        "M6CompactionTest"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0070",
+      "taskId": "R5-03",
+      "originalVerdict": "accepted",
+      "adoptedScope": "每删除一组即重建ChatRequest并对完整messages/tools做toString，长工具历史有重复遍历分配；用累计大小和一次构造，保持协议组不拆分。",
+      "sourceReferences": [
+        "harness-agent/src/main/java/io/jharness/agent/ExtractiveContextCompactor.java:58"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5CompactionTest",
+        "R5CompactionAuditTest",
+        "R3CompactionBoundaryTest",
+        "M6CompactionTest"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0071",
+      "taskId": "R5-03",
+      "originalVerdict": "accepted",
+      "adoptedScope": "代码仅保护groups最后一组；尾部普通user时最近assistant/tool组仍可被删除，违反M6最后协议组保护。补尾部user和文本assistant回归。",
+      "sourceReferences": [
+        "harness-agent/src/main/java/io/jharness/agent/ExtractiveContextCompactor.java:42"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5CompactionTest",
+        "R5CompactionAuditTest",
+        "R3CompactionBoundaryTest",
+        "M6CompactionTest"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0072",
+      "taskId": "R5-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "再次压缩会截取旧摘要前60字符，确有递归信息损失；提取式摘要本来允许有损，不宜永久保护无界旧摘要，需明确有界递归压缩策略。",
+      "sourceReferences": [
+        "harness-agent/src/main/java/io/jharness/agent/ExtractiveContextCompactor.java:44"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5CompactionTest",
+        "R5CompactionAuditTest",
+        "R3CompactionBoundaryTest",
+        "M6CompactionTest"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0073",
+      "taskId": "R5-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "工具摘录作为user消息有来源层级混淆；原文建议system反而提高权限不可采纳。保留角色/不可信引用边界并测试，不宣称能消除模型注入。",
+      "sourceReferences": [
+        "harness-agent/src/main/java/io/jharness/agent/ExtractiveContextCompactor.java:60"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5CompactionTest",
+        "R5CompactionAuditTest",
+        "R3CompactionBoundaryTest",
+        "M6CompactionTest"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0074",
+      "taskId": "R5-03",
+      "originalVerdict": "accepted",
+      "adoptedScope": "固定512摘录可占满1024预算使原本可容纳的受保护消息失败；需按受保护内容和工具声明剩余空间裁剪，保留真正超限拒绝。",
+      "sourceReferences": [
+        "harness-agent/src/main/java/io/jharness/agent/ExtractiveContextCompactor.java:49"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5CompactionTest",
+        "R5CompactionAuditTest",
+        "R3CompactionBoundaryTest",
+        "M6CompactionTest"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0121",
+      "taskId": "R5-02",
+      "originalVerdict": "accepted",
+      "adoptedScope": "异常结算每个未决call两次reader.events读取，确为重复全日志扫描；一次快照建立call索引即可，需保留UNKNOWN结算语义。",
+      "sourceReferences": [
+        "harness-agent/src/main/java/io/jharness/agent/DefaultAgentLoop.java:337"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5SessionBoundsTest",
+        "R5ContentSearchTest",
+        "TokenSessionSearchTest",
+        "WorkbenchContentSearchTest",
+        "existing agent/planning/questions/session suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0232",
+      "taskId": "R5-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "uncertainCalls每次全扫toolHistory属事实，采纳测量长会话后按不可变投影缓存；目前无性能阈值失败证据，不盲目引入可变增量权威状态。",
+      "sourceReferences": [
+        "harness-api/src/main/java/io/jharness/api/SessionProjection.java:12"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5SessionBoundsTest",
+        "R5ContentSearchTest",
+        "TokenSessionSearchTest",
+        "WorkbenchContentSearchTest",
+        "existing agent/planning/questions/session suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0310",
+      "taskId": "R5-02",
+      "originalVerdict": "accepted",
+      "adoptedScope": "运行收尾多次reader.events完整读JSONL，可在无新增写入节点缓存一致快照，写入后显式刷新。",
+      "sourceReferences": [
+        "harness-cli/src/main/java/io/jharness/cli/CliApplication.java:1059"
+      ],
+      "state": "PENDING_FOLLOWUP",
+      "implementationBoundary": "CLI 收尾读合并尚待实施与写入后刷新边界测试。",
+      "validationGroups": [
+        "R5SessionBoundsTest",
+        "R5ContentSearchTest",
+        "TokenSessionSearchTest",
+        "WorkbenchContentSearchTest",
+        "existing agent/planning/questions/session suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0409",
+      "taskId": "R5-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "clone维护不可变边界不应删除；接受公共transport输出上限与实现契约，未证明现有有界NativeCommandTransport泄漏或GC故障。",
+      "sourceReferences": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/CommandTransport.java:20"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5EncodingTest",
+        "R5TransportBoundsTest",
+        "R5WorkspaceBoundsTest",
+        "M2WorkspaceIntegrationTest",
+        "existing process/terminal/MCP/artifact suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0418",
+      "taskId": "R5-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "每页sha(clean)确实全量编码散列；接受单次有界内容快照复用版本，不能仅按请求客户端offset无限缓存或放弃版本一致性验证。",
+      "sourceReferences": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/ContentPages.java:19"
+      ],
+      "state": "PENDING_FOLLOWUP",
+      "implementationBoundary": "分页仍逐次校验完整内容；尚未建立可复用且不弱化秘密更新/版本一致性的单次内容快照。",
+      "validationGroups": [
+        "R5EncodingTest",
+        "R5TransportBoundsTest",
+        "R5WorkspaceBoundsTest",
+        "M2WorkspaceIntegrationTest",
+        "existing process/terminal/MCP/artifact suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0419",
+      "taskId": "R5-01",
+      "originalVerdict": "accepted",
+      "adoptedScope": "startLine用substring(0,offset).chars导致复制前缀，可无分配遍历或有界行索引，保持偏移语义。",
+      "sourceReferences": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/ContentPages.java:34"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5EncodingTest",
+        "R5TransportBoundsTest",
+        "R5WorkspaceBoundsTest",
+        "M2WorkspaceIntegrationTest",
+        "existing process/terminal/MCP/artifact suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0421",
+      "taskId": "R5-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "偏移统一UTF16但JSON字段未直接说明单位，接受跨Python/JS接口文档及非BMP回归；源码拒绝落在low surrogate，意见声称高代理起始截断不成立。",
+      "sourceReferences": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/ContentPages.java:31"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5EncodingTest",
+        "R5TransportBoundsTest",
+        "R5WorkspaceBoundsTest",
+        "M2WorkspaceIntegrationTest",
+        "existing process/terminal/MCP/artifact suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0423",
+      "taskId": "R5-01",
+      "originalVerdict": "accepted",
+      "adoptedScope": "encode先writeValueAsBytes后检查4MB，写出路径缺少有界流与对称约束；应限制序列化过程占用，深度循环保护沿用Values边界，不断言所有巨大图均可达。",
+      "sourceReferences": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/BoundedJson.java:29"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5EncodingTest",
+        "R5TransportBoundsTest",
+        "R5WorkspaceBoundsTest",
+        "M2WorkspaceIntegrationTest",
+        "existing process/terminal/MCP/artifact suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0424",
+      "taskId": "R5-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "encode只限字节而decode还限100000token/64层，自产小字节多节点报文可能对端拒绝；统一对象协议限额。encode是通用Object方法而decode约定对象，null不可往返不必强求。",
+      "sourceReferences": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/BoundedJson.java:41"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5EncodingTest",
+        "R5TransportBoundsTest",
+        "R5WorkspaceBoundsTest",
+        "M2WorkspaceIntegrationTest",
+        "existing process/terminal/MCP/artifact suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0443",
+      "taskId": "R5-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "响应encode在try之外，超限导致无结构响应；可在编码前后返回有界错误。EPIPE已断流不能保证再输出错误帧，应保持结果不确定而非重试。",
+      "sourceReferences": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/EnvironmentWorker.java:38"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5EncodingTest",
+        "R5TransportBoundsTest",
+        "R5WorkspaceBoundsTest",
+        "M2WorkspaceIntegrationTest",
+        "existing process/terminal/MCP/artifact suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0466",
+      "taskId": "R5-02",
+      "originalVerdict": "accepted",
+      "adoptedScope": "snapshot持监视器全量reader.events轮询，与accept争锁；增量索引及锁外读取降低长会话阻塞，不能读失败时伪造PERSISTED。",
+      "sourceReferences": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/ModelDisplayBuffer.java:59"
+      ],
+      "state": "PENDING_FOLLOWUP",
+      "implementationBoundary": "展示缓冲器锁外读取与 reset 并发精确窗口尚待，保留原事实读取失败语义。",
+      "validationGroups": [
+        "R5SessionBoundsTest",
+        "R5ContentSearchTest",
+        "TokenSessionSearchTest",
+        "WorkbenchContentSearchTest",
+        "existing agent/planning/questions/session suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0470",
+      "taskId": "R5-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "输出future异常后仍等进程至deadline，需提早停止和有界收尾；输出越界后有副作用状态仍须UNKNOWN，不能按建议改确定失败可重试。",
+      "sourceReferences": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/NativeCommandTransport.java:38"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5EncodingTest",
+        "R5TransportBoundsTest",
+        "R5WorkspaceBoundsTest",
+        "M2WorkspaceIntegrationTest",
+        "existing process/terminal/MCP/artifact suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0471",
+      "taskId": "R5-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "deadline在builder.start之后计算，启动耗时未纳入预算；提前校验Duration/计时并核验启动限制。不能只移动时间戳宣称已可中断操作系统阻塞start。",
+      "sourceReferences": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/NativeCommandTransport.java:37"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5EncodingTest",
+        "R5TransportBoundsTest",
+        "R5WorkspaceBoundsTest",
+        "M2WorkspaceIntegrationTest",
+        "existing process/terminal/MCP/artifact suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0486",
+      "taskId": "R5-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "宿主parameters/tools快照只限深度不限制大小，接受配置读取/工具声明入口统一数量与字节上限；可信root配置不按远程DoS定级。",
+      "sourceReferences": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/SdkConfiguration.java:35"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5EncodingTest",
+        "R5TransportBoundsTest",
+        "R5WorkspaceBoundsTest",
+        "M2WorkspaceIntegrationTest",
+        "existing process/terminal/MCP/artifact suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0500",
+      "taskId": "R5-02",
+      "originalVerdict": "accepted",
+      "adoptedScope": "todos/plan重放全日志，evidence每ID再扫描列表；一次投影/索引并保持唯一写者与恢复可重建，归并长会话读取计划。",
+      "sourceReferences": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/PlanningPlugin.java:38"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5SessionBoundsTest",
+        "R5ContentSearchTest",
+        "TokenSessionSearchTest",
+        "WorkbenchContentSearchTest",
+        "existing agent/planning/questions/session suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0522",
+      "taskId": "R5-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "content仅限条数，结构化内容/文本总量缺插件层限额；接受应用结果上限与上下文界限。已执行后超限不能一律确定FAILED允许重放。",
+      "sourceReferences": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/McpPlugin.java:415"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5EncodingTest",
+        "R5TransportBoundsTest",
+        "R5WorkspaceBoundsTest",
+        "M2WorkspaceIntegrationTest",
+        "existing process/terminal/MCP/artifact suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0561",
+      "taskId": "R5-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "每完成请求全读日志取最新requested，接受请求ID显式关联/增量读取；标准Loop单请求、子会话独立，未证明当前并发串归属，不据假想并发确认。",
+      "sourceReferences": [
+        "harness-llm/src/main/java/io/jharness/llm/ObservedLlmClient.java:83"
+      ],
+      "state": "PENDING_FOLLOWUP",
+      "implementationBoundary": "ObservedLlmClient 显式 requestId/context 传递设计未更换，未证明并发错误关联。",
+      "validationGroups": [
+        "R5SessionBoundsTest",
+        "R5ContentSearchTest",
+        "TokenSessionSearchTest",
+        "WorkbenchContentSearchTest",
+        "existing agent/planning/questions/session suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0573",
+      "taskId": "R5-02",
+      "originalVerdict": "accepted",
+      "adoptedScope": "respond持插件锁内list/reader/list三次全读，接受单次快照复用及缩小锁，保持回答幂等和单写者。",
+      "sourceReferences": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/UserQuestionsPlugin.java:254"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5SessionBoundsTest",
+        "R5ContentSearchTest",
+        "TokenSessionSearchTest",
+        "WorkbenchContentSearchTest",
+        "existing agent/planning/questions/session suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0689",
+      "taskId": "R5-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "model.toString非JSON且缺reason/limitations降低结构可读，接受统一有界结构化模型摘要，保留原结果事实及未信任输出边界。",
+      "sourceReferences": [
+        "harness-process/src/main/java/io/jharness/process/ProcessToolsPlugin.java:177"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5EncodingTest",
+        "R5TransportBoundsTest",
+        "R5WorkspaceBoundsTest",
+        "M2WorkspaceIntegrationTest",
+        "existing process/terminal/MCP/artifact suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0702",
+      "taskId": "R5-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "terminal_log最多65536仍在value/modelContent/display重复，接受模型预览/制品引用与总量限额；当前有界文本不是无限泄漏。",
+      "sourceReferences": [
+        "harness-process/src/main/java/io/jharness/process/TerminalToolsPlugin.java:195"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5EncodingTest",
+        "R5TransportBoundsTest",
+        "R5WorkspaceBoundsTest",
+        "M2WorkspaceIntegrationTest",
+        "existing process/terminal/MCP/artifact suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0741",
+      "taskId": "R5-01",
+      "originalVerdict": "accepted",
+      "adoptedScope": "put先sanitize整串再getBytes后4MB检查，需输入预界/有界编码及脱敏扩张上限，避免大工具结果峰值放大。",
+      "sourceReferences": [
+        "harness-session/src/main/java/io/jharness/session/LocalArtifactStore.java:42"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5EncodingTest",
+        "R5TransportBoundsTest",
+        "R5WorkspaceBoundsTest",
+        "M2WorkspaceIntegrationTest",
+        "existing process/terminal/MCP/artifact suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0742",
+      "taskId": "R5-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "read每页整读4MB hash，接受同一内容版本安全快照复用；直接按字节offset会破现有UTF16分页及完整脱敏，需要保持协议单位和防篡改校验。",
+      "sourceReferences": [
+        "harness-session/src/main/java/io/jharness/session/LocalArtifactStore.java:67"
+      ],
+      "state": "PENDING_FOLLOWUP",
+      "implementationBoundary": "保留每次产物完整散列与身份校验，未通过盲缓存减读；目录能力及并发篡改窗口另验。",
+      "validationGroups": [
+        "R5EncodingTest",
+        "R5TransportBoundsTest",
+        "R5WorkspaceBoundsTest",
+        "M2WorkspaceIntegrationTest",
+        "existing process/terminal/MCP/artifact suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0750",
+      "taskId": "R5-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "内存fork持仓库全局锁复制会阻塞其它会话，当前未限事件量加重；统一限额后缩锁，性能需要受控多会话数据验证。",
+      "sourceReferences": [
+        "harness-session/src/main/java/io/jharness/session/InMemorySessionRepository.java:43"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5SessionBoundsTest",
+        "R5ContentSearchTest",
+        "TokenSessionSearchTest",
+        "WorkbenchContentSearchTest",
+        "existing agent/planning/questions/session suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0752",
+      "taskId": "R5-02",
+      "originalVerdict": "accepted",
+      "adoptedScope": "内存仓库事件无总上限，与项目有界要求不符；定义可配置但确定上限和文件实现兼容回归。",
+      "sourceReferences": [
+        "harness-session/src/main/java/io/jharness/session/InMemorySessionRepository.java:109"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5SessionBoundsTest",
+        "R5ContentSearchTest",
+        "TokenSessionSearchTest",
+        "WorkbenchContentSearchTest",
+        "existing agent/planning/questions/session suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0754",
+      "taskId": "R5-02",
+      "originalVerdict": "accepted",
+      "adoptedScope": "reconstruct索引所有事件只为context查找，多次请求放大；一次线性校验同时只存必要context及已见ID，保留重复/跨会话门禁。",
+      "sourceReferences": [
+        "harness-session/src/main/java/io/jharness/session/EventRequestJournal.java:51"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5SessionBoundsTest",
+        "R5ContentSearchTest",
+        "TokenSessionSearchTest",
+        "WorkbenchContentSearchTest",
+        "existing agent/planning/questions/session suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0763",
+      "taskId": "R5-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "Catalog全日志/多遍扫描且恢复在便宜过滤前，接受有界元数据投影/增量索引；必须保持源事实权威且不复用陈旧状态。",
+      "sourceReferences": [
+        "harness-session/src/main/java/io/jharness/session/SessionCatalog.java:26"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5SessionBoundsTest",
+        "R5ContentSearchTest",
+        "TokenSessionSearchTest",
+        "WorkbenchContentSearchTest",
+        "existing agent/planning/questions/session suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0783",
+      "taskId": "R5-02",
+      "originalVerdict": "accepted",
+      "adoptedScope": "events变短但prefix匹配时内存裁剪未触发写回，磁盘保留被删payload；缩短/修复源必须更新缓存且rebuilt语义一致。",
+      "sourceReferences": [
+        "harness-session/src/main/java/io/jharness/session/SessionSearchIndex.java:118"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5SessionBoundsTest",
+        "R5ContentSearchTest",
+        "TokenSessionSearchTest",
+        "WorkbenchContentSearchTest",
+        "existing agent/planning/questions/session suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0784",
+      "taskId": "R5-02",
+      "originalVerdict": "accepted",
+      "adoptedScope": "索引全量payload转文本/重复serialize后才96MB限，峰值远超缓存限；有界增量累计和流式原子写，缓存读同样先限。",
+      "sourceReferences": [
+        "harness-session/src/main/java/io/jharness/session/SessionSearchIndex.java:102"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5SessionBoundsTest",
+        "R5ContentSearchTest",
+        "TokenSessionSearchTest",
+        "WorkbenchContentSearchTest",
+        "existing agent/planning/questions/session suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0785",
+      "taskId": "R5-02",
+      "originalVerdict": "accepted",
+      "adoptedScope": "缓存documents行Values.object/字段转换在损坏重建catch之外，畸形派生缓存使搜索失败；完整schema/hash验证后可丢弃重建，绝不改事实日志。",
+      "sourceReferences": [
+        "harness-session/src/main/java/io/jharness/session/SessionSearchIndex.java:92"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5SessionBoundsTest",
+        "R5ContentSearchTest",
+        "TokenSessionSearchTest",
+        "WorkbenchContentSearchTest",
+        "existing agent/planning/questions/session suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0786",
+      "taskId": "R5-02",
+      "originalVerdict": "accepted",
+      "adoptedScope": "lowercase下标用于原串snippet在İ长度扩张错位，512边界也可断代理；保持原始索引映射/Unicode安全窗口回归。",
+      "sourceReferences": [
+        "harness-session/src/main/java/io/jharness/session/SessionSearchIndex.java:151"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5SessionBoundsTest",
+        "R5ContentSearchTest",
+        "TokenSessionSearchTest",
+        "WorkbenchContentSearchTest",
+        "existing agent/planning/questions/session suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0793",
+      "taskId": "R5-02",
+      "originalVerdict": "accepted",
+      "adoptedScope": "静态GATES对任意合法id computeIfAbsent不释放，未存在会话探测也累积；采用固定条带或正确引用计数，不能简单LRU淘汰活跃锁导致双写。",
+      "sourceReferences": [
+        "harness-session/src/main/java/io/jharness/session/JsonlSessionRepository.java:97"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5SessionBoundsTest",
+        "R5ContentSearchTest",
+        "TokenSessionSearchTest",
+        "WorkbenchContentSearchTest",
+        "existing agent/planning/questions/session suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0816",
+      "taskId": "R5-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "TokenSessionSearch整体同步跨会话串行，内建文件锁按id已有隔离；缩锁/有界并发且验证sanitize线程安全，不直接删锁假设所有注入provider安全。",
+      "sourceReferences": [
+        "harness-session/src/main/java/io/jharness/session/TokenSessionSearch.java:76"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5SessionBoundsTest",
+        "R5ContentSearchTest",
+        "TokenSessionSearchTest",
+        "WorkbenchContentSearchTest",
+        "existing agent/planning/questions/session suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0817",
+      "taskId": "R5-02",
+      "originalVerdict": "accepted",
+      "adoptedScope": "lowercase位置用于原文snippet同786，统一Unicode位置映射与代理边界回归。",
+      "sourceReferences": [
+        "harness-session/src/main/java/io/jharness/session/TokenSessionSearch.java:203"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5SessionBoundsTest",
+        "R5ContentSearchTest",
+        "TokenSessionSearchTest",
+        "WorkbenchContentSearchTest",
+        "existing agent/planning/questions/session suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0819",
+      "taskId": "R5-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "父目录替换窗口存在于路径式缓存读写；使用绑定目录能力/原子临时文件及NOFOLLOW，重新realpath只缩窗不彻底消竞态，派生缓存不可成为事实写入通道。",
+      "sourceReferences": [
+        "harness-session/src/main/java/io/jharness/session/TokenSessionSearch.java:68"
+      ],
+      "state": "PARTIAL_IMPLEMENTATION_LIMITED",
+      "implementationBoundary": "新增目录创建时身份与发布边界复核，但未接入 SecureDirectoryStream；Windows 路径检查不能消除父目录替换竞态。",
+      "validationGroups": [
+        "R5SessionBoundsTest",
+        "R5ContentSearchTest",
+        "TokenSessionSearchTest",
+        "WorkbenchContentSearchTest",
+        "existing agent/planning/questions/session suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0848",
+      "taskId": "R5-02",
+      "originalVerdict": "accepted",
+      "adoptedScope": "旧游标未先断言非空，after=空/字符串null的400也能误通过失效规则，先证明实际存在下一页再变更快照。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M1052HistoryTest.java:280"
+      ],
+      "state": "PENDING_FOLLOWUP",
+      "implementationBoundary": "原历史分页用例的非空 cursor 先验断言尚待单独增强。",
+      "validationGroups": [
+        "R5SessionBoundsTest",
+        "R5ContentSearchTest",
+        "TokenSessionSearchTest",
+        "WorkbenchContentSearchTest",
+        "existing agent/planning/questions/session suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0895",
+      "taskId": "R5-02",
+      "originalVerdict": "accepted",
+      "adoptedScope": "第二页仅notEquals允许空错误页，补HTTP200、具体事件数/不交叠、more/next末页终止。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M10WebTest.java:327"
+      ],
+      "state": "PENDING_FOLLOWUP",
+      "implementationBoundary": "M10Web HTTP 第二页精确身份断言尚待；本轮只加强 WorkbenchContentSearch。",
+      "validationGroups": [
+        "R5SessionBoundsTest",
+        "R5ContentSearchTest",
+        "TokenSessionSearchTest",
+        "WorkbenchContentSearchTest",
+        "existing agent/planning/questions/session suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-1027",
+      "taskId": "R5-02",
+      "originalVerdict": "accepted",
+      "adoptedScope": "第二页未HTTP200且next不同可错误JSON假通过，先响应/schema/非空事件再核游标末尾及总量。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M7WebTest.java:325"
+      ],
+      "state": "PENDING_FOLLOWUP",
+      "implementationBoundary": "M7Web HTTP 第二页精确身份断言尚待；不将关联全套通过视为该窗口覆盖。",
+      "validationGroups": [
+        "R5SessionBoundsTest",
+        "R5ContentSearchTest",
+        "TokenSessionSearchTest",
+        "WorkbenchContentSearchTest",
+        "existing agent/planning/questions/session suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-1045",
+      "taskId": "R5-02",
+      "originalVerdict": "accepted",
+      "adoptedScope": "Search第二页notEquals不能证明实际匹配/无遗漏，断具体session/event与总量、more、next终止和快照稳定。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/web/WorkbenchContentSearchTest.java:96"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5SessionBoundsTest",
+        "R5ContentSearchTest",
+        "TokenSessionSearchTest",
+        "WorkbenchContentSearchTest",
+        "existing agent/planning/questions/session suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-1046",
+      "taskId": "R5-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "所有rebuild=false漏显式重建/cursor冲突，补正负例；UNKNOWN会话正文允许授权只读搜索，不能把返回未决内容等同工具重放。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/web/WorkbenchContentSearchTest.java:40"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5SessionBoundsTest",
+        "R5ContentSearchTest",
+        "TokenSessionSearchTest",
+        "WorkbenchContentSearchTest",
+        "existing agent/planning/questions/session suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-1048",
+      "taskId": "R5-02",
+      "originalVerdict": "accepted",
+      "adoptedScope": "257只负例不锁定256包含边界，配有效provider补256成功/257 SCOPE_LIMIT。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/web/WorkbenchContentSearchTest.java:171"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5SessionBoundsTest",
+        "R5ContentSearchTest",
+        "TokenSessionSearchTest",
+        "WorkbenchContentSearchTest",
+        "existing agent/planning/questions/session suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-1049",
+      "taskId": "R5-02",
+      "originalVerdict": "accepted",
+      "adoptedScope": "cursor变化只text/archive，补profile/view/limit/session范围切换失效和跨scope不复用快照。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/web/WorkbenchContentSearchTest.java:98"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5SessionBoundsTest",
+        "R5ContentSearchTest",
+        "TokenSessionSearchTest",
+        "WorkbenchContentSearchTest",
+        "existing agent/planning/questions/session suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-1085",
+      "taskId": "R5-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "WebJson写出后才由调用者限bytes，需有界输出流和状态文件读写对称schema；WorkspaceLease pending实际只有有限字段，24层请求嵌套租约例子未证实。",
+      "sourceReferences": [
+        "harness-web/src/main/java/io/jharness/web/WebJson.java:25"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5EncodingTest",
+        "R5TransportBoundsTest",
+        "R5WorkspaceBoundsTest",
+        "M2WorkspaceIntegrationTest",
+        "existing process/terminal/MCP/artifact suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-1094",
+      "taskId": "R5-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "历史row profile不在当前profiles时selected=null，需授权过滤/受控拒绝；不能把移除profile旧任务继续视可搜索授权，补重启配置删除场景。",
+      "sourceReferences": [
+        "harness-web/src/main/java/io/jharness/web/WorkbenchContentSearch.java:94"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5SessionBoundsTest",
+        "R5ContentSearchTest",
+        "TokenSessionSearchTest",
+        "WorkbenchContentSearchTest",
+        "existing agent/planning/questions/session suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-1096",
+      "taskId": "R5-02",
+      "originalVerdict": "accepted",
+      "adoptedScope": "provider timestamp到排序才Instant.parse反复解析且异常500；采集命中时校验/解析一次并给固定provider结果错误。",
+      "sourceReferences": [
+        "harness-web/src/main/java/io/jharness/web/WorkbenchContentSearch.java:126"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5SessionBoundsTest",
+        "R5ContentSearchTest",
+        "TokenSessionSearchTest",
+        "WorkbenchContentSearchTest",
+        "existing agent/planning/questions/session suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-1097",
+      "taskId": "R5-02",
+      "originalVerdict": "accepted",
+      "adoptedScope": "同profile每row调用sessions.list导致重复最多256次目录扫描；每次查询按profile单次有界membership快照，保留授权核对。",
+      "sourceReferences": [
+        "harness-web/src/main/java/io/jharness/web/WorkbenchContentSearch.java:98"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5SessionBoundsTest",
+        "R5ContentSearchTest",
+        "TokenSessionSearchTest",
+        "WorkbenchContentSearchTest",
+        "existing agent/planning/questions/session suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-1098",
+      "taskId": "R5-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "整个search锁内外部provider扇出，慢provider阻塞所有请求；缩快照锁并限制总并发，不能仅ConcurrentHashMap后允许无界并行。",
+      "sourceReferences": [
+        "harness-web/src/main/java/io/jharness/web/WorkbenchContentSearch.java:20"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5SessionBoundsTest",
+        "R5ContentSearchTest",
+        "TokenSessionSearchTest",
+        "WorkbenchContentSearchTest",
+        "existing agent/planning/questions/session suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-1104",
+      "taskId": "R5-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "新taskId含hash已有直接byHash路径，不会每非accepted全扫；仅legacy UUID/无效ID兜底扫描，接受legacy索引/格式快速拒绝的有界优化。",
+      "sourceReferences": [
+        "harness-web/src/main/java/io/jharness/web/DurableTaskCatalog.java:218"
+      ],
+      "state": "PENDING_FOLLOWUP",
+      "implementationBoundary": "DurableTaskCatalog legacy 扫描优化尚待，不跳过可能承载事实的历史目录。",
+      "validationGroups": [
+        "R5SessionBoundsTest",
+        "R5ContentSearchTest",
+        "TokenSessionSearchTest",
+        "WorkbenchContentSearchTest",
+        "existing agent/planning/questions/session suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-1123",
+      "taskId": "R5-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "gitignore子集/128条限是M8明确范围，unsupported拒绝是fail-closed不是意外全功能不兼容；可在配置预检给出具体不支持行与指导，不能静默跳过导致本应排除文件被检索。",
+      "sourceReferences": [
+        "harness-workspace/src/main/java/io/jharness/workspace/WorkspaceSearchFilter.java:58"
+      ],
+      "state": "PENDING_FOLLOWUP",
+      "implementationBoundary": "gitignore 不支持规则的逐行说明尚待补强，现有支持范围没有扩张。",
+      "validationGroups": [
+        "R5SessionBoundsTest",
+        "R5ContentSearchTest",
+        "TokenSessionSearchTest",
+        "WorkbenchContentSearchTest",
+        "existing agent/planning/questions/session suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-1125",
+      "taskId": "R5-01",
+      "originalVerdict": "accepted",
+      "adoptedScope": "partial patch提前return绕compact，最多64份diff和toString可放大模型结果；在保留UNKNOWN/changes/pending事实下做有界摘要/制品降级。",
+      "sourceReferences": [
+        "harness-workspace/src/main/java/io/jharness/workspace/WorkspaceToolsPlugin.java:353"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5EncodingTest",
+        "R5TransportBoundsTest",
+        "R5WorkspaceBoundsTest",
+        "M2WorkspaceIntegrationTest",
+        "existing process/terminal/MCP/artifact suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-1127",
+      "taskId": "R5-02",
+      "originalVerdict": "accepted",
+      "adoptedScope": "默认grep search前1000路径丢truncated，模型误以全覆盖；回传搜索范围截断及实际检查数，paths畸形明确协议错误。",
+      "sourceReferences": [
+        "harness-workspace/src/main/java/io/jharness/workspace/WorkspaceToolsPlugin.java:263"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5SessionBoundsTest",
+        "R5ContentSearchTest",
+        "TokenSessionSearchTest",
+        "WorkbenchContentSearchTest",
+        "existing agent/planning/questions/session suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-1154",
+      "taskId": "R5-02",
+      "originalVerdict": "accepted",
+      "adoptedScope": "相邻两次同一reader.events.isEmpty检查确重复全读，去重并在已取得独占后的实际快照使用，不丢并发安全。",
+      "sourceReferences": [
+        "harness-web/src/main/java/io/jharness/web/HarnessWebServer.java:914"
+      ],
+      "state": "PENDING_FOLLOWUP",
+      "implementationBoundary": "Web 相邻读取合并尚待逐路径检查。",
+      "validationGroups": [
+        "R5SessionBoundsTest",
+        "R5ContentSearchTest",
+        "TokenSessionSearchTest",
+        "WorkbenchContentSearchTest",
+        "existing agent/planning/questions/session suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-1161",
+      "taskId": "R5-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "无末尾换行nextLine可重复，超EOF可能小于请求，需明确more/EOF并单调/哨兵协议；此readPage单位是行不同ContentPages UTF16，不能混改。",
+      "sourceReferences": [
+        "harness-workspace/src/main/java/io/jharness/workspace/LocalWorkspace.java:380"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5EncodingTest",
+        "R5TransportBoundsTest",
+        "R5WorkspaceBoundsTest",
+        "M2WorkspaceIntegrationTest",
+        "existing process/terminal/MCP/artifact suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-1166",
+      "taskId": "R5-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "search达到limit仍遍历可超时丢结果，应limit+1确认truncated后终止并保留有效结果；不能假定visitor false表示全局停止需核walk契约。",
+      "sourceReferences": [
+        "harness-workspace/src/main/java/io/jharness/workspace/LocalWorkspace.java:694"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5SessionBoundsTest",
+        "R5ContentSearchTest",
+        "TokenSessionSearchTest",
+        "WorkbenchContentSearchTest",
+        "existing agent/planning/questions/session suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-1167",
+      "taskId": "R5-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "grep命中limit后仍扫其它路径，需外循环停止并准确标truncated，不为确认无更多命中无限遍历。",
+      "sourceReferences": [
+        "harness-workspace/src/main/java/io/jharness/workspace/LocalWorkspace.java:718"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5SessionBoundsTest",
+        "R5ContentSearchTest",
+        "TokenSessionSearchTest",
+        "WorkbenchContentSearchTest",
+        "existing agent/planning/questions/session suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-1170",
+      "taskId": "R5-01",
+      "originalVerdict": "accepted",
+      "adoptedScope": "恰末尾newline时先++line即truncated=true，实际无下一内容；窥读/EOF状态明确，覆盖尾换行/无尾换行/超EOF。",
+      "sourceReferences": [
+        "harness-workspace/src/main/java/io/jharness/workspace/LocalWorkspace.java:351"
+      ],
+      "state": "INCREMENT_IMPLEMENTED_OR_REGRESSION_STRENGTHENED",
+      "implementationBoundary": "本轮代码或回归补强；相关套件不等于此编号所有精确窗口已逐项验收。",
+      "validationGroups": [
+        "R5EncodingTest",
+        "R5TransportBoundsTest",
+        "R5WorkspaceBoundsTest",
+        "M2WorkspaceIntegrationTest",
+        "existing process/terminal/MCP/artifact suites"
+      ],
+      "individualAcceptanceClosed": false
+    }
+  ]
+}
