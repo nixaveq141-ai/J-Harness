@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "date": "2026-10-25",
   "milestone": "M10.5.9",
-  "status": "PUBLIC_FULL_CI_FAILED_EVIDENCE_CLI_FOCUSED_PENDING",
+  "status": "PUBLIC_FULL_CI_FAILED_PROFILED_POLL_FOCUSED_PENDING",
   "m11Eligible": false,
   "codeCommit": "11e4024c090bf1c63c0adecc823de8a86c541d69",
   "sourceSha256": {
@@ -745,13 +745,26 @@
     "releasePublished": false
   },
   "currentFullCi": {
-    "runId": "40197868436",
-    "commit": "f3d73052d8ccef52bfb20b3e10776a8315a2348c",
+    "runId": "40199991323",
+    "commit": "4797a857ec326c17dd4b35da71e5b8c7b9f5e8da",
     "status": "FAILED",
-    "linux": "PASS",
+    "Linux": "PASS",
     "macOS": "PASS",
-    "Windows": "Java702/119, client42, SDK66, native7, browser33/813 passed; release gate workbench-evidence failed R0R-026 with empty CLI stdout",
-    "rootCause": "CLI compared raw import.meta.url with canonical argv URL. Windows case/short aliases can differ; old behavior deterministically returns 0 with no JSON on case variants."
+    "Windows": "Java702/119 client42 SDK66 native7 examples2 passed; browser32/33 groups794 passed; WebKit history final invariant failed",
+    "diagnostic": {
+      "checksCompleted": 18,
+      "pageErrorCount": 1,
+      "hostContainsKey": false,
+      "storageContainsKey": false,
+      "unauthenticatedRequests": 0,
+      "accessControl": true,
+      "stoppedOrigin": true,
+      "currentOrigin": false,
+      "route": "/v1/tasks",
+      "length": 92,
+      "sha256": "a2da7ec12e6cad27838488ee6034e0fd3908a85f63697fa994af11925f44e04c"
+    },
+    "rootCause": "Exact known synthetic message hash matches stopped-origin GET /v1/tasks?limit=32&view=active&profile=default. Existing classifier accepted unprofiled list only."
   },
   "publicFullRun40195474698": {
     "commit": "11e4024c090bf1c63c0adecc823de8a86c541d69",
@@ -796,11 +809,49 @@
     "boundary": "Both original failures did not reproduce in focused runs; passing reruns do not establish a root-cause fix."
   },
   "evidenceCliFollowup": {
-    "status": "LOCAL_25_PASS_REMOTE_PENDING",
+    "status": "THREE_PLATFORM_ORIGINAL_25_PASS",
     "sameCaseIdentities": true,
     "oldPolicyNegative": "Original R0R-026 plus drive-case alias fails with Unexpected end of JSON input",
     "fix": "Compare realpath on BOTH module filename and argv filename; retain all original validation and readonly byte assertions.",
     "validation": "Windows original25 passed; isolated restored old policy R0R-026 failed deterministically.",
-    "source": "docs/testing/M10.5.9-evidence-cli-2026-10-25.md"
+    "source": "docs/testing/M10.5.9-evidence-cli-2026-10-25.md",
+    "focusedRunId": "40199833193",
+    "artifacts": [
+      {
+        "id": 12601411253,
+        "name": "m1059-evidence-focused-windows-latest",
+        "digest": "sha256:d80088679bf5d4fe922ef0f49f11fed176f21d02d26bcd899bf21c618e8126d1",
+        "checks": 25,
+        "status": "PASS"
+      },
+      {
+        "id": 12601127421,
+        "name": "m1059-evidence-focused-ubuntu-latest",
+        "digest": "sha256:f93de5f7326f0f72fc7bc5638c52846063143fc9d291dcd38b91b28ecd0e5fe4",
+        "checks": 25,
+        "status": "PASS"
+      },
+      {
+        "id": 12601031720,
+        "name": "m1059-evidence-focused-macos-latest",
+        "digest": "sha256:967743ee1b69312bb972662eed4e06d884ea103bdb5e8b1dbf011054b8f5bd80",
+        "checks": 25,
+        "status": "PASS"
+      }
+    ]
+  },
+  "publicFullRun40197868436": {
+    "runId": "40197868436",
+    "commit": "f3d73052d8ccef52bfb20b3e10776a8315a2348c",
+    "status": "FAILED",
+    "linux": "PASS",
+    "macOS": "PASS",
+    "Windows": "Java702/119, client42, SDK66, native7, browser33/813 passed; release gate workbench-evidence failed R0R-026 with empty CLI stdout",
+    "rootCause": "CLI compared raw import.meta.url with canonical argv URL. Windows case/short aliases can differ; old behavior deterministically returns 0 with no JSON on case variants."
+  },
+  "profiledPollFollowup": {
+    "status": "LOCAL_CLIENT42_PASS_HISTORY19_PASS_REMOTE_PENDING",
+    "fix": "Accept only existing active32 GET signature with optional bounded identifier profile; stopped-origin requirement retained; no action/duplicate/after/invalid profile accepted.",
+    "scope": "Original42 client identities and original19 history checks unchanged; Windows history-only manual diagnostic now three rounds, stop at first failure."
   }
 }

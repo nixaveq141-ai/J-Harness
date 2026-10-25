@@ -22,6 +22,13 @@ test('stopped-host event diagnostic is scoped to the deliberately stopped origin
   assert.equal(stoppedHostDiagnostic(list,new Set()),false)
   assert.equal(stoppedHostDiagnostic(list.replace('&view=active','&action=cancel'),origins),false)
   assert.equal(stoppedHostDiagnostic(list.replace('limit=32','limit=1000'),origins),false)
+  const profiled=list.replace('&view=active','&view=active&profile=default')
+  assert.equal(stoppedHostDiagnostic(profiled,origins),true)
+  assert.equal(stoppedHostDiagnostic(profiled.replace('Fetch API cannot load http:/',''),origins),true)
+  assert.equal(stoppedHostDiagnostic(profiled,new Set()),false)
+  for(const extra of ['&action=cancel','&profile=other','&after=cursor'])assert.equal(stoppedHostDiagnostic(profiled.replace(' due ',extra+' due '),origins),false)
+  for(const profile of ['', '../outside', 'x'.repeat(129)])assert.equal(stoppedHostDiagnostic(profiled.replace('profile=default','profile='+profile),origins),false)
+
 })
 test('live-host CORS writes and JavaScript errors remain failures',async()=>{
   const {stoppedHostDiagnostic,navigationReadDiagnostic,trackNavigationReads}=await import('./runtime.mjs'),origins=new Set(['http://127.0.0.1:9999'])

@@ -48,7 +48,7 @@ export function stoppedHostDiagnostic(message, origins) {
   try {
     const url=new URL(match[1].startsWith('/')?'http:/'+match[1]:match[1].replace(/^http: ?\/{1,2}/,'http://'))
     const read=url.pathname==='/v1/models'&&!url.search
-      || url.pathname==='/v1/tasks'&&url.search==='?limit=32&view=active'
+      || url.pathname==='/v1/tasks'&&/^\?limit=32&view=active(?:&profile=[A-Za-z0-9_-]{1,128})?$/.test(url.search)
       || /^\/v1\/tasks\/[A-Za-z0-9_-]+(?:\/(?:approvals|diagnosis|display|questions|tools))?$/.test(url.pathname)
       || /^\/v1\/tasks\/[A-Za-z0-9_-]+\/events$/.test(url.pathname)&&url.search.startsWith('?limit=')
       || /^\/v1\/tasks\/[A-Za-z0-9_-]+\/turns$/.test(url.pathname)&&url.search.startsWith('?offset=')

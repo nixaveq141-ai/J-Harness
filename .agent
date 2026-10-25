@@ -4,6 +4,8 @@
 
 ## 当前接续状态
 
+- 2026-10-25完整40199991323@4797a85：Linux/Mac全过，Windows Java702/119、客户端42、SDK66、原生7及32/33浏览器组794过，WebKit history最后联合断言失败。固定诊断确认唯一旧已停来源CORS、零泄漏/未认证；92字节摘要精确匹配GET tasks active32&profile=default，原分类漏带profile读取。仅允许可选1..128安全标识符profile，原stopped-origin及写入/参数负例保留；旧false/新true/活动源false对照、客户端42及本机WebKit history19过。Windows定点改三轮19，先定点后必要同版本整体验收；M10.5.9/M11仍未完成。
+
 - 2026-10-25完整40197868436@f3d7305：Linux/Mac全过，Windows Java702/119、客户端42、SDK66、原生7、三引擎33组813全过，但发布门禁R0R-026空stdout导致JSON解析失败。确定性大小写路径反例证实原CLI把原始module URL与realpath(argv)比较会静默退出0；两侧统一realpath并保留原25身份/JSON/只读断言，本机25过，隔离旧策略新负例失败。仅增加三平台Node25手动专项，先专项后必要整体验收；M10.5.9/M11仍未完成。history固定诊断改名匹配既有完整CI failure.txt白名单，不扩原始正文范围。
 
 - 2026-10-25公开后完整40195474698@11e4024：Linux成功，Mac/Windows各32/33组，分别WebKit models禁用按钮超时/history最终异常或泄漏联合断言失败；原ZIP摘要核对过，原因未明。仅新增固定无正文诊断与两项手动范围，保留原22/19断言，先定点再决定完整CI，M10.5.9/M11未完成。

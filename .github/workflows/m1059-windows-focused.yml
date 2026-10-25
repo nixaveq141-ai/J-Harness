@@ -52,7 +52,7 @@ jobs:
       - name: Verify selected Windows fixture (stop at first failure)
         shell: pwsh
         run: |
-          $rounds = if ($env:JHARNESS_MATRIX_FIXTURES -eq 'content') { 3 } else { 1 }
+          $rounds = if ($env:JHARNESS_MATRIX_FIXTURES -in @('content', 'history')) { 3 } else { 1 }
           for ($round = 1; $round -le $rounds; $round++) {
             node scripts/run-workbench-matrix.mjs
             $fixtureExit = $LASTEXITCODE
