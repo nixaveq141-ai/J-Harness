@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "date": "2026-10-25",
   "baseline": "e5fd815739bd185210735cd6b718897b864420dc",
-  "status": "LOCAL_VALIDATED_REMOTE_CI_QUOTA_BLOCKED",
+  "status": "LOCAL_VALIDATED_PUBLIC_FULL_CI_PENDING",
   "originalScopeCount": 186,
   "counts": {
     "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED": 148,

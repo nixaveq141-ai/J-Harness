@@ -4,7 +4,7 @@
   "status": "LOCAL_VALIDATED_CI_PENDING",
   "details": "docs/development/OCR-R6-remediation-2026-10-25.md",
   "productMilestone": "M10.5.9",
-  "productStatus": "CI_BLOCKED_INCLUDED_MINUTES_EXHAUSTED",
+  "productStatus": "PUBLIC_FULL_CI_IN_PROGRESS",
   "m11Eligible": false,
   "r0Rereview": {
     "sessionId": "eed6a134-1d3b-4e89-adaa-a0e9b2ba1f19",
@@ -124,19 +124,19 @@
     },
     "R6-01": {
       "status": "LOCAL_VALIDATED_PIPELINE_PENDING",
-      "description": "R6原186条：148实施/验证补强、18既有保留、20契约澄清；11e4024同输入final6本地19组936（Java702/119、客户端42、门禁192）过，同JAR SDK66/示例2/Windows原生7/启动器8与16环境变体、Chrome/WebKit扩展各35及安装5过，原证据已冻结。用户截图确认GitHub套餐3000分钟用满、11月1日重置；远端专项未启动，M10.5.9/M11未准入。"
+      "description": "R6采纳范围本地19组936及同JAR专项/安装通过；用户已明确要求开源，仓库public并匿名可读。公开后session专项40195176899三平台各5、extensions专项40195179536两平台各35和5份原包核对过，当前同11e4024完整40195474698进行中；严格三侧原包审计前M10.5.9/M11不准入，原计费阻塞保留为历史。"
     },
     "R6-02": {
       "status": "LOCAL_VALIDATED_PIPELINE_PENDING",
-      "description": "R6原186条：148实施/验证补强、18既有保留、20契约澄清；11e4024同输入final6本地19组936（Java702/119、客户端42、门禁192）过，同JAR SDK66/示例2/Windows原生7/启动器8与16环境变体、Chrome/WebKit扩展各35及安装5过，原证据已冻结。用户截图确认GitHub套餐3000分钟用满、11月1日重置；远端专项未启动，M10.5.9/M11未准入。"
+      "description": "R6采纳范围本地19组936及同JAR专项/安装通过；用户已明确要求开源，仓库public并匿名可读。公开后session专项40195176899三平台各5、extensions专项40195179536两平台各35和5份原包核对过，当前同11e4024完整40195474698进行中；严格三侧原包审计前M10.5.9/M11不准入，原计费阻塞保留为历史。"
     },
     "R6-03": {
       "status": "LOCAL_VALIDATED_PIPELINE_PENDING",
-      "description": "R6原186条：148实施/验证补强、18既有保留、20契约澄清；11e4024同输入final6本地19组936（Java702/119、客户端42、门禁192）过，同JAR SDK66/示例2/Windows原生7/启动器8与16环境变体、Chrome/WebKit扩展各35及安装5过，原证据已冻结。用户截图确认GitHub套餐3000分钟用满、11月1日重置；远端专项未启动，M10.5.9/M11未准入。"
+      "description": "R6采纳范围本地19组936及同JAR专项/安装通过；用户已明确要求开源，仓库public并匿名可读。公开后session专项40195176899三平台各5、extensions专项40195179536两平台各35和5份原包核对过，当前同11e4024完整40195474698进行中；严格三侧原包审计前M10.5.9/M11不准入，原计费阻塞保留为历史。"
     },
     "R6-04": {
       "status": "LOCAL_VALIDATED_PIPELINE_PENDING",
-      "description": "R6原186条：148实施/验证补强、18既有保留、20契约澄清；11e4024同输入final6本地19组936（Java702/119、客户端42、门禁192）过，同JAR SDK66/示例2/Windows原生7/启动器8与16环境变体、Chrome/WebKit扩展各35及安装5过，原证据已冻结。用户截图确认GitHub套餐3000分钟用满、11月1日重置；远端专项未启动，M10.5.9/M11未准入。"
+      "description": "R6采纳范围本地19组936及同JAR专项/安装通过；用户已明确要求开源，仓库public并匿名可读。公开后session专项40195176899三平台各5、extensions专项40195179536两平台各35和5份原包核对过，当前同11e4024完整40195474698进行中；严格三侧原包审计前M10.5.9/M11不准入，原计费阻塞保留为历史。"
     }
   },
   "r1": {
@@ -229,5 +229,16 @@
     "selectedBrowserChecks": 70,
     "smoke": 5,
     "completeRemoteAcceptance": false
+  },
+  "publicRepository": {
+    "url": "https://github.com/nixaveq141-ai/J-Harness",
+    "visibility": "public",
+    "anonymousVerified": true
+  },
+  "currentFullCi": {
+    "runId": "40195474698",
+    "commit": "11e4024c090bf1c63c0adecc823de8a86c541d69",
+    "url": "https://github.com/nixaveq141-ai/J-Harness/actions/runs/40195474698",
+    "status": "IN_PROGRESS"
   }
 }

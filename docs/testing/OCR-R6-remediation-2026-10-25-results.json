@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "date": "2026-10-25",
-  "status": "LOCAL_VALIDATED_REMOTE_QUOTA_BLOCKED",
+  "status": "PUBLIC_FULL_CI_IN_PROGRESS",
   "milestone": "M10.5.9",
   "m11Eligible": false,
   "baseline": "e5fd815739bd185210735cd6b718897b864420dc",
@@ -26,7 +26,7 @@
   ],
   "implementationCommit": "73cb12513bc257b39739aab20a66bcac647c5e89",
   "remoteValidation": {
-    "status": "BLOCKED_INCLUDED_ACTIONS_MINUTES_EXHAUSTED",
+    "status": "PUBLIC_FULL_CI_IN_PROGRESS",
     "pushExecuted": true,
     "authorization": "Current user explicit confirmation",
     "nativeRunId": "40178201805",
@@ -35,10 +35,10 @@
     "nativeArchiveSha256": "473f697d9a8e259f7076d5e84b71e899321a7cdcf0d3210dfc2cbf389834b0ee",
     "nativeChecks": 7,
     "nativePlatform": "Windows Server 2025",
-    "ciDispatched": false,
-    "ciRunId": "40179342004",
+    "ciDispatched": true,
+    "ciRunId": "40195474698",
     "ciCommit": "11e4024c090bf1c63c0adecc823de8a86c541d69",
-    "url": "https://github.com/nixaveq141-ai/J-Harness/actions/runs/40178732629",
+    "url": "https://github.com/nixaveq141-ai/J-Harness/actions/runs/40195474698",
     "canonicalFixtureFocused": {
       "status": "PASS",
       "runId": "40179167159",
@@ -94,7 +94,8 @@
     "resetDateShown": "2026-11-01",
     "actualChargesKnown": false,
     "budgetSettingsChanged": false,
-    "additionalCloudRunsOnHold": true
+    "additionalCloudRunsOnHold": false,
+    "quotaBlockerClearedForPublicStandardRunners": true
   },
   "localFollowup": {
     "javaTest": "M7ClosureTest",
@@ -350,5 +351,81 @@
     "currentArtifacts": 116,
     "currentArtifactMiB": 935.33,
     "scope": "Repository cumulative inventory, excludes other repositories and cache; not an account bill"
+  },
+  "publicRepository": {
+    "status": "PUBLIC_ANONYMOUSLY_VERIFIED",
+    "timestamp": "2026-10-25T12:53:23.957481+00:00",
+    "repository": "nixaveq141-ai/J-Harness",
+    "repositoryId": 1421543877,
+    "url": "https://github.com/nixaveq141-ai/J-Harness",
+    "beforePrivate": true,
+    "afterPrivate": false,
+    "visibility": "public",
+    "anonymousRead": true,
+    "defaultBranch": "main",
+    "budgetChanged": false,
+    "releasePublished": false
+  },
+  "publicFocusedEvidence": {
+    "status": "PASS",
+    "scope": "3xsession5 and 2xChromium extensions35 only; not full acceptance",
+    "reports": [
+      {
+        "file": "focused-0.zip",
+        "sha256": "fb1d7d8ce876d798eaed19336e2e19f2ba80f6bfc0e5027bd3e92988ee285732",
+        "artifactId": 12599725638,
+        "runId": "40195176899",
+        "commit": "11e4024c090bf1c63c0adecc823de8a86c541d69",
+        "name": "m1059-session-focused-windows-latest",
+        "checks": 5,
+        "status": "PASS"
+      },
+      {
+        "file": "focused-1.zip",
+        "sha256": "85f238470c1e847966d5583dfa3ae1081fad02d81cf70e0811c06a1334dfd638",
+        "artifactId": 12599219071,
+        "runId": "40195176899",
+        "commit": "11e4024c090bf1c63c0adecc823de8a86c541d69",
+        "name": "m1059-session-focused-macos-latest",
+        "checks": 5,
+        "status": "PASS"
+      },
+      {
+        "file": "focused-2.zip",
+        "sha256": "851133ad429917d2370b8f6115d11420c2edfa2638867e04befb81161f38bbd5",
+        "artifactId": 12599024375,
+        "runId": "40195176899",
+        "commit": "11e4024c090bf1c63c0adecc823de8a86c541d69",
+        "name": "m1059-session-focused-ubuntu-latest",
+        "checks": 5,
+        "status": "PASS"
+      },
+      {
+        "file": "focused-3.zip",
+        "sha256": "49f7c5686b125548bf2bbd9b023a08808ea997822c96b41c3fa1df359ee09fc6",
+        "artifactId": 12599154172,
+        "runId": "40195179536",
+        "commit": "11e4024c090bf1c63c0adecc823de8a86c541d69",
+        "name": "m1059-browser-focused-macos-latest",
+        "checks": 35,
+        "status": "PASS"
+      },
+      {
+        "file": "focused-4.zip",
+        "sha256": "a564765410fb08cb5e0e7aeae7ba1064ba6298c52cc69f07d26a89338d198b0a",
+        "artifactId": 12598984501,
+        "runId": "40195179536",
+        "commit": "11e4024c090bf1c63c0adecc823de8a86c541d69",
+        "name": "m1059-browser-focused-ubuntu-latest",
+        "checks": 35,
+        "status": "PASS"
+      }
+    ]
+  },
+  "currentFullCi": {
+    "runId": "40195474698",
+    "commit": "11e4024c090bf1c63c0adecc823de8a86c541d69",
+    "url": "https://github.com/nixaveq141-ai/J-Harness/actions/runs/40195474698",
+    "status": "IN_PROGRESS"
   }
 }

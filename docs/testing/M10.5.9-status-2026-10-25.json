@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "date": "2026-10-25",
   "milestone": "M10.5.9",
-  "status": "BLOCKED_INCLUDED_ACTIONS_MINUTES_EXHAUSTED",
+  "status": "PUBLIC_FULL_CI_IN_PROGRESS",
   "m11Eligible": false,
   "codeCommit": "11e4024c090bf1c63c0adecc823de8a86c541d69",
   "sourceSha256": {
@@ -606,7 +606,7 @@
   },
   "finalAcceptancePassed": false,
   "paidRequests": 0,
-  "reason": "User GitHub alert confirms3000 included minutes consumed100%, reset2026-11-01; actual charges unknown.",
+  "reason": "User authorized open sourcing; repository verified public and anonymous-readable. Both focused scopes passed and original artifacts audited.",
   "blockedRuns": [
     {
       "id": "40192469338",
@@ -658,5 +658,96 @@
   "usedIncludedMinutes": 3000,
   "resetDateShown": "2026-11-01",
   "actualChargesKnown": false,
-  "remoteExecutionOnHoldUntilUserConfirmsBudgetOrAvailableQuota": true
+  "remoteExecutionOnHoldUntilUserConfirmsBudgetOrAvailableQuota": false,
+  "repositoryVisibility": {
+    "status": "PUBLIC_ANONYMOUSLY_VERIFIED",
+    "timestamp": "2026-10-25T12:53:23.957481+00:00",
+    "repository": "nixaveq141-ai/J-Harness",
+    "repositoryId": 1421543877,
+    "url": "https://github.com/nixaveq141-ai/J-Harness",
+    "beforePrivate": true,
+    "afterPrivate": false,
+    "visibility": "public",
+    "anonymousRead": true,
+    "defaultBranch": "main",
+    "budgetChanged": false,
+    "releasePublished": false
+  },
+  "publicFocusedEvidence": {
+    "status": "PASS",
+    "scope": "3xsession5 and 2xChromium extensions35 only; not full acceptance",
+    "reports": [
+      {
+        "file": "focused-0.zip",
+        "sha256": "fb1d7d8ce876d798eaed19336e2e19f2ba80f6bfc0e5027bd3e92988ee285732",
+        "artifactId": 12599725638,
+        "runId": "40195176899",
+        "commit": "11e4024c090bf1c63c0adecc823de8a86c541d69",
+        "name": "m1059-session-focused-windows-latest",
+        "checks": 5,
+        "status": "PASS"
+      },
+      {
+        "file": "focused-1.zip",
+        "sha256": "85f238470c1e847966d5583dfa3ae1081fad02d81cf70e0811c06a1334dfd638",
+        "artifactId": 12599219071,
+        "runId": "40195176899",
+        "commit": "11e4024c090bf1c63c0adecc823de8a86c541d69",
+        "name": "m1059-session-focused-macos-latest",
+        "checks": 5,
+        "status": "PASS"
+      },
+      {
+        "file": "focused-2.zip",
+        "sha256": "851133ad429917d2370b8f6115d11420c2edfa2638867e04befb81161f38bbd5",
+        "artifactId": 12599024375,
+        "runId": "40195176899",
+        "commit": "11e4024c090bf1c63c0adecc823de8a86c541d69",
+        "name": "m1059-session-focused-ubuntu-latest",
+        "checks": 5,
+        "status": "PASS"
+      },
+      {
+        "file": "focused-3.zip",
+        "sha256": "49f7c5686b125548bf2bbd9b023a08808ea997822c96b41c3fa1df359ee09fc6",
+        "artifactId": 12599154172,
+        "runId": "40195179536",
+        "commit": "11e4024c090bf1c63c0adecc823de8a86c541d69",
+        "name": "m1059-browser-focused-macos-latest",
+        "checks": 35,
+        "status": "PASS"
+      },
+      {
+        "file": "focused-4.zip",
+        "sha256": "a564765410fb08cb5e0e7aeae7ba1064ba6298c52cc69f07d26a89338d198b0a",
+        "artifactId": 12598984501,
+        "runId": "40195179536",
+        "commit": "11e4024c090bf1c63c0adecc823de8a86c541d69",
+        "name": "m1059-browser-focused-ubuntu-latest",
+        "checks": 35,
+        "status": "PASS"
+      }
+    ]
+  },
+  "privateIncludedAllowanceExhaustionStillHistorical": true,
+  "publicRepository": {
+    "status": "PUBLIC_ANONYMOUSLY_VERIFIED",
+    "timestamp": "2026-10-25T12:53:23.957481+00:00",
+    "repository": "nixaveq141-ai/J-Harness",
+    "repositoryId": 1421543877,
+    "url": "https://github.com/nixaveq141-ai/J-Harness",
+    "beforePrivate": true,
+    "afterPrivate": false,
+    "visibility": "public",
+    "anonymousRead": true,
+    "defaultBranch": "main",
+    "budgetChanged": false,
+    "releasePublished": false
+  },
+  "currentFullCi": {
+    "runId": "40195474698",
+    "commit": "11e4024c090bf1c63c0adecc823de8a86c541d69",
+    "url": "https://github.com/nixaveq141-ai/J-Harness/actions/runs/40195474698",
+    "status": "IN_PROGRESS"
+  }
 }
