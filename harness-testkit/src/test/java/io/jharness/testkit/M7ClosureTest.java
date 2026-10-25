@@ -436,53 +436,68 @@ class M7ClosureTest {
 
     @Test
     void trustedConfigurationRejectsSecretsAndUnknownOrUnpinnedCapabilities() {
-        assertThrows(
-                HarnessException.class,
-                () -> new CliConfig(Map.of("ecosystem", Map.of("apiKey", "bad"))));
-        assertThrows(
-                HarnessException.class,
-                () ->
-                        new CliConfig(
-                                Map.of(
-                                        "ecosystem",
-                                        Map.of(
-                                                "environment",
+        assertEquals(
+                "INVALID_ECOSYSTEM_CONFIG",
+                assertThrows(
+                                HarnessException.class,
+                                () -> new CliConfig(Map.of("ecosystem", Map.of("apiKey", "bad"))))
+                        .code());
+        assertEquals(
+                "INVALID_ECOSYSTEM_CONFIG",
+                assertThrows(
+                                HarnessException.class,
+                                () ->
+                                        new CliConfig(
                                                 Map.of(
-                                                        "kind",
-                                                        "docker",
-                                                        "dockerExecutable",
-                                                        "docker",
-                                                        "image",
-                                                        "latest",
-                                                        "workerJar",
-                                                        "x")))));
-        assertThrows(
-                RuntimeException.class,
-                () ->
-                        new CliConfig(
-                                Map.of(
-                                        "ecosystem",
-                                        Map.of(
-                                                "subagents",
-                                                Map.of(
-                                                        "bad",
-                                                        Map.of("tools", List.of("write_file")))))));
-        assertThrows(
-                RuntimeException.class,
-                () ->
-                        new CliConfig(
-                                Map.of(
-                                        "ecosystem",
-                                        Map.of(
-                                                "mcp",
-                                                List.of(
+                                                        "ecosystem",
                                                         Map.of(
-                                                                "id",
-                                                                "x",
-                                                                "transport",
-                                                                "http",
-                                                                "url",
-                                                                "http://public.invalid/mcp"))))));
+                                                                "environment",
+                                                                Map.of(
+                                                                        "kind",
+                                                                        "docker",
+                                                                        "dockerExecutable",
+                                                                        "docker",
+                                                                        "image",
+                                                                        "latest",
+                                                                        "workerJar",
+                                                                        "x")))))
+                        .code());
+        assertEquals(
+                "INVALID_ECOSYSTEM_CONFIG",
+                assertThrows(
+                                HarnessException.class,
+                                () ->
+                                        new CliConfig(
+                                                Map.of(
+                                                        "ecosystem",
+                                                        Map.of(
+                                                                "subagents",
+                                                                Map.of(
+                                                                        "bad",
+                                                                        Map.of(
+                                                                                "tools",
+                                                                                List.of(
+                                                                                        "write_file")))))))
+                        .code());
+        assertEquals(
+                "INVALID_ECOSYSTEM_CONFIG",
+                assertThrows(
+                                HarnessException.class,
+                                () ->
+                                        new CliConfig(
+                                                Map.of(
+                                                        "ecosystem",
+                                                        Map.of(
+                                                                "mcp",
+                                                                List.of(
+                                                                        Map.of(
+                                                                                "id",
+                                                                                "x",
+                                                                                "transport",
+                                                                                "http",
+                                                                                "url",
+                                                                                "http://public.invalid/mcp"))))))
+                        .code());
         assertDoesNotThrow(
                 () ->
                         new CliConfig(

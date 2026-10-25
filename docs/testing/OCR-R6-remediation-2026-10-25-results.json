@@ -1,41 +1,41 @@
 {
   "schemaVersion": 1,
   "date": "2026-10-25",
-  "status": "LOCAL_VALIDATION_IN_PROGRESS_CI_PENDING",
+  "status": "LOCAL_VALIDATED_CI_PENDING",
   "milestone": "M10.5.9",
   "m11Eligible": false,
   "baseline": "e5fd815739bd185210735cd6b718897b864420dc",
   "paidRequests": 0,
   "scopeLedger": "docs/development/OCR-R6-scope-2026-10-25.json",
   "scopeCounts": {
-    "implementedOrStrengthened": 146,
+    "implementedOrStrengthened": 148,
     "retained": 18,
-    "clarified": 22
+    "clarified": 20
   },
   "independentFaultInjectionClaimed": false,
-  "jarSha256": "21f93ac6209c4a3a1226f020ded011b5b4197e5db400c887d45ec6f076de2bb3",
+  "jarSha256": "3904ed4a895e2827a49b02443bbcd82dde4cea2f72b76e200526b04b115c5ee7",
   "additionalLocal": {
     "native": {
-      "path": ".build-cache/R6-2026-10-25/native-final.json",
-      "sha256": "27e29b63b20ad0bb6a711887297a086081a4fba7374d9662ef4947367b367f44",
+      "path": ".build-cache/R6-2026-10-25/native-closing.json",
+      "sha256": "a821d9b557ebc9c63f34b61b01e0ca142958dc03c58ad724a29ac6cd26345d50",
       "status": "PASS",
       "checks": 7
     },
     "launcher": {
       "path": ".build-cache/M10-launcher-results.json",
-      "sha256": "833c20cc87f3a7edd12a8f287d35f83ecd043104610b9295a249b4bbebb38372",
+      "sha256": "540512802b30bde152d6fbf66c3d1d33eb038a331b86cbdba59ead762d9db9d1",
       "status": "PASS",
       "checks": 8
     },
     "sdk": {
       "path": ".build-cache/M10.5.8-sdk-results.json",
-      "sha256": "9b002ac9650c3a56d6afe84eefa4e35dea458d4bb1f94ba62c64d70cc7ea15b0",
+      "sha256": "b9cfdf8e124f6cb250efa629345c1032e5083a6f14bda630d601651c00fc851d",
       "status": "PASS",
       "checks": 66
     },
     "examples": {
       "path": ".build-cache/M10.5.8-examples-results.json",
-      "sha256": "0b75e48c8d729bb13611e5c4fd15e68138da7dd292095a07c6c50d5789c7d871",
+      "sha256": "638773d84f1b62c63d10caa02986adcde93ef2f59f541819c82532eea1a70d8d",
       "status": "PASS",
       "checks": 2
     }
@@ -51,43 +51,83 @@
     "final3",
     "final4"
   ],
-  "supplyChain": {
-    "npmAudit": {
-      "path": ".build-cache/R6-2026-10-25/npm-audit-final.json",
-      "sha256": "c3b80966015096c81106aa6192f89d315a59d8b1f965a38a68f3822d4917a952",
-      "status": "PASS"
-    },
-    "osv": {
-      "path": "target/osv-results.json",
-      "sha256": "6fac2aae793740df57a6ab9a2deceb0716549db2e486f3408da9d36193046b7d",
-      "status": "PASS"
-    },
-    "frontendBom": {
-      "path": "target/frontend-bom.json",
-      "sha256": "a04e6f5a5a8bd41ec722e3518208a1e6b01bbe96b3c93e393e94744ba0a6a051",
-      "status": "RECORDED"
-    },
-    "sdkInventory": {
-      "path": "target/sdk-source-inventory.json",
-      "sha256": "4ff8fbaa1bbcb9b3760b2dc1feda0fb55038591add6ef20657cd877dead5931a",
-      "status": "RECORDED"
-    },
-    "sourceSecrets": {
-      "path": "target/source-secrets.json",
-      "sha256": "b4d006ff6286ec6af341b3994f44f1e4ac5668de489211d2e8a504eac6a3d768",
-      "status": "PASS"
-    },
-    "candidateSmoke": {
-      "path": "target/candidate-smoke.json",
-      "sha256": "b404c5523c203ec71597de11ac72708eec9b1a0a9a051931f704fc2d18992615",
-      "status": "PASS"
-    },
-    "candidate": {
-      "path": "target/jharness-0.1.0-SNAPSHOT-candidate.zip",
-      "sha256": "64f35cdc22fff59737364e041bb2c8fd2a318aaf7186a8705bb0fa5067ce1cf9",
-      "workingTreeDirty": true,
-      "scope": "Local smoke before source commit; remote clean candidate still required"
-    }
+  "implementationCommit": "73cb12513bc257b39739aab20a66bcac647c5e89",
+  "remoteValidation": {
+    "status": "NATIVE_PASS_FULL_CI_PENDING",
+    "pushExecuted": true,
+    "authorization": "Current user explicit confirmation",
+    "nativeRunId": "40178201805",
+    "nativeCommit": "73cb12513bc257b39739aab20a66bcac647c5e89",
+    "nativeArtifactId": 12592194008,
+    "nativeArchiveSha256": "473f697d9a8e259f7076d5e84b71e899321a7cdcf0d3210dfc2cbf389834b0ee",
+    "nativeChecks": 7,
+    "nativePlatform": "Windows Server 2025",
+    "ciDispatched": false
   },
-  "pendingFinalRun": "r6-20261025-final5"
+  "localFrozen": {
+    "commit": "73cb12513bc257b39739aab20a66bcac647c5e89",
+    "runId": "r6-20261025-final5",
+    "path": ".build-cache/R6-2026-10-25/final5/results.json",
+    "sha256": "1cc0db0f7b39dfed50ced9540c561e2ab1e3799d747b59ca385e9aa077a27c79",
+    "groups": 19,
+    "checks": 936,
+    "java": 702,
+    "suites": 119,
+    "client": 42,
+    "gates": 192,
+    "originalXmlArchiveSha256": "b53dfbe9d80533f885bf3e24ad1a70e75145fd251246a51db6b007cdaa43d413",
+    "independentlyVerifiedBeforeFollowup": true
+  },
+  "localFollowup": {
+    "javaTest": "M7ClosureTest",
+    "javaChecks": 7,
+    "status": "PASS",
+    "log": ".build-cache/R6-2026-10-25/closing-config2.log",
+    "logSha256": "291cca3d3021e2ec4b0e106633dc5de77a0267658c4817e8db9126cbc9c07076",
+    "boundary": "Only test assertions changed after frozen run; no runtime Java/POM/UI changes. Exact current full contract must be verified by the final CI commit.",
+    "launcherProtectedVariants": 16,
+    "launcherChecks": 8
+  },
+  "preFrozenSupplyChain": {
+    "jarSha256": "21f93ac6209c4a3a1226f020ded011b5b4197e5db400c887d45ec6f076de2bb3",
+    "records": {
+      "npmAudit": {
+        "path": ".build-cache/R6-2026-10-25/npm-audit-final.json",
+        "sha256": "c3b80966015096c81106aa6192f89d315a59d8b1f965a38a68f3822d4917a952",
+        "status": "PASS"
+      },
+      "osv": {
+        "path": "target/osv-results.json",
+        "sha256": "6fac2aae793740df57a6ab9a2deceb0716549db2e486f3408da9d36193046b7d",
+        "status": "PASS"
+      },
+      "frontendBom": {
+        "path": "target/frontend-bom.json",
+        "sha256": "a04e6f5a5a8bd41ec722e3518208a1e6b01bbe96b3c93e393e94744ba0a6a051",
+        "status": "RECORDED"
+      },
+      "sdkInventory": {
+        "path": "target/sdk-source-inventory.json",
+        "sha256": "4ff8fbaa1bbcb9b3760b2dc1feda0fb55038591add6ef20657cd877dead5931a",
+        "status": "RECORDED"
+      },
+      "sourceSecrets": {
+        "path": "target/source-secrets.json",
+        "sha256": "b4d006ff6286ec6af341b3994f44f1e4ac5668de489211d2e8a504eac6a3d768",
+        "status": "PASS"
+      },
+      "candidateSmoke": {
+        "path": "target/candidate-smoke.json",
+        "sha256": "b404c5523c203ec71597de11ac72708eec9b1a0a9a051931f704fc2d18992615",
+        "status": "PASS"
+      },
+      "candidate": {
+        "path": "target/jharness-0.1.0-SNAPSHOT-candidate.zip",
+        "sha256": "64f35cdc22fff59737364e041bb2c8fd2a318aaf7186a8705bb0fa5067ce1cf9",
+        "workingTreeDirty": true,
+        "scope": "Local smoke before source commit; remote clean candidate still required"
+      }
+    },
+    "boundary": "Earlier local candidate before final5; not mixed with final current CI evidence."
+  }
 }

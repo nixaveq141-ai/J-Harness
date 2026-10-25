@@ -4,7 +4,7 @@
 
 ## 当前接续状态
 
-- 2026-10-25按用户要求推进R6与M10.5.9收尾，基线e5fd815。186条范围保留：146实施/验证补强、18既有防护、22契约澄清，不等于独立缺陷/逐项动态故障注入。Wrapper固定ZIP缓存校验、UI来源/制品绑定、legal/SBOM/SDK/秘密门禁、启动器与CI资源所有权已实施；Java契约保留700新增2为702/119，客户端42。最终本地与当前Windows原生专项及三平台完整CI待核对，不宣称M10.5.9/M11完成；原失败、边界见OCR-R6-remediation-2026-10-25及scope/validation。沿用专用分支推送和Actions授权，无本机Firefox/裸npx/付费/main合并/Release，用户原扫描段和background草稿保留不纳提交。
+- 2026-10-25按用户要求推进R6与M10.5.9收尾，基线e5fd815。186条范围保留：148实施/验证补强、18既有防护、20契约澄清，不等于独立缺陷/逐项动态故障注入。Wrapper固定ZIP缓存校验、UI来源/制品绑定、legal/SBOM/SDK/秘密门禁、启动器与CI资源所有权已实施；Java契约保留700新增2为702/119，客户端42。最终本地与当前Windows原生专项及三平台完整CI待核对，不宣称M10.5.9/M11完成；原失败、边界见OCR-R6-remediation-2026-10-25及scope/validation。沿用专用分支推送和Actions授权，无本机Firefox/裸npx/付费/main合并/Release，用户原扫描段和background草稿保留不纳提交。
 
 - 2026-10-25按用户要求推进R5本地修复，基线7f5b9bf；原64条台账中51本轮实施/回归补强、2有限实施、11后续，不等于51个独立缺陷或64条逐项关闭。编码写出预算、命令泵失败UNKNOWN、工具JSON/预览、部分patch事实、索引缩短/损坏/Unicode/并发、会话配额/锁、分页停止和压缩组/预算/来源审计已补强。最终r5-20261025-final-frozen2同输入18组926项：Java700/117套件、客户端42、门禁16组184；SDK66，Chrome/WebKit各检索28+内容45通过，最终JAR71ae2754dd54。证据/原失败/限制见OCR-R5-remediation-2026-10-25及scope/validation/results。来源歧义不猜测；目录能力/父目录替换竞态、内容安全快照等后续保留，R5/M10.5.9/M11仍未完成。未运行本机Firefox/裸npx/新远端CI/付费/推送/发布，原用户扫描段和background草稿保留不纳提交。按长期授权完成本地提交。
 
@@ -201,7 +201,7 @@ Docker CLI 为 C:/Users/Lenovo/AppData/Local/Programs/DockerDesktop/resources/bi
 
 四组 Probe classpath 包含最终 CLI JAR、harness-testkit/target/test-classes 和 target/classes，参数都是 DOCKER IMAGE BASE_DIR WORKER_JAR OUTPUT_JSON；每次新建唯一目录。运行方法见 M7-validation.md。Linux 构建位置见 .build-cache/M7-linux-location.txt，失败尝试保留原目录，精确快照核对 Java/POM SHA。
 
-## 历史验收与接续快照（M7/M8；当前入口见顶部和最新M9接续）
+## 历史验收与接续快照（M7/M8；当前入口见顶部M10.5.9/R6接续）
 
 最终 Windows 命令 .\mvnw.cmd -B clean verify，Linux 命令见 M7-linux-results.json；两侧各 260 项通过，236 个 Java/POM 哈希一致。四组 Docker Probe 均 SUCCESS 且 JAR SHA 相同：4f784f489e8d107c8822495169acbfb22372f611bfa83d4887bf5809f7bb8475。相关生产验收与 Linux 构建容器最终均无残留。固定上游归档和 19 个入口 SHA 已逐项复核。
 

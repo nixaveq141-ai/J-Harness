@@ -187,10 +187,11 @@ def exercise():
         bad = subprocess.run(PS + args + ['-JavaHome', str(base / 'missing-java')], input='', text=True, encoding='utf-8', errors='replace', capture_output=True, env=ENV, timeout=10)
         assert bad.returncode == 1 and 'Java 21 was not found' in bad.stdout
         checks.append('missing Java produces bounded actionable error')
-        settings['ecosystem']['web']['tokenEnv'] = 'PATH'
-        config.write_text(json.dumps(settings), encoding='utf-8')
-        bad = subprocess.run(PS + args, input='', text=True, encoding='utf-8', errors='replace', capture_output=True, env=ENV, timeout=10)
-        assert bad.returncode == 1 and 'different environment variable names' in bad.stdout
+        for protected in ['PATH','path','PATHEXT','JAVA_HOME','HOME','CODEX_HOME','USERPROFILE','APPDATA','LOCALAPPDATA','SystemRoot','WINDIR','ComSpec','TEMP','TMP','PSModulePath',settings.get('apiKeyEnv','JHARNESS_API_KEY')]:
+            settings['ecosystem']['web']['tokenEnv'] = protected
+            config.write_text(json.dumps(settings), encoding='utf-8')
+            bad = subprocess.run(PS + args, input='', text=True, encoding='utf-8', errors='replace', capture_output=True, env=ENV, timeout=10)
+            assert bad.returncode == 1 and 'different environment variable names' in bad.stdout, protected
         checks.append('token cannot overwrite protected environment variables')
         assert not (ROOT / '打开工作台.cmd').exists()
         checks.append('entry filename is ASCII web-ui.cmd')

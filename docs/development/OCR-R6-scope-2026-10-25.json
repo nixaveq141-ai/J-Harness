@@ -5,8 +5,8 @@
   "status": "IMPLEMENTATION_LOCAL_VALIDATION_CI_PENDING",
   "originalScopeCount": 186,
   "counts": {
-    "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED": 146,
-    "CONTRACT_CLARIFIED": 22,
+    "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED": 148,
+    "CONTRACT_CLARIFIED": 20,
     "EXISTING_GUARD_RETAINED": 18
   },
   "boundary": "Original adopted scopes include shared causes and diagnostic/contract suggestions. Counts are not independent bug counts or 186 dynamic reproductions. Original legal texts and historical receipts are not rewritten.",
@@ -562,11 +562,9 @@
       "sourceReferences": [
         "harness-testkit/src/test/java/io/jharness/testkit/M7ClosureTest.java:357"
       ],
-      "state": "CONTRACT_CLARIFIED",
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
       "validationGroups": [
-        "Java exact 702/119, retained 700 identities",
-        "R6ReleaseTest cache/UI/SBOM faults",
-        "npm ci/build/audit and current candidate gate"
+        "M7ClosureTest exact INVALID_ECOSYSTEM_CONFIG on four negative configurations"
       ],
       "individualFaultInjectionClaimed": false
     },
@@ -1279,11 +1277,9 @@
         "scripts/test-open-workbench.py:128",
         "scripts/open-workbench.ps1"
       ],
-      "state": "CONTRACT_CLARIFIED",
+      "state": "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED",
       "validationGroups": [
-        "real launcher eight identities with saved-model/browser marker/owned process/port checks",
-        "two real SDK examples",
-        "full current platform matrix"
+        "Actual launcher eight identities, sixteen protected tokenEnv variants"
       ],
       "individualFaultInjectionClaimed": false
     },
