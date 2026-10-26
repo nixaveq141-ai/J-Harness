@@ -160,6 +160,21 @@ class M8SearchFilterTest {
         assertEquals(
                 "SEARCH_FILTER_LIMIT",
                 assertThrows(HarnessException.class, () -> paths(new LocalWorkspace(root))).code());
+        Files.writeString(root.resolve(".gitignore"), "# comment\n\n*.log\n[private-rule-value]\n");
+        var invalid = assertThrows(HarnessException.class, () -> paths(new LocalWorkspace(root)));
+        assertEquals("INVALID_SEARCH_FILTER", invalid.code());
+        assertTrue(invalid.getMessage().startsWith(".gitignore line 4:"));
+        assertTrue(invalid.getMessage().contains("relative paths"));
+        assertFalse(invalid.getMessage().contains("private-rule-value"));
+        var configured =
+                assertThrows(
+                        HarnessException.class,
+                        () ->
+                                WorkspaceSearchFilter.from(
+                                        Map.of("rules", List.of("# comment", "", "[private]"))));
+        assertTrue(configured.getMessage().startsWith("Search filter rule 3:"));
+        Files.writeString(root.resolve(".gitignore"), "# comment\n\n".repeat(129) + "*.log\n");
+        assertDoesNotThrow(() -> paths(new LocalWorkspace(root)));
     }
 
     @Test

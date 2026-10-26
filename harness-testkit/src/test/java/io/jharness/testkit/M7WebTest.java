@@ -309,20 +309,44 @@ class M7WebTest {
                                             "callId",
                                             "write"))
                             .statusCode());
-            var page = object(request(server, "GET", "/v1/tasks/" + id + "/events?limit=2", null));
-            assertEquals(2, ((List<?>) page.get("events")).size());
-            var second =
-                    object(
-                            request(
-                                    server,
-                                    "GET",
-                                    "/v1/tasks/"
-                                            + id
-                                            + "/events?after="
-                                            + page.get("next")
-                                            + "&limit=2",
-                                    null));
-            assertNotEquals(page.get("next"), second.get("next"));
+            var expectedIds =
+                    sessions.openReader(id).events().stream().map(SessionEvent::eventId).toList();
+            assertTrue(expectedIds.size() > 2);
+            var actualIds = new ArrayList<String>();
+            String cursor = "";
+            boolean more;
+            int pages = 0;
+            do {
+                assertTrue(++pages <= (expectedIds.size() + 1) / 2, "Pagination must terminate");
+                var response =
+                        request(
+                                server,
+                                "GET",
+                                "/v1/tasks/"
+                                        + id
+                                        + "/events?limit=2"
+                                        + (cursor.isEmpty() ? "" : "&after=" + cursor),
+                                null);
+                assertEquals(200, response.statusCode());
+                var page = object(response);
+                var rows = (List<?>) page.get("events");
+                int offset = actualIds.size();
+                assertEquals(Math.min(2, expectedIds.size() - offset), rows.size());
+                for (Object raw : rows) {
+                    var row = Values.object(raw);
+                    assertEquals(id, row.get("sessionId"));
+                    assertInstanceOf(String.class, row.get("type"));
+                    actualIds.add((String) row.get("eventId"));
+                }
+                assertEquals(expectedIds.subList(0, actualIds.size()), actualIds);
+                assertEquals(actualIds.getLast(), page.get("next"));
+                assertNotEquals(cursor, page.get("next"));
+                cursor = (String) page.get("next");
+                more = assertInstanceOf(Boolean.class, page.get("more"));
+                assertEquals(actualIds.size() < expectedIds.size(), more);
+            } while (more);
+            assertEquals(expectedIds, actualIds);
+            assertEquals(actualIds.size(), new HashSet<>(actualIds).size());
             assertEquals(
                     400,
                     request(server, "GET", "/v1/tasks/" + id + "/events?after=unknown", null)

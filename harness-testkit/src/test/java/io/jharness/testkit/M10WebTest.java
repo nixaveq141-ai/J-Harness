@@ -347,24 +347,55 @@ class M10WebTest {
             assertEquals(
                     404,
                     request(host, "GET", "/v1/tasks/" + id + "/diff", null, true).statusCode());
-            var first =
-                    object(
-                            request(
-                                    host,
-                                    "POST",
-                                    "/v1/tasks/" + id + "/search",
-                                    Map.of("text", "tool", "after", "", "limit", 1),
-                                    true));
-            assertEquals(1, ((List<?>) first.get("events")).size());
-            var second =
-                    object(
-                            request(
-                                    host,
-                                    "POST",
-                                    "/v1/tasks/" + id + "/search",
-                                    Map.of("text", "tool", "after", first.get("next"), "limit", 1),
-                                    true));
-            assertNotEquals(first.get("events"), second.get("events"));
+            assertEquals(
+                    "FINISHED",
+                    object(request(host, "GET", "/v1/tasks/" + id, null, true)).get("phase"));
+            var referenceResponse =
+                    request(
+                            host,
+                            "POST",
+                            "/v1/tasks/" + id + "/search",
+                            Map.of("text", "tool", "after", "", "limit", 50),
+                            true);
+            assertEquals(200, referenceResponse.statusCode());
+            var reference = object(referenceResponse);
+            assertEquals(false, reference.get("more"));
+            var expectedRows = (List<?>) reference.get("events");
+            assertTrue(expectedRows.size() > 1);
+            var actualRows = new ArrayList<Object>();
+            var cursors = new HashSet<String>();
+            String cursor = "";
+            boolean more;
+            int pages = 0;
+            do {
+                assertTrue(++pages <= expectedRows.size() + 1, "Search pagination must terminate");
+                var response =
+                        request(
+                                host,
+                                "POST",
+                                "/v1/tasks/" + id + "/search",
+                                Map.of("text", "tool", "after", cursor, "limit", 1),
+                                true);
+                assertEquals(200, response.statusCode());
+                var page = object(response);
+                var rows = (List<?>) page.get("events");
+                assertTrue(rows.size() <= 1);
+                actualRows.addAll(rows);
+                cursor = assertInstanceOf(String.class, page.get("next"));
+                more = assertInstanceOf(Boolean.class, page.get("more"));
+                if (more) {
+                    assertEquals(1, rows.size());
+                    assertFalse(cursor.isEmpty());
+                    assertTrue(cursors.add(cursor), "Cursor must advance");
+                }
+            } while (more);
+            assertEquals(expectedRows, actualRows);
+            assertEquals(
+                    actualRows.size(),
+                    actualRows.stream()
+                            .map(row -> ((Map<?, ?>) row).get("eventId"))
+                            .distinct()
+                            .count());
             assertEquals(
                     400,
                     request(

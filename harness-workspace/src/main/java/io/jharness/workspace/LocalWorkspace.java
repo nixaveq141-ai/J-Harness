@@ -723,11 +723,7 @@ public final class LocalWorkspace implements WorkspaceFiles {
         if (searchFilter.useGitignore() && Files.isRegularFile(ignore, LinkOption.NOFOLLOW_LINKS)) {
             checkSegments(ignore);
             String content = text(ignore, token);
-            rules.addAll(
-                    WorkspaceSearchFilter.checkedRules(
-                            content.lines()
-                                    .filter(line -> !line.isBlank() && !line.startsWith("#"))
-                                    .toList()));
+            rules.addAll(WorkspaceSearchFilter.checkedGitignoreRules(content.lines().toList()));
         }
         rules.addAll(searchFilter.rules());
         token.throwIfCancelled();

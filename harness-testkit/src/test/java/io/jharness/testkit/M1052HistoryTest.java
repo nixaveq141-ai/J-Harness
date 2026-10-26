@@ -252,7 +252,15 @@ class M1052HistoryTest {
             } while (!cursor.isEmpty());
             assertEquals(3, pages);
             assertEquals(new HashSet<>(ids), seen);
-            var oldPage = object(request(base, "/v1/tasks?limit=8", null));
+            var oldResponse = request(base, "/v1/tasks?limit=8", null);
+            assertEquals(200, oldResponse.statusCode());
+            var oldPage = object(oldResponse);
+            assertEquals(8, ((List<?>) oldPage.get("tasks")).size());
+            assertEquals(true, oldPage.get("more"));
+            String oldCursor = assertInstanceOf(String.class, oldPage.get("next"));
+            assertFalse(oldCursor.isEmpty());
+            assertEquals(
+                    200, request(base, "/v1/tasks?limit=8&after=" + oldCursor, null).statusCode());
             var initial = object(request(base, "/v1/tasks/" + ids.getFirst(), null));
             var named = change(base, initial, "Pinned investigation", true, false);
             assertEquals(
@@ -270,10 +278,11 @@ class M1052HistoryTest {
                                             "archived",
                                             false))
                             .statusCode());
+            var stalePage = request(base, "/v1/tasks?limit=8&after=" + oldCursor, null);
+            assertEquals(400, stalePage.statusCode());
             assertEquals(
-                    400,
-                    request(base, "/v1/tasks?limit=8&after=" + oldPage.get("next"), null)
-                            .statusCode());
+                    "UNKNOWN_CURSOR",
+                    new ObjectMapper().readTree(stalePage.body()).get("error").asText());
             assertEquals(
                     ids.getFirst(),
                     Values.object(
