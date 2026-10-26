@@ -7,7 +7,7 @@ sha=lambda path:hashlib.sha256(path.read_bytes()).hexdigest()
 def require(value,message):
  if not value:raise ValueError(message)
 def main():
- data=read('docs/testing/M1-M10.5-gap-audit-2026-10-26.json');manifest=read('docs/testing/documentation-refresh-2026-10-26.json')
+ data=read('docs/testing/M10-milestone-audit-2026-10-26.json');manifest=read('docs/testing/M10-documentation-refresh-2026-10-26.json')
  require(len(data['milestones'])==19 and len(data['functionalRequirements'])==27,'Incomplete milestone/FR inventory')
  require(len(data['historicalTestLineage'])==20,'Incomplete historical snapshot inventory')
  require(len(data['r5OpenItems'])==13 and sum(f['state']=='OPEN' for f in data['findings'])==12,'Incorrect open-scope accounting')

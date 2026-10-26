@@ -1170,7 +1170,7 @@
       "kind": "DOCUMENTATION_ONLY_NO_NEW_CANDIDATE_ACCEPTANCE"
     }
   ],
-  "documentationManifest": "docs/testing/documentation-refresh-2026-10-26.json",
+  "documentationManifest": "docs/testing/M10-documentation-refresh-2026-10-26.json",
   "documentationSummary": {
     "originalMarkdownDocumentsScanned": 118,
     "originalMarkdownDocumentsUpdated": 91,

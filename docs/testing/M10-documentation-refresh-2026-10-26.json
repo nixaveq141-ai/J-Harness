@@ -845,15 +845,15 @@
     },
     {
       "path": "docs/testing/M1-M10.5-gap-audit-2026-10-26.md",
-      "sha256": "0ff8d241bb35832eb8587405d89ba6955b04a9e8dc40d4371991706595343dc4"
+      "sha256": "0eae2fb96be01683590604395c1eb40d1059cb53040421d7e6364713a2ea57c2"
     },
     {
-      "path": "docs/testing/M1-M10.5-gap-audit-2026-10-26.json",
-      "sha256": "8103afee25e13b0a5cb9bb68ba0514b0b949551d0f75f40658dc1896caf871e5"
+      "path": "docs/testing/M10-milestone-audit-2026-10-26.json",
+      "sha256": "3529f643a31985503738c06c37696fdf0e8813c40881268d77108542f1f5064f"
     },
     {
       "path": "docs/testing/tools/verify-milestone-audit-2026-10-26.py",
-      "sha256": "56a7808d3d16d213ff03cca99edd73e5ff4dab3285b33de7eac44833f25b7385"
+      "sha256": "09976fb7a001d2eb60728f6f4f92b7f78503ce7262eda2679990a9431896e002"
     },
     {
       "path": "docs/development/OCR-implementation-artifacts.json",
@@ -865,11 +865,11 @@
     },
     {
       "path": "docs/testing/M10.5.9-status-2026-10-25.json",
-      "sha256": "19188e4189a46d81f2a46bd2fbf4829f73e29aacb089600c1a55439b235bf50c"
+      "sha256": "3d8c63dc92eb51f3b7f2625eaf689a36cd03a239a1ceb235b13d0024655205c3"
     },
     {
       "path": "docs/testing/OCR-R6-remediation-2026-10-25-results.json",
-      "sha256": "8e8d3e36d9955bc1f7f0aa3ed6bac50f7aa61d7ebc19c92edc8c12914cf94e2d"
+      "sha256": "855ee81eac482c48152a1bf35ffdb6f99bf13ea734442d9355ca91d8ef713d17"
     }
   ],
   "protectedRawJson": {
@@ -1117,5 +1117,6 @@
     "docs/testing/OCR-verification-2026-10-20-results.json": "31e1de9d70f8d7c013afd9857a4794b3e1c9a9bd14e8f4de72e6b38d4a6bdaa7"
   },
   "unresolvedLocalLinks": [],
-  "boundary": "Historical raw JSON, original review snapshots and third-party legal material are preserved. Notices and active prose distinguish historical snapshots from current accepted runtime. SDK README unchanged; only distribution-guide documentation changes a build input."
+  "boundary": "Historical raw JSON, original review snapshots and third-party legal material are preserved. Notices and active prose distinguish historical snapshots from current accepted runtime. SDK README unchanged; only distribution-guide documentation changes a build input.",
+  "bytePreservation": "New audit JSON names match the existing docs/testing/M10-*.json -text rule; exact bytes survive Windows/POSIX checkout without changing .gitattributes."
 }
