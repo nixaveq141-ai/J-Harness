@@ -1,0 +1,1121 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-26",
+  "baselineDocumentationCommit": "70f9bbba4e5411872b310397ae04e7228491b1c5",
+  "summary": {
+    "originalMarkdownDocumentsScanned": 118,
+    "originalMarkdownDocumentsUpdated": 91,
+    "protectedReviewMarkdown": 9,
+    "newMarkdownDocuments": 2,
+    "protectedRawJson": 242,
+    "localFileLinksChecked": 642
+  },
+  "documents": [
+    {
+      "path": "docs/development/code-review-2026-10-20.md",
+      "beforeSha256": "fd581135fe148155e0107ff07cb7dcccb477b674606c37680a766a64b65caeeb",
+      "afterSha256": "71c39c7804e5d0625a4588b22b51ff5f3fb1be7bf6c2f2ad50d96cef04ca5961",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/development/M0-contracts.md",
+      "beforeSha256": "b9a20afc71ff8256a9027668447d89473f4ef1f97ad45d051508f769df6bc7a5",
+      "afterSha256": "5965ff4bb226039ff3722f9443653f5a7d179eccf9a84e5917b751a53e87cefa",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/development/M1-contracts.md",
+      "beforeSha256": "394f0375502c0e3ef7382857b99e520e19e93da26da2a7eeb1c3cbd1c80fb0c6",
+      "afterSha256": "89c0490f507a42242f4c43ad228535c5c998372351aaa6243d81e85127ba680b",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/development/M10-contracts.md",
+      "beforeSha256": "2beaed1977970dbc46d453624732955440bd18d5c07ca69ebe4091de39dbbf31",
+      "afterSha256": "ba37ff6f0ee588da0d3743cd9308428eb39c5c7a0665a442e3679efe5083d1da",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/development/M10-frontend-reuse-review.md",
+      "beforeSha256": "065bfd2a8178d7733be4e57e9505f76546f26dd7d0a4a20960463f0348138787",
+      "afterSha256": "b9240bb4e41573d23a1db5feca6107af594725e00f2293a273e6748efa88dc82",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/development/M10-settings.md",
+      "beforeSha256": "731c17c4d62d22b81329459917a62f40213c3efeed69dc49a1e30947364d5133",
+      "afterSha256": "eff1a2671e0a0438f541a95b04894fa75c5fa67deb3a6a0b7e8f924d0df744cc",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/development/M10-upstream-gap-review-2026-10-17.md",
+      "beforeSha256": "3cea8db94c65d39c6b53ffec553c09422915a8368906e6815682de54edc45399",
+      "afterSha256": "31cd5c2a9c50abb8d451c7cec407a25ecd13fbe3f84894064cbc74ae66239c3e",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/development/M10.5.1-contracts.md",
+      "beforeSha256": "daf3656cab5508edb74e1008c57721d464b80f2c2859bf22fb72d1cb883eb844",
+      "afterSha256": "5d5814f4df1f87ce6d47d505f22f09f200ad430291b9fec45d4176206edc1be5",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/development/M10.5.2-contracts.md",
+      "beforeSha256": "59037fa7e607263cf37fbfcf3c699abeee1b493e73078cf93128304bab9e0d84",
+      "afterSha256": "cb00ea482ecc7fa3818f05c0e7345181925c0f428a02a5a94a6cd38e30fe740d",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/development/M10.5.3-contracts.md",
+      "beforeSha256": "148d9b60e37f041cb9c2b7a95231a74cdc9373e956fba3a40461b63f0923f790",
+      "afterSha256": "9d1c7309998d5046347cbf072584386c097e11cea621b62af6f38bda3f10148a",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/development/M10.5.4-contracts.md",
+      "beforeSha256": "5f8ab98b6a2ced90d31504cf0cd50e922e316848c9f2b427a4b146e4ed108f01",
+      "afterSha256": "6896609737a48c49baa5b5dc8ea3e16598911cc317430fef6581057b732d3e64",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/development/M10.5.5-contracts.md",
+      "beforeSha256": "e30be0737a1a19c8822f29dae49f1e6e1725a7ba57144322cd56f91547646134",
+      "afterSha256": "9cc072ecb72a28cf4eb273544a644f9665cac565778071f5d87f518efd4a2140",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/development/M10.5.6-contracts.md",
+      "beforeSha256": "400418b4b5e1241d7a7de44e82c54abe663ac82859d8748b3c95ae1f81604a07",
+      "afterSha256": "e6e8aa9f71ba1ae840fe7e38d62a9d9f21fc1b7b04ac449d6f6f0da5654b5fec",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/development/M10.5.7-contracts.md",
+      "beforeSha256": "b531e7057d5d7243b88d66f88124e4121c264d86ba7d33f7ff5cb1865946c740",
+      "afterSha256": "e5692a02c6cc0c5964be83052784854afba4683c6ab7dec564d0a1d444280056",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/development/M10.5.8-contracts.md",
+      "beforeSha256": "3104ac6254c4a95ff5df3152051bbac133880e41bfe47ce674c97c93ae42ecbe",
+      "afterSha256": "c9f7229d92fcd4f7d8b59358fb8d7b8337e5299352e4ed81b8b87f08771edcff",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/development/M10.5.8-stdio.md",
+      "beforeSha256": "848d6c67b29c247be26c17d874d3405e6cdd35e9860d638485bd4e2e210f69c7",
+      "afterSha256": "3b9adca245f0b48a6e120d1b996744ab5bf33934b72a5b57da49fdd1efc91452",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/development/M10.5.9-ci-2026-10-23.md",
+      "beforeSha256": "66190c0ee1d096e385ee337b65f34ba0123b57cc63eac0be03e607bab40c1fa9",
+      "afterSha256": "f9c1c90d5994f89c61cfc5879709fdebb7c1795bc7b4a70649b98eff1f9a44be",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/development/M10.5.9-contracts.md",
+      "beforeSha256": "643ce22b1e9f3c29eaa4903db9d4f1943eea2a4f1d79938ccd49be992883dd44",
+      "afterSha256": "643ce22b1e9f3c29eaa4903db9d4f1943eea2a4f1d79938ccd49be992883dd44",
+      "updated": false,
+      "handling": "unchanged_supported_document"
+    },
+    {
+      "path": "docs/development/M10.5.9-root-causes-2026-10-24.md",
+      "beforeSha256": "609391ccaeeab7ee190766dd41eee56862b90039ef2af6bfdb7fe689adf6fcef",
+      "afterSha256": "755c7a4a1dff761ab38f5160d026c88a632889849556933b99bf40eaed37599e",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/development/M2-contracts.md",
+      "beforeSha256": "14806ffc685c2b6eca715da29c4730f4763902bd182209d37b76070c23ce6b11",
+      "afterSha256": "69478c947d50859c0c444c1ad9d390f1c879b70b6c4b474982095b2f497c558a",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/development/M3-contracts.md",
+      "beforeSha256": "13aeffac42cb0c3e22635f55a620a8abd4ca6306335885f84c21033f5baefee0",
+      "afterSha256": "96c189a9520018c0483689fa07f340f55fa24c69c6ba8da7c113916aa3950a0c",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/development/M4-contracts.md",
+      "beforeSha256": "5becb59f268efcd666be0ddb2db00d57ddeb39b32321e0ac35ff40a0560374d5",
+      "afterSha256": "a182a5252247f826516c2589d1d32c35fd3f90b1af3a5a3fface83af7662ee3b",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/development/M5-contracts.md",
+      "beforeSha256": "e3723e1c0c3698c43039de98ba3b964145aaf85d387c0a862945d0f6fd9030c7",
+      "afterSha256": "52fe3f1abb58978ab49458dd3d19f9f127915f17e3020143a4c9d3ba76039c71",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/development/M6-contracts.md",
+      "beforeSha256": "8ee1c4975682ebf56e67c25cb12afc12410e756240c36137b60a54a405e49f3f",
+      "afterSha256": "689426504b23e7dd56615e765b605d0627b0bfcb262200e81028ee3be5cfbb32",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/development/M7-contracts.md",
+      "beforeSha256": "06d44b2468e87e967d9b7b0befe692f65687edd0a0b9c650cb20f9d00f4f66d4",
+      "afterSha256": "a8b5eb63278ff2f81c15aa6e3752e50add6a1d86668bd61f50cf6f5ed1228a49",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/development/M8-contracts.md",
+      "beforeSha256": "2423f8150d8bd7ca7f1fee9ed15e3d54de2f2c5dd3896873c2bd0f5c2a81c477",
+      "afterSha256": "c2632dfc207d4dfdea758823f1dd52a267d292b41ceae1899f768d5e01f02ff1",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/development/M9-contracts.md",
+      "beforeSha256": "a36cd0a6db08eaa568b1c217292a6bc86dbd82eafd59076d5dd4df2665ed6315",
+      "afterSha256": "28561dff9631ef8dbf7a8cf56b96b63fc59975cf9734200f92811638119bddba",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/development/OCR-R0-remediation-2026-10-20.md",
+      "beforeSha256": "8de625bdb1a88cabf5db7f0152a7606147a27e199d9390d794c3ae956961299b",
+      "afterSha256": "494ea6848aab848e1a33ee6c5cb3632e2f26170f20b667318799fc876a9f1340",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/development/OCR-R0-rereview-2026-10-20.md",
+      "beforeSha256": "7bd5d9b5e306a45e78a9806fb925c4b285f7527252749b88f192a3c1d1c02cdd",
+      "afterSha256": "655e113b1150bb568d915da635b341d6729b13bf7c71d6ac6eac8e3d9d4c25c6",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/development/OCR-R0-rereview-fixes-2026-10-21.md",
+      "beforeSha256": "fbff5ad33965069add4b50a3d6cf847214c27f0ec7a850243697693c211f7603",
+      "afterSha256": "aa1c35f4578059561cb51f19c68609fcb8d867436d8b55da9af95980f45ad91d",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/development/OCR-R1-fault18-2026-10-22.md",
+      "beforeSha256": "41575a5709094c7ca5e69c033c27a9391e1a21c116e0fb5101a81642767288ec",
+      "afterSha256": "e33d488b94eed84a9c2569d51fd508d07fdd7312fbb1cc349af1827bc2d49cf6",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/development/OCR-R1-R3-implementation-2026-10-24.md",
+      "beforeSha256": "f2d5a1ad2ff2c6dc33b3d3cb918153058a69889ecef53f0e9b0ba63cb5f72325",
+      "afterSha256": "62b511f50dbab21b5a7fd3ee1e1203ff6003115f5aa9d4a1a97e2b6dcb6ea933",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/development/OCR-R1-R3-rereview-2026-10-24.md",
+      "beforeSha256": "286e97159452120adb9899c056b2d378c22946b1b3f0a21952447b814ce92a4e",
+      "afterSha256": "8675430d6f53e64accbeb1b74e949a0cc74bde2c5d217c13d93af13f046fb3e6",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/development/OCR-R1-remediation-2026-10-21.md",
+      "beforeSha256": "e9dcd4b6f3d93f307bde5145ead8bdd3bbfb352a103501bf2f2572690641c855",
+      "afterSha256": "7cbf58a389d4890a28260c8bd9f7f0c2bcf4f3a701f199eb5ed967f761a75492",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/development/OCR-R2-contracts-2026-10-22.md",
+      "beforeSha256": "4f1b377f30919c080ee5d3df0d14a3f0fe8fc9912c853068bfba1444926ccfba",
+      "afterSha256": "28ac37ae4e07005b63445eb0f97de61b20b7bc60a26538a72322d74cf61496f6",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/development/OCR-R2-remediation-2026-10-22.md",
+      "beforeSha256": "5d9f0a3675e755b3beede0899487b48befa452faab637abef4d15478c93154a8",
+      "afterSha256": "488b528f8d046a603a7d0e7c21095d788be63fb88e00013c1e84b8f1b065651e",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/development/OCR-R3-contracts-2026-10-23.md",
+      "beforeSha256": "f34ee74670b2c1ca0211d20b0fb5b07e1d03fe57d60369a89970cf57ac4d38f0",
+      "afterSha256": "22d504f03415f59c01a64573d5032ba0e6d635cce4058a0e9b015729c517e7eb",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/development/OCR-R3-remediation-2026-10-23.md",
+      "beforeSha256": "5d6d933b1cb9a32906d48f7d6e2bbf7d7e12b5010b384f4b54b63dd051882127",
+      "afterSha256": "9390817d4b2c228b32859fc71c549a668737332e47488775814ccf6e44ffc52f",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/development/OCR-R4-progress-2026-10-23.md",
+      "beforeSha256": "3608edb03032cde34a05fc99a5d123db3d39850a847738a5690ab8094164ac03",
+      "afterSha256": "9cc3dda94ae1388564604022c0c6aebd97280b7c4b9449901f8a22f1b4ab073a",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/development/OCR-R4-remediation-2026-10-25.md",
+      "beforeSha256": "12717d2c49f0a7b3880e50e8f4fb92398baeca706e92cd5422332e8fcf07b8d8",
+      "afterSha256": "e43996e9363892f3379bf3760fba858e108c7286df39d2928fdedcdea8884407",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/development/OCR-R5-remediation-2026-10-25.md",
+      "beforeSha256": "d2e6166347a0bb205f5e95e1a9d2f04143f41def9f5f7951d04336204bc61c23",
+      "afterSha256": "74704d1e83b93e9f098035f8f8ea7503bf3bbe514a698a75f7824c7c468511be",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/development/OCR-R6-remediation-2026-10-25.md",
+      "beforeSha256": "ff4b721d186ae6c5d5adf44d5e7aae9d80694b232947723b80ed0c745dbcb854",
+      "afterSha256": "ff4b721d186ae6c5d5adf44d5e7aae9d80694b232947723b80ed0c745dbcb854",
+      "updated": false,
+      "handling": "unchanged_supported_document"
+    },
+    {
+      "path": "docs/development/open-source-publication-2026-10-25.md",
+      "beforeSha256": "9d8f31f4129a2d034997f3ef458c3fa6d17ba6d1fb2cbcd74ced265e99075b42",
+      "afterSha256": "d2c9210d52b0c72924320c107d1b5d63cf5bfda60ac22e811c9cda67313d2a42",
+      "updated": true,
+      "handling": "publication_history_scope_clarified"
+    },
+    {
+      "path": "docs/development/web-history-maintenance-2026-10-17.md",
+      "beforeSha256": "b1497e21aa9e723ed5b1d13f9fc690e1706eb0e9857c60911d7da354c67eaa56",
+      "afterSha256": "325df82ced90f1e647512609f592d37483fe0debab422d332efdca619e664851",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/examples/m10.5.1-recovery.md",
+      "beforeSha256": "d824e26fb37e0e33f630fee846b803bff6518fd3ea55ed6ed2c7859075503523",
+      "afterSha256": "d824e26fb37e0e33f630fee846b803bff6518fd3ea55ed6ed2c7859075503523",
+      "updated": false,
+      "handling": "unchanged_supported_document"
+    },
+    {
+      "path": "docs/examples/m10.5.2-history.md",
+      "beforeSha256": "c18ebe6434356457b0a640e2cbade4d2de95653a34bff7d80c0b3d4d3448e290",
+      "afterSha256": "c18ebe6434356457b0a640e2cbade4d2de95653a34bff7d80c0b3d4d3448e290",
+      "updated": false,
+      "handling": "unchanged_supported_document"
+    },
+    {
+      "path": "docs/examples/m10.5.3-turns.md",
+      "beforeSha256": "b0ebfa492e7c7cf7649a798024c7f14fd5d8942d5ca48823520bbd379a281fdd",
+      "afterSha256": "b0ebfa492e7c7cf7649a798024c7f14fd5d8942d5ca48823520bbd379a281fdd",
+      "updated": false,
+      "handling": "unchanged_supported_document"
+    },
+    {
+      "path": "docs/examples/m1054-models.md",
+      "beforeSha256": "1faba7ae4b7dd05e183c9578a7cdcd34a6fc69d612481a42748f74d8c6d9c215",
+      "afterSha256": "1faba7ae4b7dd05e183c9578a7cdcd34a6fc69d612481a42748f74d8c6d9c215",
+      "updated": false,
+      "handling": "unchanged_supported_document"
+    },
+    {
+      "path": "docs/examples/m1055-questions.md",
+      "beforeSha256": "74e8a7c00555b8426a0f8f961e9eac1f1ab6bd5eb4d9ad5caee20838fc6179fc",
+      "afterSha256": "74e8a7c00555b8426a0f8f961e9eac1f1ab6bd5eb4d9ad5caee20838fc6179fc",
+      "updated": false,
+      "handling": "unchanged_supported_document"
+    },
+    {
+      "path": "docs/examples/m1056-content.md",
+      "beforeSha256": "1d79254cc8c5bf3a1d25d28ddcd069968ae8905e448244c73d0216d967f14270",
+      "afterSha256": "1d79254cc8c5bf3a1d25d28ddcd069968ae8905e448244c73d0216d967f14270",
+      "updated": false,
+      "handling": "unchanged_supported_document"
+    },
+    {
+      "path": "docs/examples/m1057-extensions.md",
+      "beforeSha256": "3949844931170dea24fd9b873b0f7708416eb54605a43366e7573bb0337ab603",
+      "afterSha256": "3949844931170dea24fd9b873b0f7708416eb54605a43366e7573bb0337ab603",
+      "updated": false,
+      "handling": "unchanged_supported_document"
+    },
+    {
+      "path": "docs/examples/m1058-search-sdk.md",
+      "beforeSha256": "881af724d74856de9300e2b77f9fd44ff3bf6c7f63063c724cc999a924a8905a",
+      "afterSha256": "881af724d74856de9300e2b77f9fd44ff3bf6c7f63063c724cc999a924a8905a",
+      "updated": false,
+      "handling": "unchanged_supported_document"
+    },
+    {
+      "path": "docs/examples/m1059-distribution.md",
+      "beforeSha256": "9d9002592276d584f6a9bc7b6b2feab5dea3179ce69e382c54b5df4c96eca1b8",
+      "afterSha256": "9d8c38211bc768a6ff5ff83b754e9fa60b8b7a64917874472f70a2ea7286a6ed",
+      "updated": true,
+      "handling": "source_bound_guide_status_update"
+    },
+    {
+      "path": "docs/examples/m7-cli.md",
+      "beforeSha256": "68a7389a9472f09768cb774d7b464f6072cb51cd9ffcc449bb8de606c5a301ed",
+      "afterSha256": "195ff5b6a2c4a07313d6dcaf12bbe4ad9dc99c66a226be4c0df190e4cb0fd55d",
+      "updated": true,
+      "handling": "current_content_update"
+    },
+    {
+      "path": "docs/examples/m7-extensions.md",
+      "beforeSha256": "e9b0a3021df6f432eb82be607e2ce33bbbf6911144085c4ae9c243e3f51ecee7",
+      "afterSha256": "98d4ae1d5aa3197db9c34bc2ac8f4ee710d4904d5ce2c2b0746a36a59b930d76",
+      "updated": true,
+      "handling": "current_content_update"
+    },
+    {
+      "path": "docs/examples/m7-web.md",
+      "beforeSha256": "d73ec1702f6b11906bdcc40786216ced916086a0930a10aa6328126a3b82589c",
+      "afterSha256": "d73ec1702f6b11906bdcc40786216ced916086a0930a10aa6328126a3b82589c",
+      "updated": false,
+      "handling": "unchanged_supported_document"
+    },
+    {
+      "path": "docs/examples/m8-model-resilience.md",
+      "beforeSha256": "15400d4ba4c9f32e2aeea70bc504017c1968f99c9d8c3825d109c7c017db1785",
+      "afterSha256": "cebe1415a37dd036ad4fb2a62a429ccaa93e2d48eae502a7cbb1ab36dfa3e5cd",
+      "updated": true,
+      "handling": "current_content_update"
+    },
+    {
+      "path": "docs/examples/m8-search-filter.md",
+      "beforeSha256": "6a405cfcbe52565cff7c1c3d5ef6898247fcd5b2b394b448c70e72fe83752fa8",
+      "afterSha256": "6a405cfcbe52565cff7c1c3d5ef6898247fcd5b2b394b448c70e72fe83752fa8",
+      "updated": false,
+      "handling": "unchanged_supported_document"
+    },
+    {
+      "path": "docs/examples/m8-tool-scheduling.md",
+      "beforeSha256": "72eb782ae84a248a4e9927bebe07cccf9e7a42ecb32a23b8a57ee025d04d19be",
+      "afterSha256": "d39394deb8f111eb01da7e6aea00408e2573f26d6366603f7458296c4be3149c",
+      "updated": true,
+      "handling": "current_cross_plugin_scope_updated"
+    },
+    {
+      "path": "docs/examples/m9-distribution.md",
+      "beforeSha256": "77beb8eddcd5515768f1814f38989164c2d86ed9bfe3af6c1f7cee8aa017813a",
+      "afterSha256": "77beb8eddcd5515768f1814f38989164c2d86ed9bfe3af6c1f7cee8aa017813a",
+      "updated": false,
+      "handling": "unchanged_supported_document"
+    },
+    {
+      "path": "docs/examples/web-ui-launcher.md",
+      "beforeSha256": "6f87d92f187b89de91bbf97da44b543baefc0d0b9cf04a51ac2d84b345e38c1d",
+      "afterSha256": "6f87d92f187b89de91bbf97da44b543baefc0d0b9cf04a51ac2d84b345e38c1d",
+      "updated": false,
+      "handling": "unchanged_supported_document"
+    },
+    {
+      "path": "docs/examples/web-ui-settings.md",
+      "beforeSha256": "4129e6e1acb0c6a5878ed9ff1867dc43a7bf3ddcdbca5aa195c5f0460b05aea5",
+      "afterSha256": "987e4aee1e6d2b2d4202b288f835aa506e80cfc17af10a61d109ed51dcdf0e58",
+      "updated": true,
+      "handling": "current_content_update"
+    },
+    {
+      "path": "docs/requirements/JHarness-next-plan-v1.0.md",
+      "beforeSha256": "2af37d0a2755c2b592133b66b1a56e0490458266544112d4027345a44c5f5405",
+      "afterSha256": "1bb496d84c7db856bf08d3413d4349e77e19f9824daa002d411c1938a277646f",
+      "updated": true,
+      "handling": "current_plan_rewrite_with_historical_snapshots"
+    },
+    {
+      "path": "docs/requirements/JHarness-NFR-AC-sequence-v1.1.md",
+      "beforeSha256": "06e6c5cd0dd42225ddcdb44ef3fcbdbe39df89c059525d09e27936697ef81e8d",
+      "afterSha256": "b2989ed63a668d82840e2dd7b8ee5201a5549062124272016d162da0d221fe08",
+      "updated": true,
+      "handling": "current_content_update"
+    },
+    {
+      "path": "docs/requirements/JHarness-PRD-v1.0.md",
+      "beforeSha256": "5068579cbd6da7cf35fd75457d3b4d833893834a55a2f492434325ef73c680e7",
+      "afterSha256": "10de0eb9b53f7b70db917471f04aec8e38cf874035607b5cb2fb124d08739c3c",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/requirements/JHarness-PRD-v1.1.md",
+      "beforeSha256": "1aa46f75c8cd01d22807cfe181a312c28c21c1844a2f07a924bd6e213e887ca5",
+      "afterSha256": "d6b6a4a43d9b2a38b445527834a558df5b5aeb2f1a43e9d20610ff7ed76fc0d9",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/requirements/M10.5-workbench-improvement-plan.md",
+      "beforeSha256": "e878f1db4545c4609af9687731a209532a2d9b56214b38d53ca1c741668cb711",
+      "afterSha256": "876f1da9ef6dd17404680cb8826bd08825c703b7a03617fa9370776d5000960a",
+      "updated": true,
+      "handling": "current_slice_table_and_handoff_updated"
+    },
+    {
+      "path": "docs/requirements/OCR-remediation-plan-2026-10-20.md",
+      "beforeSha256": "986bd10cb03b45d3a60b4be0a5a3c6697e5b5bb36386e6575049c906aaeffe92",
+      "afterSha256": "d83ab95670cfbc1b871fea9687c4e1724a52104f58ce77ddd30e6da69325f5be",
+      "updated": true,
+      "handling": "generated_current_plan"
+    },
+    {
+      "path": "docs/requirements/upstream-capabilities.md",
+      "beforeSha256": "6e1d62d40738830ae18644bb9fe04e2c337e763cd42e47f685619e4ed3e0cdcf",
+      "afterSha256": "899a2e8fc2ddf160142368b76626afe68d4234e8b88540ae076640cdf86ae851",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/testing/M0-validation.md",
+      "beforeSha256": "5d22a4a0fb91014672902a3243480a0a50f2ef102cf0902d209eb1c5694748ae",
+      "afterSha256": "2a1657e6c5869e351cf89e410959b8f0dbe4401bb5c22bc5ba4975f228d097cb",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/testing/M1-validation.md",
+      "beforeSha256": "4dccff0c7cbc4024d6ef0d9179a662b6e8d56c7476a2039c56d421c8fd679fc3",
+      "afterSha256": "7dbec99ecefb003f9845c9cc61d86e028d3e14433addeb318c68131347640cc4",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/testing/M10-auto-validation.md",
+      "beforeSha256": "dadaff0773d8bd3819ec09f066abade92668b3d8826e5d85f6984a1a8846cf68",
+      "afterSha256": "48ceb70cfdbfc68585d55c25c9f52d2a8cee39669eceab3e33ada124c181d53d",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/testing/M10-closure.md",
+      "beforeSha256": "deddd7bf99f727811814121f277d835c409b389c2c15d4176bec5ed89af17e8e",
+      "afterSha256": "02aedfd0eaeb2bbf9e5652f9cc0be5b0b2135ec73b44987176fdd3829f4e012b",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/testing/M10-settings-validation.md",
+      "beforeSha256": "5ebe61b35ce286966298642d6979acc656c60e7354e9005b35c2e5c0a89625a9",
+      "afterSha256": "c5935ff3b47f142c33e0bcf835e278d95cdc3d133a98650a1c1b4c77a2d9d742",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/testing/M10-validation.md",
+      "beforeSha256": "07b8a46cede5162fdd5092518caa58d4e2ea4e26585a1d4a1e15457d2896608d",
+      "afterSha256": "8bf829917c7b0d3779b048dda5537a828f16d0bbf4224073784393a751ac7f84",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/testing/M10.5.1-validation.md",
+      "beforeSha256": "3b075800b1d7e4c4c671d45180851d8e9ea6921f0ab829b5a565bbc67032066e",
+      "afterSha256": "fe4e02c19fdadb72d9940a5218ad2b08e7fe3150d5c23c065ba23608f2dc90c2",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/testing/M10.5.2-validation.md",
+      "beforeSha256": "9c0d29b41cbe31a7c25f6515dea47397dd89bd01ff6d682f65dfa9f236d6edf1",
+      "afterSha256": "6cf23165c6929dcafd660507a0bf09fd0dc813dec4cd22507158f6c2a969e9b6",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/testing/M10.5.3-validation.md",
+      "beforeSha256": "1247ccd5892016e8e3f0375e06bc64c6d9641b98d2f3b46b21d98d4b42dc37a8",
+      "afterSha256": "c260daa83ee95d4ff66ecabaf6f8be6d6b9fc85b6e414b6f0b13fc066a6de5b9",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/testing/M10.5.4-validation.md",
+      "beforeSha256": "516e798dfaef5dcb2c5b511e27895ded58f4b327e8d36e82820da4eb208150dc",
+      "afterSha256": "a3682a8e6af2887602896b7fc8a64828d76d326cc86e869cbe5ff002b9ff1609",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/testing/M10.5.5-validation.md",
+      "beforeSha256": "2fdb1e2eb42fb4f71a1ee3b37cc63e4a622f451ec19bd70c839a91391b733f25",
+      "afterSha256": "d1378301e0c3b171b5ec350ca76c1ab9494cd53120935d27ffc7aa08ae79d784",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/testing/M10.5.6-validation.md",
+      "beforeSha256": "a406ac287e8f8ffa117d718f81a0b412c34932c8bab5bc7769d0784145c95cce",
+      "afterSha256": "d63fea5c77572b69e0f78eac054dd872ee2772fd5bd44022d8268717904bcc8b",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/testing/M10.5.7-validation.md",
+      "beforeSha256": "be4c14e6974e4b0d0ff2dd39d1fe92eed4f8fd4ab3fb96143c012f1598e54d36",
+      "afterSha256": "ddc62da35d6d6fa55c4b235824878565eb551f178a9a17f90e999edd3a0b74d5",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/testing/M10.5.8-validation.md",
+      "beforeSha256": "3134e5694b91baf4d56fe901510d4d00f226871c5eca2232ddd98e90f68e34b4",
+      "afterSha256": "71ede8344392f5a7dbb47b4dc9570203ba26fd27bdeaaae178170f074e1eb658",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/testing/M10.5.9-evidence-cli-2026-10-25.md",
+      "beforeSha256": "7775b8b7f66bacfe399050e5193b22a8da85d9aeed5e5cd8cedfa9af38d7893a",
+      "afterSha256": "b1f18deaf4c5cd5f7afa253991d88fc4e126b6fe27ae2e55b1725f968af588fa",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/testing/M10.5.9-profiled-poll-2026-10-25.md",
+      "beforeSha256": "8c5447ce9dd2b43bfaefc91b8f7dd09184ddf0b276037806b84789f3dc2ace4a",
+      "afterSha256": "82b9d005391420e6f01bfa02a15de7b935b2d604e833ebc1b6d920d317810728",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/testing/M10.5.9-public-focused-diagnostics-2026-10-25.md",
+      "beforeSha256": "b88af308db5e3916098c81f5c8d5c8cbe8db21b7eef3713ee378f5489fd83e6a",
+      "afterSha256": "587fead3f24e2332e1f507431c4726a29d7333ca4ad30c2dfe7272525f11ad79",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/testing/M10.5.9-validation.md",
+      "beforeSha256": "d20d02d6b3673630b6e3ec8d9c006ffed00521585f85c28a4c73759c009c0987",
+      "afterSha256": "d20d02d6b3673630b6e3ec8d9c006ffed00521585f85c28a4c73759c009c0987",
+      "updated": false,
+      "handling": "unchanged_supported_document"
+    },
+    {
+      "path": "docs/testing/M2-validation.md",
+      "beforeSha256": "e7ec488a1bd2313fb4323e05e035288d19cebd54e7ba7f391947398c3f92adbf",
+      "afterSha256": "eb86a96f0908aa6530faeb09b3a102928bdacb99f3a501bcb645c195e077a264",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/testing/M3-validation.md",
+      "beforeSha256": "a5ec48ab2d913332c5dcb155c21a664b1926b84a6d169a611df70d3fbdc0756b",
+      "afterSha256": "0962083904ee2d344392f9ccf676860a9fa1075c3c01080de7d70b43d8d13bc6",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/testing/M4-validation.md",
+      "beforeSha256": "207ae35a4c2df95eb2fa8c5f333e5660db7cb81c6b1a32c2230f2103d8e045ee",
+      "afterSha256": "56a6b879bbc4653bc21632525ac4ed6f0f61229d230066a3e3849a2d2d0e58d2",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/testing/M5-validation.md",
+      "beforeSha256": "a32a380e126db98f866ed9548c1fd06477c9d87e4ee9375fc7e4a63bf48e056e",
+      "afterSha256": "bf79a1e061875ee4c3e0235d1282ce53daced1336c8bee2ba7b94eb2906bc591",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/testing/M6-validation.md",
+      "beforeSha256": "84ea8afb52dd3038f55ac89c10ca4b331e4b4407913d657a8301cf5ddcc80eb0",
+      "afterSha256": "265f3ca1b0f058cc726dda183a5bbcf392653f524a03ef2de8a3e1efd9152d50",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/testing/M7-closure.md",
+      "beforeSha256": "6f0757cc39545996a6db30e8173a512326419ba44b94a7bf906676528ec8df25",
+      "afterSha256": "2c6001f137e647ef82e42fe7f297b1190a95337fa29a37a2af45c9511c0b63ff",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/testing/M7-validation.md",
+      "beforeSha256": "09597691ec84bc004b2e023d748a68155c42846849347420f89a0a4f139725c6",
+      "afterSha256": "57dddc86842fb0e77c5caba3b658a676b81d3b49a6dbe3deedbd501bdc0b5ca7",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/testing/M8-closure.md",
+      "beforeSha256": "70244e37f892f2923af222389d5de7970a04ef78fa211a13a9c89211f4177563",
+      "afterSha256": "34f7b6a58eb49bf8114ae649889b4eaf90dff0b8974e8a69ba5d067df8aa61e7",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/testing/M8-validation.md",
+      "beforeSha256": "b7f2683b179658023022de0600b798b4b465f8425dbd250910efdc667d3e8540",
+      "afterSha256": "022947de4a7421d13ebf461754b48948a4b9fdf1b354734416fef92dd3279f27",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/testing/M9-closure.md",
+      "beforeSha256": "868dfb1a984bb042125a611bd6b9c64d0b7b9fd05eb874ed1b3522f0b0720e3b",
+      "afterSha256": "a7dcc6d762a8da94950cacc3a74b69c330d656e7340372b855090d5ce08f36a0",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/testing/M9-platform-matrix.md",
+      "beforeSha256": "2d9c1b90609f5ab3d69fc40d212f84203403e1bc2cfc882d725c295f46cb7029",
+      "afterSha256": "d90bc9a272d2cdcbf1e747cb7b40dd7ca43e5ce318a9c3a60e82d75754f656af",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/testing/M9-validation.md",
+      "beforeSha256": "bbed95dc1ea1deef5e59a01b671f523c8b93f85ab582281fd94094099f6f3f3a",
+      "afterSha256": "1ec57d3c2f299b87c06628a18d5b587cf1d3b4cb8949914c1c21a12033b14ab4",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/testing/OCR-R1-R3-implementation-2026-10-24-validation.md",
+      "beforeSha256": "425142f89151b4397856159f0c2f5bb59623b9157a6afe27be267b6017539f87",
+      "afterSha256": "59cea450d58f284a4afe0da11c805ee7a030a5a0f85959b7376c0903781b8558",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/testing/OCR-R4-remediation-2026-10-25-validation.md",
+      "beforeSha256": "094f1d60bacd3ab263e3c76dee32d6e6710272f6069f04d8889e513d0f7089a5",
+      "afterSha256": "1ca9af34ba6398a47a5477557fbc1eace2c78273cbd5e3bacef5884145e4ffd5",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/testing/OCR-R5-remediation-2026-10-25-validation.md",
+      "beforeSha256": "04c631f40b04c251bde6e82196d41c13ed4e5510430dabbc564937345cf9cdd2",
+      "afterSha256": "e4a8311ae66969dd8b252accdea0e596a20f1f00c07d6d29c838573a3af534d5",
+      "updated": true,
+      "handling": "current_status_notice_with_original_body_retained"
+    },
+    {
+      "path": "docs/testing/OCR-R6-remediation-2026-10-25-validation.md",
+      "beforeSha256": "78d4e53164a0f1b3360d5dbc246f0b1e4c216b5b556a4de345976c4ef628d4f0",
+      "afterSha256": "78d4e53164a0f1b3360d5dbc246f0b1e4c216b5b556a4de345976c4ef628d4f0",
+      "updated": false,
+      "handling": "unchanged_supported_document"
+    },
+    {
+      "path": "docs/testing/requirements-status-2026-10-15.md",
+      "beforeSha256": "c866e6d5e29884a5d0566ac972887e9bf340f606f42c8f6fc82f805f673ba227",
+      "afterSha256": "31defce32481b2138521395034d17d6906ab4de36f4e844a99ac0656b8309d25",
+      "updated": true,
+      "handling": "current_content_update"
+    },
+    {
+      "path": "docs/development/ocr-verification-2026-10-20/ledger-application.md",
+      "beforeSha256": "7de959aa34db5d80e0b4f76e9a3293b37b932f4b8817f05e85962899f707e5d6",
+      "afterSha256": "7de959aa34db5d80e0b4f76e9a3293b37b932f4b8817f05e85962899f707e5d6",
+      "updated": false,
+      "handling": "original_review_snapshot_protected"
+    },
+    {
+      "path": "docs/development/ocr-verification-2026-10-20/ledger-core.md",
+      "beforeSha256": "f07c0886e5ec4c1fed47fdcaf56f7558ce4b6b6c8a4d769d5921ac0e62a3081d",
+      "afterSha256": "f07c0886e5ec4c1fed47fdcaf56f7558ce4b6b6c8a4d769d5921ac0e62a3081d",
+      "updated": false,
+      "handling": "original_review_snapshot_protected"
+    },
+    {
+      "path": "docs/development/ocr-verification-2026-10-20/ledger-delivery.md",
+      "beforeSha256": "4b5d664cdd6055714fdb882784105e982a4ef1cb3f6283e0b1c869c3a9fa8ade",
+      "afterSha256": "4b5d664cdd6055714fdb882784105e982a4ef1cb3f6283e0b1c869c3a9fa8ade",
+      "updated": false,
+      "handling": "original_review_snapshot_protected"
+    },
+    {
+      "path": "docs/development/ocr-verification-2026-10-20/ledger-docs.md",
+      "beforeSha256": "ba637082b6d184eeef50486b71e9c2fff28bea102e992674b9277b5b05c119eb",
+      "afterSha256": "ba637082b6d184eeef50486b71e9c2fff28bea102e992674b9277b5b05c119eb",
+      "updated": false,
+      "handling": "original_review_snapshot_protected"
+    },
+    {
+      "path": "docs/development/ocr-verification-2026-10-20/notes-application.md",
+      "beforeSha256": "772cd6bf7b2b70f31a9954801c5272b53cc77bc277c2dfa30666306914965991",
+      "afterSha256": "772cd6bf7b2b70f31a9954801c5272b53cc77bc277c2dfa30666306914965991",
+      "updated": false,
+      "handling": "original_review_snapshot_protected"
+    },
+    {
+      "path": "docs/development/ocr-verification-2026-10-20/notes-core.md",
+      "beforeSha256": "2fe4218a1be638b31fca25fcd713285354de7f12a73a35aca3036ef32770f31f",
+      "afterSha256": "2fe4218a1be638b31fca25fcd713285354de7f12a73a35aca3036ef32770f31f",
+      "updated": false,
+      "handling": "original_review_snapshot_protected"
+    },
+    {
+      "path": "docs/development/ocr-verification-2026-10-20/notes-delivery-extra.md",
+      "beforeSha256": "c729e2bb91bedd17adc13aed2b26f119169d1a68502b2267e93a768251ca595b",
+      "afterSha256": "c729e2bb91bedd17adc13aed2b26f119169d1a68502b2267e93a768251ca595b",
+      "updated": false,
+      "handling": "original_review_snapshot_protected"
+    },
+    {
+      "path": "docs/development/ocr-verification-2026-10-20/notes-delivery.md",
+      "beforeSha256": "2d9a0b84fe1c1eb8c933963fc994c4e9717be66b4970f997ab5c6d848d2071c5",
+      "afterSha256": "2d9a0b84fe1c1eb8c933963fc994c4e9717be66b4970f997ab5c6d848d2071c5",
+      "updated": false,
+      "handling": "original_review_snapshot_protected"
+    },
+    {
+      "path": "docs/development/ocr-verification-2026-10-20/notes-docs.md",
+      "beforeSha256": "36c560362c6038d53ae0de1b86a9fdb3adb67b6cc32837ba8333b813169ce10a",
+      "afterSha256": "36c560362c6038d53ae0de1b86a9fdb3adb67b6cc32837ba8333b813169ce10a",
+      "updated": false,
+      "handling": "original_review_snapshot_protected"
+    },
+    {
+      "path": "README.md",
+      "beforeSha256": "55b47ff501def68cf396152d322acd1da12170ad54e5e849f2b937300ddfea8f",
+      "afterSha256": "7eb48c39231a1ccb547af2ca04059655434099d8c0fb1f709cd454a8ef3cd4ff",
+      "updated": true,
+      "handling": "current_entry_rewrite_and_archived_history"
+    },
+    {
+      "path": "frontend/README.md",
+      "beforeSha256": "4b59cb35d76d62e7a82e16ba3a0eca3ae1e36b44bf54b5a4f3c9aad59ef76235",
+      "afterSha256": "97b4c75170de1748e5d7a805d9c3b36ebdd9f1e9ccc3e33efda0f4df4316256b",
+      "updated": true,
+      "handling": "current_content_update"
+    },
+    {
+      "path": "sdk/README.md",
+      "beforeSha256": "2a8a2a934e6db6bb1ba604a9e9858d25782670c2f1dbd96a2c23c28079023148",
+      "afterSha256": "2a8a2a934e6db6bb1ba604a9e9858d25782670c2f1dbd96a2c23c28079023148",
+      "updated": false,
+      "handling": "unchanged_supported_document"
+    },
+    {
+      "path": "PRODUCT.md",
+      "beforeSha256": "b715bf9aa0cfae6ac0bae81cd4e87e227e3584cb1b4441adfc5a554bcd8c320b",
+      "afterSha256": "66dc1cc3ff1eb8de1c85c9a319410249693e251657dcb039d0e99cf6cd0c54ca",
+      "updated": true,
+      "handling": "current_content_update"
+    },
+    {
+      "path": "DESIGN.md",
+      "beforeSha256": "f4f16f41039f7882b862db4b253679e0148907c39e86f57f83e2470edf0dab88",
+      "afterSha256": "f4f16f41039f7882b862db4b253679e0148907c39e86f57f83e2470edf0dab88",
+      "updated": false,
+      "handling": "unchanged_supported_document"
+    }
+  ],
+  "outputs": [
+    {
+      "path": "docs/development/current-state.md",
+      "sha256": "bcf3c5656cbd9f3cf6d49a7201353af3884c26acb76e751afab8abffdf95d2da"
+    },
+    {
+      "path": "docs/testing/M1-M10.5-gap-audit-2026-10-26.md",
+      "sha256": "0ff8d241bb35832eb8587405d89ba6955b04a9e8dc40d4371991706595343dc4"
+    },
+    {
+      "path": "docs/testing/M1-M10.5-gap-audit-2026-10-26.json",
+      "sha256": "8103afee25e13b0a5cb9bb68ba0514b0b949551d0f75f40658dc1896caf871e5"
+    },
+    {
+      "path": "docs/testing/tools/verify-milestone-audit-2026-10-26.py",
+      "sha256": "56a7808d3d16d213ff03cca99edd73e5ff4dab3285b33de7eac44833f25b7385"
+    },
+    {
+      "path": "docs/development/OCR-implementation-artifacts.json",
+      "sha256": "9c5bce6bdd9a41b9922bf84a1bcb1ea8c23161d942e6110c2128e0e16ce55883"
+    },
+    {
+      "path": "docs/development/OCR-remediation-progress.json",
+      "sha256": "1d1a1b82948723c91195422405ba04382dc40f13c4200d11186aeaca9cda006c"
+    },
+    {
+      "path": "docs/testing/M10.5.9-status-2026-10-25.json",
+      "sha256": "19188e4189a46d81f2a46bd2fbf4829f73e29aacb089600c1a55439b235bf50c"
+    },
+    {
+      "path": "docs/testing/OCR-R6-remediation-2026-10-25-results.json",
+      "sha256": "8e8d3e36d9955bc1f7f0aa3ed6bac50f7aa61d7ebc19c92edc8c12914cf94e2d"
+    }
+  ],
+  "protectedRawJson": {
+    "docs/development/M10-frontend-reuse-source.json": "3091f8cdc155b76f185223cbfdd09f8f6b9a27ddd083da5322eb7fc5ca861a1d",
+    "docs/development/OCR-R1-R3-implementation-2026-10-24.json": "e0ce9b3b18eba60cd784843eca75c84d657d4cc3ccf1391a09136f48fef14a49",
+    "docs/development/OCR-R1-R3-rereview-2026-10-24.json": "bb9d0fdd40513b2afbe110d169af0f64a378643f669f477365b24cd6a0c54eb7",
+    "docs/development/OCR-R1-implementation-2026-10-21.json": "9c84c2fa2c73d1d13824c3f40179a322b360c5fe018196c71580f0023eb00b48",
+    "docs/development/OCR-R2-implementation-2026-10-22.json": "078c02f15ba87917b3b8640feb13f1868de55580e456f5c81fb48f5ed4a5b84c",
+    "docs/development/OCR-R3-implementation-2026-10-23.json": "a1206d23d5b691d7eefb6091fe783855ebf8b78ebdd33f1650951288211aec34",
+    "docs/development/OCR-R4-scope-2026-10-25.json": "76c4298404e85939efcfb629d339187cce4be228e08363e7a648e5bca7c7da04",
+    "docs/development/OCR-R5-scope-2026-10-25.json": "c3dc1fddd1fbb2be78d22c76c49639268fa837640bfb741b1c9a2307b48acb9d",
+    "docs/development/OCR-R6-scope-2026-10-25.json": "1f90d1bc7bec899b47bc148eee8db64338088ba76c88faddf3e104bdbe3e174b",
+    "docs/development/ocr-r0-rereview-2026-10-20/opinions.json": "f9540360340d8a88d689a922e10b2651175df1c184a4d5ad880bb5232dbc8106",
+    "docs/development/ocr-r0-rereview-2026-10-20/probes.json": "9e2550e90f78d2163c448b419833915830e41bbdf9de261e48d02a5361cfe6d5",
+    "docs/development/ocr-r0-rereview-2026-10-20/verdicts.json": "4a029e282bd8b8d559d01e5c160d3071ae723fbe52aced31b1817218b8b06cb7",
+    "docs/development/ocr-verification-2026-10-20/opinions.json": "211d56ff3dec4cde70d9628d848edd6b2a86846cf5165da7721bfc2705adad67",
+    "docs/development/ocr-verification-2026-10-20/plan-structure.json": "9eb479e1550f235e15e2218afc81cff85221a6021cddec2ee829f37082583dbc",
+    "docs/development/ocr-verification-2026-10-20/plan.json": "2a9131841ddc2fa4119a98398f9152c7cb7f6786053ae3f7cf27f42e8ae334b7",
+    "docs/development/ocr-verification-2026-10-20/review.json": "d73b2812d84512d587950e8a822c157fcaa208279327710c2593d8cd82ded305",
+    "docs/development/ocr-verification-2026-10-20/source-snapshot.json": "1c684aff7fd789b327cffea9cf8d5dea662758fcd40beb00069dc5721039f6e2",
+    "docs/development/ocr-verification-2026-10-20/verdicts-application.json": "c72e947cc898eeb041e3fbfe139e391e764a210082e51529e53051a3db3e594f",
+    "docs/development/ocr-verification-2026-10-20/verdicts-core.json": "39fb7bbd312f19e2558be0869580b60cba2b2b27d11743a05029d32c616ba150",
+    "docs/development/ocr-verification-2026-10-20/verdicts-delivery-extra.json": "38aac07d1524368b884d9e10639fa484fd9c92423f677a42cd2dde179fab9195",
+    "docs/development/ocr-verification-2026-10-20/verdicts-delivery.json": "135ded8e3dbca6cf45fdc3c37b6d66889cf81d2ebcf6fa9d5f64900fffb76aae",
+    "docs/development/ocr-verification-2026-10-20/verdicts-docs.json": "974192048bb6ff6a71ab4b282561f39db7dc28c92cfe605e5b58563e25e63372",
+    "docs/examples/deepseek-config.json": "924881e385ad9ef11993da7a478534bccf03a1caa1bceecb8db824fa82a85ef2",
+    "docs/examples/m6-config.json": "1b4c329534f4ace5fab7bd7cda7626ee851412a7753648533209d9f4dbd6f443",
+    "docs/examples/m7-config.json": "435a441bec5c08906176a8ff8e14e6cf218ad03625171d7ff6a81ccbf81f2563",
+    "docs/examples/m8-filter-config.json": "35c60165e0e052f971a7bb7417d7eda1ff8d4ea338aa12bd9af180adac214318",
+    "docs/examples/m8-model-resilience.json": "20816fcf478557258dd6ffaff513071c5ebea9c74db46bb4d8fd479ff3bed0e7",
+    "docs/examples/m8-scheduling-config.json": "94455f4d1e60f7d9668fe14e38e47543749d1e60d627f78b1a22ab1ada0b43f7",
+    "docs/testing/M0-results.json": "d6862fab77f5fe82b75e6848af459c58e011898a17428b918f5f574f063b2e48",
+    "docs/testing/M1-results.json": "3f7c2ec99eb76728d4a53faa3ce10d19d01a14dc41b284d43ddf51996e2e2108",
+    "docs/testing/M10-auto-launcher-results.json": "bf2dc125578632fb84d5c0a79d5c9100dc8c222ced2c9763a7a00853fa8f5002",
+    "docs/testing/M10-auto-results.json": "e8d708e723af77dab8413f36bb6d338cf600301ac4277ae670d3367f5ab8704e",
+    "docs/testing/M10-auto-settings-results.json": "61cee1f57ed8662ae93f310589c60e1a96b5a88a07b2bf878bcb6fe42b67e3e4",
+    "docs/testing/M10-auto-workbench-results.json": "f2d19bfb49a4aef83f7101f7404f04791abce778f6af2ae7a2833da1526c3c24",
+    "docs/testing/M10-browser-results.json": "73c55565507c3e199232ac605af259c694b96db53d487888e6544b1bd99736c5",
+    "docs/testing/M10-evidence-audit-results.json": "2777abc2fdbd53c54adc843647791cdc3de3c92cc98e2e7d7591e527c17c2ba4",
+    "docs/testing/M10-first-attempt.json": "d3b6deef99ef942c751e6b91037f92942e88ad4bdfcdf91cfd28e0dd56d84843",
+    "docs/testing/M10-frontend-sbom.json": "39fb785975a34362a43de946f4e865135f5cb848b646bf3e8be8946837180f69",
+    "docs/testing/M10-gap-review-results.json": "9a682f0eee089d09e7ec2dd5505313db60aadc9f7fab9af662c496d5042dc17a",
+    "docs/testing/M10-launcher-results.json": "c62a865c2bd1c09a3a7ca121d89d62cc888f0862bcbfed8f3766c839c0ec414e",
+    "docs/testing/M10-npm-audit.json": "1b5e7b8a0e3a2c5a1eee2239ba7e0f0ed694c24f8e920079f7b56b43871c7509",
+    "docs/testing/M10-results.json": "89f0c5e18044e1759c30e6391e272409d1f021dae2d369edfc45884f60cd12ca",
+    "docs/testing/M10-settings-browser-results.json": "7733f9166bad43ba2e9c4e24a164bcaf163455290405e5b9ae7ae012beb6944d",
+    "docs/testing/M10-settings-first-attempt.json": "84890615eb19bb47fe7899c45e6a9e168b627aa21d4dcded538330504f70d4a4",
+    "docs/testing/M10-settings-launcher-results.json": "23c394acb1fd67448061cfd100b8d5dace266f19aa395f32570fc16bf15a9498",
+    "docs/testing/M10-settings-results.json": "d92fbb76d5f476f5737f782856b8de0be4b878936ac1a1862f301be9a6a116ba",
+    "docs/testing/M10-settings-workbench-regression.json": "93c6e90e194b86c4ba9df3f2e8c87060aed79bb6bd84cd7379f3587a8d53489a",
+    "docs/testing/M10.5.1-diagnosis-results.json": "4a376e8eb65e8c5bffde478411af6eae8d89d784802b6a7d25396b5f1f804123",
+    "docs/testing/M10.5.1-launcher-results.json": "18c59517347b8c8f440cc6d06821065dcfb4fc62d9c81183f01aae392b94fd1f",
+    "docs/testing/M10.5.1-results.json": "482e03a98f4fe868e1e92b98c4020ac525536a3dc68f100a64e23d7da521832f",
+    "docs/testing/M10.5.1-settings-results.json": "b2a951067329560b370d62a64d8877c0b7df016dc51c964586d892e0e3359e5c",
+    "docs/testing/M10.5.1-workbench-results.json": "5bb67826f5ac3751856c037ca9c3f40460112fa77318cf2429ee689a9eb3e0bd",
+    "docs/testing/M10.5.2-diagnosis-results.json": "516856fec179e11bc6c93f4f8d16c97c7d43b2fc714e5daf6a3ff18e94c8d361",
+    "docs/testing/M10.5.2-history-results.json": "cec9c1b15eaa7b4befdda262e6daed69b8d39beee7d580f778a4311de74a580e",
+    "docs/testing/M10.5.2-launcher-results.json": "19a095416071ed3622d34019cbe7e6e5fcf1251f30a6fbabf8b106c46535b416",
+    "docs/testing/M10.5.2-results.json": "4e83a8aaec1363494b7dc92ba6afac627d2bffc8cb6576ceafb98ea477d66097",
+    "docs/testing/M10.5.2-settings-results.json": "90d9b7e65d052e8ed48d89230cdae55abe3bb97d6e06af45a14809fe6fdf151b",
+    "docs/testing/M10.5.2-workbench-results.json": "316077bf45fe3fb78727613f0abfbec30bd5248648a6c8ef370de8f822854b19",
+    "docs/testing/M10.5.3-diagnosis-results.json": "2055f79c5111ddb40d2587020cdd277985195338dc67ad7c412db3e0004f832d",
+    "docs/testing/M10.5.3-history-results.json": "46a522562a577b8b006edc5c80342309f8cfcffbe0fbd64a84f742b6364d7b7f",
+    "docs/testing/M10.5.3-launcher-results.json": "46e9f05b0c224c1646ab0223e8d131f9d01970d889c193ecaa5d51993073faa2",
+    "docs/testing/M10.5.3-results.json": "5b2944c2ccf5fefa9c8193e8b4a3156a9a606517f8b25b369c0d535403b41f5f",
+    "docs/testing/M10.5.3-settings-results.json": "5ca3aec43203813c83b9d38c2a85ece59b0cda12dc2107701c52de061f3b579d",
+    "docs/testing/M10.5.3-turns-results.json": "5b52e6c7baa8135e7695d10b60eb31b6bdc4dd1caab1747bc4dfe9f10750f47f",
+    "docs/testing/M10.5.3-workbench-results.json": "ee7308b6323b968fdbd42f683b1c0d947f841c3f740b19a90262ab86e1488a7a",
+    "docs/testing/M10.5.4-browser-results.json": "8936c3ebdd3822dccccbfa5c231d0084db334164d2547ebfc22e41f52861559e",
+    "docs/testing/M10.5.4-current-native-results.json": "a0caa5c9ddb1c17eb065409e6901adfdf10e2ae662adcf2e57b192d05571ae84",
+    "docs/testing/M10.5.4-diagnosis-results.json": "02ac706d93e3cb3a38cbfe80fcbeb7558f287a98236a12f7c4212fd84acfaeb0",
+    "docs/testing/M10.5.4-history-results.json": "b68cc987b1a9d34eb57190ba3efab4c8bbe7b26ac3f9765becb63296f1c8352c",
+    "docs/testing/M10.5.4-launcher-results.json": "029da596144b33032055333940dafe60572257db09c7b077732dd40e6c304c68",
+    "docs/testing/M10.5.4-models-results.json": "a15c834c65a7210dd970b3dc59206bc86694e3c3994be6c27fa81dd2025be67f",
+    "docs/testing/M10.5.4-native-ci-results.json": "83024141a493957d9b56664da2a31d4f89b08370af68c2334c52b12b6549ca54",
+    "docs/testing/M10.5.4-native-results.json": "723143504070749c0bbb4c680eb3832b54d67798fa1b1f95653f7bcf5eca1fc7",
+    "docs/testing/M10.5.4-results.json": "975fd0b8be97bf7776be36d56815174c7024b7a9caf72d539eb54da6f4f006d7",
+    "docs/testing/M10.5.4-settings-browser-results.json": "1febfc12e02b6178ec3b6011cfaa73b103f2a08c0f3744148f845ae31dac82ec",
+    "docs/testing/M10.5.4-turns-results.json": "bedf441822ae3c04e58e3165bff34c4d76eb26e54fd8cee0b096110f8ee9b46a",
+    "docs/testing/M10.5.5-browser-results.json": "04406e104839c6f1996031bd2fc26e72afb051e031c566d346316b6e4da794ef",
+    "docs/testing/M10.5.5-current-native-results.json": "ef5c63b2439e1522442ac0068006068a7e959cd82b9b0b8a37675c0320739b0c",
+    "docs/testing/M10.5.5-diagnosis-results.json": "64c15ec8c7711b3c89e3644d230a129ca77af9bf4e6778f7daea3dfbba0a90b1",
+    "docs/testing/M10.5.5-history-results.json": "904679865aafb058aed71ccbbc3ec28032e69f4e00ce1fb371c4b708887cc02d",
+    "docs/testing/M10.5.5-launcher-results.json": "2aa0f2bf8928ba467b2cea949535a0c10d40e06b919074758d41d73d64f71208",
+    "docs/testing/M10.5.5-models-results.json": "8cb0077b99519e20412d247f6be9581b2c6d17be43b77cfee8712c4c895838d1",
+    "docs/testing/M10.5.5-questions-results.json": "2a03fa273c507ecb526ece8e52e995d12af1eac0d000dddde3cf393f0a6e36a1",
+    "docs/testing/M10.5.5-results.json": "a39c134c667a5a366aa6181db7586b372c57dc5d8f266a4bfeda2e7c7488d0ca",
+    "docs/testing/M10.5.5-settings-browser-results.json": "dbbad7f6f9393fcb92093202c7de2bcedb86e81af31296fb326b22eca86bd944",
+    "docs/testing/M10.5.5-turns-results.json": "d2f5db385d7b048d98b4a904937f262ce6f392bb850c6c6e7d96e1178641d5e2",
+    "docs/testing/M10.5.6-browser-results.json": "f4b2094c2ef121d34ae7027b3871a1f62d110bdb4011366304a4dffe72da8a46",
+    "docs/testing/M10.5.6-content-results.json": "140dcad532500af3e2b186d72c3620402462605a31ca5c51330e73a979fd37a3",
+    "docs/testing/M10.5.6-current-native-results.json": "283e3b82d5ed522a3dddd66ff89fafcddedb507ba604fa67e4e087383aea1c55",
+    "docs/testing/M10.5.6-diagnosis-results.json": "737cb8234a38a9277e39616b07a05c1664034d6dff2fc431c18db0b64320d7c9",
+    "docs/testing/M10.5.6-history-results.json": "30ec46f14a080676385060c1e7ccec3fb6683c02862382c48c0b88131e9599f2",
+    "docs/testing/M10.5.6-launcher-results.json": "1e09f0e6a7ef4d2077bb3b8ba0a5ea7a28c53e05db5776bbff8d332528ef0f59",
+    "docs/testing/M10.5.6-models-results.json": "c14ad6f1ac726cb0199946f0ce9cf92efdf9069aa903ed6845402e51be8137bc",
+    "docs/testing/M10.5.6-questions-results.json": "202e3067d6d4ca60f9d4aea3a7224ca989e645537465865d9e84b35cfc5d251e",
+    "docs/testing/M10.5.6-results.json": "29fdcc22bc013b6e844fbb5c2e60bde11da9907a199800e84c2fed47b5d97d2d",
+    "docs/testing/M10.5.6-settings-browser-results.json": "a7473ead1793ef0a8fd21b60429738607aba97f96de6a2a584dfc183e259ee91",
+    "docs/testing/M10.5.6-turns-results.json": "218a6d4c8dc5b2b686cf0774fa5cc4233a232e022a88dc5bf8ea1ccb512f62a1",
+    "docs/testing/M10.5.7-browser-results.json": "b1766fcc6c267d2ff649016eb2dc5d3e00a81fe2520eb454f0351a55aeab7c44",
+    "docs/testing/M10.5.7-content-results.json": "9d23633ebb35a42d129a13a8204bc442b549f7d3dc781ba16c4e48a308c43900",
+    "docs/testing/M10.5.7-current-native-results.json": "ee425768f144dfe12d07f501e8ad4987c40d5f8fb71f22caa6677fa89a5888f3",
+    "docs/testing/M10.5.7-diagnosis-results.json": "059a051d76f5f70dee5ae08705454c863f9286637a65d69e9342e95e3727df08",
+    "docs/testing/M10.5.7-extensions-results.json": "78c4c9ff30d21ce17037a3147926b11d5631d4d713b4d568fee5f0478c0ad872",
+    "docs/testing/M10.5.7-history-results.json": "e3d323824d464cf8132c7e2b8cece0ff4e500fcbeb01f1f91bf5d95629700716",
+    "docs/testing/M10.5.7-launcher-results.json": "2ffbe901fc8210ded6b41cc918f99a265ea7863c00b48fd98f58cd3826e9109d",
+    "docs/testing/M10.5.7-models-results.json": "c37d44403b535e869bb425d60e68fd507635790ca0b9b7757a91af13320a167d",
+    "docs/testing/M10.5.7-questions-results.json": "d472f6c43a2159ee0a12d817a052edd882598567d2fe8e371182a8e287b859fa",
+    "docs/testing/M10.5.7-results.json": "b9bc70aeb0da360edfa30fd4eec20e493892a0946b652fbaddb39e6cdd99bc84",
+    "docs/testing/M10.5.7-settings-browser-results.json": "5b77e842b276cefb48ca47f8e8f47d564e9364ffce6bc62a52156f6601b7891a",
+    "docs/testing/M10.5.7-turns-results.json": "e2011f14cd07316ba4f25ac836bb3e92c09c0056f796148308f85083012b47c8",
+    "docs/testing/M10.5.8-browser-results.json": "c86bf8b27d65d02bc99c6ceb01ca4323f61635de9cd396900ef120cc065aaffa",
+    "docs/testing/M10.5.8-content-results.json": "b4fb710389235083166ead14c04db842558280bdb66ce2eb005beb2d00f9aa35",
+    "docs/testing/M10.5.8-current-native-results.json": "90665702a0ca21b70aaec5f1f48a9809ab95e4b1c1f33cbfa88473a9898774dc",
+    "docs/testing/M10.5.8-diagnosis-results.json": "42bcd96ba172813676d75624d549edab6dd7120cd7f9c06038fcd9a11f7bd004",
+    "docs/testing/M10.5.8-examples-results.json": "efa4439777a0e587c2395b7fad77967c45ac816cdc0e37747a237ae816561f42",
+    "docs/testing/M10.5.8-extensions-results.json": "f86bc0ea3c49202c2473ad5f6733a42169130ed7128adfe14afd9f55e21f2c59",
+    "docs/testing/M10.5.8-history-results.json": "80e6566535d4b2f76ef722d43553729d214e6035cc5288498ccb7ab2d79331bc",
+    "docs/testing/M10.5.8-launcher-results.json": "b96bbb5731e1c6b18c3f4d6e566afddb357737cf409e644467017f5bf034721a",
+    "docs/testing/M10.5.8-models-results.json": "6a8c4d0ea73e5b11b3aa98abf9fdf463b8652e648f633901e4d0a00716db296f",
+    "docs/testing/M10.5.8-questions-results.json": "7d669e67390d5f4742221b2d747322322e192fbd5407bc5b9cf111178a6f49a6",
+    "docs/testing/M10.5.8-results.json": "d67a66ab0076b0f863681a87a8a07b5a604eb7d5a5b72b578f88349e0861b3a2",
+    "docs/testing/M10.5.8-sdk-results.json": "7f97ada0e13669e0dc12702e4468f6595f535885697a386c8cb24dc29f325958",
+    "docs/testing/M10.5.8-search-results.json": "6f6857a36b047a0c79ee0c11963fee867f186314597df621b76be3e95a2bcf12",
+    "docs/testing/M10.5.8-settings-browser-results.json": "31422913083dea30a842841f7c9cdc2d035aab4a09565901f087ccc873ae8feb",
+    "docs/testing/M10.5.8-turns-results.json": "642089fb1940cbaaec1d83fec25b0f2e3b83bcb1d9fac2c0af9114ca15461da5",
+    "docs/testing/M10.5.9-browser-availability.json": "1fd55e04e5a412de5042ee304f546e19e5fc9a144b08d0cfed01cc49dea87cb9",
+    "docs/testing/M10.5.9-browser-runtime.json": "5dbeab7294eceb7382945e695ec00eb31a129672dbbe755281053e94215893be",
+    "docs/testing/M10.5.9-candidate-smoke.json": "f4e57cf63a762e651dd13046831e00966a4fc7d57f00a20265eb6c5e3f6f634a",
+    "docs/testing/M10.5.9-chromium-browser-results.json": "1e47442624a0473763bbe619931a0c3c27ac3fd0d24bd4bfcfb0209006f427ae",
+    "docs/testing/M10.5.9-chromium-content-results.json": "9320cff817b7738f2e15e52bf03eed4208c55c3251fce11902cd6c0865bb895f",
+    "docs/testing/M10.5.9-chromium-development-results.json": "bc1849f7dab7b25241fd106d52a53663e7c64254f7945d4a7be28b02d2d63f0e",
+    "docs/testing/M10.5.9-chromium-diagnosis-results.json": "c4ddc10dfb06cc854e1542f320ae8c830a61dda368d15f6b5cc421d025bf54f8",
+    "docs/testing/M10.5.9-chromium-extensions-results.json": "6702f2f93db633fd181283d90e6c7543b804829879e297cd7b6499cd64ad928a",
+    "docs/testing/M10.5.9-chromium-history-results.json": "f16034037d063af9174e752dee79fb778a931e6826450a9b558138f2a26be0e7",
+    "docs/testing/M10.5.9-chromium-models-results.json": "b1abf96528386727e07b42c508734f57436d36fdde9ea4d0da026e9c745059c0",
+    "docs/testing/M10.5.9-chromium-questions-results.json": "7dc1899f0e86804b53aae9395943709d7ba4388c0490c5f0a60ba51adb154e79",
+    "docs/testing/M10.5.9-chromium-search-results.json": "5ffd399de4d44fba1372128b9b4bd9dacaf6746b0c6843c8feca39ac4e33555d",
+    "docs/testing/M10.5.9-chromium-settings-results.json": "53f37f62da9602d90582434e95636d0623ed4d647d3e95f0286e74ee5994c3d1",
+    "docs/testing/M10.5.9-chromium-turns-results.json": "d83884602b0a6d5ca07dafff01b58f721f9f5781409a3932f0c83bc85736eedc",
+    "docs/testing/M10.5.9-examples-results.json": "3e7156076906635cef125bf8e28899960fd95fa75c0e004c935e033d6ace48ef",
+    "docs/testing/M10.5.9-frontend-audit.json": "97ab751b09afe519f86d714f86a713350bc3861ad3bc609c1db81985e9c39e2f",
+    "docs/testing/M10.5.9-native-results.json": "82e6e2c992fbd7cb2c876bba6090afc41fedbf82dbcbb854972f813c851ffdf0",
+    "docs/testing/M10.5.9-osv-results.json": "1d883a7aa868bf22d98e5aef081528d5149b08d15cd74f57d2f9a4dd4ff7fc62",
+    "docs/testing/M10.5.9-public-final-2026-10-26-results.json": "df40182efa65476a7a76c64ae6ac473be45a9521677dc8991bef2008693e1882",
+    "docs/testing/M10.5.9-release-evidence.json": "05189dfd93b02fa6c64aaa70e8d24810b3508640ef10aef8832d99b992581e92",
+    "docs/testing/M10.5.9-results.json": "67766025ff940270ff8bbbe4febc451c659ec34c2f3f75ce18138036bc78060e",
+    "docs/testing/M10.5.9-sdk-results.json": "493f6987189e278055393f9190bd3c86f8e99c2209fcec43a3a855d144924226",
+    "docs/testing/M10.5.9-sdk-source-inventory.json": "cee0bb944842dda5950a8652487085ff9c4098a468c4dece071e1392fc2a903b",
+    "docs/testing/M10.5.9-webkit-browser-results.json": "72c0b4e782b80766adaec4e4d3ef4e8ac1d235bfff04d76686737cfe9be01c58",
+    "docs/testing/M10.5.9-webkit-content-results.json": "2348fba0faaebbae7d6a03bfa3f40bbcc7e6e8a809f531f326a3b543bc304aeb",
+    "docs/testing/M10.5.9-webkit-development-results.json": "44d896f17b70d916e8d59cd5a4c03e85db1f3dd991a60d4ba96f85bc685d255a",
+    "docs/testing/M10.5.9-webkit-diagnosis-results.json": "a2044530e05472d7454e8473b6be4be0c84964ba968a4c9baeaeb67abab6cf7c",
+    "docs/testing/M10.5.9-webkit-extensions-results.json": "2713789463c973f7626bbeda9d05b442c3e7c9d30a6088c335391ba942476104",
+    "docs/testing/M10.5.9-webkit-history-results.json": "e84dfedcbffd293953608abe52ff05b2801b227f67993eb8f7444f8e8c800282",
+    "docs/testing/M10.5.9-webkit-models-results.json": "8c42831776b0e26dcc534a14e856a58af01560b98b43094f11de20d60a27e1eb",
+    "docs/testing/M10.5.9-webkit-questions-results.json": "c504af10e05eb43463e4898143af6d13908bd0e57b420432de3f032bab1c582c",
+    "docs/testing/M10.5.9-webkit-search-results.json": "dd68822916aa4e28141f573b7f7214abc8eb74c77187e06d88002c137c0268bd",
+    "docs/testing/M10.5.9-webkit-settings-results.json": "6c137a4b24eee33be614eb97bba14fc3d32e3973a64eeaa68dd51076c498f242",
+    "docs/testing/M10.5.9-webkit-turns-results.json": "c75f3b0e462dc01dcdab6966a0c59b51f3e36daac6c6b19946c0404dd5389b61",
+    "docs/testing/M2-results.json": "36ab6e97ba62942fc86322fe6b36927efd218faf50dfd7f08b5913d8db1c5af0",
+    "docs/testing/M3-results.json": "c71a0f077bf7cce898942a453935eb63354afebef943f96ba352094882659524",
+    "docs/testing/M4-live-results.json": "74330d747e79c5016641a09900c487778fcc51906fb6d8c0fb00076ef073da4d",
+    "docs/testing/M4-results.json": "e0ac01a023dc3a72c989b7b8d9142aeb46d876e8578c40476cd75e7f07543aaa",
+    "docs/testing/M5-results.json": "1c532e422b77c8281806108a83c475f57fcd3ae349c592192d18366cd538e784",
+    "docs/testing/M6-results.json": "eb68a178e261e84a1fa74710cb7ad81753e5d06abe6bbf2c5f486a16be841ac5",
+    "docs/testing/M6-shaded-results.json": "3794bd4efa0f1f8e940b799cd7a9218f83994e91df6a23a3924b414ba0836183",
+    "docs/testing/M7-docker-results.json": "0b97546da48edd7b159a9930bea93e2751599b411b4f2aeb7f8c74c91833594d",
+    "docs/testing/M7-linux-results.json": "f98ee4847b8e6259e10b6688856185edc292edb9d84e6e7bb5e293982359262a",
+    "docs/testing/M7-results.json": "bcdb3cc6a470a1c9edb10b264b7b94c9b949eeda2814b5748a65f5b4a6dddaae",
+    "docs/testing/M7-skills-docker-results.json": "bca489a0c0dac217f3684b6cf246973b810455565fd33c7b814a5966c1536b61",
+    "docs/testing/M7-subagent-docker-results.json": "98cfc88d3228da8db69cfce6c293ab372de87414011e7eabd7fbb280a7057513",
+    "docs/testing/M7-upstream-review.json": "290a62e3c40df3f5f7b27a619f84bae54b38f7e90170e2041d83888694e6aedf",
+    "docs/testing/M7-web-docker-results.json": "67a470fb2744293b9f15976e7bd63017ff9051f0f5087c7adb090ac9d57384c5",
+    "docs/testing/M8-closure-results.json": "afcce28a26dd5dfe2ec2580cad0a9bb0fdcd2397fa23528f8c05009f175afd4f",
+    "docs/testing/M8-environment-regression.json": "59ca07dbef1b170baa9a413c861ea1b1fb968dd856049c8e63a1abd8f88ac584",
+    "docs/testing/M8-filter-docker-results.json": "46a6d80fbda58d4f195c53abc81f7e1c051a684536cde6fbb47ee92d58487aa9",
+    "docs/testing/M8-linux-results.json": "df1481fd585a245403111a58077537f40c47434a4dbb2837c6b7f8ef71ca4acd",
+    "docs/testing/M8-results.json": "c0f42503d09b22b6bf70f13dbee4d33e9dd56e77ae4703b1e02b3af383bc4f86",
+    "docs/testing/M8.1-results.json": "0a316475b94eb6503bae5a4c09d08932c82e69ec26f3aa6fc776688c3a211690",
+    "docs/testing/M8.2-filter-regression.json": "a0414e688a25bea3b76bb24129f8f91ef07c777af4b885d41f77f12fbbe5d604",
+    "docs/testing/M8.2-results.json": "363649dcece4785a04849428bc7478e8d43b0fa9c752a2cd5ee2a613451d585a",
+    "docs/testing/M8.2-scheduling-docker-results.json": "b2c009b8117c3a167592aa4bbde750af5b883d5f7c4fe2e78ce9d982a4093ae5",
+    "docs/testing/M8.3-filter-regression.json": "03285668e56a7a87c9685f07c4692d15a0830c820e68a4ff835abb01d2fb0747",
+    "docs/testing/M8.3-resilience-docker-results.json": "a9ee85917c3c2f0d15c91e24385e5f3413068cb39a626247a9e351fa7bce6d6b",
+    "docs/testing/M8.3-results.json": "40c7796f2e53f369aeb0416a3d719aa5f471804ee277b221a076d32cf81cebfd",
+    "docs/testing/M8.4-audit-results.json": "f15bade1fcda179d7dcbd778a5a97a2bbbec3bfed263fedd38cfdc675d36e769",
+    "docs/testing/M8.4-environment-results.json": "836bda28e7085771b44282163791372afb70fd2ed5896ffbffd544bdc5431f23",
+    "docs/testing/M8.4-filter-results.json": "d3ef735ce403e82e8ccc86dc98c325ed3a477d50e54a151b7df431ca2534826d",
+    "docs/testing/M8.4-resilience-results.json": "457b58143b222e1be63f35d08e5d6ff1c8e07b7424c7c989c61cb0dacb06deaf",
+    "docs/testing/M8.4-scheduling-results.json": "724f44bc61fec1ba981facff4932e2c39255226e6cd439208efdbaf8d99815e1",
+    "docs/testing/M8.4-skills-results.json": "717f8bb42949d6093bb80e3fb35028a5264275dc906004722e1c9db961da4ddd",
+    "docs/testing/M8.4-smoke-results.json": "cc123e703781312317c2bbaa5e0bee50f086c0ff85a9a16b95a4f19fbec7a87d",
+    "docs/testing/M8.4-subagent-results.json": "2f837b3ac212537c608c2e343e50a44f7f0fe0b81702fd7f872911e93ae93068",
+    "docs/testing/M8.4-verifier-results.json": "10891400d25a7f08808b4a6e48bc08355e09678a4d0937a46d5b4322485da6e1",
+    "docs/testing/M8.4-web-results.json": "5518c44a7a5e13715a26aef0789aca2f5c9a151937df1655173c963b891f308d",
+    "docs/testing/M9-candidate-manifest.json": "9c25f0951843d64cf2cde68209c877aac89db947875fa53799a2908938287fbc",
+    "docs/testing/M9-candidate-smoke.json": "afe99fb89a9ef5d9665f65fbabe2e1ea8e302c201db095edd6114cde2db022f8",
+    "docs/testing/M9-ci-artifacts.json": "90ee3d72b7c3fea5b702cae544b9b1c67fd3acdb8ad72b745fb2ce50762740fa",
+    "docs/testing/M9-ci-first-attempt.json": "988b610e856457137362b7d97eb8a2830d248838b75e639978c800edd32d37f1",
+    "docs/testing/M9-ci-fourth-attempt.json": "e14befff2a82b020c34d8343f0804cf6a9e37444fa31e494cb702be9343f5b97",
+    "docs/testing/M9-ci-jobs.json": "379fa17cd10ec095ae9b706da9b632b005d743846e3ea598631fefe0ceefe20f",
+    "docs/testing/M9-ci-results.json": "6b5ea4c40798bd32dbb950b695a52d432ac012c121d3d1f70194ded9d1a8581d",
+    "docs/testing/M9-ci-run.json": "737c1ed83794df49ecda64269bbea8d810d96bace34401dc648baa98f0adc51e",
+    "docs/testing/M9-ci-second-attempt.json": "53cd84f59f68ea1774351c4fa3bb79d1f55301db0c5331ee59c72a1d17aabede",
+    "docs/testing/M9-ci-third-attempt.json": "ef57c4ce23ed98bc76a63cc24e063719b967e9f4aec2876a86870c6bed066e1a",
+    "docs/testing/M9-evidence-audit-results.json": "544849e8f9f996c578cec7b858dbf54d9116b27427aaffac4b34745b63d24a65",
+    "docs/testing/M9-hosted-linux-manifest.json": "a21546b1283cd378ee62c12b2bd5d8bcff726260374b805caabd787fe3170b46",
+    "docs/testing/M9-hosted-linux-results.json": "8798370fd99d9b8be4c5d6b5407549381c985631a49f7db406d94b3608153c95",
+    "docs/testing/M9-hosted-linux-sbom.json": "56db8215e86defcbe54b8d031f8db27c782d383a5f9f3834991fdd4c88dd107f",
+    "docs/testing/M9-hosted-linux-security.json": "8658045459da132cf861d01d6d1c80fd97bba8fe520aa8b8f343eb68ccfcf88a",
+    "docs/testing/M9-hosted-linux-smoke.json": "dd0008f59a2395ac4e45e8568617a3ead12f58581c6bd06df5603a1043db3ff2",
+    "docs/testing/M9-hosted-macos-manifest.json": "17737a0a87e6cced6574091f059dc392648bf3fd701872860541129f612bca43",
+    "docs/testing/M9-hosted-macos-results.json": "e3cfbaae098f846cd750ac8bcfeef0dea6b33ceeec12a83be639eac16e63b973",
+    "docs/testing/M9-hosted-macos-sbom.json": "56db8215e86defcbe54b8d031f8db27c782d383a5f9f3834991fdd4c88dd107f",
+    "docs/testing/M9-hosted-macos-security.json": "7c83684d3991b53d464faa19d972d47c5c1e3ef5ce0f045228470873cea6b0dc",
+    "docs/testing/M9-hosted-macos-smoke.json": "c35d6122e98e23155b465ae9815d35f9b45ad3fffa6b83bcbbe66c758733df72",
+    "docs/testing/M9-hosted-windows-manifest.json": "9c25f0951843d64cf2cde68209c877aac89db947875fa53799a2908938287fbc",
+    "docs/testing/M9-hosted-windows-results.json": "880eded57f2ad52fe8109be90b525ab91f946fc84830430e6f4b263312a1ad2c",
+    "docs/testing/M9-hosted-windows-sbom.json": "afa6ef7872c9371221283df0b04f8a85717b9dacb9bbb597f12e71a0b94b3ef4",
+    "docs/testing/M9-hosted-windows-security.json": "4d37e1ccccda8bd9a007372eff3efd17ce7937efcb0829d6a9aeedfee66eb029",
+    "docs/testing/M9-hosted-windows-smoke.json": "afe99fb89a9ef5d9665f65fbabe2e1ea8e302c201db095edd6114cde2db022f8",
+    "docs/testing/M9-local-candidate-smoke.json": "650c2bd994bd9ad323cfed892106f1c784ee7a5b0fead2171729f952e33a8497",
+    "docs/testing/M9-local-results.json": "6711467546f34a4f55127b0b8bd49be6c8dd4db6f7c37b250a1d7434adf5a4c0",
+    "docs/testing/M9-packaging-results.json": "5dd2942ae6d65018f672a783a9f647b030af41bcee0c0c80ab010fa6c65dfbef",
+    "docs/testing/M9-pre-hosted-local-results.json": "d1c2e6c5062648d4e412e0094cb31648e5bf0d71ac8aea4d407a66c82afb80f0",
+    "docs/testing/M9-pre-hosted-packaging-results.json": "ec3b204ab661296ae0aa473b8dd77fa5258dff7ce16cbd2e7cb398fd24635b76",
+    "docs/testing/M9-release-tools-results.json": "ff06a7dfde9cde6d999c45b3286093a2c830db66ce2e31a313c12a0b824fcbf2",
+    "docs/testing/M9-sbom.json": "afa6ef7872c9371221283df0b04f8a85717b9dacb9bbb597f12e71a0b94b3ef4",
+    "docs/testing/M9-security-before.json": "ba40bb2da7668ad81b6b8fd417c6199835b0fba3aca640bed9a5f67d51bcccbc",
+    "docs/testing/M9-security-results.json": "4d37e1ccccda8bd9a007372eff3efd17ce7937efcb0829d6a9aeedfee66eb029",
+    "docs/testing/OCR-R0-2026-10-20-results.json": "4b1630a31476d621adfc424b8aae493e164789fb27ef51f5381fcf6b5c06b845",
+    "docs/testing/OCR-R0-rereview-2026-10-20-results.json": "1fae28f166ef8afe53a0e8b7967c49f1df64265aa870f2f0aea173166ba117ba",
+    "docs/testing/OCR-R0-rereview-fixes-2026-10-21-results.json": "9e5f413767338c8f8c8819ae3502c862c00ea6edaee851358b04b05b8e113b93",
+    "docs/testing/OCR-R1-2026-10-21-results.json": "709902c933487cc066561850988732f6b6144018fa472b39b8e48d3fa467c60e",
+    "docs/testing/OCR-R1-R3-implementation-2026-10-24-results.json": "a885148d6fd2b8a113cf41a6b6d524d6dce3c2c0f458d2dedc7a0c1cb3e9a7df",
+    "docs/testing/OCR-R1-R3-rereview-2026-10-24-results.json": "5b88921a95ebc20b6fead4356c8a0c732a9ac386b36671b8d4b983032e5c3245",
+    "docs/testing/OCR-R1-fault18-2026-10-22-results.json": "131eb39694d7355ebace8066dd526610d7ff983b8a63a078b00f250d4ea64e88",
+    "docs/testing/OCR-R2-2026-10-22-results.json": "ccca8e58b0ac0dc3417dd20e9a106998cbe280fef32eecc04d31f77ee6d2d3cc",
+    "docs/testing/OCR-R3-2026-10-23-results.json": "00e3c5c18246d3c28b07eeca74d2d7e865f0ea0ecfe66282aaee4322b4a3d9ce",
+    "docs/testing/OCR-R4-progress-2026-10-23-results.json": "9ce816100f0e077bc40b5a96215796845244c8e5d7c8408f4f65c4b389b47cc8",
+    "docs/testing/OCR-R4-remediation-2026-10-25-results.json": "95dbf6797968277d26edfb3d9e99abe0d3e5b86441a73b66eb0035b2476f1ec6",
+    "docs/testing/OCR-R5-remediation-2026-10-25-results.json": "4745655c3a1c41ffe4f1cb81dcf821912fd964ae02a626642b11f6f318b0bca9",
+    "docs/testing/OCR-verification-2026-10-20-results.json": "31e1de9d70f8d7c013afd9857a4794b3e1c9a9bd14e8f4de72e6b38d4a6bdaa7"
+  },
+  "unresolvedLocalLinks": [],
+  "boundary": "Historical raw JSON, original review snapshots and third-party legal material are preserved. Notices and active prose distinguish historical snapshots from current accepted runtime. SDK README unchanged; only distribution-guide documentation changes a build input."
+}

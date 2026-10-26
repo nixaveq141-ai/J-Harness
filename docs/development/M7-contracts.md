@@ -1,5 +1,7 @@
 # M7 执行环境、SDK 与生态入口契约
 
+> 记录范围（2026-10-26核对）：本文保留原阶段设计、取证或验收快照；旧测试数、接口版本和“尚未/待授权”等描述按原日期解释。当前交付与后续任务见[当前状态](current-state.md)及[全阶段审计](../testing/M1-M10.5-gap-audit-2026-10-26.md)。77e8855的三平台完整验收已通过；专项余项以审计清单为准。
+
 日期：2026-10-15。阶段状态：按已记录范围完成本地验收与收口。实现包含：执行环境/SDK、MCP/Skills、只读 Subagent、CLI/Web、Todo/Plan、搜索归档和离线核实。验收状态见 M7-closure.md；延期与部分支持见 upstream-capabilities.md。公共 API / SDK 协议为 1.7；JSONL 格式和事件 schemaVersion 保持 1。
 
 ## 执行环境

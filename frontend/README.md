@@ -1,14 +1,16 @@
 # J-Harness Web 工作台
 
+当前M10.5.1～.9选定范围已收尾；三协议/逐轮模型、提问、内容、扩展、检索与SDK说明见[当前状态](../docs/development/current-state.md)。77e8855的三平台三引擎验收已通过；R4故障窗口及已知限制独立保留。
+
 M10.5.3增加同会话续轮、有界队列、取消排队、下一轮补充和丢响应GET核对；重启后的队列须显式开始，UNKNOWN仍阻塞。草稿仅页面内存，见[多轮说明](../docs/examples/m10.5.3-turns.md)。`npm run test:turns`使用实际CLI/Chrome和loopback替身，无付费请求。
 
 M10.5.2增加工作区注册/选择及会话命名、置顶、分叉、导出、归档/恢复和分页。历史与32个对象热集分离，磁盘目录配额10000条；只注册操作者拥有的已有真实目录，不读取目标配置。使用与边界见[会话管理](../docs/examples/m10.5.2-history.md)。`npm run test:history`使用实际CLI/Chrome和本机模型替身验证65条历史及重启，不调用付费模型。
 
 M10.5.1新增执行诊断（错误分类、主体执行、耗时/期限、清理及未决事实）、只读安全核实向导/离线交接、设置→权限的default/read-only选择，见[诊断与离线核实](../docs/examples/m10.5.1-recovery.md)。不提供在线清除UNKNOWN或自动重放。`npm run test:diagnosis`使用实际Java宿主、Chrome及无副作用的超时进程替身验证诊断；须先构建UI和最终JAR并编译testkit。验收见[M10.5.1记录](../docs/testing/M10.5.1-validation.md)。
 
-连接后点击左侧「设置」管理模型连接及插件扩展，见[使用说明](../docs/examples/web-ui-settings.md)。Windows API Key使用当前用户Credential Manager持久保存，不在浏览器保存/回显。非秘密设置独立保存到工作区元数据；设置只影响后续新任务，运行/UNKNOWN占用时不能修改。
+连接后点击左侧「设置」管理模型连接及插件扩展，见[使用说明](../docs/examples/web-ui-settings.md)。模型API Key依平台使用当前用户Windows Credential Manager、macOS Keychain或Linux Secret Service持久保存，不在浏览器保存/回显。非秘密设置独立保存到工作区元数据；设置只影响后续新任务，运行/UNKNOWN占用时不能修改。
 
-Windows新增`npm run test:settings`：使用实际CLI JAR、系统凭据库、Chrome/Playwright与loopback模型替身验证模型/插件设置、重启、脱敏和草稿保护，最终清理合成凭据；不使用付费服务。与原浏览器测试一样，需要先build并完成Maven打包，已安装Chrome时设置JHARNESS_BROWSER_CHANNEL=chrome。历史设置增量验收见[M10设置验收](../docs/testing/M10-settings-validation.md)。
+`npm run test:settings`提供设置专项：使用实际CLI JAR、适用平台系统凭据库、Chrome/Playwright与loopback模型替身验证模型/插件设置、重启、脱敏和草稿保护，最终清理合成凭据；不使用付费服务。与原浏览器测试一样，需要先build并完成Maven打包，已安装Chrome时设置JHARNESS_BROWSER_CHANNEL=chrome。历史设置增量验收见[M10设置验收](../docs/testing/M10-settings-validation.md)。
 
 React 18 / TypeScript / Vite。视觉与基础控件沿用用户指定的 DeepSeek Harness，来源、原始 SHA 和修改标志见 upstream.json，原始 MIT 见 LICENSE-DeepSeek-Harness.txt。参考项目目录不参与安装、构建或运行。
 
@@ -26,7 +28,7 @@ Windows已构建后的便捷入口：双击仓库根目录`web-ui.cmd`，自动�
 
 不启动独立Vite服务，构建后通过同源Java服务验证；避免跨源代理绕过Origin边界。修改前端后重新build和Maven打包。资源未构建时根路径返回503说明，业务API仍可用。
 
-`npm run test:browser` 需要先编译harness-testkit测试类并打包CLI JAR，且Playwright Chromium已安装（`npx playwright install chromium`）。也可设置JHARNESS_BROWSER_CHANNEL=chrome使用已安装Chrome。该脚本自行启动/关闭专用Java FakeLlm宿主与独立浏览器，不使用付费API；临时文件和截图保存在.build-cache。适用于源码验收，不是产品内置模拟模式。
+`npm run test:browser` 需要先编译harness-testkit测试类并打包CLI JAR，且Playwright Chromium已安装（`node node_modules/playwright/cli.js install chromium`）。也可设置JHARNESS_BROWSER_CHANNEL=chrome使用已安装Chrome。该脚本自行启动/关闭专用Java FakeLlm宿主与独立浏览器，不使用付费API；临时文件和截图保存在.build-cache。适用于源码验收，不是产品内置模拟模式。
 
 构建时校验原始移植文件哈希，并收集实际浏览器运行依赖React/ReactDOM/scheduler/clsx的许可，供/ui-license.txt读取。npm锁文件固定传递依赖；tsx的esbuild限定为0.28.1修复公告，Vite保留自己支持的版本，不采用全局覆盖。
 

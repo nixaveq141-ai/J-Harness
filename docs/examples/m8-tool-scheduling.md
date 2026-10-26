@@ -18,4 +18,4 @@ tool.completed和模型tool消息按原call顺序聚合，executionFinishedAt保
 
 可替换入口是ToolScheduler服务、ToolSchedulingPlugin以及StandardExtensionPoints.TOOL_BATCH。旧ToolPipeline无需实现prepare，继续串行；新PreparedToolCall只允许主体run进入工作线程，finish由调用线程执行并防止重复/虚假SUCCESS。自定义调度器须保持同一管线、作用域、原call顺序和权限语义。
 
-本切片不实现自动重试或限流；它们属于M8.3。实际验证和平台边界见 [M8验收](../testing/M8-validation.md)。
+工具调度插件不负责重试或限流；独立的模型限流/完整非流式429重试已由M8.3交付，见[m8-model-resilience.md](m8-model-resilience.md)，工具UNKNOWN仍不重放。实际验证和平台边界见 [M8验收](../testing/M8-validation.md)。

@@ -1,6 +1,6 @@
 # M7 SDK 扩展装配示例
 
-当前仅支持 Java 宿主显式装配，CLI 还没有 MCP/Skills 配置入口。以下对象加入 `HarnessSdk` 构造参数的 `List<HarnessPlugin> extensions`，原有 PolicyEngine、ApprovalService、Budget、DataSanitizer 和 CompletionEvaluator 都继续生效。
+Java宿主可显式装配；CLI已提供ecosystem.mcp/skills等可信配置入口，见[m7-cli.md](m7-cli.md)；Web扩展表单、资源/模板及显式技能根见[m1057-extensions.md](m1057-extensions.md)。以下对象加入 `HarnessSdk` 构造参数的 `List<HarnessPlugin> extensions`，原有 PolicyEngine、ApprovalService、Budget、DataSanitizer 和 CompletionEvaluator 都继续生效。
 
 ## HTTP MCP
 

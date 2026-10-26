@@ -1,0 +1,1182 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-26",
+  "auditMode": "STATIC_SOURCE_CONTRACT_EVIDENCE_REVIEW",
+  "baselineDocumentationCommit": "70f9bbba4e5411872b310397ae04e7228491b1c5",
+  "acceptedRuntimeCommit": "77e8855edaab0f7e543c9709c95513e3a0a2c4bb",
+  "acceptedCiRunId": "40284862454",
+  "newProductTestsRun": false,
+  "newCiDispatched": false,
+  "paidRequests": 0,
+  "currentState": "docs/development/current-state.md",
+  "milestones": [
+    {
+      "id": "M1",
+      "scope": "工具管线、模型、事实投影",
+      "status": "SELECTED_SCOPE_ACCEPTED",
+      "contract": "docs/development/M1-contracts.md",
+      "validation": "docs/testing/M1-validation.md",
+      "currentEvidence": "docs/testing/M10.5.9-public-final-2026-10-26-results.json"
+    },
+    {
+      "id": "M2",
+      "scope": "文件、产物、JSONL检查点",
+      "status": "SELECTED_SCOPE_ACCEPTED",
+      "contract": "docs/development/M2-contracts.md",
+      "validation": "docs/testing/M2-validation.md",
+      "currentEvidence": "docs/testing/M10.5.9-public-final-2026-10-26-results.json"
+    },
+    {
+      "id": "M3",
+      "scope": "命令、审批、预算、取消",
+      "status": "SELECTED_SCOPE_ACCEPTED",
+      "contract": "docs/development/M3-contracts.md",
+      "validation": "docs/testing/M3-validation.md",
+      "currentEvidence": "docs/testing/M10.5.9-public-final-2026-10-26-results.json"
+    },
+    {
+      "id": "M4",
+      "scope": "CLI闭环、真实模型历史评测",
+      "status": "SELECTED_SCOPE_ACCEPTED",
+      "contract": "docs/development/M4-contracts.md",
+      "validation": "docs/testing/M4-validation.md",
+      "currentEvidence": "docs/testing/M10.5.9-public-final-2026-10-26-results.json"
+    },
+    {
+      "id": "M5",
+      "scope": "恢复、迁移、查询、分叉",
+      "status": "SELECTED_SCOPE_ACCEPTED",
+      "contract": "docs/development/M5-contracts.md",
+      "validation": "docs/testing/M5-validation.md",
+      "currentEvidence": "docs/testing/M10.5.9-public-final-2026-10-26-results.json"
+    },
+    {
+      "id": "M6",
+      "scope": "流式、压缩、PTY、配置组合",
+      "status": "SELECTED_SCOPE_ACCEPTED",
+      "contract": "docs/development/M6-contracts.md",
+      "validation": "docs/testing/M6-validation.md",
+      "currentEvidence": "docs/testing/M10.5.9-public-final-2026-10-26-results.json"
+    },
+    {
+      "id": "M7",
+      "scope": "环境、MCP、Skills、只读子任务、Web/SDK",
+      "status": "SELECTED_SCOPE_ACCEPTED",
+      "contract": "docs/development/M7-contracts.md",
+      "validation": "docs/testing/M7-validation.md",
+      "currentEvidence": "docs/testing/M10.5.9-public-final-2026-10-26-results.json"
+    },
+    {
+      "id": "M8",
+      "scope": "过滤、只读调度、模型限流重试及收口",
+      "status": "SELECTED_SCOPE_ACCEPTED",
+      "contract": "docs/development/M8-contracts.md",
+      "validation": "docs/testing/M8-validation.md",
+      "currentEvidence": "docs/testing/M10.5.9-public-final-2026-10-26-results.json"
+    },
+    {
+      "id": "M9",
+      "scope": "供应链、三平台候选和安装验证",
+      "status": "SELECTED_SCOPE_ACCEPTED",
+      "contract": "docs/development/M9-contracts.md",
+      "validation": "docs/testing/M9-validation.md",
+      "currentEvidence": "docs/testing/M10.5.9-public-final-2026-10-26-results.json"
+    },
+    {
+      "id": "M10",
+      "scope": "工作台、设置、自动入口",
+      "status": "SELECTED_SCOPE_ACCEPTED",
+      "contract": "docs/development/M10-contracts.md",
+      "validation": "docs/testing/M10-validation.md",
+      "currentEvidence": "docs/testing/M10.5.9-public-final-2026-10-26-results.json"
+    },
+    {
+      "id": "M10.5.1",
+      "scope": "诊断与离线核实",
+      "status": "SELECTED_SCOPE_ACCEPTED",
+      "contract": "docs/development/M10.5.1-contracts.md",
+      "validation": "docs/testing/M10.5.1-validation.md",
+      "currentEvidence": "docs/testing/M10.5.9-public-final-2026-10-26-results.json"
+    },
+    {
+      "id": "M10.5.2",
+      "scope": "会话与工作区生命周期",
+      "status": "SELECTED_SCOPE_ACCEPTED",
+      "contract": "docs/development/M10.5.2-contracts.md",
+      "validation": "docs/testing/M10.5.2-validation.md",
+      "currentEvidence": "docs/testing/M10.5.9-public-final-2026-10-26-results.json"
+    },
+    {
+      "id": "M10.5.3",
+      "scope": "多轮队列",
+      "status": "SELECTED_SCOPE_ACCEPTED",
+      "contract": "docs/development/M10.5.3-contracts.md",
+      "validation": "docs/testing/M10.5.3-validation.md",
+      "currentEvidence": "docs/testing/M10.5.9-public-final-2026-10-26-results.json"
+    },
+    {
+      "id": "M10.5.4",
+      "scope": "三协议与逐轮模型快照",
+      "status": "SELECTED_SCOPE_ACCEPTED",
+      "contract": "docs/development/M10.5.4-contracts.md",
+      "validation": "docs/testing/M10.5.4-validation.md",
+      "currentEvidence": "docs/testing/M10.5.9-public-final-2026-10-26-results.json"
+    },
+    {
+      "id": "M10.5.5",
+      "scope": "结构化提问",
+      "status": "SELECTED_SCOPE_ACCEPTED",
+      "contract": "docs/development/M10.5.5-contracts.md",
+      "validation": "docs/testing/M10.5.5-validation.md",
+      "currentEvidence": "docs/testing/M10.5.9-public-final-2026-10-26-results.json"
+    },
+    {
+      "id": "M10.5.6",
+      "scope": "内容/文件/产物展示",
+      "status": "SELECTED_SCOPE_ACCEPTED",
+      "contract": "docs/development/M10.5.6-contracts.md",
+      "validation": "docs/testing/M10.5.6-validation.md",
+      "currentEvidence": "docs/testing/M10.5.9-public-final-2026-10-26-results.json"
+    },
+    {
+      "id": "M10.5.7",
+      "scope": "扩展表单与资源",
+      "status": "SELECTED_SCOPE_ACCEPTED",
+      "contract": "docs/development/M10.5.7-contracts.md",
+      "validation": "docs/testing/M10.5.7-validation.md",
+      "currentEvidence": "docs/testing/M10.5.9-public-final-2026-10-26-results.json"
+    },
+    {
+      "id": "M10.5.8",
+      "scope": "正文检索与外部SDK",
+      "status": "SELECTED_SCOPE_ACCEPTED",
+      "contract": "docs/development/M10.5.8-contracts.md",
+      "validation": "docs/testing/M10.5.8-validation.md",
+      "currentEvidence": "docs/testing/M10.5.9-public-final-2026-10-26-results.json"
+    },
+    {
+      "id": "M10.5.9",
+      "scope": "最终三平台三浏览器验收",
+      "status": "SELECTED_SCOPE_ACCEPTED",
+      "contract": "docs/development/M10.5.9-contracts.md",
+      "validation": "docs/testing/M10.5.9-validation.md",
+      "currentEvidence": "docs/testing/M10.5.9-public-final-2026-10-26-results.json"
+    }
+  ],
+  "functionalRequirements": [
+    {
+      "id": "FR-01",
+      "name": "插件生命周期",
+      "state": "SELECTED_SCOPE_DELIVERED",
+      "scope": "静态装载、作用域、替换与撤销；热重载/类加载器留M12。",
+      "source": "harness-plugin/src/main/java/io/jharness/plugin/PluginContainer.java"
+    },
+    {
+      "id": "FR-02",
+      "name": "事件与扩展点",
+      "state": "SELECTED_SCOPE_DELIVERED",
+      "scope": "事件、串行/通知/拦截链已实现；不强杀不合作Java线程。",
+      "source": "harness-events/src/main/java/io/jharness/events/DefaultEventBus.java"
+    },
+    {
+      "id": "FR-03",
+      "name": "事实日志与检查点",
+      "state": "SELECTED_SCOPE_DELIVERED",
+      "scope": "JSONL单写者、执行前落盘、投影及UNKNOWN；保留断电/目录fsync边界。",
+      "source": "harness-session/src/main/java/io/jharness/session/JsonlSessionRepository.java"
+    },
+    {
+      "id": "FR-04",
+      "name": "Agent Loop",
+      "state": "SELECTED_SCOPE_DELIVERED",
+      "scope": "多轮、预算、取消、工具闭环、证据完成；不是长期Goal。",
+      "source": "harness-agent/src/main/java/io/jharness/agent/DefaultAgentLoop.java"
+    },
+    {
+      "id": "FR-05",
+      "name": "模型协议",
+      "state": "SELECTED_SCOPE_DELIVERED",
+      "scope": "Chat Completions、Responses、Anthropic文本/工具与SSE；真实厂商当前版本认证另列。",
+      "source": "harness-llm/src/main/java/io/jharness/llm/ProtocolCodec.java"
+    },
+    {
+      "id": "FR-06",
+      "name": "工具管线",
+      "state": "SELECTED_SCOPE_DELIVERED",
+      "scope": "注册/Schema子集、策略、审批、持久意图和来源；不是任意Schema方言。",
+      "source": "harness-tools/src/main/java/io/jharness/tools/DefaultToolPipeline.java"
+    },
+    {
+      "id": "FR-07",
+      "name": "文件与过滤",
+      "state": "PARTIAL_WITH_DECLARED_BOUNDARIES",
+      "scope": "受保护写入/补丁/检索；父目录替换竞态、完整wildmatch与删除/重命名补丁未承诺。",
+      "source": "harness-workspace/src/main/java/io/jharness/workspace/LocalWorkspace.java"
+    },
+    {
+      "id": "FR-08",
+      "name": "上下文与产物",
+      "state": "PARTIAL_WITH_DECLARED_BOUNDARIES",
+      "scope": "有界压缩/产物/回读；图片未实现，来源映射与安全快照后续见缺口表。",
+      "source": "harness-agent/src/main/java/io/jharness/agent/ContextCompactionPlugin.java"
+    },
+    {
+      "id": "FR-09",
+      "name": "进程",
+      "state": "PARTIAL_WITH_DECLARED_BOUNDARIES",
+      "scope": "受控命令/取消/双流；ProcessHandle采样不是Job Object/完整归属保证。",
+      "source": "harness-process/src/main/java/io/jharness/process/LocalProcessRunner.java"
+    },
+    {
+      "id": "FR-10",
+      "name": "策略与审批",
+      "state": "SELECTED_SCOPE_DELIVERED",
+      "scope": "ALLOW/ASK/DENY、精确审批、只读预览；任意Shell不能静态预览。",
+      "source": "harness-policy/src/main/java/io/jharness/policy/DefaultPolicyEngine.java"
+    },
+    {
+      "id": "FR-11",
+      "name": "CLI",
+      "state": "SELECTED_SCOPE_DELIVERED",
+      "scope": "run/REPL/doctor/恢复/报告/serve/生态配置；Desktop独立。",
+      "source": "harness-cli/src/main/java/io/jharness/cli/CliApplication.java"
+    },
+    {
+      "id": "FR-12",
+      "name": "交付报告",
+      "state": "SELECTED_SCOPE_DELIVERED",
+      "scope": "事实/模型叙述、文件SHA与来源分开；有界报告不是完整日志副本。",
+      "source": "harness-cli/src/main/java/io/jharness/cli/CliApplication.java"
+    },
+    {
+      "id": "FR-13",
+      "name": "存储恢复",
+      "state": "SELECTED_SCOPE_DELIVERED",
+      "scope": "JSONL查询/分叉/导出/迁移/人工核实；SQLite可选，未知格式拒绝。",
+      "source": "harness-session/src/main/java/io/jharness/session/SessionRecovery.java"
+    },
+    {
+      "id": "FR-14",
+      "name": "流式与压缩",
+      "state": "SELECTED_SCOPE_DELIVERED",
+      "scope": "受校验流式、有界摘要、请求重建；重复/合成消息来源不可逆时保留未映射。",
+      "source": "harness-agent/src/main/java/io/jharness/agent/ContextCompactionPlugin.java"
+    },
+    {
+      "id": "FR-15",
+      "name": "终端",
+      "state": "PARTIAL_WITH_DECLARED_BOUNDARIES",
+      "scope": "宿主内PTY/后台任务/尾日志；无冷接管守护、Job Object或Docker PTY。",
+      "source": "harness-process/src/main/java/io/jharness/process/LocalTerminalSession.java"
+    },
+    {
+      "id": "FR-16",
+      "name": "多模型与观测",
+      "state": "SELECTED_SCOPE_DELIVERED",
+      "scope": "可信模型选择、协议快照、usage及保守预算；不保证提供商缓存命中。",
+      "source": "harness-llm/src/main/java/io/jharness/llm/LazyModelRouter.java"
+    },
+    {
+      "id": "FR-17",
+      "name": "配置组合",
+      "state": "SELECTED_SCOPE_DELIVERED",
+      "scope": "模型/Profile/Bundle/Preset及Web设置；任务正文不能改可信配置。",
+      "source": "harness-ecosystem/src/main/java/io/jharness/ecosystem/SdkConfiguration.java"
+    },
+    {
+      "id": "FR-18",
+      "name": "热重载",
+      "state": "PLANNED_NOT_IMPLEMENTED",
+      "scope": "静态插件已实现，热重载/类加载器迁移与回滚仍为M12候选。",
+      "source": "harness-plugin/src/main/java/io/jharness/plugin/PluginContainer.java"
+    },
+    {
+      "id": "FR-19",
+      "name": "MCP/Skills",
+      "state": "PARTIAL_WITH_DECLARED_BOUNDARIES",
+      "scope": "CLI/SDK/Web受控装配、资源与单变量模板/显式技能根；OAuth/常驻续传/隐式监视未支持。",
+      "source": "harness-ecosystem/src/main/java/io/jharness/ecosystem/McpPlugin.java"
+    },
+    {
+      "id": "FR-20",
+      "name": "子Agent",
+      "state": "PARTIAL_WITH_DECLARED_BOUNDARIES",
+      "scope": "只读委派、独立来源/预算/作用域、父单写者；写入型/递归通用子任务未实现。",
+      "source": "harness-ecosystem/src/main/java/io/jharness/ecosystem/SubagentPlugin.java"
+    },
+    {
+      "id": "FR-21",
+      "name": "Workflow",
+      "state": "PLANNED_NOT_IMPLEMENTED",
+      "scope": "节点编排、扇出/汇总/失败恢复未实现；Plan不是Workflow。",
+      "source": "harness-ecosystem/src/main/java/io/jharness/ecosystem/PlanningPlugin.java"
+    },
+    {
+      "id": "FR-22",
+      "name": "PTC",
+      "state": "PLANNED_NOT_IMPLEMENTED",
+      "scope": "run_code与代码内逐工具审计运行时未实现；Shell不是PTC。",
+      "source": "harness-tools/src/main/java/io/jharness/tools/DefaultToolPipeline.java"
+    },
+    {
+      "id": "FR-23",
+      "name": "任务类型",
+      "state": "PARTIAL_WITH_DECLARED_BOUNDARIES",
+      "scope": "Todo/Plan已实现；Goal/Schedule生命周期与后台调度未实现。",
+      "source": "harness-ecosystem/src/main/java/io/jharness/ecosystem/PlanningPlugin.java"
+    },
+    {
+      "id": "FR-24",
+      "name": "会话与正文检索",
+      "state": "SELECTED_SCOPE_DELIVERED",
+      "scope": "注册工作区、生命周期、跨会话词语/短语、排序/分页/来源、TS/Python SDK；无自动GC。",
+      "source": "harness-web/src/main/java/io/jharness/web/WorkbenchContentSearch.java"
+    },
+    {
+      "id": "FR-25",
+      "name": "工具调度/横切",
+      "state": "SELECTED_SCOPE_DELIVERED",
+      "scope": "显式有界只读并行/写屏障、默认关闭的模型限流/完整非流式429重试；工具UNKNOWN不重放。",
+      "source": "harness-agent/src/main/java/io/jharness/agent/ModelResiliencePlugin.java"
+    },
+    {
+      "id": "FR-26",
+      "name": "网页/LSP",
+      "state": "PARTIAL_WITH_DECLARED_BOUNDARIES",
+      "scope": "固定可信来源web_fetch已实现；通用搜索提供方和LSP延期。",
+      "source": "harness-ecosystem/src/main/java/io/jharness/ecosystem/WebFetchPlugin.java"
+    },
+    {
+      "id": "FR-27",
+      "name": "环境/多入口",
+      "state": "PARTIAL_WITH_DECLARED_BOUNDARIES",
+      "scope": "本地/Docker实现、CLI/JavaSDK/Web/stdio；当前Docker实测缺口与Desktop未实现分开记录。",
+      "source": "harness-ecosystem/src/main/java/io/jharness/ecosystem/HarnessSdk.java"
+    }
+  ],
+  "findings": [
+    {
+      "id": "GAP-01",
+      "priority": "P1",
+      "title": "父目录替换竞态仍属有限防护",
+      "kind": "PARTIAL_IMPLEMENTATION",
+      "state": "OPEN",
+      "milestones": [
+        "M2",
+        "R5"
+      ],
+      "evidence": [
+        "harness-workspace/src/main/java/io/jharness/workspace/LocalWorkspace.java",
+        "harness-api/src/main/java/io/jharness/api/DirectoryIdentity.java",
+        "harness-session/src/main/java/io/jharness/session/TokenSessionSearch.java",
+        "docs/development/OCR-R5-scope-2026-10-25.json"
+      ],
+      "completionCriteria": "明确可信宿主与攻击模型；如要求抵抗不合作祖先替换，使用目录能力/OS句柄等独立方案，并以受控竞态负例验证，不能仅重复realpath检查。",
+      "opinionIds": [
+        "OCR-0819"
+      ]
+    },
+    {
+      "id": "GAP-02",
+      "priority": "P1",
+      "title": "R4精确故障窗口未逐项验收",
+      "kind": "EVIDENCE_GAP",
+      "state": "OPEN",
+      "milestones": [
+        "M10",
+        "M10.5",
+        "R4"
+      ],
+      "evidence": [
+        "docs/development/OCR-R4-remediation-2026-10-25.md",
+        "frontend/tests/r4.mjs",
+        "frontend/tests/client.test.ts"
+      ],
+      "completionCriteria": "列出写入丢响应/卸载/同实例连接替换、存储失败、正文损坏、观察器失败的逐条场景，核对副作用次数、旧响应拒绝、草稿/身份与UNKNOWN，不以115个编号推导115个独立Bug。",
+      "opinionIds": []
+    },
+    {
+      "id": "GAP-03",
+      "priority": "P1",
+      "title": "三组旧分页断言尚未精确补强",
+      "kind": "TEST_GAP",
+      "state": "OPEN",
+      "milestones": [
+        "M7",
+        "M10",
+        "M10.5.2",
+        "R5"
+      ],
+      "evidence": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M1052HistoryTest.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/M10WebTest.java",
+        "harness-testkit/src/test/java/io/jharness/testkit/M7WebTest.java"
+      ],
+      "completionCriteria": "先证明真实非空下一页游标，再核HTTP200/schema、事件身份/不交叠、页数/总量和末页终止；失效游标须排除空字符串/null导致的普通400。",
+      "opinionIds": [
+        "OCR-0848",
+        "OCR-0895",
+        "OCR-1027"
+      ]
+    },
+    {
+      "id": "GAP-04",
+      "priority": "P1",
+      "title": "当前版本Docker主动验证未补齐",
+      "kind": "EVIDENCE_GAP",
+      "state": "OPEN",
+      "milestones": [
+        "M7",
+        "M8",
+        "R6"
+      ],
+      "evidence": [
+        "docs/testing/OCR-R6-remediation-2026-10-25-results.json",
+        ".github/workflows/ci.yml",
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/DockerExecutionEnvironment.java"
+      ],
+      "completionCriteria": "对当前JAR/worker执行环境、文件/命令同域、Skills/子任务/Web及过滤/调度/限流适用主动夹具，核容器真实状态、owner标签、清理及同版本摘要。历史M7/M8/R1-R3 Docker成功保留，不能视为当前认证。",
+      "opinionIds": []
+    },
+    {
+      "id": "GAP-05",
+      "priority": "P2",
+      "title": "压缩来源仍有歧义未映射",
+      "kind": "PARTIAL_IMPLEMENTATION",
+      "state": "OPEN",
+      "milestones": [
+        "M6",
+        "R5"
+      ],
+      "evidence": [
+        "harness-agent/src/main/java/io/jharness/agent/ContextCompactionPlugin.java"
+      ],
+      "completionCriteria": "对重复历史和合成消息建立显式来源身份或明确不可逆边界；保留未映射计数，不能猜来源或宣称全部可逆。",
+      "opinionIds": [
+        "OCR-0060"
+      ]
+    },
+    {
+      "id": "GAP-06",
+      "priority": "P2",
+      "title": "五项读取/安全快照优化未实施",
+      "kind": "IMPLEMENTATION_FOLLOWUP",
+      "state": "OPEN",
+      "milestones": [
+        "M5",
+        "M7",
+        "M10.5",
+        "R5"
+      ],
+      "evidence": [
+        "harness-cli/src/main/java/io/jharness/cli/CliApplication.java",
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/ContentPages.java",
+        "harness-session/src/main/java/io/jharness/session/LocalArtifactStore.java",
+        "harness-web/src/main/java/io/jharness/web/DurableTaskCatalog.java",
+        "harness-web/src/main/java/io/jharness/web/HarnessWebServer.java"
+      ],
+      "completionCriteria": "先测量成本，再合并同一稳定快照的重复读取；保留写后刷新、秘密变化、全文完整性/版本及UTF-16分页校验，禁止盲缓存。",
+      "opinionIds": [
+        "OCR-0310",
+        "OCR-0418",
+        "OCR-0742",
+        "OCR-1104",
+        "OCR-1154"
+      ]
+    },
+    {
+      "id": "GAP-07",
+      "priority": "P2",
+      "title": "展示读取持锁与请求关联设计后续",
+      "kind": "IMPLEMENTATION_FOLLOWUP",
+      "state": "OPEN",
+      "milestones": [
+        "M6",
+        "M10.5.6",
+        "R5"
+      ],
+      "evidence": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/ModelDisplayBuffer.java",
+        "harness-llm/src/main/java/io/jharness/llm/ObservedLlmClient.java"
+      ],
+      "completionCriteria": "测量锁等待与全量读取，设计显式request/context关联与锁外快照，注入reset/结算竞争；读取失败保持UNKNOWN。未证实当前存在并发误归属漏洞。",
+      "opinionIds": [
+        "OCR-0466",
+        "OCR-0561"
+      ]
+    },
+    {
+      "id": "GAP-08",
+      "priority": "P2",
+      "title": "gitignore不支持规则缺逐行指导",
+      "kind": "USABILITY_FOLLOWUP",
+      "state": "OPEN",
+      "milestones": [
+        "M2",
+        "M8",
+        "R5"
+      ],
+      "evidence": [
+        "harness-workspace/src/main/java/io/jharness/workspace/WorkspaceSearchFilter.java"
+      ],
+      "completionCriteria": "配置预检定位具体不支持行并给可操作说明；保持fail-closed，不静默跳过规则，不扩称完整Git wildmatch。",
+      "opinionIds": [
+        "OCR-1123"
+      ]
+    },
+    {
+      "id": "GAP-09",
+      "priority": "P2",
+      "title": "长会话峰值内存和性能证据不足",
+      "kind": "EVIDENCE_GAP",
+      "state": "OPEN",
+      "milestones": [
+        "M2",
+        "M5",
+        "M6",
+        "R5"
+      ],
+      "evidence": [
+        "harness-workspace/src/test/java/io/jharness/workspace/LocalWorkspaceTest.java",
+        "docs/development/OCR-R5-remediation-2026-10-25.md"
+      ],
+      "completionCriteria": "保留已通过的1000条目≤2秒回归；补受控堆、长事件链、分页和并发场景的峰值内存/延迟/读取次数。预算单测和并发计数不是性能基准。",
+      "opinionIds": []
+    },
+    {
+      "id": "GAP-10",
+      "priority": "P2",
+      "title": "Windows10/独立WSL与额外CPU未认证",
+      "kind": "EVIDENCE_GAP",
+      "state": "OPEN",
+      "milestones": [
+        "M3",
+        "M6",
+        "M9"
+      ],
+      "evidence": [
+        "docs/testing/M9-platform-matrix.md",
+        ".github/workflows/ci.yml"
+      ],
+      "completionCriteria": "按用户目标选择真实Windows10/独立WSL/macOS Intel/Linux其他CPU并验证；Windows Server、Win11、Ubuntu与内置native文件不能替代未测环境。",
+      "opinionIds": []
+    },
+    {
+      "id": "GAP-11",
+      "priority": "P2",
+      "title": "当前三协议的真实厂商效果未认证",
+      "kind": "EVIDENCE_GAP",
+      "state": "OPEN",
+      "milestones": [
+        "M1",
+        "M4",
+        "M10.5.4"
+      ],
+      "evidence": [
+        "docs/testing/M4-live-results.json",
+        "docs/testing/M10.5.9-public-final-2026-10-26-results.json",
+        "docs/examples/m1054-models.md"
+      ],
+      "completionCriteria": "有独立预算授权后固定任务、服务配置、次数、费用上界和独立行为oracle。当前三协议loopback已验证协议闭环；M4八次真实DeepSeek属于旧构建历史，不能推导当前普遍质量。",
+      "opinionIds": []
+    },
+    {
+      "id": "GAP-12",
+      "priority": "P2",
+      "title": "早期macOS模型按钮超时原因未定",
+      "kind": "HISTORICAL_UNEXPLAINED_FAILURE",
+      "state": "OPEN",
+      "milestones": [
+        "M10.5.4",
+        "M10.5.9"
+      ],
+      "evidence": [
+        "docs/testing/M10.5.9-public-focused-diagnostics-2026-10-25.md",
+        "docs/testing/M10.5.9-public-final-2026-10-26-results.json",
+        "frontend/tests/models.mjs"
+      ],
+      "completionCriteria": "现版本定点及完整CI通过；保留原失败与固定诊断，若再现按draft/busy/pending/task状态定位。不能宣称该历史失败已有根因修复，也无需为追求复现盲目全量重跑。",
+      "opinionIds": []
+    },
+    {
+      "id": "GAP-13",
+      "priority": "P2",
+      "title": "当前入口文档与旧阶段状态冲突",
+      "kind": "DOCUMENTATION_DRIFT",
+      "state": "RESOLVED_IN_THIS_DOCUMENTATION_UPDATE",
+      "milestones": [
+        "M1-M10.5"
+      ],
+      "evidence": [
+        "README.md",
+        "PRODUCT.md",
+        "frontend/README.md",
+        "docs/requirements/JHarness-next-plan-v1.0.md",
+        "docs/examples/m7-extensions.md"
+      ],
+      "completionCriteria": "更新活动状态/使用说明和统一索引，历史记录加范围标记，保护原始JSON/法律材料与用户草稿。",
+      "opinionIds": []
+    },
+    {
+      "id": "GAP-14",
+      "priority": "P3",
+      "title": "原生二进制精确构建来源仍有限",
+      "kind": "RETAINED_LIMITATION",
+      "state": "RETAINED_LIMITATION",
+      "milestones": [
+        "M6",
+        "M9",
+        "R6"
+      ],
+      "evidence": [
+        "third-party/README.md",
+        "docs/development/OCR-R6-remediation-2026-10-25.md"
+      ],
+      "completionCriteria": "若产品要求更强供应链保证，再补native构建来源/证明或独立重建；现有许可/SBOM/坐标OSV门禁已通过，覆盖面不等于OS/CPE全量证明。",
+      "opinionIds": []
+    },
+    {
+      "id": "GAP-15",
+      "priority": "P3",
+      "title": "长期原始证据保存策略待明确",
+      "kind": "GOVERNANCE_RECOMMENDATION",
+      "state": "RECOMMENDATION",
+      "milestones": [
+        "M1-M10.5"
+      ],
+      "evidence": [
+        ".github/workflows/ci.yml",
+        "docs/testing/M1-validation.md"
+      ],
+      "completionCriteria": "明确CI保留期、原ZIP/XML/截图的异地归档和可复核索引。当前三原包已保存在本地忽略缓存及CI；早期共享surefire路径会被clean覆盖。这是治理建议，不是已证实业务缺陷。",
+      "opinionIds": []
+    }
+  ],
+  "historicalTestLineage": [
+    {
+      "file": "docs/testing/M1-results.json",
+      "historicalCases": 76,
+      "retainedExact": 76,
+      "notExactNow": []
+    },
+    {
+      "file": "docs/testing/M2-results.json",
+      "historicalCases": 104,
+      "retainedExact": 104,
+      "notExactNow": []
+    },
+    {
+      "file": "docs/testing/M3-results.json",
+      "historicalCases": 130,
+      "retainedExact": 130,
+      "notExactNow": []
+    },
+    {
+      "file": "docs/testing/M4-results.json",
+      "historicalCases": 156,
+      "retainedExact": 156,
+      "notExactNow": []
+    },
+    {
+      "file": "docs/testing/M5-results.json",
+      "historicalCases": 175,
+      "retainedExact": 175,
+      "notExactNow": []
+    },
+    {
+      "file": "docs/testing/M6-results.json",
+      "historicalCases": 198,
+      "retainedExact": 198,
+      "notExactNow": []
+    },
+    {
+      "file": "docs/testing/M7-results.json",
+      "historicalCases": 260,
+      "retainedExact": 258,
+      "notExactNow": [
+        [
+          "harness-testkit",
+          "io.jharness.testkit.M7SubagentTest",
+          "explicitParentCancellationReachesChildAndDoesNotClaimSuccess"
+        ],
+        [
+          "harness-testkit",
+          "io.jharness.testkit.M7WebTest",
+          "sharedWorkspaceAndRetainedTaskBoundsRejectWithoutOpeningMoreModels"
+        ]
+      ]
+    },
+    {
+      "file": "docs/testing/M8-results.json",
+      "historicalCases": 295,
+      "retainedExact": 293,
+      "notExactNow": [
+        [
+          "harness-testkit",
+          "io.jharness.testkit.M7SubagentTest",
+          "explicitParentCancellationReachesChildAndDoesNotClaimSuccess"
+        ],
+        [
+          "harness-testkit",
+          "io.jharness.testkit.M7WebTest",
+          "sharedWorkspaceAndRetainedTaskBoundsRejectWithoutOpeningMoreModels"
+        ]
+      ]
+    },
+    {
+      "file": "docs/testing/M8.2-results.json",
+      "historicalCases": 280,
+      "retainedExact": 278,
+      "notExactNow": [
+        [
+          "harness-testkit",
+          "io.jharness.testkit.M7SubagentTest",
+          "explicitParentCancellationReachesChildAndDoesNotClaimSuccess"
+        ],
+        [
+          "harness-testkit",
+          "io.jharness.testkit.M7WebTest",
+          "sharedWorkspaceAndRetainedTaskBoundsRejectWithoutOpeningMoreModels"
+        ]
+      ]
+    },
+    {
+      "file": "docs/testing/M8.3-results.json",
+      "historicalCases": 295,
+      "retainedExact": 293,
+      "notExactNow": [
+        [
+          "harness-testkit",
+          "io.jharness.testkit.M7SubagentTest",
+          "explicitParentCancellationReachesChildAndDoesNotClaimSuccess"
+        ],
+        [
+          "harness-testkit",
+          "io.jharness.testkit.M7WebTest",
+          "sharedWorkspaceAndRetainedTaskBoundsRejectWithoutOpeningMoreModels"
+        ]
+      ]
+    },
+    {
+      "file": "docs/testing/M9-local-results.json",
+      "historicalCases": 305,
+      "retainedExact": 304,
+      "notExactNow": [
+        [
+          "harness-testkit",
+          "io.jharness.testkit.M7WebTest",
+          "sharedWorkspaceAndRetainedTaskBoundsRejectWithoutOpeningMoreModels"
+        ]
+      ]
+    },
+    {
+      "file": "docs/testing/M10-results.json",
+      "historicalCases": 307,
+      "retainedExact": 306,
+      "notExactNow": [
+        [
+          "harness-testkit",
+          "io.jharness.testkit.M7WebTest",
+          "sharedWorkspaceAndRetainedTaskBoundsRejectWithoutOpeningMoreModels"
+        ]
+      ]
+    },
+    {
+      "file": "docs/testing/M10.5.1-results.json",
+      "historicalCases": 322,
+      "retainedExact": 321,
+      "notExactNow": [
+        [
+          "harness-testkit",
+          "io.jharness.testkit.M7WebTest",
+          "sharedWorkspaceAndRetainedTaskBoundsRejectWithoutOpeningMoreModels"
+        ]
+      ]
+    },
+    {
+      "file": "docs/testing/M10.5.2-results.json",
+      "historicalCases": 331,
+      "retainedExact": 331,
+      "notExactNow": []
+    },
+    {
+      "file": "docs/testing/M10.5.3-results.json",
+      "historicalCases": 337,
+      "retainedExact": 337,
+      "notExactNow": []
+    },
+    {
+      "file": "docs/testing/M10.5.4-results.json",
+      "historicalCases": 358,
+      "retainedExact": 358,
+      "notExactNow": []
+    },
+    {
+      "file": "docs/testing/M10.5.5-results.json",
+      "historicalCases": 371,
+      "retainedExact": 371,
+      "notExactNow": []
+    },
+    {
+      "file": "docs/testing/M10.5.6-results.json",
+      "historicalCases": 388,
+      "retainedExact": 388,
+      "notExactNow": []
+    },
+    {
+      "file": "docs/testing/M10.5.7-results.json",
+      "historicalCases": 399,
+      "retainedExact": 399,
+      "notExactNow": []
+    },
+    {
+      "file": "docs/testing/M10.5.8-results.json",
+      "historicalCases": 410,
+      "retainedExact": 410,
+      "notExactNow": []
+    }
+  ],
+  "verifiedIdentityAliases": [
+    {
+      "from": [
+        "harness-testkit",
+        "io.jharness.testkit.M7SubagentTest",
+        "explicitParentCancellationReachesChildAndDoesNotClaimSuccess"
+      ],
+      "to": [
+        [
+          "harness-testkit",
+          "io.jharness.testkit.M7SubagentTest",
+          "explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[10]"
+        ],
+        [
+          "harness-testkit",
+          "io.jharness.testkit.M7SubagentTest",
+          "explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[1]"
+        ],
+        [
+          "harness-testkit",
+          "io.jharness.testkit.M7SubagentTest",
+          "explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[2]"
+        ],
+        [
+          "harness-testkit",
+          "io.jharness.testkit.M7SubagentTest",
+          "explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[3]"
+        ],
+        [
+          "harness-testkit",
+          "io.jharness.testkit.M7SubagentTest",
+          "explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[4]"
+        ],
+        [
+          "harness-testkit",
+          "io.jharness.testkit.M7SubagentTest",
+          "explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[5]"
+        ],
+        [
+          "harness-testkit",
+          "io.jharness.testkit.M7SubagentTest",
+          "explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[6]"
+        ],
+        [
+          "harness-testkit",
+          "io.jharness.testkit.M7SubagentTest",
+          "explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[7]"
+        ],
+        [
+          "harness-testkit",
+          "io.jharness.testkit.M7SubagentTest",
+          "explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[8]"
+        ],
+        [
+          "harness-testkit",
+          "io.jharness.testkit.M7SubagentTest",
+          "explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[9]"
+        ]
+      ],
+      "reason": "同一取消行为升级为RepeatedTest(10)，不是移除。"
+    },
+    {
+      "from": [
+        "harness-testkit",
+        "io.jharness.testkit.M7WebTest",
+        "sharedWorkspaceAndRetainedTaskBoundsRejectWithoutOpeningMoreModels"
+      ],
+      "to": [
+        [
+          "harness-testkit",
+          "io.jharness.testkit.M7WebTest",
+          "sharedWorkspaceIsExclusiveAndSettledHistoryOutlivesHotSet"
+        ]
+      ],
+      "reason": "M10.5.2将持久历史与热集分离，测试由总量拒绝改为热集/工作区独占与持久历史；65会话用例另验。"
+    }
+  ],
+  "r5OpenItems": [
+    {
+      "id": "OCR-0060",
+      "taskId": "R5-03",
+      "originalVerdict": "partial",
+      "adoptedScope": "sourceEvents收集全会话而非移除消息，关联粒度过宽；应明确来源集合语义并建立移除消息到事件的映射，不能据此认定恢复重放错误。",
+      "sourceReferences": [
+        "harness-agent/src/main/java/io/jharness/agent/ContextCompactionPlugin.java:76"
+      ],
+      "state": "PARTIAL_IMPLEMENTATION_LIMITED",
+      "implementationBoundary": "新增唯一值精确来源关联和歧义未映射计数；历史重复消息/合成消息不猜来源，未宣称全部消息可逆映射。",
+      "validationGroups": [
+        "R5CompactionTest",
+        "R5CompactionAuditTest",
+        "R3CompactionBoundaryTest",
+        "M6CompactionTest"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0310",
+      "taskId": "R5-02",
+      "originalVerdict": "accepted",
+      "adoptedScope": "运行收尾多次reader.events完整读JSONL，可在无新增写入节点缓存一致快照，写入后显式刷新。",
+      "sourceReferences": [
+        "harness-cli/src/main/java/io/jharness/cli/CliApplication.java:1059"
+      ],
+      "state": "PENDING_FOLLOWUP",
+      "implementationBoundary": "CLI 收尾读合并尚待实施与写入后刷新边界测试。",
+      "validationGroups": [
+        "R5SessionBoundsTest",
+        "R5ContentSearchTest",
+        "TokenSessionSearchTest",
+        "WorkbenchContentSearchTest",
+        "existing agent/planning/questions/session suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0418",
+      "taskId": "R5-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "每页sha(clean)确实全量编码散列；接受单次有界内容快照复用版本，不能仅按请求客户端offset无限缓存或放弃版本一致性验证。",
+      "sourceReferences": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/ContentPages.java:19"
+      ],
+      "state": "PENDING_FOLLOWUP",
+      "implementationBoundary": "分页仍逐次校验完整内容；尚未建立可复用且不弱化秘密更新/版本一致性的单次内容快照。",
+      "validationGroups": [
+        "R5EncodingTest",
+        "R5TransportBoundsTest",
+        "R5WorkspaceBoundsTest",
+        "M2WorkspaceIntegrationTest",
+        "existing process/terminal/MCP/artifact suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0466",
+      "taskId": "R5-02",
+      "originalVerdict": "accepted",
+      "adoptedScope": "snapshot持监视器全量reader.events轮询，与accept争锁；增量索引及锁外读取降低长会话阻塞，不能读失败时伪造PERSISTED。",
+      "sourceReferences": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/ModelDisplayBuffer.java:59"
+      ],
+      "state": "PENDING_FOLLOWUP",
+      "implementationBoundary": "展示缓冲器锁外读取与 reset 并发精确窗口尚待，保留原事实读取失败语义。",
+      "validationGroups": [
+        "R5SessionBoundsTest",
+        "R5ContentSearchTest",
+        "TokenSessionSearchTest",
+        "WorkbenchContentSearchTest",
+        "existing agent/planning/questions/session suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0561",
+      "taskId": "R5-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "每完成请求全读日志取最新requested，接受请求ID显式关联/增量读取；标准Loop单请求、子会话独立，未证明当前并发串归属，不据假想并发确认。",
+      "sourceReferences": [
+        "harness-llm/src/main/java/io/jharness/llm/ObservedLlmClient.java:83"
+      ],
+      "state": "PENDING_FOLLOWUP",
+      "implementationBoundary": "ObservedLlmClient 显式 requestId/context 传递设计未更换，未证明并发错误关联。",
+      "validationGroups": [
+        "R5SessionBoundsTest",
+        "R5ContentSearchTest",
+        "TokenSessionSearchTest",
+        "WorkbenchContentSearchTest",
+        "existing agent/planning/questions/session suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0742",
+      "taskId": "R5-01",
+      "originalVerdict": "partial",
+      "adoptedScope": "read每页整读4MB hash，接受同一内容版本安全快照复用；直接按字节offset会破现有UTF16分页及完整脱敏，需要保持协议单位和防篡改校验。",
+      "sourceReferences": [
+        "harness-session/src/main/java/io/jharness/session/LocalArtifactStore.java:67"
+      ],
+      "state": "PENDING_FOLLOWUP",
+      "implementationBoundary": "保留每次产物完整散列与身份校验，未通过盲缓存减读；目录能力及并发篡改窗口另验。",
+      "validationGroups": [
+        "R5EncodingTest",
+        "R5TransportBoundsTest",
+        "R5WorkspaceBoundsTest",
+        "M2WorkspaceIntegrationTest",
+        "existing process/terminal/MCP/artifact suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0819",
+      "taskId": "R5-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "父目录替换窗口存在于路径式缓存读写；使用绑定目录能力/原子临时文件及NOFOLLOW，重新realpath只缩窗不彻底消竞态，派生缓存不可成为事实写入通道。",
+      "sourceReferences": [
+        "harness-session/src/main/java/io/jharness/session/TokenSessionSearch.java:68"
+      ],
+      "state": "PARTIAL_IMPLEMENTATION_LIMITED",
+      "implementationBoundary": "新增目录创建时身份与发布边界复核，但未接入 SecureDirectoryStream；Windows 路径检查不能消除父目录替换竞态。",
+      "validationGroups": [
+        "R5SessionBoundsTest",
+        "R5ContentSearchTest",
+        "TokenSessionSearchTest",
+        "WorkbenchContentSearchTest",
+        "existing agent/planning/questions/session suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0848",
+      "taskId": "R5-02",
+      "originalVerdict": "accepted",
+      "adoptedScope": "旧游标未先断言非空，after=空/字符串null的400也能误通过失效规则，先证明实际存在下一页再变更快照。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M1052HistoryTest.java:280"
+      ],
+      "state": "PENDING_FOLLOWUP",
+      "implementationBoundary": "原历史分页用例的非空 cursor 先验断言尚待单独增强。",
+      "validationGroups": [
+        "R5SessionBoundsTest",
+        "R5ContentSearchTest",
+        "TokenSessionSearchTest",
+        "WorkbenchContentSearchTest",
+        "existing agent/planning/questions/session suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-0895",
+      "taskId": "R5-02",
+      "originalVerdict": "accepted",
+      "adoptedScope": "第二页仅notEquals允许空错误页，补HTTP200、具体事件数/不交叠、more/next末页终止。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M10WebTest.java:327"
+      ],
+      "state": "PENDING_FOLLOWUP",
+      "implementationBoundary": "M10Web HTTP 第二页精确身份断言尚待；本轮只加强 WorkbenchContentSearch。",
+      "validationGroups": [
+        "R5SessionBoundsTest",
+        "R5ContentSearchTest",
+        "TokenSessionSearchTest",
+        "WorkbenchContentSearchTest",
+        "existing agent/planning/questions/session suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-1027",
+      "taskId": "R5-02",
+      "originalVerdict": "accepted",
+      "adoptedScope": "第二页未HTTP200且next不同可错误JSON假通过，先响应/schema/非空事件再核游标末尾及总量。",
+      "sourceReferences": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M7WebTest.java:325"
+      ],
+      "state": "PENDING_FOLLOWUP",
+      "implementationBoundary": "M7Web HTTP 第二页精确身份断言尚待；不将关联全套通过视为该窗口覆盖。",
+      "validationGroups": [
+        "R5SessionBoundsTest",
+        "R5ContentSearchTest",
+        "TokenSessionSearchTest",
+        "WorkbenchContentSearchTest",
+        "existing agent/planning/questions/session suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-1104",
+      "taskId": "R5-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "新taskId含hash已有直接byHash路径，不会每非accepted全扫；仅legacy UUID/无效ID兜底扫描，接受legacy索引/格式快速拒绝的有界优化。",
+      "sourceReferences": [
+        "harness-web/src/main/java/io/jharness/web/DurableTaskCatalog.java:218"
+      ],
+      "state": "PENDING_FOLLOWUP",
+      "implementationBoundary": "DurableTaskCatalog legacy 扫描优化尚待，不跳过可能承载事实的历史目录。",
+      "validationGroups": [
+        "R5SessionBoundsTest",
+        "R5ContentSearchTest",
+        "TokenSessionSearchTest",
+        "WorkbenchContentSearchTest",
+        "existing agent/planning/questions/session suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-1123",
+      "taskId": "R5-02",
+      "originalVerdict": "partial",
+      "adoptedScope": "gitignore子集/128条限是M8明确范围，unsupported拒绝是fail-closed不是意外全功能不兼容；可在配置预检给出具体不支持行与指导，不能静默跳过导致本应排除文件被检索。",
+      "sourceReferences": [
+        "harness-workspace/src/main/java/io/jharness/workspace/WorkspaceSearchFilter.java:58"
+      ],
+      "state": "PENDING_FOLLOWUP",
+      "implementationBoundary": "gitignore 不支持规则的逐行说明尚待补强，现有支持范围没有扩张。",
+      "validationGroups": [
+        "R5SessionBoundsTest",
+        "R5ContentSearchTest",
+        "TokenSessionSearchTest",
+        "WorkbenchContentSearchTest",
+        "existing agent/planning/questions/session suites"
+      ],
+      "individualAcceptanceClosed": false
+    },
+    {
+      "id": "OCR-1154",
+      "taskId": "R5-02",
+      "originalVerdict": "accepted",
+      "adoptedScope": "相邻两次同一reader.events.isEmpty检查确重复全读，去重并在已取得独占后的实际快照使用，不丢并发安全。",
+      "sourceReferences": [
+        "harness-web/src/main/java/io/jharness/web/HarnessWebServer.java:914"
+      ],
+      "state": "PENDING_FOLLOWUP",
+      "implementationBoundary": "Web 相邻读取合并尚待逐路径检查。",
+      "validationGroups": [
+        "R5SessionBoundsTest",
+        "R5ContentSearchTest",
+        "TokenSessionSearchTest",
+        "WorkbenchContentSearchTest",
+        "existing agent/planning/questions/session suites"
+      ],
+      "individualAcceptanceClosed": false
+    }
+  ],
+  "boundary": "Selected milestone acceptance is retained; no blanket per-opinion closure, no coverage percentage or absence-of-bugs claim. Historical JSON/third-party legal materials unchanged.",
+  "documentationBuildInputDifferences": [
+    {
+      "path": "docs/examples/m1059-distribution.md",
+      "acceptedBuildSha256": "9d9002592276d584f6a9bc7b6b2feab5dea3179ce69e382c54b5df4c96eca1b8",
+      "currentDocumentationSha256": "9d8c38211bc768a6ff5ff83b754e9fa60b8b7a64917874472f70a2ea7286a6ed",
+      "kind": "DOCUMENTATION_ONLY_NO_NEW_CANDIDATE_ACCEPTANCE"
+    }
+  ],
+  "documentationManifest": "docs/testing/documentation-refresh-2026-10-26.json",
+  "documentationSummary": {
+    "originalMarkdownDocumentsScanned": 118,
+    "originalMarkdownDocumentsUpdated": 91,
+    "protectedReviewMarkdown": 9,
+    "newMarkdownDocuments": 2,
+    "protectedRawJson": 242,
+    "localFileLinksChecked": 642
+  }
+}

@@ -1,5 +1,7 @@
 # M3 验收记录
 
+> 记录范围（2026-10-26核对）：本文保留原阶段设计、取证或验收快照；旧测试数、接口版本和“尚未/待授权”等描述按原日期解释。当前交付与后续任务见[当前状态](../development/current-state.md)及[全阶段审计](M1-M10.5-gap-audit-2026-10-26.md)。77e8855的三平台完整验收已通过；专项余项以审计清单为准。
+
 日期：2026-10-14。本阶段按 PRD v1.1 与 NFR/AC 顺序表实施命令、策略、审批、预算、取消和进程清理；使用真实文件系统/进程/本机 socket、Fake LLM，未访问付费模型。
 
 验证命令：`.\mvnw.cmd -B spotless:apply clean verify`。2026-10-14 16:09:32 +08:00 完成，耗时 37.179 秒，BUILD SUCCESS；130 项测试、0 失败、0 错误、0 跳过，其中 M3 新增 26 项。编译执行 `-Xlint:all -Werror`，verify 执行格式检查及全部模块测试。最终运行结果、各测试名、环境、日志 SHA-256 与源码/构建哈希由 [M3-results.json](M3-results.json) 记录；原始日志位于 `.build-cache/M3-verify.log`（Git 忽略）。

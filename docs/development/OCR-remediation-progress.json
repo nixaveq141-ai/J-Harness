@@ -19,8 +19,8 @@
   },
   "tasks": {
     "R0-01": {
-      "status": "BASELINE_VALIDATED_PIPELINE_PENDING",
-      "description": "复审采纳范围已修复且本地验证；新回执覆盖130门禁/33客户端/410Java；完整发布流水线和三平台三引擎CI仍待运行"
+      "status": "BASELINE_VALIDATED_FOLLOWUPS_OPEN",
+      "description": "R0复审采纳范围已有本地证据，当前77e8855的三平台完整验收与原包审计已通过；原484意见的各项范围仍由R1～R6台账与当前缺口清单区分，不据整体CI全部关闭。"
     },
     "R0-02": {
       "status": "IMPLEMENTED_LOCAL_VALIDATED",
@@ -373,5 +373,23 @@
     },
     "rootCause": "Exact known synthetic message hash matches stopped-origin GET /v1/tasks?limit=32&view=active&profile=default. Existing classifier accepted unprofiled list only."
   },
-  "r6CompletionBoundary": "Current adopted R6 scopes; 148 implemented/strengthened +18 retained +20 clarified, not 186 independent dynamic defects. R4/R5 open scopes unchanged."
+  "r6CompletionBoundary": "Current adopted R6 scopes; 148 implemented/strengthened +18 retained +20 clarified, not 186 independent dynamic defects. R4/R5 open scopes unchanged.",
+  "documentationAudit": {
+    "date": "2026-10-26",
+    "report": "docs/testing/M1-M10.5-gap-audit-2026-10-26.md",
+    "currentState": "docs/development/current-state.md",
+    "acceptedRuntimeCommit": "77e8855edaab0f7e543c9709c95513e3a0a2c4bb",
+    "sourceBoundDocumentationChanged": [
+      "docs/examples/m1059-distribution.md"
+    ],
+    "scope": "Static source/contract/evidence review and documentation refresh; no new product tests or candidate acceptance.",
+    "summary": {
+      "originalMarkdownDocumentsScanned": 118,
+      "originalMarkdownDocumentsUpdated": 91,
+      "protectedReviewMarkdown": 9,
+      "newMarkdownDocuments": 2,
+      "protectedRawJson": 242,
+      "localFileLinksChecked": 642
+    }
+  }
 }

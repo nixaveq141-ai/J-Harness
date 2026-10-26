@@ -1,32 +1,10 @@
 # J-Harness
 
-2026-10-26：项目已[公开开源](https://github.com/nixaveq141-ai/J-Harness)，保持Apache-2.0及第三方归因。[M10.5.9整阶段验收](docs/testing/M10.5.9-validation.md)与R6采纳范围已收尾：[完整CI40284862454](https://github.com/nixaveq141-ai/J-Harness/actions/runs/40284862454)同77e8855三平台通过，三份原包已严格独立核对。M11准入通过，尚未开始实现；最新代码仍在codex/m1059-full-validation，未合并main或发布Release。下文旧状态保留为历史快照，R4/R5后续项及已知限制不改写为完成。
+本机单操作者的Java Agent Runtime与Web工作台。当前运行时代码`77e8855`已完成M10.5.9三平台验收；[CI与原包审计](docs/testing/M10.5.9-public-final-2026-10-26-results.json)覆盖每平台702 Java、42客户端、813浏览器、66 SDK和7原生凭据项。API/Java SDK1.14，独立stdio1.0。
 
-2026-10-25：[R5 本地修复增量](docs/development/OCR-R5-remediation-2026-10-25.md)覆盖有界编码、检索索引与并发、工具预览/分页和压缩审计；64 条台账中 51 条本轮补强、2 条有限实施、11 条后续项，R5 仍在进行中。验证与限制见[验收记录](docs/testing/OCR-R5-remediation-2026-10-25-validation.md)。
+[当前实现与验收索引](docs/development/current-state.md) · [M1至今缺口清单](docs/testing/M1-M10.5-gap-audit-2026-10-26.md) · [后续计划](docs/requirements/JHarness-next-plan-v1.0.md)
 
-2026-10-25：[R4 本地修复增量](docs/development/OCR-R4-remediation-2026-10-25.md)补强扩展表单、旧响应隔离、路由展示、报告独立预算与截断前脱敏。原115条索引已保留；R4仍在进行中，最终本地证据见[验收记录](docs/testing/OCR-R4-remediation-2026-10-25-validation.md)，不替代M10.5.9/M11准入。
-
-2026-10-24当前任务：独立推进[M10.5.9整阶段验收](docs/testing/M10.5.9-validation.md)，按原始契约执行当前版本跨平台、三浏览器及制品门禁。OCR R4～R6整体完成不作为本次前置；已获专用分支推送和Actions授权，实际结果归档后再更新完成状态。
-
-2026-10-23：[R4 工作台加固进展](docs/development/OCR-R4-progress-2026-10-23.md)已交付一批异步状态、密钥草稿、回答核对与展示修复；原115条范围仍在逐项复核，M10.5.9未完成。专用验证分支推送和 GitHub Actions 已获授权并执行；当前Windows专项定位及完整同提交门禁仍待通过。
-
-[R3 模型、工具、扩展与配置修复](docs/development/OCR-R3-remediation-2026-10-23.md)已完成304条采纳范围的本地实现、契约澄清与关联验证：640个Java用例、170项门禁、33项客户端及66项SDK检查通过；Windows/固定Docker专项与真实Linux目录别名反例通过。下一入口R4，M10.5.9和完整CI门禁保持。
-
-2026-10-23：2457 条 OCR 意见的核实与阶段计划见[核实报告](docs/development/code-review-2026-10-20.md)和[修复计划](docs/requirements/OCR-remediation-plan-2026-10-20.md)。R0/R1 已有本地修复证据，[R2 持久化与恢复修复](docs/development/OCR-R2-remediation-2026-10-22.md)已完成采纳范围的本地实现与验证（107条逐项台账，603个Java用例）。WebKit问答运行时断言仍失败，完整浏览器矩阵未通过，留R6定位；M10.5.9及M11准入仍按实际验收证据判断。
-
-后续开发已按用户要求插入 **M10.5工作台完善 → M11 Desktop → M12扩展**。M10.5包含九个切片，当前.1～.8已完成本地验收，.9整阶段验收实施中，覆盖多轮交互、会话容量/管理、错误恢复、模型协议、提问、展示、扩展、检索/SDK及整阶段验证；详细顺序和验收见[M10.5计划](docs/requirements/M10.5-workbench-improvement-plan.md)。M10.5.1已实现执行诊断、只读核实交接和权限选择，已完成本地验收，见[本片记录](docs/testing/M10.5.1-validation.md)。
-
-M10.5.2已支持工作区注册/切换、会话命名/置顶/分叉/导出/归档/恢复和分页，解除累计32条后不能新建的问题；使用见[会话管理](docs/examples/m10.5.2-history.md)。
-
-内容检索支持授权工作区/会话、归档、词语/短语与来源读取；外部集成见[TS/Python SDK](sdk/README.md)和[检索说明](docs/examples/m1058-search-sdk.md)。
-
-扩展设置支持可视化条目、显式技能目录与 `/技能名` 候选；MCP 支持受控文本资源和简单 URI 模板。详见[M10.5.7说明](docs/examples/m1057-extensions.md)。
-
-M10.5.3现可在已完成会话底部继续对话，忙碌时排队或发送下一轮补充，支持取消排队和受理核对；重启后显式开始，详见[多轮说明](docs/examples/m10.5.3-turns.md)。
-
-Web工作台新增「设置」入口：可添加/修改/删除模型连接、API URL和API Key并选择默认连接；密钥按用户选择保存在Windows凭据管理器，重启后可用。「插件与扩展」提供Planning、上下文压缩以及MCP/Skills等配置入口。详见[使用说明](docs/examples/web-ui-settings.md)与[增量验收](docs/testing/M10-settings-validation.md)。
-
-基于 Java 21 的可扩展 Agent Harness，需求基线为 [PRD v1.1](docs/requirements/JHarness-PRD-v1.1.md)。M0～M7 的本地实现范围和验收见各阶段记录，M7 最新计数与源码版本见 [收口记录](docs/testing/M7-closure.md)；CLI、持久化与恢复、SSE、上下文压缩、PTY/后台任务、多模型路线与命名配置组合已贯通。真实 DeepSeek 验收及费用证据见 [M4 验收记录](docs/testing/M4-validation.md)。M9源码的Windows/Linux/macOS远端CI历史证据见[M9验收](docs/testing/M9-validation.md)。M10新增Web工作台已完成本地验收，见[M10记录](docs/testing/M10-validation.md)。
+M11准入通过、Desktop尚未开始；R4逐项故障验证、R5的2条有限实施/11条后续及已知证据缺口继续保留。[仓库已公开](https://github.com/nixaveq141-ai/J-Harness)，采用Apache-2.0并保留第三方归因；当前代码在codex/m1059-full-validation，默认main与正式Release状态独立记录。
 
 ## 构建与启动
 
@@ -57,7 +35,7 @@ cd ..
 .\jharness.cmd --config docs/examples/m7-config.json serve
 ```
 
-手动serve前设置JHARNESS_WEB_TOKEN，浏览器打开输出的127.0.0.1地址后自动进入工作台。模型密钥可在连接后的设置页保存到系统凭据库，也可继续使用配置指定的环境变量。浏览器自动取得仅在内存中使用的本机会话，刷新自动重连，不把凭据放进URL或Web Storage。页面不会因刷新/断线重提任务；UNKNOWN需按现有CLI流程离线核实。本机serve需保持宿主运行，EOF或退出关闭。当前浏览器证据不代表已完成新版本的远端三平台验证。
+手动serve前设置JHARNESS_WEB_TOKEN，浏览器打开输出的127.0.0.1地址后自动进入工作台。模型密钥可在连接后的设置页保存到系统凭据库，也可继续使用配置指定的环境变量。浏览器自动取得仅在内存中使用的本机会话，刷新自动重连，不把凭据放进URL或Web Storage。页面不会因刷新/断线重提任务；UNKNOWN需按现有CLI流程离线核实。本机serve需保持宿主运行，EOF或退出关闭。运行时代码77e8855已完成三平台三引擎验收；精确环境、证据与保留缺口见[当前状态](docs/development/current-state.md)。
 
 ## 模型配置与交互
 
@@ -148,7 +126,7 @@ Docker 采用固定镜像摘要、非 root、只读根、禁外网、资源配�
 | harness-policy | 精确命令模板、默认 ASK/DENY、可取消审批 |
 | harness-tools | Schema、作用域、策略、审批、检查点和执行管线 |
 | harness-agent | 串行 Loop、事件派生请求、压缩插件、预算、取消与完成判定 |
-| harness-llm | JSON/SSE OpenAI-compatible、增量组装、惰性路由与请求元数据 |
+| harness-llm | 三协议文本/工具及有界SSE、增量组装、惰性路由与请求元数据 |
 | harness-ecosystem | 执行环境、Docker 工作程序、嵌入式 SDK、MCP/Skills 与只读 Subagent 插件 |
 | harness-web | 本机认证 API、持久任务提交、取消、工具审批、事件分页/SSE 与历史 Diff |
 | harness-cli | CLI、REPL、doctor、交互审批、恢复核实和报告 |
@@ -164,7 +142,7 @@ Loop 只依赖公共 API；CLI 通过 AgentLoopFactory 服务选择实现。插�
 - 默认策略只自动批准完整只读 Git status 模板；其他命令和写入 ASK。Windows .cmd/.bat 必须显式 Shell。
 - ProcessHandle 采样清理保留 partial 和观察范围；快速脱离的未观察进程无法保证清理，没有 Windows Job Object。命令输出/进程数/等待有界，PTY 已通过本机交互验证；任务不脱离 CLI/REPL 宿主存活。
 - 串行事件请求超时中断，但 Java 不能强制停止不响应中断的插件。热重载、隔离类加载器延期；本地没有 OS 沙箱，Docker 边界见 M7 契约。
-- 适配器明确禁用 thinking；支持有界 SSE，不支持 reasoning、图片。网络结果不明及 5xx 不自动重发；实时验收不配置重试。
+- Chat Completions路径禁用thinking；Responses支持适用的推理参数和加密推理状态回放，Anthropic文本/工具及SSE按有界子集支持；图片和Anthropic thinking/signature不支持。网络结果不明及 5xx 不自动重发；实时验收不配置重试。
 - 自动化测试使用 Fake LLM/本地 HTTP；付费真实验收另行执行，固定隔离夹具和预算，不进入默认构建。
 
 ## M8.1 检索过滤
@@ -173,17 +151,51 @@ Loop 只依赖公共 API；CLI 通过 AgentLoopFactory 服务选择实现。插�
 
 ## M8.2 只读工具调度
 
-顶层 `toolScheduling` 默认串行，显式 `readonly-parallel` 可启用宿主白名单内、注册 READ_ONLY 且策略直接 ALLOW 的工具并行。并发上限 1～8，结果按原调用顺序聚合，写入、命令和 ASK 审批先等待前面读取结算。取消/超时触发中断，仍未退出的工作线程记录 UNKNOWN；不重放未知结果。经典 CLI、SDK、生态入口/serve 共用调度插件，dry-run 与旧管线保持串行。配置、扩展及线程安全要求见 [只读调度](docs/examples/m8-tool-scheduling.md)，实际验证见 [M8 验收](docs/testing/M8-validation.md)。API/SDK 协议为 1.9，JSONL/schema 仍为 1；旧构造保留串行默认。
+顶层 `toolScheduling` 默认串行，显式 `readonly-parallel` 可启用宿主白名单内、注册 READ_ONLY 且策略直接 ALLOW 的工具并行。并发上限 1～8，结果按原调用顺序聚合，写入、命令和 ASK 审批先等待前面读取结算。取消/超时触发中断，仍未退出的工作线程记录 UNKNOWN；不重放未知结果。经典 CLI、SDK、生态入口/serve 共用调度插件，dry-run 与旧管线保持串行。配置、扩展及线程安全要求见 [只读调度](docs/examples/m8-tool-scheduling.md)，实际验证见 [M8 验收](docs/testing/M8-validation.md)。M8引入时API/SDK协议为1.9；当前为1.14，JSONL/schema 仍为 1；旧构造保留串行默认。
 
 ## M8.3 模型限流与重试
 
 顶层 `modelResilience` 默认关闭；启用后在同一作用域内限制请求间隔和等待者数量，仅对明确收到的非流式429作有限退避。每次尝试独立准备、预留费用、落盘及校验请求；UNKNOWN、超时、断流及工具调用不重放。标准插件唯一拥有重试次数，避免与适配器内层重试叠加，取消和卸载可停止等待。配置、SDK兼容构造及限制见 [模型限流与重试](docs/examples/m8-model-resilience.md)；M8.4已完成所选范围收口，详见下节。
 
-## M8 收口
+## M8 收口（历史阶段验收）
 
-M8.1～M8.4所选范围已完成：Windows与Linux容器各295项通过，零失败/错误/跳过，259个Java/POM哈希一致；七组最终JAR本地/真实Docker回归及清理通过。收口校验器绑定测试、源码、日志和制品，拒绝旧/不完整证据。验收矩阵、机器摘要与保留限制见 [M8收口](docs/testing/M8-closure.md)。API/SDK1.9，JSONL/schema仍1。
+M8.1～M8.4所选范围已完成：Windows与Linux容器各295项通过，零失败/错误/跳过，259个Java/POM哈希一致；七组最终JAR本地/真实Docker回归及清理通过。收口校验器绑定测试、源码、日志和制品，拒绝旧/不完整证据。验收矩阵、机器摘要与保留限制见 [M8收口](docs/testing/M8-closure.md)。该阶段API/SDK1.9；当前API/SDK1.14，JSONL/schema仍1。
 
 上述为M8历史快照。M9发布验证已收口；M10 Web工作台已完成本地验收，Desktop留待M11。
+
+## 历史进展记录
+
+<details>
+<summary>按原日期保留的阶段快照；后续状态见当前索引</summary>
+
+
+2026-10-26：项目已[公开开源](https://github.com/nixaveq141-ai/J-Harness)，保持Apache-2.0及第三方归因。[M10.5.9整阶段验收](docs/testing/M10.5.9-validation.md)与R6采纳范围已收尾：[完整CI40284862454](https://github.com/nixaveq141-ai/J-Harness/actions/runs/40284862454)同77e8855三平台通过，三份原包已严格独立核对。M11准入通过，尚未开始实现；最新代码仍在codex/m1059-full-validation，未合并main或发布Release。下文旧状态保留为历史快照，R4/R5后续项及已知限制不改写为完成。
+
+2026-10-25：[R5 本地修复增量](docs/development/OCR-R5-remediation-2026-10-25.md)覆盖有界编码、检索索引与并发、工具预览/分页和压缩审计；64 条台账中 51 条本轮补强、2 条有限实施、11 条后续项，R5 仍在进行中。验证与限制见[验收记录](docs/testing/OCR-R5-remediation-2026-10-25-validation.md)。
+
+2026-10-25：[R4 本地修复增量](docs/development/OCR-R4-remediation-2026-10-25.md)补强扩展表单、旧响应隔离、路由展示、报告独立预算与截断前脱敏。原115条索引已保留；R4仍在进行中，最终本地证据见[验收记录](docs/testing/OCR-R4-remediation-2026-10-25-validation.md)，不替代M10.5.9/M11准入。
+
+2026-10-24当前任务：独立推进[M10.5.9整阶段验收](docs/testing/M10.5.9-validation.md)，按原始契约执行当前版本跨平台、三浏览器及制品门禁。OCR R4～R6整体完成不作为本次前置；已获专用分支推送和Actions授权，实际结果归档后再更新完成状态。
+
+2026-10-23：[R4 工作台加固进展](docs/development/OCR-R4-progress-2026-10-23.md)已交付一批异步状态、密钥草稿、回答核对与展示修复；原115条范围仍在逐项复核，M10.5.9未完成。专用验证分支推送和 GitHub Actions 已获授权并执行；当前Windows专项定位及完整同提交门禁仍待通过。
+
+[R3 模型、工具、扩展与配置修复](docs/development/OCR-R3-remediation-2026-10-23.md)已完成304条采纳范围的本地实现、契约澄清与关联验证：640个Java用例、170项门禁、33项客户端及66项SDK检查通过；Windows/固定Docker专项与真实Linux目录别名反例通过。下一入口R4，M10.5.9和完整CI门禁保持。
+
+2026-10-23：2457 条 OCR 意见的核实与阶段计划见[核实报告](docs/development/code-review-2026-10-20.md)和[修复计划](docs/requirements/OCR-remediation-plan-2026-10-20.md)。R0/R1 已有本地修复证据，[R2 持久化与恢复修复](docs/development/OCR-R2-remediation-2026-10-22.md)已完成采纳范围的本地实现与验证（107条逐项台账，603个Java用例）。WebKit问答运行时断言仍失败，完整浏览器矩阵未通过，留R6定位；M10.5.9及M11准入仍按实际验收证据判断。
+
+后续开发已按用户要求插入 **M10.5工作台完善 → M11 Desktop → M12扩展**。M10.5包含九个切片，当前.1～.8已完成本地验收，.9整阶段验收实施中，覆盖多轮交互、会话容量/管理、错误恢复、模型协议、提问、展示、扩展、检索/SDK及整阶段验证；详细顺序和验收见[M10.5计划](docs/requirements/M10.5-workbench-improvement-plan.md)。M10.5.1已实现执行诊断、只读核实交接和权限选择，已完成本地验收，见[本片记录](docs/testing/M10.5.1-validation.md)。
+
+M10.5.2已支持工作区注册/切换、会话命名/置顶/分叉/导出/归档/恢复和分页，解除累计32条后不能新建的问题；使用见[会话管理](docs/examples/m10.5.2-history.md)。
+
+内容检索支持授权工作区/会话、归档、词语/短语与来源读取；外部集成见[TS/Python SDK](sdk/README.md)和[检索说明](docs/examples/m1058-search-sdk.md)。
+
+扩展设置支持可视化条目、显式技能目录与 `/技能名` 候选；MCP 支持受控文本资源和简单 URI 模板。详见[M10.5.7说明](docs/examples/m1057-extensions.md)。
+
+M10.5.3现可在已完成会话底部继续对话，忙碌时排队或发送下一轮补充，支持取消排队和受理核对；重启后显式开始，详见[多轮说明](docs/examples/m10.5.3-turns.md)。
+
+Web工作台新增「设置」入口：可添加/修改/删除模型连接、API URL和API Key并选择默认连接；密钥按用户选择保存在Windows凭据管理器，重启后可用。「插件与扩展」提供Planning、上下文压缩以及MCP/Skills等配置入口。详见[使用说明](docs/examples/web-ui-settings.md)与[增量验收](docs/testing/M10-settings-validation.md)。
+
+基于 Java 21 的可扩展 Agent Harness，需求基线为 [PRD v1.1](docs/requirements/JHarness-PRD-v1.1.md)。M0～M7 的本地实现范围和验收见各阶段记录，M7 最新计数与源码版本见 [收口记录](docs/testing/M7-closure.md)；CLI、持久化与恢复、SSE、上下文压缩、PTY/后台任务、多模型路线与命名配置组合已贯通。真实 DeepSeek 验收及费用证据见 [M4 验收记录](docs/testing/M4-validation.md)。M9源码的Windows/Linux/macOS远端CI历史证据见[M9验收](docs/testing/M9-validation.md)。M10新增Web工作台已完成本地验收，见[M10记录](docs/testing/M10-validation.md)。
 
 ## 开发记录
 
@@ -231,3 +243,5 @@ M10.5.6已完成本地验收：对话/安全Markdown与代码复制、工具/变
 M10.5.9当前本地验证、三平台CI准备和保留门禁见[验收状态](docs/testing/M10.5.9-validation.md)。本轮专用验证分支推送/CI已获授权并执行11轮完整运行；六轮Windows专项完成剩余浏览器定位，第十一轮Linux暴露MCP清理根Process回收缺口。修复后的三平台进程专项各31项、本地649项全量已通过；正在复验Windows Chromium回执采集单组，随后完整同提交验收，完整门禁闭合前不进入M11。R4～R6另按OCR范围继续，不作为本次整批前置。
 
 2026-10-19 M10.5.9实施中、本机部分验收和CI准备完成：Java410/客户端33、Chrome155与WebKit26.5各271项共542、SDK58、示例2、启动器8及Windows原生7通过，候选真实安装/审批/取消/显式恢复5项通过；Maven18依赖OSV、前端6运行依赖SBOM/npm审计0发现、SDK零外部依赖源码清单及秘密模式门禁已核对。跨引擎夹具保持断言并修正异步等待，受控断网/停机的只读诊断单独留痕。Firefox原包14001，隔离清单副本仅版本探针成功，实际无头启动仍失败；不计通过。证据M10.5.9-results.json/validation.md为LOCAL_PARTIAL_CI_PENDING、m11Eligible=false；三平台/三引擎严格CI工作流已准备但未授权推送/未运行，不能收口或进入M11。下一步取得对应推送/CI授权后在当前版本真实Windows/Linux/macOS运行并解决失败。保留原审查草稿，参考目录未改，无付费模型请求。
+
+</details>

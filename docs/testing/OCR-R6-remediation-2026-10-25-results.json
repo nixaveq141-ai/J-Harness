@@ -560,5 +560,19 @@
       "sha256": "a2da7ec12e6cad27838488ee6034e0fd3908a85f63697fa994af11925f44e04c"
     },
     "rootCause": "Exact known synthetic message hash matches stopped-origin GET /v1/tasks?limit=32&view=active&profile=default. Existing classifier accepted unprofiled list only."
+  },
+  "documentationFollowup": {
+    "date": "2026-10-26",
+    "audit": "docs/testing/M1-M10.5-gap-audit-2026-10-26.json",
+    "acceptedRuntimeCommit": "77e8855edaab0f7e543c9709c95513e3a0a2c4bb",
+    "buildInputDocChanges": [
+      {
+        "path": "docs/examples/m1059-distribution.md",
+        "acceptedBuildSha256": "9d9002592276d584f6a9bc7b6b2feab5dea3179ce69e382c54b5df4c96eca1b8",
+        "currentDocumentationSha256": "9d8c38211bc768a6ff5ff83b754e9fa60b8b7a64917874472f70a2ea7286a6ed",
+        "kind": "DOCUMENTATION_ONLY_NO_NEW_CANDIDATE_ACCEPTANCE"
+      }
+    ],
+    "newCandidateAccepted": false
   }
 }

@@ -1,6 +1,6 @@
 # M8.3 模型限流与重试
 
-`modelResilience` 是宿主配置，可用于经典 CLI、生态 CLI/serve；Profile/Preset settings 按整对象覆盖。默认关闭。将 [配置片段](m8-model-resilience.json) 合并到已有模型配置，不含凭据；`doctor` 不发送请求。适用 API/SDK 1.9，JSONL/schema 仍为1。
+`modelResilience` 是宿主配置，可用于经典 CLI、生态 CLI/serve；Profile/Preset settings 按整对象覆盖。默认关闭。将 [配置片段](m8-model-resilience.json) 合并到已有模型配置，不含凭据；`doctor` 不发送请求。该能力由API/SDK1.9引入，当前API/SDK1.14保留此配置，JSONL/schema 仍为1。
 
 ```json
 {

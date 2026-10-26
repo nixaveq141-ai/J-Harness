@@ -18,7 +18,7 @@ J-Harness 的本机单操作者，通过浏览器管理可信配置中的开发�
 
 内容检索在已注册工作区的授权会话正文中查找来源，支持归档与会话范围；读取结果不提交任务。外部 TypeScript/Python 客户端通过独立 stdio 边界复用相同服务和权限，超时/断线先核对受理，不自动重发。
 
-通过独立设置入口管理可信模型连接和扩展。模型密钥按用户明确选择保存到当前Windows用户的系统凭据库；任务内容和模型输出不能更改配置。
+通过独立设置入口管理可信模型连接和扩展。模型密钥按用户明确选择保存到当前用户的Windows Credential Manager、macOS Keychain或Linux Secret Service（依平台服务条件）；任务内容和模型输出不能更改配置。
 
 ## Capabilities and Constraints
 
@@ -32,7 +32,7 @@ Java Runtime 是执行、权限和持久化的事实来源。页面只调用本�
 
 ## Evidence on Hand
 
-M9 历史验收；M10-frontend-reuse-review.md 与来源哈希清单。新界面须产生新的浏览器证据。
+M10.5.9运行时代码77e8855的三平台/三浏览器完整验收及原包审计已通过；当前状态与保留缺口见docs/development/current-state.md。M10-frontend-reuse-review.md与来源哈希保留，新界面变更仍需新的适用浏览器证据。
 
 操作者可注册可信工作区并管理会话名称、置顶、分叉、导出、归档/恢复和分页；历史与32对象热集分离，工作区未决占用跨目录保持。
 

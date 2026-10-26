@@ -1,6 +1,6 @@
 # J-Harness 本地验收候选包
 
-这是0.1.0-SNAPSHOT候选包，不表示已正式发布或完成M10.5.9跨平台准入。需要Java21；TypeScript源码客户端需要支持原生TS stripping的Node，Python客户端使用标准库。当前Java API/SDK1.14、独立stdio协议1.0，JSONL/schema1、Web目录4。
+这是0.1.0-SNAPSHOT候选包。77e8855已完成M10.5.9三平台验收与原包审计，正式Release仍未发布。需要Java21；TypeScript源码客户端需要支持原生TS stripping的Node，Python客户端使用标准库。当前Java API/SDK1.14、独立stdio协议1.0，JSONL/schema1、Web目录4。
 
 解压后运行 `jharness.cmd --version`（Windows）或 `sh jharness --version`（POSIX）；配置JAVA_HOME为Java21目录。`doctor`只检查本机条件，不发送模型请求。模型凭据使用环境变量或已有系统凭据，不能写进命令参数或明文配置。选择合适权限，逐次批准写入/命令；完成依据显式读取/文件版本/验证命令证据，不依据模型总结。
 
@@ -13,3 +13,5 @@ manifest.json列出文件摘要；Maven、前端与SDK分别附bom.json、fronte
 持久性边界：文件 force(true) 与原子替换保证的是已检查的文件内容/进程崩溃路径；当前没有对所有平台父目录执行 fsync 的统一保证，不能据此承诺断电后目录项持久。Windows、Linux、macOS 的实际验收范围按本轮 runner/CPU 记录；pty4j 原生文件不等于所有 CPU 均已实测。
 
 基础 base 路由与 models.primary 是独立可选路线，修改其中一项不会联动修改另一项。示例费用预留按 inputTokenCeiling/maxOutputTokens 的单次保守上界计算，不承诺 maxSteps 步一定可运行；示例不代表当前服务商报价。
+
+本文于2026-10-26更新验收状态；既有CI制品仍绑定77e8855及其原始manifest。后续重新打包应生成新的候选清单与适用安装回执，文档更新本身不构成新制品验收。最新状态见[当前索引](../development/current-state.md)。
