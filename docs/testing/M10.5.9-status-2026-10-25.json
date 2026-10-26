@@ -2,17 +2,17 @@
   "schemaVersion": 1,
   "date": "2026-10-25",
   "milestone": "M10.5.9",
-  "status": "PUBLIC_FULL_CI_FAILED_PROFILED_POLL_FOCUSED_PENDING",
-  "m11Eligible": false,
-  "codeCommit": "11e4024c090bf1c63c0adecc823de8a86c541d69",
+  "status": "COMPLETE",
+  "m11Eligible": true,
+  "codeCommit": "77e8855edaab0f7e543c9709c95513e3a0a2c4bb",
   "sourceSha256": {
     ".gitattributes": "5a06a6695f98e107e44d35dfef9c4eecdde9f370a2d8231791ce6c710dffa1af",
     ".github/workflows/ci.yml": "56900c8b4061706bb4bb051767658014001f5037b3da344f8bac3b6da825848b",
     ".github/workflows/m1059-native-focused.yml": "438fff9287a2282389e791ce1158f126b669cfdfb34abd5b2a66560fe78041c1",
-    ".github/workflows/m1059-process-focused.yml": "b31e633e18a2cd13b55c3f595d38c8a255e32f7f7ca4dc90fb5864fd1308c145",
+    ".github/workflows/m1059-process-focused.yml": "d71a13b81a0179266a66d462f697d278121c2e1e08cf8b7a69d0fffdae3c7c57",
     ".github/workflows/m1059-sdk-focused.yml": "6059ba06e53102e978e8d0ceee74304c66fe50bcf0d754b5aca7265b876cb3d6",
-    ".github/workflows/m1059-settings-focused.yml": "8707d335fe3a66f9e04a630380da0aea6ca1e9056e1c308474e366541b8df87e",
-    ".github/workflows/m1059-windows-focused.yml": "e0e76c544224e4967de34003d45203f9fecc1cb79b17bb43d3f90d897c0982af",
+    ".github/workflows/m1059-settings-focused.yml": "6170c1c4a967929d57ddf95907ed7eb19d08206a123392b3060a0ae9e04c96a5",
+    ".github/workflows/m1059-windows-focused.yml": "ef80c838c231428290bb37c414c1dc9a4e185b7c10b9029ebb909bf646f30041",
     ".github/workflows/native-credentials.yml": "47b579f7e92f3cf2802154923b57a3a8804320a2117b4672e96e27245ba39727",
     ".gitignore": "34eefe823abfb61c9c7e1877b2762fd05e55b547bac4f503f00303a1fd869751",
     ".mvn/wrapper/Bootstrap.java": "d2eff546cc02ed9f313019c24c40284746143449c35db844cd68ec236910476f",
@@ -68,19 +68,19 @@
     "frontend/tests/browser.mjs": "d5149280a125db989fd7f9dcea95efea0b061672d5688309b2d7d833c31550d4",
     "frontend/tests/cleanup.mjs": "0d54af7fb45da15f13657cba0b9caaaa3b4f88a86994644c23fb0d42e86ce84d",
     "frontend/tests/cleanup.test.mjs": "7bb6d72c6b749c1ae2385046ae7e12f4c96a6bb0a1e4a08562aafba6c3c90e1f",
-    "frontend/tests/client.test.ts": "9e8408c53371020973b79543152ade840bc0fafa5162970a01f28ddd376d4abe",
+    "frontend/tests/client.test.ts": "dff62d16c0c16d04975e52a4b65e56039639dad58514ca5f6bdef00475ce3e43",
     "frontend/tests/content.mjs": "73f3b115b03379458504b09d3d99e7cba622f488f5997cade4332dd9b2e7269f",
     "frontend/tests/development.mjs": "4039a5d9e35a71c0079fefafc10f45999dc16cf140522b712ffe30adeca3d56b",
     "frontend/tests/diagnosis.mjs": "c7f5fd635fa152943e8df07f5a3fc6b315bb727d90a567d82084305cde31d854",
     "frontend/tests/diagnostics/webkit-navigation.mjs": "294f4b435d81a862b574d936f28a4d22cabdb15f3fc93878a81c6ddb06ecf6fc",
     "frontend/tests/extensions.mjs": "49e8ce202fee3c1134e50242bf27722be14014a09e9b854aeb155c6e19fd1a39",
-    "frontend/tests/history.mjs": "3e25e94588197dddfb4b9587c148b261a7d75de725c4586676422cd5daf568de",
-    "frontend/tests/models.mjs": "c57f5be3cf71a5926dee20a80d48698c9b755d2baf339268a389b0eb22534239",
+    "frontend/tests/history.mjs": "8df2e1dd1e3aec9d99c8d5c2199b15dfc78c66730cf8d1c91a01a74e1c5563ec",
+    "frontend/tests/models.mjs": "223810f7d0eae81f2bf6b2b7baf488429056d251f8f3ef47d70e86d089c5236f",
     "frontend/tests/questions.mjs": "f222e443562ff38a32bddf252b6f0030859bee6f746be0850c4e226caf9da907",
     "frontend/tests/r4-fixture.tsx": "f21edaf5db321793b5ada84616d1e32f3397188a7fa842f6b01a705a724fbeaf",
     "frontend/tests/r4.mjs": "b42411f515d334a7e0fa6b0237fe005ba864338f3203faa57a08559f7846c446",
     "frontend/tests/runtime.d.mts": "15f419a517ce26e90bf211b664af9a472c9c1e1aa97177c0ee46c07c27456f0b",
-    "frontend/tests/runtime.mjs": "cab448ba10451ae68c3f11ab733f96121b8b62628b3960286c407daafa4dfe02",
+    "frontend/tests/runtime.mjs": "79f579460f2d50b38c29bdc6581cad92d299a0f9be31c2318abce28a90a64b45",
     "frontend/tests/search.mjs": "0c06257362cdf7fce4ae73a4ce2a861ffeb497b46eb911d9456daa167fcf1ae0",
     "frontend/tests/settings.mjs": "c9a8178819e2b26e1528ffe365e4dd50f469d8badb317c43abed40e77048806b",
     "frontend/tests/turns.mjs": "c0e33e4a6762650eabe5ea6fe50bed3d135aecf8ff6096f23edea08c4dbae149",
@@ -539,7 +539,7 @@
     "scripts/test-smoke-evidence.py": "08722f3adb76ec50aa3c4fde23acf630f8be8001a19e2b1fc154156cafa3006f",
     "scripts/test-source-secrets.py": "d7768059feb6e7553f20965bf161fafe7e7f2abb6ee82541b01bbfed7037626d",
     "scripts/test-windows-credential-compat.py": "9b81e783d0a60513bd431245800377d74c5f4e6151feae4a3cfa70e5f9895656",
-    "scripts/test-workbench-evidence.mjs": "ebb78a0be115c3686d744e05e83354ecee4b37d41cabeb6ce049cddeb61466ec",
+    "scripts/test-workbench-evidence.mjs": "f144627d56bebf7248ecc6691320d281d8122cab4cc93f407249421d2060c2a8",
     "scripts/ts-runtime-imports.mjs": "9346524c27e0a404da165ceef2ba8288d780ff0436cb7611faf64edf32f17723",
     "scripts/ui-bundle.py": "516e7ea117681c159bf7209a274fd05b555e7e8658bb3c9230467c5bb53b1ce7",
     "scripts/verify-m8-closure.py": "9000e37a4de773d3a01884ed4d187f23314b8a61418aa362099bafa1e46998c4",
@@ -547,7 +547,7 @@
     "scripts/verify-r1-implementation.py": "a7547e6a5c43fba989a82d29fd974d827170aaecd63ac2a7266b5074526203f6",
     "scripts/verify-r123r-implementation.py": "b3163361851a9a7bd116732f1c840e3ba93f05cf23b3da1922a2fb557e5149a0",
     "scripts/workbench-case-contract.json": "5c24b1e84ed7952a8745cb91cd6366144c7bcee48abe018ee4b9a827ccc8a19c",
-    "scripts/workbench-evidence.mjs": "aece3ef0c9059ec731e58ba6700dfdf47aeef49e018bca15355aa26eaa0c9aee",
+    "scripts/workbench-evidence.mjs": "4abab8d517e075de1e6bdfb665a08eb8e85fe375d2c6f59c2521da90f03ca812",
     "sdk/examples/demo.json": "ae8c1814945a367c9afbbea7e4d3501fdcb16459f0bb352cc4806af0c6b1a011",
     "sdk/examples/loopback_provider.py": "6844649611bb06e0237fddfe5ecb15cab5928b65e2f14866244fefb2d7cca57f",
     "sdk/examples/run.py": "dac6de112151fa9a957047312b22932c7ed8c4d959325b17ff06e12100a6cce9",
@@ -604,9 +604,9 @@
     "third-party/upstream/wrapper-NOTICE": "706530c7c8baaa8dd4b37f3f12c87042c73b9d53051a0197770373516d85ec0f",
     "web-ui.cmd": "c28ea8a03f496f223c67f06d595d55925f6cc83e01aaed58d1d6511c5142d82e"
   },
-  "finalAcceptancePassed": false,
+  "finalAcceptancePassed": true,
   "paidRequests": 0,
-  "reason": "User authorized open sourcing; repository verified public and anonymous-readable. Both focused scopes passed and original artifacts audited.",
+  "reason": "Exact original three-runner ZIP/XML/case/receipt/JAR/UI/SDK/native/candidate audit passed.",
   "blockedRuns": [
     {
       "id": "40192469338",
@@ -644,11 +644,7 @@
     "gates": 192
   },
   "resume": [
-    "Wait for the included allowance reset shown as2026-11-01, or use another billing decision explicitly chosen by the user; verify budget/quota before any new cloud jobs",
-    "Run and audit the exact three-runner session5 and two-runner extension35 diagnostics on the current code",
-    "Run one complete Windows/Linux/macOS acceptance on that same code commit",
-    "Acquire original ZIPs, verify full Java702/119, client42, SDK66, native7, examples2, Windows launcher8 and browser33/813 per runner, supply-chain and candidate evidence",
-    "Require strict same-run aggregate and independent original-ZIP audit before marking M10.5.9 complete or M11 eligible"
+    "M11 is eligible, not implemented by this closeout. No main merge or Release."
   ],
   "currentLocalFrozenComponents": {
     "path": ".build-cache/R6-2026-10-25/final6-frozen-components/manifest.json",
@@ -745,26 +741,13 @@
     "releasePublished": false
   },
   "currentFullCi": {
-    "runId": "40199991323",
-    "commit": "4797a857ec326c17dd4b35da71e5b8c7b9f5e8da",
-    "status": "FAILED",
-    "Linux": "PASS",
-    "macOS": "PASS",
-    "Windows": "Java702/119 client42 SDK66 native7 examples2 passed; browser32/33 groups794 passed; WebKit history final invariant failed",
-    "diagnostic": {
-      "checksCompleted": 18,
-      "pageErrorCount": 1,
-      "hostContainsKey": false,
-      "storageContainsKey": false,
-      "unauthenticatedRequests": 0,
-      "accessControl": true,
-      "stoppedOrigin": true,
-      "currentOrigin": false,
-      "route": "/v1/tasks",
-      "length": 92,
-      "sha256": "a2da7ec12e6cad27838488ee6034e0fd3908a85f63697fa994af11925f44e04c"
-    },
-    "rootCause": "Exact known synthetic message hash matches stopped-origin GET /v1/tasks?limit=32&view=active&profile=default. Existing classifier accepted unprofiled list only."
+    "runId": "40284862454",
+    "commit": "77e8855edaab0f7e543c9709c95513e3a0a2c4bb",
+    "url": "https://github.com/nixaveq141-ai/J-Harness/actions/runs/40284862454",
+    "status": "PASS",
+    "originalArtifactsIndependentlyAudited": true,
+    "results": "docs/testing/M10.5.9-public-final-2026-10-26-results.json",
+    "originalAuditSha256": "0dfd548f493a49e8f52308a2d97fec9c93163b06e83b8c8a08da35a77b5b0036"
   },
   "publicFullRun40195474698": {
     "commit": "11e4024c090bf1c63c0adecc823de8a86c541d69",
@@ -850,8 +833,58 @@
     "rootCause": "CLI compared raw import.meta.url with canonical argv URL. Windows case/short aliases can differ; old behavior deterministically returns 0 with no JSON on case variants."
   },
   "profiledPollFollowup": {
-    "status": "LOCAL_CLIENT42_PASS_HISTORY19_PASS_REMOTE_PENDING",
+    "status": "WINDOWS_THREE_ROUNDS_19_PASS",
     "fix": "Accept only existing active32 GET signature with optional bounded identifier profile; stopped-origin requirement retained; no action/duplicate/after/invalid profile accepted.",
-    "scope": "Original42 client identities and original19 history checks unchanged; Windows history-only manual diagnostic now three rounds, stop at first failure."
+    "scope": "Original42 client identities and original19 history checks unchanged; Windows history-only manual diagnostic now three rounds, stop at first failure.",
+    "focusedEvidence": {
+      "status": "PASS",
+      "runId": "40201926086",
+      "commit": "77e8855edaab0f7e543c9709c95513e3a0a2c4bb",
+      "artifactId": 12601359495,
+      "archiveSha256": "dc35008c421f3d441ff00bfa0e8b4703be7a6617bcec3c4a8d34e4f6bc529f15",
+      "rounds": [
+        {
+          "round": 1,
+          "checks": 19,
+          "recordSha256": "28bb3b9f6d364ec978557b38f94b355538baf794ee5d731e57e30d385aa237b9",
+          "transportDiagnostics": 1
+        },
+        {
+          "round": 2,
+          "checks": 19,
+          "recordSha256": "17d476cad15aaaa5763aa898857794727275cfc9cbc70569d910649c8dc6e66f",
+          "transportDiagnostics": 0
+        },
+        {
+          "round": 3,
+          "checks": 19,
+          "recordSha256": "83a540d8f1d6434a2dbf7ddacdf5d9a18983af47ba97a3f4576288326170fcdd",
+          "transportDiagnostics": 0
+        }
+      ]
+    }
+  },
+  "updatedAt": "2026-10-26",
+  "publicFullRun40199991323": {
+    "runId": "40199991323",
+    "commit": "4797a857ec326c17dd4b35da71e5b8c7b9f5e8da",
+    "status": "FAILED",
+    "Linux": "PASS",
+    "macOS": "PASS",
+    "Windows": "Java702/119 client42 SDK66 native7 examples2 passed; browser32/33 groups794 passed; WebKit history final invariant failed",
+    "diagnostic": {
+      "checksCompleted": 18,
+      "pageErrorCount": 1,
+      "hostContainsKey": false,
+      "storageContainsKey": false,
+      "unauthenticatedRequests": 0,
+      "accessControl": true,
+      "stoppedOrigin": true,
+      "currentOrigin": false,
+      "route": "/v1/tasks",
+      "length": 92,
+      "sha256": "a2da7ec12e6cad27838488ee6034e0fd3908a85f63697fa994af11925f44e04c"
+    },
+    "rootCause": "Exact known synthetic message hash matches stopped-origin GET /v1/tasks?limit=32&view=active&profile=default. Existing classifier accepted unprofiled list only."
   }
 }

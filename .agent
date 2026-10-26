@@ -1,8 +1,10 @@
 # J-Harness 项目接续说明
 
-最后更新：2026-10-25（Asia/Shanghai）。根目录 AGENTS.md 引用本文件。开始实现前阅读，并以当前源码、Git 与验收记录核实日期快照。
+最后更新：2026-10-26（Asia/Shanghai）。根目录 AGENTS.md 引用本文件。开始实现前阅读，并以当前源码、Git 与验收记录核实日期快照。
 
 ## 当前接续状态
+
+- 2026-10-26最终收尾：仓库已公开；77e8855的完整CI40284862454三平台全部通过，三份原ZIP/119套件精确XML、702 Java、42客户端、33组813浏览器、66 SDK、7原生、2示例、命令回执/JAR/UI/候选ZIP及安装门禁已独立核对，严格同commit/runId/source/UI，M10.5.9完成、M11准入通过但未实施。R6按148实施/补强、18保留、20澄清的原186采纳范围收尾，不等于186个独立动态缺陷；R4/R5后续及Docker/文件系统等限制保留。Windows停机带profile轮询分类及证据CLI入口已按精确根因修正；较早macOS模型按钮失败未在后续定点和最终CI复现，仍不补猜原因。完整证据见docs/testing/M10.5.9-public-final-2026-10-26-results.json；以下旧状态均为对应日期/轮次的历史快照，不代表当前阻塞。
 
 - 2026-10-25完整40199991323@4797a85：Linux/Mac全过，Windows Java702/119、客户端42、SDK66、原生7及32/33浏览器组794过，WebKit history最后联合断言失败。固定诊断确认唯一旧已停来源CORS、零泄漏/未认证；92字节摘要精确匹配GET tasks active32&profile=default，原分类漏带profile读取。仅允许可选1..128安全标识符profile，原stopped-origin及写入/参数负例保留；旧false/新true/活动源false对照、客户端42及本机WebKit history19过。Windows定点改三轮19，先定点后必要同版本整体验收；M10.5.9/M11仍未完成。
 

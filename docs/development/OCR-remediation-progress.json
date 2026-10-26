@@ -1,11 +1,11 @@
 {
-  "updatedAt": "2026-10-25",
+  "updatedAt": "2026-10-26",
   "phase": "R6",
-  "status": "LOCAL_VALIDATED_CI_PENDING",
+  "status": "COMPLETE",
   "details": "docs/development/OCR-R6-remediation-2026-10-25.md",
   "productMilestone": "M10.5.9",
-  "productStatus": "PUBLIC_FULL_CI_FAILED_PROFILED_POLL_FOCUSED_PENDING",
-  "m11Eligible": false,
+  "productStatus": "COMPLETE",
+  "m11Eligible": true,
   "r0Rereview": {
     "sessionId": "eed6a134-1d3b-4e89-adaa-a0e9b2ba1f19",
     "status": "ADOPTED_SCOPE_LOCAL_VALIDATED_CI_PENDING",
@@ -123,20 +123,20 @@
       "description": "2026-10-25 R5 本地修复增量：64条范围中51条本轮实施/补强、2条有限实施、11条后续；相关套件不等于逐条精确窗口或整阶段通过。详见OCR-R5-remediation-2026-10-25及scope台账。"
     },
     "R6-01": {
-      "status": "LOCAL_VALIDATED_PIPELINE_PENDING",
-      "description": "R6采纳范围本地19组936及同JAR专项/安装通过；用户已明确要求开源，仓库public并匿名可读。公开后session专项40195176899三平台各5、extensions专项40195179536两平台各35和5份原包核对过，当前同11e4024完整40195474698进行中；严格三侧原包审计前M10.5.9/M11不准入，原计费阻塞保留为历史。"
+      "status": "COMPLETE",
+      "description": "R6采纳范围已实施/补强并完成同77e8855、同40284862454三平台原包严格审计；各702 Java/119套件、42客户端、813浏览器、66 SDK、7原生、2示例及发布/候选安装门禁通过。148实施/补强、18保留、20澄清不等于186独立故障注入；R4/R5后续、Docker实际运行验证缺口与既有竞态限制保留。详见M10.5.9-public-final-2026-10-26-results.json。"
     },
     "R6-02": {
-      "status": "LOCAL_VALIDATED_PIPELINE_PENDING",
-      "description": "R6采纳范围本地19组936及同JAR专项/安装通过；用户已明确要求开源，仓库public并匿名可读。公开后session专项40195176899三平台各5、extensions专项40195179536两平台各35和5份原包核对过，当前同11e4024完整40195474698进行中；严格三侧原包审计前M10.5.9/M11不准入，原计费阻塞保留为历史。"
+      "status": "COMPLETE",
+      "description": "R6采纳范围已实施/补强并完成同77e8855、同40284862454三平台原包严格审计；各702 Java/119套件、42客户端、813浏览器、66 SDK、7原生、2示例及发布/候选安装门禁通过。148实施/补强、18保留、20澄清不等于186独立故障注入；R4/R5后续、Docker实际运行验证缺口与既有竞态限制保留。详见M10.5.9-public-final-2026-10-26-results.json。"
     },
     "R6-03": {
-      "status": "LOCAL_VALIDATED_PIPELINE_PENDING",
-      "description": "R6采纳范围本地19组936及同JAR专项/安装通过；用户已明确要求开源，仓库public并匿名可读。公开后session专项40195176899三平台各5、extensions专项40195179536两平台各35和5份原包核对过，当前同11e4024完整40195474698进行中；严格三侧原包审计前M10.5.9/M11不准入，原计费阻塞保留为历史。"
+      "status": "COMPLETE",
+      "description": "R6采纳范围已实施/补强并完成同77e8855、同40284862454三平台原包严格审计；各702 Java/119套件、42客户端、813浏览器、66 SDK、7原生、2示例及发布/候选安装门禁通过。148实施/补强、18保留、20澄清不等于186独立故障注入；R4/R5后续、Docker实际运行验证缺口与既有竞态限制保留。详见M10.5.9-public-final-2026-10-26-results.json。"
     },
     "R6-04": {
-      "status": "LOCAL_VALIDATED_PIPELINE_PENDING",
-      "description": "R6采纳范围本地19组936及同JAR专项/安装通过；用户已明确要求开源，仓库public并匿名可读。公开后session专项40195176899三平台各5、extensions专项40195179536两平台各35和5份原包核对过，当前同11e4024完整40195474698进行中；严格三侧原包审计前M10.5.9/M11不准入，原计费阻塞保留为历史。"
+      "status": "COMPLETE",
+      "description": "R6采纳范围已实施/补强并完成同77e8855、同40284862454三平台原包严格审计；各702 Java/119套件、42客户端、813浏览器、66 SDK、7原生、2示例及发布/候选安装门禁通过。148实施/补强、18保留、20澄清不等于186独立故障注入；R4/R5后续、Docker实际运行验证缺口与既有竞态限制保留。详见M10.5.9-public-final-2026-10-26-results.json。"
     }
   },
   "r1": {
@@ -236,26 +236,13 @@
     "anonymousVerified": true
   },
   "currentFullCi": {
-    "runId": "40199991323",
-    "commit": "4797a857ec326c17dd4b35da71e5b8c7b9f5e8da",
-    "status": "FAILED",
-    "Linux": "PASS",
-    "macOS": "PASS",
-    "Windows": "Java702/119 client42 SDK66 native7 examples2 passed; browser32/33 groups794 passed; WebKit history final invariant failed",
-    "diagnostic": {
-      "checksCompleted": 18,
-      "pageErrorCount": 1,
-      "hostContainsKey": false,
-      "storageContainsKey": false,
-      "unauthenticatedRequests": 0,
-      "accessControl": true,
-      "stoppedOrigin": true,
-      "currentOrigin": false,
-      "route": "/v1/tasks",
-      "length": 92,
-      "sha256": "a2da7ec12e6cad27838488ee6034e0fd3908a85f63697fa994af11925f44e04c"
-    },
-    "rootCause": "Exact known synthetic message hash matches stopped-origin GET /v1/tasks?limit=32&view=active&profile=default. Existing classifier accepted unprofiled list only."
+    "runId": "40284862454",
+    "commit": "77e8855edaab0f7e543c9709c95513e3a0a2c4bb",
+    "url": "https://github.com/nixaveq141-ai/J-Harness/actions/runs/40284862454",
+    "status": "PASS",
+    "originalArtifactsIndependentlyAudited": true,
+    "results": "docs/testing/M10.5.9-public-final-2026-10-26-results.json",
+    "originalAuditSha256": "0dfd548f493a49e8f52308a2d97fec9c93163b06e83b8c8a08da35a77b5b0036"
   },
   "previousPublicFullCi": {
     "runId": "40195474698",
@@ -333,8 +320,58 @@
     "rootCause": "CLI compared raw import.meta.url with canonical argv URL. Windows case/short aliases can differ; old behavior deterministically returns 0 with no JSON on case variants."
   },
   "profiledPollFollowup": {
-    "status": "LOCAL_CLIENT42_PASS_HISTORY19_PASS_REMOTE_PENDING",
+    "status": "WINDOWS_THREE_ROUNDS_19_PASS",
     "fix": "Accept only existing active32 GET signature with optional bounded identifier profile; stopped-origin requirement retained; no action/duplicate/after/invalid profile accepted.",
-    "scope": "Original42 client identities and original19 history checks unchanged; Windows history-only manual diagnostic now three rounds, stop at first failure."
-  }
+    "scope": "Original42 client identities and original19 history checks unchanged; Windows history-only manual diagnostic now three rounds, stop at first failure.",
+    "focusedEvidence": {
+      "status": "PASS",
+      "runId": "40201926086",
+      "commit": "77e8855edaab0f7e543c9709c95513e3a0a2c4bb",
+      "artifactId": 12601359495,
+      "archiveSha256": "dc35008c421f3d441ff00bfa0e8b4703be7a6617bcec3c4a8d34e4f6bc529f15",
+      "rounds": [
+        {
+          "round": 1,
+          "checks": 19,
+          "recordSha256": "28bb3b9f6d364ec978557b38f94b355538baf794ee5d731e57e30d385aa237b9",
+          "transportDiagnostics": 1
+        },
+        {
+          "round": 2,
+          "checks": 19,
+          "recordSha256": "17d476cad15aaaa5763aa898857794727275cfc9cbc70569d910649c8dc6e66f",
+          "transportDiagnostics": 0
+        },
+        {
+          "round": 3,
+          "checks": 19,
+          "recordSha256": "83a540d8f1d6434a2dbf7ddacdf5d9a18983af47ba97a3f4576288326170fcdd",
+          "transportDiagnostics": 0
+        }
+      ]
+    }
+  },
+  "publicFullRun40199991323": {
+    "runId": "40199991323",
+    "commit": "4797a857ec326c17dd4b35da71e5b8c7b9f5e8da",
+    "status": "FAILED",
+    "Linux": "PASS",
+    "macOS": "PASS",
+    "Windows": "Java702/119 client42 SDK66 native7 examples2 passed; browser32/33 groups794 passed; WebKit history final invariant failed",
+    "diagnostic": {
+      "checksCompleted": 18,
+      "pageErrorCount": 1,
+      "hostContainsKey": false,
+      "storageContainsKey": false,
+      "unauthenticatedRequests": 0,
+      "accessControl": true,
+      "stoppedOrigin": true,
+      "currentOrigin": false,
+      "route": "/v1/tasks",
+      "length": 92,
+      "sha256": "a2da7ec12e6cad27838488ee6034e0fd3908a85f63697fa994af11925f44e04c"
+    },
+    "rootCause": "Exact known synthetic message hash matches stopped-origin GET /v1/tasks?limit=32&view=active&profile=default. Existing classifier accepted unprofiled list only."
+  },
+  "r6CompletionBoundary": "Current adopted R6 scopes; 148 implemented/strengthened +18 retained +20 clarified, not 186 independent dynamic defects. R4/R5 open scopes unchanged."
 }

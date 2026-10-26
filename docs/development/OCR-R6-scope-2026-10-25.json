@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "date": "2026-10-25",
   "baseline": "e5fd815739bd185210735cd6b718897b864420dc",
-  "status": "LOCAL_VALIDATED_PUBLIC_FULL_CI_PENDING",
+  "status": "VALIDATED_ADOPTED_SCOPE_COMPLETE",
   "originalScopeCount": 186,
   "counts": {
     "SOURCE_IMPLEMENTED_OR_VALIDATION_STRENGTHENED": 148,
@@ -3022,6 +3022,16 @@
     }
   ],
   "currentLocalRun": "r6-20261025-final6",
-  "finalCodeCommit": "11e4024c090bf1c63c0adecc823de8a86c541d69",
-  "m11Eligible": false
+  "finalCodeCommit": "77e8855edaab0f7e543c9709c95513e3a0a2c4bb",
+  "m11Eligible": true,
+  "currentFullCi": {
+    "runId": "40284862454",
+    "commit": "77e8855edaab0f7e543c9709c95513e3a0a2c4bb",
+    "url": "https://github.com/nixaveq141-ai/J-Harness/actions/runs/40284862454",
+    "status": "PASS",
+    "originalArtifactsIndependentlyAudited": true,
+    "results": "docs/testing/M10.5.9-public-final-2026-10-26-results.json",
+    "originalAuditSha256": "0dfd548f493a49e8f52308a2d97fec9c93163b06e83b8c8a08da35a77b5b0036"
+  },
+  "updatedAt": "2026-10-26"
 }

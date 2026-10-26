@@ -1,6 +1,6 @@
 # J-Harness
 
-2026-10-25：项目已[公开开源](https://github.com/nixaveq141-ai/J-Harness)，保持Apache-2.0及第三方归因。最新修复在codex/m1059-full-validation。完整40199991323的Linux/macOS通过，Windows WebKit历史停机后带profile只读轮询分类遗漏已精确定位，[修正及证据](docs/testing/M10.5.9-profiled-poll-2026-10-25.md)保留原断言；M10.5.9尚待严格三侧收尾。
+2026-10-26：项目已[公开开源](https://github.com/nixaveq141-ai/J-Harness)，保持Apache-2.0及第三方归因。[M10.5.9整阶段验收](docs/testing/M10.5.9-validation.md)与R6采纳范围已收尾：[完整CI40284862454](https://github.com/nixaveq141-ai/J-Harness/actions/runs/40284862454)同77e8855三平台通过，三份原包已严格独立核对。M11准入通过，尚未开始实现；最新代码仍在codex/m1059-full-validation，未合并main或发布Release。下文旧状态保留为历史快照，R4/R5后续项及已知限制不改写为完成。
 
 2026-10-25：[R5 本地修复增量](docs/development/OCR-R5-remediation-2026-10-25.md)覆盖有界编码、检索索引与并发、工具预览/分页和压缩审计；64 条台账中 51 条本轮补强、2 条有限实施、11 条后续项，R5 仍在进行中。验证与限制见[验收记录](docs/testing/OCR-R5-remediation-2026-10-25-validation.md)。
 
