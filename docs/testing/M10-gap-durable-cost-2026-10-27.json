@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-27",
+  "status": "LOCAL_BOUNDED_DURABLE_SAMPLE_PASS",
+  "runtimeValidation": "M10-gap-r123-lifecycle-2026-10-27.json",
+  "jarSha256": "269e4b698257abc52dbe0839a47993d31a0be2a313b6243119f1d6a7e8b1848b",
+  "probe": {
+    "schemaVersion": 1,
+    "status": "PASS",
+    "maxHeapBytes": 134217728,
+    "os": "Windows 11",
+    "arch": "amd64",
+    "java": "21.0.12.1",
+    "sessionCount": 2,
+    "eventsPerSession": 5000,
+    "appendElapsedNanos": 3436448200,
+    "append": {
+      "p50Nanos": 279000,
+      "p99Nanos": 638700,
+      "maxNanos": 11681700,
+      "operations": 10000,
+      "p95Nanos": 448700
+    },
+    "realAppendForceCalls": 10000,
+    "forceIncludingMetadata": {
+      "p50Nanos": 241300,
+      "p99Nanos": 525500,
+      "maxNanos": 11618700,
+      "operations": 10002,
+      "p95Nanos": 376200
+    },
+    "logBytes": 3986124,
+    "logSha256": {
+      "durable-cost-0.jsonl": "0b0508452d97586312de55b813214d8249feba75fba6581d1d974840d05ee069",
+      "durable-cost-1.jsonl": "29ed5db4a04427590cca9a65a42f3e1164a1f216ac791f4c058f510ca4376efb"
+    },
+    "reopenedReadAndProjection": {
+      "p50Nanos": 155615700,
+      "p99Nanos": 318258600,
+      "maxNanos": 318258600,
+      "operations": 3,
+      "p95Nanos": 318258600
+    },
+    "concurrentReaders": 4,
+    "concurrentFullReads": 16,
+    "concurrentReadElapsedNanos": 709144800,
+    "sampledHeapUsedAfterBytes": 113299888
+  },
+  "sourceAndJarBeforeAfterSha256": {
+    "docs/testing/tools/run-durable-session-cost.py": "85ed9b08b1ddca89c432f2adbba86431c20cb8becf9076ade05da696cfdf27e6",
+    "docs/testing/tools/DurableSessionCost.java": "c6baba4cfe7d86fb5f3b7117d00a81de598c8c8c486cf4aa2daed43cf0d0cb13",
+    "harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar": "269e4b698257abc52dbe0839a47993d31a0be2a313b6243119f1d6a7e8b1848b"
+  },
+  "compiledClassSha256": "2797fc636754e0e09ef3d6f6a6d1c0a48c865b4d8b826b628f54833df3df398d",
+  "evidencePath": ".build-cache/durable-session-cost/gap-durable-final2-20261027/evidence.json",
+  "evidenceSha256": "c2f230d7d2a9bbb2a4575c34927a71096a142737c9bedc3ddd8e5156f4248639",
+  "originalJournalFactsVerified": 10000,
+  "logSha256": {
+    "compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "probe.log": "5aaf3cd06f6f445139546978f3332568249da906a97829969350c398c513cd57"
+  },
+  "priorIncompleteSamples": [
+    {
+      "path": ".build-cache/gap-durable-cost-20261027",
+      "reason": "Single session hit existing250000 aggregate JSON-node quota after9259 committed user.message facts; source and force barriers were not weakened.",
+      "committedEvents": 9259,
+      "originalJournalSha256": "57bf36274f7ed529ea072150d31058332d6e2d29144c30ddde6be38a8958c5f4"
+    },
+    {
+      "path": ".build-cache/durable-session-cost/gap-durable-final-20261027",
+      "reason": "Runtime sample passed but independent oracle failed on legitimate format-header row; header handling corrected and a fresh final run retained."
+    }
+  ],
+  "boundaries": [
+    "10000 actual FileChannel.force(true) append barriers, plus2 metadata forces; not substituted with no-op.",
+    "Two sessions5000 each; not10000 representative messages in one session.",
+    "Repository instances reopened in same JVM; OS page cache not flushed; power loss not simulated.",
+    "Concurrent reads do not imply concurrent writers or sustained mixed workload throughput.",
+    "One Windows11 sample/128MiB Java heap; final sampled heap is not peak/RSS; latency is not an SLA.",
+    "No production source change, paid model request, physical-platform acceptance, or new CI run."
+  ]
+}
