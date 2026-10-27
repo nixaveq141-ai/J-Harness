@@ -6,6 +6,7 @@ import re
 import sys
 
 CONTRACT_PATH = Path(__file__).with_name('contracts') / 'm1059-java-cases.json'
+R4_CONTRACT_PATH = Path(__file__).with_name('contracts') / 'r4-fault-cases.json'
 MAX_REPORT_BYTES = 2 * 1024 * 1024
 HEX256 = re.compile(r'[0-9a-f]{64}\Z')
 HEX_COMMIT = re.compile(r'[0-9a-f]{40}\Z')
@@ -93,6 +94,16 @@ def validate_report(report, contract):
         exact_count(java.get(field), 0, 'Java ' + field)
     for field, count in [('browserChecks', 813), ('sdkChecks', 66), ('frontendClientChecks', 42)]:
         exact_count(report.get(field), count, field)
+    r4=report.get('r4Faults')
+    require(type(r4) is dict,'Missing R4 fault evidence')
+    r4_raw=R4_CONTRACT_PATH.read_bytes();r4_contract=load_json(r4_raw)
+    require(r4.get('contractSha256')==hashlib.sha256(r4_raw).hexdigest(),'Wrong R4 fault contract')
+    require(type(r4.get('engineChecks')) is dict and set(r4['engineChecks'])=={'chromium','firefox','webkit'},'Missing R4 engine set')
+    for engine in ('chromium','firefox','webkit'):
+        exact_count(r4['engineChecks'][engine],len(r4_contract['cases']),'R4 '+engine)
+    for field,extension in [('records','json'),('screenshots','png')]:
+        fingerprint(r4.get(field),'R4 '+field)
+        require(set(r4[field])=={f'.build-cache/R4/{report["runId"]}/browser-{engine}.{extension}' for engine in ('chromium','firefox','webkit')},'Wrong R4 '+field+' identity')
 
 
 def aggregate(directory):

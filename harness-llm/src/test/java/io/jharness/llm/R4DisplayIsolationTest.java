@@ -105,6 +105,40 @@ class R4DisplayIsolationTest {
                         .text());
         assertTrue(text.contains("final answer"));
         assertTrue(updates.stream().anyMatch(update -> update.text().equals("final answer")));
+        // Fail initial reset, partial frame and final frame separately, on either sink kind.
+        for (boolean failUpdates : List.of(false, true)) {
+            for (String phase : List.of("", "draft", "final answer")) {
+                var received = new ArrayList<String>();
+                var observed = new ArrayList<ModelDisplay.Update>();
+                var failed = new java.util.concurrent.atomic.AtomicInteger();
+                Consumer<String> failing =
+                        value -> {
+                            if (value.equals(phase)) {
+                                failed.incrementAndGet();
+                                throw new IllegalStateException(
+                                        "injected optional observer failure");
+                            }
+                        };
+                var checked = new StreamingLlmClient(provider(false), value -> {}, List.of());
+                if (failUpdates)
+                    checked =
+                            (StreamingLlmClient)
+                                    checked.withDisplayUpdates(
+                                            value -> failing.accept(value.text()));
+                else checked = (StreamingLlmClient) checked.withDisplay(failing);
+                var view = checked.withDisplay(received::add).withDisplayUpdates(observed::add);
+                assertEquals(
+                        "final answer",
+                        view.complete(
+                                        new ChatRequest(List.of(), List.of(), Map.of()),
+                                        CancellationToken.NONE)
+                                .text());
+                assertTrue(failed.get() > 0, "Fault window was not entered: " + phase);
+                assertTrue(received.contains("final answer"));
+                assertTrue(
+                        observed.stream().anyMatch(value -> value.text().equals("final answer")));
+            }
+        }
     }
 
     @Test

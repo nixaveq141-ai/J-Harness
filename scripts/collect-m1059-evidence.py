@@ -11,6 +11,7 @@ import zipfile
 from evidence_io import bounded_path, read_json_snapshot, atomic_write_json, stream_sha256
 from evidence_run import inputs, valid_run_id, validate as validate_command
 from evidence_checks import suite_snapshot, sdk_checks, native_checks, names, CONTRACT, firefox_unavailable, firefox_executable, validate_java_suites
+from r4_faults import validate_record as validate_r4, frontend_sources
 
 ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/'.build-cache/M10.5.9'
@@ -40,6 +41,7 @@ def collect(log):
         'sdk':(OUT/'sdk.log',ROOT/'.build-cache/M10.5.8-sdk-results.json'),
         'examples':(OUT/'examples.log',ROOT/'.build-cache/M10.5.8-examples-results.json'),
         'browser':(OUT/'browser.log',OUT/'browser/matrix.json'),
+        'r4-gate':(OUT/'r4-gate.log',None),
         'smoke':(OUT/'smoke.log',ROOT/'target/candidate-smoke.json')}
     if sys.platform=='win32':
         command_specs['launcher']=(OUT/'launcher.log',ROOT/'.build-cache/M10-launcher-results.json')
@@ -51,6 +53,7 @@ def collect(log):
         'native':[sys.executable,'scripts/test-native-credentials.py'],
         'sdk':['node','sdk/tests/run.mjs'],'examples':['node','sdk/tests/examples.mjs'],
         'browser':['node','scripts/run-workbench-matrix.mjs'],
+        'r4-gate':[sys.executable,'scripts/test-r4-faults.py'],
         'smoke':['python','scripts/smoke-candidate.py'],
         'launcher':[sys.executable,'scripts/test-open-workbench.py'],
         'firefox-probe':[sys.executable,'scripts/probe-firefox.py']}
@@ -106,6 +109,19 @@ def collect(log):
         for name,digest in r.get('sourceSha256',{}).items():require(sha(bounded_path(ROOT,name))==digest,'Browser source drift')
         records[entry['path']]=entry['sha256']
     require(len(seen)==len(EXPECTED)*len(engines),'Missing browser runs')
+    r4_contract=load(ROOT/'scripts/contracts/r4-fault-cases.json')
+    r4_records={};r4_shots={};r4_counts={};r4_sources=frontend_sources(ROOT)
+    for engine in sorted(engines):
+        path=f'.build-cache/R4/{run_id}/browser-{engine}.json';value=load(ROOT/path)
+        r4_counts[engine]=validate_r4(value,r4_contract['cases'],engine=engine,run_id=run_id,sources=r4_sources)
+        screenshot=value['screenshot']['path']
+        require(isinstance(screenshot,str) and screenshot.startswith(f'.build-cache/R4/{run_id}/'),'Foreign R4 screenshot')
+        require(sha(bounded_path(ROOT,screenshot))==value['screenshot']['sha256'],'R4 screenshot drift')
+        r4_records[path]=SNAPSHOTS[path].sha256;r4_shots[screenshot]=value['screenshot']['sha256']
+        name='r4-'+engine;receipt_path=OUT/'commands'/str(name+'.json');receipt=load(receipt_path)
+        validate_command(receipt,name=name,log=OUT/(name+'.log'),run_id=run_id,source=source,
+                         command=['node','frontend/tests/r4.mjs'],cwd='.',outputs={path:r4_records[path]})
+        receipt_hashes[receipt_path.relative_to(ROOT).as_posix()]=SNAPSHOTS[receipt_path.relative_to(ROOT).as_posix()].sha256
     sdk=load(ROOT/'.build-cache/M10.5.8-sdk-results.json');examples=load(ROOT/'.build-cache/M10.5.8-examples-results.json')
     for r in [sdk,examples]:require(r['status']=='PASS' and r['jarSha256']==jar_sha and type(r['paidRequests']) is int and r['paidRequests']==0,'SDK/example failure')
     sdk_checks(sdk,examples)
@@ -146,6 +162,8 @@ def collect(log):
                 toolVersions=dict(python=sys.version,node=subprocess.check_output(['node','--version']).decode().strip(),playwright=load(ROOT/'frontend/node_modules/playwright/package.json')['version']),
                 commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT).decode().strip(),workingTreeDirty=bool(subprocess.check_output(['git','status','--porcelain'],cwd=ROOT)),ciRunId=os.environ.get('GITHUB_RUN_ID'),
                 java=totals,suites=suites,frontendClientChecks=42,browserChecks=sum(EXPECTED.values())*len(engines),browserMatrix=matrix,browserAvailability=availability,browserRuntime=runtime,sdkChecks=66,exampleChecks=2,nativeChecks=len(native['checks']),
+                r4Faults=dict(engineChecks=r4_counts,records=r4_records,screenshots=r4_shots,
+                             contractSha256=SNAPSHOTS['scripts/contracts/r4-fault-cases.json'].sha256),
                 jarSha256=jar_sha,uiSha256=ui,sourceSha256=source,
                 records=records,supplyChain={n:sha(ROOT/'target'/n) for n in ['bom.json','frontend-bom.json','frontend-audit.json','sdk-bom.json','sdk-source-inventory.json','osv-results.json','source-secrets.json','release-evidence.json','candidate-smoke.json','jharness-0.1.0-SNAPSHOT-candidate.zip']},
                 verificationLogSha256=sha(log),paidRequests=0,remoteExecution=ci)

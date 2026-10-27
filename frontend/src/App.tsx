@@ -1,4 +1,5 @@
 import { useLifetime } from './lifecycle'
+import { pendingMarker, isPendingMarkerPersisted } from './pendingMarker'
 import { ContentSearch } from './ContentSearch'
 import { ContentReader } from './ContentPanel'
 import { Conversation } from './Conversation'
@@ -100,7 +101,7 @@ export function App() {
   const [modelId, setModelId] = useState('')
   const [searchOpen, setSearchOpen] = useState(false)
   const [goal, setGoal] = useState(''), [filter, setFilter] = useState(''), [error, setError] = useState('')
-  const [pending, setPending] = useState(() => storage('jh-pending')), [submitting, setSubmitting] = useState(false)
+  const [pending, setPending] = useState(() => pendingMarker('jh-pending')), [submitting, setSubmitting] = useState(false)
   const [busy, setBusy] = useState(''), [live, setLive] = useState('连接后自动更新'), [historyKey, setHistoryKey] = useState(0)
   const [sideOpen, setSideOpen] = useState(() => window.matchMedia('(min-width: 761px)').matches), [inspectorOpen, setInspectorOpen] = useState(false)
   const [tab, setTab] = useState<Inspector>('detail'), [focusedEvent, setFocusedEvent] = useState<SessionEvent | null>(null)
@@ -115,6 +116,8 @@ export function App() {
   const active = detailTask?.taskId === selected ? detailTask : tasks.find(t => t.taskId === selected)
   const hasProblems = !!active && isTerminal(active) && (uncertain(active) || active.status !== 'COMPLETED' || events.some(e => e.type === 'tool.completed' && e.payload.status !== 'SUCCESS'))
   const currentApi = useRef(api); currentApi.current = api
+  const life = useLifetime(api)
+  useEffect(() => { createLock.current=false;actionLock.current=false;setSubmitting(false);setBusy('') }, [api])
   useEffect(() => { document.body.toggleAttribute('data-ds-dark-theme', dark); try { localStorage.setItem('jh-theme', dark ? 'dark' : 'light') } catch { /* optional preference */ } }, [dark])
   useEffect(() => { storage('jh-selected', selected) }, [selected])
   useEffect(() => { if (autoScroll.current) listEnd.current?.scrollIntoView({ block: 'nearest' }) }, [events.length])
@@ -229,44 +232,45 @@ export function App() {
   async function submit(e: FormEvent) {
     e.preventDefault(); if (!api || !goal.trim() || pending || createLock.current) return
     const id = crypto.randomUUID(), text = goal.trim(); createLock.current = true; setSubmitting(true)
-    setPending(id); storage('jh-pending', id); setError('')
+    if(pendingMarker('jh-pending',id)!==id){createLock.current=false;setSubmitting(false);setError('待核对请求过多，请先核对已有请求。');return}
+    setPending(id); setError('')
     try {
       const t = await api.submit(profile, text, id, modelId)
-      if (currentApi.current !== api) return
-      storage('jh-pending', ''); setPending('')
+      if (!life.alive || currentApi.current !== api) return
+      pendingMarker('jh-pending', ''); setPending('')
       showTask(t); setGoal('')
-    } catch (e) { if (currentApi.current === api) {
-      if (e instanceof ApiError && e.code === 'API_KEY_MISSING') { storage('jh-pending', ''); setPending(''); setError(errorText(e)) }
+    } catch (e) { if (life.alive && currentApi.current === api) {
+      if (e instanceof ApiError && e.code === 'API_KEY_MISSING') { pendingMarker('jh-pending', ''); setPending(''); setError(errorText(e)) }
       else setError(errorText(e) + ' 请核对本次提交状态。')
     } }
-    finally { createLock.current = false; setSubmitting(false) }
+    finally { if(life.alive){createLock.current = false; setSubmitting(false)} }
   }
   async function forkSession(eventId: string) {
     if (!api || !active || pending || createLock.current) return
-    const requestId = crypto.randomUUID(); createLock.current = true; setSubmitting(true); setPending(requestId); storage('jh-pending', requestId); setError('')
-    try { const value = await api.fork(active, eventId, requestId); if (currentApi.current !== api)return;storage('jh-pending', ''); setPending(''); showTask(value) }
-    catch (e) { setError(errorText(e) + ' 请核对本次提交状态。') }
-    finally { createLock.current = false; setSubmitting(false) }
+    const requestId = crypto.randomUUID(); if(pendingMarker('jh-pending',requestId)!==requestId){setError('待核对请求过多，请先核对已有请求。');return} createLock.current = true; setSubmitting(true); setPending(requestId); setError('')
+    try { const value = await api.fork(active, eventId, requestId); if (!life.alive || currentApi.current !== api)return;pendingMarker('jh-pending', ''); setPending(''); showTask(value) }
+    catch (e) { if(life.alive)setError(errorText(e) + ' 请核对本次提交状态。') }
+    finally { if(life.alive){createLock.current = false; setSubmitting(false)} }
   }
   async function reconcile() {
     if (!api || !pending || actionLock.current) return
     actionLock.current = true; setBusy('reconcile')
-    try { const t = await api.submission(pending); if(currentApi.current !== api)return;storage('jh-pending', ''); setPending(''); showTask(t); setGoal(''); setError('') }
-    catch (e) { setError(errorText(e)) } finally { actionLock.current = false; setBusy('') }
+    try { const t = await api.submission(pending); if(!life.alive || currentApi.current !== api)return;pendingMarker('jh-pending', ''); setPending(''); showTask(t); setGoal(''); setError('') }
+    catch (e) { if(life.alive)setError(errorText(e)) } finally { if(life.alive){actionLock.current = false; setBusy('')} }
   }
   async function decide(a: Approval, approved: boolean) {
     if (!api || !active || actionLock.current) return
     const id = selected; actionLock.current = true; mutationEpoch.current++;setBusy(a.approvalId); setError('')
     try { await api.decide(id, a, approved, approved ? '用户批准本次操作' : '用户拒绝本次操作') }
-    catch (e) { setError(errorText(e)) }
-    finally { if (currentApi.current === api) { const remaining = await api.approvals(id).catch(() => []); if (storage('jh-selected') === id) setApprovals(remaining) }
-      actionLock.current = false; setBusy('') }
+    catch (e) { if(life.alive)setError(errorText(e)) }
+    finally { if (life.alive && currentApi.current === api) { const remaining = await api.approvals(id).catch(() => []); if (life.alive && currentApi.current === api && selectedRef.current === id) setApprovals(remaining) }
+      if(life.alive){actionLock.current = false; setBusy('')} }
   }
   async function cancel() {
     if (!api || !active || actionLock.current) return
     const id = selected; actionLock.current = true; mutationEpoch.current++;setBusy('cancel')
-    try { const t = await api.cancel(id); if (currentApi.current === api) updateTask(t) }
-    catch (e) { setError(errorText(e)) } finally { actionLock.current = false; setBusy('') }
+    try { const t = await api.cancel(id); if (life.alive && currentApi.current === api) updateTask(t) }
+    catch (e) { if(life.alive)setError(errorText(e)) } finally { if(life.alive){actionLock.current = false; setBusy('')} }
   }
   function drag(e: PointerEvent<HTMLDivElement>) {
     e.currentTarget.setPointerCapture(e.pointerId); setDragging(true)
@@ -305,9 +309,9 @@ export function App() {
       <header className="topbar"><div className="task-heading"><h1>{searchOpen?'内容检索':taskTitle}</h1>{active && !searchOpen && <Status value={active} />}</div><div className="top-actions"><span className="local-badge">本机工作台</span><Button aria-label={inspectorOpen ? '关闭任务详情' : '打开任务详情'} title="任务详情" onClick={() => setInspectorOpen(v => !v)}><Icon name="panel" /></Button></div></header>
       {error && <div className="error-banner" role="alert"><span>{error}</span><button aria-label="关闭提示" onClick={() => setError('')}><Icon name="close" /></button></div>}
       {!api ? <section className="welcome connection-page"><div className="intro-symbol">J</div><h2>{connecting ? '正在打开工作台…' : '本机服务暂时无法连接'}</h2><p>请保持启动窗口运行。</p><Button variant="primary" disabled={connecting} onClick={() => void connect()}>重新连接</Button></section>
-        : searchOpen ? <ContentSearch api={api} profile={viewProfile} view={viewMode} currentSession={selected} workspaces={workspaceNames} onBack={()=>setSearchOpen(false)} onOpen={async id=>{if(navigationGuard)return;const task=await api.detail(id);if(currentApi.current!==api)return;showTask(task);setFocusedEvent(null);setInspectorOpen(false);setSearchOpen(false)}}/> : settingsOpen ? <Settings api={api} onBack={() => { setModelId(''); setSettingsOpen(false) }} onGuardChange={setSettingsGuard} /> : <>
-          {pending && <div className="pending-banner" role="status"><div><strong>本次提交待核对</strong><p>为避免重复执行，已暂停创建。核对操作只读取后台记录。</p></div><Button variant="outline" disabled={!!busy || submitting} onClick={() => void reconcile()}>核对提交状态</Button>
-            <button className="text-button" disabled={submitting || !!busy} onClick={() => { if (window.confirm('这只清除本页待核对记录，后台任务可能仍在执行。确定已检查任务列表并清除？')) { storage('jh-pending', ''); setPending('') } }}>清除本页记录</button></div>}
+        : searchOpen ? <ContentSearch api={api} profile={viewProfile} view={viewMode} currentSession={selected} workspaces={workspaceNames} onBack={()=>setSearchOpen(false)} onOpen={async id=>{if(navigationGuard)return;const task=await api.detail(id);if(!life.alive||currentApi.current!==api)return;showTask(task);setFocusedEvent(null);setInspectorOpen(false);setSearchOpen(false)}}/> : settingsOpen ? <Settings api={api} onBack={() => { setModelId(''); setSettingsOpen(false) }} onGuardChange={setSettingsGuard} /> : <>
+          {pending && <div className="pending-banner" role="status"><div><strong>本次提交待核对</strong><p>为避免重复执行，已暂停创建。核对操作只读取后台记录。</p>{!isPendingMarkerPersisted('jh-pending',pending)&&<p>本页核对标记无法保存；请保持页面，刷新后先核对任务列表。</p>}</div><Button variant="outline" disabled={!!busy || submitting} onClick={() => void reconcile()}>核对提交状态</Button>
+            <button className="text-button" disabled={submitting || !!busy} onClick={() => { if (window.confirm('这只清除本页待核对记录，后台任务可能仍在执行。确定已检查任务列表并清除？')) { pendingMarker('jh-pending', ''); setPending('') } }}>清除本页记录</button></div>}
           {!selected ? <section className="welcome"><div className="intro-symbol">J</div><h2>今天，想完成什么？</h2><p>描述目标，让 J-Harness 在你的工作区中协助完成。</p><div className="suggestions">{['阅读项目结构，梳理模块职责', '检查最近的修改，指出潜在问题', '分析一个问题，并提出修复方案'].map(s => <button key={s} onClick={() => setGoal(s)}><Icon name="file" />{s}<Icon name="chevron" /></button>)}</div></section>
             : <section className="timeline" aria-label="任务事件时间线" onScroll={e => { const el = e.currentTarget; autoScroll.current = el.scrollHeight - el.scrollTop - el.clientHeight < 100 }}>
               {api && active && <SessionActions key={active.taskId} api={api} task={active} lastEvent={events.at(-1)?.eventId ?? ''} onUpdated={value => { updateTask(value); resetPages(); setViewMode(value.archived ? 'archived' : 'active') }} onFork={forkSession} onGuard={setSessionGuard} />}

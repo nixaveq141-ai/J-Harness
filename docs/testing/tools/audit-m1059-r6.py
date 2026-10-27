@@ -13,6 +13,7 @@ sys.path.insert(0,str(ROOT/'scripts'))
 from evidence_io import bounded_path, stream_sha256, strict_json_loads, atomic_write_json
 from evidence_run import inputs
 from evidence_checks import suite_snapshot, validate_java_suites, names, CONTRACT
+from r4_faults import validate_record as validate_r4, frontend_sources
 
 def module(name):
     spec=importlib.util.spec_from_file_location(name,ROOT/'scripts'/f'{name}.py');value=importlib.util.module_from_spec(spec);spec.loader.exec_module(value);return value
@@ -94,6 +95,15 @@ def audit(directory,commit,run_id):
                 for language in value['results']:names(language['checks'],CONTRACT['sdk'][language['language']],'SDK cases')
             if name=='native':require(value['passed'] is True and set(value['checks'])==set(CONTRACT['native']) and all(v is True for v in value['checks'].values()),'Native cases')
             if name=='examples':require(value['status']=='PASS' and len(value['checks'])==2 and all(v['passed'] is True for v in value['checks']),'Example cases')
+        r4_contract=strict_json_loads((ROOT/'scripts/contracts/r4-fault-cases.json').read_bytes())
+        require(set(report['r4Faults']['engineChecks'])=={'chromium','firefox','webkit'},'Missing R4 engine')
+        for engine in ['chromium','firefox','webkit']:
+            path=f'.build-cache/R4/{report["runId"]}/browser-{engine}.json'
+            verify(path,report['r4Faults']['records'][path])
+            value=strict_json_loads((target/path).read_bytes())
+            count=validate_r4(value,r4_contract['cases'],engine=engine,run_id=report['runId'],sources=frontend_sources(ROOT))
+            require(report['r4Faults']['engineChecks'][engine]==count,'Wrong R4 count')
+            verify(value['screenshot']['path'],value['screenshot']['sha256'])
         candidate=target/'target/jharness-0.1.0-SNAPSHOT-candidate.zip'
         manifest,files=smoke.validate_candidate(candidate.read_bytes(),smoke.required_legal_files(ROOT))
         require(manifest['gitCommit']==commit and manifest['workingTreeDirty'] is False,'Candidate source identity')

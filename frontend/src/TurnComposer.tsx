@@ -4,10 +4,8 @@ import { Api, ApiError, uncertain, type Task, type TurnSubmission } from './api'
 import { Button } from './upstream/Button'
 import { SkillsPicker, ToolInventory } from './SkillsPicker'
 import { useLifetime } from './lifecycle'
+import { pendingMarker as marker, isPendingMarkerPersisted } from './pendingMarker'
 
-function marker(key: string, value?: string) {
-  try { if (value !== undefined) { if (value) sessionStorage.setItem(key, value); else sessionStorage.removeItem(key) }; return sessionStorage.getItem(key) ?? '' } catch { return '' }
-}
 const states: Record<string, string> = { QUEUED: '已排队', PAUSED: '已暂停 · 需显式开始', RUNNING: '正在执行', UNKNOWN: '结果待核实', FINISHED: '本轮已结算', CANCELLED: '已取消排队', VERIFIED: '已离线核实' }
 export function TurnComposer({ api, task, onUpdated, onHistory, onGuard }: { api: Api; task: Task; onUpdated: (task: Task) => void; onHistory: () => void; onGuard: (value: boolean) => void }) {
   const key = `jh-turn-${task.taskId}`
@@ -19,7 +17,7 @@ export function TurnComposer({ api, task, onUpdated, onHistory, onGuard }: { api
   const life=useLifetime(api,task.taskId),epoch=useRef(0)
   const [pollError,setPollError]=useState('')
   function publish(value:Task){if(life.alive){epoch.current++;callbacks.current.onUpdated(value)}}
-  useEffect(()=>{lock.current=false;setBusy(false);setRows([]);setPollError('');setError('')},[api,task.taskId])
+  useEffect(()=>{lock.current=false;setBusy(false);setRows([]);setPollError('');setError('');setNotice('');setNotFound(false);setPending(marker(key))},[api,task.taskId,key])
   useEffect(() => { onGuard(!!draft || busy); return () => onGuard(false) }, [draft, busy, onGuard])
   useEffect(() => { if (!draft && !busy) return; const stop = (e: BeforeUnloadEvent) => e.preventDefault(); window.addEventListener('beforeunload', stop); return () => window.removeEventListener('beforeunload', stop) }, [draft, busy])
   useEffect(() => {
@@ -48,7 +46,7 @@ export function TurnComposer({ api, task, onUpdated, onHistory, onGuard }: { api
   }
   async function submit() {
     if (!draft.trim() || pending || lock.current) return
-    const id = crypto.randomUUID(); marker(key, id); setPending(id); setNotFound(false)
+    const id = crypto.randomUUID(); if(marker(key,id)!==id){setError('待核对请求过多，请先核对已有请求。');return} setPending(id); setNotFound(false)
     await run(async () => {
       try {
         const value = await api.submitTurn(task.taskId, id, draft.trim(), kind, modelId)
@@ -67,11 +65,11 @@ export function TurnComposer({ api, task, onUpdated, onHistory, onGuard }: { api
     <ToolInventory api={api} taskId={task.taskId} />
     <div className="turn-toolbar"><ModelPicker api={api} value={modelId} onChange={setModelId} disabled={busy || !!pending} label="下一条消息模型" /><label>消息方式 <select aria-label="消息方式" value={kind} disabled={busy || !!pending} onChange={e => setKind(e.target.value as 'message' | 'supplement')}><option value="message">下一轮消息</option><option value="supplement">补充指令</option></select></label><Button disabled={busy || !!pending || !draft.trim() || uncertain(task) || task.archived} onClick={() => void submit()}>发送后续消息</Button>{draft && <Button disabled={busy || !!pending} onClick={() => setDraft('')}>丢弃草稿</Button>}</div>
     <p className="muted turn-hint">忙碌时排队，补充指令也在当前轮结束后的下一轮应用。未发送草稿只留在本页，刷新会丢失。</p>
-    {pending && <div className="turn-pending" role="status">本次消息待核对，不会自动重发。<Button disabled={busy} onClick={() => void run(async () => {
+    {pending && <div className="turn-pending" role="status">本次消息待核对，不会自动重发。{!isPendingMarkerPersisted(key,pending)&&<p>本页核对标记无法保存；请保持页面，刷新后先读取消息队列核对。</p>}<Button disabled={busy} onClick={() => void run(async () => {
       try { const value = await api.turnStatus(task.taskId, pending); if(!life.alive)return;marker(key, ''); setPending(''); setDraft(''); publish(value.task); callbacks.current.onHistory(); setNotice(`已找到受理记录：${states[value.submission.state]}`) }
-      catch (e) { if (e instanceof ApiError && e.code === 'SUBMISSION_NOT_FOUND') setNotFound(true); throw e }
+      catch (e) { if (life.alive && e instanceof ApiError && e.code === 'SUBMISSION_NOT_FOUND') setNotFound(true); throw e }
     })}>核对消息受理</Button>{notFound && <Button disabled={busy} onClick={() => { marker(key, ''); setPending(''); setNotFound(false); setNotice('已清除本页标记；未撤销任何可能已受理的执行。重新提交由你决定。') }}>清除本页标记</Button>}</div>}
-    {rows.length > 0 && <details className="turn-queue"><summary>消息队列与轮次（本页 {rows.length} 条）</summary><ol>{rows.map((row, index) => <li key={row.submissionId}><span>第 {row.sequence} 次输入 · {row.kind === 'supplement' ? '补充指令' : '消息'} · {states[row.state]}{row.preview && <small>{row.preview}</small>}{row.turnId && <small>轮次 {row.turnId.slice(0, 8)}</small>}</span>{['QUEUED','PAUSED'].includes(row.state) && <div>{row.state === 'PAUSED' && <Button disabled={busy || offset>0 || index !== 0 && rows.slice(0,index).some(i => ['QUEUED','PAUSED'].includes(i.state)) || uncertain(task)} onClick={() => void run(async () => { const value = await api.turnAction(task.taskId, row.submissionId, 'start'); publish(value.task); callbacks.current.onHistory() })}>开始这条消息</Button>}<Button disabled={busy} onClick={() => void run(async () => { const value=await api.turnAction(task.taskId, row.submissionId, 'cancel');if(!life.alive)return;if(value.submission.state!=='CANCELLED')throw new ApiError('INVALID_RESPONSE');publish(value.task);setNotice('已取消排队；未撤销已经发生的操作。') })}>取消排队</Button></div>}</li>)}</ol><div className="turn-toolbar"><Button disabled={busy || offset === 0} onClick={() => setOffset(Math.max(0,offset-32))}>上一页消息</Button><Button disabled={busy || !more} onClick={() => setOffset(next)}>下一页消息</Button></div></details>}
+    {rows.length > 0 && <details className="turn-queue"><summary>消息队列与轮次（本页 {rows.length} 条）</summary><ol>{rows.map((row, index) => <li key={row.submissionId}><span>第 {row.sequence} 次输入 · {row.kind === 'supplement' ? '补充指令' : '消息'} · {states[row.state]}{row.preview && <small>{row.preview}</small>}{row.turnId && <small>轮次 {row.turnId.slice(0, 8)}</small>}</span>{['QUEUED','PAUSED'].includes(row.state) && <div>{row.state === 'PAUSED' && <Button disabled={busy || offset>0 || index !== 0 && rows.slice(0,index).some(i => ['QUEUED','PAUSED'].includes(i.state)) || uncertain(task)} onClick={() => void run(async () => { const value = await api.turnAction(task.taskId, row.submissionId, 'start'); if(!life.alive)return;publish(value.task); callbacks.current.onHistory() })}>开始这条消息</Button>}<Button disabled={busy} onClick={() => void run(async () => { const value=await api.turnAction(task.taskId, row.submissionId, 'cancel');if(!life.alive)return;if(value.submission.state!=='CANCELLED')throw new ApiError('INVALID_RESPONSE');publish(value.task);setNotice('已取消排队；未撤销已经发生的操作。') })}>取消排队</Button></div>}</li>)}</ol><div className="turn-toolbar"><Button disabled={busy || offset === 0} onClick={() => setOffset(Math.max(0,offset-32))}>上一页消息</Button><Button disabled={busy || !more} onClick={() => setOffset(next)}>下一页消息</Button></div></details>}
     {pollError&&<p role="status">{pollError}</p>}{error && <p className="inline-error" role="status">{error}</p>}{notice && <p role="status">{notice}</p>}
   </section>
 }

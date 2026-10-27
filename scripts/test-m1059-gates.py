@@ -30,6 +30,10 @@ class CiGateTest(unittest.TestCase):
                          uiSha256={p:'d'*64 for p in ['index.html','ui-license.txt','assets/index.js','assets/index.css']},
                          suites=self.suites, java=dict(tests=sum(len(s['cases']) for s in self.suites),failures=0,errors=0,skipped=0),
                          browserChecks=813,sdkChecks=66,frontendClientChecks=42)
+        self.base['r4Faults']=dict(contractSha256=hashlib.sha256(gate.R4_CONTRACT_PATH.read_bytes()).hexdigest(),
+            engineChecks={engine:len(json.loads(gate.R4_CONTRACT_PATH.read_bytes())['cases']) for engine in ('chromium','firefox','webkit')},
+            records={f'.build-cache/R4/synthetic-schema-test/browser-{engine}.json':'e'*64 for engine in ('chromium','firefox','webkit')},
+            screenshots={f'.build-cache/R4/synthetic-schema-test/browser-{engine}.png':'f'*64 for engine in ('chromium','firefox','webkit')})
 
     def write_reports(self, change=None):
         for os_name in ['Windows','Linux','macOS']:
@@ -69,8 +73,12 @@ class CiGateTest(unittest.TestCase):
             ('sdkChecks',1,'sdkChecks: incorrect integer count'),
             ('sdkChecks',58,'sdkChecks: incorrect integer count'),
             ('frontendClientChecks',33,'frontendClientChecks: incorrect integer count'),
-            ('frontendClientChecks','33','frontendClientChecks: incorrect integer count')]:
+            ('frontendClientChecks','33','frontendClientChecks: incorrect integer count'),
+            ('r4Faults',None,'Missing R4 fault evidence')]:
             with self.subTest(field=field,value=value): self.reject(lambda d:d.update({field:value}),reason)
+        self.reject(lambda d:d['r4Faults'].update(contractSha256='0'*64),'Wrong R4 fault contract')
+        self.reject(lambda d:d['r4Faults']['engineChecks'].update(chromium=True),'R4 chromium: incorrect integer count')
+        self.reject(lambda d:d['r4Faults']['records'].pop(next(iter(d['r4Faults']['records']))),'Wrong R4 records identity')
 
     def test_one_field_fingerprint_failures_have_specific_reasons(self):
         for field,value,reason in [
@@ -83,7 +91,11 @@ class CiGateTest(unittest.TestCase):
             with self.subTest(field=field,value=value): self.reject(lambda d:d.update({field:value}),reason)
         self.reject(lambda d:d['sourceSha256'].update({'pom.xml':'e'*64}), 'Different CI/source/UI: sourceSha256')
         self.reject(lambda d:d.update(ciRunId='987654321'), 'Different CI/source/UI: ciRunId')
-        self.reject(lambda d:d.update(runId='another-run'), 'Different CI/source/UI: runId')
+        def another_run(data):
+            data['runId']='another-run'
+            for field in ('records','screenshots'):
+                data['r4Faults'][field]={p.replace('synthetic-schema-test','another-run'):h for p,h in data['r4Faults'][field].items()}
+        self.reject(another_run, 'Different CI/source/UI: runId')
         self.reject(lambda d:d.update(runnerOs='Windows'), 'Missing or duplicate runner OS')
 
     def test_empty_missing_duplicate_or_invented_cases_reject(self):

@@ -129,6 +129,22 @@ test('mutation barrier changes before and after a lost response for read reconci
   const api=new Api(token,(()=>new Promise((_resolve,reject)=>{fail=()=>reject(Error())})) as typeof fetch)
   const before=api.stateVersion,pending=api.submit('default','goal','request_1')
   assert.ok(api.stateVersion>before);const inFlight=api.stateVersion;fail();await assert.rejects(pending,ApiError);assert.ok(api.stateVersion>inFlight)
+  const {createPendingMarker}=await import('../src/pendingMarker.ts')
+  for(const fault of ['set','get','remove']) {
+    const backing=new Map<string,string>();let blocked=''
+    const store={getItem:(key:string)=>{if(blocked==='get')throw Error();return backing.get(key)??null},
+      setItem:(key:string,value:string)=>{if(blocked==='set')throw Error();backing.set(key,value)},
+      removeItem:(key:string)=>{if(blocked==='remove')throw Error();backing.delete(key)}}
+    const marker=createPendingMarker(()=>store,2)
+    blocked=fault==='set'?'set':'';assert.equal(marker('first','request_1'),'request_1')
+    blocked=fault;assert.equal(marker('first'),'request_1','Read must prefer admitted memory marker')
+    assert.equal(marker('first',''),'');assert.equal(marker('first'),'','Failed clear needs an authoritative tombstone')
+  }
+  const backing=new Map<string,string>(), marker=createPendingMarker(()=>({getItem:key=>backing.get(key)??null,setItem:(key,value)=>{backing.set(key,value)},removeItem:key=>{backing.delete(key)}}),2)
+  assert.equal(marker('a','request_a'),'request_a');assert.equal(marker('b','request_b'),'request_b')
+  assert.equal(marker('c','request_c'),'');assert.equal(marker('a'),'request_a');assert.equal(marker('b'),'request_b')
+  marker('a','');assert.equal(marker('c','request_c'),'request_c')
+  assert.equal(marker('x'.repeat(513),'request'),'');assert.equal(marker('oversized','x'.repeat(257)),'')
 })
 
 test('diagnosis is read only and rejects incompatible or excessive facts', async () => {

@@ -3,10 +3,9 @@ import { Api, ApiError, type UserQuestion } from './api'
 import { Button } from './upstream/Button'
 import { Tag } from './upstream/Tag'
 import { useLifetime } from './lifecycle'
+import { pendingMarker as marker } from './pendingMarker'
 
 const labels: Record<string,string> = { PENDING: '等待回答', SUBMITTED: '正在核对回答', ANSWERED: '已回答', SKIPPED: '已跳过', TIMED_OUT: '已超时 · 未收到答案', CANCELLED: '已取消', INTERRUPTED: '等待已中断 · 不会自动重提' }
-const memoryMarkers=new Map<string,string>()
-function marker(key: string, value?: string) { if(value!==undefined)memoryMarkers.set(key,value);try { if (value !== undefined) { if (value) sessionStorage.setItem(key,value); else sessionStorage.removeItem(key) } const saved=sessionStorage.getItem(key)??'';memoryMarkers.set(key,saved);return saved } catch { return memoryMarkers.get(key)??'' } }
 
 export function Questions({ api, id, onGuard, onWaiting }: { api: Api; id: string; onGuard: (value: boolean) => void; onWaiting: (value: boolean) => void }) {
   const [offset,setOffset] = useState(0), [total,setTotal] = useState(0), [hasWaiting,setHasWaiting] = useState(false)
@@ -72,11 +71,11 @@ function QuestionCard({ api, value: q, onGuard }: { api: Api; value: UserQuestio
       const saved=await api.questionDraft(q,selected,text,revision.current);
       if(!life.alive)return
       revision.current=saved.revision
-      const id=attempt.current||crypto.randomUUID();attempt.current=id;setPending(id);marker(key,id)
+      const id=attempt.current||crypto.randomUUID();if(marker(key,id)!==id)throw new ApiError('PENDING_MARKER_LIMIT');attempt.current=id;setPending(id)
       try { if(sessionStorage.getItem(key)!==id)setNotice('本页核对标记无法保存；请保持页面，刷新后先查问题状态。') }catch{setNotice('本页核对标记无法保存；请保持页面，刷新后先查问题状态。')}
       const receipt=await api.answerQuestion(q,id,skip?[]:selected,skip?'':text,skip);if(life.alive){setDirty(false);setNotice(receipt.state==='SUBMITTED'?'已接收，正在核对持久记录':'回答状态已记录')}
     }
-    catch(e) { if(life.alive){setError(e instanceof ApiError && e.code==='INVALID_ANSWER'?'答案格式无效，请检查选项或文字。':'回答未确认，请核对状态；不会自动重发。');if(e instanceof ApiError && ['INVALID_ANSWER','QUESTION_CLOSED','QUESTION_NOT_FOUND','QUESTION_ASSOCIATION_MISMATCH','ANSWER_CONFLICT'].includes(e.code)){setPending('');marker(key,'')}} }
+    catch(e) { if(life.alive){setError(e instanceof ApiError && e.code==='PENDING_MARKER_LIMIT'?'待核对请求过多，请先核对已有请求。':e instanceof ApiError && e.code==='INVALID_ANSWER'?'答案格式无效，请检查选项或文字。':'回答未确认，请核对状态；不会自动重发。');if(e instanceof ApiError && ['INVALID_ANSWER','QUESTION_CLOSED','QUESTION_NOT_FOUND','QUESTION_ASSOCIATION_MISMATCH','ANSWER_CONFLICT'].includes(e.code)){setPending('');marker(key,'')}} }
     finally { if(life.alive){lock.current=false;setBusy(false)} }
   }
   if(!open && q.state!=='SUBMITTED') return <details className="question-card question-closed"><summary>{q.question} · {labels[q.state]}</summary>{q.state==='ANSWERED' && <p>{(q.selected??[]).map(id=>q.options.find(o=>o.id===id)?.label??id).join('、')}{q.text ? ' '+q.text : ''}</p>}<p className="muted">问题回答不授权工具操作。轮次 {q.turnId.slice(0,8)}</p></details>

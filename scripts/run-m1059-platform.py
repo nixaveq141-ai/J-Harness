@@ -1,5 +1,6 @@
 """Run the packaged matrix, keeping same-run exit-code and output receipts."""
 import importlib.util
+import json
 import os
 from pathlib import Path
 import sys
@@ -35,6 +36,19 @@ def main():
     for name, command, output in commands:
         run(command, name=name, log=OUT / (name + '.log'), receipt=OUT / 'commands' / (name + '.json'),
             run_id=run_id, env=env, outputs=(ROOT / output,))
+        print('PASS', name, flush=True)
+    run([sys.executable, 'scripts/test-r4-faults.py'], name='r4-gate',
+        log=OUT / 'r4-gate.log', receipt=OUT / 'commands/r4-gate.json', run_id=run_id, env=env)
+    matrix = json.loads((OUT / 'browser/matrix.json').read_bytes())
+    for engine in matrix['engines']:
+        fault_env = dict(env, JHARNESS_BROWSER_ENGINE=engine, JHARNESS_R4_RUN_ID=run_id)
+        if engine != 'chromium':
+            fault_env.pop('JHARNESS_BROWSER_CHANNEL', None)
+        name = 'r4-' + engine
+        run(['node', 'frontend/tests/r4.mjs'], name=name,
+            log=OUT / (name + '.log'), receipt=OUT / 'commands' / (name + '.json'),
+            run_id=run_id, env=fault_env,
+            outputs=(ROOT / '.build-cache/R4' / run_id / ('browser-' + engine + '.json'),))
         print('PASS', name, flush=True)
 
 

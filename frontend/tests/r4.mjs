@@ -4,7 +4,7 @@ import { browserType, engine } from './runtime.mjs'
 import assert from 'node:assert/strict'
 import { writeFile, mkdir, readFile, readdir } from 'node:fs/promises'
 import { createHash } from 'node:crypto'
-import { resolve } from 'node:path'
+import { resolve, relative } from 'node:path'
 const root=resolve(import.meta.dirname,'..'),checks=[],errors=[]
 const runId=process.env.JHARNESS_R4_RUN_ID??'local-'+Date.now()
 if(!/^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/.test(runId))throw Error('Invalid R4 run identity')
@@ -157,9 +157,107 @@ try{
   await page.evaluate(()=>window.r4.mount('Button',{children:'temporary'}));await page.getByRole('button',{name:'temporary',exact:true}).waitFor();await page.evaluate(()=>window.r4.mount('Questions',window.storageProps));await page.getByRole('button',{name:'核对回答',exact:true}).waitFor();assert.equal(await page.getByRole('button',{name:'提交回答',exact:true}).isDisabled(),true);assert.equal(await page.evaluate(()=>window.storageAnswers),1)
   check('blocked browser storage retains the uncertain answer marker in memory across remount without reposting')
  } finally {await page.evaluate(()=>{for(const [key,value]of Object.entries(window.storageOriginal))Storage.prototype[key]=value})}
+ const contentDigest=hash(Buffer.from('abcdef'))
+ for(const kind of ['file','artifacts','content'])for(const fault of ['changed-version','corrupt-body','stalled-page','truncated-tail']) {
+  await page.evaluate(async({kind,fault,digest})=>{
+   const {Api}=await import('/src/api.ts')
+   window.contentDownloads=0;window.contentReads=0;window.contentOriginalURL=URL.createObjectURL
+   URL.createObjectURL=()=>{window.contentDownloads++;return 'blob:unexpected-download'}
+   const target=kind==='file'?'notes.txt':kind==='content'?'event_1':'00000000-0000-0000-0000-000000000000-'+'b'.repeat(64)
+   const api=new Api('test_token_0123456789_ABCDEFGHIJKLMNOPQRSTUVWXYZ',async(path,init)=>{
+    if(init.method!=='GET')throw Error('Content inspection attempted a write')
+    window.contentReads++
+    const offset=Number(new URL(path,'http://localhost').searchParams.get('offset'))
+    const row={text:offset?'def':'abc',offset,nextOffset:offset+3,more:offset===0,totalCharacters:6,contentSha256:digest,startLine:1,sanitized:true,
+     ...(kind==='file'?{source:'current-workspace',path:target,fileVersion:'a'.repeat(64)}:kind==='artifacts'?{source:'recorded-artifact',sessionId:'task_1',artifactId:target}:{source:'recorded-event',sessionId:'task_1',eventId:target})}
+    if(offset){
+     if(fault==='changed-version')row.contentSha256='c'.repeat(64)
+     if(fault==='corrupt-body')row.text='XYZ'
+     if(fault==='stalled-page'){row.nextOffset=offset;row.more=true}
+     if(fault==='truncated-tail'){row.text='d';row.nextOffset=4;row.more=false}
+    }
+    return new Response(JSON.stringify(row),{headers:{'content-type':'application/json'}})
+   })
+   window.r4.mount('ContentReader',{api,id:'task_1',kind,target})
+  },{kind,fault,digest:contentDigest})
+  try {
+   await page.getByRole('button',{name:'下载脱敏文本',exact:true}).waitFor();await page.waitForFunction(()=>window.contentReads===1);await page.getByRole('button',{name:'下载脱敏文本',exact:true}).click();await page.getByRole('alert').waitFor()
+   assert.equal(await page.evaluate(()=>window.contentDownloads),0);assert.equal(await page.evaluate(()=>window.contentReads),3);assert.equal(await page.getByRole('button',{name:'下载脱敏文本',exact:true}).isDisabled(),false)
+   check(kind+' '+fault+' fails download validation without publishing a blob or replaying writes')
+  } finally {await page.evaluate(()=>URL.createObjectURL=window.contentOriginalURL)}
+ }
+ await page.evaluate(()=>{
+  window.turnTask={...window.sessionProps.task,taskId:'turn_late',profile:'default',name:'Turn',protocolVersion:'1.14'}
+  window.turnRow={submissionId:'queued_1',sequence:1,state:'PAUSED',kind:'message',preview:'queued',turnId:''};window.turnHistory=0;window.turnWrites=0
+  window.baseTurnApi={models:async()=>window.data,skills:async()=>[],tools:async()=>({recorded:true,tools:[]}),detail:async()=>window.turnTask,turns:async()=>({submissions:[],more:false,next:0,total:0})}
+  window.turnProps={api:{...window.baseTurnApi,turns:async()=>({submissions:[window.turnRow],more:false,next:0,total:1}),turnAction:()=>{window.turnWrites++;return new Promise(resolve=>window.releaseTurn=resolve)}},task:window.turnTask,onUpdated:()=>{},onHistory:()=>window.turnHistory++,onGuard:()=>{}}
+  window.r4.mount('TurnComposer',window.turnProps)
+ });await page.getByText('消息队列与轮次（本页 1 条）',{exact:true}).click();await page.getByRole('button',{name:'开始这条消息',exact:true}).click();await page.waitForFunction(()=>window.turnWrites===1)
+ await page.evaluate(()=>window.r4.mount('TurnComposer',{...window.turnProps,api:window.baseTurnApi}));await page.waitForFunction(()=>!document.body.textContent.includes('消息队列与轮次'))
+ await page.evaluate(()=>window.releaseTurn({task:window.turnTask,submission:{...window.turnRow,state:'RUNNING'}}));await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));assert.equal(await page.evaluate(()=>window.turnHistory),0);assert.equal(await page.evaluate(()=>window.turnWrites),1);check('late queued-turn start cannot notify a replacement API context')
+ await page.evaluate(async()=>{
+  const {ApiError}=await import('/src/api.ts');window.turnTask={...window.turnTask,taskId:'turn_reconcile'};window.turnWrites=0
+  window.lookupTurnApi={...window.baseTurnApi,detail:async()=>window.turnTask,submitTurn:async()=>{window.turnWrites++;throw Error('response lost')},turnStatus:()=>new Promise((_resolve,reject)=>window.failOldLookup=()=>reject(new ApiError('SUBMISSION_NOT_FOUND')))}
+  window.turnProps={...window.turnProps,api:window.lookupTurnApi,task:window.turnTask};window.r4.mount('TurnComposer',window.turnProps)
+ });await page.getByLabel('后续消息',{exact:true}).fill('message');await page.getByRole('button',{name:'发送后续消息',exact:true}).click();await page.getByRole('button',{name:'核对消息受理',exact:true}).waitFor();await page.getByRole('button',{name:'核对消息受理',exact:true}).click();await page.waitForFunction(()=>typeof window.failOldLookup==='function')
+ await page.evaluate(()=>window.r4.mount('TurnComposer',{...window.turnProps,api:{...window.baseTurnApi,detail:async()=>window.turnTask}}));await page.getByRole('button',{name:'核对消息受理',exact:true}).waitFor();await page.evaluate(()=>window.failOldLookup());await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));assert.equal(await page.getByRole('button',{name:'清除本页标记',exact:true}).count(),0);assert.equal(await page.evaluate(()=>window.turnWrites),1);check('late missing-turn lookup cannot authorize clearing the replacement context pending marker')
+ await page.evaluate(()=>{
+  window.storageOriginalSet=Storage.prototype.setItem;Storage.prototype.setItem=()=>{throw new DOMException('blocked','QuotaExceededError')}
+  window.turnTask={...window.turnTask,taskId:'turn_storage'};window.turnWrites=0
+  window.turnProps={...window.turnProps,task:window.turnTask,api:{...window.baseTurnApi,detail:async()=>window.turnTask,submitTurn:async()=>{window.turnWrites++;throw Error('response lost')}}};window.r4.mount('TurnComposer',window.turnProps)
+ })
+ try {
+  await page.getByLabel('后续消息',{exact:true}).fill('message');await page.getByRole('button',{name:'发送后续消息',exact:true}).click();await page.getByRole('button',{name:'核对消息受理',exact:true}).waitFor()
+  await page.evaluate(()=>window.r4.mount('Button',{children:'remount turn'}));await page.getByRole('button',{name:'remount turn',exact:true}).waitFor();await page.evaluate(()=>window.r4.mount('TurnComposer',window.turnProps));await page.getByRole('button',{name:'核对消息受理',exact:true}).waitFor();assert.equal(await page.getByRole('button',{name:'发送后续消息',exact:true}).isDisabled(),true);assert.equal(await page.evaluate(()=>window.turnWrites),1);check('turn admission marker survives remount when only storage writes fail')
+ } finally {await page.evaluate(()=>Storage.prototype.setItem=window.storageOriginalSet)}
+ await page.evaluate(()=>{
+  window.appOriginalFetch=window.fetch;window.appConnections=0;window.cancelWrites=0;window.expireOldConnection=false
+  sessionStorage.setItem('jh-selected','task_1')
+  window.appTask={...window.sessionProps.task,taskId:'task_1',profile:'default',phase:'RUNNING',status:'RUNNING',protocolVersion:'1.14',revision:'r1',createdAt:'2026-10-27T00:00:00Z'}
+  window.fetch=async(path,init={})=>{
+   const url=new URL(path,'http://localhost'),json=(data,status=200)=>new Response(JSON.stringify(data),{status,headers:{'content-type':'application/json'}})
+   if(url.pathname==='/v1/browser-session'){window.appConnections++;return json({token:'fixture_token_0123456789_ABCDEFGHIJKLMNOPQRSTUVWXYZ_'+window.appConnections})}
+   if(url.pathname==='/v1/info')return json({profiles:['default'],protocolVersion:'1.14'})
+   if(url.pathname==='/v1/models')return json(window.data)
+   if(url.pathname==='/v1/workspaces')return json({workspaces:[],canRegister:false})
+   if(url.pathname==='/v1/tasks'){
+    if(window.expireOldConnection&&new Headers(init.headers).get('Authorization').endsWith('_1'))return json({error:'UNAUTHORIZED'},401)
+    return json({tasks:[window.appTask],next:'',more:false})
+   }
+   if(url.pathname.endsWith('/cancel')){window.cancelWrites++;return new Promise((resolve,reject)=>{if(window.cancelWrites===1)window.rejectOldCancel=()=>reject(new TypeError('lost response'));else window.resolveNewCancel=()=>resolve(json({...window.appTask,cancelRequested:true}))})}
+   if(url.pathname.endsWith('/events'))return new Headers(init.headers).get('Accept')==='text/event-stream'?new Response('',{headers:{'content-type':'text/event-stream'}}):json({events:[],next:'',more:false})
+   if(url.pathname.endsWith('/approvals'))return json({approvals:[]})
+   if(url.pathname.endsWith('/questions'))return json({questions:[],total:0,hasWaiting:false})
+   if(url.pathname.endsWith('/turns'))return json({submissions:[],more:false,next:0,total:0})
+   if(url.pathname.endsWith('/display'))return json({state:'IDLE',text:'',sourceEvent:'',truncated:false})
+   if(url.pathname.endsWith('/tools'))return json({recorded:true,tools:[]})
+   return json(window.appTask)
+  }
+  window.r4.mount('App',{})
+ })
+ try {
+  await page.getByRole('button',{name:'取消任务',exact:true}).click();await page.waitForFunction(()=>window.cancelWrites===1);await page.evaluate(()=>window.expireOldConnection=true);await page.getByRole('button',{name:'重新连接',exact:true}).click();await page.getByRole('button',{name:'取消任务',exact:true}).waitFor();await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));assert.equal(await page.getByRole('button',{name:'取消任务',exact:true}).isDisabled(),false);await page.getByRole('button',{name:'取消任务',exact:true}).click();await page.waitForFunction(()=>window.cancelWrites===2)
+  await page.evaluate(()=>window.rejectOldCancel());await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))));assert.equal(await page.getByRole('button',{name:'取消任务',exact:true}).isDisabled(),true);assert.equal(await page.getByText(/连接中断。读取可以重连/).count(),0);assert.equal(await page.evaluate(()=>window.cancelWrites),2)
+  await page.evaluate(()=>window.resolveNewCancel());check('old connection cancel failure cannot clear a newer action lock or publish a stale error')
+ } finally {await page.evaluate(()=>window.r4.mount('Button',{children:'unmounted app'}));await page.getByRole('button',{name:'unmounted app',exact:true}).waitFor();await page.evaluate(()=>{window.fetch=window.appOriginalFetch;sessionStorage.removeItem('jh-selected')})}
+ await page.evaluate(()=>{
+  window.appOriginalFetch=window.fetch;window.storageOriginalSet=Storage.prototype.setItem;Storage.prototype.setItem=()=>{throw new DOMException('blocked','QuotaExceededError')};window.appWrites=0
+  window.fetch=async(path,init={})=>{
+   const url=new URL(path,'http://localhost'),json=data=>new Response(JSON.stringify(data),{headers:{'content-type':'application/json'}})
+   if(url.pathname==='/v1/browser-session')return json({token:'test_token_0123456789_ABCDEFGHIJKLMNOPQRSTUVWXYZ'})
+   if(url.pathname==='/v1/info')return json({profiles:['default'],protocolVersion:'1.14'})
+   if(url.pathname==='/v1/models')return json(window.data)
+   if(url.pathname==='/v1/workspaces')return json({workspaces:[],canRegister:false})
+   if(url.pathname==='/v1/tasks'&&init.method==='POST'){window.appWrites++;throw new TypeError('lost response')}
+   return json({tasks:[],next:'',more:false})
+  };window.r4.mount('App',{})
+ })
+ try {
+  await page.getByLabel('任务目标',{exact:true}).fill('new task');await page.getByRole('button',{name:'创建任务',exact:true}).click();await page.getByText('本次提交待核对',{exact:true}).waitFor();await page.evaluate(()=>window.r4.mount('Button',{children:'remount app'}));await page.getByRole('button',{name:'remount app',exact:true}).waitFor();await page.evaluate(()=>window.r4.mount('App',{}));await page.getByText('本次提交待核对',{exact:true}).waitFor();await page.getByLabel('任务目标',{exact:true}).fill('another task');assert.equal(await page.getByRole('button',{name:'创建任务',exact:true}).isDisabled(),true);assert.equal(await page.evaluate(()=>window.appWrites),1);check('task admission marker survives App remount when storage writes fail without reposting')
+ } finally {await page.evaluate(()=>window.r4.mount('Button',{children:'finished'}));await page.getByRole('button',{name:'finished',exact:true}).waitFor();await page.evaluate(()=>{window.fetch=window.appOriginalFetch;Storage.prototype.setItem=window.storageOriginalSet})}
  assert.deepEqual(errors,[])
  assert.deepEqual(await sourceSnapshot(),sources)
  const screenshot=resolve(evidenceRoot,'browser-'+engine+'.png');await page.screenshot({path:screenshot,fullPage:true})
- await writeFile(output,JSON.stringify({status:'PASS',runId,engine,checks,errors,sourceSha256:sources,screenshot:{path:screenshot,sha256:hash(await readFile(screenshot))}},null,2)+'\n')
+ await writeFile(output,JSON.stringify({status:'PASS',runId,engine,checks,errors,sourceSha256:sources,screenshot:{path:relative(resolve(root,'..'),screenshot).replaceAll('\\','/'),sha256:hash(await readFile(screenshot))}},null,2)+'\n')
 }catch(error){await writeFile(output,JSON.stringify({status:'FAILED',runId,engine,checks,errors,error:String(error)},null,2)+'\n');throw error}
 finally{await browser?.close();await server.close()}
