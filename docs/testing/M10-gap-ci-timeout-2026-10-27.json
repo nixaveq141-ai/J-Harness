@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-27",
+  "status": "INCOMPLETE_LINUX_DEPENDENCY_INSTALL_JOB_TIMEOUT",
+  "commit": "78885e599f6453f2eb8d53b56263bc53e76c6824",
+  "ciRunId": "40506475359",
+  "m11Eligible": false,
+  "paidRequests": 0,
+  "artifacts": [
+    {
+      "file": "12736450541.zip",
+      "sha256": "41ae12376c77bc220ab91c31d40a6777cf706b21c3fc975b31c41b2bce86de31",
+      "githubDigest": "sha256:41ae12376c77bc220ab91c31d40a6777cf706b21c3fc975b31c41b2bce86de31",
+      "artifactId": 12736450541,
+      "name": "test-results-macos-latest",
+      "runId": "40506475359",
+      "commit": "78885e599f6453f2eb8d53b56263bc53e76c6824",
+      "createdAt": "2026-10-27T12:59:02Z",
+      "expiresAt": "2027-01-25T12:46:53Z"
+    },
+    {
+      "file": "12735139976.zip",
+      "sha256": "6935113a32140e20810569127f228029ef660b61295504f7753ee2266c125d9c",
+      "githubDigest": "sha256:6935113a32140e20810569127f228029ef660b61295504f7753ee2266c125d9c",
+      "artifactId": 12735139976,
+      "name": "test-results-windows-latest",
+      "runId": "40506475359",
+      "commit": "78885e599f6453f2eb8d53b56263bc53e76c6824",
+      "createdAt": "2026-10-27T13:07:38Z",
+      "expiresAt": "2027-01-25T12:46:53Z"
+    },
+    {
+      "file": "12739431696.zip",
+      "sha256": "6fd82ec5996a47a58d77109848baf393c5bd4ebfd71c35d6d4d6d8464e9aa69b",
+      "githubDigest": "sha256:6fd82ec5996a47a58d77109848baf393c5bd4ebfd71c35d6d4d6d8464e9aa69b",
+      "artifactId": 12739431696,
+      "name": "test-results-ubuntu-latest",
+      "runId": "40506475359",
+      "commit": "78885e599f6453f2eb8d53b56263bc53e76c6824",
+      "createdAt": "2026-10-27T13:47:14Z",
+      "expiresAt": "2027-01-25T12:46:53Z"
+    }
+  ],
+  "runnerConclusions": {
+    "macOS": "success",
+    "Windows": "success",
+    "Linux": "cancelled_after60minuteJobLimit"
+  },
+  "strictOriginalAudit": {
+    "status": "REJECTED_INCOMPLETE",
+    "completedRunnerChecksBeforeLinuxFailure": [
+      "macOS",
+      "Windows"
+    ],
+    "failure": "Linux original ZIP lacks .build-cache/M10.5.9/runner.json; aggregate not accepted.",
+    "auditLogSha256": "25fcd2b7d2d0b8f1d2d2753292b61797d7964d343f300072206a0f08bbc23379"
+  },
+  "linuxPartial": {
+    "java": {
+      "tests": 715,
+      "suites": 119,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "originalXmlExactIdentitiesVerified": true,
+    "sameFrozenBuildInputs": 610,
+    "sourceMapSha256": "ec89d132bd633293f6ae178f8931faf22b9c0e1ef38239a8b42b40b64660e788",
+    "browserMatrix": "NOT_EXECUTED",
+    "sdkNativeCandidate": "NOT_ACCEPTED"
+  },
+  "diagnosis": {
+    "actualImage": "ubuntu-26.04",
+    "imageVersion": "20261012.163",
+    "downloadSource": "azure.archive.ubuntu.com",
+    "credentialPackageDownloadMB": 18.4,
+    "browserSystemPackageDownloadMB": 129,
+    "installStartUtc": "2026-10-27T12:49:11Z",
+    "cancelledUtc": "2026-10-27T13:47:12Z",
+    "observation": "apt package download remained in progress at job deadline; no browser matrix executed. Underlying mirror/network cause unproven.",
+    "decodedJobLogSha256": "8f6b04de4c6bcab05f888fb74808a8684c76a11f1ef3d17bc30e8e08bd0dddf4"
+  },
+  "nextConfiguration": {
+    "linuxRunner": "ubuntu-24.04",
+    "artifactKey": "ubuntu-latest retained as compatibility key, not OS version",
+    "installSteps": 2,
+    "perInstallStepTimeoutMinutes": 15,
+    "allThreeBrowsersRetained": true,
+    "yamlValidationLogSha256": "859faa23c1c7dfd05f24d387bd45a920226b9f9ebd98e9369f8a8ea914e93e55",
+    "status": "STATIC_CHECK_PASS_REMOTE_PENDING"
+  },
+  "boundaries": [
+    "Pinning a supported LTS baseline does not prove download throughput is fixed.",
+    "Original Mac/Windows complete checks and Linux Java do not compose into a passing three-platform result.",
+    "This CI source715 predates the new718 test bodies; newer local reports remain separate.",
+    "Physical-machine acceptance skipped by user; no paid provider call."
+  ]
+}

@@ -99,3 +99,12 @@ R123R-172使用两个独立工作区的真实Web/SDK任务，模型主体和SDK�
 2026-10-27新增真实HTTP/JSONL回归：catalog.append完成真实force后停在受理屏障，客户端原始TCP连接用SO_LINGER=0关闭形成RST，然后才释放服务端继续SDK入口与响应。核对断连前受理事实恰一条且SDK尚未进入，之后按requestId读取回同一taskId；显式同ID重试及冷重开服务器后读取/显式重试仍是同一taskId，受理事实与SDK入口均只一次。SDK工厂以受控错误在模型创建前停止，不进行厂商调用。
 
 单项及最终完整verify718项/119套件零失败、错误、跳过，原717身份全保留，610输入执行前后不变；原XML/日志/命令回执/JAR269e4b69独立归档，汇总12项及Java精确证据8项通过。见[真实断连结果](../testing/M10-gap-r4-real-response-2026-10-27.json)。本项只关闭任务受理这一真实服务端窗口，不将其扩大为全部17写操作或所有响应故障均已验收；前端仍不自动重放。
+
+
+## Linux远端依赖下载超时与下一轮约束
+
+40506475359@78885e5：macOS/Windows完整成功，Linux达到60分钟job上限取消。三原ZIP均核对GitHub摘要，冻结610输入的严格审计已完成前两侧全部检查，随后因Linux缺最终runner.json拒绝整体验收。Linux原119套件/715精确身份及verify回执/日志可独立核对通过，但浏览器矩阵未执行，不拼接成三平台成功。见[原轮结果](../testing/M10-gap-ci-timeout-2026-10-27.json)。
+
+原日志记录实际镜像ubuntu26.04/20261012.163；12:49开始依赖安装，先下载18.4MB凭据依赖，之后129MB浏览器系统依赖到13:47仍未完。可确认软件包下载耗尽时间，底层镜像源/网络原因未证实，不称浏览器测试失败。后续Linux基线固定ubuntu24.04（仍为标准runner），保留旧ubuntu-latest制品键兼容审计；job显示真实runner标签，凭据和浏览器安装拆为各15分钟，apt连接超时30秒/重试一次，不再以整项60分钟作为唯一安装上界。三引擎与全部断言保留，安全YAML解析和矩阵/时限核对通过；新远端尚未验证，不宣称限速原因已解决。
+
+依据：[Playwright支持的系统](https://playwright.dev/docs/intro#system-requirements)同时包含Ubuntu24.04/26.04；[GitHub镜像与latest迁移说明](https://github.com/actions/runner-images#latest-migration-process)允许显式固定OS基线。固定版本用于减少环境漂移，不据此声称26.04不兼容。

@@ -11,11 +11,19 @@ permissions:
   contents: read
 jobs:
   verify:
+    name: verify (${{ matrix.runner }})
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, ubuntu-latest, macos-latest]
-    runs-on: ${{ matrix.os }}
+        include:
+          - os: windows-latest
+            runner: windows-latest
+          # Keep the artifact key stable; pin the actual Linux baseline explicitly.
+          - os: ubuntu-latest
+            runner: ubuntu-24.04
+          - os: macos-latest
+            runner: macos-latest
+    runs-on: ${{ matrix.runner }}
     timeout-minutes: 60
     env:
       JHARNESS_EVIDENCE_RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}-${{ github.sha }}
@@ -78,13 +86,18 @@ jobs:
             if [[ -f verify.log ]]; then tail -n 100 -- verify.log || true; fi
             exit "$verify_exit"
           fi
-      - name: Install browsers and credential service on Linux
+      - name: Install credential service on Linux
         if: runner.os == 'Linux'
+        timeout-minutes: 15
         working-directory: frontend
         run: |
-          sudo apt-get update
-          sudo apt-get install -y dbus-x11 libsecret-1-0 gnome-keyring
-          node node_modules/playwright/cli.js install --with-deps chromium firefox webkit
+          sudo apt-get -o Acquire::Retries=1 -o Acquire::http::Timeout=30 update
+          sudo apt-get -o Acquire::Retries=1 -o Acquire::http::Timeout=30 install -y dbus-x11 libsecret-1-0 gnome-keyring
+      - name: Install browsers and dependencies on Linux
+        if: runner.os == 'Linux'
+        timeout-minutes: 15
+        working-directory: frontend
+        run: node node_modules/playwright/cli.js install --with-deps chromium firefox webkit
       - name: Install browsers on Windows and macOS
         if: runner.os != 'Linux'
         working-directory: frontend
