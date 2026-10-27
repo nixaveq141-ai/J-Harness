@@ -111,6 +111,21 @@ class M7EnvironmentTest {
 
     @Test
     void containerFlagsOwnershipAndUnknownOutcomeAreConservative() throws Exception {
+        var json = new com.fasterxml.jackson.databind.ObjectMapper();
+        for (String option :
+                List.of("no-new-privileges", "no-new-privileges=true", "no-new-privileges:true"))
+            assertTrue(M7DockerProbe.noNewPrivileges(json.valueToTree(List.of(option))));
+        for (Object invalid :
+                List.of(
+                        List.of(),
+                        List.of("no-new-privileges:false"),
+                        List.of("no-new-privileges=false"),
+                        List.of("no-new-privileges:true", "no-new-privileges:false"),
+                        List.of("no-new-privileges:true", "no-new-privileges:true"),
+                        "no-new-privileges",
+                        List.of(true)))
+            assertFalse(M7DockerProbe.noNewPrivileges(json.valueToTree(invalid)));
+        assertFalse(M7DockerProbe.noNewPrivileges(null));
         Path jar = root.resolve("worker.jar");
         Files.writeString(jar, "fixture");
         var commands = new ArrayList<List<String>>();

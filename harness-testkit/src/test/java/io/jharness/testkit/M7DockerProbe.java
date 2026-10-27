@@ -76,6 +76,17 @@ public final class M7DockerProbe {
             require(inspect.exitCode() == 0 && !inspect.uncertain(), "inspect");
             var actual = new ObjectMapper().readTree(inspect.stdout()).get(0);
             var host = actual.get("HostConfig");
+            // Only fixed isolation fields; never persist Config.Env or general inspect output.
+            var isolationFields = new LinkedHashMap<String, Object>();
+            for (String field :
+                    List.of(
+                            "NetworkMode",
+                            "ReadonlyRootfs",
+                            "CapDrop",
+                            "SecurityOpt",
+                            "Memory",
+                            "PidsLimit")) isolationFields.put(field, host.get(field));
+            result.put("isolationInspection", isolationFields);
             require(host.get("NetworkMode").asText().equals("none"), "network");
             require(host.get("ReadonlyRootfs").asBoolean(), "readonly root");
             require(
@@ -83,12 +94,7 @@ public final class M7DockerProbe {
                             && host.get("CapDrop").size() == 1
                             && host.get("CapDrop").get(0).asText().equals("ALL"),
                     "caps");
-            require(
-                    host.get("SecurityOpt").isArray()
-                            && host.get("SecurityOpt").size() == 1
-                            && Set.of("no-new-privileges", "no-new-privileges=true")
-                                    .contains(host.get("SecurityOpt").get(0).asText()),
-                    "privileges");
+            require(noNewPrivileges(host.get("SecurityOpt")), "privileges");
             require(actual.get("Config").get("User").asText().equals("65534:65534"), "nonroot");
             require(
                     host.get("Memory").asLong() == 512L * 1024 * 1024
@@ -102,7 +108,7 @@ public final class M7DockerProbe {
                                             "isolation",
                                             CommandRequest.Mode.SH,
                                             List.of(
-                                                    "test ! -S /var/run/docker.sock && test ! -e /host && test \"$(id -u)\" = 65534 && command -v touch >/dev/null && ! touch /forbidden"),
+                                                    "test ! -S /var/run/docker.sock && test ! -e /host && test \"$(id -u)\" = 65534 && grep -q '^NoNewPrivs:[[:space:]]*1$' /proc/self/status && command -v touch >/dev/null && ! touch /forbidden"),
                                             new ExecPath("."),
                                             Duration.ofSeconds(10)),
                                     CancellationToken.NONE);
@@ -148,10 +154,22 @@ public final class M7DockerProbe {
                                                                 "execute_command",
                                                                 Map.of(
                                                                         "mode",
-                                                                        docker ? "SH" : "CMD",
+                                                                        docker
+                                                                                        || !System
+                                                                                                .getProperty(
+                                                                                                        "os.name")
+                                                                                                .startsWith(
+                                                                                                        "Windows")
+                                                                                ? "SH"
+                                                                                : "CMD",
                                                                         "argv",
                                                                         List.of(
                                                                                 docker
+                                                                                                || !System
+                                                                                                        .getProperty(
+                                                                                                                "os.name")
+                                                                                                        .startsWith(
+                                                                                                                "Windows")
                                                                                         ? "printf '%s' 'SDK \"quoted\" value' > sdk-shell.txt"
                                                                                         : "echo SDK \"quoted\" value>sdk-shell.txt"),
                                                                         "cwd",
@@ -265,5 +283,14 @@ public final class M7DockerProbe {
 
     private static void require(boolean value, String label) {
         if (!value) throw new IllegalStateException(label);
+    }
+
+    static boolean noNewPrivileges(com.fasterxml.jackson.databind.JsonNode options) {
+        return options != null
+                && options.isArray()
+                && options.size() == 1
+                && options.get(0).isTextual()
+                && Set.of("no-new-privileges", "no-new-privileges=true", "no-new-privileges:true")
+                        .contains(options.get(0).asText());
     }
 }

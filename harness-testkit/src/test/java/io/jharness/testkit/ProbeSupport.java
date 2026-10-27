@@ -44,6 +44,16 @@ final class ProbeSupport {
                     var report = new LinkedHashMap<String, Object>();
                     report.put("result", "FAILED");
                     report.put("failureType", failure.getClass().getSimpleName());
+                    if (Set.of(
+                                    "inspect",
+                                    "network",
+                                    "readonly root",
+                                    "caps",
+                                    "privileges",
+                                    "nonroot",
+                                    "quotas")
+                            .contains(Objects.toString(failure.getMessage(), "")))
+                        report.put("failureCheck", failure.getMessage());
                     report.put("completedEvidence", progress);
                     report.put("cleanupVerified", false);
                     report.put(
