@@ -1,6 +1,9 @@
 name: Remaining gaps real Docker validation
 on:
   workflow_dispatch:
+  push:
+    branches: [codex/m1059-full-validation]
+    paths: [.github/workflows/gap-docker-focused.yml]
 permissions:
   contents: read
 concurrency:
