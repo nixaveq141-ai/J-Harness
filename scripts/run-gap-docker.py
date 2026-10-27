@@ -22,6 +22,24 @@ def validate_report(report, jar):
         raise ValueError('Incomplete same-JAR real-container report')
 
 
+def run_probe(command, *, input_files, **kwargs):
+    """Inputs must survive: evidence_run deliberately deletes generated outputs before launch."""
+    root = kwargs.get('root', ROOT)
+    before = {p.relative_to(root).as_posix(): stream_sha256(p) for p in input_files}
+    if set(input_files).intersection(kwargs.get('outputs', ())):
+        raise ValueError('Input artifact cannot be declared as a generated output')
+    receipt = run(command, **kwargs)
+    after = {p.relative_to(root).as_posix(): stream_sha256(p) for p in input_files}
+    receipt['inputArtifactsSha256'] = before
+    receipt['inputArtifactsAfterSha256'] = after
+    if before != after:
+        receipt['status'] = 'INPUT_ARTIFACT_DRIFT'
+    atomic_write_json(kwargs['receipt'], receipt)
+    if before != after:
+        raise ValueError('Input artifact changed during probe')
+    return receipt
+
+
 def main():
     run_id = os.environ.get('JHARNESS_EVIDENCE_RUN_ID')
     if not valid_run_id(run_id):
@@ -54,10 +72,11 @@ def main():
         for name in PROBES:
             result = output / (name + '.json')
             probe_class = ROOT / 'harness-testkit/target/test-classes/io/jharness/testkit' / (name + '.class')
-            receipt = run([java, '-cp', classpath, 'io.jharness.testkit.' + name, docker, IMAGE,
+            receipt = run_probe([java, '-cp', classpath, 'io.jharness.testkit.' + name, docker, IMAGE,
                            str(output / 'fixtures'), str(jar), str(result)],
                           name=name, log=output / (name + '.log'), receipt=output / (name + '.receipt.json'),
-                          run_id=run_id, timeout=480, env=env, outputs=(result, probe_class, jar))
+                          run_id=run_id, timeout=480, env=env, outputs=(result,),
+                          input_files=(probe_class, jar))
             data = json.loads(result.read_bytes())
             validate_report(data, report['jarSha256'])
             report['probes'].append(dict(name=name, resultSha256=stream_sha256(result),
