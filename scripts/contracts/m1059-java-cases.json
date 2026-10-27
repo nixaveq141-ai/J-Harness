@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "milestone": "M10.5.9",
-  "origin": "2026-10-26 gap follow-up preserves all 702 prior identities and adds three controlled display monitor/generation regressions; current CI must prove its exact set.",
+  "origin": "2026-10-27 remaining-gap follow-ups preserve all 705 prior identities and add four legacy-index/request-association regressions; current CI must prove its exact set.",
   "suites": [
     {
       "module": "harness-agent",
@@ -495,7 +495,9 @@
       "cases": [
         "factoryFailureAfterCloseRemovesPendingMarkerWithoutClaimingClientCleanup",
         "factoryReentryCannotCorruptMapOrRecursivelyConstructSameRoute",
-        "factoryRunsOutsideLockAndLateClientClosesAfterRouterClose"
+        "factoryRunsOutsideLockAndLateClientClosesAfterRouterClose",
+        "recordedIdentitySurvivesRoutingStreamingAndConcurrentIdenticalRequestsWithoutHistoryReads",
+        "unboundObservationDoesNotInventSourceAndBoundFailureKeepsPrimaryException"
       ]
     },
     {
@@ -1291,6 +1293,8 @@
       "module": "harness-testkit",
       "name": "io.jharness.web.R1CatalogScanBoundaryTest",
       "cases": [
+        "coldLegacyLookupReadsOnlyItsRecordButFullScanStillRejectsCorruption",
+        "duplicateLegacyIdentityIsRejectedBeforeASecondRecordIsWritten",
         "flatTenThousandRecordScanIsBoundedAndDoesNotHoldCatalogMonitor"
       ]
     },

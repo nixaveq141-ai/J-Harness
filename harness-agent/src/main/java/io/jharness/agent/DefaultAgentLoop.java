@@ -153,17 +153,22 @@ public final class DefaultAgentLoop implements AgentLoop {
                                                 "Journal did not reconstruct the prepared request");
                                     ChatResponse attemptResponse;
                                     try {
+                                        LlmClient recordedClient =
+                                                Objects.requireNonNull(
+                                                        core.llm()
+                                                                .forRecordedRequest(
+                                                                        attemptRequestId),
+                                                        "recorded request client");
                                         attemptResponse =
                                                 Objects.requireNonNull(
                                                         singleSend
-                                                                ? core.llm()
+                                                                ? recordedClient
                                                                         .completeSingleAttempt(
                                                                                 replay,
                                                                                 attemptCancellation)
-                                                                : core.llm()
-                                                                        .complete(
-                                                                                replay,
-                                                                                attemptCancellation));
+                                                                : recordedClient.complete(
+                                                                        replay,
+                                                                        attemptCancellation));
                                     } catch (ModelRejectedException rejected) {
                                         append(
                                                 "model.rejected",

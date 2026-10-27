@@ -10,6 +10,7 @@ public final class ObservedLlmClient implements LlmClient, ModelRouter {
     private final SessionReader reader;
     private final DataSanitizer sanitizer;
     private final String session;
+    private final String requestEvent;
 
     public ObservedLlmClient(
             LlmClient delegate,
@@ -17,11 +18,29 @@ public final class ObservedLlmClient implements LlmClient, ModelRouter {
             SessionReader reader,
             DataSanitizer sanitizer,
             String session) {
+        this(delegate, writer, reader, sanitizer, session, "");
+    }
+
+    private ObservedLlmClient(
+            LlmClient delegate,
+            SessionWriter writer,
+            SessionReader reader,
+            DataSanitizer sanitizer,
+            String session,
+            String requestEvent) {
         this.delegate = Objects.requireNonNull(delegate);
         this.writer = Objects.requireNonNull(writer);
         this.reader = Objects.requireNonNull(reader);
         this.sanitizer = Objects.requireNonNull(sanitizer);
         this.session = session;
+        this.requestEvent = requestEvent;
+    }
+
+    @Override
+    public LlmClient forRecordedRequest(String eventId) {
+        Values.required(eventId, "request event ID");
+        return new ObservedLlmClient(
+                delegate.forRecordedRequest(eventId), writer, reader, sanitizer, session, eventId);
     }
 
     @Override
@@ -38,8 +57,15 @@ public final class ObservedLlmClient implements LlmClient, ModelRouter {
                     && observed.writer == writer
                     && observed.reader == reader
                     && observed.sanitizer == sanitizer
+                    && observed.requestEvent.equals(requestEvent)
                     && Objects.equals(observed.session, session)) return chosen;
-            return new ObservedLlmClient(chosen, writer, reader, sanitizer, session);
+            return new ObservedLlmClient(
+                    requestEvent.isEmpty() ? chosen : chosen.forRecordedRequest(requestEvent),
+                    writer,
+                    reader,
+                    sanitizer,
+                    session,
+                    requestEvent);
         }
         if ("base".equals(route)) return this;
         throw new HarnessException("MODEL_ROUTE_NOT_FOUND", "Unknown model route");
@@ -97,11 +123,8 @@ public final class ObservedLlmClient implements LlmClient, ModelRouter {
                 metrics.put("requestCount", 1);
                 metrics.put("model", request.parameters().getOrDefault("model", "unknown"));
                 metrics.put("stream", Boolean.TRUE.equals(request.parameters().get("stream")));
-                var events = reader.events();
-                events.stream()
-                        .filter(e -> e.type().equals("model.requested"))
-                        .reduce((a, b) -> b)
-                        .ifPresent(e -> metrics.put("sourceEvent", e.eventId()));
+                if (!requestEvent.isEmpty()) metrics.put("sourceEvent", requestEvent);
+                else metrics.put("sourceAssociation", "UNBOUND");
                 if (response != null) {
                     Map<String, Object> usage = new LinkedHashMap<>();
                     for (String key : List.of("prompt_tokens", "completion_tokens", "total_tokens"))

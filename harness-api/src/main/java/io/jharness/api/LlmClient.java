@@ -5,6 +5,16 @@ public interface LlmClient extends AutoCloseable {
     default void close() {}
 
     /**
+     * Borrowed per-call view bound to the already persisted model.requested fact. The identity is
+     * host metadata, never a provider parameter. Legacy adapters may ignore it; decorators must
+     * forward it. The loop closes the original owning client, not this temporary view.
+     */
+    default LlmClient forRecordedRequest(String eventId) {
+        Values.required(eventId, "request event ID");
+        return this;
+    }
+
+    /**
      * Optional independent host display observer. Text is a cumulative sanitized snapshot, never a
      * delta or execution fact. Implementations must isolate display failures from model completion;
      * low-level stream() frames are provider data and require sanitization before presentation,

@@ -26,6 +26,15 @@ public final class RoutedLlmClient implements LlmClient, ModelRouter {
     }
 
     @Override
+    public LlmClient forRecordedRequest(String eventId) {
+        Values.required(eventId, "request event ID");
+        return new RoutedLlmClient(
+                router,
+                selected.forRecordedRequest(eventId),
+                client -> decorate.apply(client).forRecordedRequest(eventId));
+    }
+
+    @Override
     public LlmClient withDisplay(Consumer<String> observer) {
         Objects.requireNonNull(observer);
         return new RoutedLlmClient(

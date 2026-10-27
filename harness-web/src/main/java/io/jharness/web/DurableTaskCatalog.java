@@ -17,6 +17,9 @@ final class DurableTaskCatalog implements SessionWriter {
     private final DataSanitizer sanitizer;
     private final Path directory;
     private final Map<String, String> recent = new LinkedHashMap<>();
+    // Derived addresses only, bounded by the same 10000-record quota as the facts.
+    // Filled by the mandatory startup scan; no histories or Task objects are retained.
+    private final Map<String, String> legacyAddresses = new HashMap<>();
     private int count;
 
     DurableTaskCatalog(
@@ -254,6 +257,7 @@ final class DurableTaskCatalog implements SessionWriter {
                 || id == null
                 || !history.getFirst().sessionId().equals(recordId(hash)))
             throw error("INVALID_WEB_CATALOG");
+        indexLegacy(id, hash);
         recent.remove(id);
         recent.put(id, hash);
         if (recent.size() > 32) recent.remove(recent.keySet().iterator().next());
@@ -306,6 +310,12 @@ final class DurableTaskCatalog implements SessionWriter {
     }
 
     synchronized List<SessionEvent> byId(String id) {
+        try {
+            check();
+        } catch (IOException ex) {
+            throw error("WEB_CATALOG_IO");
+        }
+        if (id == null || !id.matches("[A-Za-z0-9_-]{1,128}")) return List.of();
         if (recent.containsKey(id)) return byHash(recent.get(id));
         if (id.matches("web-[a-f0-9]{32}-[a-f0-9]{64}")) {
             var history = byHash(id.substring(37));
@@ -313,14 +323,20 @@ final class DurableTaskCatalog implements SessionWriter {
                     ? history
                     : List.of();
         }
-        var found = new ArrayList<SessionEvent>();
-        scan(
-                history -> {
-                    if (id.equals(history.getFirst().payload().get("taskId")))
-                        found.addAll(history);
-                });
-        if (!found.isEmpty()) remember(found);
-        return found;
+        String hash = legacyAddresses.get(id);
+        if (hash == null) return List.of();
+        var history = byHash(hash); // Always re-read and validate the addressed durable facts.
+        if (history.isEmpty() || !id.equals(history.getFirst().payload().get("taskId")))
+            throw error("INVALID_WEB_CATALOG");
+        return history;
+    }
+
+    private void indexLegacy(String id, String hash) {
+        if (id.matches("web-[a-f0-9]{32}-[a-f0-9]{64}")) return;
+        String previous = legacyAddresses.get(id);
+        if (previous != null && !previous.equals(hash)) throw error("INVALID_WEB_CATALOG");
+        if (previous == null && legacyAddresses.size() >= 10000) throw error("WEB_HISTORY_QUOTA");
+        legacyAddresses.put(id, hash);
     }
 
     synchronized int count() {
@@ -348,6 +364,7 @@ final class DurableTaskCatalog implements SessionWriter {
             hash = (String) event.payload().get("requestHash");
             if (!byHash(hash).isEmpty()) throw error("REQUEST_ID_CONFLICT");
             if (count >= 10000) throw error("WEB_HISTORY_QUOTA");
+            if (legacyAddresses.containsKey(id)) throw error("INVALID_WEB_CATALOG");
         } else {
             var history = byId(id);
             if (history.isEmpty()) throw error("TASK_NOT_FOUND");
@@ -364,6 +381,7 @@ final class DurableTaskCatalog implements SessionWriter {
             throw error("WEB_CATALOG_IO");
         }
         recent.put(id, hash);
+        if (accepted) indexLegacy(id, hash);
         if (recent.size() > 32) recent.remove(recent.keySet().iterator().next());
         if (accepted) count++;
         return persisted;

@@ -29,6 +29,13 @@ public final class StreamingLlmClient implements LlmClient, ModelRouter {
     }
 
     @Override
+    public LlmClient forRecordedRequest(String eventId) {
+        Values.required(eventId, "request event ID");
+        return new StreamingLlmClient(
+                delegate.forRecordedRequest(eventId), display, secrets, updates);
+    }
+
+    @Override
     public LlmClient withDisplay(Consumer<String> observer) {
         Objects.requireNonNull(observer);
         return new StreamingLlmClient(
