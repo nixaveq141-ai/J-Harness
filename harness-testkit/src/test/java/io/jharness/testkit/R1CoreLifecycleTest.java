@@ -544,6 +544,109 @@ class R1CoreLifecycleTest {
     }
 
     @Test
+    void noncooperatingWorkersShareOneStopGraceAndSettleOnce() throws Exception {
+        var entered = new CountDownLatch(4);
+        var release = new CountDownLatch(1);
+        var exited = new CountDownLatch(4);
+        try (var f = new Fixture();
+                var scheduler =
+                        new BoundedReadOnlyToolScheduler(
+                                new ToolSchedulingOptions(
+                                        4, Set.of("fixture"), Duration.ofMillis(200)))) {
+            f.tools.register(tool(SideEffectLevel.READ_ONLY, c -> ok(c.callId())), SCOPE);
+            var settled = new LinkedHashMap<String, ToolResult>();
+            Thread owner = Thread.currentThread();
+            ToolPipeline pipeline =
+                    new ToolPipeline() {
+                        public ToolResult execute(
+                                ToolInvocation call, ToolPipelineContext context) {
+                            throw new AssertionError("prepared path required");
+                        }
+
+                        public Optional<PreparedToolCall> prepare(
+                                ToolInvocation call,
+                                ToolPipelineContext context,
+                                Runnable barrier) {
+                            return Optional.of(
+                                    new PreparedToolCall() {
+                                        public boolean parallelAllowed() {
+                                            return true;
+                                        }
+
+                                        public ToolResult run() {
+                                            entered.countDown();
+                                            try {
+                                                while (release.getCount() != 0) {
+                                                    try {
+                                                        release.await();
+                                                    } catch (InterruptedException ignored) {
+                                                        // Intentionally retain ownership despite
+                                                        // cancellation.
+                                                    }
+                                                }
+                                                return ok(call.callId());
+                                            } finally {
+                                                exited.countDown();
+                                            }
+                                        }
+
+                                        public ToolResult finish(ToolResult result) {
+                                            assertSame(owner, Thread.currentThread());
+                                            assertNull(settled.putIfAbsent(call.callId(), result));
+                                            return result;
+                                        }
+                                    });
+                        }
+                    };
+            var calls =
+                    java.util.stream.IntStream.range(0, 4)
+                            .mapToObj(
+                                    i ->
+                                            new ToolInvocation(
+                                                    "held-" + i,
+                                                    "fixture",
+                                                    Map.of(),
+                                                    SideEffectLevel.READ_ONLY))
+                            .toList();
+            try {
+                long start = System.nanoTime();
+                assertEquals(
+                        "UNKNOWN_SIDE_EFFECT",
+                        assertThrows(
+                                        HarnessException.class,
+                                        () -> scheduler.execute(calls, f.context(), pipeline))
+                                .code());
+                assertTrue(
+                        Duration.ofNanos(System.nanoTime() - start).compareTo(Duration.ofSeconds(5))
+                                < 0,
+                        "four workers must share one two-second grace, not receive four graces");
+                assertEquals(0, entered.getCount());
+                assertEquals(4, exited.getCount());
+                assertEquals(
+                        calls.stream().map(ToolInvocation::callId).toList(),
+                        new ArrayList<>(settled.keySet()));
+                assertTrue(
+                        settled.values().stream().allMatch(r -> r.status() == ToolStatus.UNKNOWN));
+                assertEquals(
+                        List.of("SCHEDULER_TIMEOUT", "UNKNOWN_SIDE_EFFECT"),
+                        f.events().stream()
+                                .filter(e -> e.type().equals("tool.batch.stopped"))
+                                .map(e -> e.payload().get("reason"))
+                                .toList());
+                assertEquals(
+                        "SCHEDULER_BUSY",
+                        assertThrows(
+                                        HarnessException.class,
+                                        () -> scheduler.execute(calls, f.context(), pipeline))
+                                .code());
+            } finally {
+                release.countDown();
+                assertTrue(exited.await(2, TimeUnit.SECONDS));
+            }
+        }
+    }
+
+    @Test
     void modelFailureKeepsPrimaryWhenStopAuditAlsoFails() {
         var primary = new HarnessException("MODEL_TRANSPORT_UNKNOWN", "safe fixture");
         var secondary = new HarnessException("AUDIT_FAILED", "safe fixture");

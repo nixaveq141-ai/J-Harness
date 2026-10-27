@@ -345,6 +345,181 @@ class R1WebOwnershipTest {
     }
 
     @Test
+    @org.junit.jupiter.api.Timeout(20)
+    void simultaneousWorkerCleanupReleasesCatalogExactlyOnceAfterBothLeave() throws Exception {
+        var entered = new CountDownLatch(2);
+        var release = new CountDownLatch(1);
+        var cleanupEntered = new CountDownLatch(2);
+        var cleanupRelease = new CountDownLatch(1);
+        var modelCloses = new AtomicInteger();
+        var catalogCloses = new AtomicInteger();
+        LlmClient model =
+                new LlmClient() {
+                    public ModelCapabilities capabilities() {
+                        return new ModelCapabilities(true, false, false, false, 8192);
+                    }
+
+                    public PreparedRequest prepare(ChatRequest request) {
+                        return new PreparedRequest(request);
+                    }
+
+                    void hold(CountDownLatch latch) {
+                        while (latch.getCount() != 0) {
+                            try {
+                                latch.await();
+                            } catch (InterruptedException ignored) {
+                                /* noncooperating owner fixture */
+                            }
+                        }
+                    }
+
+                    public ChatResponse complete(ChatRequest request, CancellationToken token) {
+                        entered.countDown();
+                        hold(release);
+                        return new ChatResponse("done", List.of(), Map.of());
+                    }
+
+                    public StreamHandle stream(ChatRequest request, CancellationToken token) {
+                        throw new UnsupportedOperationException();
+                    }
+
+                    public void close() {
+                        modelCloses.incrementAndGet();
+                        cleanupEntered.countDown();
+                        hold(cleanupRelease);
+                    }
+                };
+        var physical = new JsonlSessionRepository(root.resolve("catalog"));
+        SessionRepository catalog =
+                new SessionRepository() {
+                    public List<String> list() {
+                        return physical.list();
+                    }
+
+                    public String fork(String id, String event) {
+                        return physical.fork(id, event);
+                    }
+
+                    public SessionReader openReader(String id) {
+                        return physical.openReader(id);
+                    }
+
+                    public SessionWriter openWriter(String id, WriteOwnership ownership) {
+                        var writer = physical.openWriter(id, ownership);
+                        return new SessionWriter() {
+                            public boolean durable() {
+                                return writer.durable();
+                            }
+
+                            public String append(SessionEvent event) {
+                                return writer.append(event);
+                            }
+
+                            public void flush() {
+                                writer.flush();
+                            }
+
+                            public void close() {
+                                catalogCloses.incrementAndGet();
+                                writer.close();
+                            }
+                        };
+                    }
+                };
+        var profiles = new LinkedHashMap<String, HarnessWebServer.Profile>();
+        for (String name : List.of("first", "second")) {
+            var workspace = Files.createDirectories(root.resolve(name));
+            var repo = new JsonlSessionRepository(root.resolve(name + "-sessions"));
+            profiles.put(
+                    name,
+                    new HarnessWebServer.Profile(
+                            name,
+                            repo,
+                            (id, approval, sanitizer) ->
+                                    new HarnessSdk(
+                                            id,
+                                            "fixture",
+                                            repo,
+                                            new LocalExecutionEnvironment(
+                                                    "local", workspace, List.of()),
+                                            model,
+                                            new LocalArtifactStore(
+                                                    root.resolve(name + "-artifacts"), sanitizer),
+                                            sanitizer,
+                                            new DefaultPolicyEngine(),
+                                            approval,
+                                            new Budget(2, Duration.ofSeconds(20)),
+                                            (a, b) ->
+                                                    new CompletionEvaluator.CompletionDecision(
+                                                            true, "fixture"),
+                                            ApiCostGuard.unavailable(),
+                                            List.of())));
+        }
+        var host =
+                new HarnessWebServer(
+                        0,
+                        TOKEN,
+                        profiles,
+                        catalog,
+                        "web-catalog",
+                        new SecretRedactor(),
+                        2,
+                        8,
+                        Duration.ofSeconds(3));
+        try {
+            for (String name : profiles.keySet()) {
+                assertEquals(
+                        202,
+                        request(
+                                        host,
+                                        "/v1/tasks",
+                                        "{\"profile\":\""
+                                                + name
+                                                + "\",\"goal\":\"test\",\"requestId\":\""
+                                                + name
+                                                + "\"}")
+                                .statusCode());
+            }
+            assertTrue(entered.await(2, TimeUnit.SECONDS));
+            host.close();
+            assertEquals(0, catalogCloses.get());
+            release.countDown();
+            assertTrue(cleanupEntered.await(4, TimeUnit.SECONDS));
+            assertEquals(2, modelCloses.get());
+            assertEquals(0, catalogCloses.get(), "SDK cleanup still owns both workers");
+            assertEquals(
+                    "WRITE_CONFLICT",
+                    assertThrows(
+                                    HarnessException.class,
+                                    () ->
+                                            physical.openWriter(
+                                                    "web-catalog", WriteOwnership.EXCLUSIVE))
+                            .code());
+            cleanupRelease.countDown();
+            long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(4);
+            boolean freed = false;
+            while (System.nanoTime() < deadline) {
+                try (var writer = physical.openWriter("web-catalog", WriteOwnership.EXCLUSIVE)) {
+                    writer.flush();
+                    freed = true;
+                    break;
+                } catch (HarnessException busy) {
+                    assertEquals("WRITE_CONFLICT", busy.code());
+                    Thread.sleep(5);
+                }
+            }
+            assertTrue(freed, "last mandatory cleanup must release the catalog");
+            host.close();
+            assertEquals(1, catalogCloses.get());
+            assertEquals(2, modelCloses.get());
+        } finally {
+            release.countDown();
+            cleanupRelease.countDown();
+            host.close();
+        }
+    }
+
+    @Test
     void committedMutationResponseCannotKeepOrReleaseAnotherMutationGuard() throws Exception {
         for (boolean workspace : List.of(true, false)) {
             var entered = new CountDownLatch(1);

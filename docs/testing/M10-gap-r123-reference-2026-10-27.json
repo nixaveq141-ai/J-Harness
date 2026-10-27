@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "date": "2026-10-27",
-  "status": "REFERENCES_VERIFIED_PATCH_FAULT_ORACLE_ADDED_OTHER_PRECISE_FOLLOWUPS_OPEN",
+  "status": "REFERENCES_VERIFIED_THREE_PRECISE_FOLLOWUPS_LOCAL_ORACLES_PASS",
   "ledgerSha256": "e0ce9b3b18eba60cd784843eca75c84d657d4cc3ccf1391a09136f48fef14a49",
   "opinionCount": 174,
   "historicalCounts": {
@@ -2893,17 +2893,22 @@
     },
     {
       "id": "R123R-150",
-      "gap": "Associated lifecycle coverage exists, but shared first-stop grace/repeated same UNKNOWN merits direct bounded regression."
+      "gap": "Associated lifecycle coverage exists, but shared first-stop grace/repeated same UNKNOWN merits direct bounded regression.",
+      "status": "LOCAL_EXACT_ORACLE_PASS",
+      "result": "M10-gap-r123-lifecycle-2026-10-27.json"
     },
     {
       "id": "R123R-172",
-      "gap": "Single uncooperative worker cleanup is tested; simultaneous final two-worker cleanup needs an exact barrier case."
+      "gap": "Single uncooperative worker cleanup is tested; simultaneous final two-worker cleanup needs an exact barrier case.",
+      "status": "LOCAL_EXACT_ORACLE_PASS",
+      "result": "M10-gap-r123-lifecycle-2026-10-27.json"
     }
   ],
   "boundaries": [
     "Original opinion verdicts and historic acceptance remain unchanged.",
     "Current 715 XML snapshot predates pure frontend CRLF normalization; original bytes preserved in ignored cache.",
     "Offline gate192 ran before pure frontend CRLF normalization; all three differing originals are retained.",
-    "No new paid model requests or physical-machine acceptance."
+    "No new paid model requests or physical-machine acceptance.",
+    "Later 150/172 exact regressions supplement this dated reference inventory; use their result for the newer 717 contract and full-verification status."
   ]
 }

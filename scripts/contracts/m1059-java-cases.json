@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "milestone": "M10.5.9",
-  "origin": "2026-10-27 remaining-gap follow-ups preserve all 709 prior identities and add six provenance/snapshot regressions; current CI must prove its exact set.",
+  "origin": "2026-10-27 remaining-gap follow-ups preserve all 715 prior identities and add shared stop-grace and simultaneous worker-cleanup regressions; current CI must prove its exact set.",
   "suites": [
     {
       "module": "harness-agent",
@@ -1198,6 +1198,7 @@
         "knownReturnedFailureDoesNotBecomeUnknownMerelyBecauseBodyEntered",
         "modelFailureKeepsPrimaryWhenStopAuditAlsoFails",
         "modelObservationFailurePreservesOriginalRejectionAndSecondaryCause",
+        "noncooperatingWorkersShareOneStopGraceAndSettleOnce",
         "observerReceivesExactlyPersistedSanitizedPayloadAndUnsafeIdentityRejects",
         "operatorVerificationProjectionOmitsUnrecognizedPayloadFields",
         "persistedEventFailureIsDistinguishedFromNotificationFailure",
@@ -1233,6 +1234,7 @@
         "displaySnapshotFailureStillClosesSdkAndPreservesUnknownOwnership",
         "expiredApprovalPostAndOwnerContendAtSameBarrierAndBothDeny",
         "failedQueuePauseNotifiesWaitersAndCannotReleaseUncertainTask",
+        "simultaneousWorkerCleanupReleasesCatalogExactlyOnceAfterBothLeave",
         "slowHistoryReconciliationCannotBlockUnrelatedRequestsOrOwnServerMonitor",
         "slowSettingsBodyCannotOwnServerLockOrBlockUnrelatedRequests",
         "slowSettingsSaveReleasesServerMonitorAndReservesAdmission"
