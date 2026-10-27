@@ -1,0 +1,53 @@
+name: Remaining gaps real Docker validation
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: gap-docker-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      JHARNESS_EVIDENCE_RUN_ID: gap-docker-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Build current UI and packaged runtime without repeating unrelated suites
+        run: |
+          set -euo pipefail
+          npm --prefix frontend ci
+          npm --prefix frontend run build
+          python scripts/test-gap-docker.py
+          mkdir -p .build-cache/gap-docker-build
+          python scripts/evidence_run.py --name gap-docker-build --log .build-cache/gap-docker-build/build.log --output harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar -- sh ./mvnw -B -DskipTests package
+      - name: Provision only the pinned image
+        run: docker pull eclipse-temurin@sha256:ccbad9e7cb84c27092b12c40a4143e5733e050db9c3784d84f632dcf423fb2ef
+      - name: Execute seven real-container acceptance probes
+        run: python scripts/run-gap-docker.py
+      - name: Preserve bounded reports and receipts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: remaining-gap-docker
+          include-hidden-files: true
+          retention-days: 90
+          if-no-files-found: error
+          path: |
+            .build-cache/gap-docker/*/runner.json
+            .build-cache/gap-docker/*/M*.json
+            .build-cache/M10.5.9/commands/gap-docker-build.json

@@ -185,6 +185,52 @@ test('mutations are never automatically retried and token stays in headers', asy
   assert.ok(!String(calls[0].init.body).includes(token))
   assert.equal(calls[0].init.redirect, 'error')
   assert.equal(calls[0].init.credentials, 'omit')
+
+  // Each fixture commits exactly once before failing at a different response boundary.
+  // This checks transport replay, not a claim that these are real server side effects.
+  const question: Parameters<Api['answerQuestion']>[0] = { questionId:'q1', sessionId:'task_1',
+    turnId:'turn_1', callId:'call_1', question:'Question', mode:'text', options:[], allowText:true,
+    state:'PENDING', expiresAt:'2026-10-27T00:00:00Z', draftRevision:0 }
+  const approval = { approvalId:'approval_1', callId:'call_1', sessionId:'task_1',
+    tool:'write_file', arguments:{}, sideEffectLevel:'WORKSPACE_WRITE' }
+  const settings: Parameters<Api['saveSettings']>[0] = { revision:'revision_1', models:[], selected:'a',
+    extensions:{}, policy:'default', credentialStore:'fixture', corePlugins:[], credentialCleanupPending:false }
+  const writes: [string,string,(api:Api)=>Promise<unknown>][] = [
+    ['submit','/v1/tasks',api=>api.submit('default','goal','fixed_id')],
+    ['turn','/v1/tasks/task_1/turns',api=>api.submitTurn('task_1','fixed_id','text','message')],
+    ['supplement','/v1/tasks/task_1/turns',api=>api.submitTurn('task_1','fixed_id','text','supplement')],
+    ['start turn','/v1/tasks/task_1/turns/hash_1/start',api=>api.turnAction('task_1','hash_1','start')],
+    ['cancel turn','/v1/tasks/task_1/turns/hash_1/cancel',api=>api.turnAction('task_1','hash_1','cancel')],
+    ['cancel task','/v1/tasks/task_1/cancel',api=>api.cancel('task_1')],
+    ['approve','/v1/tasks/task_1/approvals/approval_1',api=>api.decide('task_1',approval,true,'yes')],
+    ['deny','/v1/tasks/task_1/approvals/approval_1',api=>api.decide('task_1',approval,false,'no')],
+    ['answer','/v1/tasks/task_1/questions/q1/answer',api=>api.answerQuestion(question,'fixed_id',[],'answer',false)],
+    ['skip','/v1/tasks/task_1/questions/q1/answer',api=>api.answerQuestion(question,'fixed_id',[],'',true)],
+    ['draft','/v1/tasks/task_1/questions/q1/draft',api=>api.questionDraft(question,[],'draft',0)],
+    ['register','/v1/workspaces',api=>api.registerWorkspace('/owned','owned')],
+    ['rename','/v1/tasks/task_1/metadata',api=>api.metadata(row,{name:'new',pinned:false,archived:false})],
+    ['pin','/v1/tasks/task_1/metadata',api=>api.metadata(row,{name:'old',pinned:true,archived:false})],
+    ['archive','/v1/tasks/task_1/metadata',api=>api.metadata(row,{name:'old',pinned:false,archived:true})],
+    ['fork','/v1/tasks/task_1/fork',api=>api.fork(row,'event_1','fixed_id')],
+    ['settings','/v1/settings',api=>api.saveSettings(settings,{})]
+  ]
+  for (const [name,path,write] of writes) for (const window of ['headers lost','body lost','invalid body']) {
+    let committed=0
+    const failing=new Api(token,(async(url,init)=>{
+      committed++
+      assert.equal(String(url),path,name);assert.equal(init?.method,'POST',name)
+      if(window==='headers lost')throw new TypeError('lost response')
+      if(window==='invalid body')return new Response('{invalid', {headers:{'content-type':'application/json'}})
+      return new Response(new ReadableStream({start(controller){
+        controller.enqueue(new TextEncoder().encode('{"partial":'))
+        controller.error(new TypeError('body connection lost'))
+      }}),{headers:{'content-type':'application/json'}})
+    }) as typeof fetch)
+    const version=failing.stateVersion
+    await assert.rejects(write(failing),ApiError,name+' '+window)
+    assert.equal(committed,1,name+' '+window+' must never replay')
+    assert.equal(failing.stateVersion,version+2,name+' '+window+' must invalidate reads on entry and exit')
+  }
 })
 test('runtime shape and path validation reject invalid wire data', async () => {
   assert.throws(() => task({ ...row, cancelRequested: 'false' }), ApiError)

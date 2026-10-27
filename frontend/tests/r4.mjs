@@ -6,9 +6,12 @@ import { writeFile, mkdir, readFile, readdir } from 'node:fs/promises'
 import { createHash } from 'node:crypto'
 import { resolve } from 'node:path'
 const root=resolve(import.meta.dirname,'..'),checks=[],errors=[]
-const output=resolve(root,'../.build-cache/R4-2026-10-25/browser-'+engine+'.json')
-await mkdir(resolve(root,'../.build-cache/R4-2026-10-25'),{recursive:true})
-await writeFile(output,JSON.stringify({status:'INCOMPLETE',engine,checks,errors},null,2)+'\n')
+const runId=process.env.JHARNESS_R4_RUN_ID??'local-'+Date.now()
+if(!/^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/.test(runId))throw Error('Invalid R4 run identity')
+const evidenceRoot=resolve(root,'../.build-cache/R4',runId)
+const output=resolve(evidenceRoot,'browser-'+engine+'.json')
+await mkdir(evidenceRoot,{recursive:true})
+await writeFile(output,JSON.stringify({status:'INCOMPLETE',runId,engine,checks,errors},null,2)+'\n',{flag:'wx'})
 const hash=data=>createHash('sha256').update(data).digest('hex')
 async function sourceSnapshot(){
  const names=(await readdir(resolve(root,'src'),{recursive:true,withFileTypes:true})).filter(e=>e.isFile()).map(e=>resolve(e.parentPath,e.name))
@@ -114,9 +117,49 @@ try{
   window.readerProps={api:window.readerApi,id:'task_1',kind:'content',target:'first'};window.r4.mount('ContentReader',window.readerProps)
  });await page.getByRole('button',{name:'下一页内容',exact:true}).waitFor();await page.getByRole('button',{name:'下一页内容',exact:true}).click();await page.waitForFunction(()=>document.body.textContent.includes('第 3～6 字符'));
  await page.evaluate(()=>window.r4.mount('ContentReader',{...window.readerProps,target:'second'}));await page.waitForFunction(()=>window.reads.some(read=>read.target==='second'));const newRead=await page.evaluate(()=>window.reads.find(read=>read.target==='second'));assert.equal(newRead.offset,0);assert.equal(newRead.version,'');check('same-instance content source replacement resets page offset and version before reading')
+ // Pending writes may commit remotely even after their component disappears.
+ for(const component of ['Settings','WorkspacePicker','SessionActions']) {
+  await page.evaluate(component=>{
+   window.pendingWrites=0;window.lateUpdates=0;window.pendingProps={}
+   const pending=()=>{window.pendingWrites++;return new Promise(resolve=>window.releasePending=resolve)}
+   if(component==='Settings')window.pendingProps={api:{settings:async()=>window.data,saveSettings:pending},onBack:()=>{},onGuardChange:()=>{}}
+   if(component==='WorkspacePicker')window.pendingProps={api:{workspaces:async()=>({workspaces:[],canRegister:true}),registerWorkspace:pending},value:'',disabled:false,onProfiles:()=>{},onSelect:()=>window.lateUpdates++}
+   if(component==='SessionActions')window.pendingProps={...window.sessionProps,api:{metadata:pending},task:{...window.sessionProps.task,name:'Original'},onUpdated:()=>window.lateUpdates++}
+   window.r4.mount(component,window.pendingProps)
+  },component)
+  if(component==='Settings'){await page.getByLabel('API Key',{exact:true}).fill('synthetic-unmounted-key');await page.getByRole('button',{name:'保存设置',exact:true}).click()}
+  if(component==='WorkspacePicker'){await page.getByText('注册工作区',{exact:true}).click();await page.getByLabel('工作区名称',{exact:true}).fill('owned');await page.getByLabel('工作区绝对目录',{exact:true}).fill('/owned');await page.getByRole('button',{name:'注册并选择'}).click()}
+  if(component==='SessionActions'){await page.getByText('会话管理',{exact:true}).click();await page.getByLabel('会话名称',{exact:true}).fill('Changed');await page.getByRole('button',{name:'保存名称',exact:true}).click()}
+  await page.waitForFunction(()=>window.pendingWrites===1)
+  await page.evaluate(()=>window.r4.mount('Button',{children:'replacement view'}));await page.getByRole('button',{name:'replacement view',exact:true}).waitFor()
+  await page.evaluate(component=>window.releasePending(component==='Settings'?window.data:component==='WorkspacePicker'?{workspaces:[{id:'owned',name:'owned',path:'/owned'}],canRegister:true}:{...window.sessionProps.task,name:'STALE'}),component)
+  await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))))
+  assert.equal(await page.evaluate(()=>window.pendingWrites),1);assert.equal(await page.evaluate(()=>window.lateUpdates),0)
+  assert.equal(await page.getByRole('button',{name:'replacement view',exact:true}).count(),1)
+  assert.equal(await page.evaluate(()=>JSON.stringify({...localStorage,...sessionStorage}).includes('synthetic-unmounted-key')),false)
+  check(component+' pending committed response after unmount never replays or updates replacement view')
+ }
+ await page.evaluate(()=>{
+  window.pendingWrites=0;window.r4.mount('Settings',{api:{settings:async()=>window.data,saveSettings:()=>{window.pendingWrites++;return new Promise(resolve=>window.releasePending=resolve)}},onBack:()=>{},onGuardChange:()=>{}})
+ });await page.getByLabel('API Key',{exact:true}).fill('synthetic-old-context-key');await page.getByRole('button',{name:'保存设置',exact:true}).click();await page.waitForFunction(()=>window.pendingWrites===1)
+ await page.evaluate(()=>window.r4.mount('Settings',{api:{settings:async()=>({...window.data,models:[{...window.model,label:'Replacement context'}]}),saveSettings:async data=>data},onBack:()=>{},onGuardChange:()=>{}}))
+ await page.waitForFunction(()=>[...document.querySelectorAll('input')].some(input=>input.value==='Replacement context'));await page.evaluate(()=>window.releasePending({...window.data,models:[{...window.model,label:'STALE'}]}));await page.evaluate(()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve))))
+ assert.equal(await page.getByLabel('连接名称',{exact:true}).inputValue(),'Replacement context');assert.equal(await page.getByLabel('API Key',{exact:true}).inputValue(),'');assert.equal(await page.evaluate(()=>window.pendingWrites),1);check('same-instance API replacement ignores a late settings commit and clears old in-memory key')
+ await page.evaluate(()=>{
+  window.storageOriginal=Object.fromEntries(['getItem','setItem','removeItem'].map(key=>[key,Storage.prototype[key]]))
+  for(const key of Object.keys(window.storageOriginal))Storage.prototype[key]=()=>{throw new DOMException('blocked','SecurityError')}
+  window.storageQuestion={...window.q,questionId:'storage_q',sessionId:'storage_task'};window.storageAnswers=0
+  window.storageProps={api:{questionPage:async()=>({questions:[window.storageQuestion],total:1,hasWaiting:true}),questionDraft:async()=>({revision:1}),answerQuestion:async()=>{window.storageAnswers++;throw Error('committed, response lost')},questionStatus:async()=>window.storageQuestion},id:'storage_task',onGuard:()=>{},onWaiting:()=>{}}
+  window.r4.mount('Questions',window.storageProps)
+ })
+ try {
+  await page.getByLabel('问题文字回答',{exact:true}).fill('answer');await page.getByRole('button',{name:'提交回答',exact:true}).click();await page.getByText('回答未确认，请核对状态；不会自动重发。').waitFor();assert.equal(await page.getByRole('button',{name:'提交回答',exact:true}).isDisabled(),true)
+  await page.evaluate(()=>window.r4.mount('Button',{children:'temporary'}));await page.getByRole('button',{name:'temporary',exact:true}).waitFor();await page.evaluate(()=>window.r4.mount('Questions',window.storageProps));await page.getByRole('button',{name:'核对回答',exact:true}).waitFor();assert.equal(await page.getByRole('button',{name:'提交回答',exact:true}).isDisabled(),true);assert.equal(await page.evaluate(()=>window.storageAnswers),1)
+  check('blocked browser storage retains the uncertain answer marker in memory across remount without reposting')
+ } finally {await page.evaluate(()=>{for(const [key,value]of Object.entries(window.storageOriginal))Storage.prototype[key]=value})}
  assert.deepEqual(errors,[])
  assert.deepEqual(await sourceSnapshot(),sources)
- const screenshot=resolve(root,'../.build-cache/R4-2026-10-25/browser-'+engine+'.png');await page.screenshot({path:screenshot,fullPage:true})
- await writeFile(output,JSON.stringify({status:'PASS',engine,checks,errors,sourceSha256:sources,screenshot:{path:screenshot,sha256:hash(await readFile(screenshot))}},null,2)+'\n')
-}catch(error){await writeFile(output,JSON.stringify({status:'FAILED',engine,checks,errors,error:String(error)},null,2)+'\n');throw error}
+ const screenshot=resolve(evidenceRoot,'browser-'+engine+'.png');await page.screenshot({path:screenshot,fullPage:true})
+ await writeFile(output,JSON.stringify({status:'PASS',runId,engine,checks,errors,sourceSha256:sources,screenshot:{path:screenshot,sha256:hash(await readFile(screenshot))}},null,2)+'\n')
+}catch(error){await writeFile(output,JSON.stringify({status:'FAILED',runId,engine,checks,errors,error:String(error)},null,2)+'\n');throw error}
 finally{await browser?.close();await server.close()}
