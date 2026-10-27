@@ -20,6 +20,10 @@
 
 ## 尚需继续
 
-GAP-01目录能力竞态、GAP-02 R4全部精确窗口、GAP-05压缩来源、GAP-06读取优化、GAP-07展示锁与请求关联、GAP-09性能、GAP-12历史WebKit原因以及R0～R3逐意见深入复核仍待完成。不能用本轮28项通过推导这些内容已关闭。
+2026-10-27第二批：GAP-06的OCR-0310复用CLI报告/交付来源/退出判定的同一收尾事实快照；OCR-1154移除Web导出重复读取，在取得独占写锁后读取一次用于空历史检查和完整导出。GAP-07的OCR-0466将事实读取及宿主脱敏回调移至展示monitor之外，以更新ticket和revision拒绝跨reset旧回调、旧失败及旧事实将新代次误标PERSISTED。读取事实失败仍抛给宿主保留UNKNOWN，不降级为展示成功。三个受控并发反例在旧实现均失败，当前均通过；相关专项21项与CLI/显示/HTTP集成42项通过。最终本地verify已通过705项/119套件，精确保留原702身份并新增3个受控并发用例；599份输入在执行前后及接续核对时一致，回执/日志/XML/JAR独立复核通过。JAR SHA为e5186ae8ecb3992505cd1d1ed39ae6c2b59c9419bcd38c0d25a94838df868a83。原始中断运行无成功回执，仍保留为未完成。完整记录见[第二批结果](../testing/M10-gap-snapshots-2026-10-27-results.json)。
 
-GAP-04当前Docker daemon不可用；WSL仅docker-desktop，没有独立发行版。GAP-10 Windows10、独立WSL、macOS Intel及Linux其他架构尚无可用机器证据。GAP-14原生二进制来源约束与GAP-15证据留存治理继续保留。完整边界及关闭标准见[全阶段审计](../testing/M1-M10.5-gap-audit-2026-10-26.md)；M11/M12不在本轮补缺中伪造交付。
+GAP-01目录能力竞态、GAP-02 R4全部精确窗口、GAP-05压缩来源、GAP-06另外三项读取优化、GAP-07请求显式关联、GAP-09性能、GAP-12历史WebKit原因以及R0～R3逐意见深入复核仍待完成。局部补强不关闭整个GAP-06/07或R4/R5。
+
+GAP-04当前Docker daemon不可用；WSL仅docker-desktop，没有独立发行版。用户已说明有Linux、暂时没有macOS设备，Linux架构/连接方式待确认。普通Linux虚拟机可用于Linux验收，但不能冒充独立WSL或其他CPU；VMware Workstation不能替代本Windows宿主上macOS的官方支持验证。
+
+GAP-10的macOS自动测试可使用公开仓库免费的标准GitHub-hosted runner，因此不要求用户先购买Mac。用户先前决定暂停macOS研发，本轮最新指示明确要求带上macOS/Linux/Windows先进行远端CI，故本轮恢复三平台测试范围；不据此推导新增macOS产品开发或全部硬件认证。沿用ci.yml的windows-latest/ubuntu-latest/macos-latest矩阵，实际CPU/镜像以本次回执为准，不冒称额外Intel机器验收。仅在本地验证已核对后推送专用分支、手动触发本轮完整CI；此段记录派发前状态，未取得同提交三侧证据前不标记远端通过。无main合并、Release或新增付费模型请求。依据：[GitHub runner说明](https://docs.github.com/en/actions/how-tos/write-workflows/choose-where-workflows-run/choose-the-runner-for-a-job)、[VMware平台说明](https://www.vmware.com/docs/desktop-hypervisor-faqs)。GAP-14原生二进制来源约束与GAP-15证据留存治理继续保留。完整边界及关闭标准见[全阶段审计](../testing/M1-M10.5-gap-audit-2026-10-26.md)；M11/M12不在本轮补缺中伪造交付。

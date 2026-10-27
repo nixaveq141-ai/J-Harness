@@ -997,11 +997,9 @@ public final class HarnessWebServer implements AutoCloseable {
             synchronized (this) {
                 maintenanceReady(task);
                 var repository = profiles.get(task.profile).sessions();
-                if (repository.openReader(task.id).events().isEmpty())
-                    throw fault(404, "SESSION_HISTORY_UNAVAILABLE");
-                if (repository.openReader(task.id).events().isEmpty())
-                    throw fault(404, "SESSION_HISTORY_UNAVAILABLE");
                 try (var writer = repository.openWriter(task.id, WriteOwnership.EXCLUSIVE)) {
+                    var exportEvents = repository.openReader(task.id).events();
+                    if (exportEvents.isEmpty()) throw fault(404, "SESSION_HISTORY_UNAVAILABLE");
                     var content = new ByteArrayOutputStream();
                     content.write(
                             WebJson.encode(
@@ -1013,7 +1011,7 @@ public final class HarnessWebServer implements AutoCloseable {
                                             "sessionId",
                                             task.id)));
                     content.write('\n');
-                    for (var e : repository.openReader(task.id).events()) {
+                    for (var e : exportEvents) {
                         var row = fullEvent(e);
                         content.write(WebJson.encode(row));
                         content.write('\n');

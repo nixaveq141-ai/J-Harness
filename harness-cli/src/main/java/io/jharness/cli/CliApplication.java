@@ -1107,8 +1107,10 @@ public final class CliApplication {
                                         session,
                                         "terminal.snapshot",
                                         Map.of("tasks", terminal.states())));
+                    var closingEvents = reader.events();
+                    var closingProjection = new EventSessionProjection(closingEvents);
                     Map<String, Object> report =
-                            EvidenceReport.build(goal, reader.events(), sanitizer);
+                            EvidenceReport.build(goal, closingEvents, sanitizer);
                     Path reportPath =
                             metadata.directory("reports")
                                     .resolve(session + "-" + control.runId() + ".json");
@@ -1135,23 +1137,18 @@ public final class CliApplication {
                                             "markdownSha256",
                                             Json.hash(md),
                                             "sourceEvents",
-                                            reader.events().stream()
+                                            closingEvents.stream()
                                                     .filter(e -> e.type().equals("turn.ended"))
                                                     .map(SessionEvent::eventId)
                                                     .toList())));
                     out.println(Json.text(report));
                     out.println("REPORT " + reportPath);
                     if (args.has("dry-run")) return 4;
-                    return switch (new EventSessionProjection(reader.events()).taskStatus()) {
+                    return switch (closingProjection.taskStatus()) {
                         case COMPLETED -> 0;
                         case CANCELLED -> 3;
                         case LIMIT_REACHED -> 4;
-                        default ->
-                                new EventSessionProjection(reader.events())
-                                                .uncertainCalls()
-                                                .isEmpty()
-                                        ? 2
-                                        : 6;
+                        default -> closingProjection.uncertainCalls().isEmpty() ? 2 : 6;
                     };
                 }
             }

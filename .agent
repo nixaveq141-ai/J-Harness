@@ -1,8 +1,10 @@
 # J-Harness 项目接续说明
 
-最后更新：2026-10-26（Asia/Shanghai）。根目录 AGENTS.md 引用本文件。开始实现前阅读，并以当前源码、Git 与验收记录核实日期快照。
+最后更新：2026-10-27（Asia/Shanghai）。根目录 AGENTS.md 引用本文件。开始实现前阅读，并以当前源码、Git 与验收记录核实日期快照。
 
 ## 当前接续状态
+
+- 2026-10-27按最新用户要求准备macOS/Linux/Windows三平台远端CI：第二批OCR-0310/1154稳定快照及0466展示锁外读取已补齐；旧实现3个受控反例均拒绝，当前相关21+集成42及最终705Java/119套件通过，原702身份全保留。599输入/命令回执/日志/XML/JAR e5186ae8独立复核；前轮中断不算成功。macOS本轮纳入CI，硬件/其他缺口仍保留；沿用专用分支推送及Actions授权，不合并main、不发布Release、无新付费模型。当前为派发前状态，远端未验收；详见gap-remediation-2026-10-26及M10-gap-snapshots-2026-10-27-results.json。用户原段/background草稿不纳入提交。
 
 - 2026-10-26补齐全阶段审计第一批：GAP-03三组分页HTTP/完整事件身份/游标失效与末页终止断言、GAP-08 gitignore物理行号及安全语法指导已补齐；本地4套件28项、费用中继9项与历史冻结11项通过，当前JAR打包通过。用户授权DeepSeek flash累计人民币2元，独立只读中继三协议各2次真实请求HTTP200/CLI0，唯一read_file全文/SHA及COMPLETED独立核验；累计不退款预留上界0.884736元，非账单。原生成代码入口仍冻结，无新CI/推送/发布；其余缺口及外部Docker/额外机器仍待，不能标记全部完成。见docs/development/gap-remediation-2026-10-26.md与docs/testing/M10-gap-remediation-2026-10-26-results.json。用户原.agent段与background草稿不纳提交。
 

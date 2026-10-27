@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "milestone": "M10.5.9",
-  "origin": "R6 final contract preserves all 700 prior case identities, adds UI manifest and probe failure/JAR drift regressions; current CI must prove its exact set.",
+  "origin": "2026-10-26 gap follow-up preserves all 702 prior identities and adds three controlled display monitor/generation regressions; current CI must prove its exact set.",
   "suites": [
     {
       "module": "harness-agent",
@@ -383,8 +383,11 @@
       "module": "harness-ecosystem",
       "name": "io.jharness.ecosystem.R4DisplayBufferTest",
       "cases": [
+        "blockedFactSnapshotDoesNotBlockResetOrSettleTheNextGeneration",
         "rapidFinalSnapshotIsVisibleWithoutASecondFrame",
-        "sanitizerAndReaderFailureClearPresentationWithoutThrowing"
+        "sanitizerAndReaderFailureClearPresentationWithoutThrowing",
+        "slowSanitizerCannotOverwriteNewerCumulativeUpdate",
+        "staleFailingPresentationCannotPoisonResetGeneration"
       ]
     },
     {
