@@ -2,6 +2,8 @@
 
 更新：2026-10-27。本文是开发与使用状态的统一入口；阶段原始验收JSON和取证材料各自保留版本。
 
+本轮新增精确证据：R123R-143补丁后产物故障、150共享停止宽限、172双worker同时清理已补齐；完整本地717项/119套件通过，见[生命周期结果](../testing/M10-gap-r123-lifecycle-2026-10-27.json)。实际JSONL落盘探针在128MiB堆下完成两个会话各5000条、10000次真实force、重开投影及4读者16次全读，来源/JAR及原始事实独立核对，见[落盘样本](../testing/M10-gap-durable-cost-2026-10-27.json)；系统性混合负载和跨平台SLA仍待。R4真实受理落盘后HTTP RST丢响应及重启防重放新用例已单项通过，最终718项/119套件完整verify通过，原717身份保留，见[真实断连结果](../testing/M10-gap-r4-real-response-2026-10-27.json)。最新远端40506475359仅绑定78885e5：Windows/macOS成功，Linux依赖下载耗尽60分钟后取消（原包已取得），该轮三平台未验收。
+
 剩余缺口继续实施：[接续计划](gap-followups-2026-10-27.md)。旧任务索引、请求显式关联、压缩来源身份及内容/产物快照已实现，本地完整verify715项/119套件、128MiB堆万事件与64并发读取测量通过。见[本批结果](../testing/M10-gap-provenance-snapshot-2026-10-27.json)。R4另补17×3响应窗口与生命周期/存储修复，最终客户端42、Chrome/WebKit各51及同输入Java715/119通过；正式平台入口已要求新R4精确身份、来源/截图及命令回执。见[本批结果](../testing/M10-gap-r4-lifetimes-2026-10-27.json)；Docker七夹具在e12994e/40479240473真实Linux容器全部通过并核对原包/604输入/七类字节，见[Docker结果](../testing/M10-gap-docker-2026-10-27.json)。新远端验收仍待，以下dae011a为历史已验收基线。实体操作系统机器验收按用户要求跳过；目录竞态、R4剩余服务端精确窗口及真实模型隔离评测等继续。证据保留政策及历史原ZIP导出已补，异地副本尚未建立。
 
 2026-10-27接续：CLI收尾/Web导出快照复用与展示锁外读取已完成本地705项/119套件，原702身份保留、新增3项并发回归。用户要求的macOS/Linux/Windows完整CI [40467690361](https://github.com/nixaveq141-ai/J-Harness/actions/runs/40467690361)三侧全部成功，三份原ZIP及119套件精确XML、命令回执/JAR/UI/候选包已严格独立审计；当时599份构建输入一致（不覆盖后续补缺源码）。见[远端结果](../testing/M10-gap-remote-ci-2026-10-27.json)、[补缺进展](gap-remediation-2026-10-26.md)和[本地结果](../testing/M10-gap-snapshots-2026-10-27-results.json)。
@@ -12,7 +14,7 @@
 
 每平台：Java705/119套件、客户端42、三浏览器33组813、SDK66、原生凭据7、示例2及适用发布/安装门禁通过。源码与UI摘要跨平台一致；Windows JAR为e5186ae8、Linux/macOS为543e5db6，各自绑定其回执和候选包。仓库公开，默认main未合并验证分支，Release未发布。开源可见性与发布版本是独立状态。
 
-扫描结果见[全阶段缺口审计](../testing/M1-M10.5-gap-audit-2026-10-26.md)。R4主要缺逐项故障窗口证据；R5原台账的2条有限实施、11条后续按日期保留，后续实际补齐项见实施记录。当前Docker主动实测、独立WSL等额外平台、长会话性能和真实生成代码评测未闭合；托管Windows runner不替代Windows10/11实机专项。历史macOS模型按钮一次超时未定位，后续定点及本次完整验收通过。
+扫描结果见[全阶段缺口审计](../testing/M1-M10.5-gap-audit-2026-10-26.md)。R4主要缺逐项故障窗口证据；R5原台账的2条有限实施、11条后续按日期保留，后续实际补齐项见实施记录。七组真实Docker专项已通过；长会话性能已补内存与实际落盘样本，系统性混合负载和真实生成代码评测仍待。独立WSL等实体额外平台按用户要求跳过，托管Windows runner不替代Windows10/11实机专项。历史macOS模型按钮一次超时未定位，后续定点及本次完整验收通过。
 
 ## M1至今逐阶段索引
 
@@ -70,7 +72,7 @@
 | FR-24 | 会话与正文检索 | 注册工作区、生命周期、跨会话词语/短语、排序/分页/来源、TS/Python SDK；无自动GC。 | [WorkbenchContentSearch.java](../../harness-web/src/main/java/io/jharness/web/WorkbenchContentSearch.java) |
 | FR-25 | 工具调度/横切 | 显式有界只读并行/写屏障、默认关闭的模型限流/完整非流式429重试；工具UNKNOWN不重放。 | [ModelResiliencePlugin.java](../../harness-agent/src/main/java/io/jharness/agent/ModelResiliencePlugin.java) |
 | FR-26 | 网页/LSP | 固定可信来源web_fetch已实现；通用搜索提供方和LSP延期。 | [WebFetchPlugin.java](../../harness-ecosystem/src/main/java/io/jharness/ecosystem/WebFetchPlugin.java) |
-| FR-27 | 环境/多入口 | 本地/Docker实现、CLI/JavaSDK/Web/stdio；当前Docker实测缺口与Desktop未实现分开记录。 | [HarnessSdk.java](../../harness-ecosystem/src/main/java/io/jharness/ecosystem/HarnessSdk.java) |
+| FR-27 | 环境/多入口 | 本地/Docker实现、CLI/JavaSDK/Web/stdio；七组真实Docker专项已通过，Desktop未实现另列。 | [HarnessSdk.java](../../harness-ecosystem/src/main/java/io/jharness/ecosystem/HarnessSdk.java) |
 
 ## 后续范围与安全边界
 

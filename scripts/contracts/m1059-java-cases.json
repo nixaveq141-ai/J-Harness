@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "milestone": "M10.5.9",
-  "origin": "2026-10-27 remaining-gap follow-ups preserve all 715 prior identities and add shared stop-grace and simultaneous worker-cleanup regressions; current CI must prove its exact set.",
+  "origin": "2026-10-27 follow-ups retain all717 prior identities and add a real durable-admission HTTP response-loss/restart regression; current CI must prove its exact set.",
   "suites": [
     {
       "module": "harness-agent",
@@ -786,6 +786,7 @@
       "module": "harness-testkit",
       "name": "io.jharness.testkit.M1052HistoryTest",
       "cases": [
+        "durablyAcceptedSubmissionSurvivesLostResponseWithoutDuplicateExecution",
         "futureCatalogVersionIsRejectedWithoutChangingItsBytes",
         "interruptedAdmissionIsRecoveredFromWorkspacePointerWithoutExecuting",
         "legacyCatalogKeepsExactByteBackupAndMigrationFailureNeverExecutes",

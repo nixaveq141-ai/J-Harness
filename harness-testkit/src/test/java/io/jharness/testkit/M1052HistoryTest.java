@@ -19,6 +19,156 @@ import org.junit.jupiter.api.io.TempDir;
 
 class M1052HistoryTest {
     @Test
+    @org.junit.jupiter.api.Timeout(20)
+    void durablyAcceptedSubmissionSurvivesLostResponseWithoutDuplicateExecution() throws Exception {
+        var sessions = new JsonlSessionRepository(root.resolve("lost-sessions"));
+        var physical = new JsonlSessionRepository(root.resolve("lost-catalog"));
+        var accepted = new java.util.concurrent.CountDownLatch(1);
+        var release = new java.util.concurrent.CountDownLatch(1);
+        var sdkEntered = new java.util.concurrent.CountDownLatch(1);
+        var once = new AtomicBoolean(true);
+        var opens = new AtomicInteger();
+        SessionRepository catalog =
+                new SessionRepository() {
+                    public List<String> list() {
+                        return physical.list();
+                    }
+
+                    public String fork(String id, String from) {
+                        return physical.fork(id, from);
+                    }
+
+                    public SessionReader openReader(String id) {
+                        return physical.openReader(id);
+                    }
+
+                    public SessionWriter openWriter(String id, WriteOwnership ownership) {
+                        var writer = physical.openWriter(id, ownership);
+                        return new SessionWriter() {
+                            public boolean durable() {
+                                return writer.durable();
+                            }
+
+                            public String append(SessionEvent event) {
+                                String persisted = writer.append(event);
+                                if (event.type().equals("web.task.accepted")
+                                        && once.getAndSet(false)) {
+                                    accepted.countDown();
+                                    try {
+                                        if (!release.await(
+                                                5, java.util.concurrent.TimeUnit.SECONDS))
+                                            throw new AssertionError(
+                                                    "Socket-loss barrier was not released");
+                                    } catch (InterruptedException failure) {
+                                        Thread.currentThread().interrupt();
+                                        throw new AssertionError(failure);
+                                    }
+                                }
+                                return persisted;
+                            }
+
+                            public void flush() {
+                                writer.flush();
+                            }
+
+                            public void close() {
+                                writer.close();
+                            }
+                        };
+                    }
+                };
+        var profile =
+                new HarnessWebServer.Profile(
+                        "lost-workspace",
+                        sessions,
+                        (id, approvals, sanitizer) -> {
+                            opens.incrementAndGet();
+                            sdkEntered.countDown();
+                            throw new HarnessException(
+                                    "FIXTURE_STOP", "No model call in this fixture");
+                        });
+        var body = Map.of("profile", "local", "goal", "Read fixture", "requestId", "lost-response");
+        String task;
+        try (var server =
+                new HarnessWebServer(
+                        0,
+                        M10BrowserHost.TOKEN,
+                        Map.of("local", profile),
+                        catalog,
+                        "lost",
+                        new SecretRedactor(),
+                        1,
+                        32,
+                        Duration.ofSeconds(1))) {
+            byte[] bytes = JSON.writeValueAsBytes(body);
+            try (var socket =
+                    new java.net.Socket(server.address().getHost(), server.address().getPort())) {
+                String headers =
+                        "POST /v1/tasks HTTP/1.1\r\nHost: "
+                                + server.address().getAuthority()
+                                + "\r\nAuthorization: Bearer "
+                                + M10BrowserHost.TOKEN
+                                + "\r\nContent-Type: application/json\r\nContent-Length: "
+                                + bytes.length
+                                + "\r\nConnection: close\r\n\r\n";
+                socket.getOutputStream()
+                        .write(headers.getBytes(java.nio.charset.StandardCharsets.US_ASCII));
+                socket.getOutputStream().write(bytes);
+                socket.getOutputStream().flush();
+                assertTrue(accepted.await(3, java.util.concurrent.TimeUnit.SECONDS));
+                assertEquals(
+                        1,
+                        physical.openReader("lost").events().stream()
+                                .filter(e -> e.type().equals("web.task.accepted"))
+                                .count());
+                assertEquals(0, opens.get(), "response-loss barrier precedes SDK entry");
+                socket.setSoLinger(true, 0);
+            } finally {
+                release.countDown();
+            }
+            assertTrue(sdkEntered.await(3, java.util.concurrent.TimeUnit.SECONDS));
+            task =
+                    (String)
+                            object(request(server.address(), "/v1/submissions/lost-response", null))
+                                    .get("taskId");
+            assertNotNull(task);
+            assertEquals(task, object(request(server.address(), "/v1/tasks", body)).get("taskId"));
+            assertEquals(1, opens.get());
+            assertEquals(
+                    1,
+                    physical.openReader("lost").events().stream()
+                            .filter(e -> e.type().equals("web.task.accepted"))
+                            .count());
+        } finally {
+            release.countDown();
+        }
+        try (var server =
+                new HarnessWebServer(
+                        0,
+                        M10BrowserHost.TOKEN,
+                        Map.of("local", profile),
+                        catalog,
+                        "lost",
+                        new SecretRedactor(),
+                        1,
+                        32,
+                        Duration.ofSeconds(1))) {
+            assertEquals(
+                    task,
+                    object(request(server.address(), "/v1/submissions/lost-response", null))
+                            .get("taskId"));
+            assertEquals(task, object(request(server.address(), "/v1/tasks", body)).get("taskId"));
+            assertEquals(
+                    1, opens.get(), "cold reconciliation must not execute accepted work again");
+            assertEquals(
+                    1,
+                    physical.openReader("lost").events().stream()
+                            .filter(e -> e.type().equals("web.task.accepted"))
+                            .count());
+        }
+    }
+
+    @Test
     void interruptedAdmissionIsRecoveredFromWorkspacePointerWithoutExecuting() throws Exception {
         var sessions = new JsonlSessionRepository(root.resolve("sessions"));
         var fail = new AtomicBoolean(false);
