@@ -144,6 +144,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: test-results-${{ matrix.os }}
+          retention-days: 90
           include-hidden-files: true
           path: |
             **/target/surefire-reports/
