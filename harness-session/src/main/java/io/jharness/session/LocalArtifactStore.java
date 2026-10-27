@@ -15,6 +15,10 @@ public final class LocalArtifactStore implements ArtifactStore {
     private final Path root;
     private final Object rootKey;
     private final DataSanitizer sanitizer;
+    private volatile Snapshot snapshot;
+
+    /** Only one verified content copy is retained. Every read rechecks scope and all file bytes. */
+    private record Snapshot(String session, String id, byte[] bytes, String text) {}
 
     public LocalArtifactStore(Path root, DataSanitizer sanitizer) throws IOException {
         Files.createDirectories(root);
@@ -115,13 +119,38 @@ public final class LocalArtifactStore implements ArtifactStore {
         Path file = directory(session, false).resolve(id + ".txt");
         if (!Files.isRegularFile(file, LinkOption.NOFOLLOW_LINKS))
             throw new HarnessException("ARTIFACT_NOT_FOUND", "Artifact not in this scope");
+        Snapshot cached = snapshot;
+        if (cached != null && cached.session.equals(session) && cached.id.equals(id)) {
+            // Validate against the immutable, already hashed copy with a bounded scratch buffer.
+            // Neither unchanged timestamps nor a remembered reference imply integrity.
+            try (InputStream input = Files.newInputStream(file, LinkOption.NOFOLLOW_LINKS)) {
+                byte[] block = new byte[65536];
+                int offset = 0, read;
+                while ((read = input.read(block)) != -1) {
+                    if (read > cached.bytes.length - offset)
+                        throw new HarnessException(
+                                "ARTIFACT_CORRUPT", "Artifact integrity check failed");
+                    for (int i = 0; i < read; i++)
+                        if (block[i] != cached.bytes[offset + i])
+                            throw new HarnessException(
+                                    "ARTIFACT_CORRUPT", "Artifact integrity check failed");
+                    offset += read;
+                }
+                if (offset != cached.bytes.length)
+                    throw new HarnessException(
+                            "ARTIFACT_CORRUPT", "Artifact integrity check failed");
+            }
+            return cached.text;
+        }
         byte[] bytes;
         try (InputStream input = Files.newInputStream(file, LinkOption.NOFOLLOW_LINKS)) {
             bytes = input.readNBytes(LIMIT + 1);
         }
         if (bytes.length > LIMIT || !hash(bytes).equals(id.substring(37)))
             throw new HarnessException("ARTIFACT_CORRUPT", "Artifact integrity check failed");
-        return new String(bytes, StandardCharsets.UTF_8);
+        String text = new String(bytes, StandardCharsets.UTF_8);
+        snapshot = new Snapshot(session, id, bytes, text);
+        return text;
     }
 
     private static String hash(byte[] bytes) {

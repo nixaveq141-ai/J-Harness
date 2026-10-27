@@ -64,7 +64,7 @@ public final class EventSessionProjection implements SessionProjection {
                                             .contains(role)))
                         throw new HarnessException(
                                 "INVALID_EVENT", "Message requires a valid role");
-                    messageList.add(event.payload());
+                    messageList.add(new SourcedMessage(event.payload(), event.eventId()));
                 }
                 case "sdk.input.applied" -> {
                     if (event.payload().containsKey("userMessage")) {
@@ -72,17 +72,19 @@ public final class EventSessionProjection implements SessionProjection {
                         if (!"user".equals(message.get("role"))
                                 || !(message.get("content") instanceof String))
                             throw new HarnessException("INVALID_EVENT", "Invalid atomic SDK input");
-                        messageList.add(message);
+                        messageList.add(new SourcedMessage(message, event.eventId()));
                     }
                 }
                 case "system.message" -> {
                     messageList.removeIf(message -> "system".equals(message.get("role")));
-                    messageList.addFirst(event.payload());
+                    messageList.addFirst(new SourcedMessage(event.payload(), event.eventId()));
                 }
                 case "request.context" -> {
                     if (!referencedContexts.contains(event.eventId())) break;
                     messageList.clear();
-                    messageList.addAll(EventRequestJournal.fromPayload(event.payload()).messages());
+                    var restored = EventRequestJournal.fromPayload(event.payload()).messages();
+                    for (int i = 0; i < restored.size(); i++)
+                        messageList.add(new SourcedMessage(restored.get(i), event.eventId(), i));
                 }
                 case "turn.started", "step.started" -> {
                     current = TaskStatus.RUNNING;
@@ -114,23 +116,27 @@ public final class EventSessionProjection implements SessionProjection {
                     if (event.type().equals("tool.completed")
                             && event.payload().get("content") instanceof String content)
                         messageList.add(
-                                Map.of(
-                                        "role",
-                                        "tool",
-                                        "tool_call_id",
-                                        event.callId(),
-                                        "content",
-                                        content));
+                                new SourcedMessage(
+                                        Map.of(
+                                                "role",
+                                                "tool",
+                                                "tool_call_id",
+                                                event.callId(),
+                                                "content",
+                                                content),
+                                        event.eventId()));
                     if (event.type().equals("tool.verified"))
                         messageList.add(
-                                Map.of(
-                                        "role",
-                                        "user",
-                                        "content",
-                                        "Operator verification of call "
-                                                + event.callId()
-                                                + ": "
-                                                + verificationSummary(event.payload())));
+                                new SourcedMessage(
+                                        Map.of(
+                                                "role",
+                                                "user",
+                                                "content",
+                                                "Operator verification of call "
+                                                        + event.callId()
+                                                        + ": "
+                                                        + verificationSummary(event.payload())),
+                                        event.eventId()));
                 }
                 case "turn.ended" -> {
                     Object value = event.payload().get("status");

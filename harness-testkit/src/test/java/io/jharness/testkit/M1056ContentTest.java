@@ -32,6 +32,120 @@ class M1056ContentTest {
     }
 
     @Test
+    void cachedPagesKeepExactLinesUnicodeAndRejectChangedSanitizedVersions() {
+        var cache = new ContentPages.Cache();
+        String text = ("a\n".repeat(8191) + "\uD83D\uDE80\n").repeat(4);
+        String digest = ContentPages.sha(text);
+        for (int offset : new int[] {0, 1, 16382, 16384, 16385, 32769, text.length()}) {
+            var page = cache.page(text, offset, digest);
+            assertEquals(ContentPages.page(text, offset, digest), page);
+            assertEquals(
+                    1L + text.substring(0, offset).chars().filter(c -> c == '\n').count(),
+                    page.get("startLine"));
+            assertEquals(digest, page.get("contentSha256"));
+        }
+        assertEquals(
+                "INVALID_RANGE",
+                assertThrows(HarnessException.class, () -> cache.page(text, 16383, digest)).code());
+        assertEquals(
+                "CONTENT_CHANGED",
+                assertThrows(
+                                HarnessException.class,
+                                () -> cache.page(text.replace('a', 'b'), 0, digest))
+                        .code());
+        assertEquals("new", cache.page("new", 0, "").get("text"));
+        assertEquals(digest, cache.page(text, 0, "").get("contentSha256"));
+    }
+
+    @Test
+    void warmArtifactSnapshotStillRejectsAllByteChangesDeletionAndWrongScope() throws Exception {
+        String text = "a".repeat(70000) + "\uD83D\uDE80tail";
+        var artifact = store.put("own", text);
+        Path path = root.resolve("artifacts/own").resolve(artifact.id() + ".txt");
+        byte[] original = Files.readAllBytes(path);
+        var time = Files.getLastModifiedTime(path);
+        assertEquals(text, store.readText("own", artifact.id()));
+        byte[] changed = original.clone();
+        changed[66000] = 'b';
+        for (byte[] invalid :
+                List.of(
+                        changed,
+                        Arrays.copyOf(original, original.length - 1),
+                        Arrays.copyOf(original, original.length + 1))) {
+            Files.write(path, invalid);
+            Files.setLastModifiedTime(path, time);
+            assertEquals(
+                    "ARTIFACT_CORRUPT",
+                    assertThrows(HarnessException.class, () -> store.readText("own", artifact.id()))
+                            .code());
+            Files.write(path, original);
+            Files.setLastModifiedTime(path, time);
+            assertEquals(text, store.readText("own", artifact.id()));
+        }
+        store.put("other", "other");
+        assertEquals(
+                "ARTIFACT_NOT_FOUND",
+                assertThrows(HarnessException.class, () -> store.readText("other", artifact.id()))
+                        .code());
+        Files.delete(path);
+        assertEquals(
+                "ARTIFACT_NOT_FOUND",
+                assertThrows(HarnessException.class, () -> store.readText("own", artifact.id()))
+                        .code());
+    }
+
+    @Test
+    void warmContentSnapshotReauthorizesAndResanitizesEveryPage() throws Exception {
+        var current =
+                new java.util.concurrent.atomic.AtomicReference<DataSanitizer>(
+                        new SecretRedactor());
+        var allowed = new java.util.concurrent.atomic.AtomicBoolean(true);
+        var inspection =
+                new WorkspaceContentInspection(
+                        files,
+                        store,
+                        data -> current.get().sanitize(data),
+                        (call, context) ->
+                                allowed.get()
+                                        ? PolicyEngine.Decision.ALLOW
+                                        : PolicyEngine.Decision.DENY,
+                        () -> {},
+                        "own");
+        String text = "visible\n".repeat(3000) + SECRET;
+        var artifact = store.put("own", text);
+        var first = inspection.artifact("own", artifact.id(), 0, "", CancellationToken.NONE);
+        current.set(new SecretRedactor(List.of(SECRET)));
+        assertEquals(
+                "CONTENT_CHANGED",
+                assertThrows(
+                                HarnessException.class,
+                                () ->
+                                        inspection.artifact(
+                                                "own",
+                                                artifact.id(),
+                                                16384,
+                                                first.get("contentSha256").toString(),
+                                                CancellationToken.NONE))
+                        .code());
+        var second = inspection.artifact("own", artifact.id(), 16384, "", CancellationToken.NONE);
+        assertFalse(second.get("text").toString().contains(SECRET));
+        assertTrue(second.get("text").toString().contains("[REDACTED]"));
+        allowed.set(false);
+        assertEquals(
+                "INSPECTION_DENIED",
+                assertThrows(
+                                HarnessException.class,
+                                () ->
+                                        inspection.artifact(
+                                                "own",
+                                                artifact.id(),
+                                                0,
+                                                "",
+                                                CancellationToken.NONE))
+                        .code());
+    }
+
+    @Test
     void scopedInspectionNeverReadsAnotherExistingSessionArtifact() throws Exception {
         var own = store.put("own", "own text");
         var other = store.put("other", "other text");

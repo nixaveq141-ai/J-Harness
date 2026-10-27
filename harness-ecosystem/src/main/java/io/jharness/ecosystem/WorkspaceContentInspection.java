@@ -13,6 +13,7 @@ public final class WorkspaceContentInspection implements ContentInspection {
     private final PolicyEngine policy;
     private final RootCheck check;
     private final String session;
+    private final ContentPages.Cache contentPages = new ContentPages.Cache();
 
     @FunctionalInterface
     public interface RootCheck {
@@ -137,7 +138,7 @@ public final class WorkspaceContentInspection implements ContentInspection {
         }
         if (!version.isEmpty() && !before.equals(version))
             throw new HarnessException("FILE_CONFLICT", "File version changed");
-        var out = new LinkedHashMap<>(ContentPages.page(clean, offset, ""));
+        var out = new LinkedHashMap<>(contentPages.page(clean, offset, ""));
         out.put("source", "current-workspace");
         out.put("path", path);
         out.put("fileVersion", before);
@@ -160,7 +161,7 @@ public final class WorkspaceContentInspection implements ContentInspection {
         String text = artifacts.readText(session, id);
         token.throwIfCancelled();
         String clean = (String) sanitizer.sanitize(Map.of("text", text)).get("text");
-        var out = new LinkedHashMap<>(ContentPages.page(clean, offset, version));
+        var out = new LinkedHashMap<>(contentPages.page(clean, offset, version));
         out.put("source", "recorded-artifact");
         out.put("sessionId", session);
         out.put("artifactId", id);

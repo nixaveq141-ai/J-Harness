@@ -31,3 +31,6 @@ GAP-01目录能力竞态、GAP-02 R4全部精确窗口、GAP-05压缩来源、GA
 GAP-04本机Docker daemon不可用；WSL仅docker-desktop，没有独立发行版。用户云电脑已确认Ubuntu24.04.4/x86_64、4核约8GiB、JDK21.0.12.1/Python3.12.3；SSH socket与22端口监听已存在，但本机到云端私网的TCP探测超时，虚拟组网仍待完成。用户本轮选择先做远端CI，故未继续云电脑安装/项目测试。普通Linux虚拟机不能冒充独立WSL或其他CPU；本轮托管CI不替代该云电脑原生专项。
 
 GAP-10的macOS自动测试可使用公开仓库免费的标准GitHub-hosted runner，因此不要求用户先购买Mac。用户先前决定暂停macOS研发，本轮最新指示明确要求带上macOS/Linux/Windows先进行远端CI，故本轮已完成三平台测试；不据此推导新增macOS产品开发或全部硬件认证。沿用ci.yml的windows-latest/ubuntu-latest/macos-latest矩阵，实际CPU/镜像以本次回执为准，不冒称额外Intel机器验收。无main合并、Release或新增付费模型请求。依据：[GitHub runner说明](https://docs.github.com/en/actions/how-tos/write-workflows/choose-where-workflows-run/choose-the-runner-for-a-job)、[VMware平台说明](https://www.vmware.com/docs/desktop-hypervisor-faqs)。GAP-14原生二进制来源约束与GAP-15证据留存治理继续保留。完整边界及关闭标准见[全阶段审计](../testing/M1-M10.5-gap-audit-2026-10-26.md)；M11/M12不在本轮补缺中伪造交付。
+
+
+2026-10-27后续进展：1104/0561、压缩来源以及0418/0742已实现并本地verify715项通过；单次128MiB性能探针通过。最新范围与尚待项以[接续计划](gap-followups-2026-10-27.md)为准，旧行文为对应批次快照。新远端未验收；实体操作系统机器验收按最新用户要求跳过。

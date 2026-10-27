@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "milestone": "M10.5.9",
-  "origin": "2026-10-27 remaining-gap follow-ups preserve all 705 prior identities and add four legacy-index/request-association regressions; current CI must prove its exact set.",
+  "origin": "2026-10-27 remaining-gap follow-ups preserve all 709 prior identities and add six provenance/snapshot regressions; current CI must prove its exact set.",
   "suites": [
     {
       "module": "harness-agent",
@@ -836,6 +836,7 @@
       "name": "io.jharness.testkit.M1056ContentTest",
       "cases": [
         "artifactScopeIntegrityAndFullRedactionBeforePages",
+        "cachedPagesKeepExactLinesUnicodeAndRejectChangedSanitizedVersions",
         "completeSanitizationPrecedesFilePagingAndUnicodeBoundary",
         "directoriesAndExplicitReadsKeepPathMetadataAndBinaryBounds",
         "explicitLineOffsetsAndStalePageAreBounded",
@@ -844,7 +845,9 @@
         "previewDoesNotGrantModelVersionObservation",
         "rawVersionChangesEvenWhenSanitizedContentIsIdentical",
         "scopedInspectionNeverReadsAnotherExistingSessionArtifact",
-        "streamingSanitizersComposeWithFullSecretWindowsAndFailClosedByDefault"
+        "streamingSanitizersComposeWithFullSecretWindowsAndFailClosedByDefault",
+        "warmArtifactSnapshotStillRejectsAllByteChangesDeletionAndWrongScope",
+        "warmContentSnapshotReauthorizesAndResanitizesEveryPage"
       ]
     },
     {
@@ -1261,7 +1264,10 @@
       "module": "harness-testkit",
       "name": "io.jharness.testkit.R5CompactionAuditTest",
       "cases": [
-        "auditCapsAssociationsAndDoesNotGuessAmbiguousSourceEvents"
+        "auditCapsAssociationsAndDoesNotGuessAmbiguousSourceEvents",
+        "derivedVerificationRequiresExactRoleAndCompleteRecordedContent",
+        "duplicateMessagesRetainExactFactOrSnapshotIndexWithoutProviderMetadata",
+        "provenanceIsImmutableAndUnknownExplicitFactsAreNotGuessedByContent"
       ]
     },
     {
@@ -1593,6 +1599,7 @@
     "harness-api/src/main/java/io/jharness/api/SessionState.java",
     "harness-api/src/main/java/io/jharness/api/SessionWriter.java",
     "harness-api/src/main/java/io/jharness/api/SideEffectLevel.java",
+    "harness-api/src/main/java/io/jharness/api/SourcedMessage.java",
     "harness-api/src/main/java/io/jharness/api/StandardExtensionPoints.java",
     "harness-api/src/main/java/io/jharness/api/StreamHandle.java",
     "harness-api/src/main/java/io/jharness/api/TaskStatus.java",
@@ -1793,6 +1800,7 @@
     "harness-testkit/src/main/java/io/jharness/testkit/TemporaryProject.java",
     "harness-testkit/src/test/java/io/jharness/ecosystem/M7ChildEnvironmentTest.java",
     "harness-testkit/src/test/java/io/jharness/testkit/CrashWriteProbe.java",
+    "harness-testkit/src/test/java/io/jharness/testkit/GapSnapshotPerformanceProbe.java",
     "harness-testkit/src/test/java/io/jharness/testkit/M0ServiceReplacementTest.java",
     "harness-testkit/src/test/java/io/jharness/testkit/M1052HistoryTest.java",
     "harness-testkit/src/test/java/io/jharness/testkit/M1053TurnsTest.java",

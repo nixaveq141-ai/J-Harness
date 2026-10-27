@@ -64,7 +64,10 @@ public final class ContextCompactionPlugin implements HarnessPlugin {
 
     private Map<String, Object> audit(ChatRequest request, ContextCompactor.Compaction result) {
         var candidates = new HashMap<Map<String, Object>, List<String>>();
+        var byId = new HashMap<String, SessionEvent>();
+        var byEvent = new HashMap<String, Map<String, Object>>();
         for (var event : reader.events()) {
+            byId.put(event.eventId(), event);
             Map<String, Object> message = null;
             if (Set.of("user.message", "assistant.message", "system.message", "context.injected")
                     .contains(event.type())) message = event.payload();
@@ -75,10 +78,24 @@ public final class ContextCompactionPlugin implements HarnessPlugin {
             else if (event.type().equals("sdk.input.applied")
                     && event.payload().get("userMessage") instanceof Map<?, ?>)
                 message = Values.object(event.payload().get("userMessage"));
-            else if (event.type().equals("context.compacted")
+            else if (event.type().equals("tool.verified")) {
+                var summary =
+                        new StringBuilder("Operator verification of call " + event.callId() + ": ");
+                for (String key : List.of("outcome", "reason")) {
+                    if (event.payload().get(key) instanceof String text)
+                        summary.append(key)
+                                .append("=")
+                                .append(text.length())
+                                .append(":")
+                                .append(text)
+                                .append(";");
+                }
+                message = Map.of("role", "user", "content", summary.toString());
+            } else if (event.type().equals("context.compacted")
                     && event.payload().get("summary") instanceof String summary
                     && !summary.isEmpty()) message = Map.of("role", "user", "content", summary);
             if (message != null) {
+                byEvent.put(event.eventId(), message);
                 var ids = candidates.computeIfAbsent(message, ignored -> new ArrayList<>());
                 if (ids.size() < 2) ids.add(event.eventId());
             }
@@ -87,14 +104,42 @@ public final class ContextCompactionPlugin implements HarnessPlugin {
         var associations = new ArrayList<Map<String, Object>>();
         int unmapped = 0;
         for (int index : result.removedMessageIndices()) {
-            var matches = candidates.getOrDefault(request.messages().get(index), List.of());
-            if (matches.size() != 1) {
-                unmapped++;
-                continue;
+            var message = request.messages().get(index);
+            String eventId;
+            Integer contextIndex = null;
+            if (message instanceof SourcedMessage sourced) {
+                var event = byId.get(sourced.eventId());
+                boolean valid = event != null;
+                if (sourced.messageIndex() >= 0) {
+                    contextIndex = sourced.messageIndex();
+                    valid =
+                            valid
+                                    && event.type().equals("request.context")
+                                    && event.payload().get("messages") instanceof List<?> rows
+                                    && contextIndex < rows.size()
+                                    && message.equals(rows.get(contextIndex));
+                } else valid = valid && message.equals(byEvent.get(sourced.eventId()));
+                if (!valid) {
+                    unmapped++;
+                    continue;
+                }
+                eventId = sourced.eventId();
+            } else {
+                var matches = candidates.getOrDefault(message, List.of());
+                if (matches.size() != 1) {
+                    unmapped++;
+                    continue;
+                }
+                eventId = matches.getFirst();
             }
-            sources.add(matches.getFirst());
-            if (associations.size() < 256)
-                associations.add(Map.of("messageIndex", index, "eventId", matches.getFirst()));
+            sources.add(eventId);
+            if (associations.size() < 256) {
+                var association = new LinkedHashMap<String, Object>();
+                association.put("messageIndex", index);
+                association.put("eventId", eventId);
+                if (contextIndex != null) association.put("contextMessageIndex", contextIndex);
+                associations.add(association);
+            }
         }
         var out = new LinkedHashMap<String, Object>();
         out.put("strategy", compactor.getClass().getSimpleName());
@@ -108,7 +153,7 @@ public final class ContextCompactionPlugin implements HarnessPlugin {
         out.put("sourceAssociations", associations);
         out.put(
                 "sourceMapping",
-                "unique exact message values only; ambiguous or synthetic sources remain unmapped");
+                "explicit projected fact identities/context indices; legacy unique exact values only; unproven synthetic sources remain unmapped");
         out.put("unmappedMessages", unmapped);
         out.put(
                 "sourceEventsTruncated",

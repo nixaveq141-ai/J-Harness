@@ -143,6 +143,8 @@ public final class HarnessWebServer implements AutoCloseable {
     private final DurableTaskCatalog diskCatalog;
     private final Map<String, WorkspaceLease> leases = new HashMap<>();
     private final Map<String, Cursor> cursors = new LinkedHashMap<>();
+    private final io.jharness.ecosystem.ContentPages.Cache contentPages =
+            new io.jharness.ecosystem.ContentPages.Cache();
     private final WorkbenchContentSearch contentSearch = new WorkbenchContentSearch();
     private final String catalogId, catalogBinding;
     private final byte[] credential;
@@ -1395,7 +1397,7 @@ public final class HarnessWebServer implements AutoCloseable {
                                     : new String(WebJson.encode(clean), StandardCharsets.UTF_8);
                     out =
                             new LinkedHashMap<>(
-                                    io.jharness.ecosystem.ContentPages.page(
+                                    contentPages.page(
                                             text,
                                             contentNumber(query, "offset", 0),
                                             query.getOrDefault("version", "")));
