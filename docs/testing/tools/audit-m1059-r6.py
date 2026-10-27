@@ -65,7 +65,8 @@ def audit(directory,commit,run_id):
         verify('verify.log',report['verificationLogSha256'])
         suites=[suite_snapshot(target/s['module']/'target/surefire-reports'/('TEST-'+s['name']+'.xml'),s['module']) for s in contract['suites']]
         require(sorted(suites,key=lambda s:(s['module'],s['name']))==sorted(report['suites'],key=lambda s:(s['module'],s['name'])),'Original XML/runner suite mismatch')
-        require(validate_java_suites(suites,contract)==702,'Java case identities incomplete')
+        expected_java=sum(len(suite['cases']) for suite in contract['suites'])
+        require(validate_java_suites(suites,contract)==expected_java,'Java case identities incomplete')
         for name,digest in report['supplyChain'].items():verify('target/'+name,digest)
         for name,digest in report['archiveInputs'].items():verify(name,digest)
         for name,digest in report['records'].items():verify(name,digest)

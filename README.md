@@ -1,10 +1,10 @@
 # J-Harness
 
-本机单操作者的Java Agent Runtime与Web工作台。当前运行时代码`77e8855`已完成M10.5.9三平台验收；[CI与原包审计](docs/testing/M10.5.9-public-final-2026-10-26-results.json)覆盖每平台702 Java、42客户端、813浏览器、66 SDK和7原生凭据项。API/Java SDK1.14，独立stdio1.0。
+本机单操作者的Java Agent Runtime与Web工作台。当前运行时代码`dae011a`已完成补缺后的三平台完整验收；[CI与原包审计](docs/testing/M10-gap-remote-ci-2026-10-27.json)覆盖每平台705 Java、42客户端、813浏览器、66 SDK和7原生凭据项。原M10.5.9验收记录保留。API/Java SDK1.14，独立stdio1.0。
 
 [当前实现与验收索引](docs/development/current-state.md) · [M1至今缺口清单](docs/testing/M1-M10.5-gap-audit-2026-10-26.md) · [后续计划](docs/requirements/JHarness-next-plan-v1.0.md)
 
-M11准入通过、Desktop尚未开始；R4逐项故障验证、R5的2条有限实施/11条后续及已知证据缺口继续保留。[仓库已公开](https://github.com/nixaveq141-ai/J-Harness)，采用Apache-2.0并保留第三方归因；当前代码在codex/m1059-full-validation，默认main与正式Release状态独立记录。
+M11准入通过、Desktop尚未开始；R4/R5余项及已知证据缺口继续保留，实际补齐范围见当前索引。[仓库已公开](https://github.com/nixaveq141-ai/J-Harness)，采用Apache-2.0并保留第三方归因；当前代码在codex/m1059-full-validation，默认main与正式Release状态独立记录。
 
 ## 构建与启动
 
