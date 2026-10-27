@@ -23,7 +23,7 @@ class M2WorkspaceIntegrationTest {
 
     @Test
     void committedWriteRetainsVersionsWhenDiffArtifactPublicationFails() throws Exception {
-        try (Fixture f = new Fixture(true)) {
+        try (Fixture f = new Fixture(true, true)) {
             String content = "line of committed content\n".repeat(600);
             var result =
                     f.run(
@@ -41,6 +41,79 @@ class M2WorkspaceIntegrationTest {
                     result.value().get("afterVersion"));
             assertEquals("MISSING", result.value().get("beforeVersion"));
             assertEquals(true, result.value().get("outputTruncated"));
+            String editBefore = "before committed edit\n".repeat(600);
+            Files.writeString(f.root.resolve("edited.txt"), editBefore);
+            String editVersion = new LocalWorkspace(f.root).versionOf(new ExecPath("edited.txt"));
+            var edit =
+                    f.run(
+                            call(
+                                    "edit_file",
+                                    "edit",
+                                    Map.of(
+                                            "path",
+                                            "edited.txt",
+                                            "oldText",
+                                            "before",
+                                            "newText",
+                                            "after",
+                                            "expectedOccurrences",
+                                            600,
+                                            "expectedVersion",
+                                            editVersion)));
+            assertEquals(ToolStatus.FAILED, edit.status());
+            assertEquals("ARTIFACT_WRITE_FAILED", edit.error().orElseThrow().code());
+            assertEquals(true, edit.value().get("committed"));
+            assertEquals(false, edit.value().get("sideEffectUncertain"));
+            assertEquals(
+                    editBefore.replace("before", "after"),
+                    Files.readString(f.root.resolve("edited.txt")));
+            assertEquals(editVersion, edit.value().get("beforeVersion"));
+            assertEquals(
+                    new LocalWorkspace(f.root).versionOf(new ExecPath("edited.txt")),
+                    edit.value().get("afterVersion"));
+            String patchContent =
+                    "patch content survives artifact publication failure\n".repeat(600);
+            for (boolean partial : List.of(false, true)) {
+                String path = partial ? "partial.txt" : "patched.txt";
+                String patch =
+                        "--- /dev/null\n+++ b/"
+                                + path
+                                + "\n@@ -0,0 +1,600 @@\n"
+                                + ("+patch content survives artifact publication failure\n")
+                                        .repeat(600);
+                if (partial)
+                    patch +=
+                            "--- /dev/null\n+++ b/blocked-by-fixture.txt\n@@ -0,0 +1,1 @@\n+must not publish\n";
+                var patched =
+                        f.run(
+                                call(
+                                        "apply_patch",
+                                        partial ? "patch-partial" : "patch-complete",
+                                        Map.of("patchText", patch)));
+                assertEquals(partial ? ToolStatus.UNKNOWN : ToolStatus.FAILED, patched.status());
+                assertEquals(
+                        partial ? "PATCH_PARTIAL" : "ARTIFACT_WRITE_FAILED",
+                        patched.error().orElseThrow().code());
+                assertEquals(true, patched.value().get("committed"));
+                assertEquals(partial, patched.value().get("sideEffectUncertain"));
+                assertEquals(true, patched.value().get("outputTruncated"));
+                assertEquals(patchContent, Files.readString(f.root.resolve(path)));
+                var changes = (List<?>) patched.value().get("changes");
+                assertEquals(1, changes.size());
+                var change = Values.object(changes.getFirst());
+                assertEquals(path, change.get("path"));
+                assertEquals("MISSING", change.get("beforeVersion"));
+                assertEquals(
+                        new LocalWorkspace(f.root).versionOf(new ExecPath(path)),
+                        change.get("afterVersion"));
+                assertFalse(change.containsKey("diff"));
+                if (partial)
+                    assertEquals("blocked-by-fixture.txt", patched.value().get("failedPath"));
+            }
+            assertFalse(Files.exists(f.root.resolve("blocked-by-fixture.txt")));
+            assertEquals(4, f.artifactAttempts);
+            assertEquals(
+                    4, f.events().stream().filter(e -> e.type().equals("tool.intent")).count());
         }
     }
 
@@ -461,12 +534,17 @@ class M2WorkspaceIntegrationTest {
                         new JsonSchemaValidator(),
                         new SecretRedactor(List.of("reachable-secret-sentinel")));
         final PluginContainer container;
+        int artifactAttempts;
 
         Fixture() throws IOException {
             this(false);
         }
 
         Fixture(boolean failArtifacts) throws IOException {
+            this(failArtifacts, false);
+        }
+
+        Fixture(boolean failArtifacts, boolean failBeforePatchCommit) throws IOException {
             root = Files.createDirectory(temporary.resolve("workspace"));
             store = temporary.resolve("store");
             repo = new JsonlSessionRepository(store);
@@ -486,6 +564,7 @@ class M2WorkspaceIntegrationTest {
                             ? new ArtifactStore() {
                                 public Artifact put(String session, String content)
                                         throws IOException {
+                                    artifactAttempts++;
                                     throw new IOException("artifact fixture failure");
                                 }
 
@@ -503,7 +582,19 @@ class M2WorkspaceIntegrationTest {
                                     repo,
                                     new LocalArtifactStore(
                                             store.resolve("artifacts"), new SecretRedactor())),
-                            new WorkspaceToolsPlugin(new LocalWorkspace(root), spill));
+                            new WorkspaceToolsPlugin(
+                                    new LocalWorkspace(
+                                            root,
+                                            Duration.ofSeconds(5),
+                                            path -> {
+                                                if (failBeforePatchCommit
+                                                        && path.getFileName()
+                                                                .toString()
+                                                                .equals("blocked-by-fixture.txt"))
+                                                    throw new IOException(
+                                                            "controlled failure before second patch commit");
+                                            }),
+                                    spill));
             container =
                     new PluginContainer(
                             SCOPE,

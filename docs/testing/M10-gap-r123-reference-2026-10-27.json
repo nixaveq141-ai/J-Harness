@@ -1,0 +1,2909 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-27",
+  "status": "REFERENCES_VERIFIED_PATCH_FAULT_ORACLE_ADDED_OTHER_PRECISE_FOLLOWUPS_OPEN",
+  "ledgerSha256": "e0ce9b3b18eba60cd784843eca75c84d657d4cc3ccf1391a09136f48fef14a49",
+  "opinionCount": 174,
+  "historicalCounts": {
+    "EXISTING_FIX_CONFIRMED": 8,
+    "IMPLEMENTED_LOCAL_VALIDATED": 138,
+    "CONTRACT_CLARIFIED": 9,
+    "OUT_OF_SCOPE": 19
+  },
+  "missingFileOrSuiteReferences": 0,
+  "sourceFiles": {
+    ".github/workflows/ci.yml": "f3ea446e52194181cd5b7aba1e5383bb203565def0b7559c1c1f06785622b00b",
+    "docs/development/OCR-R1-R3-implementation-2026-10-24.md": "62b511f50dbab21b5a7fd3ee1e1203ff6003115f5aa9d4a1a97e2b6dcb6ea933",
+    "docs/development/OCR-remediation-progress.json": "1d1a1b82948723c91195422405ba04382dc40f13c4200d11186aeaca9cda006c",
+    "docs/testing/OCR-R1-2026-10-21-results.json": "709902c933487cc066561850988732f6b6144018fa472b39b8e48d3fa467c60e",
+    "docs/testing/OCR-R2-2026-10-22-results.json": "ccca8e58b0ac0dc3417dd20e9a106998cbe280fef32eecc04d31f77ee6d2d3cc",
+    "harness-agent/src/main/java/io/jharness/agent/BoundedModelExecution.java": "083f86590f1f121bb54a3da90d8c6abe69a91a35c5d247f3e534db8f7f0c4258",
+    "harness-agent/src/main/java/io/jharness/agent/ContextCompactionPlugin.java": "7729b52971aaea419cf0b2cf88a464973c808b27aef737e8a91ebb4d5bdc4dd5",
+    "harness-agent/src/test/java/io/jharness/agent/R3CompactionBoundaryTest.java": "eab7adffdc4016cae31fcf877addd7b9f3405594682a532619fb20da812b75eb",
+    "harness-api/src/main/java/io/jharness/api/AtomicFileMetadata.java": "0caaa9f2560d24ae857f77ebef24326a05863915cdb61122a4deabafbe7f9430",
+    "harness-api/src/main/java/io/jharness/api/DataSanitizer.java": "21ce155e76ba457f02e5448758a7aa8b88207750474459b93f0fda3b1a66be19",
+    "docs/testing/tools/SanitizerCost.java": "d7c2fe2bde1a7d2acc2cb53a07be0a3f3882d1cd304678b98127ed66393957aa",
+    "harness-api/src/main/java/io/jharness/api/DirectoryIdentity.java": "b2b5bde5f1c72826557f0b4900461b20e95d42cb9c108c20de2f06ece04c9b47",
+    "harness-api/src/main/java/io/jharness/api/FileSystemView.java": "bf9785fc378f9d90f4d85b2210bfce2a2d6a1f7235eee10e2813232234e41858",
+    "harness-api/src/main/java/io/jharness/api/LlmClient.java": "aec1dedf1bdd4313891af8bb90d79e36800a8e7c6167a17d1a8a9ca61739397a",
+    "harness-api/src/main/java/io/jharness/api/ModelRejectedException.java": "66b981c0a9a560810b85e150cb31b4d52c69076ad384160415e77f6a62ea91cb",
+    "harness-api/src/main/java/io/jharness/api/SessionWriter.java": "feb8272e274cdc28f1829d22c15548629df333737adce4b88de30db0325162b1",
+    "harness-api/src/main/java/io/jharness/api/ToolResults.java": "f54b5e9397011d6e82f32f974e620abc19791cc1811724c493cd7b5ec356eae3",
+    "harness-api/src/test/java/io/jharness/api/R1CoreApiTest.java": "56a1c26a3965d71056c62cb0bedc0401f68d527589e8cac51df45c81e1f21296",
+    "harness-cli/src/main/java/io/jharness/cli/Arguments.java": "eb84ece9eee60ece43cef4d49f30d9d5e10e2241b4a9530ebb2ecd38ecfaadfd",
+    "harness-cli/src/main/java/io/jharness/cli/CliConfig.java": "7a4aae620a93b104f41873215498ced12be96ce3a4b1ef72ca6f9b575a0d8f69",
+    "harness-cli/src/main/java/io/jharness/cli/DryRunPipeline.java": "fd4d9ec70d0f88f2072763f91cc09e08009657537bdfbfbaf34d9c0e639c8004",
+    "harness-cli/src/main/java/io/jharness/cli/EcosystemCli.java": "7d1b7371a209290f0c3cf81cd73d79b551b06c01345c05bae58b64b88b7fc4c8",
+    "harness-cli/src/main/java/io/jharness/cli/EcosystemConfig.java": "9c29fcb5e813d0259f74c024754f43efe94f32a42202a535514901a2973faca2",
+    "harness-cli/src/main/java/io/jharness/cli/EvidenceCompletion.java": "5e57dea7cc1307c0952476265854b71da3bec96ed030c3d64b89b1cb6d1e385c",
+    "harness-cli/src/main/java/io/jharness/cli/EvidenceReport.java": "e3d8f7d59796bf0be8d918905a9e931737a31bfac888cb7237d7ae442cd897f8",
+    "harness-cli/src/main/java/io/jharness/cli/Json.java": "9b3012c938e106d70f9adc7087e4b0131b60991fd4c11616f6409a527c0e563b",
+    "harness-cli/src/main/java/io/jharness/cli/Metadata.java": "6caf9c24ab96a4bd0683cd9d3cd25530c30f4ac63808eeeb45a74d58c4bc5395",
+    "harness-cli/src/main/java/io/jharness/cli/NativeCredentials.java": "65752f4b44a019b0e227fdda213167bcab641356b41eb27e13ec53ccedcb3427",
+    "harness-cli/src/main/java/io/jharness/cli/StdioSdkServer.java": "f8a51d276e6dbea2b350741deacb61e9038472d47bab140f1cbf77005457c29f",
+    "harness-cli/src/main/java/io/jharness/cli/SystemCredentials.java": "6430e0ebe60a391f589c42ee4cc01402d9a08ec7717370ba4777f01aabb396ff",
+    "harness-cli/src/main/java/io/jharness/cli/WorkbenchSettings.java": "993dc9a89300c2375c8327a7f4325b0970e3732ac633e8bfa466b652dabf4097",
+    "harness-cli/src/main/java/io/jharness/cli/WorkbenchWorkspaces.java": "f8121862c4a9254083f1e0a3fe6d72ef092783fc9e424875f9de0607183253bf",
+    "harness-cli/src/test/java/io/jharness/cli/CredentialStoreProbe.java": "567db4ae4b87c3b73439381f92cacdded09ba96ae611b665a027bdffdbd746cd",
+    "harness-cli/src/test/java/io/jharness/cli/R1ApplicationNativeTest.java": "557bd6e6cc5fd78e4beb493d140176157f9e03178e6de8f320225a7701eb91f6",
+    "harness-cli/src/test/java/io/jharness/cli/R1CliLifecycleTest.java": "ab9008ede2aa190a3652fe90c18e0a8b04d58444aaa627fa8a8fc16781684927",
+    "harness-cli/src/test/java/io/jharness/cli/R1CredentialCleanupTest.java": "9d9f0013775e06cff939d9d19df99e370229568b9708b1fb197f043f8dc65246",
+    "harness-cli/src/test/java/io/jharness/cli/R1PreviewPolicyTest.java": "033d162f9134fe474effa52ae0b1f486db89f2e7e9ceeb37f385e8040cdc981b",
+    "harness-cli/src/test/java/io/jharness/cli/R1WorkbenchTransactionTest.java": "d03d5c6aa08511c827f62d9be0377e72bdec0006ad5e82684ccb3682188ed7e1",
+    "harness-cli/src/test/java/io/jharness/cli/R2RegistryTest.java": "d2b4074a963857d23ca7fcfb53bc271465e59285678e9790bb0bc683ea9f05f6",
+    "harness-cli/src/test/java/io/jharness/cli/WorkbenchCredentialCleanup.java": "f433195a1613e8caa94f661278d410df96ae9940896c73aae27452fb8d81074f",
+    "frontend/tests/settings.mjs": "c9a8178819e2b26e1528ffe365e4dd50f469d8badb317c43abed40e77048806b",
+    "frontend/tests/cleanup.mjs": "0d54af7fb45da15f13657cba0b9caaaa3b4f88a86994644c23fb0d42e86ce84d",
+    "frontend/tests/cleanup.test.mjs": "7bb6d72c6b749c1ae2385046ae7e12f4c96a6bb0a1e4a08562aafba6c3c90e1f",
+    "harness-cli/src/test/java/io/jharness/cli/WorkbenchSettingsTest.java": "d8f613b9b783c633d1772efdb9cebac65060e55fb942436b1db635f446d6ab1f",
+    "harness-cli/src/test/java/io/jharness/cli/WorkbenchWorkspacesTest.java": "38dc89ddbf4831d85e6c9c1eeab68e5a9e3a8a5a84d1015eeeef2eb4a6d68be1",
+    "harness-ecosystem/src/main/java/io/jharness/ecosystem/CommandTransport.java": "491d8d5f88e96216155179074761ebda4b910c8bc3f3769971de2fe9a32d5714",
+    "harness-ecosystem/src/main/java/io/jharness/ecosystem/DockerExecutionEnvironment.java": "dc4f9b75d1bcdda89511f371265fb69118a98ca3bbae46d721932e837dda8f65",
+    "harness-ecosystem/src/main/java/io/jharness/ecosystem/EnvironmentWorker.java": "c9bf43b03d27a5425ac80642800d9c67414f3855738b0b88439a21e4fdc409cf",
+    "harness-ecosystem/src/main/java/io/jharness/ecosystem/HarnessSdk.java": "a5d79f7f1332f676253af6a702ca0d89e314feb1499aa7656c0a60a642d0fdcb",
+    "harness-ecosystem/src/main/java/io/jharness/ecosystem/McpIo.java": "de522e7998362187871827ec7f3aaa2bdda616aee0ac001f7e777a24acf3b856",
+    "harness-ecosystem/src/main/java/io/jharness/ecosystem/PlanningPlugin.java": "63bcf972b0d7ffadae4e8c6cdf025dea073a33aaea4fd4d069fe28e74be3ec97",
+    "harness-ecosystem/src/main/java/io/jharness/ecosystem/ProcessCleanup.java": "689b398dc981954acf2f5d8bd10306ad52a93e3973af92c5c18d78b3e00ac385",
+    "harness-ecosystem/src/main/java/io/jharness/ecosystem/RemoteWorkspace.java": "a73c3d8922e7823cc4dbf6035d898bf39b36c65f5a55241ba07d09c8c7db20bb",
+    "harness-ecosystem/src/main/java/io/jharness/ecosystem/StdioMcpTransport.java": "2d8942e8714f4b532980903f7aa23fe4055f54aa38a8560dd40413d1d67e2743",
+    "harness-ecosystem/src/main/java/io/jharness/ecosystem/UserQuestionsPlugin.java": "d6aad119f199438d380faa9c46d96bccbff16418079f8edf764fcff1c2dc2941",
+    "harness-ecosystem/src/main/java/io/jharness/ecosystem/WorkspaceContentInspection.java": "3774f7f929b1309de6b69946fff3e106ec9039a3f652bed6061454436922e898",
+    "harness-ecosystem/src/test/java/io/jharness/ecosystem/R1EnvironmentLifecycleTest.java": "2c0ca575c3b524c853b108a704ea676ecaf336e44cd1af41f3d19f7226d93255",
+    "harness-ecosystem/src/test/java/io/jharness/ecosystem/R1RemainingOwnershipFaultTest.java": "10d180155c6cadab2b9bae19f903dd61570657f5596f079bc085980cf92a41be",
+    "harness-ecosystem/src/test/java/io/jharness/ecosystem/R3SkillBoundaryTest.java": "2e8e9e55a3c3ab7c2b34ffce38ca466e01890e3250095472c22cec9202aa7802",
+    "harness-events/src/main/java/io/jharness/events/DefaultEventBus.java": "d06a3ef251c6bf52c28d2833f9fa44a29309df0d07e3538086de92c205e6a5d4",
+    "harness-llm/src/main/java/io/jharness/llm/LazyModelRouter.java": "7147d397b4662ed4e99d5c07fbd3ce9180101524a3b84c21ddbad8adde281600",
+    "harness-llm/src/main/java/io/jharness/llm/OpenAiCompatibleLlmClient.java": "ac017c709fd77805faa1f9f86ab57a81246d63b64bb11fefb21eb19b3111c2ff",
+    "harness-llm/src/main/java/io/jharness/llm/ProtocolCodec.java": "d8248f62c1c69782aec76fdf3ba63bf07081a41aa31e129d7a80d33cb82ccc2f",
+    "harness-llm/src/main/java/io/jharness/llm/ProtocolStream.java": "5103483fbc077dcc364fc7a41ce3e0ee5c1d8b5e2d006a8430dafa161b4ef5d0",
+    "harness-plugin/src/main/java/io/jharness/plugin/PluginContainer.java": "ec26d821703f2167a798dd621b31fe4fd4c5e17ce49399474ace383624d0d428",
+    "harness-plugin/src/main/java/io/jharness/plugin/ScopedToolRegistry.java": "a22cedfc7cf51892899e8ca1874461a1821933bf2ddf670340f652c761dd6c13",
+    "harness-policy/src/main/java/io/jharness/policy/DefaultPolicyEngine.java": "51eb78a7b7ad24a06bcfe0882173a0232c66cc393e6b2c40d5c162a2719a9476",
+    "harness-policy/src/main/java/io/jharness/policy/InteractiveApprovalService.java": "b72ac38aeb4f556d57b256fdd134b4b8b96c00549606a63b47d3631c1af31f16",
+    "harness-policy/src/test/java/io/jharness/policy/R1ApprovalDeadlineTest.java": "eab41de5e2bac5b496baf8d2a028e25d88be54d72f61bc47872d89f1f6f73e68",
+    "harness-process/src/main/java/io/jharness/process/LocalPlanPreviewer.java": "8141f165b374b718b1a5252adbf3a15a94f05cb9818b93e22745d592a78d0f15",
+    "harness-process/src/main/java/io/jharness/process/LocalProcessRunner.java": "ab01395fcfe102e05b0d8e17a1de4a3935569f70ec80fcc589aa7c7a59ed4f13",
+    "harness-process/src/main/java/io/jharness/process/LocalRunControl.java": "c14a859e390afba8f1128c9bb1408ef6577e32721c6929a49e0a73b56fd34edf",
+    "harness-process/src/main/java/io/jharness/process/LocalTerminalSession.java": "919abce4dba63e7e5b8a43bd7651f30cfc826e830badaf640ed524558b46e7ef",
+    "harness-process/src/test/java/io/jharness/process/R1ProcessSafetyTest.java": "dff44c264cf0e4c16c7654c3b8ccc65dfb19560032c3d4d59f2ef6d9a2f48f29",
+    "harness-session/src/main/java/io/jharness/session/EventSessionProjection.java": "9e87bd36b2599e95d1f8d5ba6a7f7b94abdca99690abfdde8fb822f637cde72f",
+    "harness-session/src/main/java/io/jharness/session/LocalArtifactStore.java": "6d672081d547bddfaaa84a97275e3acc83f061ac8de486a9a9bdd6703ae17804",
+    "harness-session/src/main/java/io/jharness/session/SessionRecovery.java": "17e7865aee75d5600491784ad06847cb1e8931d557f7f6a7ffa63048eb14b532",
+    "harness-session/src/test/java/io/jharness/session/R2PersistenceTest.java": "b0c3c10ed809e7a1d2552edc68b331a1889a32213835fb3a8a5f0201cf404bdd",
+    "harness-testkit/src/test/java/io/jharness/testkit/M7SubagentTest.java": "bcfddf8e2d6d95c32306dbdfa4b0a110e1c39f0e7b7943e710bb61d14325c337",
+    "harness-workspace/src/main/java/io/jharness/workspace/LocalWorkspace.java": "c754a37cf41290be0fff7bdb70f61a44f81762d71a9ec38d8b3537e705740c2d",
+    "harness-workspace/src/main/java/io/jharness/workspace/WorkspaceToolsPlugin.java": "d8f629261d303bc5a35c61569eae2d3fe97e41cacc3762f6fbaccb0801bbb9eb",
+    "scripts/test-r3-provider.py": "9b6328e9d5a9f08c4d0645f880819e784f5f2e9f850f5cf5e94165ec4902cc7f",
+    "harness-testkit/src/test/java/io/jharness/testkit/M10WebTest.java": "3984093b3eaab57aa056912d8f5c5127fc24788ac5b9e2ab4c4c070abce92216",
+    "scripts/run-r1-supplemental.py": "bb7452dfa2164e580ba13d9ba6109f29c88e620654601c0956cf02101a08eb2b",
+    "scripts/verify-r1-implementation.py": "a7547e6a5c43fba989a82d29fd974d827170aaecd63ac2a7266b5074526203f6",
+    "harness-tools/src/main/java/io/jharness/tools/BoundedReadOnlyToolScheduler.java": "e190e0016f0afd9dee0b69628e421d57cac1f1659f7a3597e72fc9c11c45207a",
+    "scripts/test-windows-credential-compat.py": "9b81e783d0a60513bd431245800377d74c5f4e6151feae4a3cfa70e5f9895656",
+    "harness-web/src/main/java/io/jharness/web/DurableTaskCatalog.java": "6fe1467a194654ce2735342b92449ef226aacb26f899dd81502edce31206d767",
+    "harness-web/src/main/java/io/jharness/web/TurnQueue.java": "8e1c0bb79e209a2bbe7d28e1bd93de22b5ca3b8d272a97ccdbc6140e8775aea1",
+    "harness-testkit/src/test/java/io/jharness/testkit/R3ExtensionProtocolTest.java": "4c3aeecdb835e04aee2910cf310ed4f9ffbd0b080e73d869039728cb0a567cc9",
+    "harness-testkit/src/test/java/io/jharness/testkit/R1WebOwnershipTest.java": "4fbd08572b3117f82fcc7a3eef744285ebe73580bb744acd2786c31012064c0c",
+    "harness-testkit/src/test/java/io/jharness/testkit/M7WebTest.java": "fab36d8978d4c8ca066110eabe0a6dfcb75c776d63992eff26203d9e34fa2bd1",
+    "harness-tools/src/main/java/io/jharness/tools/DefaultToolPipeline.java": "90801b97a70cbec8da726c7366aa1767bdd56ee2f5cf758a57f734f235d5c8f2",
+    "sdk/python/jharness_sdk.py": "44eab1a38fdbc6cce21eb358edbd19b491a2c6598746840d126fb916d599b81b",
+    "sdk/tests/client.py": "f5efe495a1e787dd2396540400f3b1c5389f0815289f0333438dc52917c2fdca",
+    "sdk/tests/client.ts": "12131cb0b00fecb5686404294c832fc57f7b209b354e7aaba5312526088d296b",
+    "harness-testkit/src/test/java/io/jharness/testkit/R1CoreLifecycleTest.java": "f276510a3c69e72ac9895d56ba25d773a048dc39a45d0d8683343184431f099c",
+    "harness-web/src/main/java/io/jharness/web/HarnessWebServer.java": "8d202c439dba3524c15662e5041b8b1e9c599907523f0e66905c9d694aa8c837"
+  },
+  "javaSuites": {
+    "io.jharness.testkit.R1CoreLifecycleTest": {
+      "module": "harness-testkit",
+      "cases": [
+        "actualResultValueDisplayAndModelContentAreRedactedBeforeCompletion",
+        "conflictCodeWithoutProviderProofStillRequiresVerification",
+        "costGuardChecksActualUnicodeToolAndMessageInputBeforeSending",
+        "drainDoesNotRepeatFailedSettlementAndStillSettlesRemainingPreparedCall",
+        "knownCancellationAndTimeoutPreserveReasonButBlockContinuationForPartialEffects",
+        "knownReturnedFailureDoesNotBecomeUnknownMerelyBecauseBodyEntered",
+        "modelFailureKeepsPrimaryWhenStopAuditAlsoFails",
+        "modelObservationFailurePreservesOriginalRejectionAndSecondaryCause",
+        "observerReceivesExactlyPersistedSanitizedPayloadAndUnsafeIdentityRejects",
+        "operatorVerificationProjectionOmitsUnrecognizedPayloadFields",
+        "persistedEventFailureIsDistinguishedFromNotificationFailure",
+        "redactionCannotReportSuccessWithInvalidVisibleSchema",
+        "requiredAttemptAuditFailurePreventsAnySend",
+        "residualProcessOrUnknownNeverDowngradesToKnownCancellation",
+        "retryAuditFailurePreservesRejectionAndPreventsSecondSend",
+        "routerCloseRetainsFailedRouteEvidenceWithoutRetryingResource",
+        "schedulerCloseBeforeWorkerRegistrationPreventsLateBodyEntry",
+        "schedulerDoesNotRetryFailedSettlementAndStillSettlesOtherAcceptedCalls",
+        "settlementBeforeWrapperEntryPreventsBodyAndRecordsSingleCompletion",
+        "stoppedBarrierSettlesAlreadyPreparedCallWithoutEnteringItsBody",
+        "waitingAuditDoesNotHoldMonitorNeededByActiveRequestExit",
+        "wrapperCannotTurnFailedWriteIntoKnownSuccess",
+        "wrongSettlementIdentityDoesNotConsumeValidCompletion"
+      ],
+      "original715XmlSha256": "e6626befaff9089cf978a67e1138564bac7625baea6f4dd717d2186dd9e6263e"
+    },
+    "io.jharness.agent.R3CompactionBoundaryTest": {
+      "module": "harness-agent",
+      "cases": [
+        "completedToolGroupsAndRemovalAuditMustStayAtomic",
+        "malformedOrDuplicateToolIdsUseCompactionError",
+        "replacementCompactorCannotDropConfigOrProtectedMessages"
+      ],
+      "original715XmlSha256": "f8f4163930ae38f66940922f7700821c9e179ac84100a6a556f842430d4e86be"
+    },
+    "io.jharness.cli.R2RegistryTest": {
+      "module": "harness-cli",
+      "cases": [
+        "jsonReplacementKeepsExistingOwnerWithoutReassigningSameOwner",
+        "malformedRegistryPathReportsStableCodeWithoutRewritingFile",
+        "metadataRejectsNonSegmentsButKeepsExplicitRootAccess",
+        "missingRegisteredRootIsVisibleAsUnavailableAndRestoredRootCanReopen",
+        "replacedDirectoryIdentityRevokesMetadataAndWorkspaceChecks"
+      ],
+      "original715XmlSha256": "83bcb968ac50fe582eb80a5a584f361a65684c03524e62521a59888ba40716e0"
+    },
+    "io.jharness.api.R1CoreApiTest": {
+      "module": "harness-api",
+      "cases": [
+        "checkpointRejectsNullBeforeFlush",
+        "errorInfoAndSuccessHaveConsistentSchema",
+        "metadataToStringOmitsRawInputs",
+        "rejectionMetadataIsBoundedAndHasNoRawProviderInput",
+        "repeatedStreamingFramesRemainBoundedAndNeverExposeCrossBoundarySecret",
+        "sanitizationShapeFailureHasStableCode",
+        "sanitizerAliasesAndKeyCollisionsAreFailClosed",
+        "sanitizerCannotInjectAnErrorIntoSuccess",
+        "streamingNeverSplitsReplacementAndRetainsOnlyPotentialSecretSuffix"
+      ],
+      "original715XmlSha256": "19c57eb98243c13fe042d765676c44d2cfc139c8a48c0b05385cdf8b2a6fbfbe"
+    },
+    "io.jharness.api.R123IdentityBoundaryTest": {
+      "module": "harness-api",
+      "cases": [
+        "concurrentBindingsPublishOneCompleteAnchorAndNeverOverwriteInvalidIdentity",
+        "environmentCredentialSuffixHasBoundaryWithoutIgnoringShortSecrets",
+        "stableKeysAndAnchorsDoNotDependOnFallbackModificationTime"
+      ],
+      "original715XmlSha256": "8ff7628d47bef6c7cb2cc4c3860e6a50e7eb8d80b6475f2f58075e176d5c6cb6"
+    },
+    "io.jharness.ecosystem.R3SkillBoundaryTest": {
+      "module": "harness-ecosystem",
+      "cases": [
+        "boundedTextRejectsBeforeUnboundedLoadAndRemoteRepliesValidate",
+        "frontmatterSingleQuoteIsControlledFailureAndPairedQuotesWork"
+      ],
+      "original715XmlSha256": "6b15bf3dad164d770257b89f350b1695cd4ace4dbb1a2bf6eb884873578971f5"
+    },
+    "io.jharness.web.R1CatalogScanBoundaryTest": {
+      "module": "harness-testkit",
+      "cases": [
+        "coldLegacyLookupReadsOnlyItsRecordButFullScanStillRejectsCorruption",
+        "duplicateLegacyIdentityIsRejectedBeforeASecondRecordIsWritten",
+        "flatTenThousandRecordScanIsBoundedAndDoesNotHoldCatalogMonitor"
+      ],
+      "original715XmlSha256": "88f7bc411bcbee6c93fac22c7a8e4555d1c69c15314accb2726a05acc4a12578"
+    },
+    "io.jharness.cli.R123CliBoundaryTest": {
+      "module": "harness-cli",
+      "cases": [
+        "configurationCanBeRepairedBeforeCrossFieldValidation",
+        "credentialWorkerClassifiesMalformedInputAndOutputFailureWithoutUsingNativeVault",
+        "emptyPathOptionsAndInvalidUtf8HaveStableInputErrors"
+      ],
+      "original715XmlSha256": "11081df3f8c9eeb8cf75d129b2a49056a99c36182ace9a7a5fd3b93cfef18de9"
+    },
+    "io.jharness.cli.R1CliLifecycleTest": {
+      "module": "harness-cli",
+      "cases": [
+        "interactionFailureCancelsRunAndPreservesPrimaryAndCleanupFailures",
+        "parameterizedModelDelegatesSingleAttemptCapabilityAndStreamingWithoutRetry",
+        "policyPluginRevokesApprovalRegistrationBeforeClosingAndStillRevokesPolicyOnFailure",
+        "shutdownStopsTerminalEvenWhenCancellationOrTaskFails"
+      ],
+      "original715XmlSha256": "ac9416e19303ae473fd567a4731fa98ef0a4677f22d18536cb2598867a356164"
+    },
+    "io.jharness.cli.WorkbenchSettingsTest": {
+      "module": "harness-cli",
+      "cases": [
+        "acceptedModelAndBudgetSnapshotSurvivesDefaultAndCapabilityChanges",
+        "corruptCleanupJournalIsPreservedWithMaintenanceDiagnostic",
+        "explicitSkillRootsPersistDiscoverAndRejectTraversalWithoutNetwork",
+        "explicitUserSkillRootAcceptsLocalAbsoluteAndRejectsRelativeOrUnc",
+        "extensionsAndIndependentModelPricesReachRuntime",
+        "invalidConfigurationCannotWriteCredentialsOrReplaceState",
+        "missingMcpCredentialRejectsCaptureAndFrozenRuntimeBeforeAssembly",
+        "permissionSelectionIsBoundedPersistentAndDoesNotRewriteRuntimeSnapshots",
+        "savedKeySurvivesNewHostWithoutEnteringDiskOrResponses",
+        "systemCredentialAdapterRoundTripAndCleanupOrExplicitUnsupported",
+        "unavailableNativeVaultPreservesSettingsAndBlocksAdmissionWithoutFallback",
+        "vaultFailureKeepsSettingsAndKeyRotationDeletesOnlyManagedOldKey"
+      ],
+      "original715XmlSha256": "b584fdfc64017370e9dd4ac92a4668a8656a8c6725fdf3a89907149453a3c357"
+    },
+    "io.jharness.cli.EvidenceCompletionTest": {
+      "module": "harness-cli",
+      "cases": [
+        "currentTurnCannotReusePriorTurnsReadEvidence",
+        "expectedFileMustStillHaveRecordedVersionAndVerificationAfterLastWrite",
+        "failedBuildThenLatestSuccessfulVerificationPassesAndSubsequentSystemCommandInvalidatesIt"
+      ],
+      "original715XmlSha256": "1c135e06f20df2dc06677ca30c55e738bc9e9dc16dbeb80a1797068edcabae99"
+    },
+    "io.jharness.cli.R1ApplicationNativeTest": {
+      "module": "harness-cli",
+      "cases": [
+        "awsAliasesAreRedactedByClassicCliAndRejectedByEcosystemAssembly",
+        "conflictingAndOversizedBatchesNeverReachVault",
+        "credentialsAliasesAreRedactedInWorkbenchAndFailedInputsRemainRegistered",
+        "mcpUserInfoAndFragmentsAreRejectedBeforeAnyConnection",
+        "nativeProbeReportsOnlyFixedSafeFailureCategories",
+        "reportRedactsBeforeTruncationWithoutLeakingKnownSecretPrefix",
+        "resourceCloseFailureCannotSkipOtherResourcesAndPreservesSuppressed",
+        "utf8ByteLimitIsValidatedBeforeNativeOperation"
+      ],
+      "original715XmlSha256": "8269ed82daaf5f3027980d04c614beb2ebea84394d4b488ef780225781018737"
+    },
+    "io.jharness.cli.R1NativeWorkerTest": {
+      "module": "harness-cli",
+      "cases": [
+        "corruptWindowsBlobIsBoundedAndFreedAndProbeNeverMutates",
+        "invalidBatchNeverLoadsNativeAndMutatingFailureIsUnknown",
+        "parentClassifiesReadTimeoutAndUnknownMutationWithoutRawException",
+        "workerClearsReadBufferOnSuccessAndNativeLinkFailureWithoutDiagnostics"
+      ],
+      "original715XmlSha256": "054f4363bb35acd7efb20abffa95d3164c73d78f53a8c6efd251068248a7a453"
+    },
+    "io.jharness.cli.StdioSdkServerTest": {
+      "module": "harness-cli",
+      "cases": [
+        "duplicateFieldsRejectRatherThanSelectingLastValue",
+        "exactVersionInitializationUnknownFieldsAndMethodsAreExecutionBarriers",
+        "truncatedOversizedAndInvalidUtf8FramesCloseWithoutInterpretingBytes"
+      ],
+      "original715XmlSha256": "709c187700a7bdd3cf4d3b4210c092c69af08f1ea97615f1464c590ed2e8a727"
+    },
+    "io.jharness.cli.R1CredentialCleanupTest": {
+      "module": "harness-cli",
+      "cases": [
+        "invalidArgumentsAndAbsentFixtureCannotClaimClean",
+        "linkedMetadataCannotReadOrDeleteSiblingFixtureCredentials",
+        "liveAndPendingCleanupReferencesAreCombinedWithoutVaultAccess",
+        "malformedModelsAndUnknownReferencesAreRejectedBeforeVaultAccess"
+      ],
+      "original715XmlSha256": "55e33219dffb1711870a5839c3f046662aa979265de63f16f3f07746fb4e2996"
+    },
+    "io.jharness.cli.R1PreviewPolicyTest": {
+      "module": "harness-cli",
+      "cases": [
+        "nullablePolicyCannotEnterPreviewEvenWhenProviderIsInstalled"
+      ],
+      "original715XmlSha256": "d01158b2be2bc83f52236968d997f36dc4c7599c7e0021e63f82a2bdbb3c8feb"
+    },
+    "io.jharness.cli.R1WorkbenchTransactionTest": {
+      "module": "harness-cli",
+      "cases": [
+        "failedFileCommitCompensatesOnlyNewCredentialAndRedactsFailedInput",
+        "failedRotationPreservesDiskAndOriginalCredentialAcrossRestart",
+        "invalidSaveLeavesExistingDiskRuntimeAndVaultUntouched",
+        "obsoleteCredentialCleanupSurvivesRestartAndResetsPending",
+        "repeatedSavesReuseRedactorUntilASecretIsAddedIncludingFailedRotation"
+      ],
+      "original715XmlSha256": "91faaaa7c61710da4440a45b4832e7bb8a7631339142fad331ff146f919f9063"
+    },
+    "io.jharness.cli.WorkbenchWorkspacesTest": {
+      "module": "harness-cli",
+      "cases": [
+        "registrationPersistsCanonicalRootsWithoutLoadingTargetConfig",
+        "relativeTraversalMetadataSecretsLinksAndWrongOwnerAreRejected",
+        "workspaceOwnedByAnotherHostCannotBeRegistered"
+      ],
+      "original715XmlSha256": "7761609c6274c03d18b66651bc3e34eb9265dbb9d685f3eb1390ed3f821a0ffc"
+    },
+    "io.jharness.ecosystem.R1EnvironmentLifecycleTest": {
+      "module": "harness-ecosystem",
+      "cases": [
+        "childRevocationReachesAnAlreadyRunningBorrowedReadToken",
+        "closedLocalEnvironmentRevokesAlreadyBorrowedFiles",
+        "dockerRemovalCanBeRetriedWithoutRestoringCapabilities",
+        "failedContainerStartRetainsFailedCompensation",
+        "fatalMcpFailureCompletesImmediatelyAndStillAborts",
+        "httpCloseAbortsTheInFlightBodyWithoutWaitingForExchangeMonitor",
+        "malformedWorkerCommandResponseRemainsUnknownAfterSuccessfulControlExit",
+        "mcpAbortFailureCannotReplaceTheUnknownExecutionCode",
+        "nativeTransportReturnsOnlyAfterCancelledChildExitAndPreservesUnknownDelivery",
+        "nonzeroMutationAndFailedRemovalKeepBothUnknownFacts",
+        "planningStopRevokesBeforeBlockedPreparationCanSaveAndWaitsForOwnerExit",
+        "sdkConfigurationNeverPrintsPromptOrParameterValues",
+        "skillScanDeadlineIsDistinctFromUserCancellation",
+        "uncertainCommandNeverReportsRemovedWhenRemovalFailed",
+        "workerUncertaintyNormalizesPublicStatusButKeepsExitEvidence"
+      ],
+      "original715XmlSha256": "4dc39b6157ddba42eccc643cefde7cfee3918550cb7c7ee5773df46affc2721f"
+    },
+    "io.jharness.testkit.R2SdkPersistenceTest": {
+      "module": "harness-testkit",
+      "cases": [
+        "environmentVerificationCannotCreateMissingOrAlterArchivedSession",
+        "futureSdkProtocolRefusesReopenWithoutChangingFacts",
+        "halfInitializationIsDiagnosedAndOnlySameFingerprintCanResumeBeforePlugins",
+        "inputCheckpointFailureCannotLeaveDanglingUserAssociationOrExecuteModel",
+        "invalidGoalAndSubmissionLeaveExactJournalBytesUntouched",
+        "recursiveRandomIdsAndNewSecretConfigurationDoNotChangeStableBinding"
+      ],
+      "original715XmlSha256": "e005dc85ae140948cce9f31c8099e1675ae2ed62a95db8f55faf35b6020d2e14"
+    },
+    "io.jharness.ecosystem.R1RemainingOwnershipFaultTest": {
+      "module": "harness-ecosystem",
+      "cases": [
+        "environmentDoubleCloseFailureRevokesFilesAndPreservesBothCauses",
+        "postStartFatalFailureKeepsCleanupUncertaintyAsSuppressed",
+        "postStartInitializationErrorReapsActualOwnedChildAndRethrowsSameError",
+        "stdioCleanupWaitsForRootProcessExitState",
+        "stdioCloseReportsSamplingOverflowAndStopsEveryRetainedHandle",
+        "webResponseArrivingAfterFailedCancellationIsClosedByLateCallback",
+        "webResponseReceivedBeforeCancellationAndNeverHandedOffIsClosed"
+      ],
+      "original715XmlSha256": "f70e313a15d75cb19658ee1553e667f207ecf9def27f77221b6a20a50e50fb9f"
+    },
+    "io.jharness.testkit.M1055QuestionsTest": {
+      "module": "harness-testkit",
+      "cases": [
+        "answerReceivedBeforeDeadlineSurvivesDelayedOwnerThreadSettlement",
+        "answeringQuestionDoesNotAuthorizeGenuineWorkspaceWrite",
+        "cancellationClosesWaitWithoutAnotherModelRequest",
+        "draftAndAnswerAreRedactedAndDuplicateConflictsAreBounded",
+        "explicitAnswerEntersNextPreparedRequestAndCannotAuthorizeWrite(String)[1]",
+        "explicitAnswerEntersNextPreparedRequestAndCannotAuthorizeWrite(String)[2]",
+        "explicitAnswerEntersNextPreparedRequestAndCannotAuthorizeWrite(String)[3]",
+        "interactiveQuestionCannotRunOnReadOnlyWorkerEvenIfAllowlisted",
+        "interruptedProjectionDoesNotResumeOrFabricateAnAnswer",
+        "invalidQuestionNeverCreatesPendingCard",
+        "maximumUnicodeAnswerIsPreservedInNextPreparedRequest",
+        "overallTaskBudgetStopsQuestionWaitWithoutInventingAnswer",
+        "persistedAnswerFingerprintOmitsRawSensitiveTextAndSurvivesRestartComparison",
+        "r2AcceptedAnswerRetainsIdentityWhenCancellationPrecedesOwnerResume",
+        "skipDoesNotSubmitPreselectedRecommendedOption",
+        "stopWaitsForOwnerSettlementAndKeepsAnAlreadyAcceptedAnswer",
+        "timeoutIsExplicitUnansweredAndLateAnswerIsRejected"
+      ],
+      "original715XmlSha256": "bb8171223dc25984e93b113386220e6131dc53e169a0d12bca4ab16b2f091f6a"
+    },
+    "io.jharness.testkit.M1056ContentTest": {
+      "module": "harness-testkit",
+      "cases": [
+        "artifactScopeIntegrityAndFullRedactionBeforePages",
+        "cachedPagesKeepExactLinesUnicodeAndRejectChangedSanitizedVersions",
+        "completeSanitizationPrecedesFilePagingAndUnicodeBoundary",
+        "directoriesAndExplicitReadsKeepPathMetadataAndBinaryBounds",
+        "explicitLineOffsetsAndStalePageAreBounded",
+        "linkTraversalCannotFallBackToSiblingRoot",
+        "policyCancellationAndRootChecksPrecedeInspection",
+        "previewDoesNotGrantModelVersionObservation",
+        "rawVersionChangesEvenWhenSanitizedContentIsIdentical",
+        "scopedInspectionNeverReadsAnotherExistingSessionArtifact",
+        "streamingSanitizersComposeWithFullSecretWindowsAndFailClosedByDefault",
+        "warmArtifactSnapshotStillRejectsAllByteChangesDeletionAndWrongScope",
+        "warmContentSnapshotReauthorizesAndResanitizesEveryPage"
+      ],
+      "original715XmlSha256": "92ae376a13fc0d351b4385f4bb56769e31139d3db9deed0fc0bbf9cda9c57b6e"
+    },
+    "io.jharness.events.R1EventSafetyTest": {
+      "module": "harness-events",
+      "cases": [
+        "barriersRejectNonpositiveTimeoutAndClosedBusWithStableCode",
+        "cancelledSerialTaskThatNeverStartedDoesNotPoisonTheBus",
+        "closeReportsWorkerThatDidNotCooperateAndReturnsBeforeItsRelease",
+        "failureSummaryOmitsCauseMessageAndFreeFormEventIdentity",
+        "notificationSaturationIsBoundedAndDiagnosedWithoutRejectingPersistedFact",
+        "recursiveSerialFailurePreservesExplicitRecursiveCause",
+        "saturatedDiagnosticDoesNotHoldBusMonitorAndBarrierWaitsForAdmission",
+        "uncooperativeSerialTimeoutBlocksLaterDispatchUntilClose"
+      ],
+      "original715XmlSha256": "224b7816c176e962037d4cd67ec6c6e1c8444f2dd4e285a28b5f66fa00ed4e4c"
+    },
+    "io.jharness.llm.R3RouterBoundaryTest": {
+      "module": "harness-llm",
+      "cases": [
+        "factoryFailureAfterCloseRemovesPendingMarkerWithoutClaimingClientCleanup",
+        "factoryReentryCannotCorruptMapOrRecursivelyConstructSameRoute",
+        "factoryRunsOutsideLockAndLateClientClosesAfterRouterClose",
+        "recordedIdentitySurvivesRoutingStreamingAndConcurrentIdenticalRequestsWithoutHistoryReads",
+        "unboundObservationDoesNotInventSourceAndBoundFailureKeepsPrimaryException"
+      ],
+      "original715XmlSha256": "f34948b75674c8f5c53d284d3af23dad0657105eefda55fc286e4b4bb0dc28ea"
+    },
+    "io.jharness.llm.M6StreamingTest": {
+      "module": "harness-llm",
+      "cases": [
+        "cancellationAndTimeoutInterruptBodyWithoutASecondRequest",
+        "fragmentedUtf8MultiToolCallsAndUsageAssembleOnlyAfterDone",
+        "incompleteMalformedAndDuplicateStreamsNeverExposeFinalToolsOrRetry",
+        "routerLazilySelectsCapabilitiesAndClosesOnlyInstantiatedAdapters",
+        "streamLimitsAndSecretsSplitAcrossDeltasAreSafe"
+      ],
+      "original715XmlSha256": "001200e4a0f3c2dd3e1552e9ace87f3cbf9edccfa581c9047ee7d0afb5670fc6"
+    },
+    "io.jharness.llm.R3ProtocolBoundaryTest": {
+      "module": "harness-llm",
+      "cases": [
+        "anthropicStopUsesRequestErrorDomainAndExplicitProductBound",
+        "configAcceptsCaseInsensitiveUrisAndRejectsUnsafeHeaderEarly",
+        "sequenceFreeLegacyFramesCannotMixWithSequencedFrames",
+        "terminalCannotIntroduceUnstreamedFunctionCall"
+      ],
+      "original715XmlSha256": "2719e5c5a494d85fcb2d64cb4d42959fcb66dd22dba871f4fef8a1b6e3f0898a"
+    },
+    "io.jharness.plugin.R1PluginRollbackTest": {
+      "module": "harness-plugin",
+      "cases": [
+        "brokenLifecycleObservationCannotSkipRollbackOrReplaceStartupFailure",
+        "closedContextImmediatelyClosesLateOwnedResourceAndRejectsWrongScope",
+        "failedStopAndResourceCloseRetainBothFailuresAndDoNotRetry",
+        "resourceCloseRunsOutsideContextMonitor",
+        "startErrorRollsBackRegistrationAndOwnedResourcesPreservingOriginal",
+        "toolMetadataCallbackDoesNotHoldRegistryMonitor"
+      ],
+      "original715XmlSha256": "212f354bd02ec1226f949439bd4f624b03476012d0ee3655a3fe80e298b22581"
+    },
+    "io.jharness.plugin.R3DeclarationTest": {
+      "module": "harness-plugin",
+      "cases": [
+        "badDeclarationFailsBeforeRegistrationAndNamesTool"
+      ],
+      "original715XmlSha256": "d4e5b2e57e8712994d21e56947801ce555cf8711caf5e5e85bd62c9dd5c2a650"
+    },
+    "io.jharness.policy.PolicyApprovalTest": {
+      "module": "harness-policy",
+      "cases": [
+        "approvalPromptContainsFullCallAndSingleUserDecision",
+        "cancellationRevokesPromptAndTimeoutAndCloseDeny",
+        "trustedCommandIsExactAndShellOrSuffixNeedsApproval",
+        "trustedTemplateReusesCommandConstructionValidation"
+      ],
+      "original715XmlSha256": "94c044d8b18c84b305e4c6dd0116f8df728e88d91ebdb23d376b7f2386dc8c54"
+    },
+    "io.jharness.policy.R1ApprovalDeadlineTest": {
+      "module": "harness-policy",
+      "cases": [
+        "acceptedAnswerSurvivesOwnerDelayedBeyondDeadline",
+        "cancellationStillWinsOverAcceptedAnswerBeforeOwnerReadsIt",
+        "closeStillWinsOverAcceptedAnswerBeforeOwnerReadsIt",
+        "expiredAnswerAndOwnerContendOnPendingMonitorAndBothDeny"
+      ],
+      "original715XmlSha256": "39aeec4c35896cd3a803bd45af69db1e4d394d40ab5f77e297967808ab0b734c"
+    },
+    "io.jharness.process.LocalPlanPreviewerTest": {
+      "module": "harness-process",
+      "cases": [
+        "fileWriteAndEditPreviewDiffWithoutMutationAndShellIsExplicitlyUnpreviewable",
+        "previewRejectsOutsideAndStaleVersions"
+      ],
+      "original715XmlSha256": "3cad6a978fe82d68ed5def2d67fa7e45a7dbf67867b89a4c4818a3afd3428659"
+    },
+    "io.jharness.process.R1ProcessSafetyTest": {
+      "module": "harness-process",
+      "cases": [
+        "aSlowPartialControlFrameCannotStarveAValidCancellation",
+        "artifactFailureRetainsTheCommandStatusAndExitEvidence",
+        "cancelEntrypointRejectsBlankAndInvalidPathsWithTheDocumentedCode",
+        "cancelledFrameWithLostAcknowledgementHasUnknownDeliveryOutcome",
+        "closedControlledRunRejectsItsFirstSubmission",
+        "controlledRunHasOneOwnerAndCloseRequestsCancellationBeforeEndpointExit",
+        "controlledRunRetainsExecutionFailureWhenEndedEventAndStateCloseBothFail",
+        "discoveryOnlyReturnsRegularFilesWithStrictUuidNames",
+        "environmentValidationUsesTheEffectiveSnapshot",
+        "failedExitedCheckpointCanBeRetriedWithoutReopeningTheListener",
+        "interruptedCloseStillWritesExitedStateAndRestoresTheInterrupt",
+        "publicTerminalRejectsInvalidEnvironmentBeforeStartingAnything",
+        "runnerCloseTakesOwnershipOfAnInFlightNativeProcessAndRejectsNewWork",
+        "staleProcessIdentityIsRejectedBeforeSendingCancellation",
+        "terminalSecretChunksRotateWithStableSanitizedOffsetsAndKeepNormalFinalTail",
+        "terminalSuppressesKnownSecretPrefixAtEofWithoutDroppingOrdinaryTail"
+      ],
+      "original715XmlSha256": "959c2ed3ae49405c00acf75c59d8d7d29908b13b1087da32d989d3e86e118c67"
+    },
+    "io.jharness.process.LocalRunControlTest": {
+      "module": "harness-process",
+      "cases": [
+        "invalidCredentialDoesNotCancelAndUnreachableIsDifferentFromExited",
+        "separateJvmCancelAuthenticatesAndExitStateIsDiscoverable"
+      ],
+      "original715XmlSha256": "cff31b844565515127edfa89aa5125aae6192415804687703fcbcdd02d06c2f0"
+    },
+    "io.jharness.process.M6TerminalTest": {
+      "module": "harness-process",
+      "cases": [
+        "backgroundTaskStatusLogStopAndTimeoutAreBounded",
+        "cancellationTraversalInvalidPagesAndCloseNeverStartOrLeakTasks",
+        "cancellingBlockedStdinStopsProcessAndReturnsUnknownWithinTheDeadline",
+        "lifetimeHistoryLimitKeepsCompletedLogsAndRejectsThirtyThirdTask",
+        "realPtyAcceptsInputResizesAndPreservesItsWorkingDirectory",
+        "rollingLogsAndConcurrentTaskQuotaStayBounded",
+        "terminalCleanupWaitsForRootProcessReaperEvenAfterHandlesDisappear"
+      ],
+      "original715XmlSha256": "fd89ed456cb2c32a24b0e11aaf203e28bc66c6729135def1bf820e7426606617"
+    },
+    "io.jharness.session.R2PersistenceTest": {
+      "module": "harness-session",
+      "cases": [
+        "ambiguousResponsesCannotSettleTwoUnresolvedAttempts",
+        "archiveRestoreCatalogAndMissingLifecycleHaveOneMeaning",
+        "destinationOwnershipIsHeldThroughoutPreparationAcrossProcesses",
+        "eventBudgetIsCheckedBeforeArtifactPreparation",
+        "existingAndOwnedForkDestinationsNeverChangeOrPrepareArtifacts",
+        "failedArtifactCopyPublishesNoPartialScopeAndValidCopyIsIndependent",
+        "logPublicationFailureCompensatesOnlyNewlyCopiedScope",
+        "malformedTimestampIsTailDamageButUnsupportedSchemaCannotBeRepairedAway",
+        "orphanContextIsNotComposedAndMalformedCoreMessagesFailClosed",
+        "replacedArtifactRootIdentityIsRejectedBeforeScopeCreation",
+        "terminalVerificationRejectsStaleSnapshotsButNewObservedActivityRemainsUnknown"
+      ],
+      "original715XmlSha256": "b3a46125926c5f5105e79a8bd2b4c49b64d4cb3e7691d7e1a0bc9b41c586b4f5"
+    },
+    "io.jharness.testkit.M7SubagentTest": {
+      "module": "harness-testkit",
+      "cases": [
+        "cancellationPersistenceFailureStillCancelsChildSdk",
+        "concurrencyQuotaAndTaskQuotaDoNotLaunchExtraModels",
+        "explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[10]",
+        "explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[1]",
+        "explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[2]",
+        "explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[3]",
+        "explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[4]",
+        "explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[5]",
+        "explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[6]",
+        "explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[7]",
+        "explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[8]",
+        "explicitParentCancellationReachesChildAndDoesNotClaimSuccess()[9]",
+        "failedAssignmentPersistenceNeverConstructsChildModel",
+        "feeLimitedParentRequiresBoundedChildFees",
+        "independentChildCannotWriteAndParentCanEditAfterEvidenceWithFullOwnershipAndReplay",
+        "interruptedParentSettlesWithRealWriterAndLateChildNeverWritesParentJournal",
+        "missingChildCompletionCriteriaCannotPromoteModelClaimToSuccess",
+        "parentCancellationAndUncooperativeChildStayUnknownUntilExplicitSettledAudit",
+        "parentPolicyExtensionsStillRestrictChildReads",
+        "profilesCannotGrantWriteToolsOrExceedParentBudget",
+        "rejectingDelegationNeverCreatesAChildOrModel",
+        "reusingParentModelIsRejectedWithoutClosingIt",
+        "separateReadObservationDoesNotAuthorizeParentOverwrite",
+        "sharedFeeCapIncludesParentAndChildRequests",
+        "twoReadOnlyChildrenRunConcurrentlyWithDistinctContextsAndLogs"
+      ],
+      "original715XmlSha256": "d054e8ff6f2ee33e62db2432de7c9ced71b96a453c2031cd3f41c4b71c00e1d4"
+    },
+    "io.jharness.workspace.LocalWorkspaceTest": {
+      "module": "harness-workspace",
+      "cases": [
+        "aRaceBeforeCommitIsDetectedAndTemporaryFileIsRemoved",
+        "binaryInvalidUtf8AndOversizedEditsAreRejected",
+        "cancellationAndIoFailureDoNotLeaveDelayedWritesOrDamagedOriginals",
+        "escapeLinkOrWindowsJunctionIsRejectedForReadsWritesAndSearchTraversal",
+        "gitignoreAndDefaultExcludedDirectoriesFilterSearchAndLimitIsReported",
+        "largeFilesArePagedAndLiteralGrepFindsBeyondFirstPageWithoutRegexWork",
+        "missingReadGuardAndExplicitOverwriteAreEnforcedAndNewParentsCanBeCreated",
+        "relativeReadsWritesAndDiffPreserveOtherFilesAndCrLfBom",
+        "replacedRootCannotRebindExistingOrIsolatedViewOutsideBoundary",
+        "staleReadVersionAndWrongMatchCountsNeverOverwriteUserChanges",
+        "thousandDirectoryEntriesMeetLocalTwoSecondTarget",
+        "traversalAbsoluteAdsDevicesAndProtectedMetadataAreDenied",
+        "unifiedDiffHandlesEmptyFilesAndMissingFinalNewlineAndNonGitWorkspace"
+      ],
+      "original715XmlSha256": "08a54b70002215771bc1b06d417071f3803ea93b54fbe52b8583c240834a489c"
+    },
+    "io.jharness.workspace.R1WorkspaceSafetyTest": {
+      "module": "harness-workspace",
+      "cases": [
+        "localGitConfigurationCannotRunExternalDiffOrFsmonitor",
+        "oversizedGitOutputTerminatesAtTheOutputBudget",
+        "temporaryCleanupFailureCannotReplaceTheOriginalConflict"
+      ],
+      "original715XmlSha256": "b681faf2231adc3d4ecc648167b5d85ab08deeaa1e419e256bbe7f46ac5c2b6c"
+    },
+    "io.jharness.testkit.M10WebTest": {
+      "module": "harness-testkit",
+      "cases": [
+        "browserSessionIsAutomaticButRequiresExactBrowserOrigin",
+        "browserTrustAndStaticManifestKeepApiPrivate",
+        "diagnosisIsAuthenticatedReadOnlySanitizedAndCannotClearUnknown",
+        "reportSearchAndSubmissionLookupAreReadOnlyAndBounded",
+        "settingsRequireOperatorAuthAndUnknownBindingBlocksMutation"
+      ],
+      "original715XmlSha256": "1e8442b75844857437e293303ab64e6ff1b2b2b24ae983a8c0a887daad614f9b"
+    },
+    "io.jharness.web.R123TurnQueueBoundaryTest": {
+      "module": "harness-testkit",
+      "cases": [
+        "malformedAdmissionCannotPoisonItsHashOrPublishPartialSelection"
+      ],
+      "original715XmlSha256": "26afc8e2339b51fcf913fb39245b395234be6fa64419b23737e7aec0919f7e09"
+    },
+    "io.jharness.testkit.R3ExtensionProtocolTest": {
+      "module": "harness-testkit",
+      "cases": [
+        "executionThenRpcErrorIsUnknownAndNeverRetried",
+        "invalidSkillScriptsFailDuringLoadingWithoutMarker",
+        "sdkUsesInjectedPolicyAndApprovalExactlyOnce",
+        "terminalSemanticFailureHasNoApprovalIntentOrBody"
+      ],
+      "original715XmlSha256": "fa5cefdfd270bf69266917c0905f92043490c12124cb788f249a2ce0f952e5fd"
+    },
+    "io.jharness.testkit.R1WebOwnershipTest": {
+      "module": "harness-testkit",
+      "cases": [
+        "approvalAcceptedBeforeDeadlineSurvivesOwnerResumingAfterDeadline",
+        "closeRetainsCatalogOwnershipUntilUncooperativeWorkerActuallyLeaves",
+        "committedMutationResponseCannotKeepOrReleaseAnotherMutationGuard",
+        "concurrentProfileRegistrationAndInfoReadReturnCompleteSafeSnapshots",
+        "displaySnapshotFailureStillClosesSdkAndPreservesUnknownOwnership",
+        "expiredApprovalPostAndOwnerContendAtSameBarrierAndBothDeny",
+        "failedQueuePauseNotifiesWaitersAndCannotReleaseUncertainTask",
+        "slowHistoryReconciliationCannotBlockUnrelatedRequestsOrOwnServerMonitor",
+        "slowSettingsBodyCannotOwnServerLockOrBlockUnrelatedRequests",
+        "slowSettingsSaveReleasesServerMonitorAndReservesAdmission"
+      ],
+      "original715XmlSha256": "438f8fe86530dc3b5c5476ef3e46d52c2660890ad7e1dfda424639d4e98274b6"
+    },
+    "io.jharness.testkit.M7WebTest": {
+      "module": "harness-testkit",
+      "cases": [
+        "approvedExecutionIsDurableReconstructableAndIdempotentAcrossRestart",
+        "authenticationOriginAndBoundedStrictBodiesCannotConstructExecution",
+        "boundedSseUsesDurableCursorsAndKeepsApprovalRequestsAvailable",
+        "cancellationRevokesPendingApprovalAndDoesNotWrite",
+        "catalogCheckpointFailureCannotConstructSdkOrRetryAdmission",
+        "denialAndApprovalTimeoutNeverEnterWriteBody",
+        "diffEndpointReturnsActualRecordedGitResultWithSourceEvent",
+        "eventPagesRedactBearerAndOmitLargePayloadsWithoutLosingCursor",
+        "hostileHostHeaderIsRejectedEvenWithValidBearer",
+        "offlineWebVerificationRequiresOwnershipAndUnderlyingAuditWithoutReplay",
+        "sharedWorkspaceIsExclusiveAndSettledHistoryOutlivesHotSet",
+        "shutdownDuringUncooperativeFactoryRestoresUnknownWithoutReplaying",
+        "unknownModelRequestBlocksWorkspaceAndErrorDetailsAreNotExposed"
+      ],
+      "original715XmlSha256": "e75acf30d62e3b6774be69f45cd9708f98fa384bad291d8737f98a157ef86726"
+    }
+  },
+  "opinions": [
+    {
+      "id": "R123R-001",
+      "historicalStatus": "EXISTING_FIX_CONFIRMED",
+      "files": [
+        ".github/workflows/ci.yml",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "gates:r3-provider"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-002",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        ".github/workflows/ci.yml",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "gates:r3-provider"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-003",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "docs/development/OCR-remediation-progress.json",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "gates:ocr-progress"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-004",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "docs/development/OCR-remediation-progress.json",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "gates:ocr-progress"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-005",
+      "historicalStatus": "CONTRACT_CLARIFIED",
+      "files": [
+        "docs/testing/OCR-R1-2026-10-21-results.json",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "historical-reference"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-006",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "docs/testing/OCR-R2-2026-10-22-results.json",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "gates:workbench-evidence"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-007",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "docs/testing/OCR-R2-2026-10-22-results.json",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "gates:workbench-evidence"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-008",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-agent/src/main/java/io/jharness/agent/BoundedModelExecution.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.testkit.R1CoreLifecycleTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-009",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-agent/src/main/java/io/jharness/agent/ContextCompactionPlugin.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.agent.R3CompactionBoundaryTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-010",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-agent/src/main/java/io/jharness/agent/ContextCompactionPlugin.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.agent.R3CompactionBoundaryTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-011",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-agent/src/main/java/io/jharness/agent/ContextCompactionPlugin.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.agent.R3CompactionBoundaryTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-012",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-agent/src/test/java/io/jharness/agent/R3CompactionBoundaryTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.agent.R3CompactionBoundaryTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-013",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-api/src/main/java/io/jharness/api/AtomicFileMetadata.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.cli.R2RegistryTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-014",
+      "historicalStatus": "CONTRACT_CLARIFIED",
+      "files": [
+        "harness-api/src/main/java/io/jharness/api/DataSanitizer.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md",
+        "docs/testing/tools/SanitizerCost.java"
+      ],
+      "associatedTests": [
+        "java:io.jharness.api.R1CoreApiTest",
+        "sanitizer-cost-observation"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-015",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-api/src/main/java/io/jharness/api/DirectoryIdentity.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.api.R123IdentityBoundaryTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-016",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-api/src/main/java/io/jharness/api/DirectoryIdentity.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.api.R123IdentityBoundaryTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-017",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-api/src/main/java/io/jharness/api/FileSystemView.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.ecosystem.R3SkillBoundaryTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-018",
+      "historicalStatus": "OUT_OF_SCOPE",
+      "files": [],
+      "associatedTests": [],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-019",
+      "historicalStatus": "CONTRACT_CLARIFIED",
+      "files": [
+        "harness-api/src/main/java/io/jharness/api/LlmClient.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.testkit.R1CoreLifecycleTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-020",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-api/src/main/java/io/jharness/api/LlmClient.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.testkit.R1CoreLifecycleTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-021",
+      "historicalStatus": "CONTRACT_CLARIFIED",
+      "files": [
+        "harness-api/src/main/java/io/jharness/api/ModelRejectedException.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.api.R1CoreApiTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-022",
+      "historicalStatus": "OUT_OF_SCOPE",
+      "files": [],
+      "associatedTests": [],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-023",
+      "historicalStatus": "OUT_OF_SCOPE",
+      "files": [],
+      "associatedTests": [],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-024",
+      "historicalStatus": "OUT_OF_SCOPE",
+      "files": [],
+      "associatedTests": [],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-025",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-api/src/main/java/io/jharness/api/SessionWriter.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.web.R1CatalogScanBoundaryTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-026",
+      "historicalStatus": "OUT_OF_SCOPE",
+      "files": [],
+      "associatedTests": [],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-027",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-api/src/main/java/io/jharness/api/ToolResults.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.api.R1CoreApiTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-028",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-api/src/test/java/io/jharness/api/R1CoreApiTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.api.R1CoreApiTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-029",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/Arguments.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.cli.R123CliBoundaryTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-030",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/CliConfig.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.cli.R123CliBoundaryTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-031",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/CliConfig.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.cli.R123CliBoundaryTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-032",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/DryRunPipeline.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.cli.R1CliLifecycleTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-033",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/EcosystemCli.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.api.R123IdentityBoundaryTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-034",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/EcosystemConfig.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.cli.WorkbenchSettingsTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-035",
+      "historicalStatus": "OUT_OF_SCOPE",
+      "files": [],
+      "associatedTests": [],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-036",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/EvidenceCompletion.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.cli.EvidenceCompletionTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-037",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/EvidenceReport.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.cli.R1ApplicationNativeTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-038",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/Json.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.cli.R123CliBoundaryTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-039",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/Metadata.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.cli.R2RegistryTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-040",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/NativeCredentials.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.cli.R1NativeWorkerTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-041",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/NativeCredentials.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.cli.R1NativeWorkerTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-042",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/NativeCredentials.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.cli.R1NativeWorkerTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-043",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/StdioSdkServer.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.cli.StdioSdkServerTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-044",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/SystemCredentials.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.cli.R1NativeWorkerTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-045",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/SystemCredentials.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.cli.R1NativeWorkerTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-046",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/SystemCredentials.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.cli.R1NativeWorkerTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-047",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/WorkbenchSettings.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.cli.WorkbenchSettingsTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-048",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/WorkbenchSettings.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.cli.WorkbenchSettingsTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-049",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/WorkbenchSettings.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.cli.WorkbenchSettingsTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-050",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/WorkbenchWorkspaces.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.cli.R2RegistryTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-051",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/WorkbenchWorkspaces.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.cli.R2RegistryTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-052",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-cli/src/main/java/io/jharness/cli/WorkbenchWorkspaces.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.cli.R2RegistryTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-053",
+      "historicalStatus": "EXISTING_FIX_CONFIRMED",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/CredentialStoreProbe.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "native:7",
+        "java:io.jharness.cli.R1NativeWorkerTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-054",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/R1ApplicationNativeTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.cli.R1ApplicationNativeTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-055",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/R1ApplicationNativeTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.cli.R1ApplicationNativeTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-056",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/R1ApplicationNativeTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.cli.R1ApplicationNativeTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-057",
+      "historicalStatus": "EXISTING_FIX_CONFIRMED",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/R1ApplicationNativeTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.cli.R1ApplicationNativeTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-058",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/R1ApplicationNativeTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.cli.R1ApplicationNativeTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-059",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/R1CliLifecycleTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.cli.R1CliLifecycleTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-060",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/R1CredentialCleanupTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.cli.R1CredentialCleanupTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-061",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/R1CredentialCleanupTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.cli.R1CredentialCleanupTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-062",
+      "historicalStatus": "CONTRACT_CLARIFIED",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/R1PreviewPolicyTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.cli.R1PreviewPolicyTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-063",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/R1WorkbenchTransactionTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.cli.R1WorkbenchTransactionTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-064",
+      "historicalStatus": "EXISTING_FIX_CONFIRMED",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/R1WorkbenchTransactionTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.cli.R1WorkbenchTransactionTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-065",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/R2RegistryTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.cli.R2RegistryTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-066",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/R2RegistryTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.cli.R2RegistryTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-067",
+      "historicalStatus": "OUT_OF_SCOPE",
+      "files": [],
+      "associatedTests": [],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-068",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/WorkbenchCredentialCleanup.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md",
+        "frontend/tests/settings.mjs",
+        "frontend/tests/cleanup.mjs",
+        "frontend/tests/cleanup.test.mjs"
+      ],
+      "associatedTests": [
+        "java:io.jharness.cli.R1CredentialCleanupTest",
+        "gates:fixture-cleanup"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-069",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/WorkbenchCredentialCleanup.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.cli.R1CredentialCleanupTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-070",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/WorkbenchCredentialCleanup.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.cli.R1CredentialCleanupTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-071",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/WorkbenchSettingsTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.cli.WorkbenchSettingsTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-072",
+      "historicalStatus": "EXISTING_FIX_CONFIRMED",
+      "files": [
+        "harness-cli/src/test/java/io/jharness/cli/WorkbenchWorkspacesTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.cli.WorkbenchWorkspacesTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-073",
+      "historicalStatus": "CONTRACT_CLARIFIED",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/CommandTransport.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.ecosystem.R1EnvironmentLifecycleTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-074",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/DockerExecutionEnvironment.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.ecosystem.R1EnvironmentLifecycleTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-075",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/DockerExecutionEnvironment.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.ecosystem.R1EnvironmentLifecycleTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-076",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/EnvironmentWorker.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.ecosystem.R3SkillBoundaryTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-077",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/EnvironmentWorker.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.ecosystem.R3SkillBoundaryTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-078",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/EnvironmentWorker.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.ecosystem.R3SkillBoundaryTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-079",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/HarnessSdk.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.testkit.R2SdkPersistenceTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-080",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/HarnessSdk.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.testkit.R2SdkPersistenceTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-081",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/HarnessSdk.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.testkit.R2SdkPersistenceTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-082",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/McpIo.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.ecosystem.R1EnvironmentLifecycleTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-083",
+      "historicalStatus": "OUT_OF_SCOPE",
+      "files": [],
+      "associatedTests": [],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-084",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/PlanningPlugin.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.ecosystem.R1EnvironmentLifecycleTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-085",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/ProcessCleanup.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.ecosystem.R1RemainingOwnershipFaultTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-086",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/RemoteWorkspace.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.ecosystem.R3SkillBoundaryTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-087",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/StdioMcpTransport.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.ecosystem.R1RemainingOwnershipFaultTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-088",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/UserQuestionsPlugin.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.testkit.M1055QuestionsTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-089",
+      "historicalStatus": "CONTRACT_CLARIFIED",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/UserQuestionsPlugin.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.testkit.M1055QuestionsTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-090",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-ecosystem/src/main/java/io/jharness/ecosystem/WorkspaceContentInspection.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.testkit.M1056ContentTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-091",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-ecosystem/src/test/java/io/jharness/ecosystem/R1EnvironmentLifecycleTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.ecosystem.R1EnvironmentLifecycleTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-092",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-ecosystem/src/test/java/io/jharness/ecosystem/R1EnvironmentLifecycleTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.ecosystem.R1EnvironmentLifecycleTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-093",
+      "historicalStatus": "EXISTING_FIX_CONFIRMED",
+      "files": [
+        "harness-ecosystem/src/test/java/io/jharness/ecosystem/R1EnvironmentLifecycleTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.ecosystem.R1EnvironmentLifecycleTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-094",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-ecosystem/src/test/java/io/jharness/ecosystem/R1EnvironmentLifecycleTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.ecosystem.R1EnvironmentLifecycleTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-095",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-ecosystem/src/test/java/io/jharness/ecosystem/R1RemainingOwnershipFaultTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.ecosystem.R1RemainingOwnershipFaultTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-096",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-ecosystem/src/test/java/io/jharness/ecosystem/R3SkillBoundaryTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.ecosystem.R3SkillBoundaryTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-097",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-events/src/main/java/io/jharness/events/DefaultEventBus.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.events.R1EventSafetyTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-098",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-events/src/main/java/io/jharness/events/DefaultEventBus.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.events.R1EventSafetyTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-099",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-events/src/main/java/io/jharness/events/DefaultEventBus.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.events.R1EventSafetyTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-100",
+      "historicalStatus": "OUT_OF_SCOPE",
+      "files": [],
+      "associatedTests": [],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-101",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-llm/src/main/java/io/jharness/llm/LazyModelRouter.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.llm.R3RouterBoundaryTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-102",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-llm/src/main/java/io/jharness/llm/LazyModelRouter.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.llm.R3RouterBoundaryTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-103",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-llm/src/main/java/io/jharness/llm/OpenAiCompatibleLlmClient.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.llm.M6StreamingTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-104",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-llm/src/main/java/io/jharness/llm/ProtocolCodec.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.llm.R3ProtocolBoundaryTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-105",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-llm/src/main/java/io/jharness/llm/ProtocolCodec.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.llm.R3ProtocolBoundaryTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-106",
+      "historicalStatus": "EXISTING_FIX_CONFIRMED",
+      "files": [
+        "harness-llm/src/main/java/io/jharness/llm/ProtocolStream.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "gates:r3-provider",
+        "java:io.jharness.llm.R3ProtocolBoundaryTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-107",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-plugin/src/main/java/io/jharness/plugin/PluginContainer.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.plugin.R1PluginRollbackTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-108",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-plugin/src/main/java/io/jharness/plugin/PluginContainer.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.plugin.R1PluginRollbackTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-109",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-plugin/src/main/java/io/jharness/plugin/PluginContainer.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.plugin.R1PluginRollbackTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-110",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-plugin/src/main/java/io/jharness/plugin/ScopedToolRegistry.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.plugin.R3DeclarationTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-111",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-policy/src/main/java/io/jharness/policy/DefaultPolicyEngine.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.policy.PolicyApprovalTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-112",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-policy/src/main/java/io/jharness/policy/DefaultPolicyEngine.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.policy.PolicyApprovalTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-113",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-policy/src/main/java/io/jharness/policy/InteractiveApprovalService.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.policy.R1ApprovalDeadlineTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-114",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-policy/src/test/java/io/jharness/policy/R1ApprovalDeadlineTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.policy.R1ApprovalDeadlineTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-115",
+      "historicalStatus": "CONTRACT_CLARIFIED",
+      "files": [
+        "harness-policy/src/test/java/io/jharness/policy/R1ApprovalDeadlineTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.policy.R1ApprovalDeadlineTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-116",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-process/src/main/java/io/jharness/process/LocalPlanPreviewer.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.process.LocalPlanPreviewerTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-117",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-process/src/main/java/io/jharness/process/LocalProcessRunner.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.process.R1ProcessSafetyTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-118",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-process/src/main/java/io/jharness/process/LocalRunControl.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.process.LocalRunControlTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-119",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-process/src/main/java/io/jharness/process/LocalRunControl.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.process.LocalRunControlTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-120",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-process/src/main/java/io/jharness/process/LocalRunControl.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.process.LocalRunControlTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-121",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-process/src/main/java/io/jharness/process/LocalRunControl.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.process.LocalRunControlTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-122",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-process/src/main/java/io/jharness/process/LocalTerminalSession.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.process.M6TerminalTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-123",
+      "historicalStatus": "OUT_OF_SCOPE",
+      "files": [],
+      "associatedTests": [],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-124",
+      "historicalStatus": "EXISTING_FIX_CONFIRMED",
+      "files": [
+        "harness-process/src/test/java/io/jharness/process/R1ProcessSafetyTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.process.R1ProcessSafetyTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-125",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-session/src/main/java/io/jharness/session/EventSessionProjection.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.session.R2PersistenceTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-126",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-session/src/main/java/io/jharness/session/LocalArtifactStore.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.session.R2PersistenceTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-127",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-session/src/main/java/io/jharness/session/LocalArtifactStore.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.session.R2PersistenceTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-128",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-session/src/main/java/io/jharness/session/LocalArtifactStore.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.session.R2PersistenceTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-129",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-session/src/main/java/io/jharness/session/LocalArtifactStore.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.session.R2PersistenceTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-130",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-session/src/main/java/io/jharness/session/LocalArtifactStore.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.session.R2PersistenceTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-131",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-session/src/main/java/io/jharness/session/SessionRecovery.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.session.R2PersistenceTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-132",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-session/src/test/java/io/jharness/session/R2PersistenceTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.session.R2PersistenceTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-133",
+      "historicalStatus": "OUT_OF_SCOPE",
+      "files": [],
+      "associatedTests": [],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-134",
+      "historicalStatus": "OUT_OF_SCOPE",
+      "files": [],
+      "associatedTests": [],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-135",
+      "historicalStatus": "OUT_OF_SCOPE",
+      "files": [],
+      "associatedTests": [],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-136",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M7SubagentTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.testkit.M7SubagentTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-137",
+      "historicalStatus": "OUT_OF_SCOPE",
+      "files": [],
+      "associatedTests": [],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-138",
+      "historicalStatus": "OUT_OF_SCOPE",
+      "files": [],
+      "associatedTests": [],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-139",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-workspace/src/main/java/io/jharness/workspace/LocalWorkspace.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.workspace.LocalWorkspaceTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-140",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-workspace/src/main/java/io/jharness/workspace/LocalWorkspace.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.workspace.LocalWorkspaceTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-141",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-workspace/src/main/java/io/jharness/workspace/LocalWorkspace.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.workspace.LocalWorkspaceTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-142",
+      "historicalStatus": "OUT_OF_SCOPE",
+      "files": [],
+      "associatedTests": [],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-143",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-workspace/src/main/java/io/jharness/workspace/WorkspaceToolsPlugin.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.workspace.R1WorkspaceSafetyTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false,
+      "exactSupplementalTests": [
+        "io.jharness.testkit.M2WorkspaceIntegrationTest#committedWriteRetainsVersionsWhenDiffArtifactPublicationFails"
+      ],
+      "supplementalResult": "M10-gap-r123-patch-faults-2026-10-27.json"
+    },
+    {
+      "id": "R123R-144",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "scripts/test-r3-provider.py",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "gates:r3-provider"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-145",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M10WebTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.testkit.M10WebTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-146",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "scripts/run-r1-supplemental.py",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "gates:r1-supplemental",
+        "gates:r123r-evidence",
+        "native:7",
+        "windows-compat:4"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-147",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "scripts/run-r1-supplemental.py",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "gates:r1-supplemental",
+        "gates:r123r-evidence",
+        "native:7",
+        "windows-compat:4"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-148",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "scripts/run-r1-supplemental.py",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "gates:r1-supplemental",
+        "gates:r123r-evidence",
+        "native:7",
+        "windows-compat:4"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-149",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "scripts/verify-r1-implementation.py",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "gates:r1-implementation"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-150",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-tools/src/main/java/io/jharness/tools/BoundedReadOnlyToolScheduler.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.testkit.R1CoreLifecycleTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": true
+    },
+    {
+      "id": "R123R-151",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-tools/src/main/java/io/jharness/tools/BoundedReadOnlyToolScheduler.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.testkit.R1CoreLifecycleTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-152",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-tools/src/main/java/io/jharness/tools/BoundedReadOnlyToolScheduler.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.testkit.R1CoreLifecycleTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-153",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "scripts/test-windows-credential-compat.py",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "gates:r1-supplemental",
+        "gates:r123r-evidence",
+        "native:7",
+        "windows-compat:4"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-154",
+      "historicalStatus": "CONTRACT_CLARIFIED",
+      "files": [
+        "harness-web/src/main/java/io/jharness/web/DurableTaskCatalog.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.web.R1CatalogScanBoundaryTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-155",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-web/src/main/java/io/jharness/web/TurnQueue.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.web.R123TurnQueueBoundaryTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-156",
+      "historicalStatus": "OUT_OF_SCOPE",
+      "files": [],
+      "associatedTests": [],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-157",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/R3ExtensionProtocolTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.testkit.R3ExtensionProtocolTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-158",
+      "historicalStatus": "OUT_OF_SCOPE",
+      "files": [],
+      "associatedTests": [],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-159",
+      "historicalStatus": "OUT_OF_SCOPE",
+      "files": [],
+      "associatedTests": [],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-160",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/R1WebOwnershipTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.testkit.R1WebOwnershipTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-161",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "scripts/test-windows-credential-compat.py",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "gates:r1-supplemental",
+        "gates:r123r-evidence",
+        "native:7",
+        "windows-compat:4"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-162",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/M7WebTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.testkit.M7WebTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-163",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-tools/src/main/java/io/jharness/tools/BoundedReadOnlyToolScheduler.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.testkit.R1CoreLifecycleTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-164",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-tools/src/main/java/io/jharness/tools/DefaultToolPipeline.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.testkit.R1CoreLifecycleTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-165",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-workspace/src/main/java/io/jharness/workspace/LocalWorkspace.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.workspace.LocalWorkspaceTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-166",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-workspace/src/main/java/io/jharness/workspace/LocalWorkspace.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.workspace.LocalWorkspaceTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-167",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "sdk/python/jharness_sdk.py",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "gates:r3-provider",
+        "sdk:66"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-168",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "sdk/tests/client.py",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "sdk:66"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-169",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "sdk/tests/client.ts",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "sdk:66"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-170",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/R1WebOwnershipTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.testkit.R1WebOwnershipTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-171",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-testkit/src/test/java/io/jharness/testkit/R1CoreLifecycleTest.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.testkit.R1CoreLifecycleTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-172",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-web/src/main/java/io/jharness/web/HarnessWebServer.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.testkit.R1WebOwnershipTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": true
+    },
+    {
+      "id": "R123R-173",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "harness-web/src/main/java/io/jharness/web/TurnQueue.java",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "java:io.jharness.web.R123TurnQueueBoundaryTest"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    },
+    {
+      "id": "R123R-174",
+      "historicalStatus": "IMPLEMENTED_LOCAL_VALIDATED",
+      "files": [
+        "sdk/python/jharness_sdk.py",
+        "docs/development/OCR-R1-R3-implementation-2026-10-24.md"
+      ],
+      "associatedTests": [
+        "gates:r3-provider",
+        "sdk:66"
+      ],
+      "verificationBoundary": "Associated source/suite references only; no blanket per-opinion fault claim",
+      "needsPreciseFollowup": false
+    }
+  ],
+  "gateRunId": "gap-r123-review-20261027",
+  "gateCommands": 17,
+  "gateTests": 192,
+  "gateResultSha256": "53a3f5196db68b33f084e8b4ca32c0537eea69fbd915515e9d56a6cd69cf8c17",
+  "preciseFollowups": [
+    {
+      "id": "R123R-143",
+      "gap": "Referenced R1WorkspaceSafetyTest has no direct apply_patch-after-artifact-failure case; M2WorkspaceIntegrationTest only directly covers committed write failure. Add patch/edit fault oracles.",
+      "status": "LOCAL_EXACT_ORACLE_PASS",
+      "result": "M10-gap-r123-patch-faults-2026-10-27.json"
+    },
+    {
+      "id": "R123R-150",
+      "gap": "Associated lifecycle coverage exists, but shared first-stop grace/repeated same UNKNOWN merits direct bounded regression."
+    },
+    {
+      "id": "R123R-172",
+      "gap": "Single uncooperative worker cleanup is tested; simultaneous final two-worker cleanup needs an exact barrier case."
+    }
+  ],
+  "boundaries": [
+    "Original opinion verdicts and historic acceptance remain unchanged.",
+    "Current 715 XML snapshot predates pure frontend CRLF normalization; original bytes preserved in ignored cache.",
+    "Offline gate192 ran before pure frontend CRLF normalization; all three differing originals are retained.",
+    "No new paid model requests or physical-machine acceptance."
+  ]
+}

@@ -66,3 +66,11 @@ Docker第三轮[40479240473](https://github.com/nixaveq141-ai/J-Harness/actions/
 React TSX夹具已纳入TypeScript检查，避免导入错误只能等浏览器发现。51身份冻结为scripts/contracts/r4-fault-cases.json，平台入口按实际浏览器矩阵运行补充R4检查；收集器要求同运行/来源/截图/命令回执，汇总门禁要求完整三引擎精确计数，原包审计再核每个身份和图片摘要。证据门禁3项及既有汇总12项、Java证据8项通过；曾因系统临时目录被本地沙箱限制而失败的运行不算通过，解除该执行限制后通过，产品源码未为环境失败作修改。
 
 当前本批已通过本地完整verify，JAR SHA f66437bd94131e0e24c186afc185fcaf5c9265da76f290ca9a336c026aaa2684；新完整三平台CI尚未派发。R4剩余真实服务端落盘故障的逐动作覆盖、目录能力竞态和真实模型隔离评测继续，不将51个合成组件窗口等同全部故障或全部R0–R6意见逐项验收。
+
+
+2026-10-27已推送78885e5，唯一新完整CI为[40506475359](https://github.com/nixaveq141-ai/J-Harness/actions/runs/40506475359)，截至本接续macOS成功、其余进行中。R0～R6继承的离线17组192项及原回执重新验证通过。对174条R1～R3记录的源码与44个关联Java套件逐条核对，无丢失引用；发现“套件关联”仍不能替代143的补丁后产物失败、150的共享停止宽限和172的双worker同时收尾精确反例。见[引用复核](../testing/M10-gap-r123-reference-2026-10-27.json)，保留原意见裁决与日期，不冒称全部异常调度已逐项复现。
+
+为严格原包审计，三份frontend工作文件的CRLF原字节已保存到忽略缓存，确认只存在换行差异后对齐Git规定LF。原715项回执/源字节/JAR均保留；补做规范字节制品verify时LocalProcessRunnerTest.explicitNativeShellExecutesBatchAndTreeLimitStopsSpawn在JUnit删除临时根时失败，业务断言未失败。失败日志和原报告保留；精确目录对应Java查询无残留，单项一次重验通过，不能反推原锁拥有者或声称已修复。没有连续重跑完整套件，运行JAR恢复为已通过715项的f66437bd原字节。它不是新的规范字节验收通过。
+
+
+R123R-143精确缺口随后已补：M2WorkspaceIntegrationTest原用例身份保留，新增编辑、完整补丁与部分补丁的实际工作区故障窗口；四次产物失败和四个持久intent逐一核对。完整提交保持before/after版本及磁盘正文，部分补丁保持UNKNOWN/PATCH_PARTIAL且未发布第二个目标，不允许按普通失败重做。旧252bfd7实现的新用例确定失败（完整补丁预期FAILED而返回UNKNOWN），恢复当前实现后3套件15项通过，结果见[补丁故障补齐](../testing/M10-gap-r123-patch-faults-2026-10-27.json)。这不是新的完整715或远端验收；CI40506475359仍只绑定78885e5，610输入与审计工具已冻结在独立忽略目录，后续测试不混入该轮。
