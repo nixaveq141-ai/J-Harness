@@ -10,9 +10,9 @@ import java.util.*;
 /** Short-lived directory authority. All names below it are single relative components. */
 public final class DirectoryCapability implements Closeable {
     interface Posix extends Library {
-        int open(String path, int flags, int mode);
+        int open(String path, int flags, Object... mode);
 
-        int openat(int directory, String name, int flags, int mode);
+        int openat(int directory, String name, int flags, Object... mode);
 
         int close(int descriptor);
 

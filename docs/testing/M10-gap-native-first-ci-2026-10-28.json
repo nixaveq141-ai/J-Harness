@@ -1,0 +1,200 @@
+{
+  "runId": "40687306512",
+  "commit": "0170fce43122b8588467860b3827524919a86a1f",
+  "status": "REJECTED",
+  "platforms": [
+    {
+      "artifact": {
+        "file": "12815936145.zip",
+        "sha256": "83ddadd5e74529251c2b7bddf516ddf81347fc584021b128549261cceb580da6",
+        "githubDigest": "sha256:83ddadd5e74529251c2b7bddf516ddf81347fc584021b128549261cceb580da6",
+        "artifactId": 12815936145,
+        "name": "m1059-session-focused-windows-latest",
+        "runId": "40687306512",
+        "commit": "0170fce43122b8588467860b3827524919a86a1f",
+        "createdAt": "2026-10-28T12:23:53Z",
+        "expiresAt": "2027-01-26T12:22:47Z"
+      },
+      "suites": [
+        {
+          "name": "io.jharness.session.M5SessionTest",
+          "tests": 11,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "name": "io.jharness.session.R2PersistenceTest",
+          "tests": 11,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "name": "io.jharness.session.R5SessionBoundsTest",
+          "tests": 5,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "name": "io.jharness.workspace.DirectoryCapabilityTest",
+          "tests": 4,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "name": "io.jharness.workspace.LocalWorkspaceTest",
+          "tests": 13,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "name": "io.jharness.workspace.M8SearchFilterTest",
+          "tests": 4,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "name": "io.jharness.workspace.WindowsDirectoryPinTest",
+          "tests": 6,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      ],
+      "capabilityEvidence": {
+        "status": "PASS",
+        "sources": {
+          "docs/testing/tools/run-index-capability.py": "28b6b13a23a997940c118cd199078ae845513aef8fd7b0fd6cc038f46ef392b5",
+          "harness-session/src/main/java/io/jharness/session/IndexFiles.java": "a9e3efbb4144323689e6b0cf9881294a5ee6468630c44ee241ba253e26aeac18",
+          "harness-session/src/test/java/io/jharness/session/IndexCapabilityProbe.java": "06061d89f5bed38a195dc24450586dd79082239c926fcdda2712b839dfffe08b",
+          "harness-workspace/src/test/java/io/jharness/workspace/WindowsDirectoryPinAttackProbe.java": "ed1e4a34ead1d35d46908c4c366a0c49731a61e92f3691366ef23bbb61f4023f",
+          "harness-workspace/src/main/java/io/jharness/workspace/DirectoryCapability.java": "2859fb92ba9aae63871d859988f933d4a491eae2e2088cb175a01702a93441e1",
+          "harness-workspace/src/main/java/io/jharness/workspace/WindowsDirectoryPin.java": "320aff0847ef8656bcc849d99675e72f1d393ed12b2f7d8a8d6ba725b08c1a62"
+        },
+        "nativeReparseAndCleanup": "PASS",
+        "current": {
+          "normalPublication": true,
+          "secureProvider": false,
+          "windowsPinned": true,
+          "publishRace": "PASS_REPLACEMENT_BLOCKED",
+          "readRace": "PASS_REPLACEMENT_BLOCKED",
+          "lockRace": "PASS_REPLACEMENT_BLOCKED",
+          "replacementRace": "PASS_REPLACEMENT_BLOCKED",
+          "posixDescriptor": false,
+          "status": "PASS"
+        },
+        "controlledOldRejected": true,
+        "controlledOldPhasesRejected": [
+          "publish",
+          "read",
+          "lock"
+        ],
+        "logs": {
+          "compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "controlled-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "controlled-old-lock.log": "cf6d1cda7a5298c63125656de82efb8edf33c9e8725457637fa93e37461c0ff8",
+          "controlled-old-publish.log": "f6e0d8c7a06262e8c72a9cc8fdf145b58bdd42895efc4e26f0928e916d8499b8",
+          "controlled-old-read.log": "71804ba26d3292d6ed0a4be877cd531bbda40cbcd985d0285549dc32d76f1f75",
+          "current.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "native-reparse.log": "4dc35b1f1653fa623684c9759b997be35321f62629a1f5f93b2c18083d4eab08"
+        }
+      }
+    },
+    {
+      "artifact": {
+        "file": "12815916351.zip",
+        "sha256": "d9e6edd7f4752f822053fcbb2b2edc2da2196f09274b1c72f87432f4718b356b",
+        "githubDigest": "sha256:d9e6edd7f4752f822053fcbb2b2edc2da2196f09274b1c72f87432f4718b356b",
+        "artifactId": 12815916351,
+        "name": "m1059-session-focused-macos-latest",
+        "runId": "40687306512",
+        "commit": "0170fce43122b8588467860b3827524919a86a1f",
+        "createdAt": "2026-10-28T12:23:08Z",
+        "expiresAt": "2027-01-26T12:22:47Z"
+      },
+      "suites": [
+        {
+          "name": "io.jharness.workspace.DirectoryCapabilityTest",
+          "tests": 4,
+          "failures": 0,
+          "errors": 2,
+          "skipped": 0
+        },
+        {
+          "name": "io.jharness.workspace.LocalWorkspaceTest",
+          "tests": 13,
+          "failures": 1,
+          "errors": 2,
+          "skipped": 0
+        },
+        {
+          "name": "io.jharness.workspace.M8SearchFilterTest",
+          "tests": 4,
+          "failures": 0,
+          "errors": 1,
+          "skipped": 0
+        },
+        {
+          "name": "io.jharness.workspace.WindowsDirectoryPinTest",
+          "tests": 6,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      ]
+    },
+    {
+      "artifact": {
+        "file": "12815392408.zip",
+        "sha256": "62825704a35cc93e21d958157e4b29acbb3e78d787feb99c51e68ac49a7405b8",
+        "githubDigest": "sha256:62825704a35cc93e21d958157e4b29acbb3e78d787feb99c51e68ac49a7405b8",
+        "artifactId": 12815392408,
+        "name": "m1059-session-focused-ubuntu-latest",
+        "runId": "40687306512",
+        "commit": "0170fce43122b8588467860b3827524919a86a1f",
+        "createdAt": "2026-10-28T12:23:12Z",
+        "expiresAt": "2027-01-26T12:22:47Z"
+      },
+      "suites": [
+        {
+          "name": "io.jharness.workspace.DirectoryCapabilityTest",
+          "tests": 4,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "name": "io.jharness.workspace.LocalWorkspaceTest",
+          "tests": 13,
+          "failures": 1,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "name": "io.jharness.workspace.M8SearchFilterTest",
+          "tests": 4,
+          "failures": 0,
+          "errors": 1,
+          "skipped": 0
+        },
+        {
+          "name": "io.jharness.workspace.WindowsDirectoryPinTest",
+          "tests": 6,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      ]
+    }
+  ],
+  "diagnosis": {
+    "linux": "ELOOP from no-follow inspection escaped prior PATH_DENIED business error and traversal skip.",
+    "macos": "Same symlink error plus AccessDenied opening new file descriptors; native variadic mode ABI under investigation."
+  },
+  "assertionsPreserved": true
+}

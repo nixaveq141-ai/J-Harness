@@ -252,7 +252,7 @@ public final class LocalWorkspace implements WorkspaceFiles {
         Path at = root;
         for (Path part : root.relativize(target)) {
             at = at.resolve(part);
-            if (!exists(at)) break;
+            if (!Files.exists(at, LinkOption.NOFOLLOW_LINKS)) break;
             BasicFileAttributes attributes =
                     Files.readAttributes(at, BasicFileAttributes.class, LinkOption.NOFOLLOW_LINKS);
             if (attributes.isSymbolicLink()

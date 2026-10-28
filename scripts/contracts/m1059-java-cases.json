@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "milestone": "M10.5.9",
-  "origin": "2026-10-28 retains all719 prior identities and adds10 native capability and directory-pin fault cases; total729 cases/122 suites.",
+  "origin": "2026-10-28 retains all729 prior identities and adds private native creation mode, read-write descriptor and repeated enumeration regression; total730 cases/122 suites.",
   "suites": [
     {
       "module": "harness-agent",
@@ -1374,6 +1374,7 @@
       "name": "io.jharness.workspace.DirectoryCapabilityTest",
       "cases": [
         "heldDirectoryCannotRedirectReadWriteListOrCleanup",
+        "nativeCreationModeReadWriteAndRepeatedEnumerationAreStable",
         "noClobberPublicationAndClosedAuthorityRejectBeforeUse",
         "privateAnchorIsDurableStableAndCorruptionIsNotReset",
         "reusedDirectoryNameCannotReusePrivateAnchorIdentity"

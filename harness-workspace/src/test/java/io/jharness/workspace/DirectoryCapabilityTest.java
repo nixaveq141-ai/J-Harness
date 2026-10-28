@@ -19,6 +19,41 @@ class DirectoryCapabilityTest {
                     LinkOption.NOFOLLOW_LINKS);
 
     @Test
+    void nativeCreationModeReadWriteAndRepeatedEnumerationAreStable() throws Exception {
+        Path root = Files.createDirectory(base.resolve("mode")).toRealPath();
+        try (var cap =
+                DirectoryCapability.open(root, DirectoryCapability.identity(root), root, true)) {
+            try (var channel =
+                    cap.channel(
+                            Path.of("entry"),
+                            Set.of(
+                                    StandardOpenOption.READ,
+                                    StandardOpenOption.WRITE,
+                                    StandardOpenOption.CREATE_NEW,
+                                    LinkOption.NOFOLLOW_LINKS))) {
+                channel.write(ByteBuffer.wrap(new byte[] {42}));
+                channel.force(true);
+                channel.position(0);
+                var bytes = ByteBuffer.allocate(1);
+                assertEquals(1, channel.read(bytes));
+                assertEquals(42, bytes.array()[0]);
+            }
+            if (!WindowsDirectoryPin.supported())
+                assertEquals(
+                        Set.of(
+                                java.nio.file.attribute.PosixFilePermission.OWNER_READ,
+                                java.nio.file.attribute.PosixFilePermission.OWNER_WRITE),
+                        Files.getPosixFilePermissions(root.resolve("entry")));
+            for (int round = 0; round < 2; round++)
+                try (var entries = cap.entries()) {
+                    var names = new HashSet<String>();
+                    for (Path entry : entries) names.add(entry.getFileName().toString());
+                    assertTrue(names.contains("entry"));
+                }
+        }
+    }
+
+    @Test
     void heldDirectoryCannotRedirectReadWriteListOrCleanup() throws Exception {
         Path root = Files.createDirectory(base.resolve("root")).toRealPath();
         Files.writeString(root.resolve("original"), "original");

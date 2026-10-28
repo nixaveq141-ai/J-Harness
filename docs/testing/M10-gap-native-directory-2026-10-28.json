@@ -1,6 +1,6 @@
 {
   "date": "2026-10-28",
-  "status": "LOCAL_FOCUSED_PASS_REMOTE_PENDING",
+  "status": "WINDOWS_PASS_POSIX_CORRECTION_PENDING",
   "baseCommit": "4584d593fbe161ca70b5a63af90e71f31b05d361",
   "scope": [
     "private-index-publication-read-lock",
@@ -76,5 +76,14 @@
     "No malicious kernel, arbitrary mounts, or OS-level compare-and-swap claim.",
     "Command/Git subprocess host cwd remains trusted-host execution boundary.",
     "No new paid provider call; physical OS acceptance skipped."
-  ]
+  ],
+  "localFullAt0170fce": {
+    "status": "PASS",
+    "cases": 729,
+    "suites": 122,
+    "archive": ".build-cache/gap-native-20261028/final-729",
+    "receipt": ".build-cache/M10.5.9/commands/gapnativeverify3.json"
+  },
+  "firstRemote": "M10-gap-native-first-ci-2026-10-28.json",
+  "posixCorrection": "Preserve previous symlink PATH_DENIED/traversal behavior; declare native open/openat mode variadic for Darwin arm64; add private creation-mode/read-write/repeated-stream regression. Local focused pass; remote required."
 }
