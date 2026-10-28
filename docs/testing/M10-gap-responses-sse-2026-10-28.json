@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-28",
+  "status": "PASS",
+  "scope": "Responses real SSE read-only tool roundtrip",
+  "originalResult": ".build-cache/deepseek-sse-aa4fdcfbfe946a9e/result.json",
+  "originalResultSha256": "c3710d7ff83e6e6fbf025fd4891151ed165496af85e0c06e912fe9df5fd9c301",
+  "sources": {
+    "docs/testing/tools/deepseek-sse-validation.py": "1d64aa2522ab1ff0a59635546dff1dbac51970d43111328dad4b6448707de060",
+    "scripts/deepseek-readonly-validation.py": "f399eb95e6178d35c6fa447ddf0187d85cd2f274dceeca28c3421e9c42d8d811",
+    "harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar": "269e4b698257abc52dbe0839a47993d31a0be2a313b6243119f1d6a7e8b1848b"
+  },
+  "protocol": {
+    "protocol": "responses",
+    "exitCode": 0,
+    "passed": true,
+    "requests": [
+      {
+        "attempt": 11,
+        "status": "COMPLETE_SSE",
+        "requestSha256": "509b292a02a03f3720aeac36d7fb0a03436f11a35c8d38c0034e6a58d19dcb04",
+        "httpStatus": 200,
+        "frames": 17,
+        "terminal": true,
+        "numericUsage": {
+          "input_tokens": 504,
+          "output_tokens": 39,
+          "total_tokens": 543
+        },
+        "responseSha256": "f4270380807a601a2b51d8dd81686692188abf4a022002db8359a49e907d5efb"
+      },
+      {
+        "attempt": 12,
+        "status": "COMPLETE_SSE",
+        "requestSha256": "cd2d25b1621911a328ec106aa79462716d0d356ebc32b22cf68ac0462c413efb",
+        "httpStatus": 200,
+        "frames": 60,
+        "terminal": true,
+        "numericUsage": {
+          "input_tokens": 646,
+          "output_tokens": 52,
+          "total_tokens": 698
+        },
+        "responseSha256": "a09444b9a0fcfaf2c732e389cb528324acd919136ea19562c02c8c6763dda82f"
+      }
+    ],
+    "factsSha256": "a1a26007b1d375ad9604db533a6a38031beab568b165083d2cdb35bb0fea4e87"
+  },
+  "independentFacts": 31,
+  "reservedMicroCny": 1769472,
+  "capMicroCny": 2000000,
+  "attempts": 12,
+  "attemptCap": 12,
+  "morePaidRequestsAllowed": false,
+  "transportFix": "Read bounded body before authentication/path rejection to avoid unread-body Windows TCP reset; auth/validation still precede reservation/send",
+  "offlineTests": 9,
+  "rawProviderFramesRetained": false,
+  "isolatedGeneratedCodeEvaluation": "PENDING",
+  "physicalMachineAcceptance": "SKIPPED_BY_USER"
+}

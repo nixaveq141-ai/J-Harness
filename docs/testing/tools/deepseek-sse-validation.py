@@ -122,11 +122,6 @@ def handler(wallet, key, token, path, records):
         def do_POST(self):
             status, data, content_type = 502, b'{"error":"BOUNDED_SSE_RELAY_FAILURE"}', 'application/json'
             try:
-                if self.path != path or len(records) >= 2:
-                    raise ValueError('Fixed path/two-send bound')
-                if (self.headers.get('Authorization') != 'Bearer ' + token
-                        and self.headers.get('x-api-key') != token):
-                    raise ValueError('Local authentication failed')
                 length = int(self.headers.get('Content-Length', '-1'))
                 if not 0 < length <= 32768 or self.headers.get('Transfer-Encoding'):
                     raise ValueError('Input framing bound')
@@ -134,6 +129,11 @@ def handler(wallet, key, token, path, records):
                 body = self.rfile.read(length)
                 if len(body) != length:
                     raise ValueError('Partial input')
+                if self.path != path or len(records) >= 2:
+                    raise ValueError('Fixed path/two-send bound')
+                if (self.headers.get('Authorization') != 'Bearer ' + token
+                        and self.headers.get('x-api-key') != token):
+                    raise ValueError('Local authentication failed')
                 checked_request(path, body)
                 attempt = wallet.reserve(path, body)
                 record = dict(attempt=attempt, status='RESERVED_UNKNOWN', requestSha256=sha(body))
