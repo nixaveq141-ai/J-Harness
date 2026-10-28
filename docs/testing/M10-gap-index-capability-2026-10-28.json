@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-28",
+  "status": "IMPLEMENTED_REMOTE_PENDING",
+  "scope": "Index cache publication only",
+  "local": {
+    "status": "LIMITED",
+    "sources": {
+      "docs/testing/tools/run-index-capability.py": "e84f3bdd18ab5350ad2d908bee41f507378173a09bd33a4f9f913d0b1edeed07",
+      "harness-session/src/main/java/io/jharness/session/IndexFiles.java": "78adc02667c8be4b57209b755ca5d096cc7d44a95769ddd9161ae797d3d3e0b4",
+      "harness-session/src/test/java/io/jharness/session/IndexCapabilityProbe.java": "2c4401d30b292977482b2967ca66d5e3d550dd8d8d8f4eccefc3b0a0a30d9bc2"
+    },
+    "current": {
+      "normalPublication": true,
+      "secureProvider": false,
+      "replacementRace": "UNSUPPORTED_RETAINED_BOUNDARY",
+      "status": "LIMITED"
+    },
+    "logs": {
+      "compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "current.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "localSessionTests": 55,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "logSha256": "b190134beebe3695900188ac01dfedb2e6c7c39c670d560be38d3ece51eb2f6e",
+  "remote": "NOT_DISPATCHED_YET",
+  "reference": "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/SecureDirectoryStream.html",
+  "boundaries": [
+    "Windows provider remains boundary-checked compatibility path; no race-resistance claim",
+    "Cache read and lock open paths, artifact stores, workspace writes and other metadata remain separate follow-ups",
+    "SDS provider must expose matching fileKey and a force-capable channel; otherwise fail closed",
+    "Atomic replacement may fail if a provider refuses replacement; no non-atomic fallback",
+    "Controlled root swap must preserve replacement-directory sentinel and publish only in original open directory",
+    "No full new product/platform acceptance claimed"
+  ]
+}
