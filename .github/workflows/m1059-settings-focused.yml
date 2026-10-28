@@ -6,7 +6,7 @@ on:
         type: choice
         description: Selected browser diagnostic scope
         default: turns
-        options: [turns, extensions, models]
+        options: [turns, extensions, models, development]
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include: ${{ fromJSON(inputs.scope == 'models' && '[{"os":"macos-latest","fixture":"models"}]' || inputs.scope == 'extensions' && '[{"os":"ubuntu-latest","fixture":"extensions"},{"os":"macos-latest","fixture":"extensions"}]' || '[{"os":"ubuntu-latest","fixture":"turns"}]') }}
+        include: ${{ fromJSON(inputs.scope == 'development' && '[{"os":"macos-latest","fixture":"development"}]' || inputs.scope == 'models' && '[{"os":"macos-latest","fixture":"models"}]' || inputs.scope == 'extensions' && '[{"os":"ubuntu-latest","fixture":"extensions"},{"os":"macos-latest","fixture":"extensions"}]' || '[{"os":"ubuntu-latest","fixture":"turns"}]') }}
     runs-on: ${{ matrix.os }}
     timeout-minutes: 20
     env:
@@ -70,3 +70,6 @@ jobs:
             .build-cache/M10.5.3-turns-*.png
             .build-cache/M10.5.3-turns-failure.txt
             .build-cache/M10.5.4-models-failure.txt
+            .build-cache/M10.5.9-development-*.png
+            .build-cache/M10.5.9-development-failure.txt
+            .build-cache/M10.5.9-development-diagnostic-failure.txt

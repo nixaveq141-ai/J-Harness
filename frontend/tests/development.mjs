@@ -1,4 +1,4 @@
-import { browserType, engine } from './runtime.mjs'
+import { browserType, engine, trackNavigationReads } from './runtime.mjs'
 import { createServer } from 'node:http'
 import { spawn } from 'node:child_process'
 import { mkdir, writeFile, readFile } from 'node:fs/promises'
@@ -17,7 +17,23 @@ const steps=[['list_directory',{path:'.'}],['read_file',{path:'App.java'}],['edi
   ['execute_command',command([exe('javac'),'App.java','Verify.java'])],['edit_file',edit('return broken;','return 1;',digest(broken))],
   ['execute_command',command([exe('javac'),'App.java','Verify.java'])],['execute_command',command([exe('java'),'-cp','.','Verify'])],
   ['edit_file',edit('return 1;','return 2;',digest(original))],['execute_command',command([exe('javac'),'App.java','Verify.java'])],['execute_command',command([exe('java'),'-cp','.','Verify'])]]
-let host,base,output='',browser,context,page,result,step=0
+let host,base,output='',browser,context,page,result,navigation,step=0,phase='startup',pageErrorCount=0
+// Keep bounded, fixed-schema diagnostics; never persist exception text, URLs or stacks.
+// Classification is evidence only: every pageerror still fails the existing assertion.
+function pageError(error){
+  pageErrorCount++
+  if(errors.length>=8)return
+  const message=String(error.message),state=navigation?.snapshot()
+  const item={phase,length:message.length,sha256:digest(message),controlledRead:navigation?.diagnostic(message)===true,navigationCollecting:state?.collecting===true,navigationCommitted:typeof state?.committed==='number'}
+  const match=/^(?:Fetch API cannot load )?((?:http: ?\/{1,2}|\/)127\.0\.0\.1:\d+\/[^ ]+) due to access control checks\.$/.exec(message)
+  item.accessControl=!!match
+  if(match)try{
+    const url=new URL(match[1].startsWith('/')?'http:/'+match[1]:match[1].replace(/^http: ?\/{1,2}/,'http://'))
+    item.currentOrigin=url.origin===base
+    item.route=['/v1/models','/v1/tasks','/v1/workspaces'].includes(url.pathname)?url.pathname:/^\/v1\/tasks\/[A-Za-z0-9_-]+(?:\/(?:approvals|diagnosis|display|questions|tools|events|turns))?$/.test(url.pathname)?'/v1/tasks/:id'+(url.pathname.split('/')[4]?'/'+url.pathname.split('/')[4]:''):'OTHER'
+  }catch{item.parseFailed=true}
+  errors.push(item)
+}
 const wait=ms=>new Promise(r=>setTimeout(r,ms))
 async function until(fn,ms=45000){const end=Date.now()+ms;while(Date.now()<end){if(await fn())return;await wait(80)}throw Error('Development fixture timeout')}
 function check(name,value=true){assert.ok(value,name);checks.push({name,passed:true});console.log('PASS',name)}
@@ -28,7 +44,7 @@ async function shot(name){const path=join(out,'M10.5.9-development-'+name+'.png'
 await mkdir(workspace,{recursive:true});await writeFile(join(workspace,'App.java'),original);await writeFile(join(workspace,'Verify.java'),test);await new Promise(r=>provider.listen(0,'127.0.0.1',r));const config=join(workspace,'config.json');await writeFile(config,JSON.stringify({baseUrl:'http://127.0.0.1:'+provider.address().port,model:'development-fixture',maxSteps:16,durationSeconds:180,policy:'default',ecosystem:{web:{port:0,approvalSeconds:60}}}))
 try{
   host=spawn(exe('java'),['-Dfile.encoding=UTF-8','-jar',jar,'--workspace',workspace,'--config',config,'--require-read','App.java','--expect-file','App.java','--verify-argv',JSON.stringify([exe('java'),'-cp','.','Verify']),'serve'],{cwd:root,env:{...process.env,JHARNESS_WEB_TOKEN:token,JHARNESS_API_KEY:secret},stdio:'pipe',windowsHide:true});host.stdout.on('data',d=>{output+=d;base=output.match(/WEB (http:\/\/127\.0\.0\.1:\d+)/)?.[1]});host.stderr.on('data',d=>output+=d);await until(()=>base||host.exitCode!==null);assert.ok(base,output)
-  browser=await browserType.launch(process.env.JHARNESS_BROWSER_CHANNEL?{channel:process.env.JHARNESS_BROWSER_CHANNEL}:{});context=await browser.newContext({viewport:{width:1440,height:1000}});page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));await page.goto(base)
+  browser=await browserType.launch(process.env.JHARNESS_BROWSER_CHANNEL?{channel:process.env.JHARNESS_BROWSER_CHANNEL}:{});context=await browser.newContext({viewport:{width:1440,height:1000}});page=await context.newPage();navigation=trackNavigationReads(page);page.on('pageerror',pageError);await page.goto(base);phase='task'
   await page.getByLabel('任务目标',{exact:true}).fill('Read this project, fix App, build and test it. Every write and command requires approval.');await page.getByRole('button',{name:'创建任务',exact:true}).click()
   await until(async()=>(await api('/v1/tasks')).tasks.length===1);const id=(await api('/v1/tasks')).tasks[0].taskId
   let approvals=0
@@ -48,9 +64,9 @@ try{
   check('model sees shell build and assertion errors before fixing',wire.some(w=>w.observedShellError)&&wire.some(w=>w.observedBuildError)&&wire.some(w=>w.observedTestError))
   const report=await api('/v1/tasks/'+id+'/report');check('fact report is available without submitting another task',JSON.stringify(report).includes(id)&&wire.length===12)
   await page.locator('#main-content').getByText('已完成',{exact:true}).waitFor();await shot('desktop');await page.setViewportSize({width:390,height:844});await shot('mobile');check('development conversation has no mobile horizontal overflow',await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth))
-  const before=wire.length;await page.setViewportSize({width:1440,height:1000});await page.reload();await page.getByText('本机服务已连接',{exact:true}).waitFor();check('refresh reads existing build results without replay',wire.length===before)
+  const before=wire.length;await page.setViewportSize({width:1440,height:1000});phase='refresh';await navigation.during(async()=>{await page.reload();await page.getByText('本机服务已连接',{exact:true}).waitFor()});phase='after-refresh';check('refresh reads existing build results without replay',wire.length===before)
   check('all model traffic is authorized redacted loopback',wire.every(w=>w.authorized&&w.redacted));check('no browser runtime exception',errors.length===0)
   result={status:'PASS',capturedAt:new Date().toISOString(),browserEngine:engine,browserVersion:browser.version(),checks,screenshots,jarSha256:digest(await readFile(jar)),factsSha256:digest(await readFile(join(workspace,'.jharness/sessions',id+'.jsonl'))),modelRequests:wire.length,paidRequests:0}
-}catch(e){if(page)await page.screenshot({path:join(out,'M10.5.9-development-failure.png'),fullPage:true});await writeFile(join(out,'M10.5.9-development-failure.txt'),(String(e.stack)+'\n'+output).replaceAll(secret,'[REDACTED]').replaceAll(token,'[REDACTED]'));throw e}
+}catch(e){const diagnostic={checksCompleted:checks.length,pageErrorCount,pageErrors:errors,modelRequests:wire.length,hostExited:host?.exitCode!==null};await writeFile(join(out,'M10.5.9-development-diagnostic-failure.txt'),JSON.stringify(diagnostic,null,2));if(page)await page.screenshot({path:join(out,'M10.5.9-development-failure.png'),fullPage:true});await writeFile(join(out,'M10.5.9-development-failure.txt'),(String(e.stack)+'\n'+output).replaceAll(secret,'[REDACTED]').replaceAll(token,'[REDACTED]'));throw e}
 finally{if(host?.exitCode===null){host.stdin.end(':quit\n');await until(()=>host.exitCode!==null).catch(()=>host.kill())}await browser?.close();provider.closeAllConnections();await new Promise(r=>provider.close(r))}
 await writeFile(join(out,'M10.5.9-development-results.json'),JSON.stringify(result,null,2))

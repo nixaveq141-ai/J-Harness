@@ -1,0 +1,46 @@
+name: Gap lifecycle Windows focused validation
+on:
+  workflow_dispatch:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+permissions:
+  contents: read
+jobs:
+  lifecycle:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    env:
+      JHARNESS_EVIDENCE_RUN_ID: ${{ github.run_id }}-${{ github.run_attempt }}-${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify scheduler grace and Web ownership
+        shell: pwsh
+        run: |
+          $PSNativeCommandUseErrorActionPreference = $false
+          python scripts/evidence_run.py --name lifecycle-focused --log .build-cache/M10.5.9/lifecycle-focused.log --timeout 900 -- mvnw.cmd -B -pl harness-testkit -am '-Dtest=R1CoreLifecycleTest,R1WebOwnershipTest' '-Dsurefire.failIfNoSpecifiedTests=false' test
+          $testExit = $LASTEXITCODE
+          if ($testExit -ne 0) {
+            Get-Content .build-cache/M10.5.9/lifecycle-focused.log -Tail 100
+          }
+          exit $testExit
+      - name: Preserve original lifecycle evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gap-lifecycle-windows
+          retention-days: 90
+          include-hidden-files: true
+          if-no-files-found: error
+          path: |
+            .build-cache/M10.5.9/lifecycle-focused.log
+            .build-cache/M10.5.9/commands/lifecycle-focused.json
+            harness-testkit/target/surefire-reports/

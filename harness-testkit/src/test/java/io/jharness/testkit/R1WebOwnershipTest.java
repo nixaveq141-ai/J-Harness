@@ -43,6 +43,16 @@ class R1WebOwnershipTest {
             SessionRepository catalog,
             Duration approvalTimeout)
             throws Exception {
+        return host(model, repo, catalog, approvalTimeout, new OwnershipStartup());
+    }
+
+    HarnessWebServer host(
+            LlmClient model,
+            SessionRepository repo,
+            SessionRepository catalog,
+            Duration approvalTimeout,
+            OwnershipStartup startup)
+            throws Exception {
         Files.createDirectories(root.resolve("workspace"));
         return new HarnessWebServer(
                 0,
@@ -52,27 +62,31 @@ class R1WebOwnershipTest {
                         new HarnessWebServer.Profile(
                                 "workspace",
                                 repo,
-                                (id, approval, sanitizer) ->
-                                        new HarnessSdk(
-                                                id,
-                                                "fixture",
-                                                repo,
-                                                new LocalExecutionEnvironment(
-                                                        "local",
-                                                        root.resolve("workspace"),
-                                                        List.of()),
-                                                model,
-                                                new LocalArtifactStore(
-                                                        root.resolve("artifacts"), sanitizer),
-                                                sanitizer,
-                                                new DefaultPolicyEngine(),
-                                                approval,
-                                                new Budget(2, Duration.ofSeconds(20)),
-                                                (a, b) ->
-                                                        new CompletionEvaluator.CompletionDecision(
-                                                                true, "fixture"),
-                                                ApiCostGuard.unavailable(),
-                                                List.of()))),
+                                startup.observe(
+                                        "local",
+                                        (id, approval, sanitizer) ->
+                                                new HarnessSdk(
+                                                        id,
+                                                        "fixture",
+                                                        repo,
+                                                        new LocalExecutionEnvironment(
+                                                                "local",
+                                                                root.resolve("workspace"),
+                                                                List.of()),
+                                                        model,
+                                                        new LocalArtifactStore(
+                                                                root.resolve("artifacts"),
+                                                                sanitizer),
+                                                        sanitizer,
+                                                        new DefaultPolicyEngine(),
+                                                        approval,
+                                                        new Budget(2, Duration.ofSeconds(20)),
+                                                        (a, b) ->
+                                                                new CompletionEvaluator
+                                                                        .CompletionDecision(
+                                                                        true, "fixture"),
+                                                        ApiCostGuard.unavailable(),
+                                                        List.of())))),
                 catalog,
                 "web-catalog",
                 new SecretRedactor(),
@@ -268,8 +282,64 @@ class R1WebOwnershipTest {
         }
     }
 
+    // Startup includes real HTTP admission, forced JSONL writes and SDK construction. It is not
+    // the shutdown/monitor deadline under test; keep the default one-second request helper intact.
+    static final class OwnershipStartup {
+        final Map<String, String> factories = new ConcurrentHashMap<>();
+        final AtomicInteger prepared = new AtomicInteger();
+        static final Duration TIMEOUT = Duration.ofSeconds(10);
+
+        HarnessWebServer.SdkFactory observe(String name, HarnessWebServer.SdkFactory factory) {
+            factories.put(name, "not-entered");
+            return (id, approval, sanitizer) -> {
+                factories.put(name, "entered");
+                try {
+                    var sdk = factory.open(id, approval, sanitizer);
+                    factories.put(name, "ready");
+                    return sdk;
+                } catch (Exception ex) {
+                    String code = ex instanceof HarnessException he ? he.code() : "EXCEPTION";
+                    factories.put(
+                            name, "failed:" + (code.matches("[A-Z0-9_]{1,64}") ? code : "OTHER"));
+                    throw ex;
+                }
+            };
+        }
+
+        String diagnostic(CountDownLatch entered) {
+            // Fixed fixture names, SDK codes and counts only: no goals, paths or response bodies.
+            return "factories="
+                    + new TreeMap<>(factories)
+                    + ", prepared="
+                    + prepared.get()
+                    + ", awaitingModel="
+                    + entered.getCount();
+        }
+    }
+
+    HttpResponse<String> ownershipAdmission(
+            HarnessWebServer host, String body, OwnershipStartup startup, CountDownLatch entered)
+            throws Exception {
+        try {
+            return request(host, "/v1/tasks", body, OwnershipStartup.TIMEOUT);
+        } catch (HttpTimeoutException ex) {
+            throw new AssertionError(
+                    "Ownership fixture admission timeout: " + startup.diagnostic(entered), ex);
+        }
+    }
+
+    void awaitOwnershipModel(OwnershipStartup startup, CountDownLatch entered) throws Exception {
+        assertTrue(
+                entered.await(OwnershipStartup.TIMEOUT.toMillis(), TimeUnit.MILLISECONDS),
+                () ->
+                        "Ownership fixture did not reach model barrier: "
+                                + startup.diagnostic(entered));
+    }
+
     @Test
+    @org.junit.jupiter.api.Timeout(40)
     void closeRetainsCatalogOwnershipUntilUncooperativeWorkerActuallyLeaves() throws Exception {
+        var startup = new OwnershipStartup();
         var entered = new CountDownLatch(1);
         var release = new CountDownLatch(1);
         var closed = new CountDownLatch(1);
@@ -280,6 +350,7 @@ class R1WebOwnershipTest {
                     }
 
                     public PreparedRequest prepare(ChatRequest request) {
+                        startup.prepared.incrementAndGet();
                         return new PreparedRequest(request);
                     }
 
@@ -303,16 +374,23 @@ class R1WebOwnershipTest {
                         closed.countDown();
                     }
                 };
-        var host = host(model);
+        var host =
+                host(
+                        model,
+                        new JsonlSessionRepository(root.resolve("sessions")),
+                        new JsonlSessionRepository(root.resolve("catalog")),
+                        Duration.ofSeconds(3),
+                        startup);
         try {
             assertEquals(
                     202,
-                    request(
+                    ownershipAdmission(
                                     host,
-                                    "/v1/tasks",
-                                    "{\"profile\":\"local\",\"goal\":\"test\",\"requestId\":\"hold\"}")
+                                    "{\"profile\":\"local\",\"goal\":\"test\",\"requestId\":\"hold\"}",
+                                    startup,
+                                    entered)
                             .statusCode());
-            assertTrue(entered.await(2, TimeUnit.SECONDS));
+            awaitOwnershipModel(startup, entered);
             host.close();
             var catalog = new JsonlSessionRepository(root.resolve("catalog"));
             assertEquals(
@@ -345,8 +423,9 @@ class R1WebOwnershipTest {
     }
 
     @Test
-    @org.junit.jupiter.api.Timeout(20)
+    @org.junit.jupiter.api.Timeout(60)
     void simultaneousWorkerCleanupReleasesCatalogExactlyOnceAfterBothLeave() throws Exception {
+        var startup = new OwnershipStartup();
         var entered = new CountDownLatch(2);
         var release = new CountDownLatch(1);
         var cleanupEntered = new CountDownLatch(2);
@@ -360,6 +439,7 @@ class R1WebOwnershipTest {
                     }
 
                     public PreparedRequest prepare(ChatRequest request) {
+                        startup.prepared.incrementAndGet();
                         return new PreparedRequest(request);
                     }
 
@@ -435,25 +515,29 @@ class R1WebOwnershipTest {
                     new HarnessWebServer.Profile(
                             name,
                             repo,
-                            (id, approval, sanitizer) ->
-                                    new HarnessSdk(
-                                            id,
-                                            "fixture",
-                                            repo,
-                                            new LocalExecutionEnvironment(
-                                                    "local", workspace, List.of()),
-                                            model,
-                                            new LocalArtifactStore(
-                                                    root.resolve(name + "-artifacts"), sanitizer),
-                                            sanitizer,
-                                            new DefaultPolicyEngine(),
-                                            approval,
-                                            new Budget(2, Duration.ofSeconds(20)),
-                                            (a, b) ->
-                                                    new CompletionEvaluator.CompletionDecision(
-                                                            true, "fixture"),
-                                            ApiCostGuard.unavailable(),
-                                            List.of())));
+                            startup.observe(
+                                    name,
+                                    (id, approval, sanitizer) ->
+                                            new HarnessSdk(
+                                                    id,
+                                                    "fixture",
+                                                    repo,
+                                                    new LocalExecutionEnvironment(
+                                                            "local", workspace, List.of()),
+                                                    model,
+                                                    new LocalArtifactStore(
+                                                            root.resolve(name + "-artifacts"),
+                                                            sanitizer),
+                                                    sanitizer,
+                                                    new DefaultPolicyEngine(),
+                                                    approval,
+                                                    new Budget(2, Duration.ofSeconds(20)),
+                                                    (a, b) ->
+                                                            new CompletionEvaluator
+                                                                    .CompletionDecision(
+                                                                    true, "fixture"),
+                                                    ApiCostGuard.unavailable(),
+                                                    List.of()))));
         }
         var host =
                 new HarnessWebServer(
@@ -470,17 +554,18 @@ class R1WebOwnershipTest {
             for (String name : profiles.keySet()) {
                 assertEquals(
                         202,
-                        request(
+                        ownershipAdmission(
                                         host,
-                                        "/v1/tasks",
                                         "{\"profile\":\""
                                                 + name
                                                 + "\",\"goal\":\"test\",\"requestId\":\""
                                                 + name
-                                                + "\"}")
+                                                + "\"}",
+                                        startup,
+                                        entered)
                                 .statusCode());
             }
-            assertTrue(entered.await(2, TimeUnit.SECONDS));
+            awaitOwnershipModel(startup, entered);
             host.close();
             assertEquals(0, catalogCloses.get());
             release.countDown();

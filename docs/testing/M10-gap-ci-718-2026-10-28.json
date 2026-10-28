@@ -1,0 +1,161 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-28",
+  "status": "INCOMPLETE",
+  "commit": "8b1cafe8d20c14a3a102e63719707cb86042b92b",
+  "ciRunId": "40516513783",
+  "url": "https://github.com/nixaveq141-ai/J-Harness/actions/runs/40516513783",
+  "originalArtifacts": [
+    {
+      "file": "12740207588.zip",
+      "sha256": "408babfec416dce08e0ff420b45eda8cf8f96f005992e0e7fbafa3783e3bbddc",
+      "githubDigest": "sha256:408babfec416dce08e0ff420b45eda8cf8f96f005992e0e7fbafa3783e3bbddc",
+      "artifactId": 12740207588,
+      "name": "test-results-windows-latest",
+      "runId": "40516513783",
+      "commit": "8b1cafe8d20c14a3a102e63719707cb86042b92b",
+      "createdAt": "2026-10-27T14:04:46Z",
+      "expiresAt": "2027-01-25T13:56:29Z"
+    },
+    {
+      "file": "12739569049.zip",
+      "sha256": "430cb6b5ff0bdd5722793a34ba715607fab20655a4e99bf12292fdadf289e4de",
+      "githubDigest": "sha256:430cb6b5ff0bdd5722793a34ba715607fab20655a4e99bf12292fdadf289e4de",
+      "artifactId": 12739569049,
+      "name": "test-results-macos-latest",
+      "runId": "40516513783",
+      "commit": "8b1cafe8d20c14a3a102e63719707cb86042b92b",
+      "createdAt": "2026-10-27T14:09:00Z",
+      "expiresAt": "2027-01-25T13:56:29Z"
+    },
+    {
+      "file": "12740147883.zip",
+      "sha256": "b78044f818abc79a586b6ef148ce525986d74ca457cb311b1b881ce0ac848950",
+      "githubDigest": "sha256:b78044f818abc79a586b6ef148ce525986d74ca457cb311b1b881ce0ac848950",
+      "artifactId": 12740147883,
+      "name": "test-results-ubuntu-latest",
+      "runId": "40516513783",
+      "commit": "8b1cafe8d20c14a3a102e63719707cb86042b92b",
+      "createdAt": "2026-10-27T14:10:42Z",
+      "expiresAt": "2027-01-25T13:56:29Z"
+    }
+  ],
+  "linuxOriginalAudit": {
+    "os": "Linux",
+    "archiveSha256": "b78044f818abc79a586b6ef148ce525986d74ca457cb311b1b881ce0ac848950",
+    "artifactId": 12740147883,
+    "runnerSha256": "4172ef286dd2922adda9782d677396d9d0b3afc6b77b1a354b1c509fb5c0a9b6",
+    "jarSha256": "bcec365fd6ed53aa2531e6c07104a6461301129b0eb27c6c16afd9fadcc0ce6a",
+    "java": {
+      "tests": 718,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "browserChecks": 813,
+    "sdkChecks": 66,
+    "nativeChecks": 7
+  },
+  "partialAuditSha256": "3cef6cb2dfa96a1eb3156a4349d68de524689d058ddea9cf3c1cba7769397216",
+  "frozenAuditorSha256": "ef496d601dc0b8dbeaeaa2c9cc1704c79a06a898d2f7eae661b4364f8e0fd540",
+  "sourceInputCount": 610,
+  "windows": {
+    "jobId": 122231686325,
+    "status": "FAILED",
+    "failedSuite": "R1WebOwnershipTest",
+    "failures": [
+      {
+        "case": "simultaneousWorkerCleanupReleasesCatalogExactlyOnceAfterBothLeave",
+        "stage": "SETUP_HTTP_SUBMISSION",
+        "error": "HttpTimeoutException",
+        "requestTimeoutSeconds": 1
+      },
+      {
+        "case": "closeRetainsCatalogOwnershipUntilUncooperativeWorkerActuallyLeaves",
+        "stage": "WAIT_MODEL_ENTRY",
+        "error": "AssertionFailedError",
+        "waitSeconds": 2
+      }
+    ],
+    "rootCause": "UNDETERMINED: original XML does not distinguish slow setup from SDK startup failure"
+  },
+  "macos": {
+    "jobId": 122231686872,
+    "status": "FAILED",
+    "engine": "webkit",
+    "fixture": "development",
+    "passedChecksBeforeFailure": 13,
+    "failedCheck": "no browser runtime exception",
+    "rootCause": "UNDETERMINED: original artifact omitted pageerror details"
+  },
+  "boundaries": [
+    "Linux-only original audit is not three-platform acceptance",
+    "Previous accepted three-platform baseline remains dae011a / 40467690361",
+    "No new paid provider request in this CI run",
+    "Physical operating-system acceptance skipped by user request"
+  ],
+  "localFollowup": {
+    "windowsCases": 35,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "controlledDelayComparison": {
+      "injections": {
+        "single": "model.prepare sleeps 2500 ms before model entry",
+        "double": "web.task.accepted append sleeps 1500 ms before real durable append"
+      },
+      "results": [
+        {
+          "label": "old",
+          "sourceSha256": "70372333a5b11e511c029977d771e975b068383d5d82c1bd37a9cabf869d1c31",
+          "injectedSourceSha256": "1a53ae7be6a5bc3f8bb23607f3d96946b95a4614b84856643022610adbf3b205",
+          "exitCode": 1,
+          "cases": [
+            {
+              "name": "simultaneousWorkerCleanupReleasesCatalogExactlyOnceAfterBothLeave",
+              "failed": false,
+              "error": true,
+              "time": "2.0"
+            },
+            {
+              "name": "closeRetainsCatalogOwnershipUntilUncooperativeWorkerActuallyLeaves",
+              "failed": true,
+              "error": false,
+              "time": "2.741"
+            }
+          ],
+          "logSha256": "ce922386d7bbfa47ef40d4c7505b46ecb9b96a9e4e4de62b23d104256daa46dc",
+          "xmlSha256": "6b3ece5b6dc887a1dc2da6bc7174e53ea8ba51cbc40af8f9fbd0f2e7fe7083c4"
+        },
+        {
+          "label": "current",
+          "sourceSha256": "6fc5a271925af9671fa2fb81401ad70f569a9ab895d4a3b70478ae9dcad156dc",
+          "injectedSourceSha256": "f7658b3e3295270b256276b324e5adf191781e679d01cd0d774dcc6eda868a5b",
+          "exitCode": 0,
+          "cases": [
+            {
+              "name": "simultaneousWorkerCleanupReleasesCatalogExactlyOnceAfterBothLeave",
+              "failed": false,
+              "error": false,
+              "time": "5.708"
+            },
+            {
+              "name": "closeRetainsCatalogOwnershipUntilUncooperativeWorkerActuallyLeaves",
+              "failed": false,
+              "error": false,
+              "time": "4.845"
+            }
+          ],
+          "logSha256": "791c72787a1c97eacc189bce17c21bdd937080a0d4435a59d5fe945067c34a7d",
+          "xmlSha256": "6f28d08c9eb260ad84456efc7802e28292a68c1ce7e49a0400cf12023549bd0c"
+        }
+      ],
+      "restoredSourceSha256": "6fc5a271925af9671fa2fb81401ad70f569a9ab895d4a3b70478ae9dcad156dc"
+    },
+    "windowsFinalLogSha256": "e57b03c18b75575b1d45a88b7f352901c0f2aecddf1ad60e663c177319fb4ecf",
+    "macosDiagnosticLocalWebkitCases": 14,
+    "macosRootCause": "UNDETERMINED; local run did not reproduce",
+    "focusedRemote": "NOT_YET_DISPATCHED",
+    "newFullVerify": false
+  }
+}

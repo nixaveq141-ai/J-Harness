@@ -1,0 +1,185 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-28",
+  "status": "TWO_REAL_SSE_PROTOCOLS_PASS_WITH_SEPARATE_OFFLINE_HARDENING",
+  "resultPath": ".build-cache/deepseek-sse-dd394e6818e46c63/result.json",
+  "resultSha256": "1c478dc1a98203aba0e08b0527575c992ae6c05ec17bb98ec429d9592ada4008",
+  "realRunSourcesBeforeAfterSha256": {
+    "docs/testing/tools/deepseek-sse-validation.py": "bc3868d3eff96999c8b03da979765746ee09db43a9c570fe4fcd5be6b1615786",
+    "scripts/deepseek-readonly-validation.py": "f399eb95e6178d35c6fa447ddf0187d85cd2f274dceeca28c3421e9c42d8d811",
+    "harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar": "269e4b698257abc52dbe0839a47993d31a0be2a313b6243119f1d6a7e8b1848b"
+  },
+  "preservedRealRunDriverPath": ".build-cache/gap-sse-audit-20261028/real-run-driver.py",
+  "currentDriverSha256": "48d5ed41cfd015ac90b778be52881f5d944f51913a2e4b9cad3ee66fb2c4ae14",
+  "currentTestsSha256": "bf71b52b0fe42f3a0cd5fec7b2bfa7bebc0f6578f06c4eb9d6fb05bf8e1df3f7",
+  "protocols": [
+    {
+      "protocol": "chat-completions",
+      "requests": [
+        {
+          "attempt": 7,
+          "status": "COMPLETE_SSE",
+          "requestSha256": "65f017b2e7bbe7ec93080c2234a2011dd43eeb81c95c1949842a01d26767117e",
+          "httpStatus": 200,
+          "frames": 23,
+          "terminal": true,
+          "numericUsage": {
+            "prompt_tokens": 504,
+            "completion_tokens": 46,
+            "total_tokens": 550
+          },
+          "responseSha256": "1e5d86c8ae3641d59d35210ac7001bb3d5d76021a89439ebc7aac45b70492985"
+        },
+        {
+          "attempt": 8,
+          "status": "COMPLETE_SSE",
+          "requestSha256": "98dd93d75197b61575df11f4a116554e32ffd9979504dd09fe9120ffd150743a",
+          "httpStatus": 200,
+          "frames": 89,
+          "terminal": true,
+          "numericUsage": {
+            "prompt_tokens": 653,
+            "completion_tokens": 86,
+            "total_tokens": 739
+          },
+          "responseSha256": "da40c711d89a91288964f6d59691b12b968b405da8662948bd714212ef524d9f"
+        }
+      ],
+      "factsSha256": "fd83ec30433b44e823bc91b0b9ce71e706c55152e19eecd9824608e8e010b155",
+      "journalFacts": 31,
+      "streamObservations": 2,
+      "successfulReadOnlyTools": 1,
+      "completedTurns": 1,
+      "fixtureBytesUnchanged": true,
+      "normalizedUsage": [
+        {
+          "prompt_tokens": 504,
+          "completion_tokens": 46,
+          "total_tokens": 550
+        },
+        {
+          "prompt_tokens": 653,
+          "completion_tokens": 86,
+          "total_tokens": 739
+        }
+      ]
+    },
+    {
+      "protocol": "anthropic",
+      "requests": [
+        {
+          "attempt": 9,
+          "status": "COMPLETE_SSE",
+          "requestSha256": "34ce3b63d043b55e9a0a316b16fc9381af3a935386fd1f45e289919fba97ffeb",
+          "httpStatus": 200,
+          "frames": 17,
+          "terminal": true,
+          "numericUsage": {
+            "input_tokens": 248,
+            "output_tokens": 39
+          },
+          "responseSha256": "50967dacdd1cb8bb787279d25c50f6212a2ad272837733f6e8a353e9d763f66c"
+        },
+        {
+          "attempt": 10,
+          "status": "COMPLETE_SSE",
+          "requestSha256": "4be178ed125a111fa5a84fe1a854958748d474e9f9f936982e3ec405b5d1b920",
+          "httpStatus": 200,
+          "frames": 39,
+          "terminal": true,
+          "numericUsage": {
+            "input_tokens": 135,
+            "output_tokens": 33
+          },
+          "responseSha256": "bb5bdc8161281104209b30ccf169e0e9220321670de58d59e0588a65413316df"
+        }
+      ],
+      "factsSha256": "30489767dedb423ccc3665bb8bb31fce940c2ea1f1300d2e5105bba8c1397353",
+      "journalFacts": 31,
+      "streamObservations": 2,
+      "successfulReadOnlyTools": 1,
+      "completedTurns": 1,
+      "fixtureBytesUnchanged": true,
+      "normalizedUsage": [
+        {
+          "prompt_tokens": 504,
+          "completion_tokens": 39,
+          "total_tokens": 543
+        },
+        {
+          "prompt_tokens": 647,
+          "completion_tokens": 33,
+          "total_tokens": 680
+        }
+      ]
+    }
+  ],
+  "budget": {
+    "grant": "deepseek-readonly-2026-10-26-CNY2",
+    "currency": "CNY",
+    "capMicroCny": 2000000,
+    "totalAttempts": 10,
+    "newRealSseAttempts": [
+      7,
+      8,
+      9,
+      10
+    ],
+    "totalReservedMicroCny": 1474560,
+    "remainingMicroCny": 525440,
+    "accounting": "NON_REFUNDABLE_UPPER_BOUND_NOT_PROVIDER_BILL",
+    "remainingAttemptLimit": 2,
+    "independentAuditUsedReadOnlySqlite": true,
+    "walletUnchangedByIndependentAudit": true
+  },
+  "offlineValidation": {
+    "originalSseTests": 8,
+    "hardenedSseTests": 9,
+    "existingWalletTests": 9,
+    "hardenedPackagedCliAgainstLocalFakeSse": "PASS",
+    "realProviderRequestsDuringAudit": 0,
+    "controlledOmission": "Decoded credential guard disabled: four encoded key/value response assertions and final no-receipt assertion failed; all pass with guard."
+  },
+  "hardening": {
+    "issue": "Raw-byte credential matching missed JSON Unicode escapes in SSE data fields.",
+    "change": "Recursively inspect decoded JSON string keys and values before forwarding successful SSE and recording its receipt.",
+    "realRunUsedHardenedDriver": false,
+    "modelGeneratedCodeExecuted": false
+  },
+  "independentAudit": {
+    "script": ".build-cache/gap-sse-audit-20261028/audit.py",
+    "scriptSha256": "444252df4067634def8deed76774520ae28cf1c6a800415b2050ab48d4a44b25",
+    "checks": [
+      "Original result/source hashes",
+      "Both retained journals and unchanged fixture bytes",
+      "Two successful streaming model observations per protocol",
+      "Exactly one read-only tool with exact text/version",
+      "Completed terminal fact and final sum",
+      "Receipt request/response hashes match existing cumulative wallet"
+    ]
+  },
+  "priorFailure": {
+    "path": ".build-cache/deepseek-sse-f246b195d5936579/result.json",
+    "sha256": "c6022a35d111c15ae91f6c15cfa88a4b9db8fac32a4c882010aec03a1c24232c",
+    "reason": "Missing streamSupported caused fallback before relay send; zero new reservations or upstream sends.",
+    "reservedMicroCny": 884736
+  },
+  "logsSha256": {
+    ".build-cache/gap-sse-offline-final.log": "86c5e0bbf31a0705aa91c72e655181b4cbe4f519ee1cd89c405bf337ead33202",
+    ".build-cache/gap-sse-existing-wallet-tests.log": "e40ab565e07e1a6081dae4abdaa7734f1916c5451e423e1d3f9bedaf030163cf",
+    ".build-cache/gap-sse-real-final.log": "0e5775a70e404156b7a43bc40d3d19a698b2adec012f0692b92c1c825991392d",
+    ".build-cache/gap-sse-independent-offline-20261028.log": "12622e8d9e1c22a34b2bcbc43857a56fb9ead274a5055edb68cc7b72bb80bddc",
+    ".build-cache/gap-sse-hardened-offline-20261028.log": "ea7ea6eefa83016d497c55164a0fac81cef92f2acc339d16e6f2cf79a16795a9",
+    ".build-cache/gap-sse-wallet-independent-20261028.log": "2311a955c12dbc6a4680584168791f9724c890f99f6d76b38b5af60c3be1d609",
+    ".build-cache/gap-sse-audit-20261028/negative-reflection.log": "bff20b23aebc3d2cf7770095ddd27c3aed16e8bf81c1fda3de2caf1f4dbbcf88"
+  },
+  "boundaries": [
+    "Real SSE bytes were validated and hashed at capture time but not retained; the independent audit cannot replay original frames.",
+    "The relay buffers bounded SSE before forwarding, so this does not measure incremental delivery latency.",
+    "The JSON-escape credential guard was added after the real run and validated only with offline fixtures.",
+    "Credential matching covers exact raw tokens and decoded JSON fields, not arbitrary encodings or cross-field fragmentation.",
+    "Responses real SSE and isolated model-generated code evaluation remain outstanding.",
+    "Usage numbers are telemetry, not an invoice; Anthropic input_tokens alone excludes cached input, while journal normalized usage includes it.",
+    "No full current three-platform acceptance, physical OS-machine acceptance, or offsite evidence copy is claimed."
+  ]
+}
