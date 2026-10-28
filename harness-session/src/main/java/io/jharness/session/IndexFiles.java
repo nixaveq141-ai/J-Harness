@@ -1,18 +1,21 @@
 package io.jharness.session;
 
 import io.jharness.api.*;
+import io.jharness.workspace.DirectoryCapability;
+import io.jharness.workspace.WindowsDirectoryPin;
 import java.io.*;
 import java.nio.channels.*;
 import java.nio.file.*;
 import java.security.*;
 import java.util.*;
 
-/**
- * Disposable cache publication, bounded before publication. Boundary checks do not remove parent
- * races on providers without SecureDirectoryStream.
- */
+/** Bounded derived caches, using relative directory operations or pinned Windows ancestors. */
 final class IndexFiles {
     private IndexFiles() {}
+
+    private static boolean nativeEnabled() {
+        return true;
+    }
 
     static String digest(Object data, int limit) throws IOException {
         try {
@@ -30,9 +33,18 @@ final class IndexFiles {
         }
     }
 
+    static DirectoryIdentity bind(Path root) throws IOException {
+        return DirectoryCapability.bindPrivate(root);
+    }
+
+    private static Closeable pin(Path root, DirectoryIdentity identity) throws IOException {
+        if (WindowsDirectoryPin.nativeKey(identity.fileKey()))
+            return WindowsDirectoryPin.open(root, identity.fileKey());
+        return () -> {};
+    }
+
     static void check(Path root, DirectoryIdentity identity) throws IOException {
-        if (!root.toRealPath().equals(root) || !identity.equals(DirectoryIdentity.read(root)))
-            throw new IOException("Search directory identity changed");
+        DirectoryCapability.checkPrivate(root, identity);
     }
 
     static FileChannel open(
@@ -41,12 +53,35 @@ final class IndexFiles {
         return open(root, identity, target, options, () -> {});
     }
 
+    @SuppressWarnings("try") // The guard acts through its lifetime.
     static FileChannel open(
             Path root,
             DirectoryIdentity identity,
             Path target,
             Set<? extends OpenOption> options,
             PublicationHook hook)
+            throws IOException {
+        FileChannel[] owned = {null};
+        try (var guard = pin(root, identity)) {
+            return openHeld(root, identity, target, options, hook, owned);
+        } catch (IOException | RuntimeException | Error failure) {
+            if (owned[0] != null)
+                try {
+                    owned[0].close();
+                } catch (IOException cleanup) {
+                    failure.addSuppressed(cleanup);
+                }
+            throw failure;
+        }
+    }
+
+    private static FileChannel openHeld(
+            Path root,
+            DirectoryIdentity identity,
+            Path target,
+            Set<? extends OpenOption> options,
+            PublicationHook hook,
+            FileChannel[] owned)
             throws IOException {
         if (!target.getParent().equals(root)) throw new IOException("Index target outside root");
         check(root, identity);
@@ -71,14 +106,30 @@ final class IndexFiles {
                 }
                 hook.beforeMove();
                 var channel = secure.newByteChannel(target.getFileName(), options);
-                if (channel instanceof FileChannel file) return file;
+                if (channel instanceof FileChannel file) {
+                    owned[0] = file;
+                    return file;
+                }
                 channel.close();
                 throw new IOException("Secure index channel cannot hold file locks");
             }
         }
-        // Compatibility provider: the documented trusted-host boundary remains explicit.
-        hook.beforeMove();
-        return FileChannel.open(target, options);
+        // Windows ancestors remain pinned by the caller; POSIX uses an opened directory below.
+        if (WindowsDirectoryPin.supported()) {
+            hook.beforeMove();
+            owned[0] = FileChannel.open(target, options);
+            return owned[0];
+        }
+        if (!nativeEnabled()) {
+            hook.beforeMove();
+            owned[0] = FileChannel.open(target, options);
+            return owned[0];
+        }
+        try (var held = DirectoryCapability.open(root, identity.fileKey(), root, false)) {
+            hook.beforeMove();
+            owned[0] = held.channel(target.getFileName(), options);
+            return owned[0];
+        }
     }
 
     static void publish(Path root, DirectoryIdentity identity, Path target, Object data, int limit)
@@ -91,6 +142,7 @@ final class IndexFiles {
         void beforeMove() throws IOException;
     }
 
+    @SuppressWarnings("try") // Keep ancestor handles until publication and cleanup finish.
     static void publish(
             Path root,
             DirectoryIdentity identity,
@@ -98,6 +150,21 @@ final class IndexFiles {
             Object data,
             int limit,
             PublicationHook hook)
+            throws IOException {
+        try (var guard = pin(root, identity)) {
+            if (guard instanceof WindowsDirectoryPin windows) windows.allowChildRenames();
+            publishHeld(root, identity, target, data, limit, hook, guard);
+        }
+    }
+
+    private static void publishHeld(
+            Path root,
+            DirectoryIdentity identity,
+            Path target,
+            Object data,
+            int limit,
+            PublicationHook hook,
+            Closeable guard)
             throws IOException {
         if (!target.getParent().equals(root)) throw new IOException("Index target outside root");
         String hash = digest(data, limit - 100);
@@ -109,7 +176,12 @@ final class IndexFiles {
                 return;
             }
         }
-        // Explicit compatibility path: retains boundary checks, not an ancestor-race guarantee.
+        if (nativeEnabled() && !WindowsDirectoryPin.supported()) {
+            try (var held = DirectoryCapability.open(root, identity.fileKey(), root, false)) {
+                publishNative(root, identity, target.getFileName(), data, limit, hash, held, hook);
+                return;
+            }
+        }
 
         Path temp = root.resolve("index-" + UUID.randomUUID() + ".tmp");
         try {
@@ -129,16 +201,57 @@ final class IndexFiles {
             }
             check(root, identity);
             hook.beforeMove();
-            Files.move(
-                    temp,
-                    target,
-                    StandardCopyOption.ATOMIC_MOVE,
-                    StandardCopyOption.REPLACE_EXISTING);
+            if (guard instanceof WindowsDirectoryPin windows) windows.publishCache(temp, target);
+            else
+                Files.move(
+                        temp,
+                        target,
+                        StandardCopyOption.ATOMIC_MOVE,
+                        StandardCopyOption.REPLACE_EXISTING);
             check(root, identity);
         } finally {
             // Never delete through a directory whose identity has changed.
             check(root, identity);
             Files.deleteIfExists(temp);
+        }
+    }
+
+    private static void publishNative(
+            Path root,
+            DirectoryIdentity identity,
+            Path target,
+            Object data,
+            int limit,
+            String hash,
+            DirectoryCapability held,
+            PublicationHook hook)
+            throws IOException {
+        Path temporary = Path.of("index-" + UUID.randomUUID() + ".tmp");
+        boolean created = false;
+        try {
+            try (var channel =
+                    held.channel(
+                            temporary,
+                            Set.of(
+                                    StandardOpenOption.CREATE_NEW,
+                                    StandardOpenOption.WRITE,
+                                    LinkOption.NOFOLLOW_LINKS))) {
+                created = true;
+                var output = Channels.newOutputStream(channel);
+                output.write("{\"data\":".getBytes(java.nio.charset.StandardCharsets.US_ASCII));
+                JsonEncoding.writeTo(data, limit - 100, 1000000, 32, "SEARCH_INDEX_LIMIT", output);
+                output.write(
+                        (",\"sha256\":\"" + hash + "\"}\n")
+                                .getBytes(java.nio.charset.StandardCharsets.US_ASCII));
+                channel.force(true);
+            }
+            check(root, identity);
+            hook.beforeMove();
+            held.move(temporary, target, true);
+            created = false;
+            check(root, identity);
+        } finally {
+            if (created) held.delete(temporary, false);
         }
     }
 

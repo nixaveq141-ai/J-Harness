@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "milestone": "M10.5.9",
-  "origin": "2026-10-28 retains all718 prior identities and adds17x3 real backend response faults; total719 cases/120 suites.",
+  "origin": "2026-10-28 retains all719 prior identities and adds10 native capability and directory-pin fault cases; total729 cases/122 suites.",
   "suites": [
     {
       "module": "harness-agent",
@@ -1371,6 +1371,16 @@
     },
     {
       "module": "harness-workspace",
+      "name": "io.jharness.workspace.DirectoryCapabilityTest",
+      "cases": [
+        "heldDirectoryCannotRedirectReadWriteListOrCleanup",
+        "noClobberPublicationAndClosedAuthorityRejectBeforeUse",
+        "privateAnchorIsDurableStableAndCorruptionIsNotReset",
+        "reusedDirectoryNameCannotReusePrivateAnchorIdentity"
+      ]
+    },
+    {
+      "module": "harness-workspace",
       "name": "io.jharness.workspace.LocalWorkspaceTest",
       "cases": [
         "aRaceBeforeCommitIsDetectedAndTemporaryFileIsRemoved",
@@ -1440,6 +1450,18 @@
         "exactMultiFileUpdateAndCreationPreserveUnrelatedFiles",
         "secondCommitFailureReportsConfirmedChangesAndPendingPaths",
         "staleVersionAndOutsidePathFailAllPreflightBeforeFirstWrite"
+      ]
+    },
+    {
+      "module": "harness-workspace",
+      "name": "io.jharness.workspace.WindowsDirectoryPinTest",
+      "cases": [
+        "onlyKnownRejectedSharingGetsBoundedCacheRetries",
+        "openAndCloseFailuresStillAttemptAllOwnedCleanup",
+        "reparseAncestorRejectsAndClosesPartialChainInReverse",
+        "reusedNameCannotSubstituteAnotherNativeId",
+        "rootUsesReadAccessNoDeleteShareAndFullNativeIdentity",
+        "writePhasePinsNonemptyChildBeforeChangingDirectorySharing"
       ]
     }
   ],

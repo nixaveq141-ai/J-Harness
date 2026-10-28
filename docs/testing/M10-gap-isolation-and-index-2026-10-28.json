@@ -1,0 +1,88 @@
+{
+  "date": "2026-10-28",
+  "commit": "4584d593fbe161ca70b5a63af90e71f31b05d361",
+  "proofs": [
+    {
+      "kind": "historical-code-isolation",
+      "status": "PASS",
+      "artifact": {
+        "file": "12813682815.zip",
+        "sha256": "6225651c300efd8a6402035cfce42a210f862a913c47829b355e7e5e3962122c",
+        "githubDigest": "sha256:6225651c300efd8a6402035cfce42a210f862a913c47829b355e7e5e3962122c",
+        "artifactId": 12813682815,
+        "name": "historical-code-isolation",
+        "runId": "40683923370",
+        "commit": "4584d593fbe161ca70b5a63af90e71f31b05d361",
+        "createdAt": "2026-10-28T11:57:38Z",
+        "expiresAt": "2027-01-26T11:57:20Z"
+      },
+      "boundary": "Historical M4 generated source, no new provider request; two real owned Docker containers."
+    },
+    {
+      "kind": "index-read-lock-publication",
+      "status": "PASS",
+      "artifact": {
+        "file": "12814760173.zip",
+        "sha256": "be9f6b7594c7016153cafa4a93f640d80383ec570f1fd82db850e24681495cd9",
+        "githubDigest": "sha256:be9f6b7594c7016153cafa4a93f640d80383ec570f1fd82db850e24681495cd9",
+        "artifactId": 12814760173,
+        "name": "m1059-session-focused-ubuntu-latest",
+        "runId": "40683933429",
+        "commit": "4584d593fbe161ca70b5a63af90e71f31b05d361",
+        "createdAt": "2026-10-28T11:57:46Z",
+        "expiresAt": "2027-01-26T11:57:24Z"
+      },
+      "current": {
+        "normalPublication": true,
+        "secureProvider": true,
+        "replacementRace": "PASS_ORIGINAL_DIRECTORY_ONLY",
+        "readRace": "PASS_ORIGINAL_DIRECTORY_ONLY",
+        "lockRace": "PASS_ORIGINAL_DIRECTORY_ONLY",
+        "status": "PASS"
+      }
+    },
+    {
+      "kind": "index-read-lock-publication",
+      "status": "LIMITED",
+      "artifact": {
+        "file": "12814570720.zip",
+        "sha256": "bdb0c3c73c96322d059e0e3e25abe6ff98cf0d6aee62cdc11f50fab16d7316bd",
+        "githubDigest": "sha256:bdb0c3c73c96322d059e0e3e25abe6ff98cf0d6aee62cdc11f50fab16d7316bd",
+        "artifactId": 12814570720,
+        "name": "m1059-session-focused-windows-latest",
+        "runId": "40683933429",
+        "commit": "4584d593fbe161ca70b5a63af90e71f31b05d361",
+        "createdAt": "2026-10-28T11:57:55Z",
+        "expiresAt": "2027-01-26T11:57:24Z"
+      },
+      "current": {
+        "normalPublication": true,
+        "secureProvider": false,
+        "replacementRace": "UNSUPPORTED_RETAINED_BOUNDARY",
+        "status": "LIMITED"
+      }
+    },
+    {
+      "kind": "index-read-lock-publication",
+      "status": "LIMITED",
+      "artifact": {
+        "file": "12813752754.zip",
+        "sha256": "e31ab4c95008d430dacf59180829b6373bb84717c81ad5b18796f3cec82d6c8a",
+        "githubDigest": "sha256:e31ab4c95008d430dacf59180829b6373bb84717c81ad5b18796f3cec82d6c8a",
+        "artifactId": 12813752754,
+        "name": "m1059-session-focused-macos-latest",
+        "runId": "40683933429",
+        "commit": "4584d593fbe161ca70b5a63af90e71f31b05d361",
+        "createdAt": "2026-10-28T11:57:45Z",
+        "expiresAt": "2027-01-26T11:57:24Z"
+      },
+      "current": {
+        "normalPublication": true,
+        "secureProvider": false,
+        "replacementRace": "UNSUPPORTED_RETAINED_BOUNDARY",
+        "status": "LIMITED"
+      }
+    }
+  ],
+  "notCurrentNativeCoverage": true
+}

@@ -17,24 +17,38 @@ def main():
     suffix = '.exe' if os.name == 'nt' else ''
     java = Path(os.environ['JAVA_HOME']) / 'bin'
     api = ROOT / 'harness-api/target/classes'
-    report = dict(status='INCOMPLETE', sources={p.relative_to(ROOT).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in [Path(__file__).resolve(),source,probe]})
+    workspace = ROOT / 'harness-workspace/target/classes'
+    jna = Path(os.environ.get('JHARNESS_MAVEN_REPO',str(Path.home()/'.m2/repository'))) / 'net/java/dev/jna/jna/5.14.0/jna-5.14.0.jar'
+    if not jna.is_file():raise ValueError('Pinned JNA dependency missing')
+    attack=ROOT/'harness-workspace/src/test/java/io/jharness/workspace/WindowsDirectoryPinAttackProbe.java'
+    dependencies=os.pathsep.join([str(api),str(workspace),str(jna)])
+    report = dict(status='INCOMPLETE', sources={p.relative_to(ROOT).as_posix():hashlib.sha256(p.read_bytes()).hexdigest() for p in [Path(__file__).resolve(),source,probe,attack,ROOT/'harness-workspace/src/main/java/io/jharness/workspace/DirectoryCapability.java',ROOT/'harness-workspace/src/main/java/io/jharness/workspace/WindowsDirectoryPin.java']})
     try:
         classes = base / 'classes'
         classes.mkdir()
         with (base / 'compile.log').open('xb') as out:
-            subprocess.run([str(java / ('javac'+suffix)), '-encoding', 'UTF-8', '-cp', str(api), '-d', str(classes),str(source),str(probe)],stdout=out,stderr=subprocess.STDOUT,timeout=60,check=True)
-        command = [str(java / ('java'+suffix)), '-cp',os.pathsep.join([str(classes),str(api)]),'io.jharness.session.IndexCapabilityProbe']
+            subprocess.run([str(java / ('javac'+suffix)), '-encoding', 'UTF-8', '-cp', dependencies, '-d', str(classes),str(source),str(probe),str(attack)],stdout=out,stderr=subprocess.STDOUT,timeout=60,check=True)
+        command = [str(java / ('java'+suffix)), '-cp',os.pathsep.join([str(classes),dependencies]),'io.jharness.session.IndexCapabilityProbe']
         with (base / 'current.log').open('xb') as out:
             subprocess.run(command+[str(base/'current')],stdout=out,stderr=subprocess.STDOUT,timeout=30,check=True)
+        if os.name=='nt':
+            with (base/'native-reparse.log').open('xb') as out:
+                subprocess.run(command[:-1]+['io.jharness.workspace.WindowsDirectoryPinAttackProbe',str(base/'reparse')],stdout=out,stderr=subprocess.STDOUT,timeout=30,check=True)
+            report['nativeReparseAndCleanup']='PASS'
         report['current'] = json.loads((base/'current/result.json').read_bytes())
-        if report['current']['secureProvider']:
+        if report['current']['secureProvider'] or report['current'].get('windowsPinned') or report['current'].get('posixDescriptor'):
             old = base / 'IndexFiles.java'
             text=source.read_text(encoding='utf-8')
             needle='if (directory instanceof SecureDirectoryStream<Path> secure)'
             assert text.count(needle)==2
-            old.write_text(text.replace(needle,'if (false && directory instanceof SecureDirectoryStream<Path> secure)'),encoding='utf-8')
+            text=text.replace(needle,'if (false && directory instanceof SecureDirectoryStream<Path> secure)')
+            pin='return WindowsDirectoryPin.open(root, identity.fileKey());'
+            assert text.count(pin)==1
+            text=text.replace(pin,'return () -> {};')
+            text=text.replace('private static boolean nativeEnabled() {\n        return true;\n    }','private static boolean nativeEnabled() {return false;}')
+            old.write_text(text,encoding='utf-8')
             with (base/'controlled-compile.log').open('xb') as out:
-                subprocess.run([str(java/('javac'+suffix)),'-encoding','UTF-8','-cp',str(api),'-d',str(classes),str(old),str(probe)],stdout=out,stderr=subprocess.STDOUT,timeout=60,check=True)
+                subprocess.run([str(java/('javac'+suffix)),'-encoding','UTF-8','-cp',dependencies,'-d',str(classes),str(old),str(probe)],stdout=out,stderr=subprocess.STDOUT,timeout=60,check=True)
             for phase in ['publish','read','lock']:
                 log=base/('controlled-old-'+phase+'.log')
                 with log.open('xb') as out:

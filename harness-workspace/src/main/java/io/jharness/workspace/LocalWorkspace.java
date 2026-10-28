@@ -21,6 +21,7 @@ public final class LocalWorkspace implements WorkspaceFiles {
 
     private LocalWorkspace(LocalWorkspace source) throws IOException {
         root = source.root;
+        rootKey = source.rootKey;
         timeout = source.timeout;
         hook = source.hook;
         searchFilter = source.searchFilter;
@@ -36,6 +37,7 @@ public final class LocalWorkspace implements WorkspaceFiles {
     private static final Set<String> PROTECTED = Set.of(".git", ".jharness");
     private static final Set<String> DEFAULT_EXCLUDED = Set.of("target", "node_modules");
     private final Path root;
+    private final Object rootKey;
     private final java.util.concurrent.atomic.AtomicBoolean revoked;
 
     /** Revokes all borrowed views; an operation reaching its next check then stops. */
@@ -51,6 +53,8 @@ public final class LocalWorkspace implements WorkspaceFiles {
     private final CommitHook hook;
     private final WorkspaceSearchFilter searchFilter;
     private final Map<String, String> observed = new ConcurrentHashMap<>();
+    private final ThreadLocal<Deque<DirectoryCapability>> traversal =
+            ThreadLocal.withInitial(ArrayDeque::new);
 
     /** Fault/race injection seam, outside model-visible interfaces. */
     @FunctionalInterface
@@ -76,6 +80,7 @@ public final class LocalWorkspace implements WorkspaceFiles {
         this.revoked = new java.util.concurrent.atomic.AtomicBoolean();
         this.root = root.toRealPath();
         if (!Files.isDirectory(this.root)) throw new IOException("Workspace must be a directory");
+        rootKey = DirectoryCapability.identity(this.root);
         this.timeout = Objects.requireNonNull(timeout);
         this.hook = Objects.requireNonNull(hook);
         this.searchFilter = Objects.requireNonNull(searchFilter);
@@ -231,7 +236,7 @@ public final class LocalWorkspace implements WorkspaceFiles {
     /** Host-only provider seam; model tools continue to receive ExecPath, never this Path. */
     public Path commandDirectory(ExecPath path) throws IOException {
         Path directory = resolve(path);
-        if (!Files.isDirectory(directory, LinkOption.NOFOLLOW_LINKS))
+        if (!directory(directory))
             throw new HarnessException("INVALID_CWD", "Command directory must exist");
         return directory;
     }
@@ -247,7 +252,7 @@ public final class LocalWorkspace implements WorkspaceFiles {
         Path at = root;
         for (Path part : root.relativize(target)) {
             at = at.resolve(part);
-            if (!Files.exists(at, LinkOption.NOFOLLOW_LINKS)) break;
+            if (!exists(at)) break;
             BasicFileAttributes attributes =
                     Files.readAttributes(at, BasicFileAttributes.class, LinkOption.NOFOLLOW_LINKS);
             if (attributes.isSymbolicLink()
@@ -266,16 +271,63 @@ public final class LocalWorkspace implements WorkspaceFiles {
         return root.relativize(path).toString().replace('\\', '/');
     }
 
+    private DirectoryCapability capability(Path directory, boolean write) throws IOException {
+        ensureOpen();
+        return DirectoryCapability.open(root, rootKey, directory, write);
+    }
+
+    private BasicFileAttributes attributes(Path path) throws IOException {
+        for (var held : traversal.get())
+            if (held.directory().equals(path.getParent()))
+                return held.attributes(path.getFileName());
+        try (var cap = capability(path.equals(root) ? root : path.getParent(), false)) {
+            return path.equals(root) ? cap.self() : cap.attributes(path.getFileName());
+        }
+    }
+
+    private boolean exists(Path path) throws IOException {
+        try {
+            attributes(path);
+            return true;
+        } catch (NoSuchFileException missing) {
+            return false;
+        }
+    }
+
+    private boolean regular(Path path) throws IOException {
+        try {
+            return attributes(path).isRegularFile();
+        } catch (NoSuchFileException missing) {
+            return false;
+        }
+    }
+
+    private boolean directory(Path path) throws IOException {
+        try {
+            return attributes(path).isDirectory();
+        } catch (NoSuchFileException missing) {
+            return false;
+        }
+    }
+
+    private InputStream input(Path path) throws IOException {
+        try (var cap = capability(path.getParent(), false)) {
+            return java.nio.channels.Channels.newInputStream(
+                    cap.channel(
+                            path.getFileName(),
+                            Set.of(StandardOpenOption.READ, LinkOption.NOFOLLOW_LINKS)));
+        }
+    }
+
     private String version(Path path, CancellationToken token) throws IOException {
-        if (!Files.exists(path, LinkOption.NOFOLLOW_LINKS)) return MISSING;
+        if (!exists(path)) return MISSING;
         checkSegments(path);
-        if (!Files.isRegularFile(path, LinkOption.NOFOLLOW_LINKS))
-            throw new HarnessException("NOT_TEXT_FILE", "Expected a regular file");
-        long size = Files.size(path);
+        if (!regular(path)) throw new HarnessException("NOT_TEXT_FILE", "Expected a regular file");
+        long size = attributes(path).size();
         if (size > SCAN_LIMIT)
             throw new HarnessException("FILE_LIMIT", "File exceeds bounded scan size");
         MessageDigest digest = sha();
-        try (InputStream input = Files.newInputStream(path, LinkOption.NOFOLLOW_LINKS)) {
+        try (InputStream input = input(path)) {
             byte[] buffer = new byte[8192];
             int count;
             long total = 0;
@@ -309,12 +361,10 @@ public final class LocalWorkspace implements WorkspaceFiles {
 
     private String text(Path path, CancellationToken token, int limit) throws IOException {
         checkSegments(path);
-        if (!Files.exists(path, LinkOption.NOFOLLOW_LINKS))
-            throw new HarnessException("FILE_NOT_FOUND", "File not found");
-        if (!Files.isRegularFile(path, LinkOption.NOFOLLOW_LINKS))
-            throw new HarnessException("NOT_TEXT_FILE", "Expected a regular file");
+        if (!exists(path)) throw new HarnessException("FILE_NOT_FOUND", "File not found");
+        if (!regular(path)) throw new HarnessException("NOT_TEXT_FILE", "Expected a regular file");
         byte[] bytes;
-        try (InputStream input = Files.newInputStream(path, LinkOption.NOFOLLOW_LINKS)) {
+        try (InputStream input = input(path)) {
             bytes = input.readNBytes(limit + 1);
         }
         token.throwIfCancelled();
@@ -368,14 +418,12 @@ public final class LocalWorkspace implements WorkspaceFiles {
         CancellationToken token = bounded(cancellation);
         Path target = resolve(path);
         checkSegments(target);
-        if (!Files.exists(target, LinkOption.NOFOLLOW_LINKS))
-            throw new HarnessException("FILE_NOT_FOUND", "File not found");
-        if (!Files.isRegularFile(target, LinkOption.NOFOLLOW_LINKS))
-            throw new HarnessException("NOT_TEXT_FILE", "Expected regular file");
-        long size = Files.size(target);
+        if (!exists(target)) throw new HarnessException("FILE_NOT_FOUND", "File not found");
+        if (!regular(target)) throw new HarnessException("NOT_TEXT_FILE", "Expected regular file");
+        long size = attributes(target).size();
         if (size > SCAN_LIMIT) throw new HarnessException("FILE_LIMIT", "Read scan bound exceeded");
         byte[] snapshot = new byte[(int) size];
-        try (InputStream input = Files.newInputStream(target, LinkOption.NOFOLLOW_LINKS)) {
+        try (InputStream input = input(target)) {
             int offset = 0;
             while (offset < snapshot.length) {
                 token.throwIfCancelled();
@@ -519,67 +567,68 @@ public final class LocalWorkspace implements WorkspaceFiles {
         boolean committed = false;
         Map<String, Object> metadata = Map.of();
         Throwable primary = null;
-        try {
-            try (FileChannel channel =
-                    FileChannel.open(
-                            temporary,
-                            StandardOpenOption.CREATE_NEW,
-                            StandardOpenOption.WRITE,
-                            LinkOption.NOFOLLOW_LINKS)) {
-                ByteBuffer data = ByteBuffer.wrap(bytes);
-                while (data.hasRemaining()) {
-                    token.throwIfCancelled();
-                    channel.write(data);
+        try (var held = capability(parent, true)) {
+            try {
+                try (FileChannel channel =
+                        held.channel(
+                                temporary.getFileName(),
+                                Set.of(
+                                        StandardOpenOption.CREATE_NEW,
+                                        StandardOpenOption.WRITE,
+                                        LinkOption.NOFOLLOW_LINKS))) {
+                    ByteBuffer data = ByteBuffer.wrap(bytes);
+                    while (data.hasRemaining()) {
+                        token.throwIfCancelled();
+                        channel.write(data);
+                    }
+                    channel.force(true);
                 }
-                channel.force(true);
-            }
-            if (!beforeVersion.equals(MISSING))
-                metadata = AtomicFileMetadata.copyForWorkspace(target, temporary);
-            hook.beforeCommit(target);
-            checkSegments(target);
-            token.throwIfCancelled();
-            if (!expected.equals(version(target, token)))
-                throw new HarnessException("FILE_CONFLICT", "File changed before commit");
-            if (beforeVersion.equals(MISSING)) Files.move(temporary, target);
-            else {
-                try {
-                    Files.move(
-                            temporary,
-                            target,
-                            StandardCopyOption.ATOMIC_MOVE,
-                            StandardCopyOption.REPLACE_EXISTING);
-                } catch (AtomicMoveNotSupportedException ex) {
-                    throw new HarnessException(
-                            "ATOMIC_MOVE_UNSUPPORTED", "Refuse nonatomic replacement");
+                if (!beforeVersion.equals(MISSING))
+                    metadata = held.copyMetadata(target.getFileName(), temporary.getFileName());
+                hook.beforeCommit(target);
+                checkSegments(target);
+                token.throwIfCancelled();
+                if (!expected.equals(version(target, token)))
+                    throw new HarnessException("FILE_CONFLICT", "File changed before commit");
+                if (beforeVersion.equals(MISSING))
+                    held.move(temporary.getFileName(), target.getFileName(), false);
+                else {
+                    try {
+                        held.move(temporary.getFileName(), target.getFileName(), true);
+                    } catch (AtomicMoveNotSupportedException ex) {
+                        throw new HarnessException(
+                                "ATOMIC_MOVE_UNSUPPORTED", "Refuse nonatomic replacement");
+                    }
                 }
-            }
-            committed = true;
-            String afterVersion = version(target, token);
-            observed.put(relative(target), afterVersion);
-            return new FileChange(
-                    new ExecPath(relative(target)),
-                    beforeVersion,
-                    afterVersion,
-                    UnifiedDiff.between(relative(target), before, after),
-                    metadata);
-        } catch (IOException | RuntimeException | Error ex) {
-            primary =
-                    committed
-                            ? new HarnessException(
-                                    "UNKNOWN_SIDE_EFFECT",
-                                    "Commit may have completed; reread/version verification required",
-                                    ex)
-                            : ex;
-            if (primary instanceof IOException io) throw io;
-            if (primary instanceof Error fatal) throw fatal;
-            throw (RuntimeException) primary;
-        } finally {
-            if (!committed) {
-                try {
-                    Files.deleteIfExists(temporary);
-                } catch (IOException | RuntimeException cleanup) {
-                    if (primary != null) primary.addSuppressed(cleanup);
-                    else throw cleanup;
+                committed = true;
+                String afterVersion = version(target, token);
+                observed.put(relative(target), afterVersion);
+                return new FileChange(
+                        new ExecPath(relative(target)),
+                        beforeVersion,
+                        afterVersion,
+                        UnifiedDiff.between(relative(target), before, after),
+                        metadata);
+            } catch (IOException | RuntimeException | Error ex) {
+                primary =
+                        committed
+                                ? new HarnessException(
+                                        "UNKNOWN_SIDE_EFFECT",
+                                        "Commit may have completed; reread/version verification required",
+                                        ex)
+                                : ex;
+                if (primary instanceof IOException io) throw io;
+                if (primary instanceof Error fatal) throw fatal;
+                throw (RuntimeException) primary;
+            } finally {
+                if (!committed) {
+                    try {
+                        if (held.exists(temporary.getFileName()))
+                            held.delete(temporary.getFileName(), false);
+                    } catch (IOException | RuntimeException cleanup) {
+                        if (primary != null) primary.addSuppressed(cleanup);
+                        else throw cleanup;
+                    }
                 }
             }
         }
@@ -591,7 +640,10 @@ public final class LocalWorkspace implements WorkspaceFiles {
             token.throwIfCancelled();
             at = at.resolve(part);
             checkSegments(at);
-            if (!Files.exists(at, LinkOption.NOFOLLOW_LINKS)) Files.createDirectory(at);
+            if (!exists(at))
+                try (var held = capability(at.getParent(), true)) {
+                    held.createDirectory(at.getFileName());
+                }
         }
     }
 
@@ -672,9 +724,7 @@ public final class LocalWorkspace implements WorkspaceFiles {
                                     "path",
                                     relative(candidate),
                                     "type",
-                                    Files.isDirectory(candidate, LinkOption.NOFOLLOW_LINKS)
-                                            ? "directory"
-                                            : "file"));
+                                    directory(candidate) ? "directory" : "file"));
                     return true;
                 });
         return Map.of("entries", entries, "truncated", truncated[0]);
@@ -699,19 +749,25 @@ public final class LocalWorkspace implements WorkspaceFiles {
             throws IOException {
         if (depth <= 0 || stopped.getAsBoolean()) return;
         checkSegments(directory);
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(directory)) {
-            for (Path candidate : stream) {
-                if (stopped.getAsBoolean()) break;
-                token.throwIfCancelled();
-                try {
-                    checkSegments(candidate, false);
-                } catch (HarnessException ex) {
-                    if (ex.code().equals("PATH_DENIED")) continue;
-                    throw ex;
+        try (var held = capability(directory, false);
+                DirectoryStream<Path> stream = held.entries()) {
+            traversal.get().push(held);
+            try {
+                for (Path candidate : stream) {
+                    if (stopped.getAsBoolean()) break;
+                    token.throwIfCancelled();
+                    try {
+                        checkSegments(candidate, false);
+                    } catch (HarnessException ex) {
+                        if (ex.code().equals("PATH_DENIED")) continue;
+                        throw ex;
+                    }
+                    if (visitor.accept(candidate) && directory(candidate))
+                        walk(candidate, depth - 1, token, visitor, stopped);
                 }
-                if (visitor.accept(candidate)
-                        && Files.isDirectory(candidate, LinkOption.NOFOLLOW_LINKS))
-                    walk(candidate, depth - 1, token, visitor, stopped);
+            } finally {
+                traversal.get().pop();
+                if (traversal.get().isEmpty()) traversal.remove();
             }
         }
         checkSegments(directory);
@@ -720,7 +776,7 @@ public final class LocalWorkspace implements WorkspaceFiles {
     private List<String> ignoreRules(CancellationToken token) throws IOException {
         var rules = new ArrayList<String>();
         Path ignore = root.resolve(".gitignore");
-        if (searchFilter.useGitignore() && Files.isRegularFile(ignore, LinkOption.NOFOLLOW_LINKS)) {
+        if (searchFilter.useGitignore() && regular(ignore)) {
             checkSegments(ignore);
             String content = text(ignore, token);
             rules.addAll(WorkspaceSearchFilter.checkedGitignoreRules(content.lines().toList()));
@@ -730,7 +786,7 @@ public final class LocalWorkspace implements WorkspaceFiles {
         return rules;
     }
 
-    private boolean ignored(Path path, List<String> rules) {
+    private boolean ignored(Path path, List<String> rules) throws IOException {
         for (Path part : root.relativize(path))
             if (PROTECTED.contains(part.toString().toLowerCase(Locale.ROOT))) return true;
         String relative = relative(path);
@@ -739,10 +795,7 @@ public final class LocalWorkspace implements WorkspaceFiles {
         for (int i = 0; i < parts.length; i++) {
             if (i > 0) prefix.append('/');
             prefix.append(parts[i]);
-            boolean directory =
-                    i < parts.length - 1
-                            || !rules.isEmpty()
-                                    && Files.isDirectory(path, LinkOption.NOFOLLOW_LINKS);
+            boolean directory = i < parts.length - 1 || !rules.isEmpty() && directory(path);
             boolean ignored =
                     searchFilter.useDefaultExcludes()
                             && DEFAULT_EXCLUDED.contains(parts[i].toLowerCase(Locale.ROOT));
@@ -812,8 +865,7 @@ public final class LocalWorkspace implements WorkspaceFiles {
                 token,
                 candidate -> {
                     if (ignored(candidate, rules)) return false;
-                    if (Files.isRegularFile(candidate, LinkOption.NOFOLLOW_LINKS)
-                            && glob(pattern, relative(candidate))) {
+                    if (regular(candidate) && glob(pattern, relative(candidate))) {
                         if (found.size() < limit) found.add(relative(candidate));
                         else truncated[0] = true;
                     }
@@ -848,18 +900,15 @@ public final class LocalWorkspace implements WorkspaceFiles {
             Path target = resolve(path);
             if (ignored(target, rules)) continue;
             int priorCount = matches.size();
-            if (!Files.isRegularFile(target, LinkOption.NOFOLLOW_LINKS)) continue;
-            if (Files.size(target) > SCAN_LIMIT) {
+            if (!regular(target)) continue;
+            if (attributes(target).size() > SCAN_LIMIT) {
                 truncated = true;
                 continue;
             }
             CharsetDecoder decoder =
                     StandardCharsets.UTF_8.newDecoder().onMalformedInput(CodingErrorAction.REPORT);
             try (Reader reader =
-                    new BufferedReader(
-                            new InputStreamReader(
-                                    Files.newInputStream(target, LinkOption.NOFOLLOW_LINKS),
-                                    decoder))) {
+                    new BufferedReader(new InputStreamReader(input(target), decoder))) {
                 int lineNumber = 1, scanned = 0, character;
                 boolean clipped = false, binary = false;
                 StringBuilder line = new StringBuilder();

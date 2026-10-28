@@ -1,6 +1,6 @@
 # J-Harness
 
-本机单操作者的Java Agent Runtime与Web工作台。当前运行时代码`dae011a`已完成补缺后的三平台完整验收；[CI与原包审计](docs/testing/M10-gap-remote-ci-2026-10-27.json)覆盖每平台705 Java、42客户端、813浏览器、66 SDK和7原生凭据项。原M10.5.9验收记录保留。API/Java SDK1.14，独立stdio1.0。
+本机单操作者的Java Agent Runtime与Web工作台。最近完整三平台已验版本为`1f7d521`，每平台718 Java、42客户端、813浏览器、66 SDK和7原生凭据项，见[原包审计](docs/testing/M10-gap-full-ci-2026-10-28.json)。后续补缺源码与专项证据各自绑定版本，当前进度及限制见[活动状态](docs/development/current-state.md)。API/Java SDK1.14，独立stdio1.0。
 
 [当前实现与验收索引](docs/development/current-state.md) · [M1至今缺口清单](docs/testing/M1-M10.5-gap-audit-2026-10-26.md) · [后续计划](docs/requirements/JHarness-next-plan-v1.0.md)
 
@@ -240,7 +240,7 @@ M10.5.6已完成本地验收：对话/安全Markdown与代码复制、工具/变
 
 2026-10-18 M10.5.8已完成本地验收：授权跨会话/工作区正文检索、词语/短语/相关性/归档/稳定分页及来源定位、有界可替换派生索引、独立stdio JSON-RPC1.0与TS/Python客户端和示例已交付。超时/断线先对账，问题回答不批准工具，UNKNOWN不重放。最终Java410、客户端31、Chrome257（检索28+既有229）、SDK58、文档示例2、启动器8、Windows原生7通过；305份Java/POM与最终同一JAR/UI见M10.5.8-results.json及validation.md。API/SDK1.14、JSONL1/Web目录4；原生worker未改，旧三平台凭据证据独立保留。无付费请求、推送或参考项目修改；保留原审查草稿。下一入口M10.5.9，整阶段及M11/M12未完成。
 
-M10.5.9当前本地验证、三平台CI准备和保留门禁见[验收状态](docs/testing/M10.5.9-validation.md)。本轮专用验证分支推送/CI已获授权并执行11轮完整运行；六轮Windows专项完成剩余浏览器定位，第十一轮Linux暴露MCP清理根Process回收缺口。修复后的三平台进程专项各31项、本地649项全量已通过；正在复验Windows Chromium回执采集单组，随后完整同提交验收，完整门禁闭合前不进入M11。R4～R6另按OCR范围继续，不作为本次整批前置。
+M10.5.9完整验收、后续R0～R6补强和未结项统一见[活动状态](docs/development/current-state.md)及[补缺接续](docs/development/gap-followups-2026-10-27.md)。历史阶段记录保留其运行身份，不用旧测试数或CI覆盖后续代码；专用验证分支不合并main、不发布Release。
 
 2026-10-19 M10.5.9实施中、本机部分验收和CI准备完成：Java410/客户端33、Chrome155与WebKit26.5各271项共542、SDK58、示例2、启动器8及Windows原生7通过，候选真实安装/审批/取消/显式恢复5项通过；Maven18依赖OSV、前端6运行依赖SBOM/npm审计0发现、SDK零外部依赖源码清单及秘密模式门禁已核对。跨引擎夹具保持断言并修正异步等待，受控断网/停机的只读诊断单独留痕。Firefox原包14001，隔离清单副本仅版本探针成功，实际无头启动仍失败；不计通过。证据M10.5.9-results.json/validation.md为LOCAL_PARTIAL_CI_PENDING、m11Eligible=false；三平台/三引擎严格CI工作流已准备但未授权推送/未运行，不能收口或进入M11。下一步取得对应推送/CI授权后在当前版本真实Windows/Linux/macOS运行并解决失败。保留原审查草稿，参考目录未改，无付费模型请求。
 

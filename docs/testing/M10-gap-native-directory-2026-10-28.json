@@ -1,0 +1,80 @@
+{
+  "date": "2026-10-28",
+  "status": "LOCAL_FOCUSED_PASS_REMOTE_PENDING",
+  "baseCommit": "4584d593fbe161ca70b5a63af90e71f31b05d361",
+  "scope": [
+    "private-index-publication-read-lock",
+    "workspace-read-write-list-search-parent-creation-metadata-cleanup",
+    "artifact-put-read-fork-reservation-stage-publish-compensation"
+  ],
+  "local": {
+    "probePath": ".build-cache/index-capability/36ee3f7d128945e0a09b5d29284d45c1/evidence.json",
+    "probeSha256": "23b0309319121a5798d58b01f206a9a99ac8c5a1c9454049079d9a5c8f43849e",
+    "probe": {
+      "status": "PASS",
+      "sources": {
+        "docs/testing/tools/run-index-capability.py": "28b6b13a23a997940c118cd199078ae845513aef8fd7b0fd6cc038f46ef392b5",
+        "harness-session/src/main/java/io/jharness/session/IndexFiles.java": "a9e3efbb4144323689e6b0cf9881294a5ee6468630c44ee241ba253e26aeac18",
+        "harness-session/src/test/java/io/jharness/session/IndexCapabilityProbe.java": "06061d89f5bed38a195dc24450586dd79082239c926fcdda2712b839dfffe08b",
+        "harness-workspace/src/test/java/io/jharness/workspace/WindowsDirectoryPinAttackProbe.java": "ed1e4a34ead1d35d46908c4c366a0c49731a61e92f3691366ef23bbb61f4023f",
+        "harness-workspace/src/main/java/io/jharness/workspace/DirectoryCapability.java": "2859fb92ba9aae63871d859988f933d4a491eae2e2088cb175a01702a93441e1",
+        "harness-workspace/src/main/java/io/jharness/workspace/WindowsDirectoryPin.java": "320aff0847ef8656bcc849d99675e72f1d393ed12b2f7d8a8d6ba725b08c1a62"
+      },
+      "nativeReparseAndCleanup": "PASS",
+      "current": {
+        "normalPublication": true,
+        "secureProvider": false,
+        "windowsPinned": true,
+        "publishRace": "PASS_REPLACEMENT_BLOCKED",
+        "readRace": "PASS_REPLACEMENT_BLOCKED",
+        "lockRace": "PASS_REPLACEMENT_BLOCKED",
+        "replacementRace": "PASS_REPLACEMENT_BLOCKED",
+        "posixDescriptor": false,
+        "status": "PASS"
+      },
+      "controlledOldRejected": true,
+      "controlledOldPhasesRejected": [
+        "publish",
+        "read",
+        "lock"
+      ],
+      "logs": {
+        "compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "controlled-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "controlled-old-lock.log": "cf6d1cda7a5298c63125656de82efb8edf33c9e8725457637fa93e37461c0ff8",
+        "controlled-old-publish.log": "f6e0d8c7a06262e8c72a9cc8fdf145b58bdd42895efc4e26f0928e916d8499b8",
+        "controlled-old-read.log": "71804ba26d3292d6ed0a4be877cd531bbda40cbcd985d0285549dc32d76f1f75",
+        "current.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "native-reparse.log": "4dc35b1f1653fa623684c9759b997be35321f62629a1f5f93b2c18083d4eab08"
+      }
+    },
+    "regressionLogSha256": "098c2714b84e44a0f038674795c72b356071971da9abacdb7ba8db3bd1cc6230",
+    "regressionSummary": [
+      "Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.219 s -- in io.jharness.workspace.DirectoryCapabilityTest",
+      "Tests run: 13, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.430 s -- in io.jharness.workspace.LocalWorkspaceTest",
+      "Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.231 s -- in io.jharness.workspace.M8SearchFilterTest",
+      "Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.087 s -- in io.jharness.workspace.WindowsDirectoryPinTest",
+      "Tests run: 27, Failures: 0, Errors: 0, Skipped: 0",
+      "Tests run: 11, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.856 s -- in io.jharness.session.M5SessionTest",
+      "Tests run: 11, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.107 s -- in io.jharness.session.R2PersistenceTest",
+      "Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.596 s -- in io.jharness.session.R5SessionBoundsTest",
+      "Tests run: 27, Failures: 0, Errors: 0, Skipped: 0"
+    ]
+  },
+  "fullVerification": {
+    "status": "FAILED_THEN_FIXED_TARGETED",
+    "receipt": ".build-cache/gap-native-20261028/failed-verify2/receipt.json",
+    "reason": "Artifact missing-file business error changed to NoSuchFileException; restored ARTIFACT_NOT_FOUND;13 content tests and10 capability tests passed afterward.",
+    "rerunPending": true
+  },
+  "nativeDependencies": {
+    "jna": "5.14.0",
+    "darwinAbiSource": "https://github.com/apple-oss-distributions/xnu/blob/main/bsd/sys/cdefs.h"
+  },
+  "boundaries": [
+    "Remote Linux/macOS native branch not yet accepted.",
+    "No malicious kernel, arbitrary mounts, or OS-level compare-and-swap claim.",
+    "Command/Git subprocess host cwd remains trusted-host execution boundary.",
+    "No new paid provider call; physical OS acceptance skipped."
+  ]
+}

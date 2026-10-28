@@ -1,24 +1,16 @@
 # 当前实现、验收与未完成项
 
-更新：2026-10-28。本文是开发与使用状态的统一入口；阶段原始验收JSON和取证材料各自保留版本。
+更新：2026-10-28。活动状态以本节为准，各原始JSON和后文日期记录保留其历史版本。
 
+最近一次完整三平台已验收版本为`1f7d521`，运行[40671352949](https://github.com/nixaveq141-ai/J-Harness/actions/runs/40671352949)。每平台718 Java/119套件、42客户端、813浏览器、三引擎R4各51、SDK66、原生7、示例2及候选安装门禁通过，三原ZIP和611输入已严格复核。见[完整CI](../testing/M10-gap-full-ci-2026-10-28.json)。历史验收不覆盖之后的新代码。
 
-2026-10-28真实SSE补齐：Chat Completions、Anthropic各两次HTTP200，实际CLI只读工具及终态核对通过；累计原账本10次、不退款预留1.474560元（授权2元），Responses SSE与隔离代码评测仍待。新增解码后凭据反射检查及离线反例，SSE9项/原账本9项通过；补强后未再付费复测。见[真实SSE结果](../testing/M10-gap-real-sse-2026-10-28.md)。
-最新远端为[40516513783](https://github.com/nixaveq141-ai/J-Harness/actions/runs/40516513783)@8b1cafe：Linux原ZIP、718项Java、813项浏览器、三引擎各51项R4、SDK/原生/候选安装及610构建输入已严格复核通过。Windows在两个Web所有权夹具的准备阶段失败；macOS的WebKit开发流程前13项通过、最终浏览器异常断言失败。原记录不足以确认根因，已保留三原ZIP，整体验收仍拒绝；见[本轮结果](../testing/M10-gap-ci-718-2026-10-28.json)。正在补有界准备诊断并先做Windows生命周期、macOS/WebKit开发流程专项，不将单侧成功拼成三平台验收。
+`4584d59`后续本地完整719/120、614输入回执及R4真实后端17×3响应窗口通过。历史M4真实生成代码在[隔离专项40683923370](https://github.com/nixaveq141-ai/J-Harness/actions/runs/40683923370)完成Docker编译和独立功能核验，错误实现被拒绝，两自有容器清理与只读输入均已核对，无新模型调用。见[专项原包审计](../testing/M10-gap-isolation-and-index-2026-10-28.json)。同一旧版本索引读取/锁专项Linux通过，Windows/macOS仍明确LIMITED。
 
-本轮新增精确证据：R123R-143补丁后产物故障、150共享停止宽限、172双worker同时清理已补齐；完整本地717项/119套件通过，见[生命周期结果](../testing/M10-gap-r123-lifecycle-2026-10-27.json)。实际JSONL落盘探针在128MiB堆下完成两个会话各5000条、10000次真实force、重开投影及4读者16次全读，来源/JAR及原始事实独立核对，见[落盘样本](../testing/M10-gap-durable-cost-2026-10-27.json)；系统性混合负载和跨平台SLA仍待。R4真实受理落盘后HTTP RST丢响应及重启防重放新用例已单项通过，最终718项/119套件完整verify通过，原717身份保留，见[真实断连结果](../testing/M10-gap-r4-real-response-2026-10-27.json)。最新远端40506475359仅绑定78885e5：Windows/macOS成功，Linux依赖下载耗尽60分钟后取消（原包已取得），该轮三平台未验收。
+本轮目录能力已接索引、工作区读写/列举/搜索/父目录创建，以及产物读写/分叉/补偿。Windows祖先句柄、全128位文件身份、原地联接攻击及相关回归通过；POSIX逐级openat分支已实现，完整本地验证与远端三平台专项仍待。1000条目两秒目标保留，不改用更宽时限掩盖开销。最新进展见[接续](gap-followups-2026-10-27.md)。
 
-剩余缺口继续实施：[接续计划](gap-followups-2026-10-27.md)。旧任务索引、请求显式关联、压缩来源身份及内容/产物快照已实现，本地完整verify715项/119套件、128MiB堆万事件与64并发读取测量通过。见[本批结果](../testing/M10-gap-provenance-snapshot-2026-10-27.json)。R4另补17×3响应窗口与生命周期/存储修复，最终客户端42、Chrome/WebKit各51及同输入Java715/119通过；正式平台入口已要求新R4精确身份、来源/截图及命令回执。见[本批结果](../testing/M10-gap-r4-lifetimes-2026-10-27.json)；Docker七夹具在e12994e/40479240473真实Linux容器全部通过并核对原包/604输入/七类字节，见[Docker结果](../testing/M10-gap-docker-2026-10-27.json)。新远端验收仍待，以下dae011a为历史已验收基线。实体操作系统机器验收按用户要求跳过；目录竞态、R4剩余服务端精确窗口及真实模型隔离评测等继续。证据保留政策及历史原ZIP导出已补，异地副本尚未建立。
+三协议真实非流式/SSE只读往返已核对。原DeepSeek账本12次、不退款预留1.769472元人民币，2元授权及12次上限不变，禁止新付费调用。历史代码隔离评测不代表新任务或模型普遍能力认证。
 
-2026-10-27接续：CLI收尾/Web导出快照复用与展示锁外读取已完成本地705项/119套件，原702身份保留、新增3项并发回归。用户要求的macOS/Linux/Windows完整CI [40467690361](https://github.com/nixaveq141-ai/J-Harness/actions/runs/40467690361)三侧全部成功，三份原ZIP及119套件精确XML、命令回执/JAR/UI/候选包已严格独立审计；当时599份构建输入一致（不覆盖后续补缺源码）。见[远端结果](../testing/M10-gap-remote-ci-2026-10-27.json)、[补缺进展](gap-remediation-2026-10-26.md)和[本地结果](../testing/M10-gap-snapshots-2026-10-27-results.json)。
-
-补缺进展见[实施记录](gap-remediation-2026-10-26.md)。GAP-03三组分页断言与GAP-08逐行规则诊断已补齐；GAP-06/07已有三项后续补强，其余范围仍待。DeepSeek三协议只读真实闭环6次成功，人民币2元授权下累计预留上界0.884736元；生成代码执行继续冻结，本轮CI新增付费模型调用为零。77e8855的上一轮验收与原始证据保留。
-
-已验收运行时代码：`dae011a53f052cb9299467cf672c0acdd0730316`，完整CI [40467690361](https://github.com/nixaveq141-ai/J-Harness/actions/runs/40467690361)，原包已独立审计。M1～M10.5选定范围已交付，M10.5.9完成、M11准入通过但未实施；PRD全部子项、R4/R5专项意见没有因此全部关闭。API/Java SDK1.14，独立stdio1.0，JSONL/schema1，Web目录4。
-
-每平台：Java705/119套件、客户端42、三浏览器33组813、SDK66、原生凭据7、示例2及适用发布/安装门禁通过。源码与UI摘要跨平台一致；Windows JAR为e5186ae8、Linux/macOS为543e5db6，各自绑定其回执和候选包。仓库公开，默认main未合并验证分支，Release未发布。开源可见性与发布版本是独立状态。
-
-扫描结果见[全阶段缺口审计](../testing/M1-M10.5-gap-audit-2026-10-26.md)。R4主要缺逐项故障窗口证据；R5原台账的2条有限实施、11条后续按日期保留，后续实际补齐项见实施记录。七组真实Docker专项已通过；长会话性能已补内存与实际落盘样本，系统性混合负载和真实生成代码评测仍待。独立WSL等实体额外平台按用户要求跳过，托管Windows runner不替代Windows10/11实机专项。历史macOS模型按钮一次超时未定位，后续定点及本次完整验收通过。
+M1～M10.5选定范围已交付，M10.5.9历史验收成立，M11未实施；本轮新增改动尚需独立证据。实体Windows10、独立WSL、额外CPU及实体Mac验收按用户要求跳过。历史macOS偶发原因保留未知，原生二进制精确构建来源保持限制；异地备份尚无用户指定目标。API/Java SDK1.14、独立stdio1.0、JSONL/schema1、Web目录4。仓库公开，验证分支不合并main、不发布Release。
 
 ## M1至今逐阶段索引
 
@@ -56,7 +48,7 @@
 | FR-04 | Agent Loop | 多轮、预算、取消、工具闭环、证据完成；不是长期Goal。 | [DefaultAgentLoop.java](../../harness-agent/src/main/java/io/jharness/agent/DefaultAgentLoop.java) |
 | FR-05 | 模型协议 | Chat Completions、Responses、Anthropic文本/工具与SSE；真实厂商当前版本认证另列。 | [ProtocolCodec.java](../../harness-llm/src/main/java/io/jharness/llm/ProtocolCodec.java) |
 | FR-06 | 工具管线 | 注册/Schema子集、策略、审批、持久意图和来源；不是任意Schema方言。 | [DefaultToolPipeline.java](../../harness-tools/src/main/java/io/jharness/tools/DefaultToolPipeline.java) |
-| FR-07 | 文件与过滤 | 受保护写入/补丁/检索；父目录替换竞态、完整wildmatch与删除/重命名补丁未承诺。 | [LocalWorkspace.java](../../harness-workspace/src/main/java/io/jharness/workspace/LocalWorkspace.java) |
+| FR-07 | 文件与过滤 | 受保护写入/补丁/检索；目录能力新分支正在验证，完整wildmatch与删除/重命名补丁未承诺。 | [LocalWorkspace.java](../../harness-workspace/src/main/java/io/jharness/workspace/LocalWorkspace.java) |
 | FR-08 | 上下文与产物 | 有界压缩/产物/回读；图片未实现，来源映射与安全快照后续见缺口表。 | [ContextCompactionPlugin.java](../../harness-agent/src/main/java/io/jharness/agent/ContextCompactionPlugin.java) |
 | FR-09 | 进程 | 受控命令/取消/双流；ProcessHandle采样不是Job Object/完整归属保证。 | [LocalProcessRunner.java](../../harness-process/src/main/java/io/jharness/process/LocalProcessRunner.java) |
 | FR-10 | 策略与审批 | ALLOW/ASK/DENY、精确审批、只读预览；任意Shell不能静态预览。 | [DefaultPolicyEngine.java](../../harness-policy/src/main/java/io/jharness/policy/DefaultPolicyEngine.java) |
