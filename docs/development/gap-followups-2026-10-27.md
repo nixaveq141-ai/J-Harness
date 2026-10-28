@@ -112,3 +112,5 @@ R123R-172使用两个独立工作区的真实Web/SDK任务，模型主体和SDK�
 原日志记录实际镜像ubuntu26.04/20261012.163；12:49开始依赖安装，先下载18.4MB凭据依赖，之后129MB浏览器系统依赖到13:47仍未完。可确认软件包下载耗尽时间，底层镜像源/网络原因未证实，不称浏览器测试失败。后续Linux基线固定ubuntu24.04（仍为标准runner），保留旧ubuntu-latest制品键兼容审计；job显示真实runner标签，凭据和浏览器安装拆为各15分钟，apt连接超时30秒/重试一次，不再以整项60分钟作为唯一安装上界。三引擎与全部断言保留，安全YAML解析和矩阵/时限核对通过；新远端尚未验证，不宣称限速原因已解决。
 
 依据：[Playwright支持的系统](https://playwright.dev/docs/intro#system-requirements)同时包含Ubuntu24.04/26.04；[GitHub镜像与latest迁移说明](https://github.com/actions/runner-images#latest-migration-process)允许显式固定OS基线。固定版本用于减少环境漂移，不据此声称26.04不兼容。
+
+2026-10-28专项收尾：1f7d521的Windows生命周期40670936898共35项、macOS/WebKit开发流程40670970878共14项均通过。Windows原ZIP/611输入/精确XML/日志回执与Mac原ZIP/14身份/截图/轮次副本均复核，Mac旧异常原因仍未定。见[专项结果](../testing/M10-gap-focused-2026-10-28.json)。同版本完整三平台已申请一次运行，尚未验收。

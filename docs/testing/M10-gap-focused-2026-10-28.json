@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-28",
+  "status": "FOCUSED_PASS_FULL_PENDING",
+  "commit": "1f7d5215d9cb88bee6fe9975238a403eef640122",
+  "windows": {
+    "status": "PASS",
+    "runId": "40670936898",
+    "commit": "1f7d5215d9cb88bee6fe9975238a403eef640122",
+    "artifactId": 12808412137,
+    "archiveSha256": "84c7a63acb94a76a05dfb635f0a9c92daa2d0e41654c1d745af9f351d0ad54ef",
+    "sourceCount": 611,
+    "suites": [
+      {
+        "suite": "io.jharness.testkit.R1CoreLifecycleTest",
+        "cases": 24,
+        "xmlSha256": "d44a33d0e438e2c87c209c0f17915650a8f0e799cf6a8ac745198c12f1ffd27c"
+      },
+      {
+        "suite": "io.jharness.testkit.R1WebOwnershipTest",
+        "cases": 11,
+        "xmlSha256": "d726d3bc539655a84edc0433d38d381c996adf8ea4347efa3026a8566405a29b"
+      }
+    ],
+    "receiptSha256": "aaf7287bca644a98569f30f36154b95e417d61cfe907d6a83c2ac403d9f8e8d6"
+  },
+  "macos": {
+    "status": "PASS",
+    "runId": "40670970878",
+    "artifactId": 12807844365,
+    "archiveSha256": "f0aacb21555bc78f0243ee6d207688b8bf354a973ef520fdd1286d7371df0d00",
+    "checks": 14,
+    "recordSha256": "e234a1c5eedcc5f51d0d6efb4db6e0a497c910e6a460d63e812e33b2457fc302",
+    "jarSha256": "bcec365fd6ed53aa2531e6c07104a6461301129b0eb27c6c16afd9fadcc0ce6a",
+    "boundary": "Original browser record and screenshots checked; focused workflow does not supply full platform receipt/source attestation; historical pageerror root cause remains unknown"
+  },
+  "paidRequests": 0,
+  "physicalMachineAcceptance": "SKIPPED_BY_USER",
+  "fullAcceptance": "PENDING"
+}
