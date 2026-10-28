@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "date": "2026-10-28",
-  "status": "IMPLEMENTED_REMOTE_PENDING",
+  "status": "SUPPORTED_PROVIDER_PUBLICATION_VERIFIED",
   "scope": "Index cache publication only",
   "local": {
     "status": "LIMITED",
@@ -26,7 +26,108 @@
   "errors": 0,
   "skipped": 0,
   "logSha256": "b190134beebe3695900188ac01dfedb2e6c7c39c670d560be38d3ece51eb2f6e",
-  "remote": "NOT_DISPATCHED_YET",
+  "remote": {
+    "runId": "40672988045",
+    "commit": "250d8fef766d1d5fdfe57407eaa2b6a2d6ff7184",
+    "originals": [
+      {
+        "artifact": {
+          "file": "12809741248.zip",
+          "sha256": "2e31f15958b832b0a10c3e13ee47a0d9aa56f478874a0ddfc9b416abe4d5e6bb",
+          "githubDigest": "sha256:2e31f15958b832b0a10c3e13ee47a0d9aa56f478874a0ddfc9b416abe4d5e6bb",
+          "artifactId": 12809741248,
+          "name": "m1059-session-focused-ubuntu-latest",
+          "runId": "40672988045",
+          "commit": "250d8fef766d1d5fdfe57407eaa2b6a2d6ff7184",
+          "createdAt": "2026-10-28T10:33:24Z",
+          "expiresAt": "2027-01-26T10:32:55Z"
+        },
+        "report": {
+          "status": "PASS",
+          "sources": {
+            "docs/testing/tools/run-index-capability.py": "e84f3bdd18ab5350ad2d908bee41f507378173a09bd33a4f9f913d0b1edeed07",
+            "harness-session/src/main/java/io/jharness/session/IndexFiles.java": "78adc02667c8be4b57209b755ca5d096cc7d44a95769ddd9161ae797d3d3e0b4",
+            "harness-session/src/test/java/io/jharness/session/IndexCapabilityProbe.java": "2c4401d30b292977482b2967ca66d5e3d550dd8d8d8f4eccefc3b0a0a30d9bc2"
+          },
+          "current": {
+            "normalPublication": true,
+            "secureProvider": true,
+            "replacementRace": "PASS_ORIGINAL_DIRECTORY_ONLY",
+            "status": "PASS"
+          },
+          "controlledOldRejected": true,
+          "logs": {
+            "compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "controlled-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "current.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "controlled-old.log": "a086c403ca9eb943819eb599b2d60ccb972fb62f44d78229d347a6cf7e845614"
+          }
+        }
+      },
+      {
+        "artifact": {
+          "file": "12809481252.zip",
+          "sha256": "1df2343151321a5bd76880a87fe3da3404f7b4cd06f098d4ec69831bd21bd27d",
+          "githubDigest": "sha256:1df2343151321a5bd76880a87fe3da3404f7b4cd06f098d4ec69831bd21bd27d",
+          "artifactId": 12809481252,
+          "name": "m1059-session-focused-macos-latest",
+          "runId": "40672988045",
+          "commit": "250d8fef766d1d5fdfe57407eaa2b6a2d6ff7184",
+          "createdAt": "2026-10-28T10:33:14Z",
+          "expiresAt": "2027-01-26T10:32:55Z"
+        },
+        "report": {
+          "status": "LIMITED",
+          "sources": {
+            "docs/testing/tools/run-index-capability.py": "e84f3bdd18ab5350ad2d908bee41f507378173a09bd33a4f9f913d0b1edeed07",
+            "harness-session/src/main/java/io/jharness/session/IndexFiles.java": "78adc02667c8be4b57209b755ca5d096cc7d44a95769ddd9161ae797d3d3e0b4",
+            "harness-session/src/test/java/io/jharness/session/IndexCapabilityProbe.java": "2c4401d30b292977482b2967ca66d5e3d550dd8d8d8f4eccefc3b0a0a30d9bc2"
+          },
+          "current": {
+            "normalPublication": true,
+            "secureProvider": false,
+            "replacementRace": "UNSUPPORTED_RETAINED_BOUNDARY",
+            "status": "LIMITED"
+          },
+          "logs": {
+            "current.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        }
+      },
+      {
+        "artifact": {
+          "file": "12808907659.zip",
+          "sha256": "9b6b26ca118c22cacfc4ddb6c1b3516bbf7489cf956cd346495a471c8a0d2c23",
+          "githubDigest": "sha256:9b6b26ca118c22cacfc4ddb6c1b3516bbf7489cf956cd346495a471c8a0d2c23",
+          "artifactId": 12808907659,
+          "name": "m1059-session-focused-windows-latest",
+          "runId": "40672988045",
+          "commit": "250d8fef766d1d5fdfe57407eaa2b6a2d6ff7184",
+          "createdAt": "2026-10-28T10:33:34Z",
+          "expiresAt": "2027-01-26T10:32:55Z"
+        },
+        "report": {
+          "status": "LIMITED",
+          "sources": {
+            "docs/testing/tools/run-index-capability.py": "e84f3bdd18ab5350ad2d908bee41f507378173a09bd33a4f9f913d0b1edeed07",
+            "harness-session/src/main/java/io/jharness/session/IndexFiles.java": "78adc02667c8be4b57209b755ca5d096cc7d44a95769ddd9161ae797d3d3e0b4",
+            "harness-session/src/test/java/io/jharness/session/IndexCapabilityProbe.java": "2c4401d30b292977482b2967ca66d5e3d550dd8d8d8f4eccefc3b0a0a30d9bc2"
+          },
+          "current": {
+            "normalPublication": true,
+            "secureProvider": false,
+            "replacementRace": "UNSUPPORTED_RETAINED_BOUNDARY",
+            "status": "LIMITED"
+          },
+          "logs": {
+            "compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+            "current.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          }
+        }
+      }
+    ]
+  },
   "reference": "https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/nio/file/SecureDirectoryStream.html",
   "boundaries": [
     "Windows provider remains boundary-checked compatibility path; no race-resistance claim",

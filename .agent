@@ -1,8 +1,10 @@
 # J-Harness 项目接续说明
 
-最后更新：2026-10-27（Asia/Shanghai）。根目录 AGENTS.md 引用本文件。开始实现前阅读，并以当前源码、Git 与验收记录核实日期快照。
+最后更新：2026-10-28（Asia/Shanghai）。根目录 AGENTS.md 引用本文件。开始实现前阅读，并以当前源码、Git 与验收记录核实日期快照。
 
 ## 当前接续状态
+
+- 2026-10-28目录能力专项40672988045@250d8fe：Linux真实SDS发布竞态通过，禁用能力后的受控旧绝对路径对照在外部哨兵被改写处失败；Mac/Windows无SDS均明确LIMITED，三原ZIP/源码/日志/各5既有回归独立复核过。仅支持提供者索引发布子项，Windows/Mac原生能力、读锁、工作区产物仍待。旧1f7d521完整CI40671352949 Mac/Linux成功、Windows矩阵待，不混作新版本验收。
 
 - 2026-10-28目录竞态首批实现：IndexFiles在SDS提供者通过已开目录相对创建/force/move/清理并核对fileKey，新增根名替换及旧绝对路径受控对照探针。Windows本地session55项过、探针LIMITED，真实SDS分支待Mac/Linux专项；Windows能力/缓存读锁/工作区产物仍待，不关闭GAP-01。结果M10-gap-index-capability-2026-10-28.json，实体机器跳过、无付费。
 
