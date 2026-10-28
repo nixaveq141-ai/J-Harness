@@ -1,6 +1,9 @@
 name: Gap lifecycle Windows focused validation
 on:
   workflow_dispatch:
+  push:
+    branches: [codex/m1059-full-validation]
+    paths: [.github/workflows/gap-lifecycle-focused.yml]
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
