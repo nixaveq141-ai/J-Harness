@@ -1,0 +1,89 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-28",
+  "status": "PASS",
+  "scope": "Paced Windows11 single-writer/four-reader durable journal sample",
+  "evidencePath": ".build-cache/mixed-session-cost/mixed-final-20261028/evidence.json",
+  "evidenceSha256": "d1ff5327543895841a813ca5a16ccfe3c0578a15264f0efde2607d925f2a942b",
+  "evidence": {
+    "status": "PASS",
+    "runId": "mixed-final-20261028",
+    "paidRequests": 0,
+    "sourcesBefore": {
+      "docs/testing/tools/run-mixed-session-cost.py": "a42fe8e33b9f0b2d59e3a7439c9d928a36631ab935bc66ed551490b15e957811",
+      "docs/testing/tools/MixedSessionCost.java": "2a064f58130286aeb83a193e2581aa7807e8e681cfd9a82081047a539228670e",
+      "harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar": "269e4b698257abc52dbe0839a47993d31a0be2a313b6243119f1d6a7e8b1848b"
+    },
+    "commands": [
+      [
+        "C:\\Program Files\\Java\\jdk-21.0.12.1\\bin\\javac.exe",
+        "-encoding",
+        "UTF-8",
+        "-cp",
+        "D:\\Documents\\my projects\\J-Harness\\harness-cli\\target\\harness-cli-0.1.0-SNAPSHOT.jar",
+        "-d",
+        "D:\\Documents\\my projects\\J-Harness\\.build-cache\\mixed-session-cost\\mixed-final-20261028\\classes",
+        "D:\\Documents\\my projects\\J-Harness\\docs\\testing\\tools\\MixedSessionCost.java"
+      ],
+      [
+        "C:\\Program Files\\Java\\jdk-21.0.12.1\\bin\\java.exe",
+        "-Xmx128m",
+        "-cp",
+        "D:\\Documents\\my projects\\J-Harness\\.build-cache\\mixed-session-cost\\mixed-final-20261028\\classes;D:\\Documents\\my projects\\J-Harness\\harness-cli\\target\\harness-cli-0.1.0-SNAPSHOT.jar",
+        "MixedSessionCost",
+        "D:\\Documents\\my projects\\J-Harness\\.build-cache\\mixed-session-cost\\mixed-final-20261028\\probe"
+      ]
+    ],
+    "probe": {
+      "status": "PASS",
+      "elapsedNanosIncludingBarriers": 1377649600,
+      "appendP95Nanos": 493000,
+      "readProjectionP95Nanos": 54600300,
+      "heapPools": [
+        {
+          "name": "G1 Eden Space",
+          "peakUsedBytes": 77594624
+        },
+        {
+          "name": "G1 Old Gen",
+          "peakUsedBytes": 12152976
+        },
+        {
+          "name": "G1 Survivor Space",
+          "peakUsedBytes": 3824504
+        }
+      ],
+      "sumHeapPoolPeaksUpperBoundBytes": 93572104,
+      "heapLimitBytes": 134217728,
+      "os": "Windows 11",
+      "arch": "amd64",
+      "events": 2048,
+      "readers": 4,
+      "rounds": 16,
+      "verifiedPrefixReads": 64,
+      "partialPrefixReads": 64,
+      "realForceCallsIncludingHeader": 2049
+    },
+    "originalJournalSha256": "4b3a7a9015ddfdbbc4918cb376c68d16d20434507ade16c5ed13f3d1c8b604f7",
+    "independentOriginalFacts": 2048,
+    "classSha256": "2ab91d65114e184109194c858dd91bebde915071d450018f654b25054410943c",
+    "logSha256": {
+      "command-0.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "command-1.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "sourcesAfter": {
+      "docs/testing/tools/run-mixed-session-cost.py": "a42fe8e33b9f0b2d59e3a7439c9d928a36631ab935bc66ed551490b15e957811",
+      "docs/testing/tools/MixedSessionCost.java": "2a064f58130286aeb83a193e2581aa7807e8e681cfd9a82081047a539228670e",
+      "harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar": "269e4b698257abc52dbe0839a47993d31a0be2a313b6243119f1d6a7e8b1848b"
+    }
+  },
+  "boundaries": [
+    "16 barrier-paced rounds; elapsed time includes coordination and is not saturation throughput",
+    "Same JVM repository gates; not cross-process or multiple writers",
+    "Sum of individual heap-pool peaks is a conservative bound over the measured interval, not an exact simultaneous peak or RSS",
+    "JVM heap cap128MiB; does not cap native/process memory",
+    "Single Windows11 sample, not cross-platform SLA, cold disk, power-loss or all product workloads",
+    "No provider requests; cumulative original grant remains12 attempts/CNY1.769472",
+    "Directory capabilities, remaining R4 server windows and isolated generated-code evaluation remain open"
+  ]
+}
