@@ -1,0 +1,38 @@
+name: Historical generated code isolation validation
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/m1059-full-validation]
+    paths: [.github/workflows/gap-code-isolation.yml]
+permissions:
+  contents: read
+concurrency:
+  group: gap-code-isolation-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  isolated:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify offline boundaries
+        run: python docs/testing/tools/test-isolated-code-evaluation.py
+      - name: Provision pinned JDK container
+        run: docker pull eclipse-temurin@sha256:f9bf7e9fe2f9bc4657537c1a7e20c768f0c3bafca41598263be4714783dd62eb
+      - name: Compile and execute historical model output only inside isolation
+        run: python docs/testing/tools/isolated-code-evaluation.py
+      - name: Preserve bounded reports and logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: historical-code-isolation
+          retention-days: 90
+          include-hidden-files: true
+          if-no-files-found: error
+          path: |
+            .build-cache/isolated-code/*/evidence.json
+            .build-cache/isolated-code/*/*/result.json
+            .build-cache/isolated-code/*/*/execution.log

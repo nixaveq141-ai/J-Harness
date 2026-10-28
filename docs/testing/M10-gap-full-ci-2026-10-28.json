@@ -1,0 +1,61 @@
+{
+  "status": "PASS",
+  "commit": "1f7d5215d9cb88bee6fe9975238a403eef640122",
+  "ciRunId": "40671352949",
+  "runners": [
+    {
+      "os": "Windows",
+      "archiveSha256": "f4b30ca544f201bedd364a6e92c61c11dfd3e9bffa83da77f6bc7043890041d5",
+      "artifactId": 12808659845,
+      "runnerSha256": "0c07eeb715104e4213c5d8c824c87142ac11e5d937a62ce74e73b43e8572ded0",
+      "jarSha256": "f647c66f3d1bd0954c613fa4fed989f110429cf7a9cf0ca75d16435ba3ace9ef",
+      "java": {
+        "tests": 718,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "browserChecks": 813,
+      "sdkChecks": 66,
+      "nativeChecks": 7
+    },
+    {
+      "os": "Linux",
+      "archiveSha256": "3c3ecbc5aff4d22e22bc4e89c7f0ea39e43271d3ed58d39c3ff186553c3e9d7a",
+      "artifactId": 12808618006,
+      "runnerSha256": "23e312279e2b1c7f6847cfd1c826802b60b0da114f8b9cd3bb145708838e1095",
+      "jarSha256": "bcec365fd6ed53aa2531e6c07104a6461301129b0eb27c6c16afd9fadcc0ce6a",
+      "java": {
+        "tests": 718,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "browserChecks": 813,
+      "sdkChecks": 66,
+      "nativeChecks": 7
+    },
+    {
+      "os": "macOS",
+      "archiveSha256": "21a0132774a478235dcfa816c4819931d1bceb17d928007b2b555b0adbfe1640",
+      "artifactId": 12808289678,
+      "runnerSha256": "7fc188a723aa3b572e55c5723aeb79a93e57b6bc21ef636c3ac36d9c69122575",
+      "jarSha256": "bcec365fd6ed53aa2531e6c07104a6461301129b0eb27c6c16afd9fadcc0ce6a",
+      "java": {
+        "tests": 718,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "browserChecks": 813,
+      "sdkChecks": 66,
+      "nativeChecks": 7
+    }
+  ],
+  "schemaVersion": 1,
+  "date": "2026-10-28",
+  "scope": "Validated historical revision1f7d521, not subsequent250d8fe or current matrix changes",
+  "sourceInputs": 611,
+  "originalAuditSha256": "403c4949a3efaebdfaf99cb0d3355020759c85d918f2582220550194eed2c495",
+  "paidRequests": 0
+}

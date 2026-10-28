@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "milestone": "M10.5.9",
-  "origin": "2026-10-27 follow-ups retain all717 prior identities and add a real durable-admission HTTP response-loss/restart regression; current CI must prove its exact set.",
+  "origin": "2026-10-28 retains all718 prior identities and adds17x3 real backend response faults; total719 cases/120 suites.",
   "suites": [
     {
       "module": "harness-agent",
@@ -1261,6 +1261,13 @@
         "invalidSkillScriptsFailDuringLoadingWithoutMarker",
         "sdkUsesInjectedPolicyAndApprovalExactlyOnce",
         "terminalSemanticFailureHasNoApprovalIntentOrBody"
+      ]
+    },
+    {
+      "module": "harness-testkit",
+      "name": "io.jharness.testkit.R4RealResponseFaultTest",
+      "cases": [
+        "realServerMutationsRemainReconciliableAcrossThreeResponseFaults"
       ]
     },
     {

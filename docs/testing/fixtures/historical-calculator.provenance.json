@@ -1,0 +1,8 @@
+{
+  "origin": "M4 historical real DeepSeek calculator sample1; no new provider request",
+  "originalRecord": "docs/testing/M4-live-results.json",
+  "originalDirectory": ".build-cache/M4-live/calculator-1-df7253f9",
+  "sourceSha256": "8aee0ec3b10de998c9af2524ae27fdea53aa44f732fa79afa1b83430ed8c1da9",
+  "source": "historical-calculator.txt",
+  "executionPolicy": "Untrusted model-generated source; compile and execute only inside reviewed container"
+}
