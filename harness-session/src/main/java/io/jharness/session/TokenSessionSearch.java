@@ -100,16 +100,27 @@ public final class TokenSessionSearch implements ContentSearchProvider {
         Path index = file(id, ".content.json"), lock = file(id, ".content.lock");
         if (!OWNERS.add(lock)) throw error("SEARCH_BUSY");
         try (var channel =
-                        FileChannel.open(
+                        IndexFiles.open(
+                                root,
+                                identity,
                                 lock,
-                                StandardOpenOption.CREATE,
-                                StandardOpenOption.WRITE,
-                                LinkOption.NOFOLLOW_LINKS);
+                                Set.of(
+                                        StandardOpenOption.CREATE,
+                                        StandardOpenOption.WRITE,
+                                        LinkOption.NOFOLLOW_LINKS));
                 var owned = channel.tryLock()) {
             if (owned == null) throw error("SEARCH_BUSY");
             Map<String, Object> cached = Map.of();
-            if (!rebuild && Files.exists(index, LinkOption.NOFOLLOW_LINKS)) {
-                try (var input = Files.newInputStream(index, LinkOption.NOFOLLOW_LINKS)) {
+            if (!rebuild) {
+                try (var input =
+                        Channels.newInputStream(
+                                IndexFiles.open(
+                                        root,
+                                        identity,
+                                        index,
+                                        Set.of(
+                                                StandardOpenOption.READ,
+                                                LinkOption.NOFOLLOW_LINKS)))) {
                     byte[] bytes = input.readNBytes(LIMIT + 1);
                     if (bytes.length <= LIMIT) {
                         var envelope =

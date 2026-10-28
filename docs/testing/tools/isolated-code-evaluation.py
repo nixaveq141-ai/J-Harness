@@ -63,7 +63,7 @@ def validate_inspection(value, owner, input_dir):
         raise ValueError('Unexpected host mount')
     for target in ['/work', '/tmp']:
         options = host['Tmpfs'].get(target, '')
-        if not all(v in options.split(',') for v in ['rw','noexec','nosuid','size=16m']):
+        if not all(v in options.split(',') for v in ['rw','noexec','nosuid','size=16m','mode=1777']):
             raise ValueError('Unbounded writable filesystem')
 
 
@@ -86,8 +86,8 @@ def evaluate(source, directory, docker):
         control('create','--pull=never','--name',owner,'--label','io.jharness.code-eval='+owner,
                 '--network=none','--read-only','--cap-drop=ALL','--security-opt=no-new-privileges:true',
                 '--user=65534:65534','--memory=256m','--memory-swap=256m','--cpus=1','--pids-limit=64',
-                '--log-driver=none','--tmpfs','/work:rw,noexec,nosuid,size=16m',
-                '--tmpfs','/tmp:rw,noexec,nosuid,size=16m','--mount','type=bind,source='+str(inputs.resolve())+',target=/input,readonly',
+                '--log-driver=none','--tmpfs','/work:rw,noexec,nosuid,size=16m,mode=1777',
+                '--tmpfs','/tmp:rw,noexec,nosuid,size=16m,mode=1777','--mount','type=bind,source='+str(inputs.resolve())+',target=/input,readonly',
                 '--workdir','/work',IMAGE,'/bin/sh','-c',
                 'javac -J-Xmx64m -proc:none -d /work /input/Calculator.java /input/Oracle.java && java -Xmx64m -cp /work Oracle')
         created = True

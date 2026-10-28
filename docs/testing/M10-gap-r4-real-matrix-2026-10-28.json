@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "date": "2026-10-28",
-  "status": "TARGETED_PASS_FULL_PENDING",
+  "status": "LOCAL_FULL_PASS_REMOTE_PENDING",
   "actions": [
     "submit",
     "turn",
@@ -35,7 +35,18 @@
     "Gateway waits for real successful backend response then corrupts only the client delivery; this is not a crash inside every individual force call",
     "Real Java SDK/tool/questions/catalog execute; settings and registration use trusted test-host adapters that force actual fixture files, not production credential-store persistence",
     "Queue start/cancel setup uses cold durable accepted records; enqueue message/supplement go through real HTTP",
-    "Cancellation after actual model body preserves UNKNOWN; no replay or invented success",
-    "New719/120 full verify still pending"
-  ]
+    "Cancellation after actual model body preserves UNKNOWN; no replay or invented success"
+  ],
+  "fullVerify": {
+    "tests": 719,
+    "suites": 120,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "sourceCount": 614,
+    "sourcesBeforeAfterEqual": true,
+    "receiptSha256": "afb018b7a3a12f3f9db3745f6725862d5b83f38ebead6c2e3d62994273a0b88c",
+    "jarSha256": "ef774480070faee46f0879545205580c537abea4e9897842a893f2ffa4e4ec86",
+    "archive": ".build-cache/gap-all-20261028/final-719"
+  }
 }

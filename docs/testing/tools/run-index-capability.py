@@ -31,14 +31,18 @@ def main():
             old = base / 'IndexFiles.java'
             text=source.read_text(encoding='utf-8')
             needle='if (directory instanceof SecureDirectoryStream<Path> secure)'
-            assert text.count(needle)==1
+            assert text.count(needle)==2
             old.write_text(text.replace(needle,'if (false && directory instanceof SecureDirectoryStream<Path> secure)'),encoding='utf-8')
             with (base/'controlled-compile.log').open('xb') as out:
                 subprocess.run([str(java/('javac'+suffix)),'-encoding','UTF-8','-cp',str(api),'-d',str(classes),str(old),str(probe)],stdout=out,stderr=subprocess.STDOUT,timeout=60,check=True)
-            with (base/'controlled-old.log').open('xb') as out:
-                answer=subprocess.run(command+[str(base/'controlled-old')],stdout=out,stderr=subprocess.STDOUT,timeout=30)
-            assert answer.returncode!=0 and b'redirected index publication' in (base/'controlled-old.log').read_bytes()
+            for phase in ['publish','read','lock']:
+                log=base/('controlled-old-'+phase+'.log')
+                with log.open('xb') as out:
+                    answer=subprocess.run(command+[str(base/('controlled-old-'+phase)),phase],stdout=out,stderr=subprocess.STDOUT,timeout=30)
+                expected=b'redirected index '+(b'publication' if phase=='publish' else phase.encode())
+                assert answer.returncode!=0 and expected in log.read_bytes()
             report['controlledOldRejected']=True
+            report['controlledOldPhasesRejected']=['publish','read','lock']
         report['status']=report['current']['status']
         report['logs']={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in base.glob('*.log')}
         assert all(hashlib.sha256((ROOT/p).read_bytes()).hexdigest()==digest for p,digest in report['sources'].items())

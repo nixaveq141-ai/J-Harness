@@ -35,6 +35,52 @@ final class IndexFiles {
             throw new IOException("Search directory identity changed");
     }
 
+    static FileChannel open(
+            Path root, DirectoryIdentity identity, Path target, Set<? extends OpenOption> options)
+            throws IOException {
+        return open(root, identity, target, options, () -> {});
+    }
+
+    static FileChannel open(
+            Path root,
+            DirectoryIdentity identity,
+            Path target,
+            Set<? extends OpenOption> options,
+            PublicationHook hook)
+            throws IOException {
+        if (!target.getParent().equals(root)) throw new IOException("Index target outside root");
+        check(root, identity);
+        try (var directory = Files.newDirectoryStream(root)) {
+            if (directory instanceof SecureDirectoryStream<Path> secure) {
+                var attributes =
+                        secure.getFileAttributeView(
+                                        java.nio.file.attribute.BasicFileAttributeView.class)
+                                .readAttributes();
+                if (identity.fileKey() == null || !identity.fileKey().equals(attributes.fileKey()))
+                    throw new IOException("Opened search directory identity changed");
+                try {
+                    var file =
+                            secure.getFileAttributeView(
+                                            target.getFileName(),
+                                            java.nio.file.attribute.BasicFileAttributeView.class,
+                                            LinkOption.NOFOLLOW_LINKS)
+                                    .readAttributes();
+                    if (!file.isRegularFile()) throw new IOException("Index file must be regular");
+                } catch (NoSuchFileException missing) {
+                    if (!options.contains(StandardOpenOption.CREATE)) throw missing;
+                }
+                hook.beforeMove();
+                var channel = secure.newByteChannel(target.getFileName(), options);
+                if (channel instanceof FileChannel file) return file;
+                channel.close();
+                throw new IOException("Secure index channel cannot hold file locks");
+            }
+        }
+        // Compatibility provider: the documented trusted-host boundary remains explicit.
+        hook.beforeMove();
+        return FileChannel.open(target, options);
+    }
+
     static void publish(Path root, DirectoryIdentity identity, Path target, Object data, int limit)
             throws IOException {
         publish(root, identity, target, data, limit, () -> {});

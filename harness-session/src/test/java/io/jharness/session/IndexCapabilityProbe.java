@@ -7,7 +7,51 @@ import java.util.*;
 
 /** Opt-in directory-replacement probe; reports unsupported providers explicitly. */
 public final class IndexCapabilityProbe {
+    private static void openRace(Path base, boolean lock) throws Exception {
+        Path root =
+                Files.createDirectory(base.resolve(lock ? "lock-root" : "read-root")).toRealPath();
+        Path moved = base.resolve(lock ? "lock-original" : "read-original"),
+                target = root.resolve("entry");
+        var identity = DirectoryIdentity.bind(root);
+        if (!lock) Files.writeString(target, "original");
+        try (var channel =
+                IndexFiles.open(
+                        root,
+                        identity,
+                        target,
+                        lock
+                                ? Set.of(
+                                        StandardOpenOption.CREATE,
+                                        StandardOpenOption.WRITE,
+                                        LinkOption.NOFOLLOW_LINKS)
+                                : Set.of(StandardOpenOption.READ, LinkOption.NOFOLLOW_LINKS),
+                        () -> {
+                            Files.move(root, moved);
+                            Files.createDirectory(root);
+                            if (!lock) Files.writeString(target, "outside");
+                        })) {
+            if (lock) {
+                try (var owned = channel.tryLock()) {
+                    if (owned == null) throw new AssertionError("Expected exclusive index lock");
+                    if (Files.exists(target)) throw new AssertionError("redirected index lock");
+                    if (!Files.isRegularFile(moved.resolve("entry")))
+                        throw new AssertionError("Missing original lock");
+                }
+            } else {
+                var bytes = java.nio.ByteBuffer.allocate(32);
+                int count = channel.read(bytes);
+                String actual =
+                        new String(
+                                bytes.array(), 0, count, java.nio.charset.StandardCharsets.UTF_8);
+                if (!actual.equals("original")) throw new AssertionError("redirected index read");
+                if (!Files.readString(target).equals("outside"))
+                    throw new AssertionError("Outside read sentinel changed");
+            }
+        }
+    }
+
     public static void main(String[] args) throws Exception {
+        String phase = args.length > 1 ? args[1] : "all";
         Path base = Files.createDirectory(Path.of(args[0]));
         Path root = Files.createDirectory(base.resolve("index")).toRealPath();
         var identity = DirectoryIdentity.bind(root);
@@ -23,7 +67,7 @@ public final class IndexCapabilityProbe {
         var result = new LinkedHashMap<String, Object>();
         result.put("normalPublication", true);
         result.put("secureProvider", secure);
-        if (secure) {
+        if (secure && Set.of("all", "publish").contains(phase)) {
             Path moved = base.resolve("original");
             boolean[] entered = {false};
             try {
@@ -57,7 +101,15 @@ public final class IndexCapabilityProbe {
                 if (files.iterator().hasNext()) throw new AssertionError("Temporary leaked");
             }
             result.put("replacementRace", "PASS_ORIGINAL_DIRECTORY_ONLY");
-        } else result.put("replacementRace", "UNSUPPORTED_RETAINED_BOUNDARY");
+        } else if (!secure) result.put("replacementRace", "UNSUPPORTED_RETAINED_BOUNDARY");
+        if (secure && Set.of("all", "read").contains(phase)) {
+            openRace(base, false);
+            result.put("readRace", "PASS_ORIGINAL_DIRECTORY_ONLY");
+        }
+        if (secure && Set.of("all", "lock").contains(phase)) {
+            openRace(base, true);
+            result.put("lockRace", "PASS_ORIGINAL_DIRECTORY_ONLY");
+        }
         result.put("status", secure ? "PASS" : "LIMITED");
         Files.write(
                 base.resolve("result.json"), JsonEncoding.encode(result, 4096, 4096, 16, "PROBE"));

@@ -18,7 +18,7 @@ def inspection(owner,directory):
         HostConfig=dict(NetworkMode='none',ReadonlyRootfs=True,CapDrop=['ALL'],Memory=256*1024*1024,
             MemorySwap=256*1024*1024,NanoCpus=1000000000,PidsLimit=64,Privileged=False,
             SecurityOpt=['no-new-privileges:true'],LogConfig={'Type':'none'},
-            Tmpfs={p:'rw,noexec,nosuid,size=16m' for p in ['/work','/tmp']}),
+            Tmpfs={p:'rw,noexec,nosuid,size=16m,mode=1777' for p in ['/work','/tmp']}),
         Mounts=[dict(Type='bind',RW=False,Destination='/input',Source=str(directory.resolve())),
                 dict(Type='tmpfs',RW=True,Destination='/work'),dict(Type='tmpfs',RW=True,Destination='/tmp')],
         State=dict(ExitCode=0,OOMKilled=False))

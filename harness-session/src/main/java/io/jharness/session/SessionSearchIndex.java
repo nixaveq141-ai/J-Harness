@@ -68,19 +68,22 @@ public final class SessionSearchIndex {
         Path index = file(id, ".search.json"), lock = file(id, ".search.lock");
         if (!OWNERS.add(lock)) throw new HarnessException("SEARCH_BUSY", "Index writer occupied");
         try (var channel =
-                        FileChannel.open(
+                        IndexFiles.open(
+                                root,
+                                identity,
                                 lock,
-                                StandardOpenOption.CREATE,
-                                StandardOpenOption.WRITE,
-                                LinkOption.NOFOLLOW_LINKS);
+                                Set.of(
+                                        StandardOpenOption.CREATE,
+                                        StandardOpenOption.WRITE,
+                                        LinkOption.NOFOLLOW_LINKS));
                 var ownership = channel.tryLock()) {
             if (ownership == null)
                 throw new HarnessException("SEARCH_BUSY", "Index writer occupied");
             var events = repository.openReader(id).events();
             Map<String, Object> cached = Map.of();
-            if (!rebuild && Files.exists(index)) {
+            if (!rebuild) {
                 try {
-                    if (Files.size(index) <= LIMIT) {
+                    {
                         var bytes = read(index);
                         var envelope =
                                 JSON.readValue(bytes, new TypeReference<Map<String, Object>>() {});
@@ -196,8 +199,14 @@ public final class SessionSearchIndex {
         }
     }
 
-    private static byte[] read(Path path) throws IOException {
-        try (var input = Files.newInputStream(path, LinkOption.NOFOLLOW_LINKS)) {
+    private byte[] read(Path path) throws IOException {
+        try (var input =
+                Channels.newInputStream(
+                        IndexFiles.open(
+                                root,
+                                identity,
+                                path,
+                                Set.of(StandardOpenOption.READ, LinkOption.NOFOLLOW_LINKS)))) {
             byte[] bytes = input.readNBytes(LIMIT + 1);
             if (bytes.length > LIMIT) throw new IOException("Index limit");
             return bytes;
