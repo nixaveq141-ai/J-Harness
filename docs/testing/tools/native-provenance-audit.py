@@ -1,6 +1,7 @@
 """Inventory pinned native bytes without loading or executing them. Distribution is not build provenance."""
 import argparse
 import hashlib
+import io
 import json
 from pathlib import Path
 import struct
@@ -51,7 +52,8 @@ def audit(repository, upstream=False, fetch=None):
         raw = path.read_bytes()
         if sha(raw) != row['jarSha256']:
             raise ValueError('Artifact does not match pinned legal inventory: ' + row['coordinate'])
-        with zipfile.ZipFile(path) as archive:
+        # Inspect the exact bytes whose hash was checked, not a second path open.
+        with zipfile.ZipFile(io.BytesIO(raw)) as archive:
             for entry in archive.infolist():
                 if not entry.filename.lower().endswith(SUFFIXES):
                     continue
