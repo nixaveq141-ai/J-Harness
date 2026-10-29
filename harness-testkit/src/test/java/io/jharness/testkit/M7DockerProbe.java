@@ -47,7 +47,8 @@ public final class M7DockerProbe {
                                     "java",
                                     "-cp",
                                     "/runtime/harness.jar",
-                                    "com.sun.jna.Native"),
+                                    EnvironmentWorker.class.getName(),
+                                    "--native-check"),
                             new byte[0],
                             Duration.ofSeconds(10),
                             CancellationToken.NONE);
@@ -104,6 +105,19 @@ public final class M7DockerProbe {
                             CancellationToken.NONE);
             require(inspect.exitCode() == 0 && !inspect.uncertain(), "inspect");
             var actual = new ObjectMapper().readTree(inspect.stdout()).get(0);
+            int nativeMounts = 0;
+            for (var mount : actual.get("Mounts"))
+                if (mount.get("Destination").asText().equals("/runtime/native")) {
+                    require(
+                            mount.get("Type").asText().equals("bind")
+                                    && !mount.get("RW").asBoolean(),
+                            "native dependency readonly mount");
+                    nativeMounts++;
+                }
+            require(
+                    nativeMounts == 1 && nativeLoad.exitCode() == 0 && !nativeLoad.uncertain(),
+                    "trusted native load");
+            result.put("trustedNativeReadonlyMount", true);
             var host = actual.get("HostConfig");
             // Only fixed isolation fields; never persist Config.Env or general inspect output.
             var isolationFields = new LinkedHashMap<String, Object>();

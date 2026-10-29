@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "milestone": "M10.5.9",
-  "origin": "2026-10-28 retains all730 prior identities and adds2 factual JSONL directory capability regressions; total732 cases/123 suites.",
+  "origin": "2026-10-29 preserves all732 prior cases and adds2 trusted readonly native mount lifecycle regressions; total734 cases/124 suites.",
   "suites": [
     {
       "module": "harness-agent",
@@ -317,6 +317,14 @@
         "registrationPersistsCanonicalRootsWithoutLoadingTargetConfig",
         "relativeTraversalMetadataSecretsLinksAndWrongOwnerAreRejected",
         "workspaceOwnedByAnotherHostCannotBeRegistered"
+      ]
+    },
+    {
+      "module": "harness-ecosystem",
+      "name": "io.jharness.ecosystem.DockerNativeLibrariesTest",
+      "cases": [
+        "legacyWorkerWithoutNativePayloadDoesNotCreateAMount",
+        "trustedArtifactBytesRemainReadOnlyAndOwnedCleanupIsRepeatable"
       ]
     },
     {

@@ -4,6 +4,8 @@
 
 ## 当前接续状态
 
+- 2026-10-29Docker40836683164原包49fb6b60核对：可信JNA入口exit1/mappingDenied=true，证实noexec临时盘原生库映射被拒，非业务断言放宽。实现从所选可信worker JAR有界提取两Linux架构库、自有目录只读挂载、worker禁止unpack/系统库回退，保留/tmp noexec及原隔离；补2个只读字节/重复清理与旧worker回归，相关本地环境测试过，734/124保留原732。真实Docker复验待，最终全量仍待；用户只做本地备份。
+
 - 2026-10-29原生修正0e3dd82/40836205457三平台各73项及索引三类旧对照全部通过，原四ZIP摘要/源码/日志已独立审计；Docker40836210915仍ENVIRONMENT_IO，根因不猜，见M10-gap-posix-fix-2026-10-29.json。新增可信JNA入口诊断只保留退出码/布尔分类，不传原始stderr；编译通过，实际容器诊断待。当前完整验收仍未闭合，不再要求异地备份。
 
 - 2026-10-29远端c8c3253完整40835491544 Linux/Mac失败，Docker40835496100首夹具失败，三原ZIP摘要核对保存，不验收。已修POSIX清理异常类型/目录unlink标志及Mac真实fd权限fstat/fchmod，本地workspace42与定点10过；专项加入R1/R2精确失败用例。Docker仅保留HarnessException缺原因，新增固定白名单错误码诊断，不扩大原始日志上传；待真实重验。用户指定仅本地备份。报告M10-gap-final-ci-first-2026-10-29.json。

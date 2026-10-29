@@ -15,6 +15,21 @@ public final class EnvironmentWorker {
     private EnvironmentWorker() {}
 
     public static void main(String[] argv) throws Exception {
+        String platform =
+                Set.of("amd64", "x86_64").contains(System.getProperty("os.arch"))
+                        ? "linux-x86-64"
+                        : "linux-aarch64";
+        Path libraries = Path.of("/runtime/native", platform);
+        if (Files.isDirectory(libraries, LinkOption.NOFOLLOW_LINKS)) {
+            System.setProperty("jna.boot.library.path", libraries.toString());
+            System.setProperty("jna.nounpack", "true");
+            System.setProperty("jna.nosys", "true");
+        }
+        if (argv.length == 1 && argv[0].equals("--native-check")) {
+            Class.forName("com.sun.jna.Native");
+            System.out.println("TRUSTED_NATIVE_LOAD_PASS");
+            return;
+        }
         if (argv.length == 1 && argv[0].equals("--idle")) {
             while (true) Thread.sleep(Duration.ofHours(1));
         }

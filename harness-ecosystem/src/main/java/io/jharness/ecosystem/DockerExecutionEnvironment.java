@@ -14,6 +14,7 @@ public final class DockerExecutionEnvironment implements ExecutionEnvironment {
     private final CommandTransport transport;
     private final RemoteWorkspace files;
     private final WorkspaceSearchFilter searchFilter;
+    private final DockerNativeLibraries nativeLibraries;
     private volatile boolean closed;
     private volatile boolean removed;
 
@@ -42,38 +43,48 @@ public final class DockerExecutionEnvironment implements ExecutionEnvironment {
                 || !Files.isRegularFile(workerJar, LinkOption.NOFOLLOW_LINKS)
                 || root.toString().contains(",")
                 || jar.toString().contains(",")) throw BoundedJson.error("INVALID_CONTAINER_MOUNT");
+        nativeLibraries = DockerNativeLibraries.prepare(jar);
         List<String> command =
-                List.of(
-                        docker,
-                        "run",
-                        "--detach",
-                        "--pull=never",
-                        "--name",
-                        name,
-                        "--label",
-                        "io.jharness.owner=" + name,
-                        "--network=none",
-                        "--read-only",
-                        "--cap-drop=ALL",
-                        "--security-opt=no-new-privileges:true",
-                        "--user=65534:65534",
-                        "--memory=512m",
-                        "--cpus=1",
-                        "--pids-limit=64",
-                        "--tmpfs",
-                        "/tmp:rw,noexec,nosuid,size=64m",
-                        "--mount",
-                        "type=bind,source=" + root + ",target=/workspace",
-                        "--mount",
-                        "type=bind,source=" + jar + ",target=/runtime/harness.jar,readonly",
-                        "--workdir",
-                        "/workspace",
-                        image,
-                        "java",
-                        "-cp",
-                        "/runtime/harness.jar",
-                        EnvironmentWorker.class.getName(),
-                        "--idle");
+                new ArrayList<>(
+                        List.of(
+                                docker,
+                                "run",
+                                "--detach",
+                                "--pull=never",
+                                "--name",
+                                name,
+                                "--label",
+                                "io.jharness.owner=" + name,
+                                "--network=none",
+                                "--read-only",
+                                "--cap-drop=ALL",
+                                "--security-opt=no-new-privileges:true",
+                                "--user=65534:65534",
+                                "--memory=512m",
+                                "--cpus=1",
+                                "--pids-limit=64",
+                                "--tmpfs",
+                                "/tmp:rw,noexec,nosuid,size=64m",
+                                "--mount",
+                                "type=bind,source=" + root + ",target=/workspace",
+                                "--mount",
+                                "type=bind,source=" + jar + ",target=/runtime/harness.jar,readonly",
+                                "--workdir",
+                                "/workspace",
+                                image,
+                                "java",
+                                "-cp",
+                                "/runtime/harness.jar",
+                                EnvironmentWorker.class.getName(),
+                                "--idle"));
+        if (nativeLibraries != null)
+            command.addAll(
+                    command.indexOf("--workdir"),
+                    List.of(
+                            "--mount",
+                            "type=bind,source="
+                                    + nativeLibraries.path()
+                                    + ",target=/runtime/native,readonly"));
         var reply =
                 transport.call(
                         command, new byte[0], Duration.ofSeconds(15), CancellationToken.NONE);
@@ -85,6 +96,12 @@ public final class DockerExecutionEnvironment implements ExecutionEnvironment {
                 try {
                     removeContainer();
                 } catch (RuntimeException cleanup) {
+                    failure.addSuppressed(cleanup);
+                }
+            } else if (nativeLibraries != null) {
+                try {
+                    nativeLibraries.close();
+                } catch (IOException cleanup) {
                     failure.addSuppressed(cleanup);
                 }
             }
@@ -354,11 +371,23 @@ public final class DockerExecutionEnvironment implements ExecutionEnvironment {
             throw new HarnessException(
                     "CONTAINER_CLEANUP_UNKNOWN", "Container cleanup unknown: " + name);
         removed = true;
+        if (nativeLibraries != null)
+            try {
+                nativeLibraries.close();
+            } catch (IOException cleanup) {
+                throw BoundedJson.error("CONTAINER_NATIVE_CLEANUP_FAILED");
+            }
     }
 
     @Override
     public synchronized void close() {
         closed = true; // capabilities revoked even when removal fails; close may retry removal only
         if (!removed) removeContainer();
+        else if (nativeLibraries != null)
+            try {
+                nativeLibraries.close();
+            } catch (IOException cleanup) {
+                throw BoundedJson.error("CONTAINER_NATIVE_CLEANUP_FAILED");
+            }
     }
 }

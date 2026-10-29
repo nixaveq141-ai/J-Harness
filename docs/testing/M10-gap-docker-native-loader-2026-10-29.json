@@ -1,0 +1,51 @@
+{
+  "date": "2026-10-29",
+  "status": "ROOT_CAUSE_CONFIRMED_FIX_LOCAL_REMOTE_PENDING",
+  "diagnosticRun": "40836683164",
+  "artifact": {
+    "file": "12881036640.zip",
+    "sha256": "49fb6b60bdd964429c9fa47f0949302e7ce092ffd6fa76ad0f9b8bb9a8ac57fd",
+    "githubDigest": "sha256:49fb6b60bdd964429c9fa47f0949302e7ce092ffd6fa76ad0f9b8bb9a8ac57fd",
+    "artifactId": 12881036640,
+    "name": "remaining-gap-docker",
+    "runId": "40836683164",
+    "commit": "1efe20be3064399d61d68590f571771ef4523b37",
+    "createdAt": "2026-10-29T07:38:51Z",
+    "expiresAt": "2027-01-27T07:38:03Z"
+  },
+  "diagnostic": {
+    "result": "FAILED",
+    "failureType": "HarnessException",
+    "failureCode": "ENVIRONMENT_IO",
+    "completedEvidence": {
+      "milestone": "M7",
+      "slice": "execution-environment",
+      "image": "eclipse-temurin@sha256:ccbad9e7cb84c27092b12c40a4143e5733e050db9c3784d84f632dcf423fb2ef",
+      "actualDocker": true,
+      "trustedNativeLoad": {
+        "uncertain": false,
+        "mappingDenied": true,
+        "exitCode": 1,
+        "permissionDenied": false
+      },
+      "localTask": {
+        "guardedEdit": true,
+        "shellCwd": true,
+        "read": true
+      }
+    },
+    "cleanupVerified": false,
+    "cleanupBoundary": "Failure does not prove release of every external resource; inspect owned evidence",
+    "jarBeforeSha256": "1dfe961a344d77748c3441a5e64e0f0feb21dae46e4b6771dc1db67c5db4b75a",
+    "jarAfterSha256": "1dfe961a344d77748c3441a5e64e0f0feb21dae46e4b6771dc1db67c5db4b75a"
+  },
+  "fix": "Extract bounded trusted native resources from selected worker JAR into an owned host directory; bind read-only at/runtime/native; worker disables unpack/system fallback and selects platform subdirectory. Keep/tmp noexec and existing isolation flags.",
+  "localEvidence": ".build-cache/docker-native-readonly-final.log",
+  "contract": {
+    "cases": 734,
+    "suites": 124,
+    "preserves": 732
+  },
+  "remotePending": true,
+  "backup": "Local only"
+}
