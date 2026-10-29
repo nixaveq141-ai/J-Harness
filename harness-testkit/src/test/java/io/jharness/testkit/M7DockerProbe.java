@@ -36,6 +36,35 @@ public final class M7DockerProbe {
         String owner = container.id();
         try (container;
                 var local = new LocalExecutionEnvironment("probe-local", localRoot, List.of())) {
+            // Trusted dependency entry point, never generated code; retain fixed classifications
+            // only.
+            var nativeLoad =
+                    transport.call(
+                            List.of(
+                                    args[0],
+                                    "exec",
+                                    owner,
+                                    "java",
+                                    "-cp",
+                                    "/runtime/harness.jar",
+                                    "com.sun.jna.Native"),
+                            new byte[0],
+                            Duration.ofSeconds(10),
+                            CancellationToken.NONE);
+            String nativeError =
+                    new String(nativeLoad.stderr(), java.nio.charset.StandardCharsets.UTF_8);
+            result.put(
+                    "trustedNativeLoad",
+                    Map.of(
+                            "exitCode",
+                            nativeLoad.exitCode(),
+                            "uncertain",
+                            nativeLoad.uncertain(),
+                            "mappingDenied",
+                            nativeError.contains("failed to map segment")
+                                    || nativeError.contains("Operation not permitted"),
+                            "permissionDenied",
+                            nativeError.contains("Permission denied")));
             for (ExecutionEnvironment environment : List.of(local, container)) {
                 WorkspaceFiles files = (WorkspaceFiles) environment.files();
                 var input = new ExecPath("sub/input.txt");
