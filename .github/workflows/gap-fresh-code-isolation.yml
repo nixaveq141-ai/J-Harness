@@ -1,6 +1,9 @@
 name: Fresh DeepSeek generated code isolation validation
 on:
   workflow_dispatch:
+  push:
+    branches: [codex/m1059-full-validation]
+    paths: [.github/workflows/gap-fresh-code-isolation.yml]
 permissions:
   contents: read
 concurrency:
