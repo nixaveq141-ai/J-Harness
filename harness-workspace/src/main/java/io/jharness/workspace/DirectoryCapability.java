@@ -223,6 +223,7 @@ public final class DirectoryCapability implements Closeable {
         int errno = Native.getLastError();
         if (errno == 2) return new NoSuchFileException(action);
         if (errno == 17) return new FileAlreadyExistsException(action);
+        if (errno == (MAC ? 62 : 40)) return new FileSystemLoopException(action);
         return new IOException("Cannot " + action + "; native error " + errno);
     }
 
@@ -317,6 +318,8 @@ public final class DirectoryCapability implements Closeable {
         int fd = Api.INSTANCE.openat(descriptor, relative, flags, 0600);
         if (fd < 0) throw error("open relative file");
         FileChannel channel = null;
+        boolean returning = false;
+        Throwable primary = null;
         try {
             var before = stat(fd);
             if (!before.isRegularFile()) throw new IOException("Expected regular file");
@@ -333,13 +336,45 @@ public final class DirectoryCapability implements Closeable {
                                     : Set.of(StandardOpenOption.READ));
             if (!Objects.equals(before.fileKey(), stat(fd).fileKey()))
                 throw new IOException("Descriptor identity changed");
-            FileChannel result = channel;
-            channel = null;
-            return result;
+            returning = true;
+            return channel;
+        } catch (IOException | RuntimeException | Error failure) {
+            primary = failure;
+            throw failure;
         } finally {
-            if (channel != null) channel.close();
-            if (Api.INSTANCE.close(fd) != 0) throw error("close original file descriptor");
+            IOException cleanup =
+                    Api.INSTANCE.close(fd) != 0 ? error("close original file descriptor") : null;
+            if (channel != null && (!returning || cleanup != null))
+                try {
+                    channel.close();
+                } catch (IOException failure) {
+                    if (cleanup == null) cleanup = failure;
+                    else cleanup.addSuppressed(failure);
+                }
+            if (cleanup != null) {
+                if (primary != null) primary.addSuppressed(cleanup);
+                else throw cleanup;
+            }
         }
+    }
+
+    /** The returned channel independently owns its file even when closing the directory fails. */
+    public static FileChannel openFile(
+            Path root, Object key, Path target, Set<? extends OpenOption> options)
+            throws IOException {
+        FileChannel owned = null;
+        try (var cap = open(root, key, target.getParent(), false)) {
+            owned = cap.channel(target.getFileName(), options);
+        } catch (IOException | RuntimeException | Error failure) {
+            if (owned != null)
+                try {
+                    owned.close();
+                } catch (IOException cleanup) {
+                    failure.addSuppressed(cleanup);
+                }
+            throw failure;
+        }
+        return owned;
     }
 
     public void createDirectory(Path name) throws IOException {

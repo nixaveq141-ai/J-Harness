@@ -168,12 +168,13 @@ public final class LocalArtifactStore implements ArtifactStore {
     }
 
     private InputStream input(Path file) throws IOException {
-        try (var held = capability(file.getParent(), false)) {
-            return java.nio.channels.Channels.newInputStream(
-                    held.channel(
-                            file.getFileName(),
-                            Set.of(StandardOpenOption.READ, LinkOption.NOFOLLOW_LINKS)));
-        }
+        checkRoot();
+        return java.nio.channels.Channels.newInputStream(
+                DirectoryCapability.openFile(
+                        root,
+                        rootKey.fileKey(),
+                        file,
+                        Set.of(StandardOpenOption.READ, LinkOption.NOFOLLOW_LINKS)));
     }
 
     /** Copy verified immutable artifacts before publishing a fork. No parent fallback. */

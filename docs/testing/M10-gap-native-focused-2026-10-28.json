@@ -1,0 +1,435 @@
+{
+  "status": "PASS_SCOPED",
+  "runId": "40688290873",
+  "commit": "d1a5415a081e72a7b8c5dbc97a065e652b59ba71",
+  "platforms": [
+    {
+      "artifact": {
+        "file": "12815892774.zip",
+        "sha256": "4aa8b3bc4ba9d24b0a12df1fdd05d47224caabf8ae3d831339a623200caef0f9",
+        "githubDigest": "sha256:4aa8b3bc4ba9d24b0a12df1fdd05d47224caabf8ae3d831339a623200caef0f9",
+        "artifactId": 12815892774,
+        "name": "m1059-session-focused-windows-latest",
+        "runId": "40688290873",
+        "commit": "d1a5415a081e72a7b8c5dbc97a065e652b59ba71",
+        "createdAt": "2026-10-28T12:30:53Z",
+        "expiresAt": "2027-01-26T12:30:01Z"
+      },
+      "cases": 55,
+      "suites": [
+        {
+          "name": "io.jharness.session.M5SessionTest",
+          "cases": [
+            "catalogFiltersColdSessionsAndReportsDamageWithoutBuildingAnIndex",
+            "diskAndMemoryShareQueryForkAndRequestReconstructionContract",
+            "eventQueryHasInclusiveTimesExactToolStatusAndStablePagination",
+            "exportReopensAsColdRepositoryAndNeverOverwrites",
+            "forkCopiesColdArtifactsAndDetectsTamperingBeforePublication",
+            "maintenanceAndForkRefuseActiveWriterAndReleaseLocksAfterFailure",
+            "middleDamageAndFutureVersionsNeverChangeBytesOrCreateFork",
+            "migrationFailureBeforeAtomicPublishLeavesSourceUntouched",
+            "migrationPreservesEveryEventProjectionRequestAndOriginalBackup",
+            "recoveryCarriesUnknownAndUnresolvedRequestsAcrossForkAndReopen",
+            "tailRepairBacksUpTruncatedAndInvalidCompleteFinalRecords"
+          ]
+        },
+        {
+          "name": "io.jharness.session.R2PersistenceTest",
+          "cases": [
+            "ambiguousResponsesCannotSettleTwoUnresolvedAttempts",
+            "archiveRestoreCatalogAndMissingLifecycleHaveOneMeaning",
+            "destinationOwnershipIsHeldThroughoutPreparationAcrossProcesses",
+            "eventBudgetIsCheckedBeforeArtifactPreparation",
+            "existingAndOwnedForkDestinationsNeverChangeOrPrepareArtifacts",
+            "failedArtifactCopyPublishesNoPartialScopeAndValidCopyIsIndependent",
+            "logPublicationFailureCompensatesOnlyNewlyCopiedScope",
+            "malformedTimestampIsTailDamageButUnsupportedSchemaCannotBeRepairedAway",
+            "orphanContextIsNotComposedAndMalformedCoreMessagesFailClosed",
+            "replacedArtifactRootIdentityIsRejectedBeforeScopeCreation",
+            "terminalVerificationRejectsStaleSnapshotsButNewObservedActivityRemainsUnknown"
+          ]
+        },
+        {
+          "name": "io.jharness.session.R5SessionBoundsTest",
+          "cases": [
+            "bothSearchSnippetsUseOriginalUnicodeCoordinates",
+            "differentSessionsReadConcurrentlyWhileSanitizerCallsStaySerialized",
+            "directoryReplacementCannotReuseAnExistingIndexInstance",
+            "memoryCountAndByteRejectionsDoNotConsumeEventIdsOrPublishFailedForks",
+            "shortenedSourcePersistsBothIndexesAndMalformedCachedRowsAreDisposable"
+          ]
+        },
+        {
+          "name": "io.jharness.workspace.DirectoryCapabilityTest",
+          "cases": [
+            "heldDirectoryCannotRedirectReadWriteListOrCleanup",
+            "nativeCreationModeReadWriteAndRepeatedEnumerationAreStable",
+            "noClobberPublicationAndClosedAuthorityRejectBeforeUse",
+            "privateAnchorIsDurableStableAndCorruptionIsNotReset",
+            "reusedDirectoryNameCannotReusePrivateAnchorIdentity"
+          ]
+        },
+        {
+          "name": "io.jharness.workspace.LocalWorkspaceTest",
+          "cases": [
+            "aRaceBeforeCommitIsDetectedAndTemporaryFileIsRemoved",
+            "binaryInvalidUtf8AndOversizedEditsAreRejected",
+            "cancellationAndIoFailureDoNotLeaveDelayedWritesOrDamagedOriginals",
+            "escapeLinkOrWindowsJunctionIsRejectedForReadsWritesAndSearchTraversal",
+            "gitignoreAndDefaultExcludedDirectoriesFilterSearchAndLimitIsReported",
+            "largeFilesArePagedAndLiteralGrepFindsBeyondFirstPageWithoutRegexWork",
+            "missingReadGuardAndExplicitOverwriteAreEnforcedAndNewParentsCanBeCreated",
+            "relativeReadsWritesAndDiffPreserveOtherFilesAndCrLfBom",
+            "replacedRootCannotRebindExistingOrIsolatedViewOutsideBoundary",
+            "staleReadVersionAndWrongMatchCountsNeverOverwriteUserChanges",
+            "thousandDirectoryEntriesMeetLocalTwoSecondTarget",
+            "traversalAbsoluteAdsDevicesAndProtectedMetadataAreDenied",
+            "unifiedDiffHandlesEmptyFilesAndMissingFinalNewlineAndNonGitWorkspace"
+          ]
+        },
+        {
+          "name": "io.jharness.workspace.M8SearchFilterTest",
+          "cases": [
+            "anchorsDirectoryGlobsAndDisabledLayersHaveExplicitSemantics",
+            "negationCannotExposeMetadataExternalPathsOrLinks",
+            "precedenceAppliesToListSearchGrepAndIndependentChildViews",
+            "ruleLimitsAndUnsupportedConfigurationFailWithoutTruncation"
+          ]
+        },
+        {
+          "name": "io.jharness.workspace.WindowsDirectoryPinTest",
+          "cases": [
+            "onlyKnownRejectedSharingGetsBoundedCacheRetries",
+            "openAndCloseFailuresStillAttemptAllOwnedCleanup",
+            "reparseAncestorRejectsAndClosesPartialChainInReverse",
+            "reusedNameCannotSubstituteAnotherNativeId",
+            "rootUsesReadAccessNoDeleteShareAndFullNativeIdentity",
+            "writePhasePinsNonemptyChildBeforeChangingDirectorySharing"
+          ]
+        }
+      ],
+      "capability": {
+        "status": "PASS",
+        "sources": {
+          "docs/testing/tools/run-index-capability.py": "28b6b13a23a997940c118cd199078ae845513aef8fd7b0fd6cc038f46ef392b5",
+          "harness-session/src/main/java/io/jharness/session/IndexFiles.java": "a9e3efbb4144323689e6b0cf9881294a5ee6468630c44ee241ba253e26aeac18",
+          "harness-session/src/test/java/io/jharness/session/IndexCapabilityProbe.java": "06061d89f5bed38a195dc24450586dd79082239c926fcdda2712b839dfffe08b",
+          "harness-workspace/src/test/java/io/jharness/workspace/WindowsDirectoryPinAttackProbe.java": "ed1e4a34ead1d35d46908c4c366a0c49731a61e92f3691366ef23bbb61f4023f",
+          "harness-workspace/src/main/java/io/jharness/workspace/DirectoryCapability.java": "cc4fdfd413bd874f40d470c38e7a1cee1a0e899e3ac3225aedd89e59c0e35ac3",
+          "harness-workspace/src/main/java/io/jharness/workspace/WindowsDirectoryPin.java": "320aff0847ef8656bcc849d99675e72f1d393ed12b2f7d8a8d6ba725b08c1a62"
+        },
+        "nativeReparseAndCleanup": "PASS",
+        "current": {
+          "normalPublication": true,
+          "secureProvider": false,
+          "windowsPinned": true,
+          "publishRace": "PASS_REPLACEMENT_BLOCKED",
+          "readRace": "PASS_REPLACEMENT_BLOCKED",
+          "lockRace": "PASS_REPLACEMENT_BLOCKED",
+          "replacementRace": "PASS_REPLACEMENT_BLOCKED",
+          "posixDescriptor": false,
+          "status": "PASS"
+        },
+        "controlledOldRejected": true,
+        "controlledOldPhasesRejected": [
+          "publish",
+          "read",
+          "lock"
+        ],
+        "logs": {
+          "compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "controlled-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "controlled-old-lock.log": "cf6d1cda7a5298c63125656de82efb8edf33c9e8725457637fa93e37461c0ff8",
+          "controlled-old-publish.log": "f6e0d8c7a06262e8c72a9cc8fdf145b58bdd42895efc4e26f0928e916d8499b8",
+          "controlled-old-read.log": "71804ba26d3292d6ed0a4be877cd531bbda40cbcd985d0285549dc32d76f1f75",
+          "current.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "native-reparse.log": "4dc35b1f1653fa623684c9759b997be35321f62629a1f5f93b2c18083d4eab08"
+        }
+      }
+    },
+    {
+      "artifact": {
+        "file": "12815862361.zip",
+        "sha256": "2787b8884cf9b9a28d379f006978db1763edf4161637278b1adca63b2a10d0b5",
+        "githubDigest": "sha256:2787b8884cf9b9a28d379f006978db1763edf4161637278b1adca63b2a10d0b5",
+        "artifactId": 12815862361,
+        "name": "m1059-session-focused-ubuntu-latest",
+        "runId": "40688290873",
+        "commit": "d1a5415a081e72a7b8c5dbc97a065e652b59ba71",
+        "createdAt": "2026-10-28T12:30:29Z",
+        "expiresAt": "2027-01-26T12:30:01Z"
+      },
+      "cases": 55,
+      "suites": [
+        {
+          "name": "io.jharness.session.M5SessionTest",
+          "cases": [
+            "catalogFiltersColdSessionsAndReportsDamageWithoutBuildingAnIndex",
+            "diskAndMemoryShareQueryForkAndRequestReconstructionContract",
+            "eventQueryHasInclusiveTimesExactToolStatusAndStablePagination",
+            "exportReopensAsColdRepositoryAndNeverOverwrites",
+            "forkCopiesColdArtifactsAndDetectsTamperingBeforePublication",
+            "maintenanceAndForkRefuseActiveWriterAndReleaseLocksAfterFailure",
+            "middleDamageAndFutureVersionsNeverChangeBytesOrCreateFork",
+            "migrationFailureBeforeAtomicPublishLeavesSourceUntouched",
+            "migrationPreservesEveryEventProjectionRequestAndOriginalBackup",
+            "recoveryCarriesUnknownAndUnresolvedRequestsAcrossForkAndReopen",
+            "tailRepairBacksUpTruncatedAndInvalidCompleteFinalRecords"
+          ]
+        },
+        {
+          "name": "io.jharness.session.R5SessionBoundsTest",
+          "cases": [
+            "bothSearchSnippetsUseOriginalUnicodeCoordinates",
+            "differentSessionsReadConcurrentlyWhileSanitizerCallsStaySerialized",
+            "directoryReplacementCannotReuseAnExistingIndexInstance",
+            "memoryCountAndByteRejectionsDoNotConsumeEventIdsOrPublishFailedForks",
+            "shortenedSourcePersistsBothIndexesAndMalformedCachedRowsAreDisposable"
+          ]
+        },
+        {
+          "name": "io.jharness.session.R2PersistenceTest",
+          "cases": [
+            "ambiguousResponsesCannotSettleTwoUnresolvedAttempts",
+            "archiveRestoreCatalogAndMissingLifecycleHaveOneMeaning",
+            "destinationOwnershipIsHeldThroughoutPreparationAcrossProcesses",
+            "eventBudgetIsCheckedBeforeArtifactPreparation",
+            "existingAndOwnedForkDestinationsNeverChangeOrPrepareArtifacts",
+            "failedArtifactCopyPublishesNoPartialScopeAndValidCopyIsIndependent",
+            "logPublicationFailureCompensatesOnlyNewlyCopiedScope",
+            "malformedTimestampIsTailDamageButUnsupportedSchemaCannotBeRepairedAway",
+            "orphanContextIsNotComposedAndMalformedCoreMessagesFailClosed",
+            "replacedArtifactRootIdentityIsRejectedBeforeScopeCreation",
+            "terminalVerificationRejectsStaleSnapshotsButNewObservedActivityRemainsUnknown"
+          ]
+        },
+        {
+          "name": "io.jharness.workspace.DirectoryCapabilityTest",
+          "cases": [
+            "heldDirectoryCannotRedirectReadWriteListOrCleanup",
+            "nativeCreationModeReadWriteAndRepeatedEnumerationAreStable",
+            "noClobberPublicationAndClosedAuthorityRejectBeforeUse",
+            "privateAnchorIsDurableStableAndCorruptionIsNotReset",
+            "reusedDirectoryNameCannotReusePrivateAnchorIdentity"
+          ]
+        },
+        {
+          "name": "io.jharness.workspace.LocalWorkspaceTest",
+          "cases": [
+            "aRaceBeforeCommitIsDetectedAndTemporaryFileIsRemoved",
+            "binaryInvalidUtf8AndOversizedEditsAreRejected",
+            "cancellationAndIoFailureDoNotLeaveDelayedWritesOrDamagedOriginals",
+            "escapeLinkOrWindowsJunctionIsRejectedForReadsWritesAndSearchTraversal",
+            "gitignoreAndDefaultExcludedDirectoriesFilterSearchAndLimitIsReported",
+            "largeFilesArePagedAndLiteralGrepFindsBeyondFirstPageWithoutRegexWork",
+            "missingReadGuardAndExplicitOverwriteAreEnforcedAndNewParentsCanBeCreated",
+            "relativeReadsWritesAndDiffPreserveOtherFilesAndCrLfBom",
+            "replacedRootCannotRebindExistingOrIsolatedViewOutsideBoundary",
+            "staleReadVersionAndWrongMatchCountsNeverOverwriteUserChanges",
+            "thousandDirectoryEntriesMeetLocalTwoSecondTarget",
+            "traversalAbsoluteAdsDevicesAndProtectedMetadataAreDenied",
+            "unifiedDiffHandlesEmptyFilesAndMissingFinalNewlineAndNonGitWorkspace"
+          ]
+        },
+        {
+          "name": "io.jharness.workspace.M8SearchFilterTest",
+          "cases": [
+            "anchorsDirectoryGlobsAndDisabledLayersHaveExplicitSemantics",
+            "negationCannotExposeMetadataExternalPathsOrLinks",
+            "precedenceAppliesToListSearchGrepAndIndependentChildViews",
+            "ruleLimitsAndUnsupportedConfigurationFailWithoutTruncation"
+          ]
+        },
+        {
+          "name": "io.jharness.workspace.WindowsDirectoryPinTest",
+          "cases": [
+            "onlyKnownRejectedSharingGetsBoundedCacheRetries",
+            "openAndCloseFailuresStillAttemptAllOwnedCleanup",
+            "reparseAncestorRejectsAndClosesPartialChainInReverse",
+            "reusedNameCannotSubstituteAnotherNativeId",
+            "rootUsesReadAccessNoDeleteShareAndFullNativeIdentity",
+            "writePhasePinsNonemptyChildBeforeChangingDirectorySharing"
+          ]
+        }
+      ],
+      "capability": {
+        "status": "PASS",
+        "sources": {
+          "docs/testing/tools/run-index-capability.py": "28b6b13a23a997940c118cd199078ae845513aef8fd7b0fd6cc038f46ef392b5",
+          "harness-session/src/main/java/io/jharness/session/IndexFiles.java": "a9e3efbb4144323689e6b0cf9881294a5ee6468630c44ee241ba253e26aeac18",
+          "harness-session/src/test/java/io/jharness/session/IndexCapabilityProbe.java": "06061d89f5bed38a195dc24450586dd79082239c926fcdda2712b839dfffe08b",
+          "harness-workspace/src/test/java/io/jharness/workspace/WindowsDirectoryPinAttackProbe.java": "ed1e4a34ead1d35d46908c4c366a0c49731a61e92f3691366ef23bbb61f4023f",
+          "harness-workspace/src/main/java/io/jharness/workspace/DirectoryCapability.java": "cc4fdfd413bd874f40d470c38e7a1cee1a0e899e3ac3225aedd89e59c0e35ac3",
+          "harness-workspace/src/main/java/io/jharness/workspace/WindowsDirectoryPin.java": "320aff0847ef8656bcc849d99675e72f1d393ed12b2f7d8a8d6ba725b08c1a62"
+        },
+        "current": {
+          "normalPublication": true,
+          "secureProvider": true,
+          "windowsPinned": false,
+          "replacementRace": "PASS_ORIGINAL_DIRECTORY_ONLY",
+          "readRace": "PASS_ORIGINAL_DIRECTORY_ONLY",
+          "lockRace": "PASS_ORIGINAL_DIRECTORY_ONLY",
+          "posixDescriptor": false,
+          "status": "PASS"
+        },
+        "controlledOldRejected": true,
+        "controlledOldPhasesRejected": [
+          "publish",
+          "read",
+          "lock"
+        ],
+        "logs": {
+          "controlled-old-lock.log": "c7ffd5ab920cc5e3acab93eebbc33421c4d96a8930c83929194590243553a017",
+          "compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "controlled-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "current.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "controlled-old-read.log": "0245d282bc6cacf90bfc00b8d157d97d7718cc2c431c026312bbb446da9d9af8",
+          "controlled-old-publish.log": "318eee3553518df792eb5c0350bdaf5d8ac26d48a99d14ac49c71651016596d7"
+        }
+      }
+    },
+    {
+      "artifact": {
+        "file": "12815103505.zip",
+        "sha256": "2e451332adfdb24d6e9d85650109dd3d62f21e2364033c43a723a1d7d3c05f9d",
+        "githubDigest": "sha256:2e451332adfdb24d6e9d85650109dd3d62f21e2364033c43a723a1d7d3c05f9d",
+        "artifactId": 12815103505,
+        "name": "m1059-session-focused-macos-latest",
+        "runId": "40688290873",
+        "commit": "d1a5415a081e72a7b8c5dbc97a065e652b59ba71",
+        "createdAt": "2026-10-28T12:30:25Z",
+        "expiresAt": "2027-01-26T12:30:01Z"
+      },
+      "cases": 55,
+      "suites": [
+        {
+          "name": "io.jharness.session.R2PersistenceTest",
+          "cases": [
+            "ambiguousResponsesCannotSettleTwoUnresolvedAttempts",
+            "archiveRestoreCatalogAndMissingLifecycleHaveOneMeaning",
+            "destinationOwnershipIsHeldThroughoutPreparationAcrossProcesses",
+            "eventBudgetIsCheckedBeforeArtifactPreparation",
+            "existingAndOwnedForkDestinationsNeverChangeOrPrepareArtifacts",
+            "failedArtifactCopyPublishesNoPartialScopeAndValidCopyIsIndependent",
+            "logPublicationFailureCompensatesOnlyNewlyCopiedScope",
+            "malformedTimestampIsTailDamageButUnsupportedSchemaCannotBeRepairedAway",
+            "orphanContextIsNotComposedAndMalformedCoreMessagesFailClosed",
+            "replacedArtifactRootIdentityIsRejectedBeforeScopeCreation",
+            "terminalVerificationRejectsStaleSnapshotsButNewObservedActivityRemainsUnknown"
+          ]
+        },
+        {
+          "name": "io.jharness.session.R5SessionBoundsTest",
+          "cases": [
+            "bothSearchSnippetsUseOriginalUnicodeCoordinates",
+            "differentSessionsReadConcurrentlyWhileSanitizerCallsStaySerialized",
+            "directoryReplacementCannotReuseAnExistingIndexInstance",
+            "memoryCountAndByteRejectionsDoNotConsumeEventIdsOrPublishFailedForks",
+            "shortenedSourcePersistsBothIndexesAndMalformedCachedRowsAreDisposable"
+          ]
+        },
+        {
+          "name": "io.jharness.session.M5SessionTest",
+          "cases": [
+            "catalogFiltersColdSessionsAndReportsDamageWithoutBuildingAnIndex",
+            "diskAndMemoryShareQueryForkAndRequestReconstructionContract",
+            "eventQueryHasInclusiveTimesExactToolStatusAndStablePagination",
+            "exportReopensAsColdRepositoryAndNeverOverwrites",
+            "forkCopiesColdArtifactsAndDetectsTamperingBeforePublication",
+            "maintenanceAndForkRefuseActiveWriterAndReleaseLocksAfterFailure",
+            "middleDamageAndFutureVersionsNeverChangeBytesOrCreateFork",
+            "migrationFailureBeforeAtomicPublishLeavesSourceUntouched",
+            "migrationPreservesEveryEventProjectionRequestAndOriginalBackup",
+            "recoveryCarriesUnknownAndUnresolvedRequestsAcrossForkAndReopen",
+            "tailRepairBacksUpTruncatedAndInvalidCompleteFinalRecords"
+          ]
+        },
+        {
+          "name": "io.jharness.workspace.DirectoryCapabilityTest",
+          "cases": [
+            "heldDirectoryCannotRedirectReadWriteListOrCleanup",
+            "nativeCreationModeReadWriteAndRepeatedEnumerationAreStable",
+            "noClobberPublicationAndClosedAuthorityRejectBeforeUse",
+            "privateAnchorIsDurableStableAndCorruptionIsNotReset",
+            "reusedDirectoryNameCannotReusePrivateAnchorIdentity"
+          ]
+        },
+        {
+          "name": "io.jharness.workspace.LocalWorkspaceTest",
+          "cases": [
+            "aRaceBeforeCommitIsDetectedAndTemporaryFileIsRemoved",
+            "binaryInvalidUtf8AndOversizedEditsAreRejected",
+            "cancellationAndIoFailureDoNotLeaveDelayedWritesOrDamagedOriginals",
+            "escapeLinkOrWindowsJunctionIsRejectedForReadsWritesAndSearchTraversal",
+            "gitignoreAndDefaultExcludedDirectoriesFilterSearchAndLimitIsReported",
+            "largeFilesArePagedAndLiteralGrepFindsBeyondFirstPageWithoutRegexWork",
+            "missingReadGuardAndExplicitOverwriteAreEnforcedAndNewParentsCanBeCreated",
+            "relativeReadsWritesAndDiffPreserveOtherFilesAndCrLfBom",
+            "replacedRootCannotRebindExistingOrIsolatedViewOutsideBoundary",
+            "staleReadVersionAndWrongMatchCountsNeverOverwriteUserChanges",
+            "thousandDirectoryEntriesMeetLocalTwoSecondTarget",
+            "traversalAbsoluteAdsDevicesAndProtectedMetadataAreDenied",
+            "unifiedDiffHandlesEmptyFilesAndMissingFinalNewlineAndNonGitWorkspace"
+          ]
+        },
+        {
+          "name": "io.jharness.workspace.M8SearchFilterTest",
+          "cases": [
+            "anchorsDirectoryGlobsAndDisabledLayersHaveExplicitSemantics",
+            "negationCannotExposeMetadataExternalPathsOrLinks",
+            "precedenceAppliesToListSearchGrepAndIndependentChildViews",
+            "ruleLimitsAndUnsupportedConfigurationFailWithoutTruncation"
+          ]
+        },
+        {
+          "name": "io.jharness.workspace.WindowsDirectoryPinTest",
+          "cases": [
+            "onlyKnownRejectedSharingGetsBoundedCacheRetries",
+            "openAndCloseFailuresStillAttemptAllOwnedCleanup",
+            "reparseAncestorRejectsAndClosesPartialChainInReverse",
+            "reusedNameCannotSubstituteAnotherNativeId",
+            "rootUsesReadAccessNoDeleteShareAndFullNativeIdentity",
+            "writePhasePinsNonemptyChildBeforeChangingDirectorySharing"
+          ]
+        }
+      ],
+      "capability": {
+        "status": "PASS",
+        "sources": {
+          "docs/testing/tools/run-index-capability.py": "28b6b13a23a997940c118cd199078ae845513aef8fd7b0fd6cc038f46ef392b5",
+          "harness-session/src/main/java/io/jharness/session/IndexFiles.java": "a9e3efbb4144323689e6b0cf9881294a5ee6468630c44ee241ba253e26aeac18",
+          "harness-session/src/test/java/io/jharness/session/IndexCapabilityProbe.java": "06061d89f5bed38a195dc24450586dd79082239c926fcdda2712b839dfffe08b",
+          "harness-workspace/src/test/java/io/jharness/workspace/WindowsDirectoryPinAttackProbe.java": "ed1e4a34ead1d35d46908c4c366a0c49731a61e92f3691366ef23bbb61f4023f",
+          "harness-workspace/src/main/java/io/jharness/workspace/DirectoryCapability.java": "cc4fdfd413bd874f40d470c38e7a1cee1a0e899e3ac3225aedd89e59c0e35ac3",
+          "harness-workspace/src/main/java/io/jharness/workspace/WindowsDirectoryPin.java": "320aff0847ef8656bcc849d99675e72f1d393ed12b2f7d8a8d6ba725b08c1a62"
+        },
+        "current": {
+          "normalPublication": true,
+          "secureProvider": false,
+          "windowsPinned": false,
+          "replacementRace": "PASS_ORIGINAL_DIRECTORY_ONLY",
+          "readRace": "PASS_ORIGINAL_DIRECTORY_ONLY",
+          "lockRace": "PASS_ORIGINAL_DIRECTORY_ONLY",
+          "posixDescriptor": true,
+          "status": "PASS"
+        },
+        "controlledOldRejected": true,
+        "controlledOldPhasesRejected": [
+          "publish",
+          "read",
+          "lock"
+        ],
+        "logs": {
+          "current.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "controlled-old-lock.log": "c7ffd5ab920cc5e3acab93eebbc33421c4d96a8930c83929194590243553a017",
+          "compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "controlled-old-publish.log": "318eee3553518df792eb5c0350bdaf5d8ac26d48a99d14ac49c71651016596d7",
+          "controlled-old-read.log": "0245d282bc6cacf90bfc00b8d157d97d7718cc2c431c026312bbb446da9d9af8",
+          "controlled-compile.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    }
+  ],
+  "scope": "55 exact focused Java cases and actual index publication/read/lock plus disabled-capability controls per platform. Windows also real in-place reparse attack/control/cleanup.",
+  "excludes": "Later JSONL path extension and full product candidate validation."
+}

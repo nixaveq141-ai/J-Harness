@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "milestone": "M10.5.9",
-  "origin": "2026-10-28 retains all729 prior identities and adds private native creation mode, read-write descriptor and repeated enumeration regression; total730 cases/122 suites.",
+  "origin": "2026-10-28 retains all730 prior identities and adds2 factual JSONL directory capability regressions; total732 cases/123 suites.",
   "suites": [
     {
       "module": "harness-agent",
@@ -690,6 +690,14 @@
         "rejectWrongSessionDuplicatesAndFutureSchemaWithoutAppending",
         "replayProjectionIsStableAndHasNoSeparateAuthoritativeHistory",
         "writerIsExclusiveReadersSeeSnapshotsAndClosedWriterCannotReenter"
+      ]
+    },
+    {
+      "module": "harness-session",
+      "name": "io.jharness.session.JsonlDirectoryCapabilityTest",
+      "cases": [
+        "openedWriterKeepsOriginalFileAndOwnershipAcrossDirectoryRename",
+        "replacedRootRejectsReadLockForkAndCatalogWithoutTouchingReplacement"
       ]
     },
     {

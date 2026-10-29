@@ -311,12 +311,13 @@ public final class LocalWorkspace implements WorkspaceFiles {
     }
 
     private InputStream input(Path path) throws IOException {
-        try (var cap = capability(path.getParent(), false)) {
-            return java.nio.channels.Channels.newInputStream(
-                    cap.channel(
-                            path.getFileName(),
-                            Set.of(StandardOpenOption.READ, LinkOption.NOFOLLOW_LINKS)));
-        }
+        ensureOpen();
+        return java.nio.channels.Channels.newInputStream(
+                DirectoryCapability.openFile(
+                        root,
+                        rootKey,
+                        path,
+                        Set.of(StandardOpenOption.READ, LinkOption.NOFOLLOW_LINKS)));
     }
 
     private String version(Path path, CancellationToken token) throws IOException {

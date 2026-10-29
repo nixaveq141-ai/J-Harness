@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.*;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.*;
 import io.jharness.api.*;
+import io.jharness.workspace.DirectoryCapability;
 import java.io.*;
 import java.nio.*;
 import java.nio.channels.*;
@@ -32,6 +33,7 @@ public final class JsonlSessionRepository implements SessionRepository {
     // POSIX locks are process-wide: closing even a failed contender's channel can drop the owner.
     private static final Set<Path> OWNERS = ConcurrentHashMap.newKeySet();
     private final Path root;
+    private final Object rootKey;
     private final TailPolicy tailPolicy;
     private final DurabilityBarrier barrier;
     private final Consumer<String> diagnostics;
@@ -77,6 +79,7 @@ public final class JsonlSessionRepository implements SessionRepository {
             throws IOException {
         Files.createDirectories(root);
         this.root = root.toRealPath();
+        rootKey = DirectoryCapability.identity(this.root);
         this.tailPolicy = Objects.requireNonNull(policy);
         this.barrier = Objects.requireNonNull(barrier);
         this.diagnostics = Objects.requireNonNull(diagnostics);
@@ -95,6 +98,34 @@ public final class JsonlSessionRepository implements SessionRepository {
         return path;
     }
 
+    private DirectoryCapability capability(boolean write) throws IOException {
+        return DirectoryCapability.open(root, rootKey, root, write);
+    }
+
+    private FileChannel channel(Path path, OpenOption... options) throws IOException {
+        if (!path.getParent().equals(root)) throw new IOException("Session path outside root");
+        return DirectoryCapability.openFile(root, rootKey, path, Set.of(options));
+    }
+
+    private boolean exists(Path path) throws IOException {
+        try (var held = capability(false)) {
+            return held.exists(path.getFileName());
+        }
+    }
+
+    private void remove(Path path, boolean missingAllowed) throws IOException {
+        try (var held = capability(true)) {
+            if (!missingAllowed || held.exists(path.getFileName()))
+                held.delete(path.getFileName(), false);
+        }
+    }
+
+    private void move(Path from, Path to, boolean replace) throws IOException {
+        try (var held = capability(true)) {
+            held.move(from.getFileName(), to.getFileName(), replace);
+        }
+    }
+
     private static Object gate(Path path) {
         return GATES[(path.hashCode() & Integer.MAX_VALUE) % GATES.length];
     }
@@ -108,7 +139,7 @@ public final class JsonlSessionRepository implements SessionRepository {
         FileLock lock = null;
         try {
             lockChannel =
-                    FileChannel.open(
+                    channel(
                             lockPath,
                             StandardOpenOption.CREATE,
                             StandardOpenOption.WRITE,
@@ -121,7 +152,7 @@ public final class JsonlSessionRepository implements SessionRepository {
             if (lock == null) throw error("WRITE_CONFLICT");
             synchronized (gate(log)) {
                 channel =
-                        FileChannel.open(
+                        channel(
                                 log,
                                 StandardOpenOption.CREATE,
                                 StandardOpenOption.READ,
@@ -175,7 +206,7 @@ public final class JsonlSessionRepository implements SessionRepository {
         return () -> {
             synchronized (gate(log)) {
                 try {
-                    if (!Files.exists(log)) throw error("SESSION_NOT_FOUND");
+                    if (!exists(log)) throw error("SESSION_NOT_FOUND");
                     Parsed parsed = parse(log, id);
                     if (parsed.damaged) throw error("TAIL_DAMAGED");
                     return parsed.events;
@@ -216,10 +247,12 @@ public final class JsonlSessionRepository implements SessionRepository {
 
     @Override
     public List<String> list() {
-        try (DirectoryStream<Path> files = Files.newDirectoryStream(root, "*.jsonl")) {
+        try (var held = capability(false);
+                DirectoryStream<Path> files = held.entries()) {
             List<String> ids = new ArrayList<>();
             for (Path path : files)
-                if (Files.isRegularFile(path, LinkOption.NOFOLLOW_LINKS)) {
+                if (path.getFileName().toString().endsWith(".jsonl")
+                        && Files.isRegularFile(path, LinkOption.NOFOLLOW_LINKS)) {
                     String name = path.getFileName().toString();
                     if (ids.size() >= 10000) throw error("SESSION_CATALOG_LIMIT");
                     ids.add(name.substring(0, name.length() - 6));
@@ -259,8 +292,7 @@ public final class JsonlSessionRepository implements SessionRepository {
                 Maintenance destination = ownership(target)) {
             ownership.ensureValid();
             destination.ensureValid();
-            if (Files.exists(file(target, ".jsonl"), LinkOption.NOFOLLOW_LINKS))
-                throw error("SESSION_EXISTS");
+            if (exists(file(target, ".jsonl"))) throw error("SESSION_EXISTS");
             Path source = file(id, ".jsonl");
             synchronized (gate(source)) {
                 Parsed parsed = parse(source, id);
@@ -310,7 +342,7 @@ public final class JsonlSessionRepository implements SessionRepository {
                     forcedFile(validation, candidate);
                     if (parse(validation, target).damaged) throw error("TAIL_DAMAGED");
                 } finally {
-                    Files.deleteIfExists(validation);
+                    remove(validation, true);
                 }
                 prepareArtifacts.accept(target);
                 try {
@@ -338,7 +370,21 @@ public final class JsonlSessionRepository implements SessionRepository {
                 ownership.ensureValid();
                 Parsed parsed = parse(source, id);
                 if (parsed.damaged) throw error("TAIL_DAMAGED");
-                forcedFile(destination, bytes(source));
+                Path parent = destination.toAbsolutePath().getParent().toRealPath();
+                Object key = DirectoryCapability.identity(parent);
+                try (var output =
+                        DirectoryCapability.openFile(
+                                parent,
+                                key,
+                                parent.resolve(destination.getFileName()),
+                                Set.of(
+                                        StandardOpenOption.CREATE_NEW,
+                                        StandardOpenOption.WRITE,
+                                        LinkOption.NOFOLLOW_LINKS))) {
+                    ByteBuffer data = ByteBuffer.wrap(bytes(source));
+                    while (data.hasRemaining()) output.write(data);
+                    barrier.force(output);
+                }
             } catch (IOException ex) {
                 throw new HarnessException("SESSION_EXPORT_FAILED", "SESSION_EXPORT_FAILED", ex);
             }
@@ -396,20 +442,16 @@ public final class JsonlSessionRepository implements SessionRepository {
                     if (parsed.damaged && !repair) throw error("TAIL_DAMAGED");
                     if (repair && !parsed.damaged) return "ALREADY_VALID";
                     if (repair) {
-                        Files.delete(temp);
+                        remove(temp, false);
                         forcedFile(temp, Arrays.copyOf(candidate, parsed.validBytes));
                         parse(temp, id);
                     }
                     String backup = id + ".backup-" + UUID.randomUUID() + ".bak";
                     forcedFile(root.resolve(backup), original);
-                    Files.move(
-                            temp,
-                            source,
-                            StandardCopyOption.ATOMIC_MOVE,
-                            StandardCopyOption.REPLACE_EXISTING);
+                    move(temp, source, true);
                     return backup;
                 } finally {
-                    Files.deleteIfExists(temp);
+                    remove(temp, true);
                 }
             }
         } catch (IOException ex) {
@@ -420,7 +462,7 @@ public final class JsonlSessionRepository implements SessionRepository {
 
     private void forcedFile(Path path, byte[] bytes) throws IOException {
         try (FileChannel channel =
-                FileChannel.open(
+                channel(
                         path,
                         StandardOpenOption.CREATE_NEW,
                         StandardOpenOption.WRITE,
@@ -437,14 +479,14 @@ public final class JsonlSessionRepository implements SessionRepository {
             forcedFile(temp, bytes);
             Parsed parsed = parse(temp, id);
             if (parsed.damaged) throw error("TAIL_DAMAGED");
-            Files.move(temp, file(id, ".jsonl"), StandardCopyOption.ATOMIC_MOVE);
+            move(temp, file(id, ".jsonl"), false);
         } finally {
-            Files.deleteIfExists(temp);
+            remove(temp, true);
         }
     }
 
     private Maintenance maintenance(String id) throws IOException {
-        if (!Files.exists(file(id, ".jsonl"))) throw error("SESSION_NOT_FOUND");
+        if (!exists(file(id, ".jsonl"))) throw error("SESSION_NOT_FOUND");
         return ownership(id);
     }
 
@@ -454,7 +496,7 @@ public final class JsonlSessionRepository implements SessionRepository {
         FileChannel channel = null;
         try {
             channel =
-                    FileChannel.open(
+                    channel(
                             lockPath,
                             StandardOpenOption.CREATE,
                             StandardOpenOption.WRITE,
@@ -544,8 +586,9 @@ public final class JsonlSessionRepository implements SessionRepository {
     }
 
     private byte[] bytes(Path path) throws IOException {
-        if (Files.size(path) > LOG_LIMIT) throw error("SESSION_LIMIT");
-        try (InputStream input = Files.newInputStream(path, LinkOption.NOFOLLOW_LINKS)) {
+        try (var channel = channel(path, StandardOpenOption.READ, LinkOption.NOFOLLOW_LINKS);
+                InputStream input = Channels.newInputStream(channel)) {
+            if (channel.size() > LOG_LIMIT) throw error("SESSION_LIMIT");
             byte[] bytes = input.readNBytes(LOG_LIMIT + 1);
             if (bytes.length > LOG_LIMIT) throw error("SESSION_LIMIT");
             return bytes;

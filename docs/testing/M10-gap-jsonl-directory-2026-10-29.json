@@ -1,0 +1,31 @@
+{
+  "date": "2026-10-29",
+  "status": "LOCAL_MODULE_PASS_FULL_PENDING",
+  "scope": [
+    "JSONL read and writer/maintenance lock file channels",
+    "JSONL backup migration fork staging publication and cleanup",
+    "Explicit export binds selected parent and refuses overwrite",
+    "Close failure releases already opened file channels"
+  ],
+  "sourceSha256": {
+    "harness-session/src/main/java/io/jharness/session/JsonlSessionRepository.java": "e394b6ceca583c078ff23c654fc39e94445d680b391c044a109e7f89fefb535b",
+    "harness-session/src/main/java/io/jharness/session/LocalArtifactStore.java": "69afb2f0ea55bc2f70cb224eaf9a83e8c9eec3e6c26c846417c3c20bf40e987b",
+    "harness-workspace/src/main/java/io/jharness/workspace/DirectoryCapability.java": "39da6f28d46a08f58f0aebb5330a1cde3923806633c0846bf2fbfb7b91b1643a",
+    "harness-workspace/src/main/java/io/jharness/workspace/LocalWorkspace.java": "be9d5dc645355b6a7046ab8e1728306d1dbd42fea75ad541e65fee048f3d1713",
+    "harness-session/src/test/java/io/jharness/session/JsonlDirectoryCapabilityTest.java": "e59ed514b7a1ea98c3dec4abc316630ee27a6fc9ee907b916e14a3c31a071d60",
+    "scripts/contracts/m1059-java-cases.json": "b7afee174c2338082d16d8042dbd19d4149e4f2bfa0f05961097bc906be2b7b7"
+  },
+  "focusedLogSha256": "317f6175b1a2b6d4339afa15276d3e35f445f1a160fb98f1a4852f6dc33a3628",
+  "contract": {
+    "cases": 732,
+    "suites": 123,
+    "preservesPrevious": 730
+  },
+  "nativePlatformEvidence": "M10-gap-native-focused-2026-10-28.json",
+  "boundaries": [
+    "Root identity changes reject new path operations; an already opened writer remains attached to its original file.",
+    "No claim of malicious-kernel isolation, filesystem content CAS or device power-loss guarantees.",
+    "Final local full verify and current remote complete CI/Docker are pending.",
+    "Physical OS acceptance skipped as requested; no paid provider request."
+  ]
+}
