@@ -576,7 +576,8 @@ public final class LocalWorkspace implements WorkspaceFiles {
                                 Set.of(
                                         StandardOpenOption.CREATE_NEW,
                                         StandardOpenOption.WRITE,
-                                        LinkOption.NOFOLLOW_LINKS))) {
+                                        LinkOption.NOFOLLOW_LINKS),
+                                0666)) {
                     ByteBuffer data = ByteBuffer.wrap(bytes);
                     while (data.hasRemaining()) {
                         token.throwIfCancelled();
@@ -645,7 +646,7 @@ public final class LocalWorkspace implements WorkspaceFiles {
             checkSegments(at);
             if (!exists(at))
                 try (var held = capability(at.getParent(), true)) {
-                    held.createDirectory(at.getFileName());
+                    held.createDirectory(at.getFileName(), 0777);
                 }
         }
     }

@@ -296,6 +296,13 @@ public final class DirectoryCapability implements Closeable {
     }
 
     public FileChannel channel(Path name, Set<? extends OpenOption> options) throws IOException {
+        return channel(name, options, 0600);
+    }
+
+    public FileChannel channel(Path name, Set<? extends OpenOption> options, int creationMode)
+            throws IOException {
+        if (creationMode != 0600 && creationMode != 0666)
+            throw new IOException("Invalid file creation mode");
         ensureOpen();
         String relative = component(name);
         boolean write = options.contains(StandardOpenOption.WRITE),
@@ -325,7 +332,7 @@ public final class DirectoryCapability implements Closeable {
                         | (MAC ? 4 : 0x800);
         if (create) flags |= MAC ? 0xA00 : 0xC0;
         else if (options.contains(StandardOpenOption.CREATE)) flags |= MAC ? 0x200 : 0x40;
-        int fd = Api.INSTANCE.openat(descriptor, relative, flags, 0600);
+        int fd = Api.INSTANCE.openat(descriptor, relative, flags, creationMode);
         if (fd < 0) throw error("open relative file");
         FileChannel channel = null;
         boolean returning = false;
@@ -388,10 +395,16 @@ public final class DirectoryCapability implements Closeable {
     }
 
     public void createDirectory(Path name) throws IOException {
+        createDirectory(name, 0700);
+    }
+
+    public void createDirectory(Path name, int creationMode) throws IOException {
+        if (creationMode != 0700 && creationMode != 0777)
+            throw new IOException("Invalid directory creation mode");
         ensureOpen();
         String relative = component(name);
         if (windows != null) Files.createDirectory(directory.resolve(relative));
-        else if (Api.INSTANCE.mkdirat(descriptor, relative, 0700) != 0)
+        else if (Api.INSTANCE.mkdirat(descriptor, relative, creationMode) != 0)
             throw error("create relative directory");
     }
 

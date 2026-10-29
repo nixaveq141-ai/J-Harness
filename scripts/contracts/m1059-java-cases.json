@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "milestone": "M10.5.9",
-  "origin": "2026-10-29 preserves all732 prior cases and adds2 trusted readonly native mount lifecycle regressions; total734 cases/124 suites.",
+  "origin": "2026-10-29 retains all734 prior identities and adds host-default public workspace creation mode regression; total735 cases/124 suites.",
   "suites": [
     {
       "module": "harness-agent",
@@ -1407,6 +1407,7 @@
         "gitignoreAndDefaultExcludedDirectoriesFilterSearchAndLimitIsReported",
         "largeFilesArePagedAndLiteralGrepFindsBeyondFirstPageWithoutRegexWork",
         "missingReadGuardAndExplicitOverwriteAreEnforcedAndNewParentsCanBeCreated",
+        "publicCreationRetainsHostDefaultModesWhilePrivateCapabilitiesStaySeparate",
         "relativeReadsWritesAndDiffPreserveOtherFilesAndCrLfBom",
         "replacedRootCannotRebindExistingOrIsolatedViewOutsideBoundary",
         "staleReadVersionAndWrongMatchCountsNeverOverwriteUserChanges",

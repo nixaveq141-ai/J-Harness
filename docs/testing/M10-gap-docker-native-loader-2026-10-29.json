@@ -42,10 +42,20 @@
   "fix": "Extract bounded trusted native resources from selected worker JAR into an owned host directory; bind read-only at/runtime/native; worker disables unpack/system fallback and selects platform subdirectory. Keep/tmp noexec and existing isolation flags.",
   "localEvidence": ".build-cache/docker-native-readonly-final.log",
   "contract": {
-    "cases": 734,
+    "cases": 735,
     "suites": 124,
-    "preserves": 732
+    "preserves": 734
   },
   "remotePending": true,
-  "backup": "Local only"
+  "backup": "Local only",
+  "nativeFixRemote": {
+    "runId": "40837272415",
+    "commit": "2b275ed25566e3700d88bc319116b26ef0eba51d",
+    "originalZipSha256": "72dc384f3a71993ffac90e145dfb38da277341b5b2818fa3c2f997c9da70bcfa",
+    "status": "FIRST_THREE_PASS_WEB_FAILED",
+    "nativeLoadExit": 0,
+    "nativeReadonlyMount": true,
+    "localAndDockerSdk": true
+  },
+  "nextCorrection": "Public workspace creation restores original NIO0666 files/0777 directories subject to umask; private capability defaults remain0600/0700. Host-default comparison regression added. Full734 attempt interrupted after build input changed, not acceptance."
 }

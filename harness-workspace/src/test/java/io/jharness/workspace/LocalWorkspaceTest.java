@@ -13,6 +13,33 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.io.TempDir;
 
 class LocalWorkspaceTest {
+    @Test
+    void publicCreationRetainsHostDefaultModesWhilePrivateCapabilitiesStaySeparate()
+            throws Exception {
+        Path directory = root();
+        Path reference = Files.writeString(directory.resolve("reference.txt"), "reference");
+        Path referenceDirectory = Files.createDirectory(directory.resolve("reference-directory"));
+        var workspace = new LocalWorkspace(directory);
+        workspace.write(
+                new ExecPath("generated/sub/file.txt"),
+                "created",
+                false,
+                null,
+                CancellationToken.NONE);
+        assertEquals("created", workspace.readText(new ExecPath("generated/sub/file.txt")));
+        if (Files.getFileStore(directory).supportsFileAttributeView("posix")) {
+            assertEquals(
+                    Files.getPosixFilePermissions(reference),
+                    Files.getPosixFilePermissions(directory.resolve("generated/sub/file.txt")));
+            assertEquals(
+                    Files.getPosixFilePermissions(referenceDirectory),
+                    Files.getPosixFilePermissions(directory.resolve("generated")));
+            assertEquals(
+                    Files.getPosixFilePermissions(referenceDirectory),
+                    Files.getPosixFilePermissions(directory.resolve("generated/sub")));
+        }
+    }
+
     @TempDir Path temporary;
 
     @Test
