@@ -206,10 +206,11 @@ public final class JsonlSessionRepository implements SessionRepository {
         return () -> {
             synchronized (gate(log)) {
                 try {
-                    if (!exists(log)) throw error("SESSION_NOT_FOUND");
                     Parsed parsed = parse(log, id);
                     if (parsed.damaged) throw error("TAIL_DAMAGED");
                     return parsed.events;
+                } catch (NoSuchFileException missing) {
+                    throw error("SESSION_NOT_FOUND");
                 } catch (IOException ex) {
                     throw error("SESSION_READ_FAILED");
                 }

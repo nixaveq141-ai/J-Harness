@@ -1,6 +1,6 @@
 {
   "date": "2026-10-29",
-  "status": "LOCAL_MODULE_PASS_FULL_PENDING",
+  "status": "LOCAL_MODULE_AND_SCAN_PASS_FULL_RETRY_PENDING",
   "scope": [
     "JSONL read and writer/maintenance lock file channels",
     "JSONL backup migration fork staging publication and cleanup",
@@ -8,7 +8,7 @@
     "Close failure releases already opened file channels"
   ],
   "sourceSha256": {
-    "harness-session/src/main/java/io/jharness/session/JsonlSessionRepository.java": "e394b6ceca583c078ff23c654fc39e94445d680b391c044a109e7f89fefb535b",
+    "harness-session/src/main/java/io/jharness/session/JsonlSessionRepository.java": "be621b703528eb3a0210e2077e061b86844b05ff9c1274d0e3da886ab8a40093",
     "harness-session/src/main/java/io/jharness/session/LocalArtifactStore.java": "69afb2f0ea55bc2f70cb224eaf9a83e8c9eec3e6c26c846417c3c20bf40e987b",
     "harness-workspace/src/main/java/io/jharness/workspace/DirectoryCapability.java": "39da6f28d46a08f58f0aebb5330a1cde3923806633c0846bf2fbfb7b91b1643a",
     "harness-workspace/src/main/java/io/jharness/workspace/LocalWorkspace.java": "be9d5dc645355b6a7046ab8e1728306d1dbd42fea75ad541e65fee048f3d1713",
@@ -27,5 +27,16 @@
     "No claim of malicious-kernel isolation, filesystem content CAS or device power-loss guarantees.",
     "Final local full verify and current remote complete CI/Docker are pending.",
     "Physical OS acceptance skipped as requested; no paid provider request."
-  ]
+  ],
+  "fullAttempt": {
+    "status": "FAILED",
+    "receipt": ".build-cache/M10.5.9/commands/gapjsonlverify.json",
+    "reason": "Ten-thousand-record catalog scan exceeded original deadline after directory-capability overhead."
+  },
+  "correction": "Removed duplicate root open/existence check before actual read; missing files retain SESSION_NOT_FOUND.",
+  "targetedRetry": {
+    "status": "PASS",
+    "log": ".build-cache/gap-jsonl-20261029/scan-regression.log",
+    "scope": "R1CatalogScanBoundaryTest,JsonlDirectoryCapabilityTest,JsonlSessionRepositoryTest; original time and concurrency assertions retained."
+  }
 }
