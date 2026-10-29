@@ -3,5 +3,14 @@
   "sha256": "35b41108bd5c5ba0e1026feda360c75cdc538929d082a1176fba2a57fdd7f1e0",
   "bytes": 13225913,
   "members": 752,
-  "scope": "LOCAL_FULL735_DOCKER7_NOT_FULL_THREE_PLATFORM_ACCEPTANCE"
+  "scope": "LOCAL_FULL735_DOCKER7_NOT_FULL_THREE_PLATFORM_ACCEPTANCE",
+  "completeThreePlatform": {
+    "path": ".build-cache/local-evidence-backups/2026-10-29/full735-three-platform-originals.zip",
+    "sha256": "4966d1813939dd864e508af2577b8c537ed7249300d3d1f8409433609f64ab8e",
+    "bytes": 85752713,
+    "runId": "40838729596",
+    "commit": "8b9ec77bd6865e97726a3bb2076078ff0d159ec4",
+    "originalZipMembersVerified": true
+  },
+  "policy": "User requested local backup only; offsite backup is out of scope."
 }

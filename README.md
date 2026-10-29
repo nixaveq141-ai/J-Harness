@@ -1,6 +1,6 @@
 # J-Harness
 
-本机单操作者的Java Agent Runtime与Web工作台。最近完整三平台已验版本为`1f7d521`，每平台718 Java、42客户端、813浏览器、66 SDK和7原生凭据项，见[原包审计](docs/testing/M10-gap-full-ci-2026-10-28.json)。后续补缺源码与专项证据各自绑定版本，当前进度及限制见[活动状态](docs/development/current-state.md)。API/Java SDK1.14，独立stdio1.0。
+本机单操作者的Java Agent Runtime与Web工作台。当前完整三平台已验版本为`8b9ec77`，每平台735 Java、42客户端、813浏览器、66 SDK和7原生凭据项，见[原包审计](docs/testing/M10-gap-final-acceptance-2026-10-29.json)。同源码七个真实Docker夹具及本地证据备份已完成，当前范围和保留边界见[活动状态](docs/development/current-state.md)。API/Java SDK1.14，独立stdio1.0。
 
 [当前实现与验收索引](docs/development/current-state.md) · [M1至今缺口清单](docs/testing/M1-M10.5-gap-audit-2026-10-26.md) · [后续计划](docs/requirements/JHarness-next-plan-v1.0.md)
 

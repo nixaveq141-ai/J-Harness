@@ -1,6 +1,6 @@
 {
   "date": "2026-10-29",
-  "status": "DOCKER7_PASS_LOCAL735_PASS_FULL_CI_PENDING",
+  "status": "DOCKER7_AND_LOCAL735_AND_FULL_THREE_PLATFORM_PASS",
   "diagnosticRun": "40836683164",
   "artifact": {
     "file": "12881036640.zip",
@@ -67,8 +67,11 @@
     "receipt": ".build-cache/M10.5.9/commands/gapnative735verify.json",
     "jarSha256": "4b99a449368afb71e105ed8729ddc5f4c3deaaa0efc500a3d33d8baf1cc6f1d5"
   },
-  "fullCiPending": {
+  "fullCi": {
+    "status": "PASS",
     "runId": "40838729596",
-    "commit": "8b9ec77bd6865e97726a3bb2076078ff0d159ec4"
+    "commit": "8b9ec77bd6865e97726a3bb2076078ff0d159ec4",
+    "originalArtifactsAudited": true,
+    "evidence": "M10-gap-final-acceptance-2026-10-29.json"
   }
 }
