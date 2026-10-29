@@ -4,7 +4,7 @@
 
 运行时代码8b9ec77：本地735项/124套件与622输入、Docker七夹具均已复核。完整三平台40838729596全部通过，原三ZIP和完整汇总已严格审计，整轮已关闭，见[最终验收](M10-gap-final-acceptance-2026-10-29.json)。
 
-新增四项扩展验收按用户本轮要求继续推进：[当前四项接续](four-followups-2026-10-29.md)。其中新DeepSeek代码已经生成、隔离专项待验；性能大横测依用户指示延期；精确供应链/旧Mac根因仍明确未完成，不能用此前选定实现范围已关闭代替这些证据。
+新增四项扩展验收按用户本轮要求继续推进：[当前四项接续](four-followups-2026-10-29.md)。其中新DeepSeek代码的CLI生成→Docker功能专项40844744965已通过并独立审计；性能大横测依用户指示延期；精确供应链/旧Mac根因仍明确未完成，不能用此前选定实现范围已关闭代替这些证据。
 
 | 原编号 | 当前覆盖与状态 | 证据入口 |
 |---|---|---|
@@ -18,7 +18,7 @@
 | GAP-08 | gitignore无效规则实际行号/序号和操作说明已补，fail-closed及预算不变。 | [规则诊断](../development/gap-remediation-2026-10-26.md) |
 | GAP-09 | 保留千条目录两秒目标，补受控128MiB堆、万事实、分页/产物、并发读、真实force及混合负载测量。仅列实际样本，不承诺任意负载或跨平台SLA。 | [快照测量](M10-gap-provenance-snapshot-2026-10-27.json)、[落盘](M10-gap-durable-cost-2026-10-27.json)、[混合](M10-gap-mixed-load-2026-10-28.json) |
 | GAP-10 | Windows10、独立WSL、额外CPU与实体Mac验收按用户要求跳过，不伪造认证。 | [活动状态](../development/current-state.md) |
-| GAP-11 | 三协议真实非流式/SSE只读闭环和历史M4生成代码的真实Docker隔离编译/功能oracle已补。代码来源仍明确是历史输出，不宣称新的代码生成任务/其他厂商普遍质量；原2元账本/12次上限不变，无新付费。 | [SSE/来源](M10-gap-isolation-and-index-2026-10-28.json)、[Responses](M10-gap-responses-sse-2026-10-28.json) |
+| GAP-11 | 三协议只读/SSE和历史代码隔离保留；新增DeepSeek真实CLI生成CSV/算术代码并经Docker独立oracle、错误实现拒绝及自有清理，原包审计过。新5元账本2次/预留0.311296元，原2元账本不动。仅一个固定新任务，其他厂商依用户要求移出，不声称普遍质量。 | [新代码闭环](M10-fresh-code-acceptance-2026-10-29.json)、[SSE/来源](M10-gap-isolation-and-index-2026-10-28.json)、[Responses](M10-gap-responses-sse-2026-10-28.json) |
 | GAP-12 | 原macOS偶发失败与固定诊断保留，根因仍未知；当前代码定点及历史完整通过不等于历史原因已修复，当前完整也通过，历史原因仍未定。 | [原始原因记录](../development/M10.5.9-root-causes-2026-10-24.md)、[当前状态](../development/current-state.md) |
 | GAP-13 | 活动入口与证据版本刷新；旧快照按日期保留。最终完整结果已回写活动入口。 | [活动入口](../development/current-state.md) |
 | GAP-14 | 原生二进制精确构建来源仍为已声明供应链限制；许可/SBOM/坐标漏洞门禁不等于完整OS/CPE证明。 | [第三方来源](../../third-party/README.md) |

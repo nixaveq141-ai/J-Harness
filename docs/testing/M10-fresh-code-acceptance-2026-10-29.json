@@ -1,0 +1,53 @@
+{
+  "status": "PASS",
+  "commit": "33c1eb44ceab42afe8a8851b45b89365ac5114ce",
+  "ciRunId": "40844744965",
+  "originalZipSha256": "3047ab00f15847af9ecd96c837e802e592105ac4b5d9067b6067f113f13116f2",
+  "sourceSha256": "df593a653c5ffb9883b5799d127cfb91c69bb632b5dd002e1ac3ab7c2b049bff",
+  "oracleSha256": "733c96c357d115a22bfbd475db88bebec721f4ea19bff5759035cf7769fd666d",
+  "csvCases": 220,
+  "freshFunctionalPass": true,
+  "wrongImplementationRejected": true,
+  "isolationAndCleanupVerified": true,
+  "exactSourceInputs": {
+    "docs/testing/tools/fresh-code-isolated-evaluation.py": "d04c4202111faf7f454439d138e569aeb8afc3804ec202662cb984914ee31a01",
+    "docs/testing/tools/isolated-code-evaluation.py": "f7ff6c1e17dbf80ca67ef7f0f240dec69227acd0e51d154d4b2b9e8cdf3d37b1",
+    "docs/testing/fixtures/deepseek-fresh-calculator-2026-10-29.txt": "df593a653c5ffb9883b5799d127cfb91c69bb632b5dd002e1ac3ab7c2b049bff",
+    "docs/testing/fixtures/deepseek-fresh-calculator-2026-10-29.provenance.json": "7da7a4172c2a7074997a39be2b0bc77a552e1911b4be48134b48bdae099101fb",
+    ".github/workflows/gap-fresh-code-isolation.yml": "c4563691e8a165e169f4811ef184f796146e95403f3c539decd2dd5ad60df90b"
+  },
+  "date": "2026-10-29",
+  "artifact": {
+    "file": "12884536689.zip",
+    "sha256": "3047ab00f15847af9ecd96c837e802e592105ac4b5d9067b6067f113f13116f2",
+    "githubDigest": "sha256:3047ab00f15847af9ecd96c837e802e592105ac4b5d9067b6067f113f13116f2",
+    "artifactId": 12884536689,
+    "name": "fresh-code-isolation",
+    "runId": "40844744965",
+    "commit": "33c1eb44ceab42afe8a8851b45b89365ac5114ce",
+    "createdAt": "2026-10-29T08:48:15Z",
+    "expiresAt": "2027-01-27T08:47:56Z"
+  },
+  "auditCounterexamples": [
+    "source-drift",
+    "missing-control",
+    "writable-mount",
+    "false-control-log"
+  ],
+  "provider": "https://api.deepseek.com",
+  "model": "deepseek-flash",
+  "newGrantCapCny": 5,
+  "newGrantReservedMicroCny": 311296,
+  "newGrantAttempts": 2,
+  "accounting": "NON_REFUNDABLE_UPPER_BOUND_NOT_PROVIDER_BILL",
+  "scope": "One fresh synthetic code task through CLI read_file and final source, then independent Docker compilation/oracle. Not all coding workloads or write-tool certification.",
+  "nativeProvenance": "47 resource digests, 23 pty4j official distribution matches; exact source build/CPE not proven",
+  "historicalMacRootCause": "ROOT_CAUSE_UNDETERMINED",
+  "performance": "DEFERRED_TO_FINAL_BENCHMARK",
+  "prior735FrozenInputsRechecked": 622,
+  "prior735FrozenInputsChanged": [],
+  "auditorSources": {
+    "docs/testing/tools/audit-fresh-code-isolation.py": "7623ac1ec744ff3078f407c027c7725c13bb81c575790885181dbcfe9c20ebe5",
+    "docs/testing/tools/test-audit-fresh-code-isolation.py": "3364c62fb97e14dd01b515544a3a9843cedef02e4a7141d85afb1e609a4ae93c"
+  }
+}

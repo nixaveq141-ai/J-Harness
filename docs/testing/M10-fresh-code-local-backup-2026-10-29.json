@@ -1,0 +1,38 @@
+{
+  "path": ".build-cache/local-evidence-backups/2026-10-29/four-followups-fresh-code.zip",
+  "bytes": 22739,
+  "sha256": "e29bf36c52bb911cb17574be2aee9da0f08972b8010979ad21c1966570e740c7",
+  "members": {
+    ".build-cache/fresh-code-20261029/originals/12884536689.zip": "3047ab00f15847af9ecd96c837e802e592105ac4b5d9067b6067f113f13116f2",
+    ".build-cache/fresh-code-20261029/originals/acquisition.json": "daeefbf70caa7deb7431099cfc7d31fe623bb03ae26d4b86bb4dd5449883e0c1",
+    ".build-cache/fresh-code-20261029/audited.json": "b7a7ed532aa7f55fdbc3e1cd9366fc7e915572b50bf9ae507c1bb4e9b285f939",
+    ".build-cache/native-provenance-20261029/report.json": "59bb7672f98d949aafb2b32caa7cbd94de1b9795dd2ee78f6aa0faa2db41d652",
+    "docs/testing/M10-fresh-code-acceptance-2026-10-29.json": "cbb52feb577eab4a309cd4750d73cdaccd8118a2df6a6b2eca26c4236286f1c0",
+    ".build-cache/deepseek-fresh-code-2026-10-29/task-4c2ffa15563f315a/receipt.json": "2238e4ced048a020a35e62839d9635217eb2239cc6e0402efc7c6eee21c201f2",
+    ".build-cache/deepseek-fresh-code-2026-10-29/task-4c2ffa15563f315a/recovered.json": "919244038b12b415c16e536210f0baf328864bb19d2fc32cf93f8ea8562d0748",
+    ".build-cache/deepseek-fresh-code-2026-10-29/task-4c2ffa15563f315a/generated.txt": "df593a653c5ffb9883b5799d127cfb91c69bb632b5dd002e1ac3ab7c2b049bff",
+    ".build-cache/deepseek-fresh-code-2026-10-29/task-4c2ffa15563f315a/requirements.txt": "01dd6074de4ee8af5f44cf8c5e570ad46e2916df5104fdd0c0c89fea166d4d91",
+    ".build-cache/deepseek-fresh-code-2026-10-29/task-4c2ffa15563f315a/cli.log": "6a9a4fa06ee7be8da45b0d41e96bfe1a62444c37b68e308285271ccb5b54c762",
+    ".build-cache/deepseek-fresh-code-2026-10-29/task-4c2ffa15563f315a/.jharness/sessions/fresh-code.jsonl": "6230dda1614486c4f1bf4043addb901a384140b774e063839d976eda880ddc10",
+    ".build-cache/deepseek-readonly-2026-10-26/wallet.sqlite": "50a9a48afeaeb7835de1e3f762af9cce237fc9ac82342dfea2de8e826e666832",
+    ".build-cache/deepseek-fresh-code-2026-10-29/wallet.sqlite": "e13907c9c07ce00923b4d6f8b6664313c598042b680ed05195c893554ab56e3c"
+  },
+  "wallets": {
+    "deepseek-readonly-2026-10-26": {
+      "grant": "deepseek-readonly-2026-10-26-CNY2",
+      "capMicroCny": 2000000,
+      "attempts": 12,
+      "reservedMicroCny": 1769472,
+      "sha256": "50a9a48afeaeb7835de1e3f762af9cce237fc9ac82342dfea2de8e826e666832"
+    },
+    "deepseek-fresh-code-2026-10-29": {
+      "grant": "deepseek-fresh-code-2026-10-29-CNY5",
+      "capMicroCny": 5000000,
+      "attempts": 2,
+      "reservedMicroCny": 311296,
+      "sha256": "e13907c9c07ce00923b4d6f8b6664313c598042b680ed05195c893554ab56e3c"
+    }
+  },
+  "localOnly": true,
+  "secretScan": "PASS"
+}
