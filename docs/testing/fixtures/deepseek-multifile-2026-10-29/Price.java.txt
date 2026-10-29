@@ -1,0 +1,54 @@
+package example;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
+public final class Price {
+
+    private Price() {
+    }
+
+    /**
+     * Parses a nonnegative decimal amount such as "12", "12.5", "12.50" or ".75"
+     * into an exact number of cents. No rounding is performed: a value with more
+     * than two significant fractional digits (e.g. "1.005") is rejected.
+     *
+     * @param text amount text; surrounding whitespace is ignored
+     * @return exact amount in cents
+     * @throws IllegalArgumentException if the text is null, blank, negative,
+     *                                  malformed, has fractional cents, or does
+     *                                  not fit in a long number of cents
+     */
+    public static long cents(String text) {
+        if (text == null) {
+            throw new IllegalArgumentException("amount must not be null");
+        }
+        String trimmed = text.trim();
+        if (trimmed.isEmpty()) {
+            throw new IllegalArgumentException("amount must not be blank");
+        }
+
+        BigDecimal amount;
+        try {
+            amount = new BigDecimal(trimmed);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("malformed amount: " + trimmed, e);
+        }
+
+        if (amount.signum() < 0) {
+            throw new IllegalArgumentException("negative amount: " + trimmed);
+        }
+
+        // Reject anything with a fractional part smaller than a cent, e.g. 1.005.
+        BigDecimal scaled = amount.movePointRight(2);
+        if (scaled.stripTrailingZeros().scale() > 0) {
+            throw new IllegalArgumentException("fractional cents are not allowed: " + trimmed);
+        }
+
+        BigInteger exact = scaled.toBigIntegerExact();
+        if (exact.compareTo(BigInteger.valueOf(Long.MAX_VALUE)) > 0) {
+            throw new IllegalArgumentException("amount overflows long cents: " + trimmed);
+        }
+        return exact.longValue();
+    }
+}

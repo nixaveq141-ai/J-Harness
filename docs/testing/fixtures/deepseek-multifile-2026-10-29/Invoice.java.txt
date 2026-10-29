@@ -1,0 +1,37 @@
+package example;
+
+public final class Invoice {
+
+    private Invoice() {
+    }
+
+    /**
+     * Sums the given amounts (see {@link Price#cents(String)}) into total cents.
+     * An empty array yields zero.
+     *
+     * @param items amount texts
+     * @return total amount in cents
+     * @throws IllegalArgumentException if the array is null, any element is
+     *                                  invalid, or the running sum overflows a long
+     */
+    public static long total(String[] items) {
+        if (items == null) {
+            throw new IllegalArgumentException("items must not be null");
+        }
+        long sum = 0L;
+        for (int i = 0; i < items.length; i++) {
+            long cents;
+            try {
+                cents = Price.cents(items[i]);
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("invalid amount at index " + i + ": " + e.getMessage(), e);
+            }
+            try {
+                sum = Math.addExact(sum, cents);
+            } catch (ArithmeticException e) {
+                throw new IllegalArgumentException("total overflows long cents", e);
+            }
+        }
+        return sum;
+    }
+}

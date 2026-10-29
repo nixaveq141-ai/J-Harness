@@ -1,0 +1,35 @@
+name: DeepSeek multi-file repair isolation
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/m1059-full-validation]
+    paths: [.github/workflows/gap-multifile-isolation.yml]
+permissions:
+  contents: read
+jobs:
+  isolated:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify offline boundaries
+        run: |
+          python docs/testing/tools/test-isolated-code-evaluation.py
+          python docs/testing/tools/test-deepseek-multifile-validation.py
+      - name: Provision pinned image
+        run: docker pull eclipse-temurin@sha256:f9bf7e9fe2f9bc4657537c1a7e20c768f0c3bafca41598263be4714783dd62eb
+      - name: Evaluate generated multi-file repair inside isolation only
+        run: python docs/testing/tools/multifile-isolated-evaluation.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: multifile-code-isolation
+          include-hidden-files: true
+          retention-days: 90
+          path: |
+            .build-cache/multifile-isolation/*/evidence.json
+            .build-cache/multifile-isolation/*/*/result.json
+            .build-cache/multifile-isolation/*/*/execution.log

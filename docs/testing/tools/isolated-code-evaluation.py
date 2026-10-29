@@ -3,6 +3,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import threading
@@ -67,12 +68,20 @@ def validate_inspection(value, owner, input_dir):
             raise ValueError('Unbounded writable filesystem')
 
 
-def evaluate(source, directory, docker, *, oracle=ORACLE):
+def evaluate(source, directory, docker, *, oracle=ORACLE, source_name='Calculator.java', extra_sources=None):
     """Never invokes host Java/javac; generated content is only an input file."""
+    sources = dict(extra_sources or {})
+    if source_name in sources:
+        raise ValueError('Duplicate source name')
+    sources[source_name] = source
+    if (len(sources)>8 or sum(len(raw) for raw in sources.values())>131072
+            or any(not re.fullmatch(r'[A-Za-z][A-Za-z0-9_]*\.java',name) or name=='Oracle.java' for name in sources)):
+        raise ValueError('Bounded source filenames required')
     directory.mkdir()
     inputs = directory / 'input'
     inputs.mkdir()
-    (inputs / 'Calculator.java').write_bytes(source)
+    for name,raw in sources.items():
+        (inputs / name).write_bytes(raw)
     (inputs / 'Oracle.java').write_text(oracle, encoding='utf-8')
     (inputs / 'host-canary').write_bytes(b'original host canary')
     before = {p.name:sha(p) for p in inputs.iterdir()}
@@ -89,7 +98,8 @@ def evaluate(source, directory, docker, *, oracle=ORACLE):
                 '--log-driver=none','--tmpfs','/work:rw,noexec,nosuid,size=16m,mode=1777',
                 '--tmpfs','/tmp:rw,noexec,nosuid,size=16m,mode=1777','--mount','type=bind,source='+str(inputs.resolve())+',target=/input,readonly',
                 '--workdir','/work',IMAGE,'/bin/sh','-c',
-                'javac -J-Xmx64m -proc:none -d /work /input/Calculator.java /input/Oracle.java && java -Xmx64m -cp /work Oracle')
+                'javac -J-Xmx64m -proc:none -d /work '+ ' '.join('/input/'+name for name in sources)+
+                ' /input/Oracle.java && java -Xmx64m -cp /work Oracle')
         created = True
         inspection = json.loads(control('inspect',owner))[0]
         report['isolationFields'] = {k:inspection['HostConfig'].get(k) for k in
