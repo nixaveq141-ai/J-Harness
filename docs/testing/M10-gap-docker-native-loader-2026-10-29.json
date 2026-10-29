@@ -1,6 +1,6 @@
 {
   "date": "2026-10-29",
-  "status": "ROOT_CAUSE_CONFIRMED_FIX_LOCAL_REMOTE_PENDING",
+  "status": "DOCKER7_PASS_LOCAL735_PASS_FULL_CI_PENDING",
   "diagnosticRun": "40836683164",
   "artifact": {
     "file": "12881036640.zip",
@@ -46,7 +46,7 @@
     "suites": 124,
     "preserves": 734
   },
-  "remotePending": true,
+  "remotePending": false,
   "backup": "Local only",
   "nativeFixRemote": {
     "runId": "40837272415",
@@ -57,5 +57,18 @@
     "nativeReadonlyMount": true,
     "localAndDockerSdk": true
   },
-  "nextCorrection": "Public workspace creation restores original NIO0666 files/0777 directories subject to umask; private capability defaults remain0600/0700. Host-default comparison regression added. Full734 attempt interrupted after build input changed, not acceptance."
+  "nextCorrection": "Public workspace creation restores original NIO0666 files/0777 directories subject to umask; private capability defaults remain0600/0700. Host-default comparison regression added. Full734 attempt interrupted after build input changed, not acceptance.",
+  "dockerAcceptance": "M10-gap-docker-final-2026-10-29.json",
+  "full735Local": {
+    "status": "PASS",
+    "cases": 735,
+    "suites": 124,
+    "inputs": 622,
+    "receipt": ".build-cache/M10.5.9/commands/gapnative735verify.json",
+    "jarSha256": "4b99a449368afb71e105ed8729ddc5f4c3deaaa0efc500a3d33d8baf1cc6f1d5"
+  },
+  "fullCiPending": {
+    "runId": "40838729596",
+    "commit": "8b9ec77bd6865e97726a3bb2076078ff0d159ec4"
+  }
 }

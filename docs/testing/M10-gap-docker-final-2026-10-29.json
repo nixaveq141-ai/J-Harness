@@ -1,0 +1,389 @@
+{
+  "date": "2026-10-29",
+  "status": "SEVEN_REAL_DOCKER_PROBES_PASS",
+  "commit": "8b9ec77bd6865e97726a3bb2076078ff0d159ec4",
+  "runId": "40837918559",
+  "artifact": {
+    "file": "12881313265.zip",
+    "sha256": "dda8de6056a95467a784290552c196ee0558bb287dbd5c5f42c6f42b5fd4317c",
+    "githubDigest": "sha256:dda8de6056a95467a784290552c196ee0558bb287dbd5c5f42c6f42b5fd4317c",
+    "artifactId": 12881313265,
+    "name": "remaining-gap-docker",
+    "runId": "40837918559",
+    "commit": "8b9ec77bd6865e97726a3bb2076078ff0d159ec4",
+    "createdAt": "2026-10-29T07:51:19Z",
+    "expiresAt": "2027-01-27T07:49:35Z"
+  },
+  "sourceFileCount": 622,
+  "sourceBindingsMatchExactCommit": true,
+  "jarSha256": "c0f5d74785c2f31581cd5fc26d9682d9dbaf86be489d01b4071fe3c9fd8a0f83",
+  "image": "eclipse-temurin@sha256:ccbad9e7cb84c27092b12c40a4143e5733e050db9c3784d84f632dcf423fb2ef",
+  "probes": [
+    {
+      "name": "M7DockerProbe",
+      "reportSha256": "542f0550d9f23defccb12734569f6eef13934f529b1fedeeaf74e24f5a6551e1",
+      "receiptSha256": "75842752a01124e0b88d0e2a74cee6d0c0641a5bd0b5657ca89bba6871741941",
+      "localClassBytesMatch": true,
+      "checks": {
+        "milestone": "M7",
+        "slice": "execution-environment",
+        "image": "eclipse-temurin@sha256:ccbad9e7cb84c27092b12c40a4143e5733e050db9c3784d84f632dcf423fb2ef",
+        "actualDocker": true,
+        "trustedNativeLoad": {
+          "mappingDenied": false,
+          "exitCode": 0,
+          "permissionDenied": false,
+          "uncertain": false
+        },
+        "localTask": {
+          "read": true,
+          "guardedEdit": true,
+          "shellCwd": true
+        },
+        "dockerTask": {
+          "read": true,
+          "guardedEdit": true,
+          "shellCwd": true
+        },
+        "descriptor": {
+          "network": "none",
+          "isolation": "container",
+          "capabilitiesDropped": "ALL",
+          "id": "jharness-0d84b8a9-5263-4abd-918f-5f006a13aa43",
+          "user": "65534:65534",
+          "image": "eclipse-temurin@sha256:ccbad9e7cb84c27092b12c40a4143e5733e050db9c3784d84f632dcf423fb2ef",
+          "readOnlyRoot": true,
+          "kind": "docker",
+          "terminal": "unsupported"
+        },
+        "trustedNativeReadonlyMount": true,
+        "isolationInspection": {
+          "NetworkMode": "none",
+          "ReadonlyRootfs": true,
+          "CapDrop": [
+            "ALL"
+          ],
+          "SecurityOpt": [
+            "no-new-privileges:true"
+          ],
+          "Memory": 536870912,
+          "PidsLimit": 64
+        },
+        "actualIsolationChecks": true,
+        "local-sdk": {
+          "status": "COMPLETED",
+          "durableIntents": 3,
+          "requestsReconstructed": 4,
+          "quotedShell": true
+        },
+        "docker-sdk": {
+          "status": "COMPLETED",
+          "durableIntents": 3,
+          "requestsReconstructed": 4,
+          "quotedShell": true
+        },
+        "cleanupVerified": true,
+        "result": "SUCCESS",
+        "capturedAt": "2026-10-29T07:50:29.822649693Z",
+        "jarSha256": "c0f5d74785c2f31581cd5fc26d9682d9dbaf86be489d01b4071fe3c9fd8a0f83",
+        "jarUnchanged": true,
+        "cleanupBoundary": "Managed resources checked by this probe; evidence directories intentionally retained"
+      }
+    },
+    {
+      "name": "M7SkillsDockerProbe",
+      "reportSha256": "bd75a8e7870b98c7db189e88875101f38b79f2e5c90b5a9dabcf9373401e33b0",
+      "receiptSha256": "63833a4fac17f77cd29741b63363750b8f7d5bb376f7879c5256a79c3d9bd468",
+      "localClassBytesMatch": true,
+      "checks": {
+        "milestone": "M7",
+        "slice": "skills-sdk",
+        "actualDocker": true,
+        "image": "eclipse-temurin@sha256:ccbad9e7cb84c27092b12c40a4143e5733e050db9c3784d84f632dcf423fb2ef",
+        "skills-local": {
+          "actualScriptFileEvidence": true,
+          "requestsReconstructed": 4,
+          "status": "COMPLETED"
+        },
+        "skills-docker": {
+          "actualScriptFileEvidence": true,
+          "requestsReconstructed": 4,
+          "status": "COMPLETED"
+        },
+        "cleanupVerified": true,
+        "result": "SUCCESS",
+        "capturedAt": "2026-10-29T07:50:39.535405352Z",
+        "jarSha256": "c0f5d74785c2f31581cd5fc26d9682d9dbaf86be489d01b4071fe3c9fd8a0f83",
+        "jarUnchanged": true,
+        "cleanupBoundary": "Managed resources checked by this probe; evidence directories intentionally retained"
+      }
+    },
+    {
+      "name": "M7SubagentDockerProbe",
+      "reportSha256": "24adea5e555f7bab59ee2384acc14f7240726e85548dd40a3da7c7869be7765e",
+      "receiptSha256": "bee60379aebd1c01c1a999fe1aa19d0903f80dc48dd975da1cdd91cea98f7c51",
+      "localClassBytesMatch": true,
+      "checks": {
+        "milestone": "M7",
+        "slice": "read-only-subagent",
+        "actualDocker": true,
+        "image": "eclipse-temurin@sha256:ccbad9e7cb84c27092b12c40a4143e5733e050db9c3784d84f632dcf423fb2ef",
+        "subagent-local": {
+          "parentRequestsReconstructed": 4,
+          "independentVersionGuards": true,
+          "originAndArtifactVerified": true,
+          "status": "COMPLETED",
+          "childRequestsReconstructed": 2,
+          "parentEditVerified": true
+        },
+        "subagent-docker": {
+          "parentRequestsReconstructed": 4,
+          "independentVersionGuards": true,
+          "originAndArtifactVerified": true,
+          "status": "COMPLETED",
+          "childRequestsReconstructed": 2,
+          "parentEditVerified": true
+        },
+        "cleanupVerified": true,
+        "result": "SUCCESS",
+        "capturedAt": "2026-10-29T07:50:45.650644879Z",
+        "jarSha256": "c0f5d74785c2f31581cd5fc26d9682d9dbaf86be489d01b4071fe3c9fd8a0f83",
+        "jarUnchanged": true,
+        "cleanupBoundary": "Managed resources checked by this probe; evidence directories intentionally retained"
+      }
+    },
+    {
+      "name": "M7WebDockerProbe",
+      "reportSha256": "00e5157bbcb9fdf1b2cf6b893dae49e1689c2642c0144b9e19d196becaeb5638",
+      "receiptSha256": "63372c706ad2c373e45ee4ae0532e487c6da6993ea12d12263b87d1ac7b8a8cf",
+      "localClassBytesMatch": true,
+      "checks": {
+        "milestone": "M7",
+        "slice": "packaged-cli-web-sdk-docker",
+        "actualDocker": true,
+        "image": "eclipse-temurin@sha256:ccbad9e7cb84c27092b12c40a4143e5733e050db9c3784d84f632dcf423fb2ef",
+        "cases": {
+          "local": {
+            "hostExitCode": 0,
+            "status": "COMPLETED",
+            "environmentClosed": true,
+            "approvalBeforeWrite": true,
+            "parallelReadOnlyScheduling": false,
+            "submissionDeduplicated": true,
+            "requestsReconstructedAgainstWire": 3,
+            "actualHttp": true
+          },
+          "docker": {
+            "hostExitCode": 0,
+            "status": "COMPLETED",
+            "environmentClosed": true,
+            "approvalBeforeWrite": true,
+            "parallelReadOnlyScheduling": false,
+            "submissionDeduplicated": true,
+            "requestsReconstructedAgainstWire": 3,
+            "actualHttp": true
+          }
+        },
+        "result": "SUCCESS",
+        "cleanupVerified": true,
+        "capturedAt": "2026-10-29T07:50:52.521692637Z",
+        "jarSha256": "c0f5d74785c2f31581cd5fc26d9682d9dbaf86be489d01b4071fe3c9fd8a0f83",
+        "jarUnchanged": true,
+        "cleanupBoundary": "Managed resources checked by this probe; evidence directories intentionally retained"
+      }
+    },
+    {
+      "name": "M8FilterDockerProbe",
+      "reportSha256": "1a8c646e8be7b4aed62122bedf2fc94040bc45b00f85634b462b0b1548904c40",
+      "receiptSha256": "9a4559128f4a0db0fc4f2b297c0c535616861fbcab3b847b09306a5426cc9a97",
+      "localClassBytesMatch": true,
+      "checks": {
+        "milestone": "M8.1",
+        "result": "SUCCESS",
+        "actualDocker": true,
+        "existingOutsideSentinelVerified": true,
+        "image": "eclipse-temurin@sha256:ccbad9e7cb84c27092b12c40a4143e5733e050db9c3784d84f632dcf423fb2ef",
+        "cases": [
+          {
+            "local": {
+              "explicitReadRetained": true,
+              "grepPaths": [
+                "cache/keep.txt"
+              ],
+              "listMatchesSearch": true,
+              "isolatedViewMatches": true,
+              "paths": [
+                "cache/keep.txt",
+                "hidden.txt",
+                "target/out.txt",
+                "visible.txt",
+                "\u4e2d\u6587 \u7a7a\u683c/nested.txt"
+              ],
+              "metadataAndTraversalDenied": true
+            },
+            "docker": {
+              "explicitReadRetained": true,
+              "grepPaths": [
+                "cache/keep.txt"
+              ],
+              "listMatchesSearch": true,
+              "isolatedViewMatches": true,
+              "paths": [
+                "cache/keep.txt",
+                "hidden.txt",
+                "target/out.txt",
+                "visible.txt",
+                "\u4e2d\u6587 \u7a7a\u683c/nested.txt"
+              ],
+              "metadataAndTraversalDenied": true
+            },
+            "configuration": {
+              "useDefaultExcludes": true,
+              "rules": [
+                "!hidden.txt",
+                "!target/",
+                "!cache/",
+                "cache/*",
+                "!cache/keep.txt"
+              ],
+              "useGitignore": true
+            }
+          },
+          {
+            "local": {
+              "explicitReadRetained": true,
+              "grepPaths": [
+                "cache/drop.txt",
+                "cache/keep.txt"
+              ],
+              "listMatchesSearch": true,
+              "isolatedViewMatches": true,
+              "paths": [
+                "cache/drop.txt",
+                "cache/keep.txt",
+                "hidden.txt",
+                "target/out.txt",
+                "\u4e2d\u6587 \u7a7a\u683c/nested.txt"
+              ],
+              "metadataAndTraversalDenied": true
+            },
+            "docker": {
+              "explicitReadRetained": true,
+              "grepPaths": [
+                "cache/drop.txt",
+                "cache/keep.txt"
+              ],
+              "listMatchesSearch": true,
+              "isolatedViewMatches": true,
+              "paths": [
+                "cache/drop.txt",
+                "cache/keep.txt",
+                "hidden.txt",
+                "target/out.txt",
+                "\u4e2d\u6587 \u7a7a\u683c/nested.txt"
+              ],
+              "metadataAndTraversalDenied": true
+            },
+            "configuration": {
+              "useDefaultExcludes": false,
+              "rules": [
+                "/visible.txt"
+              ],
+              "useGitignore": false
+            }
+          }
+        ],
+        "cleanupVerified": true,
+        "evidenceDirectory": "/home/runner/work/J-Harness/J-Harness/.build-cache/gap-docker/gap-docker-40837918559-1-8b9ec77bd6865e97726a3bb2076078ff0d159ec4/fixtures/filter-3a6028d5-6482-4eb1-a579-63e0f2400abb",
+        "capturedAt": "2026-10-29T07:51:01.942396241Z",
+        "jarSha256": "c0f5d74785c2f31581cd5fc26d9682d9dbaf86be489d01b4071fe3c9fd8a0f83",
+        "jarUnchanged": true,
+        "cleanupBoundary": "Managed resources checked by this probe; evidence directories intentionally retained"
+      }
+    },
+    {
+      "name": "M8SchedulingDockerProbe",
+      "reportSha256": "062986727c4db8dede302feeb09e01175d2c08446b2eedc8d98fcad966e8a363",
+      "receiptSha256": "9303dc1102de540e7141d7961f7dad622daaf22f5e0aaab48bc47826cb937c8c",
+      "localClassBytesMatch": true,
+      "checks": {
+        "milestone": "M8.2",
+        "slice": "packaged-cli-web-sdk-readonly-scheduling",
+        "actualDocker": true,
+        "cases": {
+          "local": {
+            "actualHttp": true,
+            "hostExitCode": 0,
+            "status": "COMPLETED",
+            "environmentClosed": true,
+            "approvalBeforeWrite": true,
+            "parallelReadOnlyScheduling": true,
+            "submissionDeduplicated": true,
+            "requestsReconstructedAgainstWire": 3
+          },
+          "docker": {
+            "actualHttp": true,
+            "hostExitCode": 0,
+            "status": "COMPLETED",
+            "environmentClosed": true,
+            "approvalBeforeWrite": true,
+            "parallelReadOnlyScheduling": true,
+            "submissionDeduplicated": true,
+            "requestsReconstructedAgainstWire": 3
+          }
+        },
+        "image": "eclipse-temurin@sha256:ccbad9e7cb84c27092b12c40a4143e5733e050db9c3784d84f632dcf423fb2ef",
+        "result": "SUCCESS",
+        "cleanupVerified": true,
+        "capturedAt": "2026-10-29T07:51:09.376622417Z",
+        "evidenceDirectory": "/home/runner/work/J-Harness/J-Harness/.build-cache/gap-docker/gap-docker-40837918559-1-8b9ec77bd6865e97726a3bb2076078ff0d159ec4/fixtures/scheduling-a0113c7a-3d0f-4989-8c6a-c53ea6bc6972",
+        "jarSha256": "c0f5d74785c2f31581cd5fc26d9682d9dbaf86be489d01b4071fe3c9fd8a0f83",
+        "jarUnchanged": true,
+        "cleanupBoundary": "Managed resources checked by this probe; evidence directories intentionally retained"
+      }
+    },
+    {
+      "name": "M8ResilienceDockerProbe",
+      "reportSha256": "990b371d40ff432852fa33dc4edef5e45fe42b3ab93f469d316c7d66659bd9ab",
+      "receiptSha256": "484668d2e8fa3a83ecad12031d26a6daceaa7b3e1425c00e7cf3a5089bb2df7d",
+      "localClassBytesMatch": true,
+      "checks": {
+        "milestone": "M8.3",
+        "slice": "packaged-cli-web-sdk-model-resilience",
+        "actualDocker": true,
+        "cases": {
+          "local": {
+            "environmentClosed": true,
+            "approvalBeforeWrite": true,
+            "parallelReadOnlyScheduling": true,
+            "submissionDeduplicated": true,
+            "requestsReconstructedAgainstWire": 4,
+            "actualHttp": true,
+            "hostExitCode": 0,
+            "status": "COMPLETED"
+          },
+          "docker": {
+            "environmentClosed": true,
+            "approvalBeforeWrite": true,
+            "parallelReadOnlyScheduling": true,
+            "submissionDeduplicated": true,
+            "requestsReconstructedAgainstWire": 4,
+            "actualHttp": true,
+            "hostExitCode": 0,
+            "status": "COMPLETED"
+          }
+        },
+        "image": "eclipse-temurin@sha256:ccbad9e7cb84c27092b12c40a4143e5733e050db9c3784d84f632dcf423fb2ef",
+        "result": "SUCCESS",
+        "cleanupVerified": true,
+        "capturedAt": "2026-10-29T07:51:17.102679447Z",
+        "evidenceDirectory": "/home/runner/work/J-Harness/J-Harness/.build-cache/gap-docker/gap-docker-40837918559-1-8b9ec77bd6865e97726a3bb2076078ff0d159ec4/fixtures/resilience-4d305c87-75ad-480e-9823-60da45fdcddc",
+        "jarSha256": "c0f5d74785c2f31581cd5fc26d9682d9dbaf86be489d01b4071fe3c9fd8a0f83",
+        "jarUnchanged": true,
+        "cleanupBoundary": "Managed resources checked by this probe; evidence directories intentionally retained"
+      }
+    }
+  ],
+  "backupPolicy": "Original ZIP retained locally only per user instruction",
+  "remaining": "Current full735 local and complete three-platform acceptance pending."
+}
