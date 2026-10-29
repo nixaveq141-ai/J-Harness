@@ -67,13 +67,13 @@ def validate_inspection(value, owner, input_dir):
             raise ValueError('Unbounded writable filesystem')
 
 
-def evaluate(source, directory, docker):
+def evaluate(source, directory, docker, *, oracle=ORACLE):
     """Never invokes host Java/javac; generated content is only an input file."""
     directory.mkdir()
     inputs = directory / 'input'
     inputs.mkdir()
     (inputs / 'Calculator.java').write_bytes(source)
-    (inputs / 'Oracle.java').write_text(ORACLE, encoding='utf-8')
+    (inputs / 'Oracle.java').write_text(oracle, encoding='utf-8')
     (inputs / 'host-canary').write_bytes(b'original host canary')
     before = {p.name:sha(p) for p in inputs.iterdir()}
     owner = 'jharness-code-' + uuid.uuid4().hex

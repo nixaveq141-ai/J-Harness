@@ -1,0 +1,43 @@
+package example;
+
+public final class Calculator {
+
+    public int add(int a, int b) {
+        return a + b;
+    }
+
+    public int multiply(int a, int b) {
+        return a * b;
+    }
+
+    public long sumCsv(String csv) {
+        if (csv == null) {
+            throw new IllegalArgumentException("csv must not be null");
+        }
+        if (csv.trim().isEmpty()) {
+            return 0L;
+        }
+        String[] fields = csv.split(",", -1);
+        long total = 0L;
+        for (String field : fields) {
+            String trimmed = field.trim();
+            if (trimmed.isEmpty()) {
+                throw new IllegalArgumentException("Empty field in csv");
+            }
+            long value;
+            try {
+                value = Long.parseLong(trimmed);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("Non-integer field: " + trimmed, e);
+            }
+            long sum;
+            try {
+                sum = Math.addExact(total, value);
+            } catch (ArithmeticException e) {
+                throw new IllegalArgumentException("Sum overflow", e);
+            }
+            total = sum;
+        }
+        return total;
+    }
+}

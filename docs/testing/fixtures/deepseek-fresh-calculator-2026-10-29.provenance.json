@@ -1,0 +1,51 @@
+{
+  "status": "GENERATED_NOT_EXECUTED",
+  "grant": "deepseek-fresh-code-2026-10-29-CNY5",
+  "model": "deepseek-flash",
+  "fixtureSha256": "01dd6074de4ee8af5f44cf8c5e570ad46e2916df5104fdd0c0c89fea166d4d91",
+  "jarSha256": "4b99a449368afb71e105ed8729ddc5f4c3deaaa0efc500a3d33d8baf1cc6f1d5",
+  "pricingSource": "https://api-docs.deepseek.com/zh-cn/quick_start/pricing/",
+  "peakCnyPerMillion": {
+    "input": 2,
+    "output": 8
+  },
+  "isolatedFunctionalStatus": "NOT_RUN",
+  "exitCode": 0,
+  "wallet": {
+    "grant": "deepseek-fresh-code-2026-10-29-CNY5",
+    "currency": "CNY",
+    "capMicroCny": 5000000,
+    "reservedMicroCny": 311296,
+    "remainingMicroCny": 4688704,
+    "accounting": "NON_REFUNDABLE_UPPER_BOUND_NOT_PROVIDER_BILL",
+    "attempts": [
+      [
+        1,
+        "/chat/completions",
+        "e06557f18542b619bcd7ec5b1db53c259ff2e0c0af8b4e71584c6a12153b4030",
+        155648,
+        200,
+        "38e1ab378530a54ace848eb7885614d281e1f1cf4a49eb50d18db1c52f148053",
+        "{\"prompt_tokens\": 510, \"completion_tokens\": 59, \"total_tokens\": 569, \"prompt_cache_hit_tokens\": 0, \"prompt_cache_miss_tokens\": 510}"
+      ],
+      [
+        2,
+        "/chat/completions",
+        "12b4868b7e13ad3de55137d77f3fb9ce415d18698022ecf41b00c22f2b7137f7",
+        155648,
+        200,
+        "9877eed1a88dbcb562a3a8ff74d1057b5f7d6f496ed1d7eefac58700ad4c282c",
+        "{\"prompt_tokens\": 806, \"completion_tokens\": 336, \"total_tokens\": 1142, \"prompt_cache_hit_tokens\": 512, \"prompt_cache_miss_tokens\": 294}"
+      ]
+    ]
+  },
+  "sourceSha256": "df593a653c5ffb9883b5799d127cfb91c69bb632b5dd002e1ac3ab7c2b049bff",
+  "factsSha256": "6230dda1614486c4f1bf4043addb901a384140b774e063839d976eda880ddc10",
+  "recovery": "Offline extraction of sole java fence; original incomplete receipt retained. No new paid requests.",
+  "originalIncompleteReceiptSha256": "2238e4ced048a020a35e62839d9635217eb2239cc6e0402efc7c6eee21c201f2",
+  "generatedAt": "2026-10-29",
+  "provider": "https://api.deepseek.com",
+  "localOriginal": ".build-cache/deepseek-fresh-code-2026-10-29/task-4c2ffa15563f315a",
+  "hostExecution": false,
+  "oracle": "docs/testing/tools/fresh-code-isolated-evaluation.py"
+}

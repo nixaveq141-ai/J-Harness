@@ -1,0 +1,38 @@
+name: Fresh DeepSeek generated code isolation validation
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: gap-fresh-code-isolation-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  isolated:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Verify offline boundaries
+        run: |
+          python docs/testing/tools/test-isolated-code-evaluation.py
+          python docs/testing/tools/test-deepseek-fresh-code-validation.py
+          python docs/testing/tools/test-native-provenance-audit.py
+      - name: Provision pinned JDK container
+        run: docker pull eclipse-temurin@sha256:f9bf7e9fe2f9bc4657537c1a7e20c768f0c3bafca41598263be4714783dd62eb
+      - name: Compile and verify fresh source only inside isolation
+        run: python docs/testing/tools/fresh-code-isolated-evaluation.py
+      - name: Preserve bounded reports and logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fresh-code-isolation
+          retention-days: 90
+          include-hidden-files: true
+          if-no-files-found: error
+          path: |
+            .build-cache/fresh-code-isolation/*/evidence.json
+            .build-cache/fresh-code-isolation/*/*/result.json
+            .build-cache/fresh-code-isolation/*/*/execution.log
