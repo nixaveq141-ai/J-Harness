@@ -93,11 +93,11 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          .\mvnw.cmd -B -pl harness-session -am '-Dtest=R5SessionBoundsTest,WindowsDirectoryPinTest,DirectoryCapabilityTest,LocalWorkspaceTest,M8SearchFilterTest,M5SessionTest,R2PersistenceTest' '-Dsurefire.failIfNoSpecifiedTests=false' test
+          .\mvnw.cmd -B -pl harness-session -am '-Dtest=R5SessionBoundsTest,WindowsDirectoryPinTest,DirectoryCapabilityTest,LocalWorkspaceTest,M8SearchFilterTest,M5SessionTest,R2PersistenceTest,R1WorkspaceSafetyTest,R2WorkspaceSnapshotTest,JsonlDirectoryCapabilityTest,JsonlSessionRepositoryTest' '-Dsurefire.failIfNoSpecifiedTests=false' test
           exit $LASTEXITCODE
       - name: Verify exact R5 session cases on POSIX
         if: runner.os != 'Windows'
-        run: sh ./mvnw -B -pl harness-session -am '-Dtest=R5SessionBoundsTest,WindowsDirectoryPinTest,DirectoryCapabilityTest,LocalWorkspaceTest,M8SearchFilterTest,M5SessionTest,R2PersistenceTest' '-Dsurefire.failIfNoSpecifiedTests=false' test
+        run: sh ./mvnw -B -pl harness-session -am '-Dtest=R5SessionBoundsTest,WindowsDirectoryPinTest,DirectoryCapabilityTest,LocalWorkspaceTest,M8SearchFilterTest,M5SessionTest,R2PersistenceTest,R1WorkspaceSafetyTest,R2WorkspaceSnapshotTest,JsonlDirectoryCapabilityTest,JsonlSessionRepositoryTest' '-Dsurefire.failIfNoSpecifiedTests=false' test
       - name: Verify directory capability and controlled old-path counterexample
         run: python docs/testing/tools/run-index-capability.py
       - uses: actions/upload-artifact@v4

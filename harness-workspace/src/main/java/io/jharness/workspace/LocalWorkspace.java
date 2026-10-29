@@ -625,7 +625,9 @@ public final class LocalWorkspace implements WorkspaceFiles {
                 if (!committed) {
                     try {
                         if (held.exists(temporary.getFileName()))
-                            held.delete(temporary.getFileName(), false);
+                            held.delete(
+                                    temporary.getFileName(),
+                                    held.attributes(temporary.getFileName()).isDirectory());
                     } catch (IOException | RuntimeException cleanup) {
                         if (primary != null) primary.addSuppressed(cleanup);
                         else throw cleanup;

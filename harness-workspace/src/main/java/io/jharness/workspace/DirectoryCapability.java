@@ -10,6 +10,12 @@ import java.util.*;
 /** Short-lived directory authority. All names below it are single relative components. */
 public final class DirectoryCapability implements Closeable {
     interface Posix extends Library {
+        int fstat(int descriptor, Pointer stat);
+
+        int fchmod(int descriptor, int mode);
+
+        int fchown(int descriptor, int owner, int group);
+
         int open(String path, int flags, Object... mode);
 
         int openat(int directory, String name, int flags, Object... mode);
@@ -54,7 +60,10 @@ public final class DirectoryCapability implements Closeable {
                                                                         .contains(
                                                                                 System.getProperty(
                                                                                         "os.arch"))
-                                                                && Set.of("fdopendir", "readdir")
+                                                                && Set.of(
+                                                                                "fdopendir",
+                                                                                "readdir",
+                                                                                "fstat")
                                                                         .contains(method.getName())
                                                         ? method.getName() + "$INODE64"
                                                         : method.getName()));
@@ -223,6 +232,7 @@ public final class DirectoryCapability implements Closeable {
         int errno = Native.getLastError();
         if (errno == 2) return new NoSuchFileException(action);
         if (errno == 17) return new FileAlreadyExistsException(action);
+        if (errno == (MAC ? 66 : 39)) return new DirectoryNotEmptyException(action);
         if (errno == (MAC ? 62 : 40)) return new FileSystemLoopException(action);
         return new IOException("Cannot " + action + "; native error " + errno);
     }
@@ -399,38 +409,20 @@ public final class DirectoryCapability implements Closeable {
             try {
                 if (!stat(left).isRegularFile() || !stat(right).isRegularFile())
                     throw new IOException("Metadata requires regular files");
-                var view =
-                        Files.getFileAttributeView(
-                                descriptorPath(left),
-                                java.nio.file.attribute.PosixFileAttributeView.class);
-                var destination =
-                        Files.getFileAttributeView(
-                                descriptorPath(right),
-                                java.nio.file.attribute.PosixFileAttributeView.class);
-                if (view == null || destination == null)
-                    throw new IOException("Descriptor POSIX metadata unavailable");
-                var attrs = view.readAttributes();
-                try {
-                    destination.setOwner(attrs.owner());
-                } catch (IOException unavailable) {
-                    /* Report verified ownership below. */
-                }
-                try {
-                    destination.setGroup(attrs.group());
-                } catch (IOException unavailable) {
-                    /* Report verified ownership below. */
-                }
-                destination.setPermissions(attrs.permissions());
-                var actual = destination.readAttributes();
-                if (!actual.permissions().equals(attrs.permissions()))
+                int[] original = accessMetadata(left), current = accessMetadata(right);
+                if (original[1] != current[1] || original[2] != current[2])
+                    Api.INSTANCE.fchown(right, original[1], original[2]);
+                if (Api.INSTANCE.fchmod(right, original[0] & 0777) != 0)
+                    throw error("preserve file permissions");
+                int[] actual = accessMetadata(right);
+                if ((actual[0] & 0777) != (original[0] & 0777))
                     throw new IOException("Permissions not preserved");
-                if (actual.owner().equals(attrs.owner()) && actual.group().equals(attrs.group()))
-                    return Map.of();
+                if (actual[1] == original[1] && actual[2] == original[2]) return Map.of();
                 return Map.of(
                         "ownerPreserved",
-                        actual.owner().equals(attrs.owner()),
+                        actual[1] == original[1],
                         "groupPreserved",
-                        actual.group().equals(attrs.group()),
+                        actual[2] == original[2],
                         "permissionsPreserved",
                         true,
                         "ownershipNote",
@@ -440,6 +432,20 @@ public final class DirectoryCapability implements Closeable {
             }
         } finally {
             if (Api.INSTANCE.close(left) != 0) throw error("close metadata source");
+        }
+    }
+
+    private static int[] accessMetadata(int descriptor) throws IOException {
+        if (!MAC && !Set.of("amd64", "x86_64").contains(System.getProperty("os.arch")))
+            throw new IOException("Native metadata layout not certified for this CPU");
+        try (var data = new Memory(512)) {
+            if (Api.INSTANCE.fstat(descriptor, data) != 0)
+                throw error("inspect native access metadata");
+            return MAC
+                    ? new int[] {
+                        Short.toUnsignedInt(data.getShort(4)), data.getInt(16), data.getInt(20)
+                    }
+                    : new int[] {data.getInt(24), data.getInt(28), data.getInt(32)};
         }
     }
 

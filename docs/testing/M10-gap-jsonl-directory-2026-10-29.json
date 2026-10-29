@@ -1,6 +1,6 @@
 {
   "date": "2026-10-29",
-  "status": "LOCAL_MODULE_AND_SCAN_PASS_FULL_RETRY_PENDING",
+  "status": "LOCAL_FULL_PASS_REMOTE_PENDING",
   "scope": [
     "JSONL read and writer/maintenance lock file channels",
     "JSONL backup migration fork staging publication and cleanup",
@@ -38,5 +38,25 @@
     "status": "PASS",
     "log": ".build-cache/gap-jsonl-20261029/scan-regression.log",
     "scope": "R1CatalogScanBoundaryTest,JsonlDirectoryCapabilityTest,JsonlSessionRepositoryTest; original time and concurrency assertions retained."
-  }
+  },
+  "localFull": {
+    "cases": 732,
+    "suites": 123,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "inputs": 620,
+    "outputs": {
+      "harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar": "228d165b45427dfd6561bec7830aca428afee076e79f98dee9fd28fd8fd989ec"
+    },
+    "receipt": ".build-cache/M10.5.9/commands/gapjsonlverify2.json",
+    "archive": ".build-cache/gap-jsonl-20261029/final-732",
+    "sourceBeforeEqualsAfter": true
+  },
+  "remotePending": {
+    "commit": "c8c32533fce7d9008dba79dfc382fd21a0502432",
+    "fullRunId": "40835491544",
+    "dockerRunId": "40835496100"
+  },
+  "backupPolicy": "User requested local backup only; offsite backup removed from pending scope on2026-10-29."
 }

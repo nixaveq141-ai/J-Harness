@@ -1,0 +1,54 @@
+{
+  "date": "2026-10-29",
+  "commit": "c8c32533fce7d9008dba79dfc382fd21a0502432",
+  "fullRun": "40835491544",
+  "dockerRun": "40835496100",
+  "status": "REJECTED",
+  "originals": [
+    {
+      "file": "12880587129.zip",
+      "sha256": "4b736efa0b550799ae90b468d4b1865d200bc627700ed23db4e32b7cd6022973",
+      "githubDigest": "sha256:4b736efa0b550799ae90b468d4b1865d200bc627700ed23db4e32b7cd6022973",
+      "artifactId": 12880587129,
+      "name": "remaining-gap-docker",
+      "runId": "40835496100",
+      "commit": "c8c32533fce7d9008dba79dfc382fd21a0502432",
+      "createdAt": "2026-10-29T07:27:47Z",
+      "expiresAt": "2027-01-27T07:27:02Z"
+    },
+    {
+      "file": "12879684073.zip",
+      "sha256": "7b8c261e6d83db67ef037eb73217f0fbc9734e215305313b60b5c0f61ebf04b7",
+      "githubDigest": "sha256:7b8c261e6d83db67ef037eb73217f0fbc9734e215305313b60b5c0f61ebf04b7",
+      "artifactId": 12879684073,
+      "name": "test-results-macos-latest",
+      "runId": "40835491544",
+      "commit": "c8c32533fce7d9008dba79dfc382fd21a0502432",
+      "createdAt": "2026-10-29T07:28:02Z",
+      "expiresAt": "2027-01-27T07:26:59Z"
+    },
+    {
+      "file": "12879424785.zip",
+      "sha256": "8c158dcf36da74a7da9e0c0a99b9675fe970560324cdf37b6a5128dcb12d2af0",
+      "githubDigest": "sha256:8c158dcf36da74a7da9e0c0a99b9675fe970560324cdf37b6a5128dcb12d2af0",
+      "artifactId": 12879424785,
+      "name": "test-results-ubuntu-latest",
+      "runId": "40835491544",
+      "commit": "c8c32533fce7d9008dba79dfc382fd21a0502432",
+      "createdAt": "2026-10-29T07:27:46Z",
+      "expiresAt": "2027-01-27T07:26:59Z"
+    }
+  ],
+  "failures": [
+    "Linux/macOS cleanup must retain DirectoryNotEmptyException as suppressed original-conflict evidence.",
+    "macOS descriptor-path POSIX view did not preserve original file access mode.",
+    "Docker first real fixture failed after localTask; only HarnessException type retained, exact cause pending."
+  ],
+  "correction": [
+    "Use native fstat/fchmod on opened file descriptors instead of descriptor-path permission views; Linux x86_64 and Darwin native layouts only.",
+    "Recognize nonempty directory native errno and delete temporary directory with proper unlinkat directory flag.",
+    "Add R1/R2 preservation tests to focused workflow and fixed allowlisted Harness error-code diagnostics; no raw error text upload."
+  ],
+  "localFocused": "PASS workspace42 and targeted10; remote correction pending",
+  "backupPolicy": "Local only by explicit user request; original ZIPs remain in ignored cache."
+}

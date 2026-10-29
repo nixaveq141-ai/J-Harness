@@ -44,6 +44,18 @@ final class ProbeSupport {
                     var report = new LinkedHashMap<String, Object>();
                     report.put("result", "FAILED");
                     report.put("failureType", failure.getClass().getSimpleName());
+                    if (failure instanceof io.jharness.api.HarnessException known
+                            && Set.of(
+                                            "ENVIRONMENT_FAILED",
+                                            "ENVIRONMENT_UNAVAILABLE",
+                                            "ENVIRONMENT_CLOSED",
+                                            "ENVIRONMENT_PROTOCOL",
+                                            "ENVIRONMENT_IO",
+                                            "PATH_DENIED",
+                                            "FILE_CONFLICT",
+                                            "ATOMIC_MOVE_UNSUPPORTED")
+                                    .contains(known.code()))
+                        report.put("failureCode", known.code());
                     if (Set.of(
                                     "inspect",
                                     "network",
