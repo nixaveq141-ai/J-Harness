@@ -18,13 +18,17 @@ public final class NativeCandidateProbe {
         }
         if (args.length == 1 && args[0].equals("pty")) {
             byte[] marker = "JHARNESS_NATIVE_SOURCE_PTY".getBytes(StandardCharsets.US_ASCII);
-            var process = new PtyProcessBuilder(new String[] {"/bin/sh", "-c", "printf JHARNESS_NATIVE_SOURCE_PTY"})
+            var process = new PtyProcessBuilder(new String[] {"/bin/sh", "-c", "printf JHARNESS_NATIVE_SOURCE_PTY; read ack"})
                     .setEnvironment(Map.of("PATH", "/usr/bin:/bin"))
                     .start();
             try {
                 byte[] actual = process.getInputStream().readNBytes(marker.length);
-                if (!java.util.Arrays.equals(marker, actual)
-                        || !process.waitFor(5, TimeUnit.SECONDS)
+                if (!java.util.Arrays.equals(marker, actual)) {
+                    throw new AssertionError("SOURCE_PTY_BEHAVIOR_REJECTED");
+                }
+                process.getOutputStream().write("ack\n".getBytes(StandardCharsets.US_ASCII));
+                process.getOutputStream().flush();
+                if (!process.waitFor(5, TimeUnit.SECONDS)
                         || process.exitValue() != 0) {
                     throw new AssertionError("SOURCE_PTY_BEHAVIOR_REJECTED");
                 }

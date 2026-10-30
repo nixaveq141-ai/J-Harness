@@ -1,9 +1,11 @@
 name: Pinned native source build candidates
 on:
   workflow_dispatch:
-  push:
-    branches: [codex/m1059-full-validation]
-    paths: [.github/workflows/gap-native-source-build.yml]
+    inputs:
+      scope:
+        type: choice
+        default: all
+        options: [all, windows]
 permissions:
   contents: read
 jobs:
@@ -11,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-24.04, macos-latest, windows-latest]
+        os: ${{ fromJSON(inputs.scope == 'windows' && '["windows-latest"]' || '["ubuntu-24.04","macos-latest","windows-latest"]') }}
     runs-on: ${{ matrix.os }}
     timeout-minutes: 25
     steps:
@@ -27,6 +29,8 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
+          & 'C:\msys64\usr\bin\bash.exe' -lc 'pacman -S --noconfirm --needed make'
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           'C:\msys64\mingw64\bin' | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
           'C:\msys64\usr\bin' | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
       - name: Verify source pin and failure ownership offline

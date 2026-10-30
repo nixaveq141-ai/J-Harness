@@ -118,7 +118,13 @@ def main():
         if platform.system()=='Darwin':
             report['sources']['jna']['aarch64CfiBackport']=backport_aarch64_cfi(jna/'native/libffi/src/aarch64/sysv.S')
         run(['gcc','--version'],ROOT,30)
-        run(['ant','-Dbuild-native=true','native'],jna)
+        ant_command=['ant','-Dbuild-native=true']
+        if os.name=='nt':
+            msys_make=Path('C:/msys64/usr/bin/make.exe')
+            if not msys_make.is_file():raise ValueError('MSYS make required for POSIX source paths')
+            run([str(msys_make),'--version'],ROOT,30)
+            ant_command+=['-Dmake='+str(msys_make)]
+        run([*ant_command,'native'],jna)
         candidates=[p for p in (jna/'build').rglob('*') if p.is_file() and p.name in ['jnidispatch.dll','libjnidispatch.so','libjnidispatch.jnilib','libjnidispatch.dylib']]
         if not candidates:raise ValueError('No compiled JNA candidate')
         report['outputs']['jna']=[dict(path=p.relative_to(ROOT).as_posix(),sha256=digest(p)) for p in candidates]
