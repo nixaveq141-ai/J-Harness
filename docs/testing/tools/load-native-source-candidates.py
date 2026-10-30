@@ -93,10 +93,16 @@ def main():
         jarSha256=sha(jar),probeSha256=sha(probe),jniSha256=sha(jna),ptySha256=sha(pty) if pty else None,
         sourceReportSha256=sha(next(args.input.rglob('report.json'))),probes=[],paidRequests=0,productReplacement=False,
         ptyHelperSha256=sha(helper) if helper else None)
+    classes=out/'classes';classes.mkdir()
+    compile_command=[str(java.parent/('javac.exe' if os.name=='nt' else 'javac')),
+        '--release','21','-proc:none','-Xlint:all','-Werror','-cp',str(jar),'-d',str(classes),str(probe)]
+    result=subprocess.run(compile_command,cwd=ROOT,env=env,stdin=subprocess.DEVNULL,capture_output=True,timeout=30)
+    compile_log=out/'probe-compile.log';compile_log.write_bytes(result.stdout+result.stderr)
+    report['probeCompilation']=dict(argv=compile_command,exitCode=result.returncode,logSha256=sha(compile_log))
     def run(label,jni_folder,pty_folder=None,success=True,required=True):
         command=[str(java),'-Djna.nounpack=true','-Djna.nosys=true','-Djna.boot.library.path='+str(jni_folder)]
         if pty_folder is not None:command+=['-Dpty4j.preferred.native.folder='+str(pty_folder)]
-        command+=['-cp',str(jar),str(probe)]+(['pty'] if pty_folder is not None else [])
+        command+=['-cp',str(jar)+os.pathsep+str(classes),'NativeCandidateProbe']+(['pty'] if pty_folder is not None else [])
         result=subprocess.run(command,cwd=ROOT,env=env,stdin=subprocess.DEVNULL,capture_output=True,timeout=30)
         raw=result.stdout+result.stderr
         if len(raw)>65536:raise ValueError('Probe output bound')
@@ -109,6 +115,8 @@ def main():
         elif result.returncode==0 or b'UnsatisfiedLinkError' not in raw:
             raise ValueError('Missing candidate must fail native loading, no fallback')
     try:
+        if result.returncode:raise ValueError('Trusted probe compilation rejected')
+        report['probeClassSha256']=sha(classes/'NativeCandidateProbe.class')
         run('jni-positive',jna.parent)
         run('jni-missing-rejected',empty,success=False)
         if pty:

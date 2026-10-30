@@ -31,6 +31,15 @@ public final class NativeCandidateProbe {
                 process.getOutputStream().flush();
                 if (!process.waitFor(5, TimeUnit.SECONDS)
                         || process.exitValue() != 0) {
+                    System.out.println("PTY_TIMEOUT_OS_ALIVE="
+                            + ProcessHandle.of(process.pid()).map(ProcessHandle::isAlive).orElse(false));
+                    Thread.getAllStackTraces().values().stream()
+                            .filter(stack -> java.util.Arrays.stream(stack)
+                                    .anyMatch(frame -> frame.getClassName().startsWith("com.pty4j.")))
+                            .limit(4)
+                            .forEach(stack -> java.util.Arrays.stream(stack).limit(12)
+                                    .forEach(frame -> System.out.println("PTY_WAIT_FRAME="
+                                            + frame.getClassName() + "." + frame.getMethodName())));
                     throw new AssertionError("SOURCE_PTY_BEHAVIOR_REJECTED");
                 }
             } catch (Exception | Error failure) {
