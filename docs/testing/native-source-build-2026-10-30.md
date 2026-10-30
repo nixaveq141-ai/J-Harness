@@ -45,3 +45,5 @@ Console 第三轮41017612132原ZIP668546d6证实 Windows-latest 的 VS18 环境�
 41018127320 两原ZIP f00529b2/45ec0c98：Console进入C++调用后 FileTracker CommonApplicationDataPaths 报根为空，CMake 同时无法发现已安装 VS。最小构建环境漏掉 ProgramData/ALLUSERSPROFILE/ComSpec；补三项系统工具链变量，仍不继承其他凭据。新增共享根保留/任意凭据排除测试，四离线项通过，真实复验待。
 
 41018538974两原ZIP2bcdf701/b3c63883：共享数据修正后Console不再FileTracker失败，现缺WIL；原solution restore主要恢复托管项目，补四个固定native packages.config显式恢复，记录nupkg摘要。Helper已识别VS/SDK，编译器识别仍失败，补标准共享程序文件根和系统盘变量，四离线项过；新轮仍待，不将候选编译作为产品验收。
+
+继续兼容闭合：固定官方 WinPTY master7e59fe2（已含进程列表接口），对五个精确源码SHA校验后补 owned-child cwd RPC。目录读取只使用agent已有子进程句柄，跨位数、失效/变化描述符、读取失败、缓冲不足均明确失败；不把初始目录或任意PID结果冒充当前目录。补丁前后摘要和自有header摘要记入构建报告。两个离线patch项含原子拒绝/重复拒绝及七类加载拒绝反例通过；可信Java探针严格编译。新增实际native目录切换/坏描述符探针及Java非ASCII目录变化、进程列表、resize、退出/禁止回退验证，实际CI待，未声称产品替换。

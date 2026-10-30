@@ -1,6 +1,7 @@
 """Build reviewed Windows PTY alternatives in isolated CI; no product substitution."""
 import argparse
 import hashlib
+import importlib.util
 import json
 import os
 from pathlib import Path
@@ -10,7 +11,7 @@ import time
 
 ROOT=Path(__file__).resolve().parents[3]
 PINS={
-    'winpty':('rprichard/winpty','3e1ab962d5262dd76159870c6dc0724927ca6a9d'),
+    'winpty':('rprichard/winpty','7e59fe2d09adf0fa2aa606492e7ca98efbc5184e'),
     'pty4j':('JetBrains/pty4j','b7554d649f6374183040e6554942b6d5b028b5e5'),
     'console':('microsoft/terminal','6ffde34897e99a57a56ec52c12e1bf2730ceed71'),
 }
@@ -86,6 +87,15 @@ def main():
     try:
         target,source=checkout(args.component,out,run,env);report['sources'][args.component]=source
         if args.component=='winpty':
+            spec=importlib.util.spec_from_file_location('directory_patch',Path(__file__).with_name('patch-winpty-directory.py'))
+            extension=importlib.util.module_from_spec(spec);spec.loader.exec_module(extension)
+            report['sources']['winpty']['directoryExtension']=extension.apply(target)
+            probe=out/'directory-probe'
+            run(['cmake','-S',str(ROOT/'docs/testing/native/directory-probe'),'-B',str(probe),
+                 '-G','Visual Studio 17 2022','-A','x64'],ROOT)
+            run(['cmake','--build',str(probe),'--config','Release'],ROOT)
+            first=out/'directory-first';second=out/'directory-second';first.mkdir();second.mkdir()
+            run([str(probe/'Release/owned-directory-probe.exe'),str(first),str(second)],ROOT,30)
             # Build only the native Windows DLL/agent targets, not the MSYS adapter.
             run(['C:/msys64/mingw64/bin/g++.exe','--version'],target,30)
             # Upstream configure insists on an MSYS adapter compiler even when
