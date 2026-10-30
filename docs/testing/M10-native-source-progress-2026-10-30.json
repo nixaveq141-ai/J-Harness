@@ -1,0 +1,342 @@
+{
+  "status": "TECHNICAL_CLOSURE_INCOMPLETE",
+  "date": "2026-10-30",
+  "inventoryCount": 48,
+  "inventorySha256": "8c27b31a126787ff7a03edae091cffffdd9681f6ce0612d1b71860545114f71e",
+  "sourceBuilds": [
+    {
+      "artifactId": "12952960514",
+      "artifactSha256": "cc520ec03a8808ee6e530be6b27586344c3a8ec01ca12fc3da4b9237c971e912",
+      "sourceRun": "40998915552",
+      "commit": "3571d2269895644e9888963fbf54a4cf101c9597",
+      "os": "Windows-2025Server-10.0.26100-SP0",
+      "architecture": "AMD64",
+      "status": "SOURCE_CANDIDATES_BUILT_NOT_PRODUCT_ACCEPTANCE",
+      "commands": 9,
+      "jnaSha256": "c88e200b240dfa54c5b852a335b28683e64a074d30ceee7c17ffc282058891a2",
+      "ptySha256": null,
+      "helperSha256": null
+    },
+    {
+      "artifactId": "12952328469",
+      "artifactSha256": "0d27f4bc3ec793bdd007fa3f8887627dc3ebd6604e49f72f4ade23ff7f0ca066",
+      "sourceRun": "40998915552",
+      "commit": "3571d2269895644e9888963fbf54a4cf101c9597",
+      "os": "macOS-26.6.2-arm64-arm-64bit",
+      "architecture": "arm64",
+      "status": "SOURCE_CANDIDATES_BUILT_NOT_PRODUCT_ACCEPTANCE",
+      "commands": 11,
+      "jnaSha256": "ebd9fd7c720728ddd3c515f5f96ba6c3a7ce06f20c1d0e4a8eaf63e54341f357",
+      "ptySha256": "db26759cc11b61585dc7fabbf32e4074f7c511f94051a9cb10160b8700b75766",
+      "helperSha256": "99dc2da73d03f94efef5d7988f0705551805f2c4e25d7cf4f11ee3e4c80f2e10"
+    }
+  ],
+  "loadAudits": [
+    {
+      "acquisition": {
+        "file": "12951208290.zip",
+        "sha256": "439a6efeca10d52e208b1ae74db71bf024069d6ccf1cfca5712e3385f359dc64",
+        "githubDigest": "sha256:439a6efeca10d52e208b1ae74db71bf024069d6ccf1cfca5712e3385f359dc64",
+        "artifactId": 12951208290,
+        "name": "native-source-load-macos-latest",
+        "runId": "40997194805",
+        "commit": "fa759d7e1f6df0e35b2c7bed5c351c3690a71106",
+        "createdAt": "2026-10-30T03:25:15Z",
+        "expiresAt": "2027-01-28T03:24:23Z"
+      },
+      "status": "INCOMPLETE",
+      "sourceRun": "40995618881",
+      "jniSha256": "ebd9fd7c720728ddd3c515f5f96ba6c3a7ce06f20c1d0e4a8eaf63e54341f357",
+      "ptySha256": "db26759cc11b61585dc7fabbf32e4074f7c511f94051a9cb10160b8700b75766",
+      "probes": [
+        {
+          "label": "jni-positive",
+          "exitCode": 0,
+          "logSha256": "5657946b89e7710b13b2bcab5ec453fb8182fcd2bc10961d62f289476e907938"
+        },
+        {
+          "label": "jni-missing-rejected",
+          "exitCode": 1,
+          "logSha256": "f502bf48ddc2a6161904183f1f6df1bbd29a17ad77500cc133f47f5a58edf283"
+        },
+        {
+          "label": "pty-positive",
+          "exitCode": 1,
+          "logSha256": "0d23cfb01ef4b4808d4ce16bfd504669562fb4379b11975ae234d18e44774830"
+        }
+      ]
+    },
+    {
+      "acquisition": {
+        "file": "12952235869.zip",
+        "sha256": "b14260ea197f38429bb9ce5641f322d38c73fa9a80d90a29771698468bcecb44",
+        "githubDigest": "sha256:b14260ea197f38429bb9ce5641f322d38c73fa9a80d90a29771698468bcecb44",
+        "artifactId": 12952235869,
+        "name": "native-source-load-ubuntu-24.04",
+        "runId": "40997194805",
+        "commit": "fa759d7e1f6df0e35b2c7bed5c351c3690a71106",
+        "createdAt": "2026-10-30T03:25:05Z",
+        "expiresAt": "2027-01-28T03:24:23Z"
+      },
+      "status": "SOURCE_CANDIDATE_LOAD_AND_NO_FALLBACK_PASS",
+      "sourceRun": "40995618881",
+      "jniSha256": "c41be9a02e2648c7ee6bf67a0e44575d97862db362f7294cd20a26c4b43c8cec",
+      "ptySha256": "42127d2ce30c1bd38f3b6f4f71634c7656c6cce7eb2b2d0ed8a478a16a577b5d",
+      "probes": [
+        {
+          "label": "jni-positive",
+          "exitCode": 0,
+          "logSha256": "5657946b89e7710b13b2bcab5ec453fb8182fcd2bc10961d62f289476e907938"
+        },
+        {
+          "label": "jni-missing-rejected",
+          "exitCode": 1,
+          "logSha256": "f502bf48ddc2a6161904183f1f6df1bbd29a17ad77500cc133f47f5a58edf283"
+        },
+        {
+          "label": "pty-positive",
+          "exitCode": 0,
+          "logSha256": "4ffdeaacba951cba22cbb5740cb0f0c968e0e1f5bac326e2686a9d98cf4ed5a1"
+        },
+        {
+          "label": "pty-missing-rejected",
+          "exitCode": 1,
+          "logSha256": "a0dec3741d57b26797a59cfc2662ff387803b35fedfce40ea14639c6a2366a76"
+        }
+      ]
+    },
+    {
+      "acquisition": {
+        "file": "12952562782.zip",
+        "sha256": "1cc46dcd4825372919424b36ccb888dd9a35d4c1b0ad2941d8a61f38214f0601",
+        "githubDigest": "sha256:1cc46dcd4825372919424b36ccb888dd9a35d4c1b0ad2941d8a61f38214f0601",
+        "artifactId": 12952562782,
+        "name": "native-source-load-macos-latest",
+        "runId": "40999273956",
+        "commit": "066f408ff0cb7ea0a4627f6cab6ee6c9b346b251",
+        "createdAt": "2026-10-30T03:47:41Z",
+        "expiresAt": "2027-01-28T03:46:54Z"
+      },
+      "status": "INCOMPLETE",
+      "sourceRun": "40998915552",
+      "jniSha256": "ebd9fd7c720728ddd3c515f5f96ba6c3a7ce06f20c1d0e4a8eaf63e54341f357",
+      "ptySha256": "db26759cc11b61585dc7fabbf32e4074f7c511f94051a9cb10160b8700b75766",
+      "probes": [
+        {
+          "label": "jni-positive",
+          "exitCode": 0,
+          "logSha256": "5657946b89e7710b13b2bcab5ec453fb8182fcd2bc10961d62f289476e907938"
+        },
+        {
+          "label": "jni-missing-rejected",
+          "exitCode": 1,
+          "logSha256": "f502bf48ddc2a6161904183f1f6df1bbd29a17ad77500cc133f47f5a58edf283"
+        },
+        {
+          "label": "pty-positive",
+          "exitCode": 1,
+          "logSha256": "5705aac39b6d892831bd35c2fb70ddbe55712cab1c4f30eeebffe50425a7af13"
+        }
+      ]
+    },
+    {
+      "acquisition": {
+        "file": "12952776962.zip",
+        "sha256": "a755a362ccda22950c07615a4d5ca5d8908027e6765d5d6452cae3b54e127cca",
+        "githubDigest": "sha256:a755a362ccda22950c07615a4d5ca5d8908027e6765d5d6452cae3b54e127cca",
+        "artifactId": 12952776962,
+        "name": "native-source-load-ubuntu-24.04",
+        "runId": "40999273956",
+        "commit": "066f408ff0cb7ea0a4627f6cab6ee6c9b346b251",
+        "createdAt": "2026-10-30T03:47:32Z",
+        "expiresAt": "2027-01-28T03:46:54Z"
+      },
+      "status": "SOURCE_CANDIDATE_LOAD_AND_NO_FALLBACK_PASS",
+      "sourceRun": "40995618881",
+      "jniSha256": "c41be9a02e2648c7ee6bf67a0e44575d97862db362f7294cd20a26c4b43c8cec",
+      "ptySha256": "42127d2ce30c1bd38f3b6f4f71634c7656c6cce7eb2b2d0ed8a478a16a577b5d",
+      "probes": [
+        {
+          "label": "jni-positive",
+          "exitCode": 0,
+          "logSha256": "5657946b89e7710b13b2bcab5ec453fb8182fcd2bc10961d62f289476e907938"
+        },
+        {
+          "label": "jni-missing-rejected",
+          "exitCode": 1,
+          "logSha256": "f502bf48ddc2a6161904183f1f6df1bbd29a17ad77500cc133f47f5a58edf283"
+        },
+        {
+          "label": "pty-positive",
+          "exitCode": 0,
+          "logSha256": "4ffdeaacba951cba22cbb5740cb0f0c968e0e1f5bac326e2686a9d98cf4ed5a1"
+        },
+        {
+          "label": "pty-missing-rejected",
+          "exitCode": 1,
+          "logSha256": "a0dec3741d57b26797a59cfc2662ff387803b35fedfce40ea14639c6a2366a76"
+        }
+      ]
+    },
+    {
+      "acquisition": {
+        "file": "12952324326.zip",
+        "sha256": "efe1a8fb9f4b16a9ec2526395d9cc591b91d61a7234d77d3015d96631797133c",
+        "githubDigest": "sha256:efe1a8fb9f4b16a9ec2526395d9cc591b91d61a7234d77d3015d96631797133c",
+        "artifactId": 12952324326,
+        "name": "native-source-load-windows-latest",
+        "runId": "40999273956",
+        "commit": "066f408ff0cb7ea0a4627f6cab6ee6c9b346b251",
+        "createdAt": "2026-10-30T03:47:49Z",
+        "expiresAt": "2027-01-28T03:46:54Z"
+      },
+      "status": "SOURCE_CANDIDATE_LOAD_AND_NO_FALLBACK_PASS",
+      "sourceRun": "40998915552",
+      "jniSha256": "c88e200b240dfa54c5b852a335b28683e64a074d30ceee7c17ffc282058891a2",
+      "ptySha256": null,
+      "probes": [
+        {
+          "label": "jni-positive",
+          "exitCode": 0,
+          "logSha256": "1c20552b2f3eac7c406dcd5a93bdfeb2957a121fc6ab441aa9f487766d344c12"
+        },
+        {
+          "label": "jni-missing-rejected",
+          "exitCode": 1,
+          "logSha256": "f8ebe171886d7da246693cb116de74b12bd0e52cd1d518992bced0409aca4ccf"
+        }
+      ]
+    },
+    {
+      "acquisition": {
+        "file": "12952693070.zip",
+        "sha256": "67e096f7a2dd2f10e242eec6086f613e7c33853abfe4f9c8438b17e68d8d562f",
+        "githubDigest": "sha256:67e096f7a2dd2f10e242eec6086f613e7c33853abfe4f9c8438b17e68d8d562f",
+        "artifactId": 12952693070,
+        "name": "native-source-load-macos-latest",
+        "runId": "40999635249",
+        "commit": "c1e9e690074b0e8e5e0d1443bae9954ed581e333",
+        "createdAt": "2026-10-30T03:52:18Z",
+        "expiresAt": "2027-01-28T03:50:57Z"
+      },
+      "status": "INCOMPLETE",
+      "sourceRun": "40998915552",
+      "jniSha256": "ebd9fd7c720728ddd3c515f5f96ba6c3a7ce06f20c1d0e4a8eaf63e54341f357",
+      "ptySha256": "db26759cc11b61585dc7fabbf32e4074f7c511f94051a9cb10160b8700b75766",
+      "probes": [
+        {
+          "label": "jni-positive",
+          "exitCode": 0,
+          "logSha256": "5657946b89e7710b13b2bcab5ec453fb8182fcd2bc10961d62f289476e907938",
+          "behaviorPassed": true,
+          "required": true
+        },
+        {
+          "label": "jni-missing-rejected",
+          "exitCode": 1,
+          "logSha256": "f502bf48ddc2a6161904183f1f6df1bbd29a17ad77500cc133f47f5a58edf283",
+          "behaviorPassed": false,
+          "required": true
+        },
+        {
+          "label": "original-jni-original-pty",
+          "exitCode": 1,
+          "logSha256": "5705aac39b6d892831bd35c2fb70ddbe55712cab1c4f30eeebffe50425a7af13",
+          "behaviorPassed": false,
+          "required": false
+        },
+        {
+          "label": "source-jni-original-pty",
+          "exitCode": 1,
+          "logSha256": "5705aac39b6d892831bd35c2fb70ddbe55712cab1c4f30eeebffe50425a7af13",
+          "behaviorPassed": false,
+          "required": false
+        },
+        {
+          "label": "original-jni-source-pty",
+          "exitCode": 1,
+          "logSha256": "5705aac39b6d892831bd35c2fb70ddbe55712cab1c4f30eeebffe50425a7af13",
+          "behaviorPassed": false,
+          "required": false
+        },
+        {
+          "label": "pty-positive",
+          "exitCode": 1,
+          "logSha256": "5705aac39b6d892831bd35c2fb70ddbe55712cab1c4f30eeebffe50425a7af13",
+          "behaviorPassed": false,
+          "required": true
+        }
+      ]
+    },
+    {
+      "acquisition": {
+        "file": "12952667508.zip",
+        "sha256": "3025356a1beab8e50dbb54dd2befe76bed287e438502bd8e7fb901f4f6f5828f",
+        "githubDigest": "sha256:3025356a1beab8e50dbb54dd2befe76bed287e438502bd8e7fb901f4f6f5828f",
+        "artifactId": 12952667508,
+        "name": "native-source-load-macos-latest",
+        "runId": "40999943560",
+        "commit": "7e9cf04bc775de98d7847cebab654a2d82c6c59a",
+        "createdAt": "2026-10-30T03:55:37Z",
+        "expiresAt": "2027-01-28T03:54:33Z"
+      },
+      "status": "INCOMPLETE",
+      "sourceRun": "40998915552",
+      "jniSha256": "ebd9fd7c720728ddd3c515f5f96ba6c3a7ce06f20c1d0e4a8eaf63e54341f357",
+      "ptySha256": "db26759cc11b61585dc7fabbf32e4074f7c511f94051a9cb10160b8700b75766",
+      "probes": [
+        {
+          "label": "jni-positive",
+          "exitCode": 0,
+          "logSha256": "5657946b89e7710b13b2bcab5ec453fb8182fcd2bc10961d62f289476e907938",
+          "behaviorPassed": true,
+          "required": true
+        },
+        {
+          "label": "jni-missing-rejected",
+          "exitCode": 1,
+          "logSha256": "f502bf48ddc2a6161904183f1f6df1bbd29a17ad77500cc133f47f5a58edf283",
+          "behaviorPassed": false,
+          "required": true
+        },
+        {
+          "label": "original-jni-original-pty",
+          "exitCode": 1,
+          "logSha256": "67bf5e14b3b5617f0a70279187257258cf6e77d56a39129d0498368a4c584e19",
+          "behaviorPassed": false,
+          "required": false
+        },
+        {
+          "label": "source-jni-original-pty",
+          "exitCode": 1,
+          "logSha256": "67bf5e14b3b5617f0a70279187257258cf6e77d56a39129d0498368a4c584e19",
+          "behaviorPassed": false,
+          "required": false
+        },
+        {
+          "label": "original-jni-source-pty",
+          "exitCode": 1,
+          "logSha256": "67bf5e14b3b5617f0a70279187257258cf6e77d56a39129d0498368a4c584e19",
+          "behaviorPassed": false,
+          "required": false
+        },
+        {
+          "label": "pty-positive",
+          "exitCode": 1,
+          "logSha256": "67bf5e14b3b5617f0a70279187257258cf6e77d56a39129d0498368a4c584e19",
+          "behaviorPassed": false,
+          "required": true
+        }
+      ]
+    }
+  ],
+  "unresolved": [
+    "Product-wide source replacement and full acceptance not completed; Windows ConPTY/WinPTY source-build provenance and complete OS/CPE coverage remain unproven",
+    "macOS original/source JNI and PTY combinations all fail current five-second process-exit confirmation; class launcher also fails, child observed alive and native reaper waiting",
+    "Historical models disabled-send incident has no original joint causal state; old and current ten-round tests did not reproduce it"
+  ],
+  "paidRequests": 0,
+  "productReplacement": false,
+  "historicalMacRootCauseEstablished": false,
+  "residualRiskAccepted": false
+}

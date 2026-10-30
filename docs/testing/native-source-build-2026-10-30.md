@@ -17,3 +17,13 @@ Windows 40997196069 原 ZIP 3d43a1f9 已核对：MSYS `uname` 被旧 Makefile �
 40999273956 原三包核对：Windows JNI 与 Linux JNI/PTY 的正向及缺库拒绝对照通过。Mac JNI 通过，PTY 已收到标记，但五秒 waitFor 未确认退出，强制清理也未确认，首错现未再被覆盖。新增固定库存原分发/自建 JNI × PTY 四组合因果对照，仅启动 macOS，不重跑两侧。原分发对照须逐资源匹配48库存摘要，只用于定位，不作为源候选回退或通过证据。两项离线测试通过，包括对照字节篡改拒绝。
 
 Mac 四组合 40999635249 原 ZIP 67e096f7：四种组合均相同握手后退出确认失败，包括原分发 JNI+PTY，不能认定自建库导致。进一步对照常规 class 启动与先前 source-file launcher；先 javac21 严格编译并记录 class/编译日志摘要，退出超时仅记录 OS 存活布尔和白名单类/方法名，无环境值、命令参数或正文。该试验未完成，不宣称根因。
+
+## 本轮实际结论
+
+40999943560@7e9cf04 的常规 class 入口也在四组合中同样失败。原 ZIP 3025356a 已核对，超时 OS 存活布尔为 true，pty4j reaper 停在 `wait_for_child_process_exit`。不能将失败归因于仅自建库或仅源码启动器，也不能把这项新探针失败解释为历史 models 按钮超时的原因。
+
+M10-native-source-progress-2026-10-30.json 独立绑定七份加载原 ZIP、对应 Git 探针输入、每个探针日志及预编译 class 摘要。原生库存 48 项已补全官方分发字节核对；Windows/Linux/macOS JNI 已自建，Linux PTY 正反对照通过，macOS PTY 候选仍拒绝。没有替换当前产品中的库。
+
+**两项仍未技术闭合。** 供应链尚缺 Windows ConPTY/WinPTY 等完整源构建替代、产品装配验收及完整 OS/CPE 证明；历史 macOS 原始因果状态已缺失，旧/新各十轮未复现，不能补写根因。用户未接受风险归档，本轮也没有将两项标为关闭。
+
+35 个原包/取证回执及本轮审计文件已本地备份，19,014,177 字节，SHA256 `d08a67570e6f61f76475fcc8eaa61548709e6ac4de9c383eec85a5549ba2e0a2`，逐成员复核。路径与摘要在 M10-native-source-local-backup-2026-10-30.json。无付费请求，无 main 合并、Release 或异地备份。
