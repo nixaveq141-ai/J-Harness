@@ -28,7 +28,7 @@ def prepare_libffi(jna,out,fetch=None):
     else:raw=fetch(FFI_URL)
     if len(raw)!=FFI_BYTES or hashlib.sha256(raw).hexdigest()!=FFI_SHA:raise ValueError('Pinned libffi release mismatch')
     source=jna/'native/libffi';members={};inputs={};generated={}
-    helpers={'configure','compile','config.guess','config.sub','depcomp','install-sh','ltmain.sh','missing'}
+    helpers={'configure','aclocal.m4','compile','config.guess','config.sub','depcomp','install-sh','ltmain.sh','missing'}
     with tarfile.open(fileobj=io.BytesIO(raw)) as archive:
         for member in archive.getmembers():
             if not member.isfile():continue
@@ -50,6 +50,10 @@ def prepare_libffi(jna,out,fetch=None):
                 target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(data)
                 if os.name=='posix':target.chmod(0o755 if mode&0o111 else 0o644)
                 generated[name]=hashlib.sha256(data).hexdigest()
+    # Generated dependency files must share a stable timestamp newer than checkout.
+    # Otherwise make attempts to regenerate them with unavailable host autotools.
+    stamp=time.time_ns()
+    for name in generated:os.utime(source/name,ns=(stamp,stamp))
     (out/'libffi-release-3.4.4.tar.gz').write_bytes(raw)
     return dict(url=FFI_URL,sha256=FFI_SHA,matchedAutotoolsInputs=inputs,generatedInputs=generated,
                 policy='Only missing generated files; never overwrite vendored source')
@@ -94,6 +98,11 @@ def main():
             report['sources'][name]=dict(repository=repo,revision=revision,trackedFiles=files)
         jna=out/'jna'
         report['sources']['jna']['libffiBuildInputs']=prepare_libffi(jna,out)
+        makefile=jna/'native/Makefile';before=makefile.read_bytes()
+        old=b'FFI_CONFIG=--enable-static --disable-shared --with-pic=yes'
+        if before.count(old)!=2:raise ValueError('Pinned libffi build option anchors changed')
+        after=before.replace(old,old+b' --disable-docs');makefile.write_bytes(after)
+        report['sources']['jna']['manualGenerationOnlyPatch']=dict(beforeSha256=hashlib.sha256(before).hexdigest(),afterSha256=hashlib.sha256(after).hexdigest(),option='--disable-docs')
         run(['gcc','--version'],ROOT,30)
         run(['ant','-Dbuild-native=true','native'],jna)
         candidates=[p for p in (jna/'build').rglob('*') if p.is_file() and p.name in ['jnidispatch.dll','libjnidispatch.so','libjnidispatch.jnilib','libjnidispatch.dylib']]

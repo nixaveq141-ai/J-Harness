@@ -40,6 +40,8 @@ class SourceBuildTest(unittest.TestCase):
                 self.assertEqual(6,len(result['matchedAutotoolsInputs']))
                 self.assertEqual(b'vendored C remains unchanged',sentinel.read_bytes())
                 self.assertEqual(files['configure'],(source/'configure').read_bytes())
+                self.assertGreaterEqual((source/'configure').stat().st_mtime_ns,(source/'configure.ac').stat().st_mtime_ns)
+                self.assertEqual((source/'configure').stat().st_mtime_ns,(source/'Makefile.in').stat().st_mtime_ns)
 
     def test_missing_cache_parent_and_missing_tool_still_preserve_attempt(self):
         with tempfile.TemporaryDirectory() as temp,patch.object(builder,'ROOT',Path(temp)),patch.dict(os.environ,{'GITHUB_ACTIONS':'true'}),patch.object(builder.subprocess,'run',side_effect=FileNotFoundError('synthetic missing tool')):

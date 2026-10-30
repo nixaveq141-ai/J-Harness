@@ -31,6 +31,13 @@ jobs:
           'C:\msys64\usr\bin' | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
       - name: Verify source pin and failure ownership offline
         run: python docs/testing/tools/test-build-native-from-source.py
+      - name: Install Linux native AWT header dependency
+        if: runner.os == 'Linux'
+        timeout-minutes: 5
+        run: |
+          sudo apt-get -o Acquire::Retries=1 -o Acquire::http::Timeout=15 -o Acquire::https::Timeout=15 update
+          sudo apt-get -o Acquire::Retries=1 -o Acquire::http::Timeout=15 -o Acquire::https::Timeout=15 install -y --no-install-recommends libx11-dev
+          dpkg-query -W libx11-dev x11proto-dev gcc make
       - name: Build exact pinned native source candidates
         run: python docs/testing/tools/build-native-from-source.py
       - uses: actions/upload-artifact@v4
