@@ -6,12 +6,36 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+import zipfile
+from unittest.mock import patch
 
 spec=importlib.util.spec_from_file_location('loader',Path(__file__).with_name('load-native-source-candidates.py'))
 loader=importlib.util.module_from_spec(spec);spec.loader.exec_module(loader)
 
 
 class CandidateTest(unittest.TestCase):
+    def test_original_mac_controls_require_inventory_bytes_and_preserve_identity(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp);inventory=root/'docs/testing/M10-native-inventory-48-2026-10-30.json'
+            inventory.parent.mkdir(parents=True);jar=root/'fixture.jar'
+            names=['com/sun/jna/darwin-aarch64/libjnidispatch.jnilib',
+                'resources/com/pty4j/native/darwin/libpty.dylib',
+                'resources/com/pty4j/native/darwin/pty4j-unix-spawn-helper']
+            rows=[]
+            with zipfile.ZipFile(jar,'w') as archive:
+                for i,name in enumerate(names):
+                    raw=('controlled native fixture '+str(i)).encode();archive.writestr(name,raw)
+                    rows.append(dict(resource=name,sha256=hashlib.sha256(raw).hexdigest()))
+            inventory.write_text(json.dumps(dict(binaries=rows)),encoding='utf-8')
+            with patch.object(loader,'ROOT',root),patch.object(loader.platform,'machine',return_value='arm64'):
+                jni,pty=loader.original_mac_controls(jar,root/'good')
+                self.assertEqual(rows[0]['sha256'],loader.sha(jni/'libjnidispatch.jnilib'))
+                self.assertEqual(rows[2]['sha256'],loader.sha(pty/'darwin/pty4j-unix-spawn-helper'))
+                rows[2]['sha256']='0'*64
+                inventory.write_text(json.dumps(dict(binaries=rows)),encoding='utf-8')
+                with self.assertRaisesRegex(ValueError,'inventory mismatch'):
+                    loader.original_mac_controls(jar,root/'rejected')
+
     def test_source_command_identity_path_and_bytes_are_fail_closed(self):
         with tempfile.TemporaryDirectory() as temp:
             root=Path(temp);log=root/'1.log';log.write_bytes(b'controlled compile receipt')

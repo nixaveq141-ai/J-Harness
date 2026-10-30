@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 import platform
 import subprocess
+import zipfile
 
 ROOT=Path(__file__).resolve().parents[3]
 SOURCE_RUNS={'40995618881':'a2dc791bae10addc3b53b3d951b94db897ccc265',
@@ -13,6 +14,27 @@ SOURCE_RUNS={'40995618881':'a2dc791bae10addc3b53b3d951b94db897ccc265',
 
 
 def sha(path):return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def original_mac_controls(jar,out):
+    """Trusted original bytes for causal comparison, never a source candidate fallback."""
+    inventory=json.loads((ROOT/'docs/testing/M10-native-inventory-48-2026-10-30.json').read_bytes())
+    resources={v['resource']:v for v in inventory['binaries']}
+    arch='aarch64' if platform.machine()=='arm64' else 'x86-64'
+    names=['com/sun/jna/darwin-'+arch+'/libjnidispatch.jnilib',
+           'resources/com/pty4j/native/darwin/libpty.dylib',
+           'resources/com/pty4j/native/darwin/pty4j-unix-spawn-helper']
+    with zipfile.ZipFile(jar) as archive:
+        for name in names:
+            info=archive.getinfo(name)
+            if info.file_size>16*1024*1024:raise ValueError('Original native control bound')
+            raw=archive.read(info)
+            if hashlib.sha256(raw).hexdigest()!=resources[name]['sha256']:
+                raise ValueError('Original native control inventory mismatch')
+            target=out/('jni' if name.startswith('com/sun/jna') else 'pty/darwin')/Path(name).name
+            target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(raw)
+            if target.name=='pty4j-unix-spawn-helper':target.chmod(0o755)
+    return out/'jni',out/'pty'
 
 
 def validate(directory,run):
@@ -71,7 +93,7 @@ def main():
         jarSha256=sha(jar),probeSha256=sha(probe),jniSha256=sha(jna),ptySha256=sha(pty) if pty else None,
         sourceReportSha256=sha(next(args.input.rglob('report.json'))),probes=[],paidRequests=0,productReplacement=False,
         ptyHelperSha256=sha(helper) if helper else None)
-    def run(label,jni_folder,pty_folder=None,success=True):
+    def run(label,jni_folder,pty_folder=None,success=True,required=True):
         command=[str(java),'-Djna.nounpack=true','-Djna.nosys=true','-Djna.boot.library.path='+str(jni_folder)]
         if pty_folder is not None:command+=['-Dpty4j.preferred.native.folder='+str(pty_folder)]
         command+=['-cp',str(jar),str(probe)]+(['pty'] if pty_folder is not None else [])
@@ -79,9 +101,11 @@ def main():
         raw=result.stdout+result.stderr
         if len(raw)>65536:raise ValueError('Probe output bound')
         log=out/(label+'.log');log.write_bytes(raw)
-        report['probes'].append(dict(label=label,exitCode=result.returncode,logSha256=sha(log)))
+        passed=result.returncode==0 and b'SOURCE_JNI_PASS' in raw and (pty_folder is None or b'SOURCE_PTY_PASS' in raw)
+        report['probes'].append(dict(label=label,exitCode=result.returncode,logSha256=sha(log),behaviorPassed=passed,required=required))
+        if not required:return passed
         if success:
-            if result.returncode or b'SOURCE_JNI_PASS' not in raw or pty_folder is not None and b'SOURCE_PTY_PASS' not in raw:raise ValueError('Native source behavior rejected')
+            if not passed:raise ValueError('Native source behavior rejected')
         elif result.returncode==0 or b'UnsatisfiedLinkError' not in raw:
             raise ValueError('Missing candidate must fail native loading, no fallback')
     try:
@@ -93,6 +117,11 @@ def main():
                 helper.chmod(0o755)
             # pty4j resolves platform subdirectories relative to its preferred root.
             root=pty.parent.parent if platform.system()=='Darwin' else pty.parent.parent.parent
+            if platform.system()=='Darwin':
+                original_jni,original_pty=original_mac_controls(jar,out/'original-controls')
+                run('original-jni-original-pty',original_jni,original_pty,required=False)
+                run('source-jni-original-pty',jna.parent,original_pty,required=False)
+                run('original-jni-source-pty',original_jni,root,required=False)
             run('pty-positive',jna.parent,root)
             run('pty-missing-rejected',jna.parent,empty,success=False)
         if (sha(jar)!=report['jarSha256'] or sha(jna)!=report['jniSha256']

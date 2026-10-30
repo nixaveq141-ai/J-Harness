@@ -1,9 +1,11 @@
 name: Source-built JNI and PTY load controls
 on:
   workflow_dispatch:
-  push:
-    branches: [codex/m1059-full-validation]
-    paths: [.github/workflows/gap-native-source-load.yml]
+    inputs:
+      scope:
+        type: choice
+        default: all
+        options: [all, macos]
 permissions:
   contents: read
   actions: read
@@ -12,13 +14,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - os: ubuntu-24.04
-            source_run: '40995618881'
-          - os: macos-latest
-            source_run: '40998915552'
-          - os: windows-latest
-            source_run: '40998915552'
+        include: ${{ fromJSON(inputs.scope == 'macos' && '[{"os":"macos-latest","source_run":"40998915552"}]' || '[{"os":"ubuntu-24.04","source_run":"40995618881"},{"os":"macos-latest","source_run":"40998915552"},{"os":"windows-latest","source_run":"40998915552"}]') }}
     runs-on: ${{ matrix.os }}
     timeout-minutes: 15
     steps:

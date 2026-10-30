@@ -13,3 +13,5 @@ Linux/macOS尝试重编JNA和POSIX PTY；Windows尝试重编JNA。POSIX PTY先�
 Windows 40997196069 原 ZIP 3d43a1f9 已核对：MSYS `uname` 被旧 Makefile 识别为非 Windows，configure 得到 x86_64-pc-msys，实际 MinGW 编译触发 tramp.c 错误。改显式选择上游现有 win32/amd64/MinGW 分支，未改 libffi C 文件。只重跑 Windows/macOS 源码专项，Linux 已过证据不重跑。四项构建离线测试、一项七反例加载验证及 Java21 严格编译通过。
 
 源码修正专项 40998915552@3571d22 的 Windows JNI 和 macOS JNI/libpty/helper 均构建成功。加载器现限定审核过的运行及源码身份，macOS 缺源码 helper 或 CMake 命令即拒绝；提取后仅恢复已核验 helper 的执行位，前后字节仍须一致。八类离线拒绝反例通过。后续三平台加载专项使用原 Linux 源轮及新 Windows/Mac 源轮，各自绑定原报告，不混作单轮全量产品验收。
+
+40999273956 原三包核对：Windows JNI 与 Linux JNI/PTY 的正向及缺库拒绝对照通过。Mac JNI 通过，PTY 已收到标记，但五秒 waitFor 未确认退出，强制清理也未确认，首错现未再被覆盖。新增固定库存原分发/自建 JNI × PTY 四组合因果对照，仅启动 macOS，不重跑两侧。原分发对照须逐资源匹配48库存摘要，只用于定位，不作为源候选回退或通过证据。两项离线测试通过，包括对照字节篡改拒绝。
