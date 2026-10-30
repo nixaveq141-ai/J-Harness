@@ -13,6 +13,14 @@ spec.loader.exec_module(audit)
 
 
 class NativeAuditTest(unittest.TestCase):
+    def test_codeview_clues_are_bounded_and_not_attestations(self):
+        record=b'RSDS'+b'\x11'*16+struct.pack('<I',2)+b'Z:\\BuildAgent\\work\\example\\native.pdb\0'
+        rows=audit.codeview_candidates(b'MZ'+record*100)
+        self.assertEqual(16,len(rows))
+        self.assertEqual(2,rows[0]['age'])
+        self.assertEqual('EMBEDDED_CLUE_NOT_BUILD_ATTESTATION',rows[0]['status'])
+        self.assertEqual([],audit.codeview_candidates(b'MZRSDS'))
+        self.assertEqual([],audit.codeview_candidates(b'ELF'+record))
     def fixture(self, root):
         (root/'third-party').mkdir()
         jar = root/'repo/org/jetbrains/pty4j/1/pty4j-1.jar'

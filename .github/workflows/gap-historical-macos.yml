@@ -1,0 +1,46 @@
+name: Historical macOS models causal reproduction
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/m1059-full-validation]
+    paths: [.github/workflows/gap-historical-macos.yml]
+permissions:
+  contents: read
+jobs:
+  historical:
+    runs-on: macos-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Materialize exact historical source
+        run: |
+          mkdir -p .build-cache/historical-models-src
+          git archive 11e4024c090bf1c63c0adecc823de8a86c541d69 | tar -x -C .build-cache/historical-models-src
+      - name: Build historical UI and runtime
+        working-directory: .build-cache/historical-models-src
+        run: |
+          npm --prefix frontend ci
+          npm --prefix frontend run build
+          sh ./mvnw -B -DskipTests package > ../historical-models-build.log 2>&1
+          node frontend/node_modules/playwright/cli.js install --with-deps webkit
+      - name: Run original22 checks with bounded causal traces
+        run: python3 docs/testing/tools/reproduce-historical-models.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: historical-macos-causal-reproduction
+          include-hidden-files: true
+          retention-days: 90
+          path: |
+            .build-cache/historical-models-evidence/
+            .build-cache/historical-models-build.log

@@ -1,0 +1,605 @@
+{
+  "status": "BUILD_PROVENANCE_INCOMPLETE",
+  "binaries": [
+    {
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "artifactSha256": "34ed1e1f27fa896bca50dbc4e99cf3732967cec387a7a0d5e3486c09673fe8c6",
+      "resource": "com/sun/jna/win32-x86/jnidispatch.dll",
+      "bytes": 211456,
+      "sha256": "38650a0612730c52580c9f32ff766b44b1c5a426d52e7dd7a53687bf3389ac2c",
+      "embeddedFixedVersionCandidates": [
+        "7.0.0.0"
+      ],
+      "embeddedCodeViewCandidates": [],
+      "exactBuildRevision": "UNRESOLVED",
+      "cpeAssessment": "NOT_ASSESSED"
+    },
+    {
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "artifactSha256": "34ed1e1f27fa896bca50dbc4e99cf3732967cec387a7a0d5e3486c09673fe8c6",
+      "resource": "com/sun/jna/darwin-x86-64/libjnidispatch.jnilib",
+      "bytes": 107392,
+      "sha256": "12d88138ce3c0a20d4bb3cfbd091b7ccb1f6365a79ab07b2d786a52d104d418e",
+      "embeddedFixedVersionCandidates": [],
+      "embeddedCodeViewCandidates": [],
+      "exactBuildRevision": "UNRESOLVED",
+      "cpeAssessment": "NOT_ASSESSED"
+    },
+    {
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "artifactSha256": "34ed1e1f27fa896bca50dbc4e99cf3732967cec387a7a0d5e3486c09673fe8c6",
+      "resource": "com/sun/jna/darwin-aarch64/libjnidispatch.jnilib",
+      "bytes": 159800,
+      "sha256": "22139ef060538cccc0e654639ef36d53a96b4f5d8f0b5027116e430fed5e75df",
+      "embeddedFixedVersionCandidates": [],
+      "embeddedCodeViewCandidates": [],
+      "exactBuildRevision": "UNRESOLVED",
+      "cpeAssessment": "NOT_ASSESSED"
+    },
+    {
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "artifactSha256": "34ed1e1f27fa896bca50dbc4e99cf3732967cec387a7a0d5e3486c09673fe8c6",
+      "resource": "com/sun/jna/linux-x86/libjnidispatch.so",
+      "bytes": 123384,
+      "sha256": "caf3d95b12a6f907fa0b647e1d785c6505415fc266e11733b24eec22da6ae3d9",
+      "embeddedFixedVersionCandidates": [],
+      "embeddedCodeViewCandidates": [],
+      "exactBuildRevision": "UNRESOLVED",
+      "cpeAssessment": "NOT_ASSESSED"
+    },
+    {
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "artifactSha256": "34ed1e1f27fa896bca50dbc4e99cf3732967cec387a7a0d5e3486c09673fe8c6",
+      "resource": "com/sun/jna/linux-x86-64/libjnidispatch.so",
+      "bytes": 134447,
+      "sha256": "c0ff03e4593fedd2fa96bd76a66ee9dab7a057df8739a7a38133cb5f21d12552",
+      "embeddedFixedVersionCandidates": [],
+      "embeddedCodeViewCandidates": [],
+      "exactBuildRevision": "UNRESOLVED",
+      "cpeAssessment": "NOT_ASSESSED"
+    },
+    {
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "artifactSha256": "34ed1e1f27fa896bca50dbc4e99cf3732967cec387a7a0d5e3486c09673fe8c6",
+      "resource": "com/sun/jna/linux-arm/libjnidispatch.so",
+      "bytes": 130788,
+      "sha256": "00a35890dde5b4174d6646d1ebdc553bac3b7d99c1a793899eddaa002b5a16a2",
+      "embeddedFixedVersionCandidates": [],
+      "embeddedCodeViewCandidates": [],
+      "exactBuildRevision": "UNRESOLVED",
+      "cpeAssessment": "NOT_ASSESSED"
+    },
+    {
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "artifactSha256": "34ed1e1f27fa896bca50dbc4e99cf3732967cec387a7a0d5e3486c09673fe8c6",
+      "resource": "com/sun/jna/linux-armel/libjnidispatch.so",
+      "bytes": 139472,
+      "sha256": "257d627bce7ddccf539f8a32dd293e4d0ed8ba64070dab07d5ae40d4932d60a6",
+      "embeddedFixedVersionCandidates": [],
+      "embeddedCodeViewCandidates": [],
+      "exactBuildRevision": "UNRESOLVED",
+      "cpeAssessment": "NOT_ASSESSED"
+    },
+    {
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "artifactSha256": "34ed1e1f27fa896bca50dbc4e99cf3732967cec387a7a0d5e3486c09673fe8c6",
+      "resource": "com/sun/jna/linux-aarch64/libjnidispatch.so",
+      "bytes": 162288,
+      "sha256": "5c894177c2c4a1a422047886f5f526959e4f1a8c1561bb3cb2277fe0da85b744",
+      "embeddedFixedVersionCandidates": [],
+      "embeddedCodeViewCandidates": [],
+      "exactBuildRevision": "UNRESOLVED",
+      "cpeAssessment": "NOT_ASSESSED"
+    },
+    {
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "artifactSha256": "34ed1e1f27fa896bca50dbc4e99cf3732967cec387a7a0d5e3486c09673fe8c6",
+      "resource": "com/sun/jna/linux-ppc/libjnidispatch.so",
+      "bytes": 127724,
+      "sha256": "c974c4ec9701655a30d7601389c3b3246447fdbc90240e809b37cb283224a2ff",
+      "embeddedFixedVersionCandidates": [],
+      "embeddedCodeViewCandidates": [],
+      "exactBuildRevision": "UNRESOLVED",
+      "cpeAssessment": "NOT_ASSESSED"
+    },
+    {
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "artifactSha256": "34ed1e1f27fa896bca50dbc4e99cf3732967cec387a7a0d5e3486c09673fe8c6",
+      "resource": "com/sun/jna/linux-ppc64le/libjnidispatch.so",
+      "bytes": 145072,
+      "sha256": "bb026410e75b3e928cb3ccddc0f9418e3fb40aad1f6c80cf046b72d62e5eb062",
+      "embeddedFixedVersionCandidates": [],
+      "embeddedCodeViewCandidates": [],
+      "exactBuildRevision": "UNRESOLVED",
+      "cpeAssessment": "NOT_ASSESSED"
+    },
+    {
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "artifactSha256": "34ed1e1f27fa896bca50dbc4e99cf3732967cec387a7a0d5e3486c09673fe8c6",
+      "resource": "com/sun/jna/linux-mips64el/libjnidispatch.so",
+      "bytes": 144056,
+      "sha256": "5e7a37f9cc6c0dc7cfa2b6d0944788c448ff2e87d4aab894a241269a8b6335ed",
+      "embeddedFixedVersionCandidates": [],
+      "embeddedCodeViewCandidates": [],
+      "exactBuildRevision": "UNRESOLVED",
+      "cpeAssessment": "NOT_ASSESSED"
+    },
+    {
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "artifactSha256": "34ed1e1f27fa896bca50dbc4e99cf3732967cec387a7a0d5e3486c09673fe8c6",
+      "resource": "com/sun/jna/linux-loongarch64/libjnidispatch.so",
+      "bytes": 374632,
+      "sha256": "2e91afb910bf56ca578786861fb87845f7bae1dc91b3ec6374540f3a946f170a",
+      "embeddedFixedVersionCandidates": [],
+      "embeddedCodeViewCandidates": [],
+      "exactBuildRevision": "UNRESOLVED",
+      "cpeAssessment": "NOT_ASSESSED"
+    },
+    {
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "artifactSha256": "34ed1e1f27fa896bca50dbc4e99cf3732967cec387a7a0d5e3486c09673fe8c6",
+      "resource": "com/sun/jna/linux-s390x/libjnidispatch.so",
+      "bytes": 136976,
+      "sha256": "3f33fab801dc3a43a5d269fa0e8f43e54b0f7e29f02c4821901c62aafb3aee6c",
+      "embeddedFixedVersionCandidates": [],
+      "embeddedCodeViewCandidates": [],
+      "exactBuildRevision": "UNRESOLVED",
+      "cpeAssessment": "NOT_ASSESSED"
+    },
+    {
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "artifactSha256": "34ed1e1f27fa896bca50dbc4e99cf3732967cec387a7a0d5e3486c09673fe8c6",
+      "resource": "com/sun/jna/linux-riscv64/libjnidispatch.so",
+      "bytes": 100064,
+      "sha256": "938f42166508c30d5b5ed3eb094219f9b2df736b1ea38ed7586c0ce79c12ee97",
+      "embeddedFixedVersionCandidates": [],
+      "embeddedCodeViewCandidates": [],
+      "exactBuildRevision": "UNRESOLVED",
+      "cpeAssessment": "NOT_ASSESSED"
+    },
+    {
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "artifactSha256": "34ed1e1f27fa896bca50dbc4e99cf3732967cec387a7a0d5e3486c09673fe8c6",
+      "resource": "com/sun/jna/sunos-x86/libjnidispatch.so",
+      "bytes": 172040,
+      "sha256": "7af04db1da25981579214bdcbf761a8cd1ac5a76c9ac95fc226303ee65dfaeba",
+      "embeddedFixedVersionCandidates": [],
+      "embeddedCodeViewCandidates": [],
+      "exactBuildRevision": "UNRESOLVED",
+      "cpeAssessment": "NOT_ASSESSED"
+    },
+    {
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "artifactSha256": "34ed1e1f27fa896bca50dbc4e99cf3732967cec387a7a0d5e3486c09673fe8c6",
+      "resource": "com/sun/jna/sunos-x86-64/libjnidispatch.so",
+      "bytes": 172040,
+      "sha256": "7af04db1da25981579214bdcbf761a8cd1ac5a76c9ac95fc226303ee65dfaeba",
+      "embeddedFixedVersionCandidates": [],
+      "embeddedCodeViewCandidates": [],
+      "exactBuildRevision": "UNRESOLVED",
+      "cpeAssessment": "NOT_ASSESSED"
+    },
+    {
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "artifactSha256": "34ed1e1f27fa896bca50dbc4e99cf3732967cec387a7a0d5e3486c09673fe8c6",
+      "resource": "com/sun/jna/sunos-sparc/libjnidispatch.so",
+      "bytes": 164736,
+      "sha256": "58e637222be67679df8f2473967555b9697908e65ca2ddf32719d1d5e35769db",
+      "embeddedFixedVersionCandidates": [],
+      "embeddedCodeViewCandidates": [],
+      "exactBuildRevision": "UNRESOLVED",
+      "cpeAssessment": "NOT_ASSESSED"
+    },
+    {
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "artifactSha256": "34ed1e1f27fa896bca50dbc4e99cf3732967cec387a7a0d5e3486c09673fe8c6",
+      "resource": "com/sun/jna/sunos-sparcv9/libjnidispatch.so",
+      "bytes": 164736,
+      "sha256": "58e637222be67679df8f2473967555b9697908e65ca2ddf32719d1d5e35769db",
+      "embeddedFixedVersionCandidates": [],
+      "embeddedCodeViewCandidates": [],
+      "exactBuildRevision": "UNRESOLVED",
+      "cpeAssessment": "NOT_ASSESSED"
+    },
+    {
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "artifactSha256": "34ed1e1f27fa896bca50dbc4e99cf3732967cec387a7a0d5e3486c09673fe8c6",
+      "resource": "com/sun/jna/freebsd-x86/libjnidispatch.so",
+      "bytes": 109718,
+      "sha256": "c1d200c601baf9f26db1b0ba0d152fb517dd929f01cbbe1ac3320bbe40adb827",
+      "embeddedFixedVersionCandidates": [],
+      "embeddedCodeViewCandidates": [],
+      "exactBuildRevision": "UNRESOLVED",
+      "cpeAssessment": "NOT_ASSESSED"
+    },
+    {
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "artifactSha256": "34ed1e1f27fa896bca50dbc4e99cf3732967cec387a7a0d5e3486c09673fe8c6",
+      "resource": "com/sun/jna/freebsd-x86-64/libjnidispatch.so",
+      "bytes": 121307,
+      "sha256": "13281e25bf8614ab1aeb5f93d32ce4af02d986b0ca49f7692d08fce981eb1d5e",
+      "embeddedFixedVersionCandidates": [],
+      "embeddedCodeViewCandidates": [],
+      "exactBuildRevision": "UNRESOLVED",
+      "cpeAssessment": "NOT_ASSESSED"
+    },
+    {
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "artifactSha256": "34ed1e1f27fa896bca50dbc4e99cf3732967cec387a7a0d5e3486c09673fe8c6",
+      "resource": "com/sun/jna/openbsd-x86/libjnidispatch.so",
+      "bytes": 108073,
+      "sha256": "c99db52a1c9ffd791ec0dda9b39ad8aec0b7514dce881e230882210dfc9d9fb7",
+      "embeddedFixedVersionCandidates": [],
+      "embeddedCodeViewCandidates": [],
+      "exactBuildRevision": "UNRESOLVED",
+      "cpeAssessment": "NOT_ASSESSED"
+    },
+    {
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "artifactSha256": "34ed1e1f27fa896bca50dbc4e99cf3732967cec387a7a0d5e3486c09673fe8c6",
+      "resource": "com/sun/jna/openbsd-x86-64/libjnidispatch.so",
+      "bytes": 122942,
+      "sha256": "f15ad5da6b5ab33a9fe51992247fa3fe4da6a6ec0a4678d186611bb1258b4fff",
+      "embeddedFixedVersionCandidates": [],
+      "embeddedCodeViewCandidates": [],
+      "exactBuildRevision": "UNRESOLVED",
+      "cpeAssessment": "NOT_ASSESSED"
+    },
+    {
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "artifactSha256": "34ed1e1f27fa896bca50dbc4e99cf3732967cec387a7a0d5e3486c09673fe8c6",
+      "resource": "com/sun/jna/win32-x86-64/jnidispatch.dll",
+      "bytes": 254464,
+      "sha256": "69c45175ecfd25af023f96ac0bb2c45e6a95e3ba8a5a50ee7969ccab14825c44",
+      "embeddedFixedVersionCandidates": [
+        "7.0.0.0"
+      ],
+      "embeddedCodeViewCandidates": [],
+      "exactBuildRevision": "UNRESOLVED",
+      "cpeAssessment": "NOT_ASSESSED"
+    },
+    {
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "artifactSha256": "34ed1e1f27fa896bca50dbc4e99cf3732967cec387a7a0d5e3486c09673fe8c6",
+      "resource": "com/sun/jna/win32-aarch64/jnidispatch.dll",
+      "bytes": 256512,
+      "sha256": "b9d1479b9619b7ece4a36b6ae31365ffaf15a1355d4f6da02f8b5f09df2fa82f",
+      "embeddedFixedVersionCandidates": [],
+      "embeddedCodeViewCandidates": [],
+      "exactBuildRevision": "UNRESOLVED",
+      "cpeAssessment": "NOT_ASSESSED"
+    },
+    {
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "artifactSha256": "da86078dafc3c4e4e3a497981df9794e5d9ed081963ad9561d0e69657f2475d4",
+      "resource": "resources/com/pty4j/native/win/x86/winpty.dll",
+      "bytes": 523144,
+      "sha256": "c77c5b1b19bd72d714e64c783bc0a4f0afa06dfaa684ce4105eb55be3cf3e705",
+      "embeddedFixedVersionCandidates": [],
+      "embeddedCodeViewCandidates": [
+        {
+          "guid": "550EB3426FF1481B8D6F2D63C366DE28",
+          "age": 2,
+          "upstreamBuildPath": "Z:\\BuildAgent\\work\\2a95cd8f4ff7a49d\\src\\Release\\Win32\\winpty.pdb",
+          "status": "EMBEDDED_CLUE_NOT_BUILD_ATTESTATION"
+        }
+      ],
+      "exactBuildRevision": "UNRESOLVED",
+      "cpeAssessment": "NOT_ASSESSED"
+    },
+    {
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "artifactSha256": "da86078dafc3c4e4e3a497981df9794e5d9ed081963ad9561d0e69657f2475d4",
+      "resource": "resources/com/pty4j/native/win/x86/winpty-agent.exe",
+      "bytes": 599960,
+      "sha256": "1ecf08c02b534c4aed342e8a0d5a5d31d6956638d199a59ad6fbbe6519b6aa33",
+      "embeddedFixedVersionCandidates": [],
+      "embeddedCodeViewCandidates": [
+        {
+          "guid": "DF45F2FF5C634A61904D6304267CB97E",
+          "age": 2,
+          "upstreamBuildPath": "Z:\\BuildAgent\\work\\2a95cd8f4ff7a49d\\src\\Release\\Win32\\winpty-agent.pdb",
+          "status": "EMBEDDED_CLUE_NOT_BUILD_ATTESTATION"
+        }
+      ],
+      "exactBuildRevision": "UNRESOLVED",
+      "cpeAssessment": "NOT_ASSESSED"
+    },
+    {
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "artifactSha256": "da86078dafc3c4e4e3a497981df9794e5d9ed081963ad9561d0e69657f2475d4",
+      "resource": "resources/com/pty4j/native/win/x86-64/cyglaunch.exe",
+      "bytes": 28416,
+      "sha256": "5d2d8da1066eb931bf86aa0895bb5cec3d7320faf258b7b20d722f16136cb3ca",
+      "embeddedFixedVersionCandidates": [],
+      "embeddedCodeViewCandidates": [
+        {
+          "guid": "B3E6F976C2AEDB75212A8154891C79B0",
+          "age": 1,
+          "upstreamBuildPath": "",
+          "status": "EMBEDDED_CLUE_NOT_BUILD_ATTESTATION"
+        }
+      ],
+      "exactBuildRevision": "UNRESOLVED",
+      "cpeAssessment": "NOT_ASSESSED"
+    },
+    {
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "artifactSha256": "da86078dafc3c4e4e3a497981df9794e5d9ed081963ad9561d0e69657f2475d4",
+      "resource": "resources/com/pty4j/native/win/x86-64/conpty.dll",
+      "bytes": 109944,
+      "sha256": "8596b8e3f1ea3bf2f2f391a265a777e1e294a51cf2ec21e0d7d86c13817724f6",
+      "embeddedFixedVersionCandidates": [],
+      "embeddedCodeViewCandidates": [
+        {
+          "guid": "E0079026334C44B6B2A39D4F5A518392",
+          "age": 1,
+          "upstreamBuildPath": "Z:\\BuildAgent\\work\\30f77bac391eadda\\bin\\x64\\Release\\conpty.pdb",
+          "status": "EMBEDDED_CLUE_NOT_BUILD_ATTESTATION"
+        }
+      ],
+      "exactBuildRevision": "UNRESOLVED",
+      "cpeAssessment": "NOT_ASSESSED"
+    },
+    {
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "artifactSha256": "da86078dafc3c4e4e3a497981df9794e5d9ed081963ad9561d0e69657f2475d4",
+      "resource": "resources/com/pty4j/native/win/x86-64/winpty.dll",
+      "bytes": 654728,
+      "sha256": "21c6480093859d4811525dd68ece1905324014bbd8c1a11fea6a78b2933009f4",
+      "embeddedFixedVersionCandidates": [],
+      "embeddedCodeViewCandidates": [
+        {
+          "guid": "6642F7C3F89D44A8BE86D28B5A03410E",
+          "age": 1,
+          "upstreamBuildPath": "Z:\\BuildAgent\\work\\2a95cd8f4ff7a49d\\src\\Release\\x64\\winpty.pdb",
+          "status": "EMBEDDED_CLUE_NOT_BUILD_ATTESTATION"
+        }
+      ],
+      "exactBuildRevision": "UNRESOLVED",
+      "cpeAssessment": "NOT_ASSESSED"
+    },
+    {
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "artifactSha256": "da86078dafc3c4e4e3a497981df9794e5d9ed081963ad9561d0e69657f2475d4",
+      "resource": "resources/com/pty4j/native/win/x86-64/winpty-agent.exe",
+      "bytes": 747416,
+      "sha256": "2afff3901ae320437161c204a3ecdbb48e3713f074f533387f105acc44dc2fc6",
+      "embeddedFixedVersionCandidates": [],
+      "embeddedCodeViewCandidates": [
+        {
+          "guid": "D0C9CD9BDF33404B946FD74BEAAAAA99",
+          "age": 1,
+          "upstreamBuildPath": "Z:\\BuildAgent\\work\\2a95cd8f4ff7a49d\\src\\Release\\x64\\winpty-agent.pdb",
+          "status": "EMBEDDED_CLUE_NOT_BUILD_ATTESTATION"
+        }
+      ],
+      "exactBuildRevision": "UNRESOLVED",
+      "cpeAssessment": "NOT_ASSESSED"
+    },
+    {
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "artifactSha256": "da86078dafc3c4e4e3a497981df9794e5d9ed081963ad9561d0e69657f2475d4",
+      "resource": "resources/com/pty4j/native/win/x86-64/OpenConsole.exe",
+      "bytes": 1162112,
+      "sha256": "f6a57f4ad87a9e58609efdf19c85bd0a2a16b44269229df01fff60818693ccd2",
+      "embeddedFixedVersionCandidates": [],
+      "embeddedCodeViewCandidates": [
+        {
+          "guid": "6424BA5C93934B48BBE093007288F71F",
+          "age": 1,
+          "upstreamBuildPath": "Z:\\BuildAgent\\work\\30f77bac391eadda\\bin\\x64\\Release\\OpenConsole.pdb",
+          "status": "EMBEDDED_CLUE_NOT_BUILD_ATTESTATION"
+        }
+      ],
+      "exactBuildRevision": "UNRESOLVED",
+      "cpeAssessment": "NOT_ASSESSED"
+    },
+    {
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "artifactSha256": "da86078dafc3c4e4e3a497981df9794e5d9ed081963ad9561d0e69657f2475d4",
+      "resource": "resources/com/pty4j/native/win/x86-64/win-helper.dll",
+      "bytes": 42904,
+      "sha256": "d1777570d51da29d94444cbfc17632e0a6b934578fb57cc39b0de7ebc0bbecc8",
+      "embeddedFixedVersionCandidates": [],
+      "embeddedCodeViewCandidates": [],
+      "exactBuildRevision": "UNRESOLVED",
+      "cpeAssessment": "NOT_ASSESSED"
+    },
+    {
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "artifactSha256": "da86078dafc3c4e4e3a497981df9794e5d9ed081963ad9561d0e69657f2475d4",
+      "resource": "resources/com/pty4j/native/win/aarch64/conpty.dll",
+      "bytes": 107384,
+      "sha256": "0e7dc377e2cf5f90f3b221a53193fb1b0f99634d7911241a9a80cb7650f67526",
+      "embeddedFixedVersionCandidates": [],
+      "embeddedCodeViewCandidates": [
+        {
+          "guid": "FBA373ACF7644A78BAEE15103DA1368E",
+          "age": 1,
+          "upstreamBuildPath": "Z:\\BuildAgent\\work\\30f77bac391eadda\\bin\\ARM64\\Release\\conpty.pdb",
+          "status": "EMBEDDED_CLUE_NOT_BUILD_ATTESTATION"
+        }
+      ],
+      "exactBuildRevision": "UNRESOLVED",
+      "cpeAssessment": "NOT_ASSESSED"
+    },
+    {
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "artifactSha256": "da86078dafc3c4e4e3a497981df9794e5d9ed081963ad9561d0e69657f2475d4",
+      "resource": "resources/com/pty4j/native/win/aarch64/winpty.dll",
+      "bytes": 921992,
+      "sha256": "99c8aa61319c2a83278e4da60cdc584fe29a6818e24edc362399314d3a3e5808",
+      "embeddedFixedVersionCandidates": [],
+      "embeddedCodeViewCandidates": [
+        {
+          "guid": "1126040B6F284C459B561952944AF6AF",
+          "age": 1,
+          "upstreamBuildPath": "Z:\\BuildAgent\\work\\2a95cd8f4ff7a49d\\src\\Release\\arm64\\winpty.pdb",
+          "status": "EMBEDDED_CLUE_NOT_BUILD_ATTESTATION"
+        }
+      ],
+      "exactBuildRevision": "UNRESOLVED",
+      "cpeAssessment": "NOT_ASSESSED"
+    },
+    {
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "artifactSha256": "da86078dafc3c4e4e3a497981df9794e5d9ed081963ad9561d0e69657f2475d4",
+      "resource": "resources/com/pty4j/native/win/aarch64/winpty-agent.exe",
+      "bytes": 1052056,
+      "sha256": "055ab03294342b665d666f2e7fce2ec1fe182e3bd97af6b95219d046af9bf36b",
+      "embeddedFixedVersionCandidates": [],
+      "embeddedCodeViewCandidates": [
+        {
+          "guid": "3FA915AB59A7468F86D1A459F2D32AC3",
+          "age": 1,
+          "upstreamBuildPath": "Z:\\BuildAgent\\work\\2a95cd8f4ff7a49d\\src\\Release\\arm64\\winpty-agent.pdb",
+          "status": "EMBEDDED_CLUE_NOT_BUILD_ATTESTATION"
+        }
+      ],
+      "exactBuildRevision": "UNRESOLVED",
+      "cpeAssessment": "NOT_ASSESSED"
+    },
+    {
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "artifactSha256": "da86078dafc3c4e4e3a497981df9794e5d9ed081963ad9561d0e69657f2475d4",
+      "resource": "resources/com/pty4j/native/win/aarch64/OpenConsole.exe",
+      "bytes": 1201536,
+      "sha256": "8a1b1f024040579b8c656eed59c068da1f544743165f2a4cb8e78e28c1c72836",
+      "embeddedFixedVersionCandidates": [],
+      "embeddedCodeViewCandidates": [
+        {
+          "guid": "25422CABEFF0480FBD2077F0ECDEE2CD",
+          "age": 1,
+          "upstreamBuildPath": "Z:\\BuildAgent\\work\\30f77bac391eadda\\bin\\ARM64\\Release\\OpenConsole.pdb",
+          "status": "EMBEDDED_CLUE_NOT_BUILD_ATTESTATION"
+        }
+      ],
+      "exactBuildRevision": "UNRESOLVED",
+      "cpeAssessment": "NOT_ASSESSED"
+    },
+    {
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "artifactSha256": "da86078dafc3c4e4e3a497981df9794e5d9ed081963ad9561d0e69657f2475d4",
+      "resource": "resources/com/pty4j/native/win/aarch64/win-helper.dll",
+      "bytes": 40856,
+      "sha256": "b4d01792ba6ec8a7c5df2516a1170e19a0a82f0937a506673818a9510052802a",
+      "embeddedFixedVersionCandidates": [],
+      "embeddedCodeViewCandidates": [],
+      "exactBuildRevision": "UNRESOLVED",
+      "cpeAssessment": "NOT_ASSESSED"
+    },
+    {
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "artifactSha256": "da86078dafc3c4e4e3a497981df9794e5d9ed081963ad9561d0e69657f2475d4",
+      "resource": "resources/com/pty4j/native/darwin/libpty.dylib",
+      "bytes": 153104,
+      "sha256": "23f58005abd62b014c3da665d15ee9700e58e99fc2f584c69c021a260a7bb5dd",
+      "embeddedFixedVersionCandidates": [],
+      "embeddedCodeViewCandidates": [],
+      "exactBuildRevision": "UNRESOLVED",
+      "cpeAssessment": "NOT_ASSESSED"
+    },
+    {
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "artifactSha256": "da86078dafc3c4e4e3a497981df9794e5d9ed081963ad9561d0e69657f2475d4",
+      "resource": "resources/com/pty4j/native/freebsd/x86/libpty.so",
+      "bytes": 11584,
+      "sha256": "67088c6eb1ac32f4c82c43e0386cb86e9df68f6869ee4900cb68039cb0121598",
+      "embeddedFixedVersionCandidates": [],
+      "embeddedCodeViewCandidates": [],
+      "exactBuildRevision": "UNRESOLVED",
+      "cpeAssessment": "NOT_ASSESSED"
+    },
+    {
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "artifactSha256": "da86078dafc3c4e4e3a497981df9794e5d9ed081963ad9561d0e69657f2475d4",
+      "resource": "resources/com/pty4j/native/freebsd/x86-64/libpty.so",
+      "bytes": 14496,
+      "sha256": "6bf2cf3a6ac0929d0f23529b4bfc7f97348219260f86dc84f2a0140ec611dd7c",
+      "embeddedFixedVersionCandidates": [],
+      "embeddedCodeViewCandidates": [],
+      "exactBuildRevision": "UNRESOLVED",
+      "cpeAssessment": "NOT_ASSESSED"
+    },
+    {
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "artifactSha256": "da86078dafc3c4e4e3a497981df9794e5d9ed081963ad9561d0e69657f2475d4",
+      "resource": "resources/com/pty4j/native/linux/mips64el/libpty.so",
+      "bytes": 26632,
+      "sha256": "7d97ff835049dcfe1137812e17a09f1d70c4b5fd32cdcfc54a6f7d703f9dc69d",
+      "embeddedFixedVersionCandidates": [],
+      "embeddedCodeViewCandidates": [],
+      "exactBuildRevision": "UNRESOLVED",
+      "cpeAssessment": "NOT_ASSESSED"
+    },
+    {
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "artifactSha256": "da86078dafc3c4e4e3a497981df9794e5d9ed081963ad9561d0e69657f2475d4",
+      "resource": "resources/com/pty4j/native/linux/ppc64le/libpty.so",
+      "bytes": 74848,
+      "sha256": "60d5f3c23625eae9cd19b4c36a1b1cc540b03d500bae2bae7891cdd7be5533d8",
+      "embeddedFixedVersionCandidates": [],
+      "embeddedCodeViewCandidates": [],
+      "exactBuildRevision": "UNRESOLVED",
+      "cpeAssessment": "NOT_ASSESSED"
+    },
+    {
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "artifactSha256": "da86078dafc3c4e4e3a497981df9794e5d9ed081963ad9561d0e69657f2475d4",
+      "resource": "resources/com/pty4j/native/linux/x86/libpty.so",
+      "bytes": 16800,
+      "sha256": "a0502637d32147f81e43b46ec31789ca06e89747ec12fbb24f1ebd1b6a0f67f7",
+      "embeddedFixedVersionCandidates": [],
+      "embeddedCodeViewCandidates": [],
+      "exactBuildRevision": "UNRESOLVED",
+      "cpeAssessment": "NOT_ASSESSED"
+    },
+    {
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "artifactSha256": "da86078dafc3c4e4e3a497981df9794e5d9ed081963ad9561d0e69657f2475d4",
+      "resource": "resources/com/pty4j/native/linux/x86-64/libpty.so",
+      "bytes": 27248,
+      "sha256": "cffeae023d0849036c64b2fe5e7b262760ede1a4fc0af06cc57729457f59f4f7",
+      "embeddedFixedVersionCandidates": [],
+      "embeddedCodeViewCandidates": [],
+      "exactBuildRevision": "UNRESOLVED",
+      "cpeAssessment": "NOT_ASSESSED"
+    },
+    {
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "artifactSha256": "da86078dafc3c4e4e3a497981df9794e5d9ed081963ad9561d0e69657f2475d4",
+      "resource": "resources/com/pty4j/native/linux/riscv64/libpty.so",
+      "bytes": 18592,
+      "sha256": "e101b0a4282fef079d32bb0202d2ec5e2869579f45e72f09ceae5c6d0388f372",
+      "embeddedFixedVersionCandidates": [],
+      "embeddedCodeViewCandidates": [],
+      "exactBuildRevision": "UNRESOLVED",
+      "cpeAssessment": "NOT_ASSESSED"
+    },
+    {
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "artifactSha256": "da86078dafc3c4e4e3a497981df9794e5d9ed081963ad9561d0e69657f2475d4",
+      "resource": "resources/com/pty4j/native/linux/arm/libpty.so",
+      "bytes": 13688,
+      "sha256": "a272c1d2495138007654cf9dd1e8e57faab62e9c3eb2a1a0cc32b1a613a79a58",
+      "embeddedFixedVersionCandidates": [],
+      "embeddedCodeViewCandidates": [],
+      "exactBuildRevision": "UNRESOLVED",
+      "cpeAssessment": "NOT_ASSESSED"
+    },
+    {
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "artifactSha256": "da86078dafc3c4e4e3a497981df9794e5d9ed081963ad9561d0e69657f2475d4",
+      "resource": "resources/com/pty4j/native/linux/aarch64/libpty.so",
+      "bytes": 19504,
+      "sha256": "f91dbdc91a21735f2982fa8a8e16d04411f3c969d23c888d0b2f52233dfcceb9",
+      "embeddedFixedVersionCandidates": [],
+      "embeddedCodeViewCandidates": [],
+      "exactBuildRevision": "UNRESOLVED",
+      "cpeAssessment": "NOT_ASSESSED"
+    }
+  ],
+  "scope": "Exact artifact/native bytes and optional pinned upstream blob comparison; not an OS/CPE scan or build attestation.",
+  "nativeCount": 47
+}

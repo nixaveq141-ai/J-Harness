@@ -7,6 +7,7 @@ from pathlib import Path
 import struct
 import time
 import urllib.request
+import uuid
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -34,6 +35,24 @@ def versions(raw):
                 found.add('.'.join(map(str, (ms >> 16, ms & 65535, ls >> 16, ls & 65535))))
             start += 1
     return sorted(found)
+
+
+def codeview_candidates(raw):
+    """Embedded build clues only; a matching public PDB/source map is still required."""
+    rows=[];start=0
+    if raw[:2]!=b'MZ':return rows
+    while len(rows)<16:
+        start=raw.find(b'RSDS',start)
+        if start<0:break
+        if start+24<=len(raw):
+            tail=raw[start+24:start+1048];end=tail.find(b'\0')
+            if end>=0:
+                path=tail[:end].decode('utf-8',errors='replace')
+                rows.append(dict(guid=uuid.UUID(bytes_le=raw[start+4:start+20]).hex.upper(),
+                    age=struct.unpack_from('<I',raw,start+20)[0],upstreamBuildPath=path,
+                    status='EMBEDDED_CLUE_NOT_BUILD_ATTESTATION'))
+        start+=4
+    return rows
 
 
 def audit(repository, upstream=False, fetch=None, jna_upstream=False):
@@ -72,6 +91,7 @@ def audit(repository, upstream=False, fetch=None, jna_upstream=False):
                 item = dict(coordinate=row['coordinate'], artifactSha256=row['jarSha256'],
                             resource=entry.filename, bytes=len(data), sha256=sha(data),
                             embeddedFixedVersionCandidates=versions(data),
+                            embeddedCodeViewCandidates=codeview_candidates(data),
                             exactBuildRevision='UNRESOLVED', cpeAssessment='NOT_ASSESSED')
                 prefix = 'resources/com/pty4j/native/'
                 if upstream and artifact == 'pty4j' and entry.filename.startswith(prefix):

@@ -1,0 +1,81 @@
+{
+  "status": "CURRENT_MAC_10_ROUNDS_PASS_NOT_HISTORICAL_ROOT_PROOF",
+  "artifact": {
+    "file": "12948053633.zip",
+    "sha256": "634445c3fc196d469cace49f16147edb2f5f3bfbb635ac503160c131a8aaac69",
+    "githubDigest": "sha256:634445c3fc196d469cace49f16147edb2f5f3bfbb635ac503160c131a8aaac69",
+    "artifactId": 12948053633,
+    "name": "m1059-browser-focused-macos-latest",
+    "runId": "40989098843",
+    "commit": "e96b3b1a8fe2b96feb26dafc8b58306eb716c649",
+    "createdAt": "2026-10-30T02:02:13Z",
+    "expiresAt": "2027-01-28T02:00:07Z"
+  },
+  "exactInputs": 620,
+  "checkoutEolException": "mvnw.cmd explicitly reconstructed as declared CRLF; other Git blob hashes checked",
+  "rounds": [
+    {
+      "round": 1,
+      "checks": 22,
+      "traceRecords": 64,
+      "logSha256": "7b1b86c11fc51bd3f854e57526a1d1de10c8c46d108331b80bfce4f26f670746"
+    },
+    {
+      "round": 2,
+      "checks": 22,
+      "traceRecords": 64,
+      "logSha256": "7b1b86c11fc51bd3f854e57526a1d1de10c8c46d108331b80bfce4f26f670746"
+    },
+    {
+      "round": 3,
+      "checks": 22,
+      "traceRecords": 64,
+      "logSha256": "7b1b86c11fc51bd3f854e57526a1d1de10c8c46d108331b80bfce4f26f670746"
+    },
+    {
+      "round": 4,
+      "checks": 22,
+      "traceRecords": 64,
+      "logSha256": "7b1b86c11fc51bd3f854e57526a1d1de10c8c46d108331b80bfce4f26f670746"
+    },
+    {
+      "round": 5,
+      "checks": 22,
+      "traceRecords": 64,
+      "logSha256": "7b1b86c11fc51bd3f854e57526a1d1de10c8c46d108331b80bfce4f26f670746"
+    },
+    {
+      "round": 6,
+      "checks": 22,
+      "traceRecords": 64,
+      "logSha256": "7b1b86c11fc51bd3f854e57526a1d1de10c8c46d108331b80bfce4f26f670746"
+    },
+    {
+      "round": 7,
+      "checks": 22,
+      "traceRecords": 64,
+      "logSha256": "7b1b86c11fc51bd3f854e57526a1d1de10c8c46d108331b80bfce4f26f670746"
+    },
+    {
+      "round": 8,
+      "checks": 22,
+      "traceRecords": 64,
+      "logSha256": "7b1b86c11fc51bd3f854e57526a1d1de10c8c46d108331b80bfce4f26f670746"
+    },
+    {
+      "round": 9,
+      "checks": 22,
+      "traceRecords": 64,
+      "logSha256": "7b1b86c11fc51bd3f854e57526a1d1de10c8c46d108331b80bfce4f26f670746"
+    },
+    {
+      "round": 10,
+      "checks": 22,
+      "traceRecords": 64,
+      "logSha256": "7b1b86c11fc51bd3f854e57526a1d1de10c8c46d108331b80bfce4f26f670746"
+    }
+  ],
+  "paidRequests": 0,
+  "historicalRootCause": "UNDETERMINED",
+  "nativeBuildProvenance": "INCOMPLETE"
+}
