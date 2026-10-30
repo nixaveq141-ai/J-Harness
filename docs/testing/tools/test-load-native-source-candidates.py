@@ -25,6 +25,7 @@ class CandidateTest(unittest.TestCase):
             path.write_text(json.dumps(report),encoding='utf-8');loader.validate(root,'40995618881')
             for mutate in [lambda r:r.update(commit='wrong'),lambda r:r.update(status='INCOMPLETE'),
                            lambda r:r.update(commands=[]),lambda r:r['commands'][0].update(exitCode=1),
+                           lambda r:r.update(os='macOS-controlled-missing-helper'),
                            lambda r:r['outputs']['jna'][0].update(path='.build-cache/native-source-build/../../escape.so'),
                            lambda r:r['outputs']['jna'][0].update(sha256='0'*64)]:
                 bad=copy.deepcopy(report);mutate(bad);path.write_text(json.dumps(bad),encoding='utf-8')

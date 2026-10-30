@@ -12,7 +12,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-24.04, macos-latest]
+        include:
+          - os: ubuntu-24.04
+            source_run: '40995618881'
+          - os: macos-latest
+            source_run: '40998915552'
+          - os: windows-latest
+            source_run: '40998915552'
     runs-on: ${{ matrix.os }}
     timeout-minutes: 15
     steps:
@@ -26,17 +32,18 @@ jobs:
         with:
           python-version: '3.12'
       - name: Build current trusted probe runtime
+        shell: bash
         run: sh ./mvnw -B -DskipTests package > native-probe-build.log 2>&1
       - name: Verify artifact identity and path rejection offline
         run: python docs/testing/tools/test-load-native-source-candidates.py
       - uses: actions/download-artifact@v4
         with:
           name: native-source-${{ matrix.os }}
-          run-id: 40995618881
+          run-id: ${{ matrix.source_run }}
           github-token: ${{ github.token }}
           path: .build-cache/source-candidates
       - name: Verify source-built candidates and reject missing-library fallbacks
-        run: python docs/testing/tools/load-native-source-candidates.py --source-run 40995618881 --input .build-cache/source-candidates
+        run: python docs/testing/tools/load-native-source-candidates.py --source-run ${{ matrix.source_run }} --input .build-cache/source-candidates
       - uses: actions/upload-artifact@v4
         if: always()
         with:

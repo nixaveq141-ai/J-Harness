@@ -8,7 +8,8 @@ import platform
 import subprocess
 
 ROOT=Path(__file__).resolve().parents[3]
-SOURCE_RUNS={'40995618881':'a2dc791bae10addc3b53b3d951b94db897ccc265'}
+SOURCE_RUNS={'40995618881':'a2dc791bae10addc3b53b3d951b94db897ccc265',
+             '40998915552':'3571d2269895644e9888963fbf54a4cf101c9597'}
 
 
 def sha(path):return hashlib.sha256(path.read_bytes()).hexdigest()
@@ -25,7 +26,10 @@ def validate(directory,run):
             or report['sources']['pty4j']['revision']!='b7554d649f6374183040e6554942b6d5b028b5e5'
             or report['sources']['jna']['libffiBuildInputs']['sha256']!='d66c56ad259a82cf2a9dfc408b32bf5da52371500b84745f7fb8b645712df676'):
         raise ValueError('Source identity rejected')
-    if not any(v.get('argv')==['ant','-Dbuild-native=true','native'] for v in report['commands']):
+    native_commands=[['ant','-Dbuild-native=true','native'],
+        ['ant','-Dbuild-native=true','-Dmake=C:\\msys64\\usr\\bin\\make.exe',
+         '-DEXTRA_MAKE_OPTS=OS=win32 MINGW_PREFIX=','-DARCH=amd64','-DUSE_MSVC=false','native']]
+    if not any(v.get('argv') in native_commands for v in report['commands']):
         raise ValueError('Native compilation command required')
     for command in report['commands']:
         log=base/command['log']
@@ -42,12 +46,17 @@ def validate(directory,run):
     jna=[output(v) for v in report['outputs']['jna']]
     if not jna:raise ValueError('No JNI candidates')
     pty=output(report['outputs']['pty']) if 'pty' in report['outputs'] else None
-    return report,jna[0],pty
+    helper=output(report['outputs']['ptyHelper']) if 'ptyHelper' in report['outputs'] else None
+    if report.get('os','').startswith('macOS'):
+        if helper is None or helper.name!='pty4j-unix-spawn-helper' or not any(
+                v.get('argv')==['cmake','--build','native/helper-build','--config','Release'] for v in report['commands']):
+            raise ValueError('macOS source-built spawn helper required')
+    return report,jna[0],pty,helper
 
 
 def main():
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--source-run',required=True);parser.add_argument('--input',type=Path,required=True);args=parser.parse_args()
-    source,jna,pty=validate(args.input,args.source_run)
+    source,jna,pty,helper=validate(args.input,args.source_run)
     arch=lambda value: {'amd64':'x86_64','aarch64':'arm64'}.get(value.lower(),value.lower())
     if arch(source['architecture'])!=arch(platform.machine()):raise ValueError('Candidate architecture mismatch')
     out=ROOT/'.build-cache/native-source-load';out.mkdir(parents=True)
@@ -60,7 +69,8 @@ def main():
     report=dict(status='INCOMPLETE',commit=os.environ.get('GITHUB_SHA'),runId=os.environ.get('GITHUB_RUN_ID'),
         sourceRun=args.source_run,sourceCommit=SOURCE_RUNS[args.source_run],os=platform.platform(),
         jarSha256=sha(jar),probeSha256=sha(probe),jniSha256=sha(jna),ptySha256=sha(pty) if pty else None,
-        sourceReportSha256=sha(next(args.input.rglob('report.json'))),probes=[],paidRequests=0,productReplacement=False)
+        sourceReportSha256=sha(next(args.input.rglob('report.json'))),probes=[],paidRequests=0,productReplacement=False,
+        ptyHelperSha256=sha(helper) if helper else None)
     def run(label,jni_folder,pty_folder=None,success=True):
         command=[str(java),'-Djna.nounpack=true','-Djna.nosys=true','-Djna.boot.library.path='+str(jni_folder)]
         if pty_folder is not None:command+=['-Dpty4j.preferred.native.folder='+str(pty_folder)]
@@ -78,11 +88,15 @@ def main():
         run('jni-positive',jna.parent)
         run('jni-missing-rejected',empty,success=False)
         if pty:
+            if helper:
+                # GitHub ZIP artifacts preserve bytes, not executable modes.
+                helper.chmod(0o755)
             # pty4j resolves platform subdirectories relative to its preferred root.
             root=pty.parent.parent if platform.system()=='Darwin' else pty.parent.parent.parent
             run('pty-positive',jna.parent,root)
             run('pty-missing-rejected',jna.parent,empty,success=False)
-        if sha(jar)!=report['jarSha256'] or sha(jna)!=report['jniSha256'] or pty and sha(pty)!=report['ptySha256']:
+        if (sha(jar)!=report['jarSha256'] or sha(jna)!=report['jniSha256']
+                or pty and sha(pty)!=report['ptySha256'] or helper and sha(helper)!=report['ptyHelperSha256']):
             raise ValueError('Probe input drift')
         report['status']='SOURCE_CANDIDATE_LOAD_AND_NO_FALLBACK_PASS'
     finally:(out/'report.json').write_bytes((json.dumps(report,indent=2)+'\n').encode())
