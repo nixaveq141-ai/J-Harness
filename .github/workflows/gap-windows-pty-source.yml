@@ -1,6 +1,9 @@
 name: Pinned Windows PTY source candidates
 on:
   workflow_dispatch:
+  push:
+    branches: [codex/m1059-full-validation]
+    paths: [.github/workflows/gap-windows-pty-source.yml]
 permissions:
   contents: read
 jobs:
