@@ -4,6 +4,8 @@
 
 ## 当前接续状态
 
+- 2026-10-30 Console第三轮41017612132原ZIP668546d6已取证：源码/恢复已过，Windows-latest实际VS18且缺源要求SDK22621。官方runner-images当前Windows2022清单含VS17.14与SDK22621，改明确windows-2022、MSBuild17范围与SDK头前检，不改源要求或降断言；待同版本两组件实际构建。
+
 - 2026-10-30 Windows第二轮原ZIP32b83a40确认官方WinPTY源码DLL79da1ef8及agent65cc5fae实际编出；后续helper被CMake4移除3.4兼容阻断，默认NMake也不接收-A。明确VS2022生成器及官方建议policy minimum3.5，不改C++，三离线项过，待仅WinPTY组件复验。Console第三轮已仅自身派发。Mac两成功原包/延迟读取因果收据已归档，整体供应链与旧按钮根因仍未关闭。
 
 - 2026-10-30独立核验Mac两成功原包/对应Git探针/全部日志，延迟读取因果及本地8成员备份收据已生成。Windows第二轮41017274769 Console已恢复NuGet，原ZIP a497008f证实单项目缺SolutionDir；补固定源码根路径，三离线项过，专用CI改按组件手动，避免重复WinPTY在途作业。两项整体仍未关闭；历史按钮缺原始状态，不能用新PTY问题冒充旧根因。

@@ -10,7 +10,7 @@ permissions:
   contents: read
 jobs:
   source:
-    runs-on: windows-latest
+    runs-on: windows-2022
     timeout-minutes: 35
     strategy:
       fail-fast: false
@@ -22,7 +22,16 @@ jobs:
         with:
           python-version: '3.12'
       - uses: microsoft/setup-msbuild@v2
+        with:
+          vs-version: '[17.0,18.0)'
       - uses: NuGet/setup-nuget@v2
+      - name: Verify pinned upstream SDK prerequisite
+        shell: pwsh
+        run: |
+          if (-not (Test-Path -LiteralPath 'C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\Windows.h')) {
+            throw 'Pinned console source requires Windows SDK 10.0.22621.0'
+          }
+          MSBuild.exe -version
       - name: Verify source pin and failed-attempt controls offline
         run: python docs/testing/tools/test-build-windows-pty-from-source.py
       - name: Install signed MSYS build tools

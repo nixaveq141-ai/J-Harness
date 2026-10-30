@@ -35,3 +35,5 @@ M10-native-source-progress-2026-10-30.json 独立绑定七份加载原 ZIP、对
 41001582685@6c6f8d3 原 ZIP a6c4ba5a 单因素结果：原分发与源候选均先打印 PTY_EXIT_BEFORE_DRAIN=false，启动输出读取后，同一五秒总预算内退出0。正常四组合及移库拒绝均过。该实验补足的是本轮 PTY 探针输出消费与退出的因果链，不是历史按钮超时根因。Windows 首轮41001560186 原两包已保留：WinPTY configure 检查未请求的 MSYS adapter 编译器，NuGet 拒绝 Verbosity 选项。原生 DLL/agent 改用明确记录 SHA 的 native-only config.mk，不改上游 C++；移除 NuGet 的日志选项并记录帮助，三离线项通过，第二轮待。
 
 后续：Mac 两成功原包及固定 Git 探针/日志已独立核验，见 M10-mac-native-drain-2026-10-30.json；8成员本地备份逐成员核对，见 M10-native-drain-local-backup-2026-10-30.json。Windows 第二轮41017274769 Console原包a497008f：NuGet恢复已过，单项目 MSBuild 缺 SolutionDir；补明确根目录，三离线项过。仅重跑Console，保留在途WinPTY。本轮仍未完成产品替代/OS-CPE或历史按钮因果闭合。
+
+Console 第三轮41017612132原ZIP668546d6证实 Windows-latest 的 VS18 环境缺所需 SDK22621。构建专项改为 Windows2022 / VS17，并在源码构建前检查 SDK22621 头文件；依据官方当前镜像清单 https://github.com/actions/runner-images/blob/main/images/windows/Windows2022-Readme.md 。不改上游SDK要求，不将构建环境修正计作产品验收。
