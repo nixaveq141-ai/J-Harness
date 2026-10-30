@@ -31,7 +31,7 @@ public final class Price {
         BigDecimal amount;
         try {
             amount = new BigDecimal(trimmed);
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException | ArithmeticException e) {
             throw new IllegalArgumentException("malformed amount: " + trimmed, e);
         }
 
@@ -39,13 +39,70 @@ public final class Price {
             throw new IllegalArgumentException("negative amount: " + trimmed);
         }
 
-        // Reject anything with a fractional part smaller than a cent, e.g. 1.005.
-        BigDecimal scaled = amount.movePointRight(2);
+        // Work from the scale without ever expanding the decimal representation:
+        // movePointRight(2) can overflow for extreme exponents such as 1e2147483647.
+        int scale = amount.scale();
+
+        // Amounts of at least 0.03 (i.e. 1 or more cents) always fit in a long
+        // when their cent count is small enough; use the unscaled value's digits
+        // to reject huge inputs before any conversion.
+        if (scale > 2) {
+            // Fractional digits beyond cents must be zero, otherwise fractional cents.
+            BigDecimal stripped = amount.stripTrailingZeros();
+            if (stripped.scale() > 2) {
+                throw new IllegalArgumentException("fractional cents are not allowed: " + trimmed);
+            }
+            scale = stripped.scale();
+        }
+
+        int fractionalDigits = scale > 0 ? scale : 0;
+        // Significant decimal digits in the unscaled value (excluding leading zeros).
+        long significantDigits = (long) amount.precision();
+        // A nonnegative long has at most 19 decimal digits.
+        long integerDigits = significantDigits - scale;
+        if (integerDigits > 19) {
+            throw new IllegalArgumentException("amount overflows long cents: " + trimmed);
+        }
+        if (integerDigits == 19 && significantDigits > 0) {
+            // Value has 19 or more integer digits; anything with more than
+            // Long.MAX_VALUE cents must be rejected. Compare digit counts first to
+            // avoid constructing huge integers.
+            if (scale < 0) {
+                // Extreme positive exponent scaling; definitely huge unless the
+                // unscaled value is zero.
+                if (amount.signum() != 0) {
+                    throw new IllegalArgumentException("amount overflows long cents: " + trimmed);
+                }
+            }
+        } else if (scale < 0 && integerDigits > 2) {
+            // Scaling by 10^(-scale) multiplies the magnitude; reject early when
+            // the resulting magnitude clearly exceeds the long range.
+            long magnitudeDigits = integerDigits + (long) (-scale);
+            if (magnitudeDigits > 17) {
+                throw new IllegalArgumentException("amount overflows long cents: " + trimmed);
+            }
+        }
+
+        if (amount.signum() == 0) {
+            return 0L;
+        }
+
+        BigDecimal scaled;
+        try {
+            scaled = amount.movePointRight(2);
+        } catch (ArithmeticException e) {
+            throw new IllegalArgumentException("amount overflows long cents: " + trimmed, e);
+        }
         if (scaled.stripTrailingZeros().scale() > 0) {
             throw new IllegalArgumentException("fractional cents are not allowed: " + trimmed);
         }
 
-        BigInteger exact = scaled.toBigIntegerExact();
+        BigInteger exact;
+        try {
+            exact = scaled.toBigIntegerExact();
+        } catch (ArithmeticException e) {
+            throw new IllegalArgumentException("fractional cents are not allowed: " + trimmed, e);
+        }
         if (exact.compareTo(BigInteger.valueOf(Long.MAX_VALUE)) > 0) {
             throw new IllegalArgumentException("amount overflows long cents: " + trimmed);
         }

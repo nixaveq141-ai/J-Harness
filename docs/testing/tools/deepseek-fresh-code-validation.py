@@ -1,7 +1,7 @@
 """Explicit RMB5 grant: fresh code through real CLI, compilation only in Docker CI.
 
 No paid request on import or --audit. Original RMB2 ledger is never opened here.
-Fixed synthetic fixture, read_file only, six total upstream attempts, no retries.
+Fixed synthetic fixture, read_file only, twelve total upstream attempts, no retries.
 """
 import argparse
 import hashlib
@@ -23,7 +23,7 @@ spec.loader.exec_module(base)
 base.GRANT = 'deepseek-fresh-code-2026-10-29-CNY5'
 base.LIMIT_MICRO_CNY = 5_000_000
 base.OUTPUT_CAP = 2048
-base.MAX_ATTEMPTS = 6
+base.MAX_ATTEMPTS = 12
 base.RESERVATION = base.INPUT_CAP*2 + base.OUTPUT_CAP*8
 DIRECTORY = ROOT/'.build-cache/deepseek-fresh-code-2026-10-29'
 REQUIREMENTS = b'''Write Java 21 source, package example; public final class Calculator.

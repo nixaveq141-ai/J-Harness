@@ -22,8 +22,8 @@ class MultiTest(unittest.TestCase):
                 multi.checked_response(response(dict(args,**change)),('provider-secret',))
         with self.assertRaises(ValueError):multi.checked_response(response(args,'execute_command'),())
 
-    def test_original_wallet_identity_and_six_attempt_cap_retained(self):
-        self.assertEqual(6,multi.base.MAX_ATTEMPTS)
+    def test_original_wallet_identity_and_twelve_attempt_bound(self):
+        self.assertEqual(12,multi.base.MAX_ATTEMPTS)
         self.assertEqual(5_000_000,multi.base.LIMIT_MICRO_CNY)
         self.assertEqual(multi.fresh.DIRECTORY.name,'deepseek-fresh-code-2026-10-29')
 

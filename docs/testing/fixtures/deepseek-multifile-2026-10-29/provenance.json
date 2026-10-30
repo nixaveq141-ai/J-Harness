@@ -1,76 +1,215 @@
 {
-  "status": "WRITTEN_NOT_EXECUTED",
-  "jarSha256": "4b99a449368afb71e105ed8729ddc5f4c3deaaa0efc500a3d33d8baf1cc6f1d5",
-  "initialSha256": {
-    "Price.java": "c56ac2e2226d279398382c6c96090aabc500e3a9108dc0183b922c485e4f8063",
-    "Invoice.java": "04741932ac5bcb601a94a21956c694f0c668d09b4c64454746f4fb7e47a21897"
-  },
-  "requirementsSha256": "5a4d96d8e08137dc3ed7203d2f792f5dbc4d97406a3a763ae26a92fbe0c05b7a",
-  "hostExecution": false,
-  "exitCode": 0,
-  "wallet": {
-    "grant": "deepseek-fresh-code-2026-10-29-CNY5",
-    "currency": "CNY",
-    "capMicroCny": 5000000,
-    "reservedMicroCny": 778240,
-    "remainingMicroCny": 4221760,
-    "accounting": "NON_REFUNDABLE_UPPER_BOUND_NOT_PROVIDER_BILL",
-    "attempts": [
-      [
-        1,
-        "/chat/completions",
-        "e06557f18542b619bcd7ec5b1db53c259ff2e0c0af8b4e71584c6a12153b4030",
-        155648,
-        200,
-        "38e1ab378530a54ace848eb7885614d281e1f1cf4a49eb50d18db1c52f148053",
-        "{\"prompt_tokens\": 510, \"completion_tokens\": 59, \"total_tokens\": 569, \"prompt_cache_hit_tokens\": 0, \"prompt_cache_miss_tokens\": 510}"
-      ],
-      [
-        2,
-        "/chat/completions",
-        "12b4868b7e13ad3de55137d77f3fb9ce415d18698022ecf41b00c22f2b7137f7",
-        155648,
-        200,
-        "9877eed1a88dbcb562a3a8ff74d1057b5f7d6f496ed1d7eefac58700ad4c282c",
-        "{\"prompt_tokens\": 806, \"completion_tokens\": 336, \"total_tokens\": 1142, \"prompt_cache_hit_tokens\": 512, \"prompt_cache_miss_tokens\": 294}"
-      ],
-      [
-        3,
-        "/chat/completions",
-        "47a863855fd2e03b8765893fd8e0e72316502e1799d008a19551567f42b8b713",
-        155648,
-        200,
-        "247648c17314cbb55475e7e374ee9f53cda33b97c7c8f7d1f9a5fc24c4228dc8",
-        "{\"prompt_tokens\": 608, \"completion_tokens\": 46, \"total_tokens\": 654, \"prompt_cache_hit_tokens\": 0, \"prompt_cache_miss_tokens\": 608}"
-      ],
-      [
-        4,
-        "/chat/completions",
-        "7f39deb4795922050c985237eebe4c9f48f69797015fa6e5854240c818e9bba9",
-        155648,
-        200,
-        "db9d44269b6863d77e5d5fe40f7df0eb5c2ff6d817d0df8f1ec7c963e3be01af",
-        "{\"prompt_tokens\": 1045, \"completion_tokens\": 910, \"total_tokens\": 1955, \"prompt_cache_hit_tokens\": 640, \"prompt_cache_miss_tokens\": 405}"
-      ],
-      [
-        5,
-        "/chat/completions",
-        "ca622183c5c28848db528e8d1f65fbc12790bc09c6d72a0c907eff58793e3cac",
-        155648,
-        200,
-        "5a155d0856ec5943d110c9101f013cbfe5d96471c99492d6096c3c4db5c4be25",
-        "{\"prompt_tokens\": 3133, \"completion_tokens\": 372, \"total_tokens\": 3505, \"prompt_cache_hit_tokens\": 1920, \"prompt_cache_miss_tokens\": 1213}"
+  "firstTask": {
+    "status": "WRITTEN_NOT_EXECUTED",
+    "jarSha256": "4b99a449368afb71e105ed8729ddc5f4c3deaaa0efc500a3d33d8baf1cc6f1d5",
+    "initialSha256": {
+      "Price.java": "c56ac2e2226d279398382c6c96090aabc500e3a9108dc0183b922c485e4f8063",
+      "Invoice.java": "04741932ac5bcb601a94a21956c694f0c668d09b4c64454746f4fb7e47a21897"
+    },
+    "requirementsSha256": "5a4d96d8e08137dc3ed7203d2f792f5dbc4d97406a3a763ae26a92fbe0c05b7a",
+    "hostExecution": false,
+    "exitCode": 0,
+    "wallet": {
+      "grant": "deepseek-fresh-code-2026-10-29-CNY5",
+      "currency": "CNY",
+      "capMicroCny": 5000000,
+      "reservedMicroCny": 778240,
+      "remainingMicroCny": 4221760,
+      "accounting": "NON_REFUNDABLE_UPPER_BOUND_NOT_PROVIDER_BILL",
+      "attempts": [
+        [
+          1,
+          "/chat/completions",
+          "e06557f18542b619bcd7ec5b1db53c259ff2e0c0af8b4e71584c6a12153b4030",
+          155648,
+          200,
+          "38e1ab378530a54ace848eb7885614d281e1f1cf4a49eb50d18db1c52f148053",
+          "{\"prompt_tokens\": 510, \"completion_tokens\": 59, \"total_tokens\": 569, \"prompt_cache_hit_tokens\": 0, \"prompt_cache_miss_tokens\": 510}"
+        ],
+        [
+          2,
+          "/chat/completions",
+          "12b4868b7e13ad3de55137d77f3fb9ce415d18698022ecf41b00c22f2b7137f7",
+          155648,
+          200,
+          "9877eed1a88dbcb562a3a8ff74d1057b5f7d6f496ed1d7eefac58700ad4c282c",
+          "{\"prompt_tokens\": 806, \"completion_tokens\": 336, \"total_tokens\": 1142, \"prompt_cache_hit_tokens\": 512, \"prompt_cache_miss_tokens\": 294}"
+        ],
+        [
+          3,
+          "/chat/completions",
+          "47a863855fd2e03b8765893fd8e0e72316502e1799d008a19551567f42b8b713",
+          155648,
+          200,
+          "247648c17314cbb55475e7e374ee9f53cda33b97c7c8f7d1f9a5fc24c4228dc8",
+          "{\"prompt_tokens\": 608, \"completion_tokens\": 46, \"total_tokens\": 654, \"prompt_cache_hit_tokens\": 0, \"prompt_cache_miss_tokens\": 608}"
+        ],
+        [
+          4,
+          "/chat/completions",
+          "7f39deb4795922050c985237eebe4c9f48f69797015fa6e5854240c818e9bba9",
+          155648,
+          200,
+          "db9d44269b6863d77e5d5fe40f7df0eb5c2ff6d817d0df8f1ec7c963e3be01af",
+          "{\"prompt_tokens\": 1045, \"completion_tokens\": 910, \"total_tokens\": 1955, \"prompt_cache_hit_tokens\": 640, \"prompt_cache_miss_tokens\": 405}"
+        ],
+        [
+          5,
+          "/chat/completions",
+          "ca622183c5c28848db528e8d1f65fbc12790bc09c6d72a0c907eff58793e3cac",
+          155648,
+          200,
+          "5a155d0856ec5943d110c9101f013cbfe5d96471c99492d6096c3c4db5c4be25",
+          "{\"prompt_tokens\": 3133, \"completion_tokens\": 372, \"total_tokens\": 3505, \"prompt_cache_hit_tokens\": 1920, \"prompt_cache_miss_tokens\": 1213}"
+        ]
       ]
-    ]
+    },
+    "sourceSha256": {
+      "Price.java": "946d458b4a7cf3766c6d15a012becb18213b34a6b474eb3fce1b13fc19507e18",
+      "Invoice.java": "61abb602a673f8b97109b3197ff0db1ebd0e53e3262bd8879ab69c455a6ddbec"
+    },
+    "factsSha256": "d29532a9b5aa55e4041046fba82ed4a880d8ec601ae93936032465fa8090ddb7",
+    "recovery": "Offline audit uses write_file beforeVersion/afterVersion schema; original failed audit receipt retained, no request retry.",
+    "localOriginal": ".build-cache/deepseek-fresh-code-2026-10-29/multifile-db8ce0188f3a827b",
+    "provider": "https://api.deepseek.com",
+    "model": "deepseek-flash",
+    "originalIncompleteReceiptSha256": "7458b08e2eae7b527e09fe679bd7a0e71601e1a647a277e43cdfd1d49a5ed57a"
+  },
+  "repairTask": {
+    "status": "WRITTEN_NOT_EXECUTED",
+    "jarSha256": "4b99a449368afb71e105ed8729ddc5f4c3deaaa0efc500a3d33d8baf1cc6f1d5",
+    "initialSha256": {
+      "Price.java": "946d458b4a7cf3766c6d15a012becb18213b34a6b474eb3fce1b13fc19507e18"
+    },
+    "requirementsSha256": "260a5b4535848207a582717fa26f1a2d0ebbb7f37a86256547a7a5353a8817c1",
+    "hostExecution": false,
+    "exitCode": 0,
+    "wallet": {
+      "grant": "deepseek-fresh-code-2026-10-29-CNY5",
+      "currency": "CNY",
+      "capMicroCny": 5000000,
+      "reservedMicroCny": 1867776,
+      "remainingMicroCny": 3132224,
+      "accounting": "NON_REFUNDABLE_UPPER_BOUND_NOT_PROVIDER_BILL",
+      "attempts": [
+        [
+          1,
+          "/chat/completions",
+          "e06557f18542b619bcd7ec5b1db53c259ff2e0c0af8b4e71584c6a12153b4030",
+          155648,
+          200,
+          "38e1ab378530a54ace848eb7885614d281e1f1cf4a49eb50d18db1c52f148053",
+          "{\"prompt_tokens\": 510, \"completion_tokens\": 59, \"total_tokens\": 569, \"prompt_cache_hit_tokens\": 0, \"prompt_cache_miss_tokens\": 510}"
+        ],
+        [
+          2,
+          "/chat/completions",
+          "12b4868b7e13ad3de55137d77f3fb9ce415d18698022ecf41b00c22f2b7137f7",
+          155648,
+          200,
+          "9877eed1a88dbcb562a3a8ff74d1057b5f7d6f496ed1d7eefac58700ad4c282c",
+          "{\"prompt_tokens\": 806, \"completion_tokens\": 336, \"total_tokens\": 1142, \"prompt_cache_hit_tokens\": 512, \"prompt_cache_miss_tokens\": 294}"
+        ],
+        [
+          3,
+          "/chat/completions",
+          "47a863855fd2e03b8765893fd8e0e72316502e1799d008a19551567f42b8b713",
+          155648,
+          200,
+          "247648c17314cbb55475e7e374ee9f53cda33b97c7c8f7d1f9a5fc24c4228dc8",
+          "{\"prompt_tokens\": 608, \"completion_tokens\": 46, \"total_tokens\": 654, \"prompt_cache_hit_tokens\": 0, \"prompt_cache_miss_tokens\": 608}"
+        ],
+        [
+          4,
+          "/chat/completions",
+          "7f39deb4795922050c985237eebe4c9f48f69797015fa6e5854240c818e9bba9",
+          155648,
+          200,
+          "db9d44269b6863d77e5d5fe40f7df0eb5c2ff6d817d0df8f1ec7c963e3be01af",
+          "{\"prompt_tokens\": 1045, \"completion_tokens\": 910, \"total_tokens\": 1955, \"prompt_cache_hit_tokens\": 640, \"prompt_cache_miss_tokens\": 405}"
+        ],
+        [
+          5,
+          "/chat/completions",
+          "ca622183c5c28848db528e8d1f65fbc12790bc09c6d72a0c907eff58793e3cac",
+          155648,
+          200,
+          "5a155d0856ec5943d110c9101f013cbfe5d96471c99492d6096c3c4db5c4be25",
+          "{\"prompt_tokens\": 3133, \"completion_tokens\": 372, \"total_tokens\": 3505, \"prompt_cache_hit_tokens\": 1920, \"prompt_cache_miss_tokens\": 1213}"
+        ],
+        [
+          6,
+          "/chat/completions",
+          "e9df55184de25e5741741b58655fe1d15739f0ded2b018de8c530fb84067fe60",
+          155648,
+          200,
+          "89375bdf4e5a8deccfe3706bfc3aa429ab8db60171c3f793bb030fb4a574fd42",
+          "{\"prompt_tokens\": 606, \"completion_tokens\": 46, \"total_tokens\": 652, \"prompt_cache_hit_tokens\": 0, \"prompt_cache_miss_tokens\": 606}"
+        ],
+        [
+          7,
+          "/chat/completions",
+          "617b7393b779494e476c47bd9055b5817e044d81ec2be379cb3f19db0df33b85",
+          155648,
+          null,
+          null,
+          null
+        ],
+        [
+          8,
+          "/chat/completions",
+          "e9df55184de25e5741741b58655fe1d15739f0ded2b018de8c530fb84067fe60",
+          155648,
+          200,
+          "fac593b37a353aedc64c5860d111f0dd7cbcda8dbd5c884a7a4cd2a2c80495aa",
+          "{\"prompt_tokens\": 606, \"completion_tokens\": 46, \"total_tokens\": 652, \"prompt_cache_hit_tokens\": 384, \"prompt_cache_miss_tokens\": 222}"
+        ],
+        [
+          9,
+          "/chat/completions",
+          "467ecba5dfc97a882c67389ba02da74c894653ee3798be45bdc7883fdf9f2aa6",
+          155648,
+          200,
+          "0d4fde6995a75812db3ab30cc94f5d63d9e5381b75b041d77420fb550c316e60",
+          "{\"prompt_tokens\": 1534, \"completion_tokens\": 713, \"total_tokens\": 2247, \"prompt_cache_hit_tokens\": 640, \"prompt_cache_miss_tokens\": 894}"
+        ],
+        [
+          10,
+          "/chat/completions",
+          "dec58d917d67505084a389b17097985087df005f10eb9b6bf2943750e65baba2",
+          155648,
+          200,
+          "29c56060c86756a8f5f0a0008a542ac4af95cc310aec97139e8e0dfddafefbc3",
+          "{\"prompt_tokens\": 661, \"completion_tokens\": 78, \"total_tokens\": 739, \"prompt_cache_hit_tokens\": 512, \"prompt_cache_miss_tokens\": 149}"
+        ],
+        [
+          11,
+          "/chat/completions",
+          "e95ba3816bb3949dfb8ebb428f3830816478827b038fec47cc84ba63114caa69",
+          155648,
+          200,
+          "7128715d7e87b521e37b23da60e73a6c9b24ec7fcf34b8f1ffa42310b8593eb8",
+          "{\"prompt_tokens\": 2314, \"completion_tokens\": 1160, \"total_tokens\": 3474, \"prompt_cache_hit_tokens\": 640, \"prompt_cache_miss_tokens\": 1674}"
+        ],
+        [
+          12,
+          "/chat/completions",
+          "541683a9aae22f9759c1a8ca22bc7ddebef1b8a786ba1209c8e11a485ffb1333",
+          155648,
+          200,
+          "22f7e31976344522d9fcc3fa1d6177c5d516359ee75998c8b9330424926a849a",
+          "{\"prompt_tokens\": 5364, \"completion_tokens\": 502, \"total_tokens\": 5866, \"prompt_cache_hit_tokens\": 3456, \"prompt_cache_miss_tokens\": 1908}"
+        ]
+      ]
+    },
+    "sourceSha256": {
+      "Price.java": "215600056df90f65396da67ddbc18db5feba4671f1c657298ce76430c642fe2c"
+    },
+    "factsSha256": "15c26038ec4fa15fdb79be345035898ff334922838dd7b8ab4bbeef3f1c14e68",
+    "recovery": "Offline audit accepts version-pinned source reads as well as requirements; original failed audit retained. No new request."
   },
   "sourceSha256": {
-    "Price.java": "946d458b4a7cf3766c6d15a012becb18213b34a6b474eb3fce1b13fc19507e18",
+    "Price.java": "215600056df90f65396da67ddbc18db5feba4671f1c657298ce76430c642fe2c",
     "Invoice.java": "61abb602a673f8b97109b3197ff0db1ebd0e53e3262bd8879ab69c455a6ddbec"
-  },
-  "factsSha256": "d29532a9b5aa55e4041046fba82ed4a880d8ec601ae93936032465fa8090ddb7",
-  "recovery": "Offline audit uses write_file beforeVersion/afterVersion schema; original failed audit receipt retained, no request retry.",
-  "localOriginal": ".build-cache/deepseek-fresh-code-2026-10-29/multifile-db8ce0188f3a827b",
-  "provider": "https://api.deepseek.com",
-  "model": "deepseek-flash",
-  "originalIncompleteReceiptSha256": "7458b08e2eae7b527e09fe679bd7a0e71601e1a647a277e43cdfd1d49a5ed57a"
+  }
 }

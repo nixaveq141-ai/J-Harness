@@ -11,6 +11,7 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parents[3]
 PTY_COMMIT = 'b7554d649f6374183040e6554942b6d5b028b5e5'
+JNA_COMMIT = 'c366bc4fd0c50a30ac8d2475603ec564f6611462'
 SUFFIXES = ('.dll', '.exe', '.so', '.dylib', '.jnilib')
 
 
@@ -35,11 +36,19 @@ def versions(raw):
     return sorted(found)
 
 
-def audit(repository, upstream=False, fetch=None):
+def audit(repository, upstream=False, fetch=None, jna_upstream=False):
     rows = json.loads((ROOT / 'third-party/inventory.json').read_bytes())
     result = dict(status='BUILD_PROVENANCE_INCOMPLETE', binaries=[],
                   scope='Exact artifact/native bytes and optional pinned upstream blob comparison; not an OS/CPE scan or build attestation.')
     deadline = time.monotonic() + 120
+    def download(url):
+        if time.monotonic()>deadline:raise TimeoutError('Upstream verification deadline')
+        if fetch is not None:
+            raw=fetch(url)
+        else:
+            with urllib.request.urlopen(url,timeout=15) as response:raw=response.read(32*1024*1024+1)
+        if len(raw)>32*1024*1024:raise ValueError('Upstream byte bound')
+        return raw
     for row in rows:
         if row['usage'] != 'runtime':
             continue
@@ -70,19 +79,23 @@ def audit(repository, upstream=False, fetch=None):
                     if any(part in ('', '.', '..') for part in relative.split('/')):
                         raise ValueError('Invalid upstream resource path')
                     url = 'https://raw.githubusercontent.com/JetBrains/pty4j/' + PTY_COMMIT + '/os/' + relative
-                    if time.monotonic() > deadline:
-                        raise TimeoutError('Upstream verification deadline')
-                    if fetch is None:
-                        with urllib.request.urlopen(url, timeout=15) as response:
-                            original = response.read(32 * 1024 * 1024 + 1)
-                    else:
-                        original = fetch(url)
-                    if len(original) > 32 * 1024 * 1024:
-                        raise ValueError('Upstream byte bound')
+                    original = download(url)
                     item.update(upstreamUrl=url, upstreamCommit=PTY_COMMIT,
                                 upstreamSha256=sha(original), distributionBytesMatch=original == data)
                     if original != data:
                         raise ValueError('Pinned upstream native resource mismatch: ' + entry.filename)
+                if jna_upstream and artifact=='jna' and entry.filename.startswith('com/sun/jna/'):
+                    platform,filename=entry.filename.removeprefix('com/sun/jna/').split('/')
+                    if any(part in ('','.','..') for part in [platform,filename]):raise ValueError('Invalid JNA resource')
+                    url='https://raw.githubusercontent.com/java-native-access/jna/'+JNA_COMMIT+'/lib/native/'+platform+'.jar'
+                    original_jar=download(url)
+                    with zipfile.ZipFile(io.BytesIO(original_jar)) as native:
+                        info=native.getinfo(filename)
+                        if info.file_size>32*1024*1024:raise ValueError('Upstream native byte bound')
+                        original=native.read(info)
+                    item.update(upstreamUrl=url,upstreamCommit=JNA_COMMIT,upstreamJarSha256=sha(original_jar),
+                                upstreamSha256=sha(original),distributionBytesMatch=original==data)
+                    if original!=data:raise ValueError('Pinned JNA upstream native resource mismatch: '+entry.filename)
                 result['binaries'].append(item)
     result['nativeCount'] = len(result['binaries'])
     return result
@@ -92,9 +105,10 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--repository', type=Path, default=Path.home() / '.m2/repository')
     parser.add_argument('--verify-pty-upstream', action='store_true')
+    parser.add_argument('--verify-jna-upstream', action='store_true')
     parser.add_argument('--output', type=Path, required=True)
     args = parser.parse_args()
-    result = audit(args.repository, args.verify_pty_upstream)
+    result = audit(args.repository, args.verify_pty_upstream, jna_upstream=args.verify_jna_upstream)
     args.output.parent.mkdir(parents=True, exist_ok=True)
     with args.output.open('x', encoding='utf-8', newline='\n') as stream:
         json.dump(result, stream, indent=2)

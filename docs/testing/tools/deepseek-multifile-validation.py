@@ -63,7 +63,7 @@ def checked_response(data, credentials):
     return value
 
 
-def handler(wallet,key,token):
+def handler(wallet,key,token,directory):
     class Relay(BaseHTTPRequestHandler):
         def log_message(self,*args): pass
         def do_POST(self):
@@ -82,8 +82,16 @@ def handler(wallet,key,token):
                 except urllib.error.HTTPError as error: response=error
                 with response:status=response.code;data=response.read(2*1024*1024+1)
                 if len(data)>2*1024*1024:raise ValueError('Response bound')
-                checked_response(data,(key,token));wallet.receipt(attempt,status,data)
-            except Exception:
+                wallet.receipt(attempt,status,data)
+                # Preserve bounded local provider evidence before the tool gate. Never upload this file.
+                parsed=json.loads(data)
+                safe=json.dumps(parsed,ensure_ascii=False).encode()
+                if key.encode() in safe or token.encode() in safe:raise ValueError('Reflected credential')
+                (directory/('upstream-'+str(attempt)+'.json')).write_bytes(safe)
+                checked_response(data,(key,token))
+            except Exception as error:
+                with (directory/'relay-failures.jsonl').open('ab') as out:
+                    out.write((json.dumps(dict(type=type(error).__name__,reason=str(error) if isinstance(error,ValueError) else 'TRANSPORT_OR_FRAMING',upstreamStatus=status))+'\n').encode())
                 status,data=502,b'{"error":"BOUNDED_MULTIFILE_RELAY_FAILURE"}'
             self.send_response(status);self.send_header('Content-Type','application/json')
             self.send_header('Content-Length',str(len(data)));self.end_headers();self.wfile.write(data)
@@ -96,10 +104,14 @@ def inspect_facts(facts,directory):
     reads=[p for p in completed if p.get('tool')=='read_file']
     ended=[e['payload'] for e in facts if e['type']=='turn.ended']
     approvals=[e['payload'] for e in facts if e['type']=='approval.decided' and e['payload'].get('actor')=='user']
-    if (len(writes)!=2 or len(reads)!=1 or len(completed)!=3 or len(ended)!=1
-            or ended[0].get('status')!='COMPLETED' or len(approvals)!=2
+    allowed_reads={'requirements.txt':fresh.digest(REQUIREMENTS),**{n:fresh.digest(b) for n,b in FILES.items()}}
+    requirement_reads=[p for p in reads if p.get('value',{}).get('path')=='requirements.txt']
+    if (len(writes)!=len(FILES) or not 1<=len(reads)<=len(FILES)+1 or len(completed)!=len(FILES)+len(reads) or len(ended)!=1
+            or ended[0].get('status')!='COMPLETED' or len(approvals)!=len(FILES)
             or not all(p.get('approved') is True for p in approvals)
-            or reads[0].get('status')!='SUCCESS' or reads[0].get('value',{}).get('version')!=fresh.digest(REQUIREMENTS)):
+            or len(requirement_reads)!=1
+            or any(p.get('status')!='SUCCESS' or p.get('value',{}).get('path') not in allowed_reads
+                   or p['value'].get('version')!=allowed_reads[p['value']['path']] for p in reads)):
         raise ValueError('Task facts rejected')
     for name,initial in FILES.items():
         data=(directory/name).read_bytes();matched=[p for p in writes if p.get('value',{}).get('path')==name]
@@ -115,7 +127,7 @@ def run(wallet):
     if not key:raise ValueError('DEEPSEEK_API_KEY missing')
     directory=fresh.DIRECTORY/('multifile-'+secrets.token_hex(8));directory.mkdir()
     for name,raw in {**FILES,'requirements.txt':REQUIREMENTS}.items():(directory/name).write_bytes(raw)
-    token=secrets.token_hex(32);server=HTTPServer(('127.0.0.1',0),handler(wallet,key,token))
+    token=secrets.token_hex(32);server=HTTPServer(('127.0.0.1',0),handler(wallet,key,token,directory))
     config=dict(baseUrl='http://127.0.0.1:'+str(server.server_port),model='deepseek-flash',
         apiKeyEnv='JHARNESS_LIVE_RELAY_TOKEN',protocol='chat-completions',maxSteps=4,durationSeconds=240,
         requestTimeoutSeconds=75,contextTokens=base.INPUT_CAP,inputTokenCeiling=base.INPUT_CAP,
@@ -130,9 +142,12 @@ def run(wallet):
     thread=threading.Thread(target=server.serve_forever,daemon=True);thread.start()
     try:
         command=[str(java),'-jar',str(jar),'--workspace',str(directory),'--config',str(directory/'config.json'),
-            'run','Read requirements.txt once, repair both files using the specified versions, then finish. Only read_file and write_file. No commands.',
-            '--session','multifile','--require-read','requirements.txt','--expect-file','Price.java','--expect-file','Invoice.java']
-        result=subprocess.run(command,env=env,input=b'y\ny\n',stdout=subprocess.PIPE,stderr=subprocess.STDOUT,timeout=260)
+            'run','Read requirements.txt once, repair specified files, then finish. Only read_file/write_file, no commands. '
+            'EVERY write_file MUST include overwrite=true AND expectedVersion exactly from this map: '+
+            json.dumps({n:fresh.digest(b) for n,b in FILES.items()}),
+            '--session','multifile','--require-read','requirements.txt']
+        for name in FILES:command.extend(['--expect-file',name])
+        result=subprocess.run(command,env=env,input=b'y\n'*len(FILES),stdout=subprocess.PIPE,stderr=subprocess.STDOUT,timeout=260)
         (directory/'cli.log').write_bytes(result.stdout[:1024*1024].replace(key.encode(),b'[REDACTED]').replace(token.encode(),b'[REDACTED]'))
         report['exitCode']=result.returncode
         facts_path=directory/'.jharness/sessions/multifile.jsonl'
@@ -149,5 +164,16 @@ def run(wallet):
 
 
 if __name__=='__main__':
-    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--run',action='store_true',required=True);parser.parse_args()
+    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--run',action='store_true',required=True)
+    parser.add_argument('--repair-overflow',action='store_true');args=parser.parse_args()
+    if args.repair_overflow:
+        source=fresh.ROOT/'docs/testing/fixtures/deepseek-multifile-2026-10-29/Price.java.txt'
+        FILES={'Price.java':source.read_bytes()}
+        REQUIREMENTS=('''Fix only Price.java. Preserve its API and valid behavior. The independent isolated oracle
+found Price.cents("1e2147483647") throws java.lang.ArithmeticException: Overflow at BigDecimal.movePointRight.
+All invalid, fractional-cent, nonnegative long-cent overflow or extreme exponent inputs must be rejected with
+IllegalArgumentException, without allocating huge integers or unbounded exponent expansions. Catch/convert
+arithmetic failures and reject out-of-range values BEFORE conversion/expansion. Only JDK classes, no IO/env/process.
+Read requirements.txt once then write_file Price.java overwrite=true using the SHA256 below, then finish.
+SHA256='''+fresh.digest(FILES['Price.java'])+'\n'+FILES['Price.java'].decode()).encode()
     print(json.dumps(run(base.Wallet(fresh.DIRECTORY)),indent=2))

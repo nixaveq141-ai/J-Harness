@@ -1,0 +1,9 @@
+# 三项缺口接续（2026-10-30）
+
+真实多文件：DeepSeek在固定合成工作区读需求，经过两次明确审批修改Price/Invoice，版本前后SHA核对。首轮隔离CI40847774594发现极端指数导致ArithmeticException，原ZIP dc55f45c已保存；保留原断言。后续模型修正Price，实际读需求/源文件、审批写入和COMPLETED已核对，最终容器重验待。
+
+同一5元账本累计12次、非退款预留上界1.867776元，旧2元账本未动。内部次数上限由6调整12以覆盖故障反馈，未新建/重置账本。一次修复响应已确认因缺expectedVersion在写入前拒绝，另一轮仅保留MODEL_HTTP_ERROR、原因未能恢复，保留费用预留；原审计字段及读取计数错误修正后用原事实离线复核，不冒充新成功调用。不得继续付费请求。
+
+供应链：47个原生资源现均与固定官方提交分发字节相同（JNA c366bc4、pty4j b7554d6）。官方pty历史指向ConPTY Windows Terminal1.22.11141.0和WinPTY build29/tag0.13.2；但Microsoft官方两架构发布ZIP的OpenConsole摘要与捆绑版不同，因此不能冒认构建来源已证明。JNA源码libffi版本3.4.4也不直接证明每个平台预编译库采用该版本。NVD已下载libffi2条/Windows Terminal54条/winpty0条原始查询，关键词结果不等于适用性或完整OS/CPE扫描；仍未关闭精确构建及完整CPE缺口。
+
+macOS：原记录缺少禁用谓词/前端代次/事件及后端状态联合快照，现有代码静态检查未找到足以证明该历史失败的因果链。保持ROOT_CAUSE_UNDETERMINED，不把其他已知问题或后续通过套用为历史根因。

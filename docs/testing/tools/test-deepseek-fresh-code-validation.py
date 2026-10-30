@@ -18,11 +18,11 @@ class FreshTest(unittest.TestCase):
         self.assertNotEqual(old.GRANT, fresh.base.GRANT)
         with tempfile.TemporaryDirectory() as temp:
             wallet = fresh.base.Wallet(Path(temp)/'grant')
-            for _ in range(6):
+            for _ in range(12):
                 wallet.reserve('/chat/completions', b'bounded request')
             with self.assertRaisesRegex(ValueError, 'exhausted'):
-                wallet.reserve('/chat/completions', b'no seventh request')
-            self.assertEqual(6*fresh.base.RESERVATION, wallet.audit()['reservedMicroCny'])
+                wallet.reserve('/chat/completions', b'no thirteenth request')
+            self.assertEqual(12*fresh.base.RESERVATION, wallet.audit()['reservedMicroCny'])
             self.assertLess(wallet.audit()['reservedMicroCny'], 5_000_000)
 
     def test_false_completion_or_wrong_fixture_cannot_supply_code(self):
