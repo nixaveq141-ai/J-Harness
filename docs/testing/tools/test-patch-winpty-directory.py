@@ -42,5 +42,17 @@ class DirectoryPatchTest(unittest.TestCase):
             self.assertIn(b'jhOwnedChildDirectory(m_childProcess', (root/'src/agent/Agent.cc').read_bytes())
             with self.assertRaises(ValueError):extension.apply(root)
 
+    def test_crlf_checkout_keeps_exact_original_and_explicit_canonical_digests(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp);expected=self.fixture(root)
+            for name in expected:
+                path=root/name;path.write_bytes(path.read_bytes().replace(b'\n',b'\r\n'))
+            before={name:hashlib.sha256((root/name).read_bytes()).hexdigest() for name in expected}
+            with patch.object(extension,'EXPECTED',expected):result=extension.apply(root)
+            for row in result['changes']:
+                self.assertEqual(before[row['path']],row['beforeSha256'])
+                self.assertEqual(expected[row['path']],row['canonicalBeforeSha256'])
+            self.assertTrue(any(row['lineEndingConversion']=='CRLF_TO_LF' for row in result['changes']))
+
 
 if __name__=='__main__':unittest.main()

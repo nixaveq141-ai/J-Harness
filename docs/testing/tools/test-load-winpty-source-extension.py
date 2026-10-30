@@ -21,7 +21,7 @@ class SourceLoaderTest(unittest.TestCase):
             changes=[]
             for name,before in extension.EXPECTED.items():
                 path=out/'winpty'/name;path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(b'controlled patched source')
-                changes.append(dict(path=name,beforeSha256=before,afterSha256=loader.sha(path)))
+                changes.append(dict(path=name,beforeSha256=before,canonicalBeforeSha256=before,afterSha256=loader.sha(path)))
             actual=out/'winpty/src/agent/jh-owned-directory.h';actual.write_bytes(helper.read_bytes())
             log=out/'1.log';log.write_bytes(b'controlled successful compile log')
             outputs=[]
@@ -29,7 +29,7 @@ class SourceLoaderTest(unittest.TestCase):
                 path=out/name;path.write_bytes(b'MZcontrolled native fixture')
                 outputs.append(dict(path=path.relative_to(root).as_posix(),sha256=loader.sha(path)))
             report=dict(status='SOURCE_WINDOWS_PTY_CANDIDATES_BUILT_NOT_PRODUCT_ACCEPTANCE',commit='current',runId='owned-run',
-                sources=dict(winpty=dict(revision=extension.REVISION,directoryExtension=dict(baseRevision=extension.REVISION,
+                sources=dict(winpty=dict(revision=extension.REVISION,trackedFiles=extension.EXPECTED,directoryExtension=dict(baseRevision=extension.REVISION,
                     ownedChildHelperSha256=loader.sha(helper),changes=changes))),
                 winptyEligibility=dict(status='ABI_RUNTIME_VALIDATION_REQUIRED'),outputs=outputs,
                 commands=[dict(argv=['C:/msys64/usr/bin/make.exe','-j2','build/winpty.dll','build/winpty-agent.exe'],exitCode=0,log='1.log',logSha256=loader.sha(log))])

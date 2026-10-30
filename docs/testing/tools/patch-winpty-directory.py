@@ -64,13 +64,16 @@ WINPTY_API void winpty_free(winpty_t *wp) {''')],
     helper=target/'src/agent/jh-owned-directory.h'
     if helper.exists():raise ValueError('Directory extension already exists')
     for name,replacements in rules.items():
-        path=target/name;before=path.read_bytes();after=before.decode()
-        if hashlib.sha256(before).hexdigest()!=EXPECTED[name]:raise ValueError('Pinned directory source hash rejected: '+name)
+        path=target/name;before=path.read_bytes();canonical=before.replace(b'\r\n',b'\n');after=canonical.decode()
+        if hashlib.sha256(canonical).hexdigest()!=EXPECTED[name]:raise ValueError('Pinned directory source hash rejected: '+name)
         for old,new in replacements:
             if after.count(old)!=1:raise ValueError('Pinned directory patch anchor rejected: '+name)
             after=after.replace(old,new,1)
         pending.append((path,after.encode()))
-        changes.append(dict(path=name,beforeSha256=hashlib.sha256(before).hexdigest(),afterSha256=hashlib.sha256(after.encode()).hexdigest()))
+        changes.append(dict(path=name,beforeSha256=hashlib.sha256(before).hexdigest(),
+            canonicalBeforeSha256=hashlib.sha256(canonical).hexdigest(),
+            lineEndingConversion='CRLF_TO_LF' if canonical!=before else 'NONE',
+            afterSha256=hashlib.sha256(after.encode()).hexdigest()))
     # Validate every anchor before changing any source.
     helper_data=(ROOT/'docs/testing/native/winpty-owned-directory.h').read_bytes()
     for path,data in pending:path.write_bytes(data)

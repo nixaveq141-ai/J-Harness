@@ -4,6 +4,8 @@
 
 ## 当前接续状态
 
+- 2026-10-30扩展首轮41021962732原ZIP c7f17d3f核对：在补丁SHA门禁而非C++编译失败，Windows AgentMsg/Agent头精确等于Git blob LF→CRLF检出；保留原始beforeSHA并匹配trackedFiles，另记显式CRLF转换及固定blob canonicalSHA，源漂移仍拒绝。新增换行反例，patch三项和加载七拒绝类过，重验待。
+
 - 2026-10-30继续兼容闭合：固定官方WinPTY master7e59fe2已有进程列表，新增精确五文件SHA门禁的owned-child cwd RPC补丁，不按任意PID打开进程；描述符有界/交叉位数拒绝/缓冲不足报错。新增原生目录切换和无效描述符探针，以及Java真实WinPTY非ASCII目录切换/进程列表/resize/退出/移库拒绝专项。两patch离线项、七加载拒绝反例、原五项及严格Java编译过；实际Windows专项待，尚未产品替换或全闭合。
 
 - 2026-10-30 Windows源轮41019111630@93ceaaf两组件全部成功，五输出/固定源码/全部命令日志与原ZIP c6885046/52540faa独立核对；WinPTY缺pty4j声明的两个扩展名，候选明确拒绝替换（名字出现也不算ABI过），新增反例共五项过。官方master头仅有process-list仍无cwd。Mac加载/延迟读输出因果已过，但不能解释历史按钮；完整产品替代/OS-CPE/历史因果仍开放，未接受风险归档。成功两包另5成员本地备份逐摘要过，全部失败包保留。活动文档和三份新证据/两备份回执更新，无付费/main/Release。

@@ -32,7 +32,9 @@ def validate_source(out,commit,run):
     changes={v['path']:v for v in extension['changes']}
     if len(extension['changes'])!=len(patch.EXPECTED) or set(changes)!=set(patch.EXPECTED):raise ValueError('Patch source set rejected')
     for name,expected in patch.EXPECTED.items():
-        if changes[name]['beforeSha256']!=expected or sha(out/'winpty'/name)!=changes[name]['afterSha256']:
+        if (changes[name]['canonicalBeforeSha256']!=expected
+                or changes[name]['beforeSha256']!=report['sources']['winpty']['trackedFiles'][name]
+                or sha(out/'winpty'/name)!=changes[name]['afterSha256']):
             raise ValueError('Patched source drift rejected')
     if sha(out/'winpty/src/agent/jh-owned-directory.h')!=extension['ownedChildHelperSha256']:raise ValueError('Agent helper drift rejected')
     for command in report['commands']:
