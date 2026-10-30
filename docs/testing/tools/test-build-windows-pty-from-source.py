@@ -14,6 +14,26 @@ builder=importlib.util.module_from_spec(spec);spec.loader.exec_module(builder)
 
 
 class WindowsBuildTest(unittest.TestCase):
+    def test_historical_port_tree_prefetch_binds_manifest_and_rejects_reuse(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp);tool=root/'tool';out=root/'out';out.mkdir()
+            versions=tool/'versions/f-/fmt.json';versions.parent.mkdir(parents=True)
+            versions.write_bytes(json.dumps(dict(versions=[dict(version='11.1.4',**{'port-version':0,'git-tree':'a'*40})])).encode())
+            calls=[]
+            def run(argv,cwd):
+                calls.append((argv,cwd));Path(next(a.removeprefix('--output=') for a in argv if a.startswith('--output='))).write_bytes(b'controlled Git archive')
+            manifest=dict(overrides=[dict(name='fmt',version='11.1.4')])
+            result=builder.prefetch_port_trees(tool,manifest,out,run)
+            self.assertEqual('a'*40,result[0]['gitTree'])
+            self.assertEqual('a'*40,calls[0][0][-1])
+            self.assertEqual(builder.sha(versions),result[0]['versionManifestSha256'])
+            with self.assertRaisesRegex(ValueError,'Fresh port'):builder.prefetch_port_trees(tool,manifest,out,run)
+            self.assertEqual(1,len(calls))
+            with self.assertRaisesRegex(ValueError,'Unique pinned'):
+                builder.prefetch_port_trees(tool,dict(overrides=[dict(name='fmt',version='99.0')]),out,run)
+            with self.assertRaisesRegex(ValueError,'Safe pinned'):
+                builder.prefetch_port_trees(tool,dict(overrides=[dict(name='../escape',version='1.0')]),out,run)
+
     def test_missing_extension_names_reject_replacement_and_presence_is_not_acceptance(self):
         absent=builder.winpty_eligibility(b'MZcontrolled original ABI')
         self.assertEqual('REJECTED_REQUIRED_NAMES_ABSENT',absent['status'])

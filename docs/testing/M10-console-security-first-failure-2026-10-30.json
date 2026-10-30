@@ -1,0 +1,54 @@
+{
+  "status": "FAILED_SOURCE_BUILD_ORIGINAL_RETAINED",
+  "runId": "41033417202",
+  "commit": "a98980fd91b3012b3663533ae85badc898a151c3",
+  "artifact": {
+    "id": 12967027326,
+    "path": ".build-cache/console-security-first/originals/12967027326.zip",
+    "sha256": "35d195d5b2187a62f8dafb514d650e8dd95e744819dcbff1185a9ba639e262e3",
+    "bytes": 694147
+  },
+  "failedCommand": {
+    "argv": [
+      "MSBuild.exe",
+      "src/host/exe/Host.EXE.vcxproj",
+      "/m:2",
+      "/p:SolutionDir=D:/a/J-Harness/J-Harness/.build-cache/windows-pty-source/console/",
+      "/p:Configuration=Release",
+      "/p:Platform=x64",
+      "/verbosity:minimal",
+      "/nologo"
+    ],
+    "cwd": ".build-cache/windows-pty-source/console",
+    "exitCode": 1,
+    "log": "13.log",
+    "logSha256": "3fde2a49ff936b096ae714befb1066bef71062472a3260bb5c747123edb4f056",
+    "elapsedSeconds": 120.485
+  },
+  "consoleSource": "7ff11ee107c984e236960ec948b450ccbc10187b",
+  "vcpkgSource": "fe1cde61e971d53c9687cf9a46308f8f55da19fa",
+  "vendorSecurityGate": {
+    "status": "ENUMERATED_VENDOR_SECURITY_FLOORS_SATISFIED_NOT_FULL_CPE_CLEARANCE",
+    "sourceRevision": "7ff11ee107c984e236960ec948b450ccbc10187b",
+    "sourceVersion": "1.24.12741.0",
+    "advisories": [
+      {
+        "id": "CVE-2026-54124",
+        "fixedVersion": "1.24.11321.0",
+        "recordSha256": "9eaab4aa701c907fa0b9940c1b44c44314ef0c7b32811fe6ca88c7e9c00db453"
+      },
+      {
+        "id": "CVE-2026-59117",
+        "fixedVersion": "1.24.11321.0",
+        "recordSha256": "233c79d30f3e52782b6c16cb867a62d780579b0a89955cd650b163b6119c7b63"
+      }
+    ],
+    "policySha256": "15377f49a779aa696230eee041a0fdf6384051093645e81804e5b72ff5272430",
+    "bundledSubsetExposureProven": false,
+    "fullVulnerabilityCoverage": false
+  },
+  "allCommandLogHashesVerified": true,
+  "sourceCompileOrRuntimeAccepted": false,
+  "reason": "vcpkg historical jsoncpp/ms-gsl port Git object lazy fetch failed DNS during MSBuild",
+  "nextFix": "Explicit fixed port tree archive prefetch before MSBuild; do not roll back security source baseline"
+}

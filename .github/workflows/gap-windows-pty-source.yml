@@ -92,6 +92,7 @@ jobs:
           path: |
             .build-cache/windows-pty-source/report.json
             .build-cache/windows-pty-source/*.log
+            .build-cache/windows-pty-source/port-tree-*.tar
             .build-cache/windows-winpty-load/
             .build-cache/windows-console-load/
             winpty-probe-build.log

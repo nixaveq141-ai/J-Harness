@@ -2,6 +2,10 @@
 
 ## 2026-10-30 安全基线补查
 
+首轮新基线41033417202@a98980f原ZIP35d195d5已核对全部命令日志；安全版本门禁、固定Console/vcpkg检出及恢复通过，MSBuild内vcpkg展开jsoncpp/ms-gsl历史端口树时Git promisor懒加载DNS失败，尚无新二进制或运行验收。补显式按上游版本清单预取五个固定tree的Git archive，记录版本清单/树/归档SHA并保留归档，再重验；不回退安全基线。六构建控制（含拒绝历史树漂移/归档复用/路径逃逸）及安全门禁/加载控制过。原失败见[M10-console-security-first-failure-2026-10-30.json](M10-console-security-first-failure-2026-10-30.json)。
+
+本机启动边界补查：[WinPTY启动对照](M10-winpty-startup-controls-2026-10-30.json)的固定cmd隐藏新控制台/无窗口/继承控制台各三轮均退出0；源码agent的--version同三种模式各三轮也过。绕过Java/JNA直接ctypes创建空会话，源码和原分发仍agent died；仅放DLL/agent的全新目录仍失败。排除“所有隐藏控制台都不能创建”、仅Java/JNA及旁置ConPTY文件的单独归因，未定位终止触发者。
+
 原关键字 Microsoft Terminal 查询包含旧 Terminal Server，并未覆盖 Windows Terminal 产品。Microsoft CNA 的 [CVE-2026-54124](https://github.com/CVEProject/cvelistV5/blob/main/cves/2026/54xxx/CVE-2026-54124.json) 与 [CVE-2026-59117](https://github.com/CVEProject/cvelistV5/blob/main/cves/2026/59xxx/CVE-2026-59117.json) 将相应 Terminal 产品低于1.24.11321.0列入影响范围。旧源码候选1.22.11141.0不能获得安全放行；整产品版本范围不等于已经证明捆绑ConPTY/OpenConsole子集可被利用。原功能通过证据保留，但不作漏洞清白证明。
 
 候选固定到官方1.24维护版1.24.12741.0的7ff11ee107c984e236960ec948b450ccbc10187b，SDK22621/v143要求已从固定源码核实。其vcpkg基线固定fe1cde61，禁止外部二进制缓存，记录实际工具、源码、下载输入与安装文件摘要。增加公告快照摘要/数值版本/精确产品范围门禁，拒绝旧版本、错误产品、摘要漂移及未知范围语义。新加载器要求当轮源提交/实际双项目编译/安全门禁，并以既验WinPTY及JNI精确输出组装六资源预览，再跑真实ABI、禁止系统回退和产品终端。离线控制过；新候选实际构建与运行待CI。CVE-2026-96951实际为Windows Shell、CVE-2026-56171为RDP，不误写成Terminal子组件漏洞；历史Mac异常也不据此归因。见[M10-console-security-progress-2026-10-30.json](M10-console-security-progress-2026-10-30.json)。

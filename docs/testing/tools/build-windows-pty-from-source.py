@@ -6,6 +6,7 @@ import json
 import os
 from pathlib import Path
 import platform
+import re
 import subprocess
 import time
 
@@ -63,6 +64,32 @@ def winpty_eligibility(raw):
     missing=[name for name in required if name.encode()+b'\0' not in raw]
     return dict(status='REJECTED_REQUIRED_NAMES_ABSENT' if missing else 'ABI_RUNTIME_VALIDATION_REQUIRED',
                 missingRequiredNames=missing,productReplacementApproved=False)
+
+
+def prefetch_port_trees(tool,manifest,out,run):
+    """Materialize exact overridden historical port trees before MSBuild runs.
+
+    A filtered Git checkout has current port blobs but may lack overridden old
+    ones. Archive prefetch triggers that fetch with the recorded build environment;
+    subsequent vcpkg read-tree can consume the same content-addressed objects.
+    """
+    found=[]
+    for item in manifest['overrides']:
+        name=item['name'];requested=item['version'];port=item.get('port-version',0)
+        if not re.fullmatch(r'[a-z0-9]+(?:-[a-z0-9]+)*',name):raise ValueError('Safe pinned port name required')
+        versions=tool/'versions'/(name[0]+'-')/(name+'.json')
+        rows=json.loads(versions.read_bytes())['versions']
+        matches=[v for v in rows if v.get('port-version',0)==port and
+                 any(v.get(key)==requested for key in ['version','version-semver','version-string','version-date'])]
+        if len(matches)!=1 or not re.fullmatch(r'[a-f0-9]{40}',matches[0]['git-tree']):
+            raise ValueError('Unique pinned port version tree required')
+        tree=matches[0]['git-tree'];archive=out/('port-tree-'+name+'.tar')
+        if archive.exists():raise ValueError('Fresh port tree archive required')
+        run(['git','-c','core.autocrlf=false','archive','--format=tar','--output='+str(archive),tree],tool)
+        if not archive.is_file() or archive.stat().st_size>32*1024*1024:raise ValueError('Bounded materialized port tree required')
+        found.append(dict(name=name,version=requested,portVersion=port,gitTree=tree,
+                          versionManifestSha256=sha(versions),archiveSha256=sha(archive),archiveBytes=archive.stat().st_size))
+    return found
 
 
 def main():
@@ -123,6 +150,7 @@ def main():
             manifest=json.loads((target/'vcpkg.json').read_bytes())
             if manifest.get('builtin-baseline')!=PINS['vcpkg'][1]:raise ValueError('Pinned vcpkg baseline drift rejected')
             vcpkg,tool_source=checkout('vcpkg',out,run,env);report['sources']['vcpkg']=tool_source
+            report['sources']['vcpkg']['prefetchedPortTrees']=prefetch_port_trees(vcpkg,manifest,out,run)
             env.update(VCPKG_ROOT=str(vcpkg),VCPKG_DISABLE_METRICS='1',VCPKG_BINARY_SOURCES='clear',
                        VCPKG_DOWNLOADS=str(out/'vcpkg-downloads'))
             run(['cmd.exe','/d','/c','bootstrap-vcpkg.bat','-disableMetrics'],vcpkg)

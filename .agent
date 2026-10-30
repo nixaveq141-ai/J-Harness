@@ -4,6 +4,8 @@
 
 ## 当前接续状态
 
+- 2026-10-30新Console首轮41033417202@a98980f失败原ZIP35d195d5全部命令日志SHA核对：固定源/公告门禁/恢复过，MSBuild内vcpkg jsoncpp/ms-gsl历史tree的Git promisor懒加载DNS失败。补五固定版本tree显式archive预取及清单/tree/归档摘要、CI保留tar，六构建及安全/加载控制过，重验待不降基线。另本机隐藏cmd及agent --version三模式各三轮过，绕开Java/JNA的原/源空会话和两文件独立目录仍agent died，触发未明。两新收据/活动源码文档更新，原产物未改；CPE/产品替代/旧Mac仍开放。
+
 - 2026-10-30原NVD关键字Microsoft Terminal误入Terminal Server且不证明Windows Terminal覆盖；微软CNA原记录确认54124/59117整Terminal产品<1.24.11321.0受影响，旧源候选1.22不放行但未证明捆绑子集暴露。固定1.24.12741.0@7ff11ee及vcpkg fe1cde61/禁二进制缓存，新增公告快照摘要/产品/版本门禁、双项目源校验和六资源装配后的ABI/缺库拒绝/真实产品终端CI。本地门禁/加载拒绝及原构建/装配控制过，远端新构建待。Shell96951/RDP56171未误判Terminal，历史Mac不归因。源码进度与M10-console-security-progress更新；原产物未改，无付费，全CPE与产品替代/旧Mac仍开放。
 
 - 2026-10-30增强WinPTY41030432860@0cb0ddd全过，原ZIP2254d7de/源码五文件补丁重构/日志/输出/Git探针/class/JAR逐摘要核对，无效参数+错误释放已实测。源码预览JAR真实LocalTerminalSession在本机Win11输入/非ASCII切目录/resize/退出/stop/timeout及无观察残留过，首ARGV探针被显式shell门禁正确拒绝并保留，改CMD探针不改产品。自有PID限定独占trace：源及原+原JNI agent都真实退出0xC000013A STATUS_CONTROL_C_EXIT，触发未知。47成员36054815字节本地备份逐SHA过。新增两收据/产品Java探针；完整产品替换/OS-CPE/历史models根因仍未闭合，无付费。

@@ -1,0 +1,198 @@
+{
+  "status": "WINPTY_STARTUP_SCOPE_NARROWED_TRIGGER_UNRESOLVED",
+  "controls": {
+    "windows-hidden-console-controls": {
+      "status": "OBSERVATIONS_NOT_ROOT_CAUSE",
+      "command": "Fixed Windows System32 cmd.exe /d /q /c exit /b 0; no inherited handles; hidden startup flag",
+      "executableSha256": "15cd209c995b7d3009c91ca40892d5b8f1fb162f3e5f10716642ea278e8e0d7b",
+      "records": [
+        {
+          "label": "hidden-new-console",
+          "creationFlags": "0x10",
+          "exitCode": "0x0",
+          "timedOut": false,
+          "elapsedSeconds": 0.064
+        },
+        {
+          "label": "no-window",
+          "creationFlags": "0x8000000",
+          "exitCode": "0x0",
+          "timedOut": false,
+          "elapsedSeconds": 0.03
+        },
+        {
+          "label": "inherit-no-std-handles",
+          "creationFlags": "0x0",
+          "exitCode": "0x0",
+          "timedOut": false,
+          "elapsedSeconds": 0.019
+        },
+        {
+          "label": "hidden-new-console",
+          "creationFlags": "0x10",
+          "exitCode": "0x0",
+          "timedOut": false,
+          "elapsedSeconds": 0.045
+        },
+        {
+          "label": "no-window",
+          "creationFlags": "0x8000000",
+          "exitCode": "0x0",
+          "timedOut": false,
+          "elapsedSeconds": 0.037
+        },
+        {
+          "label": "inherit-no-std-handles",
+          "creationFlags": "0x0",
+          "exitCode": "0x0",
+          "timedOut": false,
+          "elapsedSeconds": 0.017
+        },
+        {
+          "label": "hidden-new-console",
+          "creationFlags": "0x10",
+          "exitCode": "0x0",
+          "timedOut": false,
+          "elapsedSeconds": 0.056
+        },
+        {
+          "label": "no-window",
+          "creationFlags": "0x8000000",
+          "exitCode": "0x0",
+          "timedOut": false,
+          "elapsedSeconds": 0.039
+        },
+        {
+          "label": "inherit-no-std-handles",
+          "creationFlags": "0x0",
+          "exitCode": "0x0",
+          "timedOut": false,
+          "elapsedSeconds": 0.016
+        }
+      ],
+      "paidRequests": 0,
+      "systemSettingsChanged": false
+    },
+    "winpty-agent-hidden-console-controls": {
+      "status": "OBSERVATIONS_NOT_ROOT_CAUSE",
+      "command": "Reviewed source WinPTY agent --version; no inherited handles; hidden startup flag",
+      "executableSha256": "a7e2e8e997036303a313bccfd0267b6bb962b0ca41a1a742bdadddc79caae393",
+      "records": [
+        {
+          "label": "hidden-new-console",
+          "creationFlags": "0x10",
+          "exitCode": "0x0",
+          "timedOut": false,
+          "elapsedSeconds": 0.268
+        },
+        {
+          "label": "no-window",
+          "creationFlags": "0x8000000",
+          "exitCode": "0x0",
+          "timedOut": false,
+          "elapsedSeconds": 0.036
+        },
+        {
+          "label": "inherit-no-std-handles",
+          "creationFlags": "0x0",
+          "exitCode": "0x0",
+          "timedOut": false,
+          "elapsedSeconds": 0.024
+        },
+        {
+          "label": "hidden-new-console",
+          "creationFlags": "0x10",
+          "exitCode": "0x0",
+          "timedOut": false,
+          "elapsedSeconds": 0.048
+        },
+        {
+          "label": "no-window",
+          "creationFlags": "0x8000000",
+          "exitCode": "0x0",
+          "timedOut": false,
+          "elapsedSeconds": 0.034
+        },
+        {
+          "label": "inherit-no-std-handles",
+          "creationFlags": "0x0",
+          "exitCode": "0x0",
+          "timedOut": false,
+          "elapsedSeconds": 0.016
+        },
+        {
+          "label": "hidden-new-console",
+          "creationFlags": "0x10",
+          "exitCode": "0x0",
+          "timedOut": false,
+          "elapsedSeconds": 0.044
+        },
+        {
+          "label": "no-window",
+          "creationFlags": "0x8000000",
+          "exitCode": "0x0",
+          "timedOut": false,
+          "elapsedSeconds": 0.042
+        },
+        {
+          "label": "inherit-no-std-handles",
+          "creationFlags": "0x0",
+          "exitCode": "0x0",
+          "timedOut": false,
+          "elapsedSeconds": 0.024
+        }
+      ],
+      "paidRequests": 0,
+      "systemSettingsChanged": false
+    },
+    "winpty-python-api-control": {
+      "records": [
+        {
+          "label": "source",
+          "dllSha256": "d5c4bdc34112c7a2af79d091574cc26adf287ed0527f17f3a9b22a21f1c4a70b",
+          "sessionOpened": false,
+          "error": "agent died"
+        },
+        {
+          "label": "original",
+          "dllSha256": "21c6480093859d4811525dd68ece1905324014bbd8c1a11fea6a78b2933009f4",
+          "sessionOpened": false,
+          "error": "agent died"
+        }
+      ],
+      "scope": "Owned empty agent sessions; no child shell and no new cwd calls"
+    },
+    "winpty-isolated-python-api-control": {
+      "records": [
+        {
+          "label": "source",
+          "dllSha256": "d5c4bdc34112c7a2af79d091574cc26adf287ed0527f17f3a9b22a21f1c4a70b",
+          "sessionOpened": false,
+          "error": "agent died"
+        },
+        {
+          "label": "original",
+          "dllSha256": "21c6480093859d4811525dd68ece1905324014bbd8c1a11fea6a78b2933009f4",
+          "sessionOpened": false,
+          "error": "agent died"
+        }
+      ],
+      "scope": "Owned empty agent sessions; no child shell and no new cwd calls"
+    }
+  },
+  "recordSha256": {
+    "windows-hidden-console-controls": "8a2c7a020f30623783832b46d93e62c3741cf6cb8b067751b88fd1ab8a099597",
+    "winpty-agent-hidden-console-controls": "5e7a7f2a4cdf5b4ee944f0708a9e91c1c02233ff01568a2ea418a1b16c2e7705",
+    "winpty-python-api-control": "0d926fb2b4603e377544f5d4ec3db7f987e31bc26f95a63bbd330885c017cd0c",
+    "winpty-isolated-python-api-control": "0d926fb2b4603e377544f5d4ec3db7f987e31bc26f95a63bbd330885c017cd0c"
+  },
+  "interpretation": [
+    "Basic hidden new-console creation is successful in all three rounds.",
+    "Source agent --version executes successfully with new-console, no-window and inherited-console flags.",
+    "Both source and original empty WinPTY sessions fail without Java/JNA or any child shell/new cwd RPC.",
+    "Putting only DLL and agent in fresh directories does not resolve the failure.",
+    "These controls do not identify the control termination trigger or explain the historical macOS button issue."
+  ],
+  "paidRequests": 0,
+  "systemSettingsChanged": false
+}
