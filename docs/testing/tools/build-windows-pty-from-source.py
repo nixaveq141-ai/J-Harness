@@ -80,7 +80,8 @@ def main():
             run(['C:/msys64/usr/bin/make.exe','-j2','build/winpty.dll','build/winpty-agent.exe'],target)
             report['outputs']+=outputs([target/'build/winpty.dll',target/'build/winpty-agent.exe'],target)
             helper,source=checkout('pty4j',out,run,env);report['sources']['pty4j']=source
-            run(['cmake','-S','native/win-helper','-B','native/helper-build','-A','x64','-DTARGET_X64=ON'],helper)
+            run(['cmake','-S','native/win-helper','-B','native/helper-build','-G','Visual Studio 17 2022',
+                 '-A','x64','-DTARGET_X64=ON','-DCMAKE_POLICY_VERSION_MINIMUM=3.5'],helper)
             run(['cmake','--build','native/helper-build','--config','Release'],helper)
             report['outputs']+=outputs([helper/'native/helper-build/Release/win-helper.dll'],helper)
         else:
