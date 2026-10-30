@@ -39,3 +39,5 @@ M10-native-source-progress-2026-10-30.json 独立绑定七份加载原 ZIP、对
 Console 第三轮41017612132原ZIP668546d6证实 Windows-latest 的 VS18 环境缺所需 SDK22621。构建专项改为 Windows2022 / VS17，并在源码构建前检查 SDK22621 头文件；依据官方当前镜像清单 https://github.com/actions/runner-images/blob/main/images/windows/Windows2022-Readme.md 。不改上游SDK要求，不将构建环境修正计作产品验收。
 
 41018127320 两原ZIP f00529b2/45ec0c98：Console进入C++调用后 FileTracker CommonApplicationDataPaths 报根为空，CMake 同时无法发现已安装 VS。最小构建环境漏掉 ProgramData/ALLUSERSPROFILE/ComSpec；补三项系统工具链变量，仍不继承其他凭据。新增共享根保留/任意凭据排除测试，四离线项通过，真实复验待。
+
+41018538974两原ZIP2bcdf701/b3c63883：共享数据修正后Console不再FileTracker失败，现缺WIL；原solution restore主要恢复托管项目，补四个固定native packages.config显式恢复，记录nupkg摘要。Helper已识别VS/SDK，编译器识别仍失败，补标准共享程序文件根和系统盘变量，四离线项过；新轮仍待，不将候选编译作为产品验收。

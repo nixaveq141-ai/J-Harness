@@ -4,6 +4,8 @@
 
 ## 当前接续状态
 
+- 2026-10-30环境轮41018538974原两ZIP2bcdf701/b3c63883已保存：Console不再FileTracker失败，现缺原生WIL包，原sln恢复只取托管项目；显式恢复四个固定packages.config并留所有nupkg摘要。Helper已发现VS及SDK，但编译器识别仍失败，补标准共享ProgramFiles/SystemDrive根，不继承任意凭据，四离线项过，实际重验待。两整体未关闭。
+
 - 2026-10-30固定工具链41018127320两原ZIP f00529b2/45ec0c98已保存：Console已进入C++工具调用但FileTracker共享数据根为空，helper也无法发现已安装VS。构建子进程最小环境漏ProgramData/ALLUSERSPROFILE/ComSpec，补三项系统工具链变量，凭据仍不继承；新增反例证明保留所需根且不继承任意凭据，四离线项过，实际复验待。活动状态纠正两项明确开放，不能误读旧735范围已完成为新增供应链/旧Mac根因已完成。
 
 - 2026-10-30 Console第三轮41017612132原ZIP668546d6已取证：源码/恢复已过，Windows-latest实际VS18且缺源要求SDK22621。官方runner-images当前Windows2022清单含VS17.14与SDK22621，改明确windows-2022、MSBuild17范围与SDK头前检，不改源要求或降断言；待同版本两组件实际构建。

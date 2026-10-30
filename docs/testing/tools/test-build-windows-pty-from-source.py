@@ -16,11 +16,14 @@ builder=importlib.util.module_from_spec(spec);spec.loader.exec_module(builder)
 class WindowsBuildTest(unittest.TestCase):
     def test_shared_toolchain_roots_survive_but_arbitrary_credentials_do_not(self):
         with patch.dict(os.environ,{'ProgramData':'C:/ProgramData','ALLUSERSPROFILE':'C:/ProgramData',
-                                  'ComSpec':'C:/Windows/System32/cmd.exe','SYNTHETIC_PRIVATE_CREDENTIAL':'canary'},clear=True):
+                                  'ComSpec':'C:/Windows/System32/cmd.exe','CommonProgramFiles':'C:/Program Files/Common Files',
+                                  'SystemDrive':'C:','SYNTHETIC_PRIVATE_CREDENTIAL':'canary'},clear=True):
             env=builder.build_environment()
             self.assertEqual('C:/ProgramData',env['ProgramData'])
             self.assertEqual('C:/ProgramData',env['ALLUSERSPROFILE'])
             self.assertIn('ComSpec',env)
+            self.assertIn('CommonProgramFiles',env)
+            self.assertEqual('C:',env['SystemDrive'])
             self.assertNotIn('SYNTHETIC_PRIVATE_CREDENTIAL',env)
 
     def test_revision_mismatch_is_rejected_before_source_is_accepted(self):

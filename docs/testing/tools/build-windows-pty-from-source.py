@@ -23,7 +23,9 @@ def build_environment():
     # Visual Studio discovery and MSBuild FileTracker require the shared
     # application-data roots; omitting them breaks an otherwise installed SDK.
     keys=['PATH','SystemRoot','WINDIR','TEMP','TMP','USERPROFILE','ProgramFiles','ProgramFiles(x86)',
-          'ProgramData','ALLUSERSPROFILE','ComSpec','LOCALAPPDATA','APPDATA','HOMEDRIVE','HOMEPATH',
+          'ProgramData','ALLUSERSPROFILE','ComSpec','SystemDrive','ProgramW6432','PUBLIC',
+          'CommonProgramFiles','CommonProgramFiles(x86)','CommonProgramW6432',
+          'LOCALAPPDATA','APPDATA','HOMEDRIVE','HOMEPATH',
           'VSINSTALLDIR','VCToolsInstallDir','WindowsSdkDir']
     return {k:os.environ[k] for k in keys if k in os.environ}
 
@@ -95,6 +97,12 @@ def main():
         else:
             run(['nuget.exe','help','restore'],target,30)
             run(['nuget.exe','restore','OpenConsole.sln','-NonInteractive'],target)
+            # Native dependencies live in standalone packages.config manifests;
+            # restoring only the solution restores managed projects, not these.
+            for manifest in ['.nuget/packages.config','build/packages.config','dep/nuget/packages.config','tools/packages.config']:
+                run(['nuget.exe','restore',manifest,'-NonInteractive','-PackagesDirectory',str(target/'packages')],target)
+            report['sources']['console']['nugetPackages']={p.relative_to(target).as_posix():sha(p)
+                for p in (target/'packages').rglob('*.nupkg') if p.is_file()}
             for project in ['src/host/exe/Host.EXE.vcxproj','src/winconpty/dll/winconptydll.vcxproj']:
                 run(['MSBuild.exe',project,'/m:2','/p:SolutionDir='+target.as_posix()+'/',
                      '/p:Configuration=Release','/p:Platform=x64','/verbosity:minimal','/nologo'],target,1200)
