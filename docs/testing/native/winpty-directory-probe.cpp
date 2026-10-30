@@ -19,7 +19,11 @@ int wmain(int argc, wchar_t **argv) {
         wchar_t expected[32768];
         DWORD length = GetCurrentDirectoryW(32768, expected);
         if (!length || length >= 32768) return 8;
-        if (jhOwnedChildDirectory(GetCurrentProcess(), value) != ERROR_SUCCESS || value != expected) return 9;
+        if (jhOwnedChildDirectory(GetCurrentProcess(), value) != ERROR_SUCCESS) return 9;
+        // The PEB DosPath may retain a directory separator that Win32's
+        // GetCurrentDirectory removes; these probe directories are non-roots.
+        if (value.size() > 3 && value.back() == L'\\') value.pop_back();
+        if (value != expected) return 10;
     }
     std::cout << "OWNED_DIRECTORY_NATIVE_PROBE_PASS\n";
     return 0;
