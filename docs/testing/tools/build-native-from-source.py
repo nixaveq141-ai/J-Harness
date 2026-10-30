@@ -18,7 +18,7 @@ def digest(path):return hashlib.sha256(path.read_bytes()).hexdigest()
 
 def main():
     if os.environ.get('GITHUB_ACTIONS')!='true':raise ValueError('Use dedicated source-build CI')
-    out=ROOT/'.build-cache/native-source-build';out.mkdir()
+    out=ROOT/'.build-cache/native-source-build';out.mkdir(parents=True)
     env={k:os.environ[k] for k in ['PATH','JAVA_HOME','SystemRoot','WINDIR','TEMP','TMP','HOME','SDKROOT'] if k in os.environ}
     env.update(GIT_TERMINAL_PROMPT='0',GCM_INTERACTIVE='Never')
     report=dict(status='INCOMPLETE',commit=os.environ.get('GITHUB_SHA'),runId=os.environ.get('GITHUB_RUN_ID'),
@@ -26,10 +26,19 @@ def main():
                 productReplacement=False,windowsPty='NOT_SOURCE_BUILT')
     def run(command,cwd,seconds=900):
         index=len(report['commands'])+1;log=out/(str(index)+'.log');begin=time.monotonic()
-        with log.open('xb') as stream:
-            result=subprocess.run(command,cwd=cwd,env=env,stdin=subprocess.DEVNULL,stdout=stream,stderr=subprocess.STDOUT,timeout=seconds)
-        report['commands'].append(dict(argv=command,cwd=Path(cwd).relative_to(ROOT).as_posix(),exitCode=result.returncode,
-            elapsedSeconds=round(time.monotonic()-begin,3),log=log.name,logSha256=digest(log)))
+        record=dict(argv=command,cwd=Path(cwd).relative_to(ROOT).as_posix(),exitCode=None,log=log.name)
+        executed=['cmd.exe','/d','/c','call',*command] if os.name=='nt' and command[0]=='ant' else command
+        record['executedArgv']=executed
+        report['commands'].append(record)
+        try:
+            with log.open('xb') as stream:
+                result=subprocess.run(executed,cwd=cwd,env=env,stdin=subprocess.DEVNULL,stdout=stream,stderr=subprocess.STDOUT,timeout=seconds)
+            record['exitCode']=result.returncode
+        except Exception as error:
+            record['failureType']=type(error).__name__
+            raise
+        finally:
+            record.update(elapsedSeconds=round(time.monotonic()-begin,3),logSha256=digest(log))
         if result.returncode:raise ValueError('Source build command failed; see fixed command log')
         return log
     try:

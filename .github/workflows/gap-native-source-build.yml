@@ -29,6 +29,8 @@ jobs:
         run: |
           'C:\msys64\mingw64\bin' | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
           'C:\msys64\usr\bin' | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
+      - name: Verify source pin and failure ownership offline
+        run: python docs/testing/tools/test-build-native-from-source.py
       - name: Build exact pinned native source candidates
         run: python docs/testing/tools/build-native-from-source.py
       - uses: actions/upload-artifact@v4
