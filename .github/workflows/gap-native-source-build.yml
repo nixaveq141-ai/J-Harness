@@ -5,7 +5,7 @@ on:
       scope:
         type: choice
         default: all
-        options: [all, windows]
+        options: [all, windows, macos, windows-macos]
 permissions:
   contents: read
 jobs:
@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: ${{ fromJSON(inputs.scope == 'windows' && '["windows-latest"]' || '["ubuntu-24.04","macos-latest","windows-latest"]') }}
+        os: ${{ fromJSON(inputs.scope == 'windows' && '["windows-latest"]' || inputs.scope == 'macos' && '["macos-latest"]' || inputs.scope == 'windows-macos' && '["macos-latest","windows-latest"]' || '["ubuntu-24.04","macos-latest","windows-latest"]') }}
     runs-on: ${{ matrix.os }}
     timeout-minutes: 25
     steps:
@@ -58,4 +58,5 @@ jobs:
             .build-cache/native-source-build/jna/build/**/libjnidispatch.*
             .build-cache/native-source-build/jna/build/**/jnidispatch.dll
             .build-cache/native-source-build/pty4j/os/darwin/libpty.dylib
+            .build-cache/native-source-build/pty4j/os/darwin/pty4j-unix-spawn-helper
             .build-cache/native-source-build/pty4j/os/linux/x86-64/libpty.so

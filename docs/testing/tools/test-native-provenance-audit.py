@@ -13,6 +13,23 @@ spec.loader.exec_module(audit)
 
 
 class NativeAuditTest(unittest.TestCase):
+    def test_extensionless_native_helper_is_included_but_classes_and_directories_are_not(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp);jar=self.fixture(root)
+            with zipfile.ZipFile(jar,'a') as archive:
+                archive.writestr('resources/com/pty4j/native/darwin/',b'')
+                archive.writestr('resources/com/pty4j/native/darwin/pty4j-unix-spawn-helper',b'\xca\xfe\xba\xbehelper')
+                archive.writestr('com/example/Example.class',b'\xca\xfe\xba\xbeclass')
+            inventory=root/'third-party/inventory.json'
+            rows=json.loads(inventory.read_bytes());rows[0]['jarSha256']=audit.sha(jar.read_bytes())
+            inventory.write_text(json.dumps(rows),encoding='utf-8')
+            original=audit.ROOT
+            try:
+                audit.ROOT=root;report=audit.audit(root/'repo')
+                self.assertEqual(2,report['nativeCount'])
+                self.assertTrue(any(v['resource'].endswith('pty4j-unix-spawn-helper') for v in report['binaries']))
+            finally:audit.ROOT=original
+
     def test_codeview_clues_are_bounded_and_not_attestations(self):
         record=b'RSDS'+b'\x11'*16+struct.pack('<I',2)+b'Z:\\BuildAgent\\work\\example\\native.pdb\0'
         rows=audit.codeview_candidates(b'MZ'+record*100)

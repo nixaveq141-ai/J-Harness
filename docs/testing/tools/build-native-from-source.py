@@ -123,7 +123,10 @@ def main():
             msys_make=Path('C:/msys64/usr/bin/make.exe')
             if not msys_make.is_file():raise ValueError('MSYS make required for POSIX source paths')
             run([str(msys_make),'--version'],ROOT,30)
-            ant_command+=['-Dmake='+str(msys_make)]
+            # MSYS uname reports MSYS_NT, which the pinned Makefile does not
+            # classify as Windows. Select its existing MinGW branch explicitly.
+            ant_command+=['-Dmake='+str(msys_make),'-DEXTRA_MAKE_OPTS=OS=win32 MINGW_PREFIX=',
+                          '-DARCH=amd64','-DUSE_MSVC=false']
         run([*ant_command,'native'],jna)
         candidates=[p for p in (jna/'build').rglob('*') if p.is_file() and p.name in ['jnidispatch.dll','libjnidispatch.so','libjnidispatch.jnilib','libjnidispatch.dylib']]
         if not candidates:raise ValueError('No compiled JNA candidate')
@@ -138,6 +141,14 @@ def main():
             run(command,pty)
             if not output.is_file():raise ValueError('Compiled PTY candidate missing')
             report['outputs']['pty']=dict(path=output.relative_to(ROOT).as_posix(),sha256=digest(output),removedPrebuiltSha256=previous)
+            if mac:
+                helper=pty/'os/darwin/pty4j-unix-spawn-helper'
+                previous=digest(helper);helper.unlink()
+                # Use the pinned project's own CMake target and universal arches.
+                run(['cmake','-S','native/unix-spawn-helper','-B','native/helper-build'],pty)
+                run(['cmake','--build','native/helper-build','--config','Release'],pty)
+                if not helper.is_file():raise ValueError('Compiled spawn helper missing')
+                report['outputs']['ptyHelper']=dict(path=helper.relative_to(ROOT).as_posix(),sha256=digest(helper),removedPrebuiltSha256=previous)
         for name in REVISIONS:
             target=out/name
             patch=subprocess.run(['git','diff','--binary'],cwd=target,env=env,capture_output=True,check=True).stdout

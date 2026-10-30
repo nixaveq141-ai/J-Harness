@@ -21,6 +21,7 @@ public final class NativeCandidateProbe {
             var process = new PtyProcessBuilder(new String[] {"/bin/sh", "-c", "printf JHARNESS_NATIVE_SOURCE_PTY; read ack"})
                     .setEnvironment(Map.of("PATH", "/usr/bin:/bin"))
                     .start();
+            Throwable primary = null;
             try {
                 byte[] actual = process.getInputStream().readNBytes(marker.length);
                 if (!java.util.Arrays.equals(marker, actual)) {
@@ -32,11 +33,18 @@ public final class NativeCandidateProbe {
                         || process.exitValue() != 0) {
                     throw new AssertionError("SOURCE_PTY_BEHAVIOR_REJECTED");
                 }
+            } catch (Exception | Error failure) {
+                primary = failure;
+                throw failure;
             } finally {
                 if (process.isAlive()) {
                     process.destroyForcibly();
                     if (!process.waitFor(5, TimeUnit.SECONDS)) {
-                        throw new AssertionError("SOURCE_PTY_CLEANUP_REJECTED");
+                        var cleanup = new AssertionError("SOURCE_PTY_CLEANUP_REJECTED");
+                        if (primary == null) {
+                            throw cleanup;
+                        }
+                        primary.addSuppressed(cleanup);
                     }
                 }
                 process.getInputStream().close();

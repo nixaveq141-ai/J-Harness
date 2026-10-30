@@ -83,7 +83,11 @@ def audit(repository, upstream=False, fetch=None, jna_upstream=False):
         # Inspect the exact bytes whose hash was checked, not a second path open.
         with zipfile.ZipFile(io.BytesIO(raw)) as archive:
             for entry in archive.infolist():
-                if not entry.filename.lower().endswith(SUFFIXES):
+                # pty4j also ships an extensionless Mach-O spawn executable.
+                # Scope the additional rule to its native resource directory;
+                # Java class files can share the universal Mach-O magic.
+                if entry.is_dir() or not (entry.filename.lower().endswith(SUFFIXES)
+                        or artifact == 'pty4j' and entry.filename.startswith('resources/com/pty4j/native/')):
                     continue
                 if len(result['binaries']) >= 128 or entry.file_size > 32 * 1024 * 1024:
                     raise ValueError('Native resource bound')
