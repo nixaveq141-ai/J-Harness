@@ -1,0 +1,15 @@
+{
+  "path": ".build-cache/local-evidence-backups/2026-10-30/two-gap-investigation.zip",
+  "bytes": 3643885,
+  "sha256": "41f128a5b3f94e232547522f639b674814402ea425d1b1e6d0c7b7d3d53909f8",
+  "members": {
+    ".build-cache/two-gap-20261030/mac-originals/12948053633.zip": "634445c3fc196d469cace49f16147edb2f5f3bfbb635ac503160c131a8aaac69",
+    ".build-cache/two-gap-20261030/historical-originals/12948439103.zip": "f128694475ba49ecb6532e239604bb4075484017aecf9c95d4dd7d64d31a6fad",
+    ".build-cache/two-gap-20261030/pe-symbols.json": "b70596955bbf818748fe27fe30676131cad01ab46d25cace84ab018831d02bea",
+    ".build-cache/two-gap-20261030/pe-signatures.json": "9c203c4eb193388a3f28a49adae7720ba1035567f439d82ddcb8cda60316ad52",
+    "docs/testing/M10-two-gap-investigation-2026-10-30.json": "d6760948590008316d3c80298886b35af8c7eb9b837808fb051d481d6b111887",
+    "docs/testing/M10-historical-mac-reproduction-2026-10-30.json": "e87e060565f2d88a67c4b82dcb9021d0179f16b4995724e5a36b1bf29d1dd0de",
+    "docs/testing/M10-native-signatures-2026-10-30.json": "8399ae5ab4a96e33bee723804817f161c86be949de6f3df3172bac5a748917a0"
+  },
+  "localOnly": true
+}

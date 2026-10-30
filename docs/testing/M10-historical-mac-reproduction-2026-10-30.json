@@ -1,0 +1,114 @@
+{
+  "status": "NOT_REPRODUCED_IN_10_ROUNDS",
+  "historicalRevision": "11e4024c090bf1c63c0adecc823de8a86c541d69",
+  "currentCommit": "d57189e4cf8c92c09185faaff3e78466e01ee9f8",
+  "ciRunId": "40990240638",
+  "originalFixtureSha256": "c57f5be3cf71a5926dee20a80d48698c9b755d2baf339268a389b0eb22534239",
+  "instrumentedFixtureSha256": "e2f7fc79c42002fb88ae6dcdde9a38ef20afb42c6d2324615709ec2ec76ff32d",
+  "paidRequests": 0,
+  "rounds": [
+    {
+      "round": 1,
+      "exitCode": 0,
+      "files": {
+        "M10.5.4-models-results.json": "c28a24b5a787bbc8eb19861a43587dd6f80441aaee756af5f5bdad7acb6e8a66",
+        "fixture.log": "7b1b86c11fc51bd3f854e57526a1d1de10c8c46d108331b80bfce4f26f670746",
+        "historical-input-trace.json": "ad3d40fddb0ee293efa33bdaa80b34f63ee17e86687cbb13b17656b4bb30133d"
+      }
+    },
+    {
+      "round": 2,
+      "exitCode": 0,
+      "files": {
+        "M10.5.4-models-results.json": "78ac9d9b4bbb34314c8ec883ac934ef9b5ac243b2d3226bfc7ce8378c431b2b8",
+        "fixture.log": "7b1b86c11fc51bd3f854e57526a1d1de10c8c46d108331b80bfce4f26f670746",
+        "historical-input-trace.json": "6dfd9d2484235d473148804a5404d0084f243041aa5ae539ad3786844a9bd6b5"
+      }
+    },
+    {
+      "round": 3,
+      "exitCode": 0,
+      "files": {
+        "M10.5.4-models-results.json": "3d88ebda81cf256aad934bbacf4379427a0c8f087f4bb5cdddf6699e4fe7f653",
+        "fixture.log": "7b1b86c11fc51bd3f854e57526a1d1de10c8c46d108331b80bfce4f26f670746",
+        "historical-input-trace.json": "725652466f8138d1bfa436a544a10994c87fc2a33e5d1d310c26bf2ac467f22a"
+      }
+    },
+    {
+      "round": 4,
+      "exitCode": 0,
+      "files": {
+        "M10.5.4-models-results.json": "48c31a7ef0eedbf28d675eed5cd0d87a4fb4bc319d00834f8c1ef595dfbaa649",
+        "fixture.log": "7b1b86c11fc51bd3f854e57526a1d1de10c8c46d108331b80bfce4f26f670746",
+        "historical-input-trace.json": "384f824d0fde6af9d2499fa47df230a623225f780f5af31939e9bcb3514cde25"
+      }
+    },
+    {
+      "round": 5,
+      "exitCode": 0,
+      "files": {
+        "M10.5.4-models-results.json": "9e8d04725d96549a51cf42791746f18f08200056ab712846596c5b1a6b15466b",
+        "fixture.log": "7b1b86c11fc51bd3f854e57526a1d1de10c8c46d108331b80bfce4f26f670746",
+        "historical-input-trace.json": "38f933e961c999de6c9308ddb6480217995f2592115997a28efc12260e79e4ca"
+      }
+    },
+    {
+      "round": 6,
+      "exitCode": 0,
+      "files": {
+        "M10.5.4-models-results.json": "232e6ec05029a4fb02f5336364053336f5061aedcc6c9bce3cbc23649d459114",
+        "fixture.log": "7b1b86c11fc51bd3f854e57526a1d1de10c8c46d108331b80bfce4f26f670746",
+        "historical-input-trace.json": "fb7f6164a0090d7075276b9a9bb95a88815f7afe3ceee305eef8e15279d2424b"
+      }
+    },
+    {
+      "round": 7,
+      "exitCode": 0,
+      "files": {
+        "M10.5.4-models-results.json": "c8b17655ba46e9e28e576c98bffabeb921812c2f3c1ff3f68b84ab265e6c4d36",
+        "fixture.log": "7b1b86c11fc51bd3f854e57526a1d1de10c8c46d108331b80bfce4f26f670746",
+        "historical-input-trace.json": "9e1426aa3c846625beff93b235c6b31e840c4500718b78fd5bdea9a37da9b182"
+      }
+    },
+    {
+      "round": 8,
+      "exitCode": 0,
+      "files": {
+        "M10.5.4-models-results.json": "cb8b7a511f6f3e98a6f16a971f079796ad7c7299725d2e122fdbaeb5dff28c20",
+        "fixture.log": "7b1b86c11fc51bd3f854e57526a1d1de10c8c46d108331b80bfce4f26f670746",
+        "historical-input-trace.json": "214764adf9162fd97df24e6b14e10d3c40f8cb59784077468538dbc4bd870082"
+      }
+    },
+    {
+      "round": 9,
+      "exitCode": 0,
+      "files": {
+        "M10.5.4-models-results.json": "78dc54ca7717b676ef7b557c6d2eaf2c8f0b7efdb5bd7c0b3b4718f765671b8e",
+        "fixture.log": "7b1b86c11fc51bd3f854e57526a1d1de10c8c46d108331b80bfce4f26f670746",
+        "historical-input-trace.json": "5bcc986eb67a49a087d06cd76e773655e34a66e8b509855fbacfba264ca0bfbc"
+      }
+    },
+    {
+      "round": 10,
+      "exitCode": 0,
+      "files": {
+        "M10.5.4-models-results.json": "d06b92770108e5392ceb871dabf4c257c827a92d5b25fc73f3c3fcc4031fa979",
+        "fixture.log": "7b1b86c11fc51bd3f854e57526a1d1de10c8c46d108331b80bfce4f26f670746",
+        "historical-input-trace.json": "d1bc5e661d233ef6c33bacdc940f72f904027565e4f9aafcc43f88a03c654fe8"
+      }
+    }
+  ],
+  "artifact": {
+    "file": "12948439103.zip",
+    "sha256": "f128694475ba49ecb6532e239604bb4075484017aecf9c95d4dd7d64d31a6fad",
+    "githubDigest": "sha256:f128694475ba49ecb6532e239604bb4075484017aecf9c95d4dd7d64d31a6fad",
+    "artifactId": 12948439103,
+    "name": "historical-macos-causal-reproduction",
+    "runId": "40990240638",
+    "commit": "d57189e4cf8c92c09185faaff3e78466e01ee9f8",
+    "createdAt": "2026-10-30T02:13:49Z",
+    "expiresAt": "2027-01-28T02:11:36Z"
+  },
+  "independentAudit": "PASS_ORIGINAL_HASHES_AND22_CHECKS_PER_ROUND",
+  "historicalRootCause": "UNDETERMINED"
+}
