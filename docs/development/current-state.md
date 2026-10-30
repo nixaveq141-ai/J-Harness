@@ -12,7 +12,7 @@
 
 M1～M10.5原735验收轮的选定实现/测试/证据任务已完成，M10.5.9该轮完整验收成立、M11准入通过但未实施。实体Windows10、独立WSL、额外CPU及实体Mac验收按用户要求跳过。用户随后明确要求原生供应链和历史macOS异常严格技术闭合，**两项目前仍开放，未接受残余风险归档**。API/Java SDK1.14、独立stdio1.0、JSONL/schema1、Web目录4。仓库公开，验证分支未合并main，未发布Release。
 
-2026-10-30技术闭合进展：原生库存补为48项并核对固定官方分发字节；三平台JNI与POSIX PTY/辅助程序源候选已有构建证据。Windows JNI、Linux JNI/PTY及Mac JNI/PTY加载和缺库拒绝已通过相应专项，Mac延迟读输出的单因素对照及原包/探针字节独立审计见[Mac证据](../testing/M10-mac-native-drain-2026-10-30.json)。这解决了新PTY探针的输出消费问题，不能解释历史models按钮超时。固定官方WinPTY源码DLL/agent已编出；helper及Microsoft Terminal源替代构建继续核对工具链，见[源码构建接续](../testing/native-source-build-2026-10-30.md)。产品原生替换、完整OS/CPE证明及历史按钮根因仍未完成，不覆盖原735产物、未新增付费调用。
+2026-10-30技术闭合进展：原生库存补为48项并核对固定官方分发字节；三平台JNI与POSIX PTY/辅助程序源候选已有构建证据。Windows JNI、Linux JNI/PTY及Mac JNI/PTY加载和缺库拒绝已通过相应专项，Mac延迟读输出的单因素对照及原包/探针字节独立审计见[Mac证据](../testing/M10-mac-native-drain-2026-10-30.json)。这解决了新PTY探针的输出消费问题，不能解释历史models按钮超时。Windows源码轮41019111630已编出WinPTY DLL/agent/helper及OpenConsole/ConPTY DLL，原两ZIP/全部命令日志/输出摘要独立审计通过；官方WinPTY 0.4.3缺当前pty4j两个扩展函数名，已明确拒绝产品替换，不能用源码构建通过冒充ABI验收，见[源码构建接续](../testing/native-source-build-2026-10-30.md)。产品原生替换、完整OS/CPE证明及历史按钮根因仍未完成，不覆盖原735产物、未新增付费调用。
 
 ## 2026-10-29扩展验收
 

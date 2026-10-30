@@ -14,6 +14,14 @@ builder=importlib.util.module_from_spec(spec);spec.loader.exec_module(builder)
 
 
 class WindowsBuildTest(unittest.TestCase):
+    def test_missing_extension_names_reject_replacement_and_presence_is_not_acceptance(self):
+        absent=builder.winpty_eligibility(b'MZcontrolled original ABI')
+        self.assertEqual('REJECTED_REQUIRED_NAMES_ABSENT',absent['status'])
+        self.assertEqual(2,len(absent['missingRequiredNames']))
+        present=builder.winpty_eligibility(b'winpty_get_console_process_list\0winpty_get_current_directory\0')
+        self.assertEqual('ABI_RUNTIME_VALIDATION_REQUIRED',present['status'])
+        self.assertFalse(present['productReplacementApproved'])
+
     def test_shared_toolchain_roots_survive_but_arbitrary_credentials_do_not(self):
         with patch.dict(os.environ,{'ProgramData':'C:/ProgramData','ALLUSERSPROFILE':'C:/ProgramData',
                                   'ComSpec':'C:/Windows/System32/cmd.exe','CommonProgramFiles':'C:/Program Files/Common Files',

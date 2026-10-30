@@ -53,6 +53,15 @@ def outputs(paths,source):
     return result
 
 
+def winpty_eligibility(raw):
+    # Required name absence is sufficient to reject a named JNA lookup. Presence
+    # alone is never ABI/runtime acceptance (it may be a non-export string).
+    required=['winpty_get_console_process_list','winpty_get_current_directory']
+    missing=[name for name in required if name.encode()+b'\0' not in raw]
+    return dict(status='REJECTED_REQUIRED_NAMES_ABSENT' if missing else 'ABI_RUNTIME_VALIDATION_REQUIRED',
+                missingRequiredNames=missing,productReplacementApproved=False)
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--component',choices=['winpty','console'],required=True);args=parser.parse_args()
     if os.environ.get('GITHUB_ACTIONS')!='true' or os.name!='nt':raise ValueError('Use isolated Windows CI')
@@ -89,6 +98,7 @@ def main():
                 reason='Build only upstream build/winpty.dll and build/winpty-agent.exe; no MSYS adapter')
             run(['C:/msys64/usr/bin/make.exe','-j2','build/winpty.dll','build/winpty-agent.exe'],target)
             report['outputs']+=outputs([target/'build/winpty.dll',target/'build/winpty-agent.exe'],target)
+            report['winptyEligibility']=winpty_eligibility((target/'build/winpty.dll').read_bytes())
             helper,source=checkout('pty4j',out,run,env);report['sources']['pty4j']=source
             run(['cmake','-S','native/win-helper','-B','native/helper-build','-G','Visual Studio 17 2022',
                  '-A','x64','-DTARGET_X64=ON','-DCMAKE_POLICY_VERSION_MINIMUM=3.5'],helper)

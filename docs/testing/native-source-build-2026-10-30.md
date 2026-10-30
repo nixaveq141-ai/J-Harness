@@ -20,6 +20,10 @@ Mac 四组合 40999635249 原 ZIP 67e096f7：四种组合均相同握手后退�
 
 ## 本轮实际结论
 
+2026-10-30 最新：41019111630@93ceaaf 两组件源码构建全部成功。WinPTY原ZIP c6885046、Console原ZIP52540faa及源码身份/全部命令日志/五个输出字节均独立核对，见 M10-winpty-source-abi-2026-10-30.json 与 M10-console-source-build-2026-10-30.json。成功原包已另本地备份，前述失败包保留。
+
+WinPTY DLL 缺少当前 pty4j 按名调用的 winpty_get_console_process_list、winpty_get_current_directory。新增必要名字缺失即拒绝的门禁；名字出现也只标ABI运行验证待，不能冒称通过。五项离线控制通过。该候选不能直接替换；产品装配、扩展接口兼容、完整OS/CPE与历史按钮因果仍未完成。
+
 2026-10-30 后续更新：41000910053@4aff934 的 macOS 四种 JNI/PTY 组合及源候选缺库拒绝全部通过；相对于上轮，子进程严格核对 ack 并增加持续读取终端输出。继续做仅推迟输出读取 500ms 的单因素对照，五秒总退出预算不变，未据此推断旧 models 按钮故障。
 
 Windows 原生替代继续：新增固定 rprichard/winpty 0.4.3 提交 3e1ab962、Microsoft Terminal v1.22.11141.0 提交 6ffde348 与 pty4j b7554d6 的隔离源码构建，目标为 WinPTY DLL/agent、win-helper、OpenConsole/conpty.dll。只认新源码构建目录的产物，记录源码及日志摘要；三个来源/输出/失败留证离线反例通过，实际 Windows 专项待。该替代尚未装配，不将原 JetBrains build29 冒称为已证明。

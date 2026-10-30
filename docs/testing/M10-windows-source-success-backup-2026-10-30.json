@@ -1,0 +1,13 @@
+{
+  "path": ".build-cache/local-evidence-backups/2026-10-30/windows-source-success.zip",
+  "bytes": 1334080,
+  "sha256": "84285309a3f5a7001a4d9d53d39baa1bfe756de005102f09f4f0f791a9693f9d",
+  "members": {
+    ".build-cache/windows-pty-source-native-manifests/originals/12960777314.zip": "52540faa7d0928b7df4af6e05ae94bf69f07d0d467ca2a14a7eae5865d144feb",
+    ".build-cache/windows-pty-source-native-manifests/originals/12960857605.zip": "c6885046fe1e1493db9b42afb9055e3b83637048f451f72327351ffa1c8904dc",
+    ".build-cache/windows-pty-source-native-manifests/originals/acquisition.json": "bf14f0a48a692525dba80a3d99d931968b67fd4e718f702686a1761ccb1a0511",
+    "docs/testing/M10-console-source-build-2026-10-30.json": "5b75e872a3501ec065f06890a7a4179aa233762db05a2c5079bae3311f0b700f",
+    "docs/testing/M10-winpty-source-abi-2026-10-30.json": "e708ade8412e487dc42ae49a8fd6297f3ff486f3f073ab7ea1b401b43abea70e"
+  },
+  "localOnly": true
+}

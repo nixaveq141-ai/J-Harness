@@ -1,0 +1,52 @@
+{
+  "status": "SOURCE_BUILD_PASS_PRODUCT_REPLACEMENT_REJECTED",
+  "acquisition": {
+    "file": "12960857605.zip",
+    "sha256": "c6885046fe1e1493db9b42afb9055e3b83637048f451f72327351ffa1c8904dc",
+    "githubDigest": "sha256:c6885046fe1e1493db9b42afb9055e3b83637048f451f72327351ffa1c8904dc",
+    "artifactId": 12960857605,
+    "name": "windows-pty-source-winpty",
+    "runId": "41019111630",
+    "commit": "93ceaafb8f72581944cbc4a1d3796c440e869a62",
+    "createdAt": "2026-10-30T07:18:35Z",
+    "expiresAt": "2027-01-28T07:16:48Z"
+  },
+  "outputs": [
+    {
+      "path": ".build-cache/windows-pty-source/winpty/build/winpty.dll",
+      "bytes": 792108,
+      "sha256": "dc9bc652ba2f263836c4858b909e24b79c5b7cd151b743b4434b3d37b2c68f6d"
+    },
+    {
+      "path": ".build-cache/windows-pty-source/winpty/build/winpty-agent.exe",
+      "bytes": 915787,
+      "sha256": "f09a7dcb855564ef0bd04e0e608d574f79795d5c26a3ddd55a819e70e566df2c"
+    },
+    {
+      "path": ".build-cache/windows-pty-source/pty4j/native/helper-build/Release/win-helper.dll",
+      "bytes": 33792,
+      "sha256": "771bb4b71033df59e52cab48eacb9c2d48e4149c11e3530ef01856ed9dee89c5"
+    }
+  ],
+  "sources": {
+    "winpty": {
+      "repository": "rprichard/winpty",
+      "revision": "3e1ab962d5262dd76159870c6dc0724927ca6a9d"
+    },
+    "pty4j": {
+      "repository": "JetBrains/pty4j",
+      "revision": "b7554d649f6374183040e6554942b6d5b028b5e5"
+    }
+  },
+  "commandCount": 8,
+  "eligibility": {
+    "status": "REJECTED_REQUIRED_NAMES_ABSENT",
+    "missingRequiredNames": [
+      "winpty_get_console_process_list",
+      "winpty_get_current_directory"
+    ],
+    "productReplacementApproved": false
+  },
+  "paidRequests": 0,
+  "productReplacement": false
+}
