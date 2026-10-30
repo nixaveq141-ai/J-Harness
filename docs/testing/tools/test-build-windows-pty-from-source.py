@@ -24,6 +24,7 @@ class WindowsBuildTest(unittest.TestCase):
             def run(*args):self.fail('Overlay source is already present; do not fetch a different registry port')
             result=builder.prefetch_port_trees(tool,manifest,out,run,console)
             self.assertEqual('PINNED_CONSOLE_OVERLAY',result[0]['sourceKind'])
+            self.assertEqual('dep/overlay/fmt/vcpkg.json',result[0]['manifestPath'])
             self.assertEqual(builder.sha(overlay),result[0]['manifestSha256'])
             with self.assertRaisesRegex(ValueError,'manifest root'):builder.prefetch_port_trees(tool,manifest,out,run)
             overlay.write_bytes(json.dumps(dict(name='fmt',version='11.0.2')).encode())

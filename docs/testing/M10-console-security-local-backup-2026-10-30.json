@@ -1,0 +1,9 @@
+{
+  "status": "LOCAL_BACKUP_MEMBER_HASHES_VERIFIED",
+  "path": ".build-cache/local-evidence-backups/2026-10-30/console-security-and-startup-controls.zip",
+  "bytes": 2354066,
+  "sha256": "5950145ed33b4bc8a93e03bbbe8491234e66621cc0d818ede91097568120fb4a",
+  "members": 29,
+  "scope": "Original Console security failure ZIPs, exact NVD/CNA raw snapshots, Windows startup controls and reproducible control scripts. Local only.",
+  "offsite": false
+}

@@ -2,6 +2,8 @@
 
 ## 2026-10-30 安全基线补查
 
+第三轮41035319681@5d7a1a2尚未源码构建：离线测试捕获同一临时目录RUNNER~1/runneradmin短长路径别名，overlay已resolve但根未resolve使relative_to拒绝。现统一解析根后计算全部相对身份，七构建项本地过，远端待；解码job日志SHA及无原始制品边界见[M10-console-path-alias-2026-10-30.json](M10-console-path-alias-2026-10-30.json)。安全/CPE原始响应与前两失败包及启动对照29成员本地备份逐SHA核对，见[M10-console-security-local-backup-2026-10-30.json](M10-console-security-local-backup-2026-10-30.json)。
+
 第二轮41034613023@3aa3fe6原ZIPf77d1c22及所有日志已核对：预取器误将fmt11.1.4当作旧注册表版本，上游实际有固定Console源码overlay。已按上游规则优先绑定该overlay的版本及全部文件SHA，其余四个固定registry tree再预取；新增拒绝覆盖源漂移/缺根测试，构建共七项过，重验待。见[M10-console-overlay-failure-2026-10-30.json](M10-console-overlay-failure-2026-10-30.json)。
 
 NVD精确CPE原始响应及分页完整性核对：旧Terminal1.22匹配54124；新候选1.24.12741.0和源码libffi3.4.4为零匹配。Microsoft Terminal的实际CPE从NVD已分析54124配置取证为microsoft:terminal，不猜为windows_terminal；59117的CNA版本门禁保留，不因NVD未返回而忽略。见[M10-native-exact-cpe-2026-10-30.json](M10-native-exact-cpe-2026-10-30.json)。这不是完整OS或未知原始二进制版本的清白证明。

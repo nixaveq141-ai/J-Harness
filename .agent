@@ -4,6 +4,8 @@
 
 ## 当前接续状态
 
+- 2026-10-30第三轮41035319681@5d7a1a2在离线测试捕获Windows RUNNER~1与runneradmin同目录短/长别名relative_to失败，尚未源码构建、无制品；解码job日志SHA保留。manifest_root先resolve再派生/相对化overlay，七构建项含精确相对清单路径本地过，远端重验待，安全基线与断言未降。29成员2354066字节安全/CPE/前两失败及启动对照本地包已逐SHA核对，M10-console-security-local-backup收据。两项仍未闭合。
+
 - 2026-10-30第二轮41034613023@3aa3fe6原ZIPf77d1c22全部日志核对：fmt11.1.4来自Console固定overlay非旧baseline注册表。预取器改按上游overlay优先，绑定版本及全部文件SHA，其余四registry tree显式归档；七构建项过，实际重验待。NVD实际CPE microsoft:terminal精确查询：旧1.22匹配54124，新1.24.12741.0及自建ffi3.4.4零匹配，原响应/分页核对；CNA59117门禁仍保留，不声称全OS清白。两新收据/源码活动文档更新，产品替代与旧Mac仍开放。
 
 - 2026-10-30新Console首轮41033417202@a98980f失败原ZIP35d195d5全部命令日志SHA核对：固定源/公告门禁/恢复过，MSBuild内vcpkg jsoncpp/ms-gsl历史tree的Git promisor懒加载DNS失败。补五固定版本tree显式archive预取及清单/tree/归档摘要、CI保留tar，六构建及安全/加载控制过，重验待不降基线。另本机隐藏cmd及agent --version三模式各三轮过，绕开Java/JNA的原/源空会话和两文件独立目录仍agent died，触发未明。两新收据/活动源码文档更新，原产物未改；CPE/产品替代/旧Mac仍开放。

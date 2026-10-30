@@ -1,0 +1,16 @@
+{
+  "status": "OFFLINE_GATE_FAILED_NO_SOURCE_BUILD",
+  "runId": "41035319681",
+  "commit": "5d7a1a289b3733a36983be5187449f7d987d711e",
+  "jobId": 123994617537,
+  "decodedLog": {
+    "path": ".build-cache/console-overlay-offline/41035319681-decoded-job.log",
+    "sha256": "f833c4a1bc02fb4eb07f929e226c7ff414f6c7a4eb716331cda776eb1223a93d",
+    "source": "GitHub connector decoded job log; not an original ZIP"
+  },
+  "reason": "Windows 8.3 short temp root differs from resolved long overlay path during relative_to",
+  "fix": "Resolve manifest root once before resolving overlay paths and computing relative identities",
+  "localTests": "Seven builder tests pass; includes exact normalized relative manifest path",
+  "sourceBuildPerformed": false,
+  "remoteRetestPending": true
+}

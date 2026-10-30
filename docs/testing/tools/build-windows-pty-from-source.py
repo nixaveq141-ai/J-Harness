@@ -73,6 +73,7 @@ def prefetch_port_trees(tool,manifest,out,run,manifest_root=None):
     ones. Archive prefetch triggers that fetch with the recorded build environment;
     subsequent vcpkg read-tree can consume the same content-addressed objects.
     """
+    if manifest_root is not None:manifest_root=Path(manifest_root).resolve()
     overlays=manifest.get('vcpkg-configuration',{}).get('overlay-ports',[])
     if overlays and manifest_root is None:raise ValueError('Pinned manifest root required for overlay resolution')
     overlay_roots=[]
