@@ -16,6 +16,17 @@ builder=importlib.util.module_from_spec(spec);spec.loader.exec_module(builder)
 
 
 class SourceBuildTest(unittest.TestCase):
+    def test_cfi_backport_moves_only_three_directives_and_rejects_unknown_source(self):
+        raw=b''.join(b'\tcfi_startproc\nCNAME('+s+b'):\n\tunchanged_instruction\n' for s in [b'ffi_call_SYSV',b'ffi_closure_SYSV',b'ffi_go_closure_SYSV'])
+        with tempfile.TemporaryDirectory() as temp:
+            path=Path(temp)/'sysv.S';path.write_bytes(raw)
+            value=builder.backport_aarch64_cfi(path)
+            self.assertEqual('8308bed5b2423878aa20d7884a99cf2e30b8daf7',value['upstreamCommit'])
+            self.assertEqual(3,path.read_bytes().count(b'unchanged_instruction'))
+            once=path.read_bytes()
+            with self.assertRaises(ValueError):builder.backport_aarch64_cfi(path)
+            self.assertEqual(once,path.read_bytes())
+
     def test_generated_release_files_cannot_overwrite_or_mismatch_source(self):
         with tempfile.TemporaryDirectory() as temp:
             root=Path(temp);jna=root/'jna';source=jna/'native/libffi';source.mkdir(parents=True)

@@ -22,6 +22,18 @@ FFI_BYTES=1362394
 def digest(path):return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def backport_aarch64_cfi(path):
+    before=path.read_bytes();after=before
+    for label in ['ffi_call_SYSV','ffi_closure_SYSV','ffi_go_closure_SYSV']:
+        old=b'\tcfi_startproc\nCNAME('+label.encode()+b'):'
+        if before.count(old)!=1:raise ValueError('Pinned CFI backport anchor mismatch')
+        after=after.replace(old,b'CNAME('+label.encode()+b'):\n\tcfi_startproc',1)
+    path.write_bytes(after)
+    return dict(upstreamCommit='8308bed5b2423878aa20d7884a99cf2e30b8daf7',
+                upstreamPullRequest='https://github.com/libffi/libffi/pull/857',
+                beforeSha256=hashlib.sha256(before).hexdigest(),afterSha256=hashlib.sha256(after).hexdigest())
+
+
 def prepare_libffi(jna,out,fetch=None):
     if fetch is None:
         with urllib.request.urlopen(FFI_URL,timeout=45) as response:raw=response.read(16*1024*1024+1)
@@ -90,7 +102,7 @@ def main():
             target=out/name
             run(['git','-c','http.https://github.com/.extraheader=','clone','--no-checkout','--filter=blob:none',
                  'https://github.com/'+repo+'.git',str(target)],ROOT)
-            run(['git','checkout','--detach',revision],target)
+            run(['git','-c','core.autocrlf=false','checkout','--detach',revision],target)
             actual=subprocess.run(['git','rev-parse','HEAD'],cwd=target,env=env,capture_output=True,check=True).stdout.decode().strip()
             if actual!=revision:raise ValueError('Pinned revision mismatch')
             paths=subprocess.run(['git','ls-files','-z'],cwd=target,env=env,capture_output=True,check=True).stdout.split(b'\0')
@@ -101,8 +113,10 @@ def main():
         makefile=jna/'native/Makefile';before=makefile.read_bytes()
         old=b'FFI_CONFIG=--enable-static --disable-shared --with-pic=yes'
         if before.count(old)!=2:raise ValueError('Pinned libffi build option anchors changed')
-        after=before.replace(old,old+b' --disable-docs');makefile.write_bytes(after)
-        report['sources']['jna']['manualGenerationOnlyPatch']=dict(beforeSha256=hashlib.sha256(before).hexdigest(),afterSha256=hashlib.sha256(after).hexdigest(),option='--disable-docs')
+        after=before.replace(old,old+b' --disable-docs --disable-maintainer-mode');makefile.write_bytes(after)
+        report['sources']['jna']['generatedReleaseModePatch']=dict(beforeSha256=hashlib.sha256(before).hexdigest(),afterSha256=hashlib.sha256(after).hexdigest(),options=['--disable-docs','--disable-maintainer-mode'])
+        if platform.system()=='Darwin':
+            report['sources']['jna']['aarch64CfiBackport']=backport_aarch64_cfi(jna/'native/libffi/src/aarch64/sysv.S')
         run(['gcc','--version'],ROOT,30)
         run(['ant','-Dbuild-native=true','native'],jna)
         candidates=[p for p in (jna/'build').rglob('*') if p.is_file() and p.name in ['jnidispatch.dll','libjnidispatch.so','libjnidispatch.jnilib','libjnidispatch.dylib']]
@@ -114,7 +128,7 @@ def main():
             if not output.resolve().is_relative_to(pty.resolve()):raise ValueError('Output path bound')
             previous=digest(output) if output.exists() else None
             output.unlink(missing_ok=True)
-            command=['make','-C','native','-B','x86_64','CC=clang'] if mac else ['make','-C','native','-B','linux_x86_64','ARCH_FLAG_X86_64=']
+            command=['make','-C','native','-B','x86_64','CC=clang'] if mac else ['make','-C','native','-B','linux_x86_64','ARCH_FLAG_X86_64=','ARCH_X86_64=x86-64']
             run(command,pty)
             if not output.is_file():raise ValueError('Compiled PTY candidate missing')
             report['outputs']['pty']=dict(path=output.relative_to(ROOT).as_posix(),sha256=digest(output),removedPrebuiltSha256=previous)

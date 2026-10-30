@@ -4,6 +4,8 @@
 
 ## 当前接续状态
 
+- 2026-10-30源轮40994571286原三包核对：LinuxJNI c41be9a0已编、PTY也实际编出但目录下划线映射导致未认领；改明确源目标arch目录。Mac命中libffi已知CFI汇编问题，回移官方合并8308bed5三处纯CFI顺序变更，4离线拒绝/不改指令测试过；Windows仍再生automake，补显式发行模式及LF源码检出。尚无候选加载或产品替换，不标两项已关闭。
+
 - 2026-10-30源码轮40993829225三原ZIP摘要核对：Linux已编libffi但缺X11头、Mac触发手册makeinfo、Windows缺aclocal导致再生automake。补完整同版生成输入及一致纳秒时序、仅禁手册生成的显式Makefile补丁，Linux安装所需头包；3离线反例过。可信JNI/PTY候选探针已本机严格编译，尚未运行候选。原生源编译仍未通过；两项未标关闭，无付费/产品替换。
 
 - 2026-10-30源码轮40992578776实际三侧Ant原包已核对：Mac/Win缺autoreconf、Linux LT_SYS_SYMBOL_USCORE宏不兼容。官方libffi3.4.4发行源码SHA d66c56ad已下载，六个configure.ac/Makefile.am与固定JNA树逐Git blob一致；仅补缺失生成文件不覆盖C/现有源，记录全部生成输入SHA，三离线拒绝/保留测试过，修正后CI待。仍无产品替换/闭合声明。
