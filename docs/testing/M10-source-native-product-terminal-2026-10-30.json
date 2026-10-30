@@ -1,0 +1,52 @@
+{
+  "status": "SOURCE_NATIVE_WINDOWS11_PRODUCT_TERMINAL_COMPONENT_PASS_NOT_FULL_PRODUCT_ACCEPTANCE",
+  "previewJarSha256": "56ac3ea944122e8831c2894a8569c1a4aa6fb57978a3b71eca4616455310fb04",
+  "probeSha256": "6bf84cf877e45b44b7ce2173d956741719ddacc7da794f86292b4cf4e479da07",
+  "classSha256": "90a1859275b3f64e6f4785a5bdb0f4fe81d7faf896a47e9c390173224129682e",
+  "sourceNativePreviewReceiptSha256": "17b49c1f204884291fb22240bab53a2893763d67e38a78638347d62b82812a8c",
+  "commands": {
+    "compile": {
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "receiptSha256": "bf9e1ff7393d538e668cc54b7067d58b321662cb9da6f065f70e951834e25ea0"
+    },
+    "product-terminal": {
+      "logSha256": "916e219dd538465f1dbfad6b9a2f41ce525edc16e794ba3dd8dc8e1c7ab66d14",
+      "receiptSha256": "70c80064875e6d77c5492e97e91f52ca8b511e9b30e3de4bdd163aa50bfdf307"
+    }
+  },
+  "paidRequests": 0,
+  "fullProductAcceptance": false,
+  "localWinptyTraceControls": [
+    {
+      "path": ".build-cache/winpty-owned-trace-exit/owned-trace.json",
+      "sha256": "14363d98be6f380d414c5bc162405abf2025da3a9850bc2ee8c4946968bc351e",
+      "agentExitCodeHex": "0xc000013a",
+      "agentExitCodeName": "STATUS_CONTROL_C_EXIT",
+      "triggerUnknown": true
+    },
+    {
+      "path": ".build-cache/winpty-original-owned-trace-exit/owned-trace.json",
+      "sha256": "d18c17526f3afbcb3424045051128871b73010858b40cca50b6f695d170efac6",
+      "agentExitCodeHex": "0xc000013a",
+      "agentExitCodeName": "STATUS_CONTROL_C_EXIT",
+      "triggerUnknown": true
+    }
+  ],
+  "firstProductAttempt": {
+    "status": "REJECTED_EXPLICIT_SHELL_MODE_REQUIRED",
+    "logSha256": "2518f084f8c5e01bcf9c9d64d923790f0fc6ca351fb522f270af37870393c96c",
+    "productBug": false
+  },
+  "localBackup": {
+    "path": ".build-cache/local-evidence-backups/2026-10-30/windows-native-enhanced-and-product.zip",
+    "bytes": 36054815,
+    "sha256": "c7a3ebad9a19c3c9bfbbf4966d4ee7c955552fa945ff7a9dd2db23fb12ea6480",
+    "members": 47,
+    "memberHashesVerified": true
+  },
+  "limits": [
+    "Product terminal component only; original full-product distribution has not been replaced or requalified.",
+    "WinPTY termination trigger and complete OS/CPE assessment remain open.",
+    "Historical macOS models button root cause is not explained by these Windows or PTY results."
+  ]
+}

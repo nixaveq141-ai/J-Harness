@@ -20,6 +20,10 @@ Mac 四组合 40999635249 原 ZIP 67e096f7：四种组合均相同握手后退�
 
 ## 本轮实际结论
 
+增强远端41030432860@0cb0ddd已成功；原ZIP2254d7de/11754474字节经连接器下载后与GitHub摘要核对，固定五文件补丁独立重构、全部命令日志/源码输出/探针Git源码/class/运行JAR逐摘要过。真实ABI无效参数拒绝与错误对象释放现已实测，见[M10-winpty-enhanced-acceptance-2026-10-30.json](M10-winpty-enhanced-acceptance-2026-10-30.json)。
+
+进一步使用源码预览JAR的真实LocalTerminalSession，本机Win11输入/非ASCII目录切换/resize/正常退出/主动stop/timeout及无观察到残留均通过；首个探针误用ARGV启动shell被产品门禁拒绝，保留原记录后改显式CMD模式，并未改产品实现。源WinPTY与原WinPTY+原JNI的独占、自有PID限定调试对照均实际退出0xC000013A（本机ntstatus.h定义STATUS_CONTROL_C_EXIT），触发者仍未知。47成员/36054815字节后续本地证据包逐成员SHA过，见[产品终端专项](M10-source-native-product-terminal-2026-10-30.json)。这些补齐组件真实集成证据，未替代完整产品重验、完整OS/CPE或历史macOS因果。
+
 本机 Windows 11 装配补证：新增 `assemble-native-preview.py`，限定原库存资源及原/新摘要，拒绝覆盖原 JAR/证据，并逐条核对所有非替换条目。六个 Windows x64 资源的预览 JAR 保留其余4531条目；源码 ConPTY 在该预览通过非 ASCII 初始/变化目录、实际进程计数、resize、退出。缺捆绑库时即便系统 ConPTY 可启动也按后端身份拒绝，未冒充源码通过。WinPTY 源候选、原 WinPTY+源 JNI、原 WinPTY+原 JNI、源候选后台桌面对照均在新 cwd 调用前 agent died；不能归因新扩展，也未确定本机环境原因。72成员/60030329字节本地证据包逐成员摘要过，详见 [Windows预览实测](M10-windows-native-preview-2026-10-30.json)。这是组件装配实测，不是完整产品验收；OS/CPE 和历史 models 因果仍开放。
 
 扩展最新：41022750231@e14d279 全部通过，原ZIP bdf90c5b 及固定源/检出字节/五文件补丁/自有header/所有编译和Java日志/三输出/class已独立重构审计。实际非ASCII初始和变化cwd、进程列表、resize、退出、缺库拒绝均过；见 M10-winpty-extension-acceptance-2026-10-30.json。两个扩展接口的兼容阻断已补齐，不等于产品装配/OS-CPE完成。后续增加真实无效参数拒绝与错误对象释放，class集合摘要；自有原生helper函数指针转换消警告，本机严格C++测试过，增强后CI仍待。

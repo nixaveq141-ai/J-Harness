@@ -1,8 +1,10 @@
 # J-Harness 项目接续说明
 
-最后更新：2026-10-29（Asia/Shanghai）。根目录 AGENTS.md 引用本文件。开始实现前阅读，并以当前源码、Git 与验收记录核实日期快照。
+最后更新：2026-10-30（Asia/Shanghai）。根目录 AGENTS.md 引用本文件。开始实现前阅读，并以当前源码、Git 与验收记录核实日期快照。
 
 ## 当前接续状态
+
+- 2026-10-30增强WinPTY41030432860@0cb0ddd全过，原ZIP2254d7de/源码五文件补丁重构/日志/输出/Git探针/class/JAR逐摘要核对，无效参数+错误释放已实测。源码预览JAR真实LocalTerminalSession在本机Win11输入/非ASCII切目录/resize/退出/stop/timeout及无观察残留过，首ARGV探针被显式shell门禁正确拒绝并保留，改CMD探针不改产品。自有PID限定独占trace：源及原+原JNI agent都真实退出0xC000013A STATUS_CONTROL_C_EXIT，触发未知。47成员36054815字节本地备份逐SHA过。新增两收据/产品Java探针；完整产品替换/OS-CPE/历史models根因仍未闭合，无付费。
 
 - 2026-10-30本机Win11源ConPTY装配预览：六资源替换/其余4531条目逐字节不变，非ASCII cwd/计数/resize/退出过，移库即使系统后端可启动也按捆绑身份拒绝。新增只准库存原生资源且绑定原/新SHA的装配工具，装配边界控制及原五/三/七项过；WinPTY源、原+源JNI、原+原JNI、后台桌面对照均先于新cwd调用agent died，本机原因未定，远端通过保留。72成员60030329字节本地备份逐摘要过，M10-windows-native-preview-2026-10-30.json。产品替代/OS-CPE/旧Mac因果仍未闭合，无付费。
 
