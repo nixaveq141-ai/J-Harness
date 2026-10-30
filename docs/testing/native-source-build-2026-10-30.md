@@ -20,6 +20,8 @@ Mac 四组合 40999635249 原 ZIP 67e096f7：四种组合均相同握手后退�
 
 ## 本轮实际结论
 
+本机 Windows 11 装配补证：新增 `assemble-native-preview.py`，限定原库存资源及原/新摘要，拒绝覆盖原 JAR/证据，并逐条核对所有非替换条目。六个 Windows x64 资源的预览 JAR 保留其余4531条目；源码 ConPTY 在该预览通过非 ASCII 初始/变化目录、实际进程计数、resize、退出。缺捆绑库时即便系统 ConPTY 可启动也按后端身份拒绝，未冒充源码通过。WinPTY 源候选、原 WinPTY+源 JNI、原 WinPTY+原 JNI、源候选后台桌面对照均在新 cwd 调用前 agent died；不能归因新扩展，也未确定本机环境原因。72成员/60030329字节本地证据包逐成员摘要过，详见 [Windows预览实测](M10-windows-native-preview-2026-10-30.json)。这是组件装配实测，不是完整产品验收；OS/CPE 和历史 models 因果仍开放。
+
 扩展最新：41022750231@e14d279 全部通过，原ZIP bdf90c5b 及固定源/检出字节/五文件补丁/自有header/所有编译和Java日志/三输出/class已独立重构审计。实际非ASCII初始和变化cwd、进程列表、resize、退出、缺库拒绝均过；见 M10-winpty-extension-acceptance-2026-10-30.json。两个扩展接口的兼容阻断已补齐，不等于产品装配/OS-CPE完成。后续增加真实无效参数拒绝与错误对象释放，class集合摘要；自有原生helper函数指针转换消警告，本机严格C++测试过，增强后CI仍待。
 
 2026-10-30 最新：41019111630@93ceaaf 两组件源码构建全部成功。WinPTY原ZIP c6885046、Console原ZIP52540faa及源码身份/全部命令日志/五个输出字节均独立核对，见 M10-winpty-source-abi-2026-10-30.json 与 M10-console-source-build-2026-10-30.json。成功原包已另本地备份，前述失败包保留。

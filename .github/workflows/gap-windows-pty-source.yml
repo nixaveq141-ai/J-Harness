@@ -45,6 +45,8 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           python docs/testing/tools/test-patch-winpty-directory.py
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python docs/testing/tools/test-assemble-native-preview.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           python docs/testing/tools/test-load-winpty-source-extension.py
       - name: Install signed MSYS build tools
         if: matrix.component == 'winpty'

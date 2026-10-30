@@ -1,0 +1,280 @@
+{
+  "date": "2026-10-30",
+  "status": "WINDOWS11_SOURCE_CONPTY_PREVIEW_AND_NO_FALSE_FALLBACK_PASS_WINPTY_STARTUP_OPEN",
+  "productReplacement": false,
+  "paidRequests": 0,
+  "conpty": {
+    "report": {
+      "status": "WINDOWS_SOURCE_CONPTY_COMPONENT_PREVIEW_PASS",
+      "manifest": {
+        "scope": "Windows x64 source ConPTY native preview; not product acceptance",
+        "baseJarSha256": "4b99a449368afb71e105ed8729ddc5f4c3deaaa0efc500a3d33d8baf1cc6f1d5",
+        "productReplacement": false,
+        "replacements": {
+          "com/sun/jna/win32-x86-64/jnidispatch.dll": {
+            "sha256": "c88e200b240dfa54c5b852a335b28683e64a074d30ceee7c17ffc282058891a2",
+            "origin": {
+              "12962960173.zip": {
+                "sha256": "bdf90c5b5265a37bda382e97a44553f8116ec19fc640f5667cf643102019f3aa",
+                "runId": "41022750231",
+                "commit": "e14d279245cf7912b71c77724ad346e00c82dd29"
+              },
+              "12960777314.zip": {
+                "sha256": "52540faa7d0928b7df4af6e05ae94bf69f07d0d467ca2a14a7eae5865d144feb",
+                "runId": "41019111630",
+                "commit": "93ceaafb8f72581944cbc4a1d3796c440e869a62"
+              }
+            }
+          },
+          "resources/com/pty4j/native/win/x86-64/winpty.dll": {
+            "sha256": "d5c4bdc34112c7a2af79d091574cc26adf287ed0527f17f3a9b22a21f1c4a70b",
+            "origin": {
+              "12962960173.zip": {
+                "sha256": "bdf90c5b5265a37bda382e97a44553f8116ec19fc640f5667cf643102019f3aa",
+                "runId": "41022750231",
+                "commit": "e14d279245cf7912b71c77724ad346e00c82dd29"
+              },
+              "12960777314.zip": {
+                "sha256": "52540faa7d0928b7df4af6e05ae94bf69f07d0d467ca2a14a7eae5865d144feb",
+                "runId": "41019111630",
+                "commit": "93ceaafb8f72581944cbc4a1d3796c440e869a62"
+              }
+            }
+          },
+          "resources/com/pty4j/native/win/x86-64/winpty-agent.exe": {
+            "sha256": "a7e2e8e997036303a313bccfd0267b6bb962b0ca41a1a742bdadddc79caae393",
+            "origin": {
+              "12962960173.zip": {
+                "sha256": "bdf90c5b5265a37bda382e97a44553f8116ec19fc640f5667cf643102019f3aa",
+                "runId": "41022750231",
+                "commit": "e14d279245cf7912b71c77724ad346e00c82dd29"
+              },
+              "12960777314.zip": {
+                "sha256": "52540faa7d0928b7df4af6e05ae94bf69f07d0d467ca2a14a7eae5865d144feb",
+                "runId": "41019111630",
+                "commit": "93ceaafb8f72581944cbc4a1d3796c440e869a62"
+              }
+            }
+          },
+          "resources/com/pty4j/native/win/x86-64/win-helper.dll": {
+            "sha256": "a157c2bdcdd2e650ce83b8648a51611475654f115f6fc28b44b5564738655c99",
+            "origin": {
+              "12962960173.zip": {
+                "sha256": "bdf90c5b5265a37bda382e97a44553f8116ec19fc640f5667cf643102019f3aa",
+                "runId": "41022750231",
+                "commit": "e14d279245cf7912b71c77724ad346e00c82dd29"
+              },
+              "12960777314.zip": {
+                "sha256": "52540faa7d0928b7df4af6e05ae94bf69f07d0d467ca2a14a7eae5865d144feb",
+                "runId": "41019111630",
+                "commit": "93ceaafb8f72581944cbc4a1d3796c440e869a62"
+              }
+            }
+          },
+          "resources/com/pty4j/native/win/x86-64/OpenConsole.exe": {
+            "sha256": "76bf41d650b1080a1b323c0a3d89fd46be167fbdcd572dc93158d609c5b26b84",
+            "origin": {
+              "12962960173.zip": {
+                "sha256": "bdf90c5b5265a37bda382e97a44553f8116ec19fc640f5667cf643102019f3aa",
+                "runId": "41022750231",
+                "commit": "e14d279245cf7912b71c77724ad346e00c82dd29"
+              },
+              "12960777314.zip": {
+                "sha256": "52540faa7d0928b7df4af6e05ae94bf69f07d0d467ca2a14a7eae5865d144feb",
+                "runId": "41019111630",
+                "commit": "93ceaafb8f72581944cbc4a1d3796c440e869a62"
+              }
+            }
+          },
+          "resources/com/pty4j/native/win/x86-64/conpty.dll": {
+            "sha256": "fb88be4f07fe0c6f8395601eb4a04c4a7ebe50e5dbf340e0820aff6724466b14",
+            "origin": {
+              "12962960173.zip": {
+                "sha256": "bdf90c5b5265a37bda382e97a44553f8116ec19fc640f5667cf643102019f3aa",
+                "runId": "41022750231",
+                "commit": "e14d279245cf7912b71c77724ad346e00c82dd29"
+              },
+              "12960777314.zip": {
+                "sha256": "52540faa7d0928b7df4af6e05ae94bf69f07d0d467ca2a14a7eae5865d144feb",
+                "runId": "41019111630",
+                "commit": "93ceaafb8f72581944cbc4a1d3796c440e869a62"
+              }
+            }
+          }
+        }
+      },
+      "previewJarSha256": "56ac3ea944122e8831c2894a8569c1a4aa6fb57978a3b71eca4616455310fb04",
+      "probeSha256": "0fefd102c36d6430d6954fc7e5a5150cd10d274b2ceb837d0abf02820ccb476a",
+      "classFilesSha256": {
+        "WinPtySourceProbe$DirectoryApi.class": "278073c266184dff8ad14aafbdf2b2e7ad8ab5497a8cac2b975b59d830788d96",
+        "WinPtySourceProbe.class": "8f6240fdddf83c2cd8b6d2addf4c3b5ba790a0cd185b138c3af2fba1900d021b"
+      },
+      "results": [
+        {
+          "mode": "conpty",
+          "receiptSha256": "05fbac7da0b7277aa6121bd9568b23d56a4c35b889f0ca036e0cd9a2f741eb35",
+          "logSha256": "99e7ef14d6955c92a2a26b631c5c6569fb97dfb25df8640aa479cff6ea9efc79"
+        }
+      ],
+      "paidRequests": 0,
+      "productReplacement": false
+    },
+    "assembly": {
+      "manifest": {
+        "scope": "Windows x64 source ConPTY native preview; not product acceptance",
+        "baseJarSha256": "4b99a449368afb71e105ed8729ddc5f4c3deaaa0efc500a3d33d8baf1cc6f1d5",
+        "productReplacement": false,
+        "replacements": {
+          "com/sun/jna/win32-x86-64/jnidispatch.dll": {
+            "sha256": "c88e200b240dfa54c5b852a335b28683e64a074d30ceee7c17ffc282058891a2",
+            "origin": {
+              "12962960173.zip": {
+                "sha256": "bdf90c5b5265a37bda382e97a44553f8116ec19fc640f5667cf643102019f3aa",
+                "runId": "41022750231",
+                "commit": "e14d279245cf7912b71c77724ad346e00c82dd29"
+              },
+              "12960777314.zip": {
+                "sha256": "52540faa7d0928b7df4af6e05ae94bf69f07d0d467ca2a14a7eae5865d144feb",
+                "runId": "41019111630",
+                "commit": "93ceaafb8f72581944cbc4a1d3796c440e869a62"
+              }
+            }
+          },
+          "resources/com/pty4j/native/win/x86-64/winpty.dll": {
+            "sha256": "d5c4bdc34112c7a2af79d091574cc26adf287ed0527f17f3a9b22a21f1c4a70b",
+            "origin": {
+              "12962960173.zip": {
+                "sha256": "bdf90c5b5265a37bda382e97a44553f8116ec19fc640f5667cf643102019f3aa",
+                "runId": "41022750231",
+                "commit": "e14d279245cf7912b71c77724ad346e00c82dd29"
+              },
+              "12960777314.zip": {
+                "sha256": "52540faa7d0928b7df4af6e05ae94bf69f07d0d467ca2a14a7eae5865d144feb",
+                "runId": "41019111630",
+                "commit": "93ceaafb8f72581944cbc4a1d3796c440e869a62"
+              }
+            }
+          },
+          "resources/com/pty4j/native/win/x86-64/winpty-agent.exe": {
+            "sha256": "a7e2e8e997036303a313bccfd0267b6bb962b0ca41a1a742bdadddc79caae393",
+            "origin": {
+              "12962960173.zip": {
+                "sha256": "bdf90c5b5265a37bda382e97a44553f8116ec19fc640f5667cf643102019f3aa",
+                "runId": "41022750231",
+                "commit": "e14d279245cf7912b71c77724ad346e00c82dd29"
+              },
+              "12960777314.zip": {
+                "sha256": "52540faa7d0928b7df4af6e05ae94bf69f07d0d467ca2a14a7eae5865d144feb",
+                "runId": "41019111630",
+                "commit": "93ceaafb8f72581944cbc4a1d3796c440e869a62"
+              }
+            }
+          },
+          "resources/com/pty4j/native/win/x86-64/win-helper.dll": {
+            "sha256": "a157c2bdcdd2e650ce83b8648a51611475654f115f6fc28b44b5564738655c99",
+            "origin": {
+              "12962960173.zip": {
+                "sha256": "bdf90c5b5265a37bda382e97a44553f8116ec19fc640f5667cf643102019f3aa",
+                "runId": "41022750231",
+                "commit": "e14d279245cf7912b71c77724ad346e00c82dd29"
+              },
+              "12960777314.zip": {
+                "sha256": "52540faa7d0928b7df4af6e05ae94bf69f07d0d467ca2a14a7eae5865d144feb",
+                "runId": "41019111630",
+                "commit": "93ceaafb8f72581944cbc4a1d3796c440e869a62"
+              }
+            }
+          },
+          "resources/com/pty4j/native/win/x86-64/OpenConsole.exe": {
+            "sha256": "76bf41d650b1080a1b323c0a3d89fd46be167fbdcd572dc93158d609c5b26b84",
+            "origin": {
+              "12962960173.zip": {
+                "sha256": "bdf90c5b5265a37bda382e97a44553f8116ec19fc640f5667cf643102019f3aa",
+                "runId": "41022750231",
+                "commit": "e14d279245cf7912b71c77724ad346e00c82dd29"
+              },
+              "12960777314.zip": {
+                "sha256": "52540faa7d0928b7df4af6e05ae94bf69f07d0d467ca2a14a7eae5865d144feb",
+                "runId": "41019111630",
+                "commit": "93ceaafb8f72581944cbc4a1d3796c440e869a62"
+              }
+            }
+          },
+          "resources/com/pty4j/native/win/x86-64/conpty.dll": {
+            "sha256": "fb88be4f07fe0c6f8395601eb4a04c4a7ebe50e5dbf340e0820aff6724466b14",
+            "origin": {
+              "12962960173.zip": {
+                "sha256": "bdf90c5b5265a37bda382e97a44553f8116ec19fc640f5667cf643102019f3aa",
+                "runId": "41022750231",
+                "commit": "e14d279245cf7912b71c77724ad346e00c82dd29"
+              },
+              "12960777314.zip": {
+                "sha256": "52540faa7d0928b7df4af6e05ae94bf69f07d0d467ca2a14a7eae5865d144feb",
+                "runId": "41019111630",
+                "commit": "93ceaafb8f72581944cbc4a1d3796c440e869a62"
+              }
+            }
+          }
+        }
+      },
+      "previewJarSha256": "56ac3ea944122e8831c2894a8569c1a4aa6fb57978a3b71eca4616455310fb04",
+      "preservedEntries": 4531,
+      "replacedEntries": 6,
+      "status": "NATIVE_PREVIEW_ASSEMBLED_NOT_PRODUCT_ACCEPTANCE"
+    },
+    "missingBundledLibrary": {
+      "exitCode": 1,
+      "logSha256": "a83656fdcf3ff7f1fece5a97117a5029a40921bcf7dac7c15c55052eb6d2f139",
+      "receiptSha256": "5babe85f0cc51825440088625550dabfc46590502d3f99fa2938ccbd07209f78"
+    }
+  },
+  "winptyControls": [
+    {
+      "label": "source",
+      "folder": ".build-cache/source-windows-preview",
+      "exitCode": 1,
+      "logSha256": "473270ec8b2c39a5419b70d23fa0cc6d75b1bc66ad6525851252501e8aa74ce4",
+      "receiptSha256": "d70dd28766aa4a7bbb83fed357ea58e439946ce6e91a83b3dc5d28554f4b33e7"
+    },
+    {
+      "label": "original-winpty-source-jni",
+      "folder": ".build-cache/original-winpty-preview",
+      "exitCode": 1,
+      "logSha256": "54b41db9d19c3f4b0f67d58971548db662a271737157840af88c2fb488cb152b",
+      "receiptSha256": "a852d83a52a9c6ae58faa35d5787f6a4d8605f09897dcc49e430ecc986889759"
+    },
+    {
+      "label": "original-winpty-original-jni",
+      "folder": ".build-cache/original-winpty-all-native-preview",
+      "exitCode": 1,
+      "logSha256": "54b41db9d19c3f4b0f67d58971548db662a271737157840af88c2fb488cb152b",
+      "receiptSha256": "4f60ee5a9eb102959b5debd60e0936eb5419475c478835823a867bca6910bb13"
+    },
+    {
+      "label": "source-background-desktop",
+      "folder": ".build-cache/winpty-background-desktop-control",
+      "exitCode": 1,
+      "logSha256": "54b41db9d19c3f4b0f67d58971548db662a271737157840af88c2fb488cb152b",
+      "receiptSha256": "2210ff6ba32486e3dce5056321a561bd26bb4d319e8a0e2f2908b220945179b6"
+    }
+  ],
+  "interpretation": [
+    "Source ConPTY passes owned non-ASCII cwd changes, process count, resize and exit on local Windows 11.",
+    "ConPTY count subtracts the temporary querying JVM; one owned cmd process is valid. WinPTY persistent agent has a separate count assertion.",
+    "Missing bundled ConPTY is rejected by backend identity even when the system backend can start.",
+    "Source and original WinPTY fail before new cwd calls; original JNI control also fails. This does not establish a source regression or identify the environment cause.",
+    "Remote source WinPTY ABI pass 41022750231 remains valid within its Windows CI scope.",
+    "This is native component preview acceptance, not full product replacement, OS/CPE closure or a historical macOS root cause."
+  ],
+  "localBackup": {
+    "path": ".build-cache/local-evidence-backups/2026-10-30/windows-native-preview.zip",
+    "bytes": 60030329,
+    "sha256": "a896b0450c1d67ba4ef90d895b458ccf6f7d6a8cd1ca5c9954bcd8e2d35c9bab",
+    "members": 72,
+    "memberHashesVerified": true
+  },
+  "toolSha256": {
+    "docs/testing/tools/assemble-native-preview.py": "0b2a15dbf3b7ad8533046893be954ec437a64391db435dccb924f3927a562ec6",
+    "docs/testing/tools/WinPtySourceProbe.java": "0fefd102c36d6430d6954fc7e5a5150cd10d274b2ceb837d0abf02820ccb476a"
+  }
+}

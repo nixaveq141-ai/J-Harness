@@ -14,6 +14,8 @@ M1～M10.5原735验收轮的选定实现/测试/证据任务已完成，M10.5.9�
 
 2026-10-30技术闭合进展：原生库存补为48项并核对固定官方分发字节；三平台JNI与POSIX PTY/辅助程序源候选已有构建证据。Windows JNI、Linux JNI/PTY及Mac JNI/PTY加载和缺库拒绝已通过相应专项，Mac延迟读输出的单因素对照及原包/探针字节独立审计见[Mac证据](../testing/M10-mac-native-drain-2026-10-30.json)。这解决了新PTY探针的输出消费问题，不能解释历史models按钮超时。Windows源码轮41019111630已编出WinPTY DLL/agent/helper及OpenConsole/ConPTY DLL，原两ZIP/全部命令日志/输出摘要独立审计通过；旧WinPTY 0.4.3候选因两个扩展名缺失已拒绝；后续固定7e59fe2并补owned-child cwd RPC，在41022750231通过真实目录变化、进程列表、resize、退出和禁止回退，见[扩展验收](../testing/M10-winpty-extension-acceptance-2026-10-30.json)，仍未冒充完整产品装配验收，见[源码构建接续](../testing/native-source-build-2026-10-30.md)。产品原生替换、完整OS/CPE证明及历史按钮根因仍未完成，不覆盖原735产物、未新增付费调用。
 
+本机 Windows 11 补充：[源码原生装配预览](../testing/M10-windows-native-preview-2026-10-30.json)通过源码 ConPTY 的目录切换、计数、resize、退出及缺捆绑库拒绝；其余4531条 JAR 条目未变。WinPTY 的源码及原分发/原 JNI 对照均启动失败，尚不能定位环境原因；远端 WinPTY ABI 成功范围保留。新增装配摘要/资源边界门禁与反例通过，72成员证据本地备份已核对；整体产品替换、OS/CPE 和历史 macOS 因果仍未关闭。
+
 ## 2026-10-29扩展验收
 
 用户新增授权仅DeepSeek人民币5元，性能大横测留到最终阶段。新独立账本已完成2次HTTP200/真实CLI读需求和新代码生成，预留0.311296元，原2元账本不变；Docker新代码功能专项40844744965已通过，原包/5输入/220CSV案例/错误实现拒绝/隔离清理及4篡改反例独立审计通过。47个原生二进制摘要核对、pty4j23个官方固定提交字节比对通过，但精确构建来源/完整OS-CPE仍未证明。原Mac失败日志重新核对，仍缺因果快照，根因未定。详见[四项接续](../testing/four-followups-2026-10-29.md)、[横测方案](../testing/final-horizontal-benchmark-plan.md)。前述“本次无新付费”为此前最终735验收轮历史状态，不覆盖本节的新授权与实际请求。

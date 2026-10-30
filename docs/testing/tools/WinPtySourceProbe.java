@@ -1,6 +1,8 @@
 import com.pty4j.PtyProcessBuilder;
+import com.pty4j.PtyProcess;
 import com.pty4j.WinSize;
 import com.pty4j.windows.winpty.WinPtyProcess;
+import com.pty4j.windows.conpty.WinConPtyProcess;
 import com.sun.jna.Native;
 import com.sun.jna.Library;
 import com.sun.jna.Pointer;
@@ -37,8 +39,10 @@ public final class WinPtySourceProbe {
             if (value != null) env.put(key, value);
         }
         env.put("JH_MARK", "READY");
+        boolean conpty = args.length > 1 && args[1].equals("conpty");
+        boolean baseline = args.length > 1 && args[1].equals("legacy-baseline");
         var process = new PtyProcessBuilder(new String[] {System.getenv("ComSpec"), "/d", "/q", "/k"})
-                .setDirectory(first.toString()).setEnvironment(env).setUseWinConPty(false)
+                .setDirectory(first.toString()).setEnvironment(env).setUseWinConPty(conpty)
                 .setInitialColumns(100).setInitialRows(30).setRedirectErrorStream(true).start();
         var output = new StringBuilder();
         Thread reader = Thread.ofVirtual().start(() -> {
@@ -56,7 +60,14 @@ public final class WinPtySourceProbe {
             }
         });
         try {
-            if (!(process instanceof WinPtyProcess legacy)) throw new AssertionError("EXPECTED_WINPTY_BACKEND");
+            if (conpty) {
+                if (!(process instanceof WinConPtyProcess modern) || !modern.isBundledConPtyLibrary()) {
+                    throw new AssertionError("EXPECTED_SOURCE_BUNDLED_CONPTY");
+                }
+            } else if (!(process instanceof WinPtyProcess)) {
+                throw new AssertionError("EXPECTED_WINPTY_BACKEND");
+            }
+            if (!conpty && !baseline) {
             DirectoryApi directoryApi = Native.load(Path.of(System.getProperty("pty4j.preferred.native.folder"),
                     "win", "x86-64", "winpty.dll").toString(), DirectoryApi.class);
             var error = new PointerByReference();
@@ -64,21 +75,28 @@ public final class WinPtySourceProbe {
                 throw new AssertionError("INVALID_DIRECTORY_ARGUMENTS_ACCEPTED");
             }
             directoryApi.winpty_error_free(error.getValue());
+            }
             send(process, "echo JH_START_%JH_MARK%");
             await(output, "JH_START_READY");
-            if (!Files.isSameFile(first, Path.of(legacy.getWorkingDirectory()))) throw new AssertionError("INITIAL_CWD_REJECTED");
-            if (legacy.getConsoleProcessCount() < 2) throw new AssertionError("CONSOLE_PROCESS_LIST_REJECTED");
+            if (!Files.isSameFile(first, Path.of(directory(process)))) throw new AssertionError("INITIAL_CWD_REJECTED");
+            int processCount = count(process);
+            System.out.println("SOURCE_CONSOLE_PROCESS_COUNT=" + processCount);
+            // ConPTY subtracts the temporary querying JVM from its count;
+            // WinPTY includes its persistent console agent.
+            if (processCount < (conpty ? 1 : 2)) throw new AssertionError("CONSOLE_PROCESS_LIST_REJECTED");
             send(process, "cd /d \"" + second + "\"");
             send(process, "echo JH_CHANGED_%JH_MARK%");
             await(output, "JH_CHANGED_READY");
-            if (!Files.isSameFile(second, Path.of(legacy.getWorkingDirectory()))) throw new AssertionError("CHANGED_CWD_REJECTED");
-            legacy.setWinSize(new WinSize(93, 27));
-            if (legacy.getWinSize().getColumns() != 93 || legacy.getWinSize().getRows() != 27) {
+            if (!Files.isSameFile(second, Path.of(directory(process)))) throw new AssertionError("CHANGED_CWD_REJECTED");
+            process.setWinSize(new WinSize(93, 27));
+            if (process.getWinSize().getColumns() != 93 || process.getWinSize().getRows() != 27) {
                 throw new AssertionError("RESIZE_REJECTED");
             }
             send(process, "exit /b 0");
             if (!process.waitFor(5, TimeUnit.SECONDS) || process.exitValue() != 0) throw new AssertionError("EXIT_REJECTED");
-            System.out.println("SOURCE_WINPTY_CWD_PROCESS_LIST_RESIZE_AND_EXIT_PASS");
+            System.out.println(conpty ? "SOURCE_CONPTY_CWD_PROCESS_LIST_RESIZE_AND_EXIT_PASS"
+                    : baseline ? "ORIGINAL_WINPTY_BASELINE_CWD_PROCESS_LIST_RESIZE_AND_EXIT_PASS"
+                    : "SOURCE_WINPTY_CWD_PROCESS_LIST_RESIZE_AND_EXIT_PASS");
         } finally {
             if (process.isAlive()) {
                 process.destroyForcibly();
@@ -88,6 +106,16 @@ public final class WinPtySourceProbe {
             process.getOutputStream().close();
             reader.join(1000);
         }
+    }
+
+    private static String directory(PtyProcess process) throws java.io.IOException {
+        return process instanceof WinPtyProcess legacy ? legacy.getWorkingDirectory()
+                : ((WinConPtyProcess) process).getWorkingDirectory();
+    }
+
+    private static int count(PtyProcess process) throws java.io.IOException {
+        return process instanceof WinPtyProcess legacy ? legacy.getConsoleProcessCount()
+                : ((WinConPtyProcess) process).getConsoleProcessCount();
     }
 
     private static void send(Process process, String command) throws Exception {

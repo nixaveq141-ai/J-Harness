@@ -4,6 +4,8 @@
 
 ## 当前接续状态
 
+- 2026-10-30本机Win11源ConPTY装配预览：六资源替换/其余4531条目逐字节不变，非ASCII cwd/计数/resize/退出过，移库即使系统后端可启动也按捆绑身份拒绝。新增只准库存原生资源且绑定原/新SHA的装配工具，装配边界控制及原五/三/七项过；WinPTY源、原+源JNI、原+原JNI、后台桌面对照均先于新cwd调用agent died，本机原因未定，远端通过保留。72成员60030329字节本地备份逐摘要过，M10-windows-native-preview-2026-10-30.json。产品替代/OS-CPE/旧Mac因果仍未闭合，无付费。
+
 - 2026-10-30扩展41022750231@e14d279全过，原ZIPbdf90c5b与编译/探针日志、三DLL/agent输出、Git Java/class、固定Git源+CRLF检出+五文件补丁/自有header已独立重构核对。真实非ASCII初始/变化cwd、进程列表、resize、退出、缺库拒绝均过，两个接口阻断已实测补齐；不是产品装配或OS-CPE。自有helper函数指针转换消警告，本机-Wall/-Wextra/-Werror实际目录/坏描述符过；补真实ABI无效参数/错误释放探针，严格Java过，增强后的CI待。历史按钮仍缺原始因果，不能套用PTY结论。
 
 - 2026-10-30扩展首轮41021962732原ZIP c7f17d3f核对：在补丁SHA门禁而非C++编译失败，Windows AgentMsg/Agent头精确等于Git blob LF→CRLF检出；保留原始beforeSHA并匹配trackedFiles，另记显式CRLF转换及固定blob canonicalSHA，源漂移仍拒绝。新增换行反例，patch三项和加载七拒绝类过，重验待。
