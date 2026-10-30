@@ -1,0 +1,43 @@
+{
+  "status": "PASS",
+  "date": "2026-10-30",
+  "runId": "40987659843",
+  "commit": "da8f0c5964f2365d4a386bea3899064a0ffa653c",
+  "artifact": {
+    "file": "12947114659.zip",
+    "sha256": "3ec3510d38e3a02044b242612931a298134c73b9cba9a9fd2900cc42fd0b66b1",
+    "githubDigest": "sha256:3ec3510d38e3a02044b242612931a298134c73b9cba9a9fd2900cc42fd0b66b1",
+    "artifactId": 12947114659,
+    "name": "multifile-code-isolation",
+    "runId": "40987659843",
+    "commit": "da8f0c5964f2365d4a386bea3899064a0ffa653c",
+    "createdAt": "2026-10-30T01:45:09Z",
+    "expiresAt": "2027-01-28T01:44:52Z"
+  },
+  "sourceInputs": {
+    "docs/testing/tools/multifile-isolated-evaluation.py": "11c0a847a19c4512cf857774ede9145fb2c6f9df2b22ebadac81de59ed710222",
+    "docs/testing/tools/isolated-code-evaluation.py": "2747ae4226b8c5480bfaf5a84278ded9b6407c757790ae950f499875dd99c038",
+    "docs/testing/fixtures/deepseek-multifile-2026-10-29/provenance.json": "707d8ad3a5e81418a73a72de6bbdf82e73bdc46456774d3a455b57b7247001f5",
+    "docs/testing/fixtures/deepseek-multifile-2026-10-29/Price.java.txt": "215600056df90f65396da67ddbc18db5feba4671f1c657298ce76430c642fe2c",
+    "docs/testing/fixtures/deepseek-multifile-2026-10-29/Invoice.java.txt": "61abb602a673f8b97109b3197ff0db1ebd0e53e3262bd8879ab69c455a6ddbec",
+    ".github/workflows/gap-multifile-isolation.yml": "24cbf99a320089c2af2418f5808e8076fa3a2f6f1c37490efa67939d4eef13e7"
+  },
+  "controls": [
+    "fresh PASS",
+    "wrong-price REJECTED",
+    "wrong-total REJECTED"
+  ],
+  "newGrantAttempts": 12,
+  "reservedMicroCny": 1867776,
+  "scope": "Synthetic two-file model writes plus real error-feedback repair; not universal coding quality certification",
+  "remaining": [
+    "Exact native build/CPE evidence",
+    "Historical macOS root cause"
+  ],
+  "localBackup": {
+    "path": ".build-cache/local-evidence-backups/2026-10-30/multifile-raw-evidence.zip",
+    "sha256": "068270d44ba3083d1cd12b97a630f5825d2a6e8665bdb85cdb9cc93f3b39679f",
+    "members": 21,
+    "bytes": 62263
+  }
+}
