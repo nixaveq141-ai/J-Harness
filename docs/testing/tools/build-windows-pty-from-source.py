@@ -19,6 +19,15 @@ PINS={
 def sha(path):return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def build_environment():
+    # Visual Studio discovery and MSBuild FileTracker require the shared
+    # application-data roots; omitting them breaks an otherwise installed SDK.
+    keys=['PATH','SystemRoot','WINDIR','TEMP','TMP','USERPROFILE','ProgramFiles','ProgramFiles(x86)',
+          'ProgramData','ALLUSERSPROFILE','ComSpec','LOCALAPPDATA','APPDATA','HOMEDRIVE','HOMEPATH',
+          'VSINSTALLDIR','VCToolsInstallDir','WindowsSdkDir']
+    return {k:os.environ[k] for k in keys if k in os.environ}
+
+
 def checkout(name,out,run,env):
     repository,revision=PINS[name];target=out/name
     run(['git','-c','http.https://github.com/.extraheader=','clone','--filter=blob:none','--no-checkout',
@@ -46,8 +55,7 @@ def main():
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--component',choices=['winpty','console'],required=True);args=parser.parse_args()
     if os.environ.get('GITHUB_ACTIONS')!='true' or os.name!='nt':raise ValueError('Use isolated Windows CI')
     out=ROOT/'.build-cache/windows-pty-source';out.mkdir(parents=True)
-    env={k:os.environ[k] for k in ['PATH','SystemRoot','WINDIR','TEMP','TMP','USERPROFILE','ProgramFiles','ProgramFiles(x86)',
-        'LOCALAPPDATA','APPDATA','HOMEDRIVE','HOMEPATH','VSINSTALLDIR','VCToolsInstallDir','WindowsSdkDir'] if k in os.environ}
+    env=build_environment()
     env.update(GIT_TERMINAL_PROMPT='0',GCM_INTERACTIVE='Never')
     report=dict(status='INCOMPLETE',runId=os.environ.get('GITHUB_RUN_ID'),commit=os.environ.get('GITHUB_SHA'),
         component=args.component,os=platform.platform(),architecture=platform.machine(),sources={},commands=[],outputs=[],

@@ -37,3 +37,5 @@ M10-native-source-progress-2026-10-30.json 独立绑定七份加载原 ZIP、对
 后续：Mac 两成功原包及固定 Git 探针/日志已独立核验，见 M10-mac-native-drain-2026-10-30.json；8成员本地备份逐成员核对，见 M10-native-drain-local-backup-2026-10-30.json。Windows 第二轮41017274769 Console原包a497008f：NuGet恢复已过，单项目 MSBuild 缺 SolutionDir；补明确根目录，三离线项过。仅重跑Console，保留在途WinPTY。本轮仍未完成产品替代/OS-CPE或历史按钮因果闭合。
 
 Console 第三轮41017612132原ZIP668546d6证实 Windows-latest 的 VS18 环境缺所需 SDK22621。构建专项改为 Windows2022 / VS17，并在源码构建前检查 SDK22621 头文件；依据官方当前镜像清单 https://github.com/actions/runner-images/blob/main/images/windows/Windows2022-Readme.md 。不改上游SDK要求，不将构建环境修正计作产品验收。
+
+41018127320 两原ZIP f00529b2/45ec0c98：Console进入C++调用后 FileTracker CommonApplicationDataPaths 报根为空，CMake 同时无法发现已安装 VS。最小构建环境漏掉 ProgramData/ALLUSERSPROFILE/ComSpec；补三项系统工具链变量，仍不继承其他凭据。新增共享根保留/任意凭据排除测试，四离线项通过，真实复验待。
