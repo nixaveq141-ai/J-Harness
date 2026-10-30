@@ -1,0 +1,159 @@
+{
+  "status": "SOURCE_WINPTY_EXTENSION_ABI_ACCEPTED_NOT_FULL_PRODUCT_ACCEPTANCE",
+  "acquisition": {
+    "file": "12962960173.zip",
+    "sha256": "bdf90c5b5265a37bda382e97a44553f8116ec19fc640f5667cf643102019f3aa",
+    "githubDigest": "sha256:bdf90c5b5265a37bda382e97a44553f8116ec19fc640f5667cf643102019f3aa",
+    "artifactId": 12962960173,
+    "name": "windows-pty-source-winpty",
+    "runId": "41022750231",
+    "commit": "e14d279245cf7912b71c77724ad346e00c82dd29",
+    "createdAt": "2026-10-30T07:54:31Z",
+    "expiresAt": "2027-01-28T07:52:27Z"
+  },
+  "outputs": [
+    {
+      "path": ".build-cache/windows-pty-source/winpty/build/winpty.dll",
+      "bytes": 793869,
+      "sha256": "d5c4bdc34112c7a2af79d091574cc26adf287ed0527f17f3a9b22a21f1c4a70b"
+    },
+    {
+      "path": ".build-cache/windows-pty-source/winpty/build/winpty-agent.exe",
+      "bytes": 920668,
+      "sha256": "a7e2e8e997036303a313bccfd0267b6bb962b0ca41a1a742bdadddc79caae393"
+    },
+    {
+      "path": ".build-cache/windows-pty-source/pty4j/native/helper-build/Release/win-helper.dll",
+      "bytes": 33792,
+      "sha256": "a157c2bdcdd2e650ce83b8648a51611475654f115f6fc28b44b5564738655c99"
+    }
+  ],
+  "directoryExtension": {
+    "baseRevision": "7e59fe2d09adf0fa2aa606492e7ca98efbc5184e",
+    "changes": [
+      {
+        "path": "src/shared/AgentMsg.h",
+        "beforeSha256": "0504cc90f78326384b8eb3f9df528be523a3df505aea97e068f1c8490173d682",
+        "canonicalBeforeSha256": "8ffd9941716b1b056beeff5dd128d0ca3573f4f4a081b3c8155d8afe11b132cc",
+        "lineEndingConversion": "CRLF_TO_LF",
+        "afterSha256": "575555ef4185271b985199cee78d6de18b7c1530cdc0a307b66668da2b5fe544"
+      },
+      {
+        "path": "src/agent/Agent.h",
+        "beforeSha256": "8c926b88ace49e1a37f82854daac1a5fa0cc0ca571a9983c11ab6571a02dadd3",
+        "canonicalBeforeSha256": "a9522c989c09818ab0751249e6278f83118853619a5d67e4ae7f60204bc746da",
+        "lineEndingConversion": "CRLF_TO_LF",
+        "afterSha256": "88ccc01b9ee2d36b00fa1c0b36c1513bda7f930d57b31d93966f9a696122989f"
+      },
+      {
+        "path": "src/agent/Agent.cc",
+        "beforeSha256": "ff7aa76354bfb4d050e1151e955594ccc1ffbd9c8cc29b6a1250dd8016c51c90",
+        "canonicalBeforeSha256": "b665784b6eef00607848ba04142a2120f59c4171995ed0171492debfe2a52e65",
+        "lineEndingConversion": "CRLF_TO_LF",
+        "afterSha256": "fa6f34fce2b1aa2ba278886f9e07dd59d910cc82d4d7edba7df7a256f3069f8a"
+      },
+      {
+        "path": "src/include/winpty.h",
+        "beforeSha256": "712c16b74ebe99ad6a897b9d014bc9e4501b1bfd3bb0536f3bd640af2be88c32",
+        "canonicalBeforeSha256": "07be0f1cad79c8439c40448381e24a212deeb6bbf22e90713da1a8297b3016f6",
+        "lineEndingConversion": "CRLF_TO_LF",
+        "afterSha256": "1e65b447d8006301ce0696f488cc37fbdf18fd6a5ba57f96a51e97efc89bf094"
+      },
+      {
+        "path": "src/libwinpty/winpty.cc",
+        "beforeSha256": "28de02ca3e1831a1d8fabada4ca3909fa929fd9cd8dfa903275cbeec65ca8ace",
+        "canonicalBeforeSha256": "10a1e68fcd02e7978c612c69be397bb4774d153556fc637203ebc178cabfb19c",
+        "lineEndingConversion": "CRLF_TO_LF",
+        "afterSha256": "ad4e1badcd6db6f497bc56bb857c7bb00849ad878006123ca385ebc0a1a3a769"
+      }
+    ],
+    "ownedChildHelperSha256": "ff831577d4ade98b26f7c76b71c8f362de21ba94cedd20e906034baaea692443",
+    "policy": "Only agent-owned child handle; cross-bitness, changing descriptors and insufficient buffers fail explicitly"
+  },
+  "sourceRevision": "7e59fe2d09adf0fa2aa606492e7ca98efbc5184e",
+  "nativeLoad": {
+    "status": "SOURCE_WINPTY_CWD_PROCESS_LIST_RESIZE_EXIT_AND_NO_FALLBACK_PASS",
+    "commit": "e14d279245cf7912b71c77724ad346e00c82dd29",
+    "runId": "41022750231",
+    "jarSha256": "f8d2a1bb455a2b94c61c826ca1b408bd3adbf33667fd58c1d6ed4b150d44218a",
+    "probeSha256": "37403c2f6085be82d791ab48b9805355062154b95a85ed5af9c3ec62be50b165",
+    "jniSha256": "c88e200b240dfa54c5b852a335b28683e64a074d30ceee7c17ffc282058891a2",
+    "nativeSha256": {
+      "winpty.dll": "d5c4bdc34112c7a2af79d091574cc26adf287ed0527f17f3a9b22a21f1c4a70b",
+      "winpty-agent.exe": "a7e2e8e997036303a313bccfd0267b6bb962b0ca41a1a742bdadddc79caae393",
+      "win-helper.dll": "a157c2bdcdd2e650ce83b8648a51611475654f115f6fc28b44b5564738655c99"
+    },
+    "probes": [
+      {
+        "label": "compile",
+        "argv": [
+          "C:\\hostedtoolcache\\windows\\Java_Temurin-Hotspot_jdk\\21.0.12-101.0\\x64\\bin\\javac.exe",
+          "--release",
+          "21",
+          "-proc:none",
+          "-Xlint:all",
+          "-Werror",
+          "-encoding",
+          "UTF-8",
+          "-cp",
+          "D:\\a\\J-Harness\\J-Harness\\harness-cli\\target\\harness-cli-0.1.0-SNAPSHOT.jar",
+          "-d",
+          "D:\\a\\J-Harness\\J-Harness\\.build-cache\\windows-winpty-load\\classes",
+          "D:\\a\\J-Harness\\J-Harness\\docs\\testing\\tools\\WinPtySourceProbe.java"
+        ],
+        "exitCode": 0,
+        "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "label": "source-positive",
+        "argv": [
+          "C:\\hostedtoolcache\\windows\\Java_Temurin-Hotspot_jdk\\21.0.12-101.0\\x64\\bin\\java.exe",
+          "-Djna.nounpack=true",
+          "-Djna.nosys=true",
+          "-Djna.boot.library.path=D:\\a\\J-Harness\\J-Harness\\.build-cache\\verified-source-jni\\jna\\build\\native-win32-x86-64",
+          "-Dpty4j.preferred.native.folder=D:\\a\\J-Harness\\J-Harness\\.build-cache\\windows-winpty-load\\native",
+          "-cp",
+          "D:\\a\\J-Harness\\J-Harness\\harness-cli\\target\\harness-cli-0.1.0-SNAPSHOT.jar;D:\\a\\J-Harness\\J-Harness\\.build-cache\\windows-winpty-load\\classes",
+          "WinPtySourceProbe",
+          "D:\\a\\J-Harness\\J-Harness\\.build-cache\\windows-winpty-load\\source-positive-work"
+        ],
+        "exitCode": 0,
+        "logSha256": "94d2728307f75705058885f60bda28491f30a76c046327895f26198f4703c1c1"
+      },
+      {
+        "label": "missing-library-rejected",
+        "argv": [
+          "C:\\hostedtoolcache\\windows\\Java_Temurin-Hotspot_jdk\\21.0.12-101.0\\x64\\bin\\java.exe",
+          "-Djna.nounpack=true",
+          "-Djna.nosys=true",
+          "-Djna.boot.library.path=D:\\a\\J-Harness\\J-Harness\\.build-cache\\verified-source-jni\\jna\\build\\native-win32-x86-64",
+          "-Dpty4j.preferred.native.folder=D:\\a\\J-Harness\\J-Harness\\.build-cache\\windows-winpty-load\\empty",
+          "-cp",
+          "D:\\a\\J-Harness\\J-Harness\\harness-cli\\target\\harness-cli-0.1.0-SNAPSHOT.jar;D:\\a\\J-Harness\\J-Harness\\.build-cache\\windows-winpty-load\\classes",
+          "WinPtySourceProbe",
+          "D:\\a\\J-Harness\\J-Harness\\.build-cache\\windows-winpty-load\\missing-library-rejected-work"
+        ],
+        "exitCode": 1,
+        "logSha256": "803b0cc7f1b6c4d871feb32aadb200dd100deb5c214a9d16a902bd47eeea454f"
+      }
+    ],
+    "paidRequests": 0,
+    "productReplacement": false,
+    "classSha256": "4d0321f289d4a0a5a5a1f8e46f9ff23a92b9f862699dae45098808e24e85b018"
+  },
+  "verified": [
+    "All source command logs",
+    "All original native output bytes",
+    "Exact patch reconstruction from fixed Git blobs and declared CRLF checkout",
+    "Trusted Java probe Git bytes and compiled class",
+    "Non-ASCII initial and changed cwd",
+    "Console process list",
+    "Resize",
+    "Normal exit",
+    "Missing-library rejection"
+  ],
+  "paidRequests": 0,
+  "productReplacement": false,
+  "completeOsCpeAssessment": false,
+  "historicalModelsRootCauseEstablished": false
+}

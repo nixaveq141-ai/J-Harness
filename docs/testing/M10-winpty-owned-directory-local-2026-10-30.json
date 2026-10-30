@@ -1,0 +1,37 @@
+{
+  "status": "PASS",
+  "scope": "Owned-process native directory helper only; not full product acceptance",
+  "os": "Windows-11-10.0.26200-SP0",
+  "sourceSha256": {
+    "docs/testing/native/winpty-owned-directory.h": "9122f53997f5647ce92cd4759863b33e91a0135caa3ddc168be405b30922b1e3",
+    "docs/testing/native/winpty-directory-probe.cpp": "c794004405fa51a7b07a1393b133142ad30935280280cd1a915d956cdcf81866"
+  },
+  "executableSha256": "b1e83d2edb9c739ec5268f7e1716ba406dbd025a4ed518e2ee91f3d0a852865b",
+  "commands": [
+    {
+      "argv": [
+        "C:/msys64/mingw64/bin/g++.exe",
+        "-std=c++11",
+        "-Wall",
+        "-Wextra",
+        "-Werror",
+        "-municode",
+        "docs/testing/native/winpty-directory-probe.cpp",
+        "-o",
+        "D:\\Documents\\my projects\\J-Harness\\.build-cache\\owned-directory-local\\probe-strict.exe"
+      ],
+      "exitCode": 0,
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "argv": [
+        "D:\\Documents\\my projects\\J-Harness\\.build-cache\\owned-directory-local\\probe-strict.exe",
+        "D:\\Documents\\my projects\\J-Harness\\.build-cache\\owned-directory-local\\first",
+        "D:\\Documents\\my projects\\J-Harness\\.build-cache\\owned-directory-local\\second"
+      ],
+      "exitCode": 0,
+      "logSha256": "bd6218537104969a4ebc09584989e5cc250d31d2c4faff54f3b6f0ee3fbf72af"
+    }
+  ],
+  "paidRequests": 0
+}

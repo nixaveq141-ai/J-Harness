@@ -2,6 +2,9 @@ import com.pty4j.PtyProcessBuilder;
 import com.pty4j.WinSize;
 import com.pty4j.windows.winpty.WinPtyProcess;
 import com.sun.jna.Native;
+import com.sun.jna.Library;
+import com.sun.jna.Pointer;
+import com.sun.jna.ptr.PointerByReference;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -10,6 +13,10 @@ import java.util.concurrent.TimeUnit;
 
 /** Trusted native ABI probe: no model output or project code is executed. */
 public final class WinPtySourceProbe {
+    public interface DirectoryApi extends Library {
+        int winpty_get_current_directory(Pointer session, int length, Pointer buffer, PointerByReference error);
+        void winpty_error_free(Pointer error);
+    }
     private WinPtySourceProbe() {}
 
     public static void main(String[] args) throws Exception {
@@ -50,6 +57,13 @@ public final class WinPtySourceProbe {
         });
         try {
             if (!(process instanceof WinPtyProcess legacy)) throw new AssertionError("EXPECTED_WINPTY_BACKEND");
+            DirectoryApi directoryApi = Native.load(Path.of(System.getProperty("pty4j.preferred.native.folder"),
+                    "win", "x86-64", "winpty.dll").toString(), DirectoryApi.class);
+            var error = new PointerByReference();
+            if (directoryApi.winpty_get_current_directory(null, 0, null, error) != 0 || error.getValue() == null) {
+                throw new AssertionError("INVALID_DIRECTORY_ARGUMENTS_ACCEPTED");
+            }
+            directoryApi.winpty_error_free(error.getValue());
             send(process, "echo JH_START_%JH_MARK%");
             await(output, "JH_START_READY");
             if (!Files.isSameFile(first, Path.of(legacy.getWorkingDirectory()))) throw new AssertionError("INITIAL_CWD_REJECTED");

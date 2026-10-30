@@ -83,6 +83,7 @@ def main():
             '-cp',str(jar),'-d',str(classes),str(probe)])
         if code:raise ValueError('Trusted source probe compilation rejected')
         report['classSha256']=sha(classes/'WinPtySourceProbe.class')
+        report['classFilesSha256']={path.name:sha(path) for path in classes.glob('*.class')}
         folder=out/'native/win/x86-64';folder.mkdir(parents=True)
         for name,path in native.items():
             shutil.copyfile(path,folder/name)

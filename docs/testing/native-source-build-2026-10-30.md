@@ -20,6 +20,8 @@ Mac 四组合 40999635249 原 ZIP 67e096f7：四种组合均相同握手后退�
 
 ## 本轮实际结论
 
+扩展最新：41022750231@e14d279 全部通过，原ZIP bdf90c5b 及固定源/检出字节/五文件补丁/自有header/所有编译和Java日志/三输出/class已独立重构审计。实际非ASCII初始和变化cwd、进程列表、resize、退出、缺库拒绝均过；见 M10-winpty-extension-acceptance-2026-10-30.json。两个扩展接口的兼容阻断已补齐，不等于产品装配/OS-CPE完成。后续增加真实无效参数拒绝与错误对象释放，class集合摘要；自有原生helper函数指针转换消警告，本机严格C++测试过，增强后CI仍待。
+
 2026-10-30 最新：41019111630@93ceaaf 两组件源码构建全部成功。WinPTY原ZIP c6885046、Console原ZIP52540faa及源码身份/全部命令日志/五个输出字节均独立核对，见 M10-winpty-source-abi-2026-10-30.json 与 M10-console-source-build-2026-10-30.json。成功原包已另本地备份，前述失败包保留。
 
 WinPTY DLL 缺少当前 pty4j 按名调用的 winpty_get_console_process_list、winpty_get_current_directory。新增必要名字缺失即拒绝的门禁；名字出现也只标ABI运行验证待，不能冒称通过。五项离线控制通过。该候选不能直接替换；产品装配、扩展接口兼容、完整OS/CPE与历史按钮因果仍未完成。

@@ -6,6 +6,7 @@
 #pragma once
 #include <windows.h>
 #include <winternl.h>
+#include <cstring>
 #include <string>
 
 inline bool jhDirectoryDescriptorValid(const UNICODE_STRING &value) {
@@ -22,7 +23,10 @@ inline DWORD jhOwnedChildDirectory(HANDLE child, std::wstring &result) {
     if (!IsWow64Process(GetCurrentProcess(), &ownWow) || !IsWow64Process(child, &childWow)) return GetLastError();
     if (ownWow != childWow) return ERROR_NOT_SUPPORTED;
     typedef NTSTATUS (NTAPI *Query)(HANDLE, PROCESSINFOCLASS, PVOID, ULONG, PULONG);
-    auto query = reinterpret_cast<Query>(GetProcAddress(GetModuleHandleW(L"ntdll.dll"), "NtQueryInformationProcess"));
+    auto symbol = GetProcAddress(GetModuleHandleW(L"ntdll.dll"), "NtQueryInformationProcess");
+    Query query = nullptr;
+    static_assert(sizeof(query) == sizeof(symbol), "Windows function pointer representation required");
+    std::memcpy(&query, &symbol, sizeof(query));
     if (!query) return ERROR_PROC_NOT_FOUND;
     PROCESS_BASIC_INFORMATION info = {};
     if (query(child, ProcessBasicInformation, &info, sizeof(info), nullptr) < 0) return ERROR_ACCESS_DENIED;

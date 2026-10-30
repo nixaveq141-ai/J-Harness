@@ -81,6 +81,7 @@ jobs:
             .build-cache/windows-pty-source/*.log
             .build-cache/windows-winpty-load/
             winpty-probe-build.log
+            harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar
             .build-cache/windows-pty-source/winpty/build/winpty.dll
             .build-cache/windows-pty-source/winpty/build/winpty-agent.exe
             .build-cache/windows-pty-source/pty4j/native/helper-build/Release/win-helper.dll

@@ -4,6 +4,8 @@
 
 ## 当前接续状态
 
+- 2026-10-30扩展41022750231@e14d279全过，原ZIPbdf90c5b与编译/探针日志、三DLL/agent输出、Git Java/class、固定Git源+CRLF检出+五文件补丁/自有header已独立重构核对。真实非ASCII初始/变化cwd、进程列表、resize、退出、缺库拒绝均过，两个接口阻断已实测补齐；不是产品装配或OS-CPE。自有helper函数指针转换消警告，本机-Wall/-Wextra/-Werror实际目录/坏描述符过；补真实ABI无效参数/错误释放探针，严格Java过，增强后的CI待。历史按钮仍缺原始因果，不能套用PTY结论。
+
 - 2026-10-30扩展首轮41021962732原ZIP c7f17d3f核对：在补丁SHA门禁而非C++编译失败，Windows AgentMsg/Agent头精确等于Git blob LF→CRLF检出；保留原始beforeSHA并匹配trackedFiles，另记显式CRLF转换及固定blob canonicalSHA，源漂移仍拒绝。新增换行反例，patch三项和加载七拒绝类过，重验待。
 
 - 2026-10-30继续兼容闭合：固定官方WinPTY master7e59fe2已有进程列表，新增精确五文件SHA门禁的owned-child cwd RPC补丁，不按任意PID打开进程；描述符有界/交叉位数拒绝/缓冲不足报错。新增原生目录切换和无效描述符探针，以及Java真实WinPTY非ASCII目录切换/进程列表/resize/退出/移库拒绝专项。两patch离线项、七加载拒绝反例、原五项及严格Java编译过；实际Windows专项待，尚未产品替换或全闭合。
