@@ -20,6 +20,10 @@ Mac 四组合 40999635249 原 ZIP 67e096f7：四种组合均相同握手后退�
 
 ## 本轮实际结论
 
+2026-10-30 后续更新：41000910053@4aff934 的 macOS 四种 JNI/PTY 组合及源候选缺库拒绝全部通过；相对于上轮，子进程严格核对 ack 并增加持续读取终端输出。继续做仅推迟输出读取 500ms 的单因素对照，五秒总退出预算不变，未据此推断旧 models 按钮故障。
+
+Windows 原生替代继续：新增固定 rprichard/winpty 0.4.3 提交 3e1ab962、Microsoft Terminal v1.22.11141.0 提交 6ffde348 与 pty4j b7554d6 的隔离源码构建，目标为 WinPTY DLL/agent、win-helper、OpenConsole/conpty.dll。只认新源码构建目录的产物，记录源码及日志摘要；三个来源/输出/失败留证离线反例通过，实际 Windows 专项待。该替代尚未装配，不将原 JetBrains build29 冒称为已证明。
+
 40999943560@7e9cf04 的常规 class 入口也在四组合中同样失败。原 ZIP 3025356a 已核对，超时 OS 存活布尔为 true，pty4j reaper 停在 `wait_for_child_process_exit`。不能将失败归因于仅自建库或仅源码启动器，也不能把这项新探针失败解释为历史 models 按钮超时的原因。
 
 M10-native-source-progress-2026-10-30.json 独立绑定七份加载原 ZIP、对应 Git 探针输入、每个探针日志及预编译 class 摘要。原生库存 48 项已补全官方分发字节核对；Windows/Linux/macOS JNI 已自建，Linux PTY 正反对照通过，macOS PTY 候选仍拒绝。没有替换当前产品中的库。

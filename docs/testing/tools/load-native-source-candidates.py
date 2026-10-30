@@ -99,10 +99,11 @@ def main():
     result=subprocess.run(compile_command,cwd=ROOT,env=env,stdin=subprocess.DEVNULL,capture_output=True,timeout=30)
     compile_log=out/'probe-compile.log';compile_log.write_bytes(result.stdout+result.stderr)
     report['probeCompilation']=dict(argv=compile_command,exitCode=result.returncode,logSha256=sha(compile_log))
-    def run(label,jni_folder,pty_folder=None,success=True,required=True):
+    def run(label,jni_folder,pty_folder=None,success=True,required=True,defer_drain=False):
         command=[str(java),'-Djna.nounpack=true','-Djna.nosys=true','-Djna.boot.library.path='+str(jni_folder)]
         if pty_folder is not None:command+=['-Dpty4j.preferred.native.folder='+str(pty_folder)]
         command+=['-cp',str(jar)+os.pathsep+str(classes),'NativeCandidateProbe']+(['pty'] if pty_folder is not None else [])
+        if defer_drain:command+=['defer-drain']
         result=subprocess.run(command,cwd=ROOT,env=env,stdin=subprocess.DEVNULL,capture_output=True,timeout=30)
         raw=result.stdout+result.stderr
         if len(raw)>65536:raise ValueError('Probe output bound')
@@ -130,6 +131,8 @@ def main():
                 run('original-jni-original-pty',original_jni,original_pty,required=False)
                 run('source-jni-original-pty',jna.parent,original_pty,required=False)
                 run('original-jni-source-pty',original_jni,root,required=False)
+                run('original-pty-deferred-drain',original_jni,original_pty,defer_drain=True)
+                run('source-pty-deferred-drain',jna.parent,root,defer_drain=True)
             run('pty-positive',jna.parent,root)
             run('pty-missing-rejected',jna.parent,empty,success=False)
         if (sha(jar)!=report['jarSha256'] or sha(jna)!=report['jniSha256']

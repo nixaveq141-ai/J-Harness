@@ -1,0 +1,46 @@
+name: Pinned Windows PTY source candidates
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: windows-latest
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        component: [winpty, console]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: microsoft/setup-msbuild@v2
+      - uses: NuGet/setup-nuget@v2
+      - name: Verify source pin and failed-attempt controls offline
+        run: python docs/testing/tools/test-build-windows-pty-from-source.py
+      - name: Install signed MSYS build tools
+        if: matrix.component == 'winpty'
+        shell: pwsh
+        run: |
+          & 'C:\msys64\usr\bin\bash.exe' -lc 'pacman -S --noconfirm --needed make gcc mingw-w64-x86_64-gcc'
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          'C:\msys64\usr\bin' | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
+          'C:\msys64\mingw64\bin' | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
+      - name: Build fixed reviewed source only
+        run: python docs/testing/tools/build-windows-pty-from-source.py --component ${{ matrix.component }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: windows-pty-source-${{ matrix.component }}
+          include-hidden-files: true
+          retention-days: 90
+          path: |
+            .build-cache/windows-pty-source/report.json
+            .build-cache/windows-pty-source/*.log
+            .build-cache/windows-pty-source/winpty/build/winpty.dll
+            .build-cache/windows-pty-source/winpty/build/winpty-agent.exe
+            .build-cache/windows-pty-source/pty4j/native/helper-build/Release/win-helper.dll
+            .build-cache/windows-pty-source/console/bin/**/OpenConsole.exe
+            .build-cache/windows-pty-source/console/bin/**/conpty.dll

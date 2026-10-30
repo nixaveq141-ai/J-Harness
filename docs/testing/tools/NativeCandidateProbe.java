@@ -17,7 +17,7 @@ public final class NativeCandidateProbe {
         if (Native.getLastError() != 1701) {
             throw new AssertionError("SOURCE_JNI_CALL_REJECTED");
         }
-        if (args.length == 1 && args[0].equals("pty")) {
+        if (args.length >= 1 && args[0].equals("pty")) {
             byte[] marker = "JHARNESS_NATIVE_SOURCE_PTY".getBytes(StandardCharsets.US_ASCII);
             var process = new PtyProcessBuilder(new String[] {"/bin/sh", "-c",
                     "printf JHARNESS_NATIVE_SOURCE_PTY; IFS= read -r ack; test \"$ack\" = ack && printf JHARNESS_NATIVE_ACK"})
@@ -32,7 +32,7 @@ public final class NativeCandidateProbe {
                 process.getOutputStream().write("ack\n".getBytes(StandardCharsets.US_ASCII));
                 process.getOutputStream().flush();
                 var acknowledged = new AtomicBoolean();
-                Thread.ofVirtual().name("probe-ack-reader").start(() -> {
+                Thread reader = Thread.ofVirtual().name("probe-ack-reader").unstarted(() -> {
                     try {
                         var bytes = new java.io.ByteArrayOutputStream();
                         for (int i = 0; i < 128; i++) {
@@ -48,7 +48,12 @@ public final class NativeCandidateProbe {
                         // Closed by the owned-process cleanup path; no acknowledgement.
                     }
                 });
-                if (!process.waitFor(5, TimeUnit.SECONDS)
+                long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(5);
+                if (args.length == 2 && args[1].equals("defer-drain")) {
+                    System.out.println("PTY_EXIT_BEFORE_DRAIN=" + process.waitFor(500, TimeUnit.MILLISECONDS));
+                }
+                reader.start();
+                if (!process.waitFor(Math.max(1, deadline - System.nanoTime()), TimeUnit.NANOSECONDS)
                         || process.exitValue() != 0) {
                     System.out.println("PTY_CHILD_ACKNOWLEDGED=" + acknowledged.get());
                     var status = new ProcessBuilder("/bin/ps", "-o", "state=", "-p", Long.toString(process.pid())).start();
