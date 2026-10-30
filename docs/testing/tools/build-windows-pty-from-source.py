@@ -13,8 +13,10 @@ ROOT=Path(__file__).resolve().parents[3]
 PINS={
     'winpty':('rprichard/winpty','7e59fe2d09adf0fa2aa606492e7ca98efbc5184e'),
     'pty4j':('JetBrains/pty4j','b7554d649f6374183040e6554942b6d5b028b5e5'),
-    'console':('microsoft/terminal','6ffde34897e99a57a56ec52c12e1bf2730ceed71'),
+    'console':('microsoft/terminal','7ff11ee107c984e236960ec948b450ccbc10187b'),
+    'vcpkg':('microsoft/vcpkg','fe1cde61e971d53c9687cf9a46308f8f55da19fa'),
 }
+CONSOLE_VERSION='1.24.12741.0'
 
 
 def sha(path):return hashlib.sha256(path.read_bytes()).hexdigest()
@@ -115,6 +117,17 @@ def main():
             run(['cmake','--build','native/helper-build','--config','Release'],helper)
             report['outputs']+=outputs([helper/'native/helper-build/Release/win-helper.dll'],helper)
         else:
+            spec=importlib.util.spec_from_file_location('console_security',Path(__file__).with_name('console-security-baseline.py'))
+            security=importlib.util.module_from_spec(spec);spec.loader.exec_module(security)
+            report['enumeratedVendorSecurityGate']=security.validate(PINS['console'][1],CONSOLE_VERSION)
+            manifest=json.loads((target/'vcpkg.json').read_bytes())
+            if manifest.get('builtin-baseline')!=PINS['vcpkg'][1]:raise ValueError('Pinned vcpkg baseline drift rejected')
+            vcpkg,tool_source=checkout('vcpkg',out,run,env);report['sources']['vcpkg']=tool_source
+            env.update(VCPKG_ROOT=str(vcpkg),VCPKG_DISABLE_METRICS='1',VCPKG_BINARY_SOURCES='clear',
+                       VCPKG_DOWNLOADS=str(out/'vcpkg-downloads'))
+            run(['cmd.exe','/d','/c','bootstrap-vcpkg.bat','-disableMetrics'],vcpkg)
+            report['sources']['vcpkg']['bootstrapExecutableSha256']=sha(vcpkg/'vcpkg.exe')
+            run([str(vcpkg/'vcpkg.exe'),'version'],vcpkg,30)
             run(['nuget.exe','help','restore'],target,30)
             run(['nuget.exe','restore','OpenConsole.sln','-NonInteractive'],target)
             # Native dependencies live in standalone packages.config manifests;
@@ -126,6 +139,12 @@ def main():
             for project in ['src/host/exe/Host.EXE.vcxproj','src/winconpty/dll/winconptydll.vcxproj']:
                 run(['MSBuild.exe',project,'/m:2','/p:SolutionDir='+target.as_posix()+'/',
                      '/p:Configuration=Release','/p:Platform=x64','/verbosity:minimal','/nologo'],target,1200)
+            installed=target/'obj/x64/vcpkg'
+            report['sources']['console']['vcpkgInstalledFiles']={p.relative_to(installed).as_posix():sha(p)
+                for p in installed.rglob('*') if p.is_file() and not p.is_symlink()}
+            report['sources']['console']['vcpkgDownloadedInputs']={p.relative_to(out/'vcpkg-downloads').as_posix():sha(p)
+                for p in (out/'vcpkg-downloads').rglob('*') if p.is_file() and not p.is_symlink()}
+            report['sources']['console']['vcpkgBinaryCachePolicy']='clear; source builds, no external binary cache'
             found={name:[p for p in target.rglob(name) if p.is_file() and 'Release' in p.parts] for name in ['OpenConsole.exe','conpty.dll']}
             if any(len(values)!=1 for values in found.values()):raise ValueError('Ambiguous or missing compiled console outputs')
             report['outputs']+=outputs([v[0] for v in found.values()],target)

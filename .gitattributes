@@ -11,6 +11,7 @@ web-ui.cmd -text
 scripts/open-workbench.ps1 text eol=lf
 *.py text eol=lf
 docs/testing/native/** text eol=lf
+docs/testing/native-security/** -text
 *.yml text eol=lf
 # Preserve original legal-resource bytes and their recorded hashes on every OS.
 third-party/** -text

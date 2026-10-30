@@ -1,0 +1,42 @@
+{
+  "status": "SECURITY_BASELINE_GATE_IMPLEMENTED_FIXED_CONSOLE_SOURCE_BUILD_PENDING",
+  "date": "2026-10-30",
+  "oldSourceRevision": "6ffde34897e99a57a56ec52c12e1bf2730ceed71",
+  "oldSourceVersion": "1.22.11141.0",
+  "newSourceRevision": "7ff11ee107c984e236960ec948b450ccbc10187b",
+  "newSourceVersion": "1.24.12741.0",
+  "vcpkgBaseline": "fe1cde61e971d53c9687cf9a46308f8f55da19fa",
+  "findings": [
+    {
+      "id": "CVE-2026-54124",
+      "oldWholeProductVersionWithinAffectedRange": true,
+      "bundledSubsetExposureProven": false,
+      "reviewedFixedVersion": "1.24.11321.0"
+    },
+    {
+      "id": "CVE-2026-59117",
+      "oldWholeProductVersionWithinAffectedRange": true,
+      "bundledSubsetExposureProven": false,
+      "reviewedFixedVersion": "1.24.11321.0"
+    }
+  ],
+  "falsePositiveReferences": [
+    {
+      "id": "CVE-2026-96951",
+      "actualMicrosoftCnaProduct": "Windows Shell; not a Windows Terminal product advisory"
+    },
+    {
+      "id": "CVE-2026-56171",
+      "actualMicrosoftCnaProduct": "Windows RDP; not a Windows Terminal product advisory"
+    }
+  ],
+  "oldCandidatePromotion": "BLOCKED_BY_ENUMERATED_VENDOR_FLOORS",
+  "fullCpeClearance": false,
+  "paidRequests": 0,
+  "originalProductChanged": false,
+  "notes": [
+    "Prior keyword query Microsoft Terminal included Terminal Server noise and did not establish Windows Terminal coverage.",
+    "Prior functional ABI/product-terminal pass receipts remain functional evidence only; they do not establish security clearance.",
+    "Exact vendor records and fixed source release are reviewed; current build and compatibility evidence still required."
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "component": "microsoft/terminal",
+  "sourceRevision": "7ff11ee107c984e236960ec948b450ccbc10187b",
+  "sourceVersion": "1.24.12741.0",
+  "release": "https://github.com/microsoft/terminal/releases/tag/v1.24.12741.0",
+  "advisories": [
+    {
+      "id": "CVE-2026-54124",
+      "file": "CVE-2026-54124.json",
+      "sha256": "9eaab4aa701c907fa0b9940c1b44c44314ef0c7b32811fe6ca88c7e9c00db453",
+      "fixedVersion": "1.24.11321.0",
+      "url": "https://github.com/CVEProject/cvelistV5/blob/main/cves/2026/54xxx/CVE-2026-54124.json"
+    },
+    {
+      "id": "CVE-2026-59117",
+      "file": "CVE-2026-59117.json",
+      "sha256": "233c79d30f3e52782b6c16cb867a62d780579b0a89955cd650b163b6119c7b63",
+      "fixedVersion": "1.24.11321.0",
+      "url": "https://github.com/CVEProject/cvelistV5/blob/main/cves/2026/59xxx/CVE-2026-59117.json"
+    }
+  ],
+  "scope": "Enumerated Microsoft CNA version floors only. Whole-product affected versions do not prove bundled ConPTY/OpenConsole subset exposure. Not a complete OS/CPE assessment."
+}

@@ -1,5 +1,11 @@
 # 固定源码原生候选构建
 
+## 2026-10-30 安全基线补查
+
+原关键字 Microsoft Terminal 查询包含旧 Terminal Server，并未覆盖 Windows Terminal 产品。Microsoft CNA 的 [CVE-2026-54124](https://github.com/CVEProject/cvelistV5/blob/main/cves/2026/54xxx/CVE-2026-54124.json) 与 [CVE-2026-59117](https://github.com/CVEProject/cvelistV5/blob/main/cves/2026/59xxx/CVE-2026-59117.json) 将相应 Terminal 产品低于1.24.11321.0列入影响范围。旧源码候选1.22.11141.0不能获得安全放行；整产品版本范围不等于已经证明捆绑ConPTY/OpenConsole子集可被利用。原功能通过证据保留，但不作漏洞清白证明。
+
+候选固定到官方1.24维护版1.24.12741.0的7ff11ee107c984e236960ec948b450ccbc10187b，SDK22621/v143要求已从固定源码核实。其vcpkg基线固定fe1cde61，禁止外部二进制缓存，记录实际工具、源码、下载输入与安装文件摘要。增加公告快照摘要/数值版本/精确产品范围门禁，拒绝旧版本、错误产品、摘要漂移及未知范围语义。新加载器要求当轮源提交/实际双项目编译/安全门禁，并以既验WinPTY及JNI精确输出组装六资源预览，再跑真实ABI、禁止系统回退和产品终端。离线控制过；新候选实际构建与运行待CI。CVE-2026-96951实际为Windows Shell、CVE-2026-56171为RDP，不误写成Terminal子组件漏洞；历史Mac异常也不据此归因。见[M10-console-security-progress-2026-10-30.json](M10-console-security-progress-2026-10-30.json)。
+
 本轮按用户要求继续技术闭合，转为构建可追溯替代候选。JNA固定c366bc4，pty4j固定b7554d6。三平台记录实际OS/架构、Java/Ant、每条构建命令/退出码/日志摘要、Git提交、完整已跟踪源文件摘要和构建时源码差异。
 
 Linux/macOS尝试重编JNA和POSIX PTY；Windows尝试重编JNA。POSIX PTY先删除自有新克隆目录内的对应预编译输出，再调用固定上游Make目标，防止把原包冒称自建。原产物、依赖版本和支持矩阵保持不变；候选未通过装配与原生/完整验收前不替换产品。

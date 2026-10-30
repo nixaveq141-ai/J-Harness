@@ -18,6 +18,8 @@ M1～M10.5原735验收轮的选定实现/测试/证据任务已完成，M10.5.9�
 
 增强WinPTY远端[41030432860](https://github.com/nixaveq141-ai/J-Harness/actions/runs/41030432860)成功，原包/固定源补丁/Git探针/class/日志/JAR独立核验，见[增强验收](../testing/M10-winpty-enhanced-acceptance-2026-10-30.json)。[源码候选产品终端专项](../testing/M10-source-native-product-terminal-2026-10-30.json)在Win11真实LocalTerminalSession通过输入、目录切换、resize、退出、停止、超时清理；源与原WinPTY均实际以STATUS_CONTROL_C_EXIT退出，触发原因待。47成员本地后续备份已校验；组件集成补证不冒充完整产品原生替换、OS/CPE或旧Mac根因闭合。
 
+2026-10-30补查安全公告：旧Terminal1.22源码候选落在CVE-2026-54124/59117公布的整产品影响版本范围内，不能凭此前功能测试放行；捆绑子集适用性尚未证明。新增精确官方公告快照与版本回退门禁，并推进固定1.24.12741.0源码、固定vcpkg基线/禁二进制缓存、双组件装配及真实产品终端CI验证；本地拒绝控制过，远端待。原735产物未改、完整OS/CPE未关闭，详见[安全进度](../testing/M10-console-security-progress-2026-10-30.json)。
+
 ## 2026-10-29扩展验收
 
 用户新增授权仅DeepSeek人民币5元，性能大横测留到最终阶段。新独立账本已完成2次HTTP200/真实CLI读需求和新代码生成，预留0.311296元，原2元账本不变；Docker新代码功能专项40844744965已通过，原包/5输入/220CSV案例/错误实现拒绝/隔离清理及4篡改反例独立审计通过。47个原生二进制摘要核对、pty4j23个官方固定提交字节比对通过，但精确构建来源/完整OS-CPE仍未证明。原Mac失败日志重新核对，仍缺因果快照，根因未定。详见[四项接续](../testing/four-followups-2026-10-29.md)、[横测方案](../testing/final-horizontal-benchmark-plan.md)。前述“本次无新付费”为此前最终735验收轮历史状态，不覆盖本节的新授权与实际请求。
