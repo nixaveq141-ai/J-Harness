@@ -87,7 +87,8 @@ def main():
             run(['nuget.exe','help','restore'],target,30)
             run(['nuget.exe','restore','OpenConsole.sln','-NonInteractive'],target)
             for project in ['src/host/exe/Host.EXE.vcxproj','src/winconpty/dll/winconptydll.vcxproj']:
-                run(['MSBuild.exe',project,'/m:2','/p:Configuration=Release','/p:Platform=x64','/verbosity:minimal','/nologo'],target,1200)
+                run(['MSBuild.exe',project,'/m:2','/p:SolutionDir='+target.as_posix()+'/',
+                     '/p:Configuration=Release','/p:Platform=x64','/verbosity:minimal','/nologo'],target,1200)
             found={name:[p for p in target.rglob(name) if p.is_file() and 'Release' in p.parts] for name in ['OpenConsole.exe','conpty.dll']}
             if any(len(values)!=1 for values in found.values()):raise ValueError('Ambiguous or missing compiled console outputs')
             report['outputs']+=outputs([v[0] for v in found.values()],target)

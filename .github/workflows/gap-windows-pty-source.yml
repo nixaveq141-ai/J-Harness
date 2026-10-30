@@ -1,9 +1,11 @@
 name: Pinned Windows PTY source candidates
 on:
   workflow_dispatch:
-  push:
-    branches: [codex/m1059-full-validation]
-    paths: [.github/workflows/gap-windows-pty-source.yml]
+    inputs:
+      scope:
+        type: choice
+        default: all
+        options: [all, console, winpty]
 permissions:
   contents: read
 jobs:
@@ -13,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        component: [winpty, console]
+        component: ${{ fromJSON(inputs.scope == 'console' && '["console"]' || inputs.scope == 'winpty' && '["winpty"]' || '["winpty","console"]') }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

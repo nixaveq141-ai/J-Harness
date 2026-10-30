@@ -1,0 +1,16 @@
+{
+  "path": ".build-cache/local-evidence-backups/2026-10-30/native-drain-windows-first.zip",
+  "bytes": 336409,
+  "sha256": "49dc9946e2812fe3d52f28c414fb428f3a0bf1b7eedded07832ec0e64a98312f",
+  "members": {
+    "docs/testing/M10-mac-native-drain-2026-10-30.json": "251d11df53dec6510c499402ebbd22a41e62504a03a537f9c284eabecca2b90a",
+    ".build-cache/native-source-load-fifth/originals/12952859605.zip": "67a422d7b6561b44eed75ac82334d5cecb62919c04bd82bfdc88aa5e92e3a110",
+    ".build-cache/native-source-load-fifth/originals/acquisition.json": "d2798e7c6a73ce938a894894a35640c909266a663c67f771f66ede9db23cc142",
+    ".build-cache/native-source-load-sixth/originals/12953372593.zip": "a6c4ba5ac86b4779fa92e46bd921193cf343bea05299af77628bd05e6b4fca24",
+    ".build-cache/native-source-load-sixth/originals/acquisition.json": "9a8c6864ec2fe56822a6cf6fb66e923360e85ea553d86ea9bffa41864f00d1e8",
+    ".build-cache/windows-pty-source-first/originals/12953118122.zip": "e277162f3dacf0cb43b143d7faa4f9bc821136596b0c24969e16d4ece697cc58",
+    ".build-cache/windows-pty-source-first/originals/12953518340.zip": "0d16b4d26ea9d13f4256f9c3e59ee1a0c302a2d4352c575116c5d0b90af2e1cb",
+    ".build-cache/windows-pty-source-first/originals/acquisition.json": "560f8816bb92fcc704dbc832de32cf1c9953569bd8dee0cffeae7ff1e8bb7f24"
+  },
+  "localOnly": true
+}

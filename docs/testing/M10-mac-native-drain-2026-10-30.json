@@ -1,0 +1,220 @@
+{
+  "status": "MAC_SOURCE_CANDIDATE_LOADING_AND_DRAIN_CONTROL_PASS",
+  "evidence": [
+    {
+      "acquisition": {
+        "file": "12952859605.zip",
+        "sha256": "67a422d7b6561b44eed75ac82334d5cecb62919c04bd82bfdc88aa5e92e3a110",
+        "githubDigest": "sha256:67a422d7b6561b44eed75ac82334d5cecb62919c04bd82bfdc88aa5e92e3a110",
+        "artifactId": 12952859605,
+        "name": "native-source-load-macos-latest",
+        "runId": "41000910053",
+        "commit": "4aff93478290f4340292635e9cf8d52049cfcc22",
+        "createdAt": "2026-10-30T04:05:52Z",
+        "expiresAt": "2027-01-28T04:05:13Z"
+      },
+      "report": {
+        "status": "SOURCE_CANDIDATE_LOAD_AND_NO_FALLBACK_PASS",
+        "commit": "4aff93478290f4340292635e9cf8d52049cfcc22",
+        "runId": "41000910053",
+        "sourceRun": "40998915552",
+        "sourceCommit": "3571d2269895644e9888963fbf54a4cf101c9597",
+        "os": "macOS-26.6.2-arm64-arm-64bit",
+        "jarSha256": "b5734abcfc708bd86d80de3ad74258ee2e62ac967295f3a1e48e8b8b686a667c",
+        "probeSha256": "7134d3bd9fe6e1c206e3a915163e8e3dac1db272d58148b6cc8770f67d5322dc",
+        "jniSha256": "ebd9fd7c720728ddd3c515f5f96ba6c3a7ce06f20c1d0e4a8eaf63e54341f357",
+        "ptySha256": "db26759cc11b61585dc7fabbf32e4074f7c511f94051a9cb10160b8700b75766",
+        "sourceReportSha256": "67014ebac68c59b03d85012a5ab44f971e37bd1df7492d865c665f35887d4a9e",
+        "probes": [
+          {
+            "label": "jni-positive",
+            "exitCode": 0,
+            "logSha256": "5657946b89e7710b13b2bcab5ec453fb8182fcd2bc10961d62f289476e907938",
+            "behaviorPassed": true,
+            "required": true
+          },
+          {
+            "label": "jni-missing-rejected",
+            "exitCode": 1,
+            "logSha256": "3e91e3f85c1e610ff85fc905e732c12bd021d30deaf31147a3737004797ea765",
+            "behaviorPassed": false,
+            "required": true
+          },
+          {
+            "label": "original-jni-original-pty",
+            "exitCode": 0,
+            "logSha256": "4ffdeaacba951cba22cbb5740cb0f0c968e0e1f5bac326e2686a9d98cf4ed5a1",
+            "behaviorPassed": true,
+            "required": false
+          },
+          {
+            "label": "source-jni-original-pty",
+            "exitCode": 0,
+            "logSha256": "4ffdeaacba951cba22cbb5740cb0f0c968e0e1f5bac326e2686a9d98cf4ed5a1",
+            "behaviorPassed": true,
+            "required": false
+          },
+          {
+            "label": "original-jni-source-pty",
+            "exitCode": 0,
+            "logSha256": "4ffdeaacba951cba22cbb5740cb0f0c968e0e1f5bac326e2686a9d98cf4ed5a1",
+            "behaviorPassed": true,
+            "required": false
+          },
+          {
+            "label": "pty-positive",
+            "exitCode": 0,
+            "logSha256": "4ffdeaacba951cba22cbb5740cb0f0c968e0e1f5bac326e2686a9d98cf4ed5a1",
+            "behaviorPassed": true,
+            "required": true
+          },
+          {
+            "label": "pty-missing-rejected",
+            "exitCode": 1,
+            "logSha256": "927813dd1345027312be3544cb2eb77d366e29cc0c565108d2032a9c5f79bbb4",
+            "behaviorPassed": false,
+            "required": true
+          }
+        ],
+        "paidRequests": 0,
+        "productReplacement": false,
+        "ptyHelperSha256": "99dc2da73d03f94efef5d7988f0705551805f2c4e25d7cf4f11ee3e4c80f2e10",
+        "probeCompilation": {
+          "argv": [
+            "/Users/runner/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.12-101.0/arm64/Contents/Home/bin/javac",
+            "--release",
+            "21",
+            "-proc:none",
+            "-Xlint:all",
+            "-Werror",
+            "-cp",
+            "/Users/runner/work/J-Harness/J-Harness/harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar",
+            "-d",
+            "/Users/runner/work/J-Harness/J-Harness/.build-cache/native-source-load/classes",
+            "/Users/runner/work/J-Harness/J-Harness/docs/testing/tools/NativeCandidateProbe.java"
+          ],
+          "exitCode": 0,
+          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "probeClassSha256": "73c9bc3cc9741a2b4aa6e9e1a61f34991b82df72efe73c2163a1eedbe4df733c"
+      }
+    },
+    {
+      "acquisition": {
+        "file": "12953372593.zip",
+        "sha256": "a6c4ba5ac86b4779fa92e46bd921193cf343bea05299af77628bd05e6b4fca24",
+        "githubDigest": "sha256:a6c4ba5ac86b4779fa92e46bd921193cf343bea05299af77628bd05e6b4fca24",
+        "artifactId": 12953372593,
+        "name": "native-source-load-macos-latest",
+        "runId": "41001582685",
+        "commit": "6c6f8d3d3270555229319374a0287cf328975a0c",
+        "createdAt": "2026-10-30T04:12:55Z",
+        "expiresAt": "2027-01-28T04:12:19Z"
+      },
+      "report": {
+        "status": "SOURCE_CANDIDATE_LOAD_AND_NO_FALLBACK_PASS",
+        "commit": "6c6f8d3d3270555229319374a0287cf328975a0c",
+        "runId": "41001582685",
+        "sourceRun": "40998915552",
+        "sourceCommit": "3571d2269895644e9888963fbf54a4cf101c9597",
+        "os": "macOS-26.6.2-arm64-arm-64bit",
+        "jarSha256": "b5734abcfc708bd86d80de3ad74258ee2e62ac967295f3a1e48e8b8b686a667c",
+        "probeSha256": "b76b25cb32327665951e4edf4927042589b98b1f12018f70bf79e2a5a859afd8",
+        "jniSha256": "ebd9fd7c720728ddd3c515f5f96ba6c3a7ce06f20c1d0e4a8eaf63e54341f357",
+        "ptySha256": "db26759cc11b61585dc7fabbf32e4074f7c511f94051a9cb10160b8700b75766",
+        "sourceReportSha256": "67014ebac68c59b03d85012a5ab44f971e37bd1df7492d865c665f35887d4a9e",
+        "probes": [
+          {
+            "label": "jni-positive",
+            "exitCode": 0,
+            "logSha256": "5657946b89e7710b13b2bcab5ec453fb8182fcd2bc10961d62f289476e907938",
+            "behaviorPassed": true,
+            "required": true
+          },
+          {
+            "label": "jni-missing-rejected",
+            "exitCode": 1,
+            "logSha256": "3e91e3f85c1e610ff85fc905e732c12bd021d30deaf31147a3737004797ea765",
+            "behaviorPassed": false,
+            "required": true
+          },
+          {
+            "label": "original-jni-original-pty",
+            "exitCode": 0,
+            "logSha256": "4ffdeaacba951cba22cbb5740cb0f0c968e0e1f5bac326e2686a9d98cf4ed5a1",
+            "behaviorPassed": true,
+            "required": false
+          },
+          {
+            "label": "source-jni-original-pty",
+            "exitCode": 0,
+            "logSha256": "4ffdeaacba951cba22cbb5740cb0f0c968e0e1f5bac326e2686a9d98cf4ed5a1",
+            "behaviorPassed": true,
+            "required": false
+          },
+          {
+            "label": "original-jni-source-pty",
+            "exitCode": 0,
+            "logSha256": "4ffdeaacba951cba22cbb5740cb0f0c968e0e1f5bac326e2686a9d98cf4ed5a1",
+            "behaviorPassed": true,
+            "required": false
+          },
+          {
+            "label": "original-pty-deferred-drain",
+            "exitCode": 0,
+            "logSha256": "aeda87a868148715816d8aaa42c238fdff8323899ec3a1320c11d1e65c99ba24",
+            "behaviorPassed": true,
+            "required": true
+          },
+          {
+            "label": "source-pty-deferred-drain",
+            "exitCode": 0,
+            "logSha256": "aeda87a868148715816d8aaa42c238fdff8323899ec3a1320c11d1e65c99ba24",
+            "behaviorPassed": true,
+            "required": true
+          },
+          {
+            "label": "pty-positive",
+            "exitCode": 0,
+            "logSha256": "4ffdeaacba951cba22cbb5740cb0f0c968e0e1f5bac326e2686a9d98cf4ed5a1",
+            "behaviorPassed": true,
+            "required": true
+          },
+          {
+            "label": "pty-missing-rejected",
+            "exitCode": 1,
+            "logSha256": "927813dd1345027312be3544cb2eb77d366e29cc0c565108d2032a9c5f79bbb4",
+            "behaviorPassed": false,
+            "required": true
+          }
+        ],
+        "paidRequests": 0,
+        "productReplacement": false,
+        "ptyHelperSha256": "99dc2da73d03f94efef5d7988f0705551805f2c4e25d7cf4f11ee3e4c80f2e10",
+        "probeCompilation": {
+          "argv": [
+            "/Users/runner/hostedtoolcache/Java_Temurin-Hotspot_jdk/21.0.12-101.0/arm64/Contents/Home/bin/javac",
+            "--release",
+            "21",
+            "-proc:none",
+            "-Xlint:all",
+            "-Werror",
+            "-cp",
+            "/Users/runner/work/J-Harness/J-Harness/harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar",
+            "-d",
+            "/Users/runner/work/J-Harness/J-Harness/.build-cache/native-source-load/classes",
+            "/Users/runner/work/J-Harness/J-Harness/docs/testing/tools/NativeCandidateProbe.java"
+          ],
+          "exitCode": 0,
+          "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "probeClassSha256": "9f9dbccc1ab245785d5909ec0ce0c9f7b96c393b373029b621a76ab4921e9054"
+      }
+    }
+  ],
+  "historicalModelsIncidentRootCauseEstablished": false,
+  "productReplacement": false,
+  "fullSupplyChainClosure": false,
+  "conclusion": "Original and source PTY both fail to confirm exit while output is withheld for 500ms; both exit successfully after output reader starts within unchanged total five seconds. This diagnoses the new probe, not the historical disabled-send incident.",
+  "paidRequests": 0
+}
