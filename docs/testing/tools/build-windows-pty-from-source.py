@@ -68,7 +68,15 @@ def main():
         target,source=checkout(args.component,out,run,env);report['sources'][args.component]=source
         if args.component=='winpty':
             # Build only the native Windows DLL/agent targets, not the MSYS adapter.
-            run(['C:/msys64/usr/bin/bash.exe','./configure'],target)
+            run(['C:/msys64/mingw64/bin/g++.exe','--version'],target,30)
+            # Upstream configure insists on an MSYS adapter compiler even when
+            # no adapter target is requested. Generate its native-only inputs
+            # explicitly; do not edit or substitute any upstream C++ source.
+            config=target/'config.mk'
+            config.write_bytes(('UNIX_CXX=/usr/bin/g++\nUNIX_LDFLAGS_STATIC=\n'
+                'MINGW_CXX=/mingw64/bin/g++\nCOMMIT_HASH='+PINS['winpty'][1]+'\nCOMMIT_HASH_DEP=config.mk\n').encode())
+            report['sources']['winpty']['nativeOnlyConfig']=dict(sha256=sha(config),
+                reason='Build only upstream build/winpty.dll and build/winpty-agent.exe; no MSYS adapter')
             run(['C:/msys64/usr/bin/make.exe','-j2','build/winpty.dll','build/winpty-agent.exe'],target)
             report['outputs']+=outputs([target/'build/winpty.dll',target/'build/winpty-agent.exe'],target)
             helper,source=checkout('pty4j',out,run,env);report['sources']['pty4j']=source
@@ -76,7 +84,8 @@ def main():
             run(['cmake','--build','native/helper-build','--config','Release'],helper)
             report['outputs']+=outputs([helper/'native/helper-build/Release/win-helper.dll'],helper)
         else:
-            run(['nuget.exe','restore','OpenConsole.sln','-NonInteractive','-Verbosity','minimal'],target)
+            run(['nuget.exe','help','restore'],target,30)
+            run(['nuget.exe','restore','OpenConsole.sln','-NonInteractive'],target)
             for project in ['src/host/exe/Host.EXE.vcxproj','src/winconpty/dll/winconptydll.vcxproj']:
                 run(['MSBuild.exe',project,'/m:2','/p:Configuration=Release','/p:Platform=x64','/verbosity:minimal','/nologo'],target,1200)
             found={name:[p for p in target.rglob(name) if p.is_file() and 'Release' in p.parts] for name in ['OpenConsole.exe','conpty.dll']}

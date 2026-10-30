@@ -31,3 +31,5 @@ M10-native-source-progress-2026-10-30.json 独立绑定七份加载原 ZIP、对
 **两项仍未技术闭合。** 供应链尚缺 Windows ConPTY/WinPTY 等完整源构建替代、产品装配验收及完整 OS/CPE 证明；历史 macOS 原始因果状态已缺失，旧/新各十轮未复现，不能补写根因。用户未接受风险归档，本轮也没有将两项标为关闭。
 
 35 个原包/取证回执及本轮审计文件已本地备份，19,014,177 字节，SHA256 `d08a67570e6f61f76475fcc8eaa61548709e6ac4de9c383eec85a5549ba2e0a2`，逐成员复核。路径与摘要在 M10-native-source-local-backup-2026-10-30.json。无付费请求，无 main 合并、Release 或异地备份。
+
+41001582685@6c6f8d3 原 ZIP a6c4ba5a 单因素结果：原分发与源候选均先打印 PTY_EXIT_BEFORE_DRAIN=false，启动输出读取后，同一五秒总预算内退出0。正常四组合及移库拒绝均过。该实验补足的是本轮 PTY 探针输出消费与退出的因果链，不是历史按钮超时根因。Windows 首轮41001560186 原两包已保留：WinPTY configure 检查未请求的 MSYS adapter 编译器，NuGet 拒绝 Verbosity 选项。原生 DLL/agent 改用明确记录 SHA 的 native-only config.mk，不改上游 C++；移除 NuGet 的日志选项并记录帮助，三离线项通过，第二轮待。

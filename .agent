@@ -4,6 +4,8 @@
 
 ## 当前接续状态
 
+- 2026-10-30 Mac41001582685原包a6c4ba5a单因素过：原分发和源候选均PTY_EXIT_BEFORE_DRAIN=false，开始读输出后同五秒总预算退出0；源候选正向/移库拒绝全过。Windows首轮41001560186两原包保留，WinPTY配置要求未构建的MSYS适配器编译器、NuGet拒绝Verbosity参数；改显式生成原生目标config.mk并留SHA/源码不改、去仅日志选项、记录NuGet帮助，三离线项过，重验待。历史按钮原根因仍无证据。
+
 - 2026-10-30 Mac加载41000910053@4aff934四组合及源候选缺库拒绝均通过；增加500ms后才读输出的单因素对照、五秒总预算不变，待核因果。新增固定WinPTY3e1ab962/Terminal6ffde348/pty4jb7554d6 Windows DLL/agent/helper/OpenConsole/ConPTY源替代构建，三离线反例过，CI待；不假称原JetBrains构建已证，不混同旧Mac按钮。
 
 - 2026-10-30用户继续要求两项技术闭合：当前Mac候选诊断增加子进程实际读入ack后的独立标记、超时白名单ps状态，区分输入未交付与退出等待；保留原五秒退出断言，严格Java编译过，仅Mac专项待。历史按钮与PTY失败不混同。

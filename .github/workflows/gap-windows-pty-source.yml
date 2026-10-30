@@ -27,7 +27,7 @@ jobs:
         if: matrix.component == 'winpty'
         shell: pwsh
         run: |
-          & 'C:\msys64\usr\bin\bash.exe' -lc 'pacman -S --noconfirm --needed make gcc mingw-w64-x86_64-gcc'
+          & 'C:\msys64\usr\bin\bash.exe' -lc 'pacman -S --noconfirm --needed make mingw-w64-x86_64-gcc'
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           'C:\msys64\usr\bin' | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
           'C:\msys64\mingw64\bin' | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
