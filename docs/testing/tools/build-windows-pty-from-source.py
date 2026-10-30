@@ -66,17 +66,37 @@ def winpty_eligibility(raw):
                 missingRequiredNames=missing,productReplacementApproved=False)
 
 
-def prefetch_port_trees(tool,manifest,out,run):
+def prefetch_port_trees(tool,manifest,out,run,manifest_root=None):
     """Materialize exact overridden historical port trees before MSBuild runs.
 
     A filtered Git checkout has current port blobs but may lack overridden old
     ones. Archive prefetch triggers that fetch with the recorded build environment;
     subsequent vcpkg read-tree can consume the same content-addressed objects.
     """
+    overlays=manifest.get('vcpkg-configuration',{}).get('overlay-ports',[])
+    if overlays and manifest_root is None:raise ValueError('Pinned manifest root required for overlay resolution')
+    overlay_roots=[]
+    for entry in overlays:
+        path=(manifest_root/entry).resolve()
+        if not path.is_relative_to(manifest_root.resolve()) or not path.is_dir():
+            raise ValueError('Bounded pinned overlay directory required')
+        overlay_roots.append(path)
     found=[]
     for item in manifest['overrides']:
         name=item['name'];requested=item['version'];port=item.get('port-version',0)
         if not re.fullmatch(r'[a-z0-9]+(?:-[a-z0-9]+)*',name):raise ValueError('Safe pinned port name required')
+        candidates=[path/name/'vcpkg.json' for path in overlay_roots if (path/name/'vcpkg.json').is_file()]
+        if candidates:
+            if len(candidates)!=1:raise ValueError('Ambiguous pinned overlay rejected')
+            path=candidates[0];data=json.loads(path.read_bytes())
+            if (data.get('name')!=name or data.get('port-version',0)!=port or
+                    not any(data.get(key)==requested for key in ['version','version-semver','version-string','version-date'])):
+                raise ValueError('Pinned overlay version drift rejected')
+            found.append(dict(name=name,version=requested,portVersion=port,sourceKind='PINNED_CONSOLE_OVERLAY',
+                              manifestPath=path.relative_to(manifest_root).as_posix(),manifestSha256=sha(path),
+                              filesSha256={p.relative_to(manifest_root).as_posix():sha(p)
+                                           for p in path.parent.rglob('*') if p.is_file() and not p.is_symlink()}))
+            continue
         versions=tool/'versions'/(name[0]+'-')/(name+'.json')
         rows=json.loads(versions.read_bytes())['versions']
         matches=[v for v in rows if v.get('port-version',0)==port and
@@ -87,7 +107,7 @@ def prefetch_port_trees(tool,manifest,out,run):
         if archive.exists():raise ValueError('Fresh port tree archive required')
         run(['git','-c','core.autocrlf=false','archive','--format=tar','--output='+str(archive),tree],tool)
         if not archive.is_file() or archive.stat().st_size>32*1024*1024:raise ValueError('Bounded materialized port tree required')
-        found.append(dict(name=name,version=requested,portVersion=port,gitTree=tree,
+        found.append(dict(name=name,version=requested,portVersion=port,sourceKind='PINNED_REGISTRY_TREE',gitTree=tree,
                           versionManifestSha256=sha(versions),archiveSha256=sha(archive),archiveBytes=archive.stat().st_size))
     return found
 
@@ -150,7 +170,7 @@ def main():
             manifest=json.loads((target/'vcpkg.json').read_bytes())
             if manifest.get('builtin-baseline')!=PINS['vcpkg'][1]:raise ValueError('Pinned vcpkg baseline drift rejected')
             vcpkg,tool_source=checkout('vcpkg',out,run,env);report['sources']['vcpkg']=tool_source
-            report['sources']['vcpkg']['prefetchedPortTrees']=prefetch_port_trees(vcpkg,manifest,out,run)
+            report['sources']['vcpkg']['preparedPortSources']=prefetch_port_trees(vcpkg,manifest,out,run,target)
             env.update(VCPKG_ROOT=str(vcpkg),VCPKG_DISABLE_METRICS='1',VCPKG_BINARY_SOURCES='clear',
                        VCPKG_DOWNLOADS=str(out/'vcpkg-downloads'))
             run(['cmd.exe','/d','/c','bootstrap-vcpkg.bat','-disableMetrics'],vcpkg)

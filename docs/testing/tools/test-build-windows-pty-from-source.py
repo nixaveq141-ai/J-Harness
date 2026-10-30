@@ -14,6 +14,22 @@ builder=importlib.util.module_from_spec(spec);spec.loader.exec_module(builder)
 
 
 class WindowsBuildTest(unittest.TestCase):
+    def test_pinned_console_overlay_precedes_registry_and_rejects_version_drift(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp);tool=root/'tool';tool.mkdir();out=root/'out';out.mkdir();console=root/'console'
+            overlay=console/'dep/overlay/fmt/vcpkg.json';overlay.parent.mkdir(parents=True)
+            overlay.write_bytes(json.dumps(dict(name='fmt',version='11.1.4')).encode())
+            manifest={'overrides':[dict(name='fmt',version='11.1.4')],
+                      'vcpkg-configuration':{'overlay-ports':['./dep/overlay']}}
+            def run(*args):self.fail('Overlay source is already present; do not fetch a different registry port')
+            result=builder.prefetch_port_trees(tool,manifest,out,run,console)
+            self.assertEqual('PINNED_CONSOLE_OVERLAY',result[0]['sourceKind'])
+            self.assertEqual(builder.sha(overlay),result[0]['manifestSha256'])
+            with self.assertRaisesRegex(ValueError,'manifest root'):builder.prefetch_port_trees(tool,manifest,out,run)
+            overlay.write_bytes(json.dumps(dict(name='fmt',version='11.0.2')).encode())
+            with self.assertRaisesRegex(ValueError,'overlay version drift'):
+                builder.prefetch_port_trees(tool,manifest,out,run,console)
+
     def test_historical_port_tree_prefetch_binds_manifest_and_rejects_reuse(self):
         with tempfile.TemporaryDirectory() as temp:
             root=Path(temp);tool=root/'tool';out=root/'out';out.mkdir()

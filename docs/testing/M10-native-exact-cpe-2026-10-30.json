@@ -1,0 +1,51 @@
+{
+  "status": "EXACT_CPE_SNAPSHOT_QUERIES_COMPLETE_NOT_FULL_OS_CLEARANCE",
+  "queries": [
+    {
+      "label": "libffi",
+      "rawPath": ".build-cache/native-security-20261030/libffi-3.4.4-exact-cpe.json",
+      "status": "EXACT_CPE_QUERY_COMPLETE",
+      "endpoint": "https://services.nvd.nist.gov/rest/json/cves/2.0?cpeName=cpe%3A2.3%3Aa%3Alibffi_project%3Alibffi%3A3.4.4%3A%2A%3A%2A%3A%2A%3A%2A%3A%2A%3A%2A%3A%2A&isVulnerable=&startIndex=0&resultsPerPage=2000",
+      "scope": "Exact source-built libffi 3.4.4 CPE query only; not all original native binaries or all OS/CPE clearance",
+      "rawSha256": "faf3e2d737c2c0c8260bb8a45627e77013d9162d9b9884da8c136b63cd483e5a",
+      "totalResults": 0,
+      "cveIds": [],
+      "timestamp": "2026-10-30T09:36:57.672"
+    },
+    {
+      "label": "old-console",
+      "rawPath": ".build-cache/native-security-20261030/console-old-1.22-exact-cpe.json",
+      "status": "EXACT_CPE_QUERY_COMPLETE",
+      "endpoint": "https://services.nvd.nist.gov/rest/json/cves/2.0?cpeName=cpe%3A2.3%3Aa%3Amicrosoft%3Aterminal%3A1.22.11141.0%3A%2A%3A%2A%3A%2A%3A%2A%3A%2A%3A%2A%3A%2A&isVulnerable=&startIndex=0&resultsPerPage=2000",
+      "timestamp": "2026-10-30T09:38:05.929",
+      "rawSha256": "21941a1c017501010828de4115ecc4032c0de531842b5580eab5bf95c4b12f02",
+      "totalResults": 1,
+      "cveIds": [
+        "CVE-2026-54124"
+      ],
+      "scope": "Exact NVD CPE version at snapshot only; not a bundled subset reachability proof or all OS/CPE clearance"
+    },
+    {
+      "label": "fixed-console",
+      "rawPath": ".build-cache/native-security-20261030/console-fixed-1.24-exact-cpe.json",
+      "status": "EXACT_CPE_QUERY_COMPLETE",
+      "endpoint": "https://services.nvd.nist.gov/rest/json/cves/2.0?cpeName=cpe%3A2.3%3Aa%3Amicrosoft%3Aterminal%3A1.24.12741.0%3A%2A%3A%2A%3A%2A%3A%2A%3A%2A%3A%2A%3A%2A&isVulnerable=&startIndex=0&resultsPerPage=2000",
+      "timestamp": "2026-10-30T09:38:13.035",
+      "rawSha256": "4452b04513dc465847a74daf9f30472bc70ff6c44c74474176765c4f0b72e6db",
+      "totalResults": 0,
+      "cveIds": [],
+      "scope": "Exact NVD CPE version at snapshot only; not a bundled subset reachability proof or all OS/CPE clearance"
+    }
+  ],
+  "mappingProof": {
+    "path": ".build-cache/native-security-20261030/nvd-CVE-2026-54124.json",
+    "sha256": "ecba454a3b6ee98aae3f189fbc5828d52eeb22c6f1fe61406da40a415103a880",
+    "criteria": "cpe:2.3:a:microsoft:terminal:*:*:*:*:*:*:*:*"
+  },
+  "limits": [
+    "NVD exact version coverage at timestamp only. Original native-resource/libffi versions are not all proven.",
+    "Microsoft CNA advisory 59117 is also gated even though the old exact-CPE query only returns 54124; no single database establishes completeness.",
+    "Bundled-subset exposure and OS-specific complete vulnerability coverage remain unproven."
+  ],
+  "paidRequests": 0
+}

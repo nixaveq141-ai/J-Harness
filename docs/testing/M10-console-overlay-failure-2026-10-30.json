@@ -1,0 +1,15 @@
+{
+  "status": "FAILED_BEFORE_COMPILE_OVERLAY_RESOLUTION_FIXED_PENDING",
+  "runId": "41034613023",
+  "commit": "3aa3fe6b8397286438ba051957700b987533034b",
+  "artifact": {
+    "id": 12966938911,
+    "path": ".build-cache/console-security-prefetch/originals/12966938911.zip",
+    "bytes": 680490,
+    "sha256": "f77d1c22bc9467cdf5b93187efa6c8c47e287801e49a4ad88e5ecfb7f20a308d"
+  },
+  "allCommandLogHashesVerified": true,
+  "reason": "Prefetch incorrectly searched baseline registry for fmt 11.1.4; pinned Terminal provides fmt as an overlay, baseline registry is older.",
+  "fix": "Honor pinned in-tree overlay first, bind all overlay file hashes; prefetch remaining fixed registry trees.",
+  "productAcceptance": false
+}

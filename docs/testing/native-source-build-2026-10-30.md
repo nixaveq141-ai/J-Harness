@@ -2,6 +2,10 @@
 
 ## 2026-10-30 安全基线补查
 
+第二轮41034613023@3aa3fe6原ZIPf77d1c22及所有日志已核对：预取器误将fmt11.1.4当作旧注册表版本，上游实际有固定Console源码overlay。已按上游规则优先绑定该overlay的版本及全部文件SHA，其余四个固定registry tree再预取；新增拒绝覆盖源漂移/缺根测试，构建共七项过，重验待。见[M10-console-overlay-failure-2026-10-30.json](M10-console-overlay-failure-2026-10-30.json)。
+
+NVD精确CPE原始响应及分页完整性核对：旧Terminal1.22匹配54124；新候选1.24.12741.0和源码libffi3.4.4为零匹配。Microsoft Terminal的实际CPE从NVD已分析54124配置取证为microsoft:terminal，不猜为windows_terminal；59117的CNA版本门禁保留，不因NVD未返回而忽略。见[M10-native-exact-cpe-2026-10-30.json](M10-native-exact-cpe-2026-10-30.json)。这不是完整OS或未知原始二进制版本的清白证明。
+
 首轮新基线41033417202@a98980f原ZIP35d195d5已核对全部命令日志；安全版本门禁、固定Console/vcpkg检出及恢复通过，MSBuild内vcpkg展开jsoncpp/ms-gsl历史端口树时Git promisor懒加载DNS失败，尚无新二进制或运行验收。补显式按上游版本清单预取五个固定tree的Git archive，记录版本清单/树/归档SHA并保留归档，再重验；不回退安全基线。六构建控制（含拒绝历史树漂移/归档复用/路径逃逸）及安全门禁/加载控制过。原失败见[M10-console-security-first-failure-2026-10-30.json](M10-console-security-first-failure-2026-10-30.json)。
 
 本机启动边界补查：[WinPTY启动对照](M10-winpty-startup-controls-2026-10-30.json)的固定cmd隐藏新控制台/无窗口/继承控制台各三轮均退出0；源码agent的--version同三种模式各三轮也过。绕过Java/JNA直接ctypes创建空会话，源码和原分发仍agent died；仅放DLL/agent的全新目录仍失败。排除“所有隐藏控制台都不能创建”、仅Java/JNA及旁置ConPTY文件的单独归因，未定位终止触发者。
