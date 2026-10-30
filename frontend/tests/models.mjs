@@ -5,6 +5,7 @@ import { mkdir, writeFile, readFile, readdir } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 import { createHash, randomUUID } from 'node:crypto'
 import assert from 'node:assert/strict'
+import { installModelInputTrace } from './model-input-trace.mjs'
 
 const stoppedOrigins=new Set(),transportDiagnostics=[]
 const root = resolve(import.meta.dirname, '../..'), out = join(root,'.build-cache'), workspace = join(out,`M10.5.4-models-${Date.now()}`)
@@ -76,7 +77,7 @@ async function settled(id,model) { await until(async()=>{const t=(await api(`/v1
 async function events(id) { let after='',rows=[];do{const p=(await api(`/v1/tasks/${id}/events?limit=100${after?'&after='+after:''}`)).body;rows.push(...p.events);after=p.more?p.next:''}while(after);return rows }
 async function shot(name) { const file=join(out,`M10.5.4-${name}.png`);await page.screenshot({path:file,fullPage:true});screenshots.push({path:file.slice(root.length+1).replaceAll('\\','/'),sha256:createHash('sha256').update(await readFile(file)).digest('hex')}) }
 try {
-  await start();browser=await chromium.launch(process.env.JHARNESS_BROWSER_CHANNEL?{channel:process.env.JHARNESS_BROWSER_CHANNEL}:{});context=await browser.newContext({viewport:{width:1440,height:1000}});page=await context.newPage();page.on('pageerror',e=>{if(stoppedHostDiagnostic(e.message,stoppedOrigins))transportDiagnostics.push(e.message);else errors.push(e.message)})
+  await start();browser=await chromium.launch(process.env.JHARNESS_BROWSER_CHANNEL?{channel:process.env.JHARNESS_BROWSER_CHANNEL}:{});context=await browser.newContext({viewport:{width:1440,height:1000}});await context.addInitScript(installModelInputTrace);page=await context.newPage();page.on('pageerror',e=>{if(stoppedHostDiagnostic(e.message,stoppedOrigins))transportDiagnostics.push(e.message);else errors.push(e.message)})
   // Four rounds retain schemas/history; R1 counts escaped prepared bytes and framing before send.
   // Reserve enough for that complete input while keeping the real guard and finite fee cap enabled.
   const initial=(await api('/v1/settings')).body, a={...initial.models[0],id:'a',label:'Chat connection',model:'model-a',protocol:'chat-completions',contextTokens:65536,maxOutputTokens:256,requestTimeoutSeconds:80,toolsSupported:true,streamSupported:true,streaming:false,pricing:{maxCost:'1',currency:'USD',inputPerMillion:'1',outputPerMillion:'2',inputTokenCeiling:20000}}
@@ -110,12 +111,13 @@ try {
   const taskDirs=(await readdir(catalogDir)).filter(n=>n.startsWith('tasks-'));let facts='';for(const dir of taskDirs)for(const file of await readdir(join(catalogDir,dir)))if(file.endsWith('.jsonl'))facts+=await readFile(join(catalogDir,dir,file),'utf8')
   check('accepted queued inputs retain immutable nonsecret snapshot',facts.includes('"settingsRevision"')&&facts.includes('"maxOutputTokens":256')&&facts.includes('"modelRoute":"b"')&&!facts.includes(key))
   check('saved settings and session events contain no API key',!(await readFile(join(workspace,'.jharness/settings/workbench.json'),'utf8')).includes(key)&&!JSON.stringify(history).includes(key))
-  result={status:'PASS',date:new Date().toISOString(),checks,screenshots,transportDiagnostics,browser:browser.version(),paidRequests:0,modelRequests:wire.length,jarSha256:createHash('sha256').update(await readFile(jar)).digest('hex')}
+  result={status:'PASS',date:new Date().toISOString(),checks,screenshots,transportDiagnostics,inputTrace:await page.evaluate(()=>window.__jhModelInputTrace??[]),browser:browser.version(),paidRequests:0,modelRequests:wire.length,jarSha256:createHash('sha256').update(await readFile(jar)).digest('hex')}
 } catch (primary) {
   // Fixed schema only: never dump environment, request bodies, task payloads or credentials.
   const diagnostic={checksCompleted:checks.length,modelRequests:wire.length,pageErrors:errors.length,hostExited:host?.exitCode!==null};
   const state=(value,allowed)=>allowed.includes(value)?value:'OTHER';
   try {
+    diagnostic.inputTrace=await page.evaluate(()=>window.__jhModelInputTrace??[]);
     const message=page.getByLabel('后续消息',{exact:true}),send=page.getByRole('button',{name:'发送后续消息',exact:true});
     diagnostic.messageCount=await message.count();diagnostic.sendCount=await send.count();
     if(diagnostic.messageCount===1){const text=await message.inputValue({timeout:1000});diagnostic.draftLength=text.length;diagnostic.firstDraftMatches=text==='second-responses';diagnostic.messageDisabled=await message.isDisabled();}
