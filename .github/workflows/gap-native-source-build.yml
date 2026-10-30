@@ -43,6 +43,7 @@ jobs:
             .build-cache/native-source-build/report.json
             .build-cache/native-source-build/*.log
             .build-cache/native-source-build/*-build-source-diff.patch
+            .build-cache/native-source-build/libffi-release-3.4.4.tar.gz
             .build-cache/native-source-build/jna/build/**/libjnidispatch.*
             .build-cache/native-source-build/jna/build/**/jnidispatch.dll
             .build-cache/native-source-build/pty4j/os/darwin/libpty.dylib

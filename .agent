@@ -4,6 +4,8 @@
 
 ## 当前接续状态
 
+- 2026-10-30源码轮40992578776实际三侧Ant原包已核对：Mac/Win缺autoreconf、Linux LT_SYS_SYMBOL_USCORE宏不兼容。官方libffi3.4.4发行源码SHA d66c56ad已下载，六个configure.ac/Makefile.am与固定JNA树逐Git blob一致；仅补缺失生成文件不覆盖C/现有源，记录全部生成输入SHA，三离线拒绝/保留测试过，修正后CI待。仍无产品替换/闭合声明。
+
 - 2026-10-30源码构建首轮40992157576三侧在编译前因缓存父目录缺失失败，Linux原解码日志已保留并核对具体栈。修parents及缺工具前置命令回执，新增两离线反例过；WindowsAnt显式CMD入口。当前原生源码构建仍未通过，修正后专用CI待，不覆盖既有产品验收。
 
 - 2026-10-30原生严格闭合转入源码候选构建：新增固定JNA/pty4j提交的三平台构建驱动，命令/工具链/源文件摘要/差异及输出回执，POSIX明确去除自有clone旧预编译输出再编译。Windows仅尝试JNA，ConPTY/WinPTY仍待。语法检查过，实际CI待；不替换原产物、不降平台、不冒称供应链或旧Mac已闭合。native-source-build-2026-10-30.md。

@@ -1,19 +1,58 @@
 """Build pinned JNA and POSIX PTY candidates; never silently replace product natives."""
 import hashlib
+import io
 import json
 import os
 from pathlib import Path
 import platform
 import shutil
 import subprocess
+import tarfile
 import time
+import urllib.request
 
 ROOT=Path(__file__).resolve().parents[3]
 REVISIONS={'jna':('java-native-access/jna','c366bc4fd0c50a30ac8d2475603ec564f6611462'),
            'pty4j':('JetBrains/pty4j','b7554d649f6374183040e6554942b6d5b028b5e5')}
+FFI_URL='https://github.com/libffi/libffi/releases/download/v3.4.4/libffi-3.4.4.tar.gz'
+FFI_SHA='d66c56ad259a82cf2a9dfc408b32bf5da52371500b84745f7fb8b645712df676'
+FFI_BYTES=1362394
 
 
 def digest(path):return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def prepare_libffi(jna,out,fetch=None):
+    if fetch is None:
+        with urllib.request.urlopen(FFI_URL,timeout=45) as response:raw=response.read(16*1024*1024+1)
+    else:raw=fetch(FFI_URL)
+    if len(raw)!=FFI_BYTES or hashlib.sha256(raw).hexdigest()!=FFI_SHA:raise ValueError('Pinned libffi release mismatch')
+    source=jna/'native/libffi';members={};inputs={};generated={}
+    helpers={'configure','compile','config.guess','config.sub','depcomp','install-sh','ltmain.sh','missing'}
+    with tarfile.open(fileobj=io.BytesIO(raw)) as archive:
+        for member in archive.getmembers():
+            if not member.isfile():continue
+            parts=Path(member.name).parts
+            if not parts or parts[0]!='libffi-3.4.4' or '..' in parts or '\\' in member.name:raise ValueError('Release path rejected')
+            relative=Path(*parts[1:])
+            if member.size>4*1024*1024:raise ValueError('Release member bound')
+            members[relative.as_posix()]=(archive.extractfile(member).read(),member.mode)
+        for name,(data,_) in members.items():
+            if name=='configure.ac' or name.endswith('Makefile.am'):
+                existing=(source/name).read_bytes()
+                if existing.replace(b'\r\n',b'\n')!=data.replace(b'\r\n',b'\n'):raise ValueError('Autotools source differs from pinned release')
+                inputs[name]=dict(sourceSha256=hashlib.sha256(existing).hexdigest(),releaseSha256=hashlib.sha256(data).hexdigest())
+        if len(inputs)!=6:raise ValueError('Expected six exact autotools source inputs')
+        for name,(data,mode) in members.items():
+            target=source/name
+            if (name.endswith('.in') or Path(name).name in helpers) and not target.exists():
+                if not target.resolve().is_relative_to(source.resolve()):raise ValueError('Generated input path bound')
+                target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(data)
+                if os.name=='posix':target.chmod(0o755 if mode&0o111 else 0o644)
+                generated[name]=hashlib.sha256(data).hexdigest()
+    (out/'libffi-release-3.4.4.tar.gz').write_bytes(raw)
+    return dict(url=FFI_URL,sha256=FFI_SHA,matchedAutotoolsInputs=inputs,generatedInputs=generated,
+                policy='Only missing generated files; never overwrite vendored source')
 
 
 def main():
@@ -54,6 +93,8 @@ def main():
             files={p.decode():digest(target/p.decode()) for p in paths if p and (target/p.decode()).is_file()}
             report['sources'][name]=dict(repository=repo,revision=revision,trackedFiles=files)
         jna=out/'jna'
+        report['sources']['jna']['libffiBuildInputs']=prepare_libffi(jna,out)
+        run(['gcc','--version'],ROOT,30)
         run(['ant','-Dbuild-native=true','native'],jna)
         candidates=[p for p in (jna/'build').rglob('*') if p.is_file() and p.name in ['jnidispatch.dll','libjnidispatch.so','libjnidispatch.jnilib','libjnidispatch.dylib']]
         if not candidates:raise ValueError('No compiled JNA candidate')
