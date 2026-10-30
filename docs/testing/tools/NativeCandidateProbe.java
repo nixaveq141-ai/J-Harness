@@ -3,6 +3,7 @@ import com.sun.jna.Native;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /** Trusted source-build probe; never compiles or executes model output. */
 public final class NativeCandidateProbe {
@@ -18,7 +19,8 @@ public final class NativeCandidateProbe {
         }
         if (args.length == 1 && args[0].equals("pty")) {
             byte[] marker = "JHARNESS_NATIVE_SOURCE_PTY".getBytes(StandardCharsets.US_ASCII);
-            var process = new PtyProcessBuilder(new String[] {"/bin/sh", "-c", "printf JHARNESS_NATIVE_SOURCE_PTY; read ack"})
+            var process = new PtyProcessBuilder(new String[] {"/bin/sh", "-c",
+                    "printf JHARNESS_NATIVE_SOURCE_PTY; IFS= read -r ack; test \"$ack\" = ack && printf JHARNESS_NATIVE_ACK"})
                     .setEnvironment(Map.of("PATH", "/usr/bin:/bin"))
                     .start();
             Throwable primary = null;
@@ -29,8 +31,33 @@ public final class NativeCandidateProbe {
                 }
                 process.getOutputStream().write("ack\n".getBytes(StandardCharsets.US_ASCII));
                 process.getOutputStream().flush();
+                var acknowledged = new AtomicBoolean();
+                Thread.ofVirtual().name("probe-ack-reader").start(() -> {
+                    try {
+                        var bytes = new java.io.ByteArrayOutputStream();
+                        for (int i = 0; i < 128; i++) {
+                            int value = process.getInputStream().read();
+                            if (value < 0) break;
+                            bytes.write(value);
+                            if (bytes.toString(StandardCharsets.US_ASCII).contains("JHARNESS_NATIVE_ACK")) {
+                                acknowledged.set(true);
+                                break;
+                            }
+                        }
+                    } catch (java.io.IOException ignored) {
+                        // Closed by the owned-process cleanup path; no acknowledgement.
+                    }
+                });
                 if (!process.waitFor(5, TimeUnit.SECONDS)
                         || process.exitValue() != 0) {
+                    System.out.println("PTY_CHILD_ACKNOWLEDGED=" + acknowledged.get());
+                    var status = new ProcessBuilder("/bin/ps", "-o", "state=", "-p", Long.toString(process.pid())).start();
+                    if (status.waitFor(1, TimeUnit.SECONDS)) {
+                        String state = new String(status.getInputStream().readNBytes(16), StandardCharsets.US_ASCII).trim();
+                        System.out.println("PTY_OS_STATE=" + (state.matches("[A-Z?+<>NslsWX]{0,8}") ? state : "REJECTED"));
+                    } else {
+                        status.destroyForcibly();
+                    }
                     System.out.println("PTY_TIMEOUT_OS_ALIVE="
                             + ProcessHandle.of(process.pid()).map(ProcessHandle::isAlive).orElse(false));
                     Thread.getAllStackTraces().values().stream()
