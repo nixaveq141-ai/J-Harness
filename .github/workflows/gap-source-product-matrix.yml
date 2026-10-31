@@ -1,6 +1,11 @@
 name: Source-native Windows packaged application matrix
 on:
   workflow_dispatch:
+    inputs:
+      scope:
+        type: choice
+        default: full
+        options: [full, diagnostic]
   push:
     branches: [codex/m1059-full-validation]
     paths: [.github/workflows/gap-source-product-matrix.yml]
@@ -14,6 +19,7 @@ jobs:
     env:
       JHARNESS_EVIDENCE_RUN_ID: source-product-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.sha }}
       JHARNESS_MATRIX_KEEP_GOING: '1'
+      JHARNESS_SOURCE_SCOPE: ${{ inputs.scope || 'diagnostic' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -46,14 +52,38 @@ jobs:
           run-id: 41179155433
           github-token: ${{ github.token }}
           path: .build-cache/accepted-console
-      - name: Preserve baseline and stage only independently accepted native bytes
-        run: python scripts/stage-source-native-runtime.py
       - name: Install all matrix browsers
         working-directory: frontend
         run: node node_modules/playwright/cli.js install chromium firefox webkit
+      - name: Observe original-native baseline for the two failing fixture families
+        if: env.JHARNESS_SOURCE_SCOPE == 'diagnostic'
+        shell: pwsh
+        run: |
+          $env:JHARNESS_MATRIX_ENGINES = 'firefox,webkit'
+          $env:JHARNESS_MATRIX_FIXTURES = 'development,questions'
+          $env:JHARNESS_EVIDENCE_RUN_ID += '-baseline'
+          node scripts/run-workbench-matrix.mjs
+          $observedExit = $LASTEXITCODE
+          New-Item -ItemType Directory -Force .build-cache/source-product/baseline-control/.build-cache/M10.5.9 | Out-Null
+          Copy-Item -LiteralPath .build-cache/M10.5.9/browser -Destination .build-cache/source-product/baseline-control/.build-cache/M10.5.9/browser -Recurse
+          @{ exitCode=$observedExit; acceptance=$false } | ConvertTo-Json | Set-Content .build-cache/source-product/baseline-control/observation.json
+          'Baseline control outcome retained as observation, not a passing acceptance.' >> $env:GITHUB_STEP_SUMMARY
+          exit 0
+      - name: Preserve baseline and stage only independently accepted native bytes
+        run: python scripts/stage-source-native-runtime.py
       - name: Run full existing packaged application matrix with source native JAR
+        if: env.JHARNESS_SOURCE_SCOPE == 'full'
         run: python scripts/run-m1059-platform.py
+      - name: Diagnose source runtime with unchanged fixture assertions
+        if: env.JHARNESS_SOURCE_SCOPE == 'diagnostic'
+        shell: pwsh
+        run: |
+          $env:JHARNESS_MATRIX_ENGINES = 'firefox,webkit'
+          $env:JHARNESS_MATRIX_FIXTURES = 'development,questions'
+          node scripts/run-workbench-matrix.mjs
+          exit $LASTEXITCODE
       - name: Bind successful command receipts to this source runtime
+        if: env.JHARNESS_SOURCE_SCOPE == 'full'
         shell: pwsh
         run: |
           @'

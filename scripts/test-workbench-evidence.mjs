@@ -5,7 +5,22 @@ import {tmpdir} from 'node:os'
 import {join} from 'node:path'
 import {pathToFileURL} from 'node:url'
 import {execFileSync,spawnSync} from 'node:child_process'
-import {contracts,sha,strictJson,validateRecord,validateFrozen,boundedRead,inputSnapshot,atomicJson,runFixtureCommand,sourceDigest} from './workbench-evidence.mjs'
+import {contracts,sha,strictJson,validateRecord,validateFrozen,boundedRead,inputSnapshot,atomicJson,runFixtureCommand,sourceDigest,freezeFailureDiagnostics} from './workbench-evidence.mjs'
+test('failed fixture diagnostics are frozen per engine before later runs overwrite them',async()=>{
+ const root=await mkdtemp(join(tmpdir(),'jh-failure-freeze-'))
+ try{
+  await mkdir(join(root,'.build-cache'),{recursive:true})
+  const file=join(root,'.build-cache/M10.5.5-questions-failure.json')
+  await writeFile(file,'{"inputTrace":[{"domLength":3,"reactLength":0}]}')
+  const first=await freezeFailureDiagnostics(root,'questions','webkit')
+  await writeFile(file,'{"inputTrace":[]}')
+  const second=await freezeFailureDiagnostics(root,'questions','firefox')
+  assert.notEqual(first[0].sha256,second[0].sha256)
+  assert.equal(sha(await readFile(join(root,first[0].path))),first[0].sha256)
+  await assert.rejects(freezeFailureDiagnostics(root,'questions','../outside'),/scope/)
+  await assert.rejects(freezeFailureDiagnostics(root,'../outside','webkit'),/scope/)
+ }finally{await rm(root,{recursive:true,force:true})}
+})
 const good=fixture=>({status:'PASS',paidRequests:0,jarSha256:'a'.repeat(64),checks:contracts[fixture].map(name=>({name,passed:true})),screenshots:[{path:'.build-cache/a.png',sha256:'b'.repeat(64)}],...(fixture==='settings'?{fixtureCredentialsCleaned:true}:{})})
 test('JSON rejects duplicate and escaped duplicate keys, overflow and malformed trailing input',()=>{
  assert.deepEqual(strictJson(Buffer.from('{"a":[{"b":true}],"c":null}')),{a:[{b:true}],c:null})

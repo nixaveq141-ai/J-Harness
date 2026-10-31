@@ -6,6 +6,23 @@ import {createHash,randomUUID} from 'node:crypto'
 import {execFileSync,spawn} from 'node:child_process'
 import {fileURLToPath} from 'node:url'
 export const sha=b=>createHash('sha256').update(b).digest('hex')
+export const failureDiagnostics={
+ questions:['M10.5.5-questions-failure.json'],
+ development:['M10.5.9-development-diagnostic-failure.txt'],
+ models:['M10.5.4-models-failure.txt'],
+}
+export async function freezeFailureDiagnostics(root,fixture,engine){
+ requireThat(Object.hasOwn(fixtures,fixture)&&['chromium','firefox','webkit'].includes(engine),'Invalid failure diagnostic scope')
+ const result=[]
+ for(const name of failureDiagnostics[fixture]??[]){
+  let bytes
+  try{bytes=await boundedRead(root,'.build-cache/'+name,4*1024*1024)}catch(error){if(error.code==='ENOENT')continue;throw error}
+  const path=`.build-cache/M10.5.9/browser/${engine}/${fixture}-${name}`
+  await mkdir(dirname(join(root,path)),{recursive:true});await writeFile(join(root,path),bytes)
+  result.push({path,sha256:sha(bytes)})
+ }
+ return result
+}
 export function strictJson(bytes){
   const text=bytes.toString('utf8');let cursor=0
   const space=()=>{while(/\s/.test(text[cursor]??'')&&cursor<text.length)cursor++}

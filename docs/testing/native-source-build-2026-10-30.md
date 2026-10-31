@@ -1,5 +1,7 @@
 # 固定源码原生候选构建
 
+2026-10-31源运行时应用全矩阵41180547707：4项原生/启动器/SDK/示例及31完整浏览器夹具773检查通过，Firefox development审批后超时、WebKit questions未保留先前草稿，R4未运行，整轮不能验收。原包f50ceb72、同run回执和JAR已核对并本地备份；首轮暂存失败原包也证明其六原生仍为原版、UI新增8项，未发生部分覆盖。新增失败状态及有界无正文输入轨迹，逐引擎冻结，不改产品或断言。准备原分发/源码库定向4夹具观察，baseline结果不作为通过；完整模式仍全矩阵。26本地证据门禁过，下一CI待。详见[M10-source-product-browser-failure-2026-10-31.json](M10-source-product-browser-failure-2026-10-31.json)。
+
 源应用首轮41180208198在暂存门禁拒绝旧预览整JAR：新应用条目集不同，功能未执行。现只复用已验六个原生文件，在当轮新构建baseline上重装配，保留当前全部非替换条目；不把旧应用字节带入。实际已验payload加新增当前专有条目的隔离实测过，4524项保留，受控漂移拒绝仍过；下一CI待。见M10-source-product-staging-2026-10-31.json。
 
 下一步产品覆盖：新增stage-source-native-runtime.py及源候选Windows打包应用全矩阵工作流。仅接受既验41179155433的完整load回执/预览JAR摘要，精确六原生资源，其余当前Java/UI/许可证逐字节不变；先保留当轮新构建baseline，再暂存可丢弃的工作JAR，不混原verify。原native/launcher/SDK/examples/浏览器全矩阵与三引擎R4将独立绑定同run回执及JAR。实际旧原包base/preview校验和受控漂移拒绝本地通过；远端尚待，不能称产品替换或735单测已使用源库。

@@ -1,0 +1,60 @@
+{
+  "status": "PACKAGED_MATRIX_FAILED_BROWSER_NOT_ACCEPTED",
+  "runId": "41180547707",
+  "commit": "1dd6e644b3385bfee385dc35d4a92992c11a7afe",
+  "artifact": {
+    "id": 13035530919,
+    "path": ".build-cache/source-product-matrix-failed/13035530919.curl.zip",
+    "bytes": 42003804,
+    "sha256": "f50ceb72493530a05d4700690fd2af3382721a64648e73696fd79f16e49bd9e7"
+  },
+  "sourceRuntimeJarSha256": "f1e7221ed0c65413a04398340779243c9b6dbcc38ebee4b01a86d939b4f26362",
+  "passedCommandReceiptSha256": {
+    "native": "e8169a550610313d1c455bf77e1c06f593cf0dd5ebd58892605c11d4d6992c8e",
+    "launcher": "f60915d38a33703c964f86f40e17262492a37effa55123c76a0fc10f81eac52f",
+    "sdk": "e5466645c6089d60bbe7d0d6f06270b24f1db9f6cc738d3fc2f86900e1015871",
+    "examples": "21171356d73e6ea4770fb30e9b44789ba37de9135f73ba4c3ad4b4949f4187de"
+  },
+  "browserPassedFixtures": 31,
+  "browserPassedChecks": 773,
+  "failures": [
+    {
+      "engine": "firefox",
+      "fixture": "development",
+      "command": {
+        "exitCode": 1,
+        "signal": null,
+        "timedOut": false,
+        "overflow": false,
+        "cleanup": {
+          "attempted": false
+        }
+      },
+      "error": "Fixture command failed, timed out or exceeded output limit",
+      "log": ".build-cache/M10.5.9/browser/firefox/development.log"
+    },
+    {
+      "engine": "webkit",
+      "fixture": "questions",
+      "command": {
+        "exitCode": 1,
+        "signal": null,
+        "timedOut": false,
+        "overflow": false,
+        "cleanup": {
+          "attempted": false
+        }
+      },
+      "error": "Fixture command failed, timed out or exceeded output limit",
+      "log": ".build-cache/M10.5.9/browser/webkit/questions.log"
+    },
+    {
+      "scope": "matrix",
+      "error": "One or more browser fixtures failed"
+    }
+  ],
+  "r4Executed": false,
+  "rootCauseEstablished": false,
+  "diagnosticChangesOnly": true,
+  "paidRequests": 0
+}

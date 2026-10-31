@@ -1,7 +1,7 @@
 import {rm,mkdir,writeFile} from 'node:fs/promises'
 import {resolve,join} from 'node:path'
 import {randomUUID} from 'node:crypto'
-import {fixtures,sha,strictJson,requireThat,boundedRead,atomicJson,inputSnapshot,validateRecord,validateFrozen,runFixtureCommand} from './workbench-evidence.mjs'
+import {fixtures,failureDiagnostics,freezeFailureDiagnostics,sha,strictJson,requireThat,boundedRead,atomicJson,inputSnapshot,validateRecord,validateFrozen,runFixtureCommand} from './workbench-evidence.mjs'
 const root=resolve(import.meta.dirname,'..'),cache=join(root,'.build-cache'),out=join(cache,'M10.5.9/browser')
 const engines=(process.env.JHARNESS_MATRIX_ENGINES??'chromium,firefox,webkit').split(',')
 const selected=(process.env.JHARNESS_MATRIX_FIXTURES??Object.keys(fixtures).join(',')).split(',')
@@ -18,6 +18,7 @@ try{
   const target=join(directory,fixture+'.json'),log=join(directory,fixture+'.log')
   await atomicJson(target,{status:'INCOMPLETE',runId,engine,fixture})
   await rm(join(cache,fixtures[fixture]),{force:true})
+  for(const name of failureDiagnostics[fixture]??[])await rm(join(cache,name),{force:true})
   const before=await inputSnapshot(root),env={...process.env,JHARNESS_BROWSER_ENGINE:engine}
   if(engine!=='chromium')delete env.JHARNESS_BROWSER_CHANNEL
   const {output,command}=await runFixtureCommand([process.execPath,'frontend/tests/'+fixture+'.mjs'],{cwd:root,env})
@@ -37,7 +38,7 @@ try{
    const bytes=await boundedRead(root,`.build-cache/M10.5.9/browser/${engine}/${fixture}.json`)
    records.push({engine,fixture,checks:record.checks.length,path:`.build-cache/M10.5.9/browser/${engine}/${fixture}.json`,sha256:sha(bytes)})
    console.log('PASS',engine,fixture,record.checks.length)
-  }catch(error){failures.push({engine,fixture,command,error:error.message,log:`.build-cache/M10.5.9/browser/${engine}/${fixture}.log`});await atomicJson(target,{status:'FAILED',runId,engine,fixture,command,error:error.message});if(process.env.JHARNESS_MATRIX_KEEP_GOING!=='1')throw error}
+  }catch(error){let diagnostics=[],diagnosticCaptureIncomplete=false;try{diagnostics=await freezeFailureDiagnostics(root,fixture,engine)}catch{diagnosticCaptureIncomplete=true}failures.push({engine,fixture,command,error:error.message,diagnostics,diagnosticCaptureIncomplete,log:`.build-cache/M10.5.9/browser/${engine}/${fixture}.log`});await atomicJson(target,{status:'FAILED',runId,engine,fixture,command,error:error.message});if(process.env.JHARNESS_MATRIX_KEEP_GOING!=='1')throw error}
  }
  requireThat(!failures.length,'One or more browser fixtures failed')
  await atomicJson(matrixPath,matrix('PASS'))

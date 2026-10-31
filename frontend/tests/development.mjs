@@ -17,7 +17,7 @@ const steps=[['list_directory',{path:'.'}],['read_file',{path:'App.java'}],['edi
   ['execute_command',command([exe('javac'),'App.java','Verify.java'])],['edit_file',edit('return broken;','return 1;',digest(broken))],
   ['execute_command',command([exe('javac'),'App.java','Verify.java'])],['execute_command',command([exe('java'),'-cp','.','Verify'])],
   ['edit_file',edit('return 1;','return 2;',digest(original))],['execute_command',command([exe('javac'),'App.java','Verify.java'])],['execute_command',command([exe('java'),'-cp','.','Verify'])]]
-let host,base,output='',browser,context,page,result,navigation,step=0,phase='startup',pageErrorCount=0
+let host,base,output='',browser,context,page,result,navigation,step=0,phase='startup',pageErrorCount=0,diagnosticTaskId,diagnosticApprovalClicks=0
 // Keep bounded, fixed-schema diagnostics; never persist exception text, URLs or stacks.
 // Classification is evidence only: every pageerror still fails the existing assertion.
 function pageError(error){
@@ -47,10 +47,10 @@ try{
   browser=await browserType.launch(process.env.JHARNESS_BROWSER_CHANNEL?{channel:process.env.JHARNESS_BROWSER_CHANNEL}:{});context=await browser.newContext({viewport:{width:1440,height:1000}});page=await context.newPage();navigation=trackNavigationReads(page);page.on('pageerror',pageError);await page.goto(base);phase='task'
   await page.getByLabel('任务目标',{exact:true}).fill('Read this project, fix App, build and test it. Every write and command requires approval.');await page.getByRole('button',{name:'创建任务',exact:true}).click()
   await until(async()=>(await api('/v1/tasks')).tasks.length===1);const id=(await api('/v1/tasks')).tasks[0].taskId
-  let approvals=0
+  diagnosticTaskId=id;let approvals=0
   await until(async()=>{
     const pending=await api('/v1/tasks/'+id+'/approvals')
-    if(pending.approvals.length){await page.getByRole('button',{name:'批准本次操作',exact:true}).waitFor();if(approvals===0)check('project read reaches first write approval without editing',await readFile(join(workspace,'App.java'),'utf8')===original);await page.getByRole('button',{name:'批准本次操作',exact:true}).click();approvals++}
+    if(pending.approvals.length){await page.getByRole('button',{name:'批准本次操作',exact:true}).waitFor();if(approvals===0)check('project read reaches first write approval without editing',await readFile(join(workspace,'App.java'),'utf8')===original);await page.getByRole('button',{name:'批准本次操作',exact:true}).click();approvals++;diagnosticApprovalClicks++}
     return(await api('/v1/tasks/'+id)).phase==='FINISHED'
   },180000)
   const task=await api('/v1/tasks/'+id),facts=await events(id),done=facts.filter(e=>e.type==='tool.completed'),by=n=>done.find(e=>e.callId==='development-'+n)
@@ -67,6 +67,6 @@ try{
   const before=wire.length;await page.setViewportSize({width:1440,height:1000});phase='refresh';await navigation.during(async()=>{await page.reload();await page.getByText('本机服务已连接',{exact:true}).waitFor()});phase='after-refresh';check('refresh reads existing build results without replay',wire.length===before)
   check('all model traffic is authorized redacted loopback',wire.every(w=>w.authorized&&w.redacted));check('no browser runtime exception',errors.length===0)
   result={status:'PASS',capturedAt:new Date().toISOString(),browserEngine:engine,browserVersion:browser.version(),checks,screenshots,jarSha256:digest(await readFile(jar)),factsSha256:digest(await readFile(join(workspace,'.jharness/sessions',id+'.jsonl'))),modelRequests:wire.length,paidRequests:0}
-}catch(e){const diagnostic={checksCompleted:checks.length,pageErrorCount,pageErrors:errors,modelRequests:wire.length,hostExited:host?.exitCode!==null};await writeFile(join(out,'M10.5.9-development-diagnostic-failure.txt'),JSON.stringify(diagnostic,null,2));if(page)await page.screenshot({path:join(out,'M10.5.9-development-failure.png'),fullPage:true});await writeFile(join(out,'M10.5.9-development-failure.txt'),(String(e.stack)+'\n'+output).replaceAll(secret,'[REDACTED]').replaceAll(token,'[REDACTED]'));throw e}
+}catch(e){const diagnostic={checksCompleted:checks.length,pageErrorCount,pageErrors:errors,modelRequests:wire.length,hostExited:host?.exitCode!==null};diagnostic.approvalClicks=diagnosticApprovalClicks;if(diagnosticTaskId)try{const t=await api('/v1/tasks/'+diagnosticTaskId),a=await api('/v1/tasks/'+diagnosticTaskId+'/approvals');diagnostic.backend={phase:['QUEUED','RUNNING','CLOSING','FINISHED','UNKNOWN'].includes(t.phase)?t.phase:'OTHER',status:['RUNNING','COMPLETED','FAILED','UNKNOWN','CANCELLED','TIMEOUT','DENIED'].includes(t.status)?t.status:'OTHER',approvalCount:a.approvals?.length??null};diagnostic.approvalButtons=await page.getByRole('button',{name:'批准本次操作',exact:true}).count()}catch{diagnostic.backendCaptureIncomplete=true}await writeFile(join(out,'M10.5.9-development-diagnostic-failure.txt'),JSON.stringify(diagnostic,null,2));if(page)await page.screenshot({path:join(out,'M10.5.9-development-failure.png'),fullPage:true});await writeFile(join(out,'M10.5.9-development-failure.txt'),(String(e.stack)+'\n'+output).replaceAll(secret,'[REDACTED]').replaceAll(token,'[REDACTED]'));throw e}
 finally{if(host?.exitCode===null){host.stdin.end(':quit\n');await until(()=>host.exitCode!==null).catch(()=>host.kill())}await browser?.close();provider.closeAllConnections();await new Promise(r=>provider.close(r))}
 await writeFile(join(out,'M10.5.9-development-results.json'),JSON.stringify(result,null,2))

@@ -1,3 +1,4 @@
+import { installModelInputTrace } from './model-input-trace.mjs'
 import { browserType as chromium, stoppedHostDiagnostic } from './runtime.mjs'
 import { createServer } from 'node:http'
 import { spawn } from 'node:child_process'
@@ -47,7 +48,7 @@ async function shot(name){const file=join(out,'M10.5.5-'+name+'.png');await page
 function body(q,id,selected,text='',skip=false){return {questionId:q.questionId,sessionId:q.sessionId,turnId:q.turnId,callId:q.callId,requestId:id,selected,text,skip}}
 async function answer(q,data){return api('/v1/tasks/'+q.sessionId+'/questions/'+q.questionId+'/answer',data)}
 try{
- await start();browser=await chromium.launch(process.env.JHARNESS_BROWSER_CHANNEL?{channel:process.env.JHARNESS_BROWSER_CHANNEL}:{});context=await browser.newContext({viewport:{width:1440,height:1000}});page=await context.newPage();page.on('pageerror',e=>{if(stoppedHostDiagnostic(e.message,new Set([...stoppedOrigins,...navigationOrigins])))transportDiagnostics.push(e.message);else errors.push(String(e))});page.on('request',r=>{if(r.method()==='POST'&&r.url().endsWith('/answer'))posts.push(r.postDataJSON())})
+ await start();browser=await chromium.launch(process.env.JHARNESS_BROWSER_CHANNEL?{channel:process.env.JHARNESS_BROWSER_CHANNEL}:{});context=await browser.newContext({viewport:{width:1440,height:1000}});await context.addInitScript(installModelInputTrace);page=await context.newPage();page.on('pageerror',e=>{if(stoppedHostDiagnostic(e.message,new Set([...stoppedOrigins,...navigationOrigins])))transportDiagnostics.push(e.message);else errors.push(String(e))});page.on('request',r=>{if(r.method()==='POST'&&r.url().endsWith('/answer'))posts.push(r.postDataJSON())})
  await page.goto(base)
  const id=await create('flow');const q1=await pending(id);await card().waitFor();await card().getByRole('radio',{name:/First choice/}).waitFor()
  check('real SDK ask_user exposes preselected recommendation without submitting',await card().getByRole('radio',{name:/First choice/}).isChecked()&&wire.filter(w=>w.goal==='flow').length===1&&(await api('/v1/tasks/'+id+'/questions')).body.questions[0].state==='PENDING')
@@ -102,5 +103,5 @@ try{
  if(errors.length)console.log('BROWSER_DIAGNOSTIC',JSON.stringify(errors).replaceAll(secret,'[REDACTED]').replaceAll(token,'[REDACTED]'))
  check('no browser runtime exceptions',errors.length===0)
  result={status:'PASS',capturedAt:new Date().toISOString(),checks,screenshots:shots,transportDiagnostics,paidRequests:0,modelRequests:wire.length,jarSha256:createHash('sha256').update(await readFile(jar)).digest('hex'),browser:browser.version()}
-}finally{if(browser)await browser.close();await stop();await new Promise(r=>provider.close(r))}
+}finally{if(!result){let trace=[];try{trace=await page.evaluate(()=>window.__jhModelInputTrace??[])}catch{}await writeFile(join(out,'M10.5.5-questions-failure.json'),JSON.stringify({checksCompleted:checks.length,modelRequests:wire.length,inputTrace:trace.slice(-64)},null,2)).catch(()=>{})}if(browser)await browser.close();await stop();await new Promise(r=>provider.close(r))}
 await writeFile(join(out,'M10.5.5-questions-results.json'),JSON.stringify({...result,hostStopped:host.exitCode===0},null,2))

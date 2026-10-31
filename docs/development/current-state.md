@@ -1,5 +1,7 @@
 # 当前实现、验收与未完成项
 
+2026-10-31源运行时应用全矩阵41180547707：4项原生/启动器/SDK/示例及31完整浏览器夹具773检查通过，Firefox development审批后超时、WebKit questions未保留先前草稿，R4未运行，整轮不能验收。原包f50ceb72、同run回执和JAR已核对并本地备份；首轮暂存失败原包也证明其六原生仍为原版、UI新增8项，未发生部分覆盖。新增失败状态及有界无正文输入轨迹，逐引擎冻结，不改产品或断言。准备原分发/源码库定向4夹具观察，baseline结果不作为通过；完整模式仍全矩阵。26本地证据门禁过，下一CI待。详见[M10-source-product-browser-failure-2026-10-31.json](../testing/M10-source-product-browser-failure-2026-10-31.json)。
+
 2026-10-31实际复验结果：修复pkgconf归档404后，[41179155433](https://github.com/nixaveq141-ai/J-Harness/actions/runs/41179155433)@87ad109全部成功。固定Terminal1.24.12741.0源码、固定vcpkg与fmt overlay/四registry tree、签名pkgconf工具完成双原生项目构建；六资源预览JAR的其余4523条目逐字节不变，真实ConPTY ABI/缺捆绑库拒绝及产品LocalTerminalSession输入、目录切换、resize、退出、停止与超时清理通过。原ZIP61257c06/全部构建日志/源码输入摘要/端口tar/库输出/探针Git源码/class/命令回执/JAR已独立核验，见[固定Console验收](../testing/M10-console-fixed-acceptance-2026-10-31.json)。成功原包及收据已本地二成员备份逐SHA核对，见[备份](../testing/M10-console-fixed-local-backup-2026-10-31.json)。新版Console构建与组件装配专项已闭合；完整产品替代、全OS/CPE及历史macOS因果仍未闭合，未替换原735验收产物，无付费模型调用。
 
 更新：2026-10-31。活动状态以本节为准，各原始JSON和后文日期记录保留其历史版本。逐项现状见[缺口闭合记录](../testing/M1-M10-gap-closure-2026-10-29.md)。
