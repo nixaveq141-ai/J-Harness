@@ -4,6 +4,7 @@ Preserve the freshly built baseline; no original verify receipt is reused. This
 does not approve release, full native provenance or OS/CPE clearance.
 """
 import hashlib
+import argparse
 import io
 import importlib.util
 import json
@@ -38,6 +39,9 @@ def validate_runtime(baseline,preview,replacements):
 
 
 def main():
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--output',default='.build-cache/source-product')
+    args=parser.parse_args()
     approved=ROOT/'docs/testing/M10-console-fixed-acceptance-2026-10-31.json'
     receipt=json.loads(approved.read_bytes())
     if receipt['status']!='FIXED_CONSOLE_SOURCE_ABI_AND_PRODUCT_TERMINAL_COMPONENT_ACCEPTED':
@@ -50,7 +54,10 @@ def main():
     runtime=ROOT/'harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar'
     if runtime.is_symlink():raise ValueError('Regular working build JAR required')
     baseline=runtime.read_bytes()
-    out=ROOT/'.build-cache/source-product';out.mkdir(parents=True,exist_ok=True)
+    out=ROOT/args.output
+    if not out.resolve().is_relative_to((ROOT/'.build-cache').resolve()):
+        raise ValueError('Output must stay in private build cache')
+    out.mkdir(parents=True,exist_ok=True)
     if out.is_symlink() or not out.resolve().is_relative_to(ROOT.resolve()):
         raise ValueError('Private staging directory required')
     saved=out/'baseline-runtime.jar'

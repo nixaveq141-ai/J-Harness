@@ -1,0 +1,69 @@
+name: Source-native Windows Java verify and candidate install
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  qualification:
+    runs-on: windows-2022
+    timeout-minutes: 60
+    env:
+      JHARNESS_EVIDENCE_RUN_ID: source-qualification-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Validate guards and build current application
+        shell: pwsh
+        run: |
+          python scripts/test-source-native-runtime.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          python scripts/test-source-native-qualification.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          npm --prefix frontend ci
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          npm --prefix frontend run build
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          .\mvnw.cmd -B -DskipTests package *> source-qualification-build.log
+          exit $LASTEXITCODE
+      - uses: actions/download-artifact@v4
+        with:
+          name: windows-pty-source-console
+          run-id: 41179155433
+          github-token: ${{ github.token }}
+          path: .build-cache/accepted-console
+      - name: Verify Java source libraries and install exact candidate
+        run: python scripts/source-native-qualification.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: source-native-java-install-windows
+          include-hidden-files: true
+          retention-days: 90
+          path: |
+            source-qualification-build.log
+            .build-cache/source-qualification/
+            native-load-*.log
+            harness-*/native-load-*.log
+            harness-*/target/surefire-reports/
+            harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar
+            target/bom.json
+            target/osv-results.json
+            target/sdk-bom.json
+            target/sdk-source-inventory.json
+            target/frontend-bom.json
+            target/candidate-smoke.json
+            target/candidate-sha256.txt
+            target/jharness-0.1.0-SNAPSHOT-candidate.zip
