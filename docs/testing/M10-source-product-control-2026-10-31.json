@@ -1,0 +1,57 @@
+{
+  "status": "ORIGINAL_BASELINE_DIAGNOSTIC_FAILED_SOURCE_PHASE_NOT_RUN",
+  "runId": "41182446943",
+  "commit": "831c75e70cba779f9de68bfb74b1fd6b3b1c3a2f",
+  "artifact": {
+    "id": 13034918994,
+    "path": ".build-cache/source-product-diagnostic-first/13034918994.zip",
+    "sha256": "f4fbd9addbc164cdb6b29bb360fad871d559784dd1d512668cf1322f46d05b0f",
+    "bytes": 11706103
+  },
+  "baselinePassedFixtures": 3,
+  "baselineFailures": [
+    {
+      "engine": "webkit",
+      "fixture": "development",
+      "command": {
+        "exitCode": 1,
+        "signal": null,
+        "timedOut": false,
+        "overflow": false,
+        "cleanup": {
+          "attempted": false
+        }
+      },
+      "error": "Fixture command failed, timed out or exceeded output limit",
+      "diagnostics": [
+        {
+          "path": ".build-cache/M10.5.9/browser/webkit/development-M10.5.9-development-diagnostic-failure.txt",
+          "sha256": "8149e74fa4b3843c37bc946312826a94a207963957fd59f3f7b8c806edb9181d"
+        }
+      ],
+      "diagnosticCaptureIncomplete": false,
+      "log": ".build-cache/M10.5.9/browser/webkit/development.log"
+    },
+    {
+      "scope": "matrix",
+      "error": "One or more browser fixtures failed"
+    }
+  ],
+  "frozenDiagnostics": [
+    {
+      "path": ".build-cache/M10.5.9/browser/webkit/development-M10.5.9-development-diagnostic-failure.txt",
+      "sha256": "8149e74fa4b3843c37bc946312826a94a207963957fd59f3f7b8c806edb9181d",
+      "value": {
+        "checksCompleted": 0,
+        "pageErrorCount": 0,
+        "pageErrors": [],
+        "modelRequests": 0,
+        "hostExited": false,
+        "approvalClicks": 0
+      }
+    }
+  ],
+  "sourceStagingFailure": "Evidence parent directory existed after baseline control; mkdir lacked exist_ok. Output leaves remain exclusive.",
+  "sourcePhaseExecuted": false,
+  "rootCauseEstablished": false
+}

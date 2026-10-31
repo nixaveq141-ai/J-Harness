@@ -50,7 +50,9 @@ def main():
     runtime=ROOT/'harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar'
     if runtime.is_symlink():raise ValueError('Regular working build JAR required')
     baseline=runtime.read_bytes()
-    out=ROOT/'.build-cache/source-product';out.mkdir(parents=True)
+    out=ROOT/'.build-cache/source-product';out.mkdir(parents=True,exist_ok=True)
+    if out.is_symlink() or not out.resolve().is_relative_to(ROOT.resolve()):
+        raise ValueError('Private staging directory required')
     saved=out/'baseline-runtime.jar'
     with saved.open('xb') as stream:stream.write(baseline)
     accepted=load['assembly']['manifest']['replacements']
