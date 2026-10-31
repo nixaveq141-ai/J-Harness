@@ -1,0 +1,8 @@
+{
+  "status": "LOCAL_BACKUP_VERIFIED",
+  "path": ".build-cache/local-evidence-backups/2026-10-31/console-fixed-source-pass.zip",
+  "sha256": "23f9eca36d7343ad84308ef439151f571e6aeb53441d127003ece730dcbd0604",
+  "bytes": 24112201,
+  "members": 2,
+  "offsite": false
+}

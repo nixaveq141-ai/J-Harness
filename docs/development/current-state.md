@@ -1,8 +1,8 @@
 # 当前实现、验收与未完成项
 
-2026-10-31接续：第四轮41036044905已通过路径规范化及固定端口预取，构建到fmt后被旧pkgconf归档各镜像404阻断；原ZIP及全部命令日志已核对。改用固定vcpkg官方支持的PKG_CONFIG环境入口，显式安装签名MSYS2工具并记录SHA/版本/包资料；仅透传该变量，不改源码或安全版本。七构建及加载控制本地通过，新CI待，原产品和整体未闭合状态保持准确。详情：`M10-console-pkgconf-2026-10-31.json`。
+2026-10-31实际复验结果：修复pkgconf归档404后，[41179155433](https://github.com/nixaveq141-ai/J-Harness/actions/runs/41179155433)@87ad109全部成功。固定Terminal1.24.12741.0源码、固定vcpkg与fmt overlay/四registry tree、签名pkgconf工具完成双原生项目构建；六资源预览JAR的其余4523条目逐字节不变，真实ConPTY ABI/缺捆绑库拒绝及产品LocalTerminalSession输入、目录切换、resize、退出、停止与超时清理通过。原ZIP61257c06/全部构建日志/源码输入摘要/端口tar/库输出/探针Git源码/class/命令回执/JAR已独立核验，见[固定Console验收](../testing/M10-console-fixed-acceptance-2026-10-31.json)。成功原包及收据已本地二成员备份逐SHA核对，见[备份](../testing/M10-console-fixed-local-backup-2026-10-31.json)。新版Console构建与组件装配专项已闭合；完整产品替代、全OS/CPE及历史macOS因果仍未闭合，未替换原735验收产物，无付费模型调用。
 
-更新：2026-10-30。活动状态以本节为准，各原始JSON和后文日期记录保留其历史版本。逐项现状见[缺口闭合记录](../testing/M1-M10-gap-closure-2026-10-29.md)。
+更新：2026-10-31。活动状态以本节为准，各原始JSON和后文日期记录保留其历史版本。逐项现状见[缺口闭合记录](../testing/M1-M10-gap-closure-2026-10-29.md)。
 
 当前已验收运行时代码：`8b9ec77bd6865e97726a3bb2076078ff0d159ec4`，完整三平台[40838729596](https://github.com/nixaveq141-ai/J-Harness/actions/runs/40838729596)全部成功。原三ZIP/GitHub摘要、622输入、XML/精确用例身份、日志、命令回执、JAR/UI、候选与安装门禁已严格独立审计，见[最终验收](../testing/M10-gap-final-acceptance-2026-10-29.json)。每平台Java735/124套件零失败错误跳过，客户端42、三浏览器813、三引擎R4各51、SDK66、原生7、示例2及适用发布/安装门禁通过。Windows JAR4b99a449，Linux/macOS JARc0f5d747，各自绑定对应回执和候选。
 

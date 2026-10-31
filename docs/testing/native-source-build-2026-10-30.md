@@ -1,6 +1,6 @@
 # 固定源码原生候选构建
 
-2026-10-31接续：第四轮41036044905已通过路径规范化及固定端口预取，构建到fmt后被旧pkgconf归档各镜像404阻断；原ZIP及全部命令日志已核对。改用固定vcpkg官方支持的PKG_CONFIG环境入口，显式安装签名MSYS2工具并记录SHA/版本/包资料；仅透传该变量，不改源码或安全版本。七构建及加载控制本地通过，新CI待，原产品和整体未闭合状态保持准确。详情：`M10-console-pkgconf-2026-10-31.json`。
+2026-10-31实际复验结果：修复pkgconf归档404后，[41179155433](https://github.com/nixaveq141-ai/J-Harness/actions/runs/41179155433)@87ad109全部成功。固定Terminal1.24.12741.0源码、固定vcpkg与fmt overlay/四registry tree、签名pkgconf工具完成双原生项目构建；六资源预览JAR的其余4523条目逐字节不变，真实ConPTY ABI/缺捆绑库拒绝及产品LocalTerminalSession输入、目录切换、resize、退出、停止与超时清理通过。原ZIP61257c06/全部构建日志/源码输入摘要/端口tar/库输出/探针Git源码/class/命令回执/JAR已独立核验，见[固定Console验收](M10-console-fixed-acceptance-2026-10-31.json)。成功原包及收据已本地二成员备份逐SHA核对，见[备份](M10-console-fixed-local-backup-2026-10-31.json)。新版Console构建与组件装配专项已闭合；完整产品替代、全OS/CPE及历史macOS因果仍未闭合，未替换原735验收产物，无付费模型调用。
 
 ## 2026-10-30 安全基线补查
 

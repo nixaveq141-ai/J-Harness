@@ -1,0 +1,208 @@
+{
+  "status": "FIXED_CONSOLE_SOURCE_ABI_AND_PRODUCT_TERMINAL_COMPONENT_ACCEPTED",
+  "runId": "41179155433",
+  "commit": "87ad1090ae64044e813a3f019b8d8c56ca6e825e",
+  "artifact": {
+    "id": 13033848514,
+    "path": ".build-cache/console-security-pass/13033848514.zip",
+    "bytes": 24112820,
+    "sha256": "61257c06cf7c53dd0a71a3be312a13e4c29495ff6a076415a3898f564645920a"
+  },
+  "consoleSource": "7ff11ee107c984e236960ec948b450ccbc10187b",
+  "vcpkgSource": "fe1cde61e971d53c9687cf9a46308f8f55da19fa",
+  "preparedPortSources": [
+    {
+      "name": "fmt",
+      "version": "11.1.4",
+      "portVersion": 0,
+      "sourceKind": "PINNED_CONSOLE_OVERLAY",
+      "manifestPath": "dep/vcpkg-overlay-ports/fmt/vcpkg.json",
+      "manifestSha256": "ba385b6792cdb256faa2e18871f94fd78510c73f74947d167f31a7e939394a1f",
+      "filesSha256": {
+        "dep/vcpkg-overlay-ports/fmt/fix-write-batch.patch": "5658d7b2362cddca318c21de795877c17cffbe62603860507291dccc40d537f3",
+        "dep/vcpkg-overlay-ports/fmt/portfile.cmake": "1501fea215112f89c40aa925c60c0d9712b4a84dd40dfc6c9624b29f9b19f459",
+        "dep/vcpkg-overlay-ports/fmt/usage": "ece096518c58df58cfc60f5ad8120d248a86383482455f539d91b8ca6eac14a7",
+        "dep/vcpkg-overlay-ports/fmt/vcpkg.json": "ba385b6792cdb256faa2e18871f94fd78510c73f74947d167f31a7e939394a1f"
+      }
+    },
+    {
+      "name": "ms-gsl",
+      "version": "3.1.0",
+      "portVersion": 0,
+      "sourceKind": "PINNED_REGISTRY_TREE",
+      "gitTree": "75aed40fd77dd1c0f123fe92df90d3aef55e7466",
+      "versionManifestSha256": "44353c06691fa46e7cc2be8b19094172cf322e4adb5093d900ad86392ec3cbd2",
+      "archiveSha256": "4d382412f7b4173dfa152e8889536b88f70575c04e572d4bcb90e94a6e87682f",
+      "archiveBytes": 10240
+    },
+    {
+      "name": "jsoncpp",
+      "version": "1.9.5",
+      "portVersion": 0,
+      "sourceKind": "PINNED_REGISTRY_TREE",
+      "gitTree": "ee92c743e235ebd2eda342c656704f20a329bda9",
+      "versionManifestSha256": "1732f0f2ba4b4fbe00283e28a80f72d543eea97b2f56ea5af5d3f450ddb68ff8",
+      "archiveSha256": "e4368348a30e5819fe949f171c7a411a4c4f6a7a512c71a238622cc321cfa2ae",
+      "archiveBytes": 10240
+    },
+    {
+      "name": "cli11",
+      "version": "2.4.2",
+      "portVersion": 0,
+      "sourceKind": "PINNED_REGISTRY_TREE",
+      "gitTree": "06ac9dc66d709da4eabe20f952b83b4bb7ae7dda",
+      "versionManifestSha256": "43b0b33def5ba7936a3814d6091d6ca22e431ca9f7c9539f58316836a31675bf",
+      "archiveSha256": "421ef3864b0c2e381d7432afdf870b13ff4caae1a838029547bb76e40e6f82eb",
+      "archiveBytes": 10240
+    },
+    {
+      "name": "cmark",
+      "version": "0.30.3",
+      "portVersion": 0,
+      "sourceKind": "PINNED_REGISTRY_TREE",
+      "gitTree": "46de0e92eb13e52bb044f1d925a477483fe23c80",
+      "versionManifestSha256": "5bf5eef62348656eddc48df0cf6c6747455bd2b0da7ca09c93129c842d8bbd4f",
+      "archiveSha256": "3ac98fe1965cd2b3fee338eb5402249ce0cfe3c335e53222ff54f6a5cd252f56",
+      "archiveBytes": 10240
+    }
+  ],
+  "pkgConfigTool": {
+    "path": "C:\\msys64\\mingw64\\bin\\pkgconf.exe",
+    "sha256": "d71d06a5476ae93a1ed054092b0fe2e97e003f8c9f10555bd79f7ae338586a09",
+    "selection": "Pinned vcpkg supports ENV{PKG_CONFIG}; preserve only that explicit tool variable"
+  },
+  "vendorSecurityGate": {
+    "status": "ENUMERATED_VENDOR_SECURITY_FLOORS_SATISFIED_NOT_FULL_CPE_CLEARANCE",
+    "sourceRevision": "7ff11ee107c984e236960ec948b450ccbc10187b",
+    "sourceVersion": "1.24.12741.0",
+    "advisories": [
+      {
+        "id": "CVE-2026-54124",
+        "fixedVersion": "1.24.11321.0",
+        "recordSha256": "9eaab4aa701c907fa0b9940c1b44c44314ef0c7b32811fe6ca88c7e9c00db453"
+      },
+      {
+        "id": "CVE-2026-59117",
+        "fixedVersion": "1.24.11321.0",
+        "recordSha256": "233c79d30f3e52782b6c16cb867a62d780579b0a89955cd650b163b6119c7b63"
+      }
+    ],
+    "policySha256": "15377f49a779aa696230eee041a0fdf6384051093645e81804e5b72ff5272430",
+    "bundledSubsetExposureProven": false,
+    "fullVulnerabilityCoverage": false
+  },
+  "outputs": [
+    {
+      "path": ".build-cache/windows-pty-source/console/bin/x64/Release/OpenConsole.exe",
+      "bytes": 1151488,
+      "sha256": "6c065dc55dce7cff61f2cfb157df5668d4421996451fdb6ae7277cd2c42b3fad"
+    },
+    {
+      "path": ".build-cache/windows-pty-source/console/bin/x64/Release/conpty.dll",
+      "bytes": 98816,
+      "sha256": "2f013656ebdc935e184f9b50cfb09875becbfd9425bb1169a66fd031367ef135"
+    }
+  ],
+  "load": {
+    "status": "SOURCE_CONSOLE_ABI_PRODUCT_TERMINAL_AND_MISSING_BUNDLE_REJECTION_PASS",
+    "runId": "41179155433",
+    "commit": "87ad1090ae64044e813a3f019b8d8c56ca6e825e",
+    "assembly": {
+      "manifest": {
+        "scope": "Windows x64 current Console source component/product-terminal preview",
+        "baseJarSha256": "f8d2a1bb455a2b94c61c826ca1b408bd3adbf33667fd58c1d6ed4b150d44218a",
+        "productReplacement": false,
+        "replacements": {
+          "resources/com/pty4j/native/win/x86-64/OpenConsole.exe": {
+            "sha256": "6c065dc55dce7cff61f2cfb157df5668d4421996451fdb6ae7277cd2c42b3fad",
+            "origin": {
+              "runId": "41179155433"
+            }
+          },
+          "resources/com/pty4j/native/win/x86-64/conpty.dll": {
+            "sha256": "2f013656ebdc935e184f9b50cfb09875becbfd9425bb1169a66fd031367ef135",
+            "origin": {
+              "runId": "41179155433"
+            }
+          },
+          "resources/com/pty4j/native/win/x86-64/winpty.dll": {
+            "sha256": "013db340ce5e3417b6821a81336965367f88bfd197ddbb7eb4f6e3302fdbb69c",
+            "origin": {
+              "runId": "41030432860"
+            }
+          },
+          "resources/com/pty4j/native/win/x86-64/winpty-agent.exe": {
+            "sha256": "aebed1cca9030bcb6771ce2b40cbbfa4a1de9ad96acb4dd4ca4ca6da24a02c1c",
+            "origin": {
+              "runId": "41030432860"
+            }
+          },
+          "resources/com/pty4j/native/win/x86-64/win-helper.dll": {
+            "sha256": "edc8a0aa728126f875bed4b02bdf0de2c76d99b25ff3e0b7ac6d1d42512e617f",
+            "origin": {
+              "runId": "41030432860"
+            }
+          },
+          "com/sun/jna/win32-x86-64/jnidispatch.dll": {
+            "sha256": "c88e200b240dfa54c5b852a335b28683e64a074d30ceee7c17ffc282058891a2",
+            "origin": {
+              "runId": "40998915552"
+            }
+          }
+        }
+      },
+      "previewJarSha256": "3ec3f1f103ed9c465da19ccd6d175ddb5d6c2966233525b7d71ba38f7db12f31",
+      "preservedEntries": 4523,
+      "replacedEntries": 6,
+      "status": "NATIVE_PREVIEW_ASSEMBLED_NOT_PRODUCT_ACCEPTANCE"
+    },
+    "assemblerSha256": "0b2a15dbf3b7ad8533046893be954ec437a64391db435dccb924f3927a562ec6",
+    "probes": [
+      {
+        "label": "compile",
+        "exitCode": 0,
+        "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "receiptSha256": "c733f3a34886eedb75515fd38851747d0149969c1248faf71c17dd5607453066"
+      },
+      {
+        "label": "source-positive",
+        "exitCode": 0,
+        "logSha256": "99e7ef14d6955c92a2a26b631c5c6569fb97dfb25df8640aa479cff6ea9efc79",
+        "receiptSha256": "21a412cbe2a6b36e54b0cf9bfbe7f2e7aa68415713717c97ef1d4c63fa9ab322"
+      },
+      {
+        "label": "missing-bundle-rejected",
+        "exitCode": 1,
+        "logSha256": "a83656fdcf3ff7f1fece5a97117a5029a40921bcf7dac7c15c55052eb6d2f139",
+        "receiptSha256": "f5e2c912210a03dc2e7ab004dd4aaf1258697a9cb2e54083f205063bad4cfa12"
+      },
+      {
+        "label": "product-terminal",
+        "exitCode": 0,
+        "logSha256": "916e219dd538465f1dbfad6b9a2f41ce525edc16e794ba3dd8dc8e1c7ab66d14",
+        "receiptSha256": "c8762ab3e850760e340728a8f43ce25d59990ab8332de4c3cf5e2ce3a6424b2b"
+      }
+    ],
+    "paidRequests": 0,
+    "fullProductAcceptance": false,
+    "probeSha256": {
+      "WinPtySourceProbe.java": "0fefd102c36d6430d6954fc7e5a5150cd10d274b2ceb837d0abf02820ccb476a",
+      "NativeProductTerminalProbe.java": "6bf84cf877e45b44b7ce2173d956741719ddacc7da794f86292b4cf4e479da07"
+    },
+    "classSha256": {
+      "NativeProductTerminalProbe.class": "90a1859275b3f64e6f4785a5bdb0f4fe81d7faf896a47e9c390173224129682e",
+      "WinPtySourceProbe$DirectoryApi.class": "278073c266184dff8ad14aafbdf2b2e7ad8ab5497a8cac2b975b59d830788d96",
+      "WinPtySourceProbe.class": "8f6240fdddf83c2cd8b6d2addf4c3b5ba790a0cd185b138c3af2fba1900d021b"
+    }
+  },
+  "allSourceCommandLogsVerified": true,
+  "allLoadReceiptsAndClassesVerified": true,
+  "jarUnreplacedEntriesByteIdentical": true,
+  "paidRequests": 0,
+  "fullProductAcceptance": false,
+  "limits": [
+    "Original universal product has not been replaced or requalified.",
+    "Full original-native and OS/CPE coverage is not established.",
+    "Historical macOS button cause and local WinPTY termination trigger remain unresolved."
+  ]
+}
