@@ -1,8 +1,10 @@
 # J-Harness 项目接续说明
 
-最后更新：2026-10-30（Asia/Shanghai）。根目录 AGENTS.md 引用本文件。开始实现前阅读，并以当前源码、Git 与验收记录核实日期快照。
+最后更新：2026-10-31（Asia/Shanghai）。根目录 AGENTS.md 引用本文件。开始实现前阅读，并以当前源码、Git 与验收记录核实日期快照。
 
 ## 当前接续状态
+
+- 2026-10-31接续第四轮41036044905@0e12b23：原ZIP6f2d1f55/全部命令日志核对；路径门禁及固定overlay/四registry tree预取通过，fmt已编译，旧vcpkg pkgconf1~2.2.0归档各镜像404阻断。用固定上游支持的ENV{PKG_CONFIG}入口及签名pacman安装工具，记二进制SHA/版本/包资料，仅透传PKG_CONFIG；七构建及加载拒绝测试过，新CI待。原产物未改、安全门禁未降，整体两项仍开放。M10-console-pkgconf-2026-10-31.json。
 
 - 2026-10-30第三轮41035319681@5d7a1a2在离线测试捕获Windows RUNNER~1与runneradmin同目录短/长别名relative_to失败，尚未源码构建、无制品；解码job日志SHA保留。manifest_root先resolve再派生/相对化overlay，七构建项含精确相对清单路径本地过，远端重验待，安全基线与断言未降。29成员2354066字节安全/CPE/前两失败及启动对照本地包已逐SHA核对，M10-console-security-local-backup收据。两项仍未闭合。
 

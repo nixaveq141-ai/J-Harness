@@ -59,6 +59,12 @@ jobs:
           if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
           'C:\msys64\usr\bin' | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
           'C:\msys64\mingw64\bin' | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
+      - name: Install signed pkgconf for pinned Console source
+        if: matrix.component == 'console'
+        shell: pwsh
+        run: |
+          & 'C:\msys64\usr\bin\bash.exe' -lc 'pacman -S --noconfirm --needed mingw-w64-x86_64-pkgconf'
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
       - name: Build fixed reviewed source only
         run: python docs/testing/tools/build-windows-pty-from-source.py --component ${{ matrix.component }}
       - uses: actions/download-artifact@v4

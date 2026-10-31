@@ -1,5 +1,7 @@
 # 固定源码原生候选构建
 
+2026-10-31接续：第四轮41036044905已通过路径规范化及固定端口预取，构建到fmt后被旧pkgconf归档各镜像404阻断；原ZIP及全部命令日志已核对。改用固定vcpkg官方支持的PKG_CONFIG环境入口，显式安装签名MSYS2工具并记录SHA/版本/包资料；仅透传该变量，不改源码或安全版本。七构建及加载控制本地通过，新CI待，原产品和整体未闭合状态保持准确。详情：`M10-console-pkgconf-2026-10-31.json`。
+
 ## 2026-10-30 安全基线补查
 
 第三轮41035319681@5d7a1a2尚未源码构建：离线测试捕获同一临时目录RUNNER~1/runneradmin短长路径别名，overlay已resolve但根未resolve使relative_to拒绝。现统一解析根后计算全部相对身份，七构建项本地过，远端待；解码job日志SHA及无原始制品边界见[M10-console-path-alias-2026-10-30.json](M10-console-path-alias-2026-10-30.json)。安全/CPE原始响应与前两失败包及启动对照29成员本地备份逐SHA核对，见[M10-console-security-local-backup-2026-10-30.json](M10-console-security-local-backup-2026-10-30.json)。

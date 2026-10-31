@@ -174,6 +174,13 @@ def main():
             report['sources']['vcpkg']['preparedPortSources']=prefetch_port_trees(vcpkg,manifest,out,run,target)
             env.update(VCPKG_ROOT=str(vcpkg),VCPKG_DISABLE_METRICS='1',VCPKG_BINARY_SOURCES='clear',
                        VCPKG_DOWNLOADS=str(out/'vcpkg-downloads'))
+            pkgconfig=Path('C:/msys64/mingw64/bin/pkgconf.exe')
+            if not pkgconfig.is_file():raise ValueError('Signed MSYS pkgconf prerequisite required')
+            env.update(PKG_CONFIG=str(pkgconfig),VCPKG_KEEP_ENV_VARS='PKG_CONFIG')
+            report['sources']['console']['pkgConfigTool']=dict(path=str(pkgconfig),sha256=sha(pkgconfig),
+                selection='Pinned vcpkg supports ENV{PKG_CONFIG}; preserve only that explicit tool variable')
+            run([str(pkgconfig),'--version'],target,30)
+            run(['C:/msys64/usr/bin/pacman.exe','-Qi','mingw-w64-x86_64-pkgconf'],target,30)
             run(['cmd.exe','/d','/c','bootstrap-vcpkg.bat','-disableMetrics'],vcpkg)
             report['sources']['vcpkg']['bootstrapExecutableSha256']=sha(vcpkg/'vcpkg.exe')
             run([str(vcpkg/'vcpkg.exe'),'version'],vcpkg,30)

@@ -1,0 +1,88 @@
+{
+  "status": "SOURCE_BUILD_FAILED_PKGCONF_ARCHIVE_REMOVED",
+  "runId": "41036044905",
+  "commit": "0e12b2393906c46607d67dd14125a2f73ff56963",
+  "artifact": {
+    "path": ".build-cache/console-security-fourth/12968257824.zip",
+    "id": 12968257824,
+    "sha256": "6f2d1f55c1037a3d5d13a0c472b7a7124a802739416bc0f1135287b3ccf950dc",
+    "bytes": 705070
+  },
+  "allCommandLogHashesVerified": true,
+  "preparedPorts": [
+    {
+      "name": "fmt",
+      "version": "11.1.4",
+      "portVersion": 0,
+      "sourceKind": "PINNED_CONSOLE_OVERLAY",
+      "manifestPath": "dep/vcpkg-overlay-ports/fmt/vcpkg.json",
+      "manifestSha256": "ba385b6792cdb256faa2e18871f94fd78510c73f74947d167f31a7e939394a1f",
+      "filesSha256": {
+        "dep/vcpkg-overlay-ports/fmt/fix-write-batch.patch": "5658d7b2362cddca318c21de795877c17cffbe62603860507291dccc40d537f3",
+        "dep/vcpkg-overlay-ports/fmt/portfile.cmake": "1501fea215112f89c40aa925c60c0d9712b4a84dd40dfc6c9624b29f9b19f459",
+        "dep/vcpkg-overlay-ports/fmt/usage": "ece096518c58df58cfc60f5ad8120d248a86383482455f539d91b8ca6eac14a7",
+        "dep/vcpkg-overlay-ports/fmt/vcpkg.json": "ba385b6792cdb256faa2e18871f94fd78510c73f74947d167f31a7e939394a1f"
+      }
+    },
+    {
+      "name": "ms-gsl",
+      "version": "3.1.0",
+      "portVersion": 0,
+      "sourceKind": "PINNED_REGISTRY_TREE",
+      "gitTree": "75aed40fd77dd1c0f123fe92df90d3aef55e7466",
+      "versionManifestSha256": "44353c06691fa46e7cc2be8b19094172cf322e4adb5093d900ad86392ec3cbd2",
+      "archiveSha256": "dfddd8cbac455332561ddf5ba7768844da56cc81643164a2a4533b7df138c752",
+      "archiveBytes": 10240
+    },
+    {
+      "name": "jsoncpp",
+      "version": "1.9.5",
+      "portVersion": 0,
+      "sourceKind": "PINNED_REGISTRY_TREE",
+      "gitTree": "ee92c743e235ebd2eda342c656704f20a329bda9",
+      "versionManifestSha256": "1732f0f2ba4b4fbe00283e28a80f72d543eea97b2f56ea5af5d3f450ddb68ff8",
+      "archiveSha256": "b014e6c02860b95f3719a3dd11222ba13a937e852447d6c708b60dbe2175cd83",
+      "archiveBytes": 10240
+    },
+    {
+      "name": "cli11",
+      "version": "2.4.2",
+      "portVersion": 0,
+      "sourceKind": "PINNED_REGISTRY_TREE",
+      "gitTree": "06ac9dc66d709da4eabe20f952b83b4bb7ae7dda",
+      "versionManifestSha256": "43b0b33def5ba7936a3814d6091d6ca22e431ca9f7c9539f58316836a31675bf",
+      "archiveSha256": "33081ef5b9ced8bed76b616cb76351eb605df872f277f2dc1f28c2a656a01042",
+      "archiveBytes": 10240
+    },
+    {
+      "name": "cmark",
+      "version": "0.30.3",
+      "portVersion": 0,
+      "sourceKind": "PINNED_REGISTRY_TREE",
+      "gitTree": "46de0e92eb13e52bb044f1d925a477483fe23c80",
+      "versionManifestSha256": "5bf5eef62348656eddc48df0cf6c6747455bd2b0da7ca09c93129c842d8bbd4f",
+      "archiveSha256": "eaaec30e81f9cec46ba7f937e2849068ae06d777c4d33b3f800fd3771a1c2285",
+      "archiveBytes": 10240
+    }
+  ],
+  "failedCommand": {
+    "argv": [
+      "MSBuild.exe",
+      "src/host/exe/Host.EXE.vcxproj",
+      "/m:2",
+      "/p:SolutionDir=D:/a/J-Harness/J-Harness/.build-cache/windows-pty-source/console/",
+      "/p:Configuration=Release",
+      "/p:Platform=x64",
+      "/verbosity:minimal",
+      "/nologo"
+    ],
+    "cwd": ".build-cache/windows-pty-source/console",
+    "exitCode": 1,
+    "log": "17.log",
+    "logSha256": "172e522a3d213dad67922a5fc2968fb651d35ccdbcb4bd1d61eb43470138a72f",
+    "elapsedSeconds": 198.141
+  },
+  "fix": "Use supported ENV{PKG_CONFIG} override with signed MSYS2 pkgconf, record binary hash/version/package and explicitly preserve only PKG_CONFIG through vcpkg clean environment",
+  "remoteRetestPending": true,
+  "productChanged": false
+}
