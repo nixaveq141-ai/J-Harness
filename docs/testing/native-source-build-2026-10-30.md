@@ -1,5 +1,7 @@
 # 固定源码原生候选构建
 
+2026-10-31源码Java首轮41186303680原ZIP `b3200958` 及实际命令日志核对：全局JAVA_TOOL_OPTIONS的标准错误横幅使R2跨进程精确输出断言失败，后续模块/候选未跑。改为Surefire直接argLine，仅限定测试fork的显式源码路径及库日志，避免污染无关子进程协议；不改测试断言。切换clean verify确保干净重建，源码路径属性仍逐XML核对。实际修正复验待，见[M10-source-qualification-first-2026-10-31.json](M10-source-qualification-first-2026-10-31.json)。
+
 2026-10-31下一验收轮：`gap-source-qualification.yml` 独立运行Windows源码原生库下的完整Java verify及候选安装。显式JVM路径、禁止JNI解包/系统回退、Surefire属性及实际加载日志一起核对，保留精确735用例契约；verify重建JAR后再次基于新baseline装配，再执行现有清单、法律漂移、OSV和候选安装冒烟。离线缺失/替换/混入/字节漂移拒绝控制及原装配控制过，远端尚待，不声称已验收或Release。
 
 2026-10-31最新验收：[完整Windows源码运行时矩阵41183770096](https://github.com/nixaveq141-ai/J-Harness/actions/runs/41183770096)@e4a16fa成功。637源码输入与Git逐项核对；仅替换已验收的六个Windows原生资源，其余当前Java/UI/legal字节保持。单轮JAR `9380bdd9` 完成三浏览器33夹具813项、三引擎R4各51项、原生7、启动器8、SDK66、示例2，全部通过；九个命令回执、结果/截图/源码摘要及原包 `9cd6b953` 已独立审计，见[完整验收收据](M10-source-product-full-2026-10-31.json)。原包、审计收据与审计器已作本地三成员备份并逐SHA核对，见[备份收据](M10-source-product-full-backup-2026-10-31.json)。

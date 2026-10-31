@@ -68,14 +68,15 @@ def main():
         env=dict(os.environ)
         if any(env.get(k) for k in ('JAVA_TOOL_OPTIONS','JDK_JAVA_OPTIONS','_JAVA_OPTIONS')):
             raise ValueError('Unreviewed inherited JVM options')
-        # JVM options reach Maven, Surefire forks and Java children that inherit
-        # the environment. Reports below check actual Surefire properties too.
+        # Pass options directly to Surefire forks. JAVA_TOOL_OPTIONS writes an
+        # unsolicited stderr banner into exact-output subprocess protocols.
+        # Do not weaken those assertions or alter unrelated child environments.
         options=['-Djna.nounpack=true','-Djna.nosys=true',
                  '-Djna.boot.library.path='+str(jni),
                  '-Dpty4j.preferred.native.folder='+str(native/'pty'),
                  '-Xlog:library=info:file=native-load-%p.log']
-        env['JAVA_TOOL_OPTIONS']=' '.join('"'+v+'"' for v in options)
-        command('source-verify',['mvnw.cmd','-B','-Prelease-audit','verify',
+        argline=' '.join('"'+v+'"' for v in options)
+        command('source-verify',['mvnw.cmd','-B','-Prelease-audit','-DargLine='+argline,'clean','verify',
                 'org.cyclonedx:cyclonedx-maven-plugin:2.9.3:makeAggregateBom'],env)
         suites=[];properties={}
         for module in sorted(ROOT.glob('harness-*')):
