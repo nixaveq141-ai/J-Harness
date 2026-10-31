@@ -1,0 +1,90 @@
+name: Source-native Windows packaged application matrix
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/m1059-full-validation]
+    paths: [.github/workflows/gap-source-product-matrix.yml]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  packaged:
+    runs-on: windows-2022
+    timeout-minutes: 60
+    env:
+      JHARNESS_EVIDENCE_RUN_ID: source-product-${{ github.run_id }}-${{ github.run_attempt }}-${{ github.sha }}
+      JHARNESS_MATRIX_KEEP_GOING: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Build fresh application baseline and verify staging boundaries
+        shell: pwsh
+        run: |
+          python scripts/test-source-native-runtime.py
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          npm --prefix frontend ci
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          npm --prefix frontend run build
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          .\mvnw.cmd -B -DskipTests package *> source-product-build.log
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - uses: actions/download-artifact@v4
+        with:
+          name: windows-pty-source-console
+          run-id: 41179155433
+          github-token: ${{ github.token }}
+          path: .build-cache/accepted-console
+      - name: Preserve baseline and stage only independently accepted native bytes
+        run: python scripts/stage-source-native-runtime.py
+      - name: Install all matrix browsers
+        working-directory: frontend
+        run: node node_modules/playwright/cli.js install chromium firefox webkit
+      - name: Run full existing packaged application matrix with source native JAR
+        run: python scripts/run-m1059-platform.py
+      - name: Bind successful command receipts to this source runtime
+        shell: pwsh
+        run: |
+          @'
+          import hashlib,json,os
+          from pathlib import Path
+          out=Path('.build-cache/source-product');stage=json.loads((out/'stage.json').read_bytes())
+          runtime=Path('harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar')
+          assert hashlib.sha256(runtime.read_bytes()).hexdigest()==stage['runtimeJarSha256']
+          names=['native','launcher','sdk','examples','browser','r4-gate','r4-chromium','r4-firefox','r4-webkit']
+          receipts={}
+          for name in names:
+              p=Path('.build-cache/M10.5.9/commands')/(name+'.json');r=json.loads(p.read_bytes())
+              assert r['status']=='PASS' and r['exitCode']==0 and r['runId']==os.environ['JHARNESS_EVIDENCE_RUN_ID']
+              assert r['sourceSha256']==r['sourceAfterSha256']
+              receipts[name]=hashlib.sha256(p.read_bytes()).hexdigest()
+          stage.update(status='PACKAGED_WINDOWS_SOURCE_RUNTIME_MATRIX_PASS_NOT_RELEASE',commandReceiptSha256=receipts,baselineJavaUnitTestsWithSourceLibraries=False)
+          (out/'result.json').write_bytes((json.dumps(stage,indent=2)+chr(10)).encode())
+          '@ | python -
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: source-native-packaged-windows
+          include-hidden-files: true
+          retention-days: 90
+          path: |
+            source-product-build.log
+            .build-cache/source-product/
+            .build-cache/M10.5.9/
+            .build-cache/R4/
+            .build-cache/M10.5.4-native-credentials.json
+            .build-cache/M10.5.8-sdk-results.json
+            .build-cache/M10.5.8-examples-results.json
+            .build-cache/M10-launcher-results.json
+            harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar

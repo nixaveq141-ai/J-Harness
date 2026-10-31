@@ -4,6 +4,8 @@
 
 ## 当前接续状态
 
+- 2026-10-31继续完整产品验证：新增精确六资源/当前Java-UI-legal字节保护的源候选工作运行时暂存器，先保存新构建baseline、不复用原verify回执。已有验收原包base/preview实际边界复核及受控类/许可证/native漂移、条目/范围拒绝本地过；新增仅Windows源候选打包应用全矩阵工作流，复用原native/launcher/SDK/examples/三浏览器与三侧R4并独立绑定同run回执和JAR。尚未远端实测，不等同完整Java源库单测、三平台替代或Release；两项整体仍开放，无付费。
+
 - 2026-10-31新版Console41179155433@87ad109全过：固定1.24.12741.0/7ff11ee及vcpkg/overlay+四tree/签名pkgconf完成双项目源构建，六资源装配其余4523条逐字节不变，ConPTY ABI/缺库拒绝/真实产品终端输入cwd-resize-exit-stop-timeout及观察残留清理过。原ZIP61257c06/所有命令日志/port tar/源码身份/输出/探针Git源码-class/回执/JAR独立核对。成功原包二成员24112201字节本地备份SHA23f9eca3逐成员过；新增固定Console验收/备份收据。新版Console构建与组件装配专项闭合，完整产品原生替换/全OS-CPE/旧Mac根因仍未闭合，原735产物不变、无付费。
 
 - 2026-10-31接续第四轮41036044905@0e12b23：原ZIP6f2d1f55/全部命令日志核对；路径门禁及固定overlay/四registry tree预取通过，fmt已编译，旧vcpkg pkgconf1~2.2.0归档各镜像404阻断。用固定上游支持的ENV{PKG_CONFIG}入口及签名pacman安装工具，记二进制SHA/版本/包资料，仅透传PKG_CONFIG；七构建及加载拒绝测试过，新CI待。原产物未改、安全门禁未降，整体两项仍开放。M10-console-pkgconf-2026-10-31.json。
