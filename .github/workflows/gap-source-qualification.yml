@@ -1,6 +1,9 @@
 name: Source-native Windows Java verify and candidate install
 on:
   workflow_dispatch:
+  push:
+    branches: [codex/m1059-full-validation]
+    paths: [.github/workflows/gap-source-qualification.yml]
 permissions:
   contents: read
   actions: read
