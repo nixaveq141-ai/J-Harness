@@ -1,0 +1,34 @@
+{
+  "status": "ORIGINAL_AND_SOURCE_TARGETED_DIAGNOSTICS_PASS_NOT_FULL_ACCEPTANCE",
+  "runId": "41183302231",
+  "commit": "e4a16fa21018bb108b53a8616d06bcc1e7b21aa3",
+  "artifact": {
+    "id": 13036175219,
+    "path": ".build-cache/source-product-diagnostic-pass/13036175219.zip",
+    "bytes": 34602016,
+    "sha256": "905aaf64ef4e6df7f4ffc8da5b758e688684c303425dff4d9da9849ac019f0ea"
+  },
+  "pairs": {
+    "original": {
+      "runId": "source-product-41183302231-1-e4a16fa21018bb108b53a8616d06bcc1e7b21aa3-baseline",
+      "jarSha256": "4b99a449368afb71e105ed8729ddc5f4c3deaaa0efc500a3d33d8baf1cc6f1d5",
+      "fixtures": 4,
+      "checks": 80,
+      "matrixSha256": "9ced29ed6d89892dda404a51b3928a03ed2f8712775a590d3165fe03d9c316bb"
+    },
+    "source": {
+      "runId": "source-product-41183302231-1-e4a16fa21018bb108b53a8616d06bcc1e7b21aa3",
+      "jarSha256": "77f4bc4400fa3105dbaf3e3e9d0db4837557299bed5ebaf9cf9ec2e22831e74b",
+      "fixtures": 4,
+      "checks": 80,
+      "matrixSha256": "69a16461053f73b90bb9e0789d51d5bb3872db12b982cc7826b6fe4304b3bff2"
+    }
+  },
+  "currentApplicationBytesPreserved": true,
+  "limits": [
+    "Original and source each pass four targeted fixture combinations in this run only.",
+    "Earlier failures are retained; this is not a causal fix or historical macOS root cause.",
+    "Full application browser/R4 qualification still required."
+  ],
+  "paidRequests": 0
+}
