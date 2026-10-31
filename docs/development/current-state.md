@@ -1,5 +1,9 @@
 # 当前实现、验收与未完成项
 
+2026-10-31最新验收：[完整Windows源码运行时矩阵41183770096](https://github.com/nixaveq141-ai/J-Harness/actions/runs/41183770096)@e4a16fa成功。637源码输入与Git逐项核对；仅替换已验收的六个Windows原生资源，其余当前Java/UI/legal字节保持。单轮JAR `9380bdd9` 完成三浏览器33夹具813项、三引擎R4各51项、原生7、启动器8、SDK66、示例2，全部通过；九个命令回执、结果/截图/源码摘要及原包 `9cd6b953` 已独立审计，见[完整验收收据](../testing/M10-source-product-full-2026-10-31.json)。原包、审计收据与审计器已作本地三成员备份并逐SHA核对，见[备份收据](../testing/M10-source-product-full-backup-2026-10-31.json)。
+
+Windows源码运行时的打包应用功能矩阵已闭合。源码原生库下的Java完整单测、候选/安装门禁、Linux/macOS完整源码运行时矩阵及其余平台资源替代尚未完成；完整OS/CPE覆盖与历史macOS按钮根因仍开放。原735三平台验收保留其原始范围。下文旧失败/待复验为当时记录，本轮通过不能证明旧失败原因已修复；未发布Release、未合并main、未新增付费模型调用。
+
 2026-10-31源运行时应用全矩阵41180547707：4项原生/启动器/SDK/示例及31完整浏览器夹具773检查通过，Firefox development审批后超时、WebKit questions未保留先前草稿，R4未运行，整轮不能验收。原包f50ceb72、同run回执和JAR已核对并本地备份；首轮暂存失败原包也证明其六原生仍为原版、UI新增8项，未发生部分覆盖。新增失败状态及有界无正文输入轨迹，逐引擎冻结，不改产品或断言。准备原分发/源码库定向4夹具观察，baseline结果不作为通过；完整模式仍全矩阵。26本地证据门禁过，下一CI待。详见[M10-source-product-browser-failure-2026-10-31.json](../testing/M10-source-product-browser-failure-2026-10-31.json)。
 
 2026-10-31实际复验结果：修复pkgconf归档404后，[41179155433](https://github.com/nixaveq141-ai/J-Harness/actions/runs/41179155433)@87ad109全部成功。固定Terminal1.24.12741.0源码、固定vcpkg与fmt overlay/四registry tree、签名pkgconf工具完成双原生项目构建；六资源预览JAR的其余4523条目逐字节不变，真实ConPTY ABI/缺捆绑库拒绝及产品LocalTerminalSession输入、目录切换、resize、退出、停止与超时清理通过。原ZIP61257c06/全部构建日志/源码输入摘要/端口tar/库输出/探针Git源码/class/命令回执/JAR已独立核验，见[固定Console验收](../testing/M10-console-fixed-acceptance-2026-10-31.json)。成功原包及收据已本地二成员备份逐SHA核对，见[备份](../testing/M10-console-fixed-local-backup-2026-10-31.json)。新版Console构建与组件装配专项已闭合；完整产品替代、全OS/CPE及历史macOS因果仍未闭合，未替换原735验收产物，无付费模型调用。

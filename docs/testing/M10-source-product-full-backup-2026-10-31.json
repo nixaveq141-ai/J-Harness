@@ -1,0 +1,8 @@
+{
+  "status": "LOCAL_BACKUP_MEMBERS_VERIFIED",
+  "path": ".build-cache/local-evidence-backups/2026-10-31/source-product-full-pass.zip",
+  "sha256": "b5c7517fe25960e3806ea641d03585dd8889204d7c064242712a22c1441979a8",
+  "bytes": 42531601,
+  "members": 3,
+  "offsite": false
+}

@@ -1,0 +1,125 @@
+{
+  "status": "WINDOWS_SOURCE_NATIVE_PACKAGED_APPLICATION_MATRIX_ACCEPTED_NOT_RELEASE",
+  "runId": "41183770096",
+  "applicationCommit": "e4a16fa21018bb108b53a8616d06bcc1e7b21aa3",
+  "artifact": {
+    "id": 13036935874,
+    "path": ".build-cache/source-product-full-pass/13036935874.zip",
+    "bytes": 42553250,
+    "sha256": "9cd6b953107b178237ab2e679515cd50b5529814e9d2191a5683d81822f32aaa"
+  },
+  "baselineJarSha256": "4b99a449368afb71e105ed8729ddc5f4c3deaaa0efc500a3d33d8baf1cc6f1d5",
+  "sourceJarSha256": "9380bdd9bcd333f071b4f793864eb23e12b76835439dee543a4c95660f692b3e",
+  "sourceInputCount": 637,
+  "sourceGitBlobsVerified": true,
+  "declaredCrlfCheckouts": [
+    "jharness.cmd",
+    "mvnw.cmd"
+  ],
+  "commandReceiptSha256": {
+    "native": "a7a2711504adeb1201360f7f61785c9c5f5bde7575e00d539548ba225c337632",
+    "launcher": "64a2dad315b5f719d54ec61facc288a12c5e04bab83160641793bb40cd845f16",
+    "sdk": "f1cc8d7c235bf712828a37b4626ecac83aeaabe59b909ae337e56ed88a30aa66",
+    "examples": "6034dcf36ec6f94dedd33960d26e0532097a0d7279100882833f90b7d36f93fe",
+    "browser": "673e36e16d45deadf09dd46a6c4b3ce7006e61b94fa5f83095a0bed1571b532a",
+    "r4-gate": "fbdb8cd56175098265ca9fe83ed25431ce7552703ff51d8cc5172c771c98166e",
+    "r4-chromium": "6f9eb515b38da90da501363d5f9939e1e246fcd0d1b8038ffe59d94eefed33e3",
+    "r4-firefox": "bd9ce2bd6f6d1ea227fdf800bfbdc43f8d8ee86078986b823d21b810acfb6f5d",
+    "r4-webkit": "e25168a4fa14a4c641e34b08cc3f90f25d32eb2fe15e9b932cfdb19fcdd608fd"
+  },
+  "browser": {
+    "fixtures": 33,
+    "checks": 813,
+    "matrixSha256": "28c1cb195483951c5c564d419f71068dc7a5a959eafdfec7b3acac32dba00ac7"
+  },
+  "r4": {
+    "chromium": {
+      "checks": 51,
+      "reportSha256": "cf5fad68964d7d567c7241afaa92f729ee49dc95ba39496bb74b39e65efda14c"
+    },
+    "firefox": {
+      "checks": 51,
+      "reportSha256": "fb0498261d8849f404805813d9cfa85c7902ee071091ae92257b84b88c3c3c87"
+    },
+    "webkit": {
+      "checks": 51,
+      "reportSha256": "e9fc3ee74fe515f6a51d79b52fa681a3e3d30fadc373bd303c55fb74182b77cd"
+    }
+  },
+  "nativeChecks": 7,
+  "sdkChecks": 66,
+  "launcherChecks": 8,
+  "exampleChecks": 2,
+  "stage": {
+    "status": "PACKAGED_WINDOWS_SOURCE_RUNTIME_MATRIX_PASS_NOT_RELEASE",
+    "baselineJarSha256": "4b99a449368afb71e105ed8729ddc5f4c3deaaa0efc500a3d33d8baf1cc6f1d5",
+    "runtimeJarSha256": "9380bdd9bcd333f071b4f793864eb23e12b76835439dee543a4c95660f692b3e",
+    "acceptedSourcePreviewSha256": "3ec3f1f103ed9c465da19ccd6d175ddb5d6c2966233525b7d71ba38f7db12f31",
+    "assemblerSha256": "0b2a15dbf3b7ad8533046893be954ec437a64391db435dccb924f3927a562ec6",
+    "acceptedReceiptSha256": "d9245ecd344d4e70b4d871d890613e036fea9d610de6cf45a7faf09ee1b23b97",
+    "sourceRunId": "41179155433",
+    "sourceCommit": "87ad1090ae64044e813a3f019b8d8c56ca6e825e",
+    "nativeReplacements": {
+      "resources/com/pty4j/native/win/x86-64/OpenConsole.exe": {
+        "sha256": "6c065dc55dce7cff61f2cfb157df5668d4421996451fdb6ae7277cd2c42b3fad",
+        "origin": {
+          "runId": "41179155433"
+        }
+      },
+      "resources/com/pty4j/native/win/x86-64/conpty.dll": {
+        "sha256": "2f013656ebdc935e184f9b50cfb09875becbfd9425bb1169a66fd031367ef135",
+        "origin": {
+          "runId": "41179155433"
+        }
+      },
+      "resources/com/pty4j/native/win/x86-64/winpty.dll": {
+        "sha256": "013db340ce5e3417b6821a81336965367f88bfd197ddbb7eb4f6e3302fdbb69c",
+        "origin": {
+          "runId": "41030432860"
+        }
+      },
+      "resources/com/pty4j/native/win/x86-64/winpty-agent.exe": {
+        "sha256": "aebed1cca9030bcb6771ce2b40cbbfa4a1de9ad96acb4dd4ca4ca6da24a02c1c",
+        "origin": {
+          "runId": "41030432860"
+        }
+      },
+      "resources/com/pty4j/native/win/x86-64/win-helper.dll": {
+        "sha256": "edc8a0aa728126f875bed4b02bdf0de2c76d99b25ff3e0b7ac6d1d42512e617f",
+        "origin": {
+          "runId": "41030432860"
+        }
+      },
+      "com/sun/jna/win32-x86-64/jnidispatch.dll": {
+        "sha256": "c88e200b240dfa54c5b852a335b28683e64a074d30ceee7c17ffc282058891a2",
+        "origin": {
+          "runId": "40998915552"
+        }
+      }
+    },
+    "preservedEntries": 4531,
+    "paidRequests": 0,
+    "originalVerifyReceiptReused": false,
+    "releaseApproved": false,
+    "commandReceiptSha256": {
+      "native": "a7a2711504adeb1201360f7f61785c9c5f5bde7575e00d539548ba225c337632",
+      "launcher": "64a2dad315b5f719d54ec61facc288a12c5e04bab83160641793bb40cd845f16",
+      "sdk": "f1cc8d7c235bf712828a37b4626ecac83aeaabe59b909ae337e56ed88a30aa66",
+      "examples": "6034dcf36ec6f94dedd33960d26e0532097a0d7279100882833f90b7d36f93fe",
+      "browser": "673e36e16d45deadf09dd46a6c4b3ce7006e61b94fa5f83095a0bed1571b532a",
+      "r4-gate": "fbdb8cd56175098265ca9fe83ed25431ce7552703ff51d8cc5172c771c98166e",
+      "r4-chromium": "6f9eb515b38da90da501363d5f9939e1e246fcd0d1b8038ffe59d94eefed33e3",
+      "r4-firefox": "bd9ce2bd6f6d1ea227fdf800bfbdc43f8d8ee86078986b823d21b810acfb6f5d",
+      "r4-webkit": "e25168a4fa14a4c641e34b08cc3f90f25d32eb2fe15e9b932cfdb19fcdd608fd"
+    },
+    "baselineJavaUnitTestsWithSourceLibraries": false
+  },
+  "currentApplicationNonNativeBytesPreserved": true,
+  "earlierFailuresRetained": true,
+  "paidRequests": 0,
+  "limits": [
+    "Windows packaged functional qualification at the exact runtime only.",
+    "Source-native libraries have not been substituted into a full Java unit/release/install or Linux/macOS qualification run.",
+    "Original universal product and remaining native resources are not replaced. Full OS/CPE and historical macOS cause remain open."
+  ]
+}
