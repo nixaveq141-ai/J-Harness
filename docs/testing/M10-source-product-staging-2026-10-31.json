@@ -1,0 +1,13 @@
+{
+  "status": "PACKAGED_MATRIX_NOT_RUN_STAGING_GATE_REJECTED_OLD_APPLICATION_ENTRY_SET",
+  "runId": "41180208198",
+  "commit": "12d640fbb2435bbd8832f99375ed5160695583a7",
+  "jobId": 124475880406,
+  "reason": "Fresh current application JAR entry set differs from earlier accepted preview; gate rejected copying the older whole application.",
+  "fix": "Extract only six hash-bound accepted native resources and reassemble against fresh preserved current baseline; validate every other current entry unchanged.",
+  "localValidation": [
+    "Native/application/license/scope rejection controls pass",
+    "Actual accepted native payload reassembled on a baseline with a new current-only application entry; entry and all non-native bytes preserved"
+  ],
+  "sourceRuntimeMatrixAcceptance": false
+}

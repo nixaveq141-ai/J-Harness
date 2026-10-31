@@ -1,5 +1,7 @@
 # 固定源码原生候选构建
 
+源应用首轮41180208198在暂存门禁拒绝旧预览整JAR：新应用条目集不同，功能未执行。现只复用已验六个原生文件，在当轮新构建baseline上重装配，保留当前全部非替换条目；不把旧应用字节带入。实际已验payload加新增当前专有条目的隔离实测过，4524项保留，受控漂移拒绝仍过；下一CI待。见M10-source-product-staging-2026-10-31.json。
+
 下一步产品覆盖：新增stage-source-native-runtime.py及源候选Windows打包应用全矩阵工作流。仅接受既验41179155433的完整load回执/预览JAR摘要，精确六原生资源，其余当前Java/UI/许可证逐字节不变；先保留当轮新构建baseline，再暂存可丢弃的工作JAR，不混原verify。原native/launcher/SDK/examples/浏览器全矩阵与三引擎R4将独立绑定同run回执及JAR。实际旧原包base/preview校验和受控漂移拒绝本地通过；远端尚待，不能称产品替换或735单测已使用源库。
 
 2026-10-31实际复验结果：修复pkgconf归档404后，[41179155433](https://github.com/nixaveq141-ai/J-Harness/actions/runs/41179155433)@87ad109全部成功。固定Terminal1.24.12741.0源码、固定vcpkg与fmt overlay/四registry tree、签名pkgconf工具完成双原生项目构建；六资源预览JAR的其余4523条目逐字节不变，真实ConPTY ABI/缺捆绑库拒绝及产品LocalTerminalSession输入、目录切换、resize、退出、停止与超时清理通过。原ZIP61257c06/全部构建日志/源码输入摘要/端口tar/库输出/探针Git源码/class/命令回执/JAR已独立核验，见[固定Console验收](M10-console-fixed-acceptance-2026-10-31.json)。成功原包及收据已本地二成员备份逐SHA核对，见[备份](M10-console-fixed-local-backup-2026-10-31.json)。新版Console构建与组件装配专项已闭合；完整产品替代、全OS/CPE及历史macOS因果仍未闭合，未替换原735验收产物，无付费模型调用。
