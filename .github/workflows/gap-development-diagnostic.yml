@@ -1,0 +1,72 @@
+name: Preserve backend evidence for original Windows development failure
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/m1059-full-validation]
+    paths: [.github/workflows/gap-development-diagnostic.yml]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  observe:
+    runs-on: windows-2022
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/download-artifact@v4
+        with:
+          name: source-native-unified-windows-2022
+          run-id: 41270037874
+          github-token: ${{ github.token }}
+          path: .build-cache/original-development-failure
+      - name: Prepare unchanged failing runtime and original assertions
+        shell: pwsh
+        run: |
+          node scripts/test-development-diagnostics.mjs
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          npm --prefix frontend ci
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          node frontend/node_modules/playwright/cli.js install chromium
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          @'
+          import hashlib,json,shutil
+          from pathlib import Path
+          expected=json.loads(Path('docs/testing/M10-unified-windows-failure-2026-11-01.json').read_bytes())
+          source=Path('.build-cache/original-development-failure/harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar')
+          assert hashlib.sha256(source.read_bytes()).hexdigest()==expected['runtimeJarSha256']
+          target=Path('harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar');target.parent.mkdir(parents=True);shutil.copyfile(source,target)
+          '@ | python -
+      - name: Observe three rounds without accepting a flaky result
+        shell: pwsh
+        run: |
+          @'
+          import json,os,subprocess,shutil,hashlib
+          from pathlib import Path
+          out=Path('.build-cache/development-diagnostic');out.mkdir()
+          rows=[]
+          for index in range(1,4):
+              env=dict(os.environ,JHARNESS_MATRIX_ENGINES='chromium',JHARNESS_MATRIX_FIXTURES='development',JHARNESS_EVIDENCE_RUN_ID='development-observe-'+os.environ['GITHUB_RUN_ID']+'-'+str(index))
+              log=out/('round-'+str(index)+'.log')
+              with log.open('wb') as stream:result=subprocess.run(['node','scripts/run-workbench-matrix.mjs'],env=env,stdout=stream,stderr=subprocess.STDOUT)
+              shutil.copytree('.build-cache/M10.5.9/browser',out/('round-'+str(index)))
+              rows.append(dict(round=index,exitCode=result.returncode,logSha256=hashlib.sha256(log.read_bytes()).hexdigest()))
+          (out/'observations.json').write_text(json.dumps(dict(status='OBSERVATIONS_NOT_ACCEPTANCE_OR_ROOT_CAUSE',rounds=rows,paidRequests=0),indent=2))
+          raise SystemExit(0 if all(r['exitCode']==0 for r in rows) else 1)
+          '@ | python -
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: original-development-diagnostics
+          include-hidden-files: true
+          retention-days: 90
+          path: .build-cache/development-diagnostic/

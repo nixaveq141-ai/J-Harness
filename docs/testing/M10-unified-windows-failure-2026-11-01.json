@@ -235,5 +235,6 @@
   },
   "r4Executed": false,
   "rootCause": "UNDETERMINED; backend UNKNOWN/FAILED after6 synthetic model requests and4 approvals, not a proven historical macOS cause",
-  "paidRequests": 0
+  "paidRequests": 0,
+  "runtimeJarSha256": "c0610ba2ed0a14fde6f840c97ac1e623aab3ca7ce52ccca45469f2cbafff515e"
 }
