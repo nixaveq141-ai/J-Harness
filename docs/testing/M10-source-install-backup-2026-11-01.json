@@ -1,0 +1,8 @@
+{
+  "status": "LOCAL_BACKUP_MEMBERS_VERIFIED",
+  "path": ".build-cache/local-evidence-backups/2026-11-01/source-install-pass.zip",
+  "sha256": "3d7261a7aad570cbc0e004ad85062f2fe84cda58b48bd6f183756d45b9e9432f",
+  "bytes": 69583927,
+  "members": 3,
+  "offsite": false
+}
