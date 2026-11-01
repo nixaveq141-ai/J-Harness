@@ -1,0 +1,37 @@
+{
+  "status": "LOCAL_WORKSPACE_FIXES_VERIFIED_REMOTE_REQUALIFICATION_PENDING",
+  "failedRun": "41287020806",
+  "failedCommit": "de81628c14fd0c7af0db21ef3260f2f966725361",
+  "artifacts": [
+    {
+      "id": "13075926951",
+      "sha256": "0b3d4b449bf1d9552dac62aaf7ad5a99a125852254891263fcba3d0950b8a4c5",
+      "bytes": 49321503,
+      "sourceVerifyLogSha256": "0322c2ef1326081d2197166c3698fc3d6a3e7b439c9ef0a36010048fbadf106f"
+    },
+    {
+      "id": "13075119882",
+      "sha256": "4e82bd2f1ca9b2a536bfc706b7e5b0e6e41cbd30eddef5b2346b18283a7d149d",
+      "bytes": 49308429,
+      "sourceVerifyLogSha256": "4159b23e3e728bea5c7889c1dfbfd95cb816e376e0c63f304f4bfd85b2a0680b"
+    }
+  ],
+  "arm64Correction": "Use arm64 O_DIRECTORY 0x4000 and O_NOFOLLOW 0x8000; x86 values select O_DIRECT/O_LARGEFILE on arm64.",
+  "gitBoundaryCorrection": "Stop repository discovery at workspace parent and constrain diff pathspec to dot; original parent-repository case fails before fix and passes after.",
+  "localJavaTests": 67,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "gitPreflight": "Record actual trusted Git --version before bounded functional cases; original five-second production budget preserved. Mac timeout root is not proved.",
+  "pythonControls": 8,
+  "logs": {
+    ".build-cache/git-ancestor-boundary-red.log": "eee643664db9149daf55b6e5a42da8647e355ee185505fdff5a35e7d48e4a2ee",
+    ".build-cache/workspace-boundaries-green2.log": "9a659b815a069b310be8bcb90f2ca5bbf0746c5d16b309d4993b7027eff0f165"
+  },
+  "references": [
+    "https://raw.githubusercontent.com/torvalds/linux/v6.8/arch/arm64/include/uapi/asm/fcntl.h",
+    "https://git-scm.com/docs/git"
+  ],
+  "paidRequests": 0,
+  "releaseApproved": false
+}

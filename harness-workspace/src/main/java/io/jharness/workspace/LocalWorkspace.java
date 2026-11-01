@@ -1006,6 +1006,7 @@ public final class LocalWorkspace implements WorkspaceFiles {
                                 "--no-textconv"));
         if (scope.equals("staged")) command.add("--cached");
         command.add("--");
+        command.add(".");
         ProcessBuilder builder = new ProcessBuilder(command).directory(root.toFile());
         var inherited = new HashMap<>(builder.environment());
         builder.environment().clear();
@@ -1020,6 +1021,11 @@ public final class LocalWorkspace implements WorkspaceFiles {
                                 ? "NUL"
                                 : "/dev/null");
         builder.environment().put("GIT_TERMINAL_PROMPT", "0");
+        // Git exempts its starting directory from ceilings; block entry into the parent.
+        builder.environment()
+                .put(
+                        "GIT_CEILING_DIRECTORIES",
+                        (root.getParent() == null ? root : root.getParent()).toString());
         builder.environment().put("LC_ALL", "C");
         Process process = builder.start();
         var overflow = new java.util.concurrent.atomic.AtomicBoolean();

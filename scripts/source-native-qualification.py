@@ -22,6 +22,20 @@ def sha(raw):
     return hashlib.sha256(raw).hexdigest()
 
 
+def trusted_git():
+    explicit=os.environ.get('JHARNESS_GIT')
+    if explicit is not None:
+        candidate=Path(explicit)
+        if not candidate.is_absolute() or candidate.is_symlink() or not candidate.is_file():
+            raise ValueError('Invalid explicit trusted Git executable')
+        return candidate.resolve()
+    candidates=([Path(os.environ[k])/'Git/cmd/git.exe' for k in ('ProgramFiles','ProgramFiles(x86)') if k in os.environ]
+                if os.name=='nt' else [Path('/usr/bin/git'),Path('/bin/git')])
+    for candidate in candidates:
+        if candidate.is_file():return candidate.resolve()
+    raise ValueError('Trusted system Git unavailable')
+
+
 def write_jvm_args(path, options):
     # JDK argument files avoid Windows batch re-parsing embedded quotes in a
     # multi-option Maven -DargLine. JSON string escaping is also valid here for
@@ -69,6 +83,11 @@ def main():
 
     try:
         python=sys.executable
+        git=trusted_git();report['trustedGitExecutable']=str(git)
+        # Exercise the same trusted executable Java uses before its bounded
+        # functional Git cases, recording cold startup separately from their budget.
+        command('trusted-git-probe',[str(git),'--version'])
+        os.environ['JHARNESS_GIT']=str(git)
         command('stage-unit',[python,stage_script,'--output',
                               '.build-cache/source-qualification/unit-stage'])
         stage=json.loads((out/'unit-stage/stage.json').read_bytes())

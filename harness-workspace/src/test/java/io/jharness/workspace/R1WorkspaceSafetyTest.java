@@ -70,6 +70,16 @@ class R1WorkspaceSafetyTest {
         Files.writeString(root.resolve("a.txt"), "after\n");
         String diff = new LocalWorkspace(root).gitDiff("working", CancellationToken.NONE);
         assertTrue(diff.contains("+after"));
+        Path nested = Files.createDirectory(root.resolve("nested-non-repository"));
+        for (String scope : List.of("working", "staged"))
+            assertEquals(
+                    "GIT_DIFF_UNAVAILABLE",
+                    assertThrows(
+                                    HarnessException.class,
+                                    () ->
+                                            new LocalWorkspace(nested)
+                                                    .gitDiff(scope, CancellationToken.NONE))
+                            .code());
     }
 
     @Test

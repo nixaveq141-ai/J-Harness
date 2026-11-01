@@ -201,11 +201,25 @@ public final class DirectoryCapability implements Closeable {
     }
 
     private static int directoryFlags() {
-        return (MAC ? 0x100000 : 0x10000) | nofollow() | cloexec();
+        return directoryFlag(MAC, System.getProperty("os.arch")) | nofollow() | cloexec();
     }
 
     private static int nofollow() {
-        return MAC ? 0x100 : 0x20000;
+        return noFollowFlag(MAC, System.getProperty("os.arch"));
+    }
+
+    static int directoryFlag(boolean mac, String architecture) {
+        // Linux arm64 overrides asm-generic/fcntl.h for AArch32 compatibility.
+        // The x86 O_DIRECTORY bit is O_DIRECT on arm64 and fails on a directory.
+        return mac ? 0x100000 : arm64(architecture) ? 0x4000 : 0x10000;
+    }
+
+    static int noFollowFlag(boolean mac, String architecture) {
+        return mac ? 0x100 : arm64(architecture) ? 0x8000 : 0x20000;
+    }
+
+    private static boolean arm64(String architecture) {
+        return "aarch64".equalsIgnoreCase(architecture) || "arm64".equalsIgnoreCase(architecture);
     }
 
     private static int cloexec() {

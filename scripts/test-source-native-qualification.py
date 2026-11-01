@@ -3,12 +3,20 @@ import importlib.util
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
 
 spec=importlib.util.spec_from_file_location('qualification',Path(__file__).with_name('source-native-qualification.py'))
 qualification=importlib.util.module_from_spec(spec);spec.loader.exec_module(qualification)
 
 
 class LoadEvidenceTest(unittest.TestCase):
+    def test_trusted_git_override_cannot_be_relative_or_missing(self):
+        with patch.dict(qualification.os.environ,{'JHARNESS_GIT':'relative/git'}):
+            with self.assertRaises(ValueError):qualification.trusted_git()
+        with tempfile.TemporaryDirectory() as folder:
+            with patch.dict(qualification.os.environ,{'JHARNESS_GIT':str(Path(folder)/'missing-git')}):
+                with self.assertRaises(ValueError):qualification.trusted_git()
+
     def test_jvm_argfile_keeps_quoted_paths_outside_maven_command(self):
         with tempfile.TemporaryDirectory() as folder:
             path=Path(folder)/'test-jvm.args'

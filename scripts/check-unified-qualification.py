@@ -27,6 +27,11 @@ def require_identical_hashes(results,extended=False):
 def verify_command_identity(name,command,windows):
     if not isinstance(command,list) or not command or any(not isinstance(v,str) for v in command):
         raise ValueError('Command argument vector required')
+    if name=='trusted-git-probe':
+        if (len(command)!=2 or command[1]!='--version'
+                or command[0].replace('\\','/').split('/')[-1].lower() not in {'git','git.exe'}):
+            raise ValueError('Exact trusted Git version probe required')
+        return
     if name=='source-verify':
         expected=(['mvnw.cmd'] if windows else ['sh','./mvnw'])+[
             '-B','-Prelease-audit','-DargLine=@../.build-cache/source-qualification/test-jvm.args',
@@ -158,13 +163,16 @@ def check(directory,commit,run,attempt='1',extended=False):
             if row!=suite:raise ValueError('Actual Java XML differs from qualified report')
             actual.append(row)
         validate_java_suites(actual,contract)
-        if set(r['commands'])!=COMMANDS:raise ValueError('Every qualification command receipt required')
+        command_names=COMMANDS|({'trusted-git-probe'} if r.get('trustedGitExecutable') else set())
+        if set(r['commands'])!=command_names:raise ValueError('Every qualification command receipt required')
         source=None
-        for name in sorted(COMMANDS):
+        for name in sorted(command_names):
             snap=read_json_snapshot(base,'.build-cache/source-qualification/'+name+'-command.json')
             if snap.sha256!=r['commands'][name]['receiptSha256']:
                 raise ValueError('Qualification command receipt bytes changed')
             verify_command_identity(name,snap.data['command'],label=='windows-2022')
+            if name=='trusted-git-probe' and snap.data['command']!=[r['trustedGitExecutable'],'--version']:
+                raise ValueError('Trusted Git probe executable differs from qualification')
             if source is None:source=snap.data['sourceSha256'];verify_git_inputs(source,commit)
             log=bounded_path(base,'.build-cache/source-qualification/'+name+'.log')
             validate(snap.data,name=name,log=log,run_id=r['runId'],source=source,cwd='.')

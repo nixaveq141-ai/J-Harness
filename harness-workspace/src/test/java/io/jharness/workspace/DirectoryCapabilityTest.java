@@ -20,6 +20,14 @@ class DirectoryCapabilityTest {
 
     @Test
     void nativeCreationModeReadWriteAndRepeatedEnumerationAreStable() throws Exception {
+        assertEquals(0x4000, DirectoryCapability.directoryFlag(false, "aarch64"));
+        assertEquals(0x8000, DirectoryCapability.noFollowFlag(false, "aarch64"));
+        assertEquals(0x4000, DirectoryCapability.directoryFlag(false, "arm64"));
+        assertEquals(0x8000, DirectoryCapability.noFollowFlag(false, "arm64"));
+        assertEquals(0x10000, DirectoryCapability.directoryFlag(false, "amd64"));
+        assertEquals(0x20000, DirectoryCapability.noFollowFlag(false, "amd64"));
+        assertEquals(0x100000, DirectoryCapability.directoryFlag(true, "aarch64"));
+        assertEquals(0x100, DirectoryCapability.noFollowFlag(true, "x86_64"));
         Path root = Files.createDirectory(base.resolve("mode")).toRealPath();
         try (var cap =
                 DirectoryCapability.open(root, DirectoryCapability.identity(root), root, true)) {
