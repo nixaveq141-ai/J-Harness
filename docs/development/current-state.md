@@ -1,5 +1,7 @@
 # 当前实现、验收与未完成项
 
+2026-11-01补证：本机Win11当前统一源码ConPTY通过真实输入/非ASCII目录/resize/退出/停止/超时和观察残留空，见M10-local-unified-conpty收据，仅组件范围。固定旧失败9ef JAR的41272245266三轮各14项原development检查通过，Git输入/截图/实际JAR已独立核对，见M10-development-observations；未复现不等于根因修复。固定JsonCpp1.9.5归档与原vcpkg SHA512匹配，Git提交OSV查询快照保存，不将空返回当完整漏洞覆盖。12成员本地补证备份逐摘要过。当前严格原生审计覆盖容器内全部非class载荷（Java platform文档/模板另属原Maven资源），未知无扩展名资源也拒绝，实际50项仍11源码/39原版。修正CMD测试条件后的完整同提交三平台41272550578@e503仍在运行；全库存来源/OS-CPE及历史macOS、WinPTY和后端UNKNOWN根因未闭合。
+
 2026-11-01新状态：9ef统一轮Windows 735单测与安装过，Chromium development后端UNKNOWN/FAILED，R4未跑，整轮不验收；Linux/Mac通过范围保留。b3规范打包轮Windows又在单测被CMD夹具tree1预算打断，原ZIP72078f14及log核对，reason=PROCESS_LIMIT、tracked2、预期9实际1。当前修正只分离两个测试条件：保留tree1所有限制/清理断言，shell语义用独立常规tree8，仍要求9且新增FAILED/NONZERO_EXIT；本机11项通过，远端修正待。这不证明第二进程身份、浏览器后端失败或旧Mac原因。50项库存的11源码/39原版边界及CLI11材料修正保留，统一资格新轮将输出实际覆盖审计；整体验收、全OS/CPE与历史根因尚未闭合。
 
 2026-11-01统一候选进展：9ef/41270037874的Linux和macOS已成功并独立核验（643Git输入、735项124套件、12回执、813浏览器、R4各51、安装候选及50项原生字节）；Windows仍运行，不标整轮通过。两原包/收据/审计器本地五成员备份过。原两JAR条目字节全部相同，但ZIP元数据导致总SHA不同；现新增固定ZIP元数据及无压缩输出，且只将严格校验三字段的内部Maven pom.properties换行规范为LF，保存原/规范基线和逐项前后摘要。类、UI、许可证和原生库内容不变。真实旧三平台基线归一后均f5d69748；新增跨作业同run/同提交/实际JAR SHA必须相等门禁，五控制过。规范打包及CLI11许可证新增后的完整三平台CI待；不冒用旧候选，50库存中39项来源构建未知、完整OS/CPE和历史根因仍开放。

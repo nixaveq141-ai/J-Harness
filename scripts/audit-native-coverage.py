@@ -19,8 +19,12 @@ def audit(jar,inventory,reviewed):
     with zipfile.ZipFile(jar) as z:
         if len(z.namelist())!=len(set(z.namelist())):raise ValueError('Duplicate runtime entries')
         for name in z.namelist():
-            if (name.startswith(('com/sun/jna/','resources/com/pty4j/native/'))
-                    and name.endswith(('.so','.dll','.exe','.dylib','.jnilib','.a','pty4j-unix-spawn-helper'))
+            # jna/platform is Java code plus package HTML/COM source templates,
+            # while architecture subdirectories under jna hold the native payloads.
+            native_container=(name.startswith('resources/com/pty4j/native/') or
+                              (name.startswith('com/sun/jna/') and not name.startswith('com/sun/jna/platform/')))
+            native_suffix=name.endswith(('.so','.dll','.exe','.dylib','.jnilib','.a'))
+            if (not name.endswith(('/','.class')) and (native_container or native_suffix)
                     and name not in original):
                 raise ValueError('Uninventoried native runtime resource: '+name)
         for name,item in sorted(original.items()):

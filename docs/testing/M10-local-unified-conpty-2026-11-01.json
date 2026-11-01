@@ -1,0 +1,21 @@
+{
+  "status": "LOCAL_WINDOWS11_UNIFIED_SOURCE_CONPTY_COMPONENT_PASS_NOT_FULL_QUALIFICATION",
+  "commit": "e503377072f7e6f2c0ff8e390e69486ffb059d76",
+  "runtimeJarSha256": "8407dc5d6e9e2879993467e3ddf0c7524b1c75ce110567ca60056cb0d41d99e1",
+  "probeSha256": "6bf84cf877e45b44b7ce2173d956741719ddacc7da794f86292b4cf4e479da07",
+  "classes": {
+    "NativeProductTerminalProbe.class": "90a1859275b3f64e6f4785a5bdb0f4fe81d7faf896a47e9c390173224129682e"
+  },
+  "commands": {
+    "compile": {
+      "exitCode": 0,
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "terminal": {
+      "exitCode": 0,
+      "logSha256": "916e219dd538465f1dbfad6b9a2f41ce525edc16e794ba3dd8dc8e1c7ab66d14"
+    }
+  },
+  "scope": "Actual input, Unicode cwd change, resize, exit, stop, timeout and observed cleanup. Does not resolve legacy WinPTY or historical browser failure.",
+  "paidRequests": 0
+}

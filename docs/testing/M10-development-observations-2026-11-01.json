@@ -1,0 +1,32 @@
+{
+  "status": "THREE_ORIGINAL_RUNTIME_DEVELOPMENT_OBSERVATIONS_PASS_NO_ROOT_CAUSE",
+  "runId": "41272245266",
+  "commit": "5d5c66227e15d764a4e765bff45019f773889522",
+  "runtimeJarSha256": "c0610ba2ed0a14fde6f840c97ac1e623aab3ca7ce52ccca45469f2cbafff515e",
+  "artifact": {
+    "id": 13069658039,
+    "bytes": 471759,
+    "sha256": "b435195c53f8640c913b9c92b2e827e787f8e2e6e16fbaea48948a4a5f18017b",
+    "path": ".build-cache/development-original-diagnostic/13069658039.zip"
+  },
+  "gitInputsVerified": 646,
+  "rounds": [
+    {
+      "round": 1,
+      "checks": 14,
+      "recordSha256": "c7b88a85c3d1c0140cd477398b6ac9ec26a02ae40c6306e269b1634e4837cc53"
+    },
+    {
+      "round": 2,
+      "checks": 14,
+      "recordSha256": "43dced83a3d65cab6875ab678e29ada7c8e98b93fa150260207ca006c27016d2"
+    },
+    {
+      "round": 3,
+      "checks": 14,
+      "recordSha256": "76188cb17a3421dfe034a464c8ccb76352c3ed62e56eb1899242fd5cf93be592"
+    }
+  ],
+  "scope": "Original failing9ef runtime with test-only bounded diagnostics; all original assertions unchanged. No reproduction, no root-cause repair or complete qualification claim.",
+  "paidRequests": 0
+}

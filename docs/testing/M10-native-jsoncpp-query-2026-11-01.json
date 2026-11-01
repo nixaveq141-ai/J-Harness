@@ -1,0 +1,16 @@
+{
+  "status": "PUBLIC_SOURCE_COMMIT_QUERY_SNAPSHOT_NOT_COMPLETE_NATIVE_OS_CPE_COVERAGE",
+  "component": "JsonCpp 1.9.5",
+  "consoleSourceRun": "41179155433",
+  "sourceCommit": "5defb4ed1a4293b8e2bf641e16b156fb9de498cc",
+  "sourceArchiveSha512": "1d06e044759b1e1a4cc4960189dd7e001a0a4389d7239a6d59295af995a553518e4e0337b4b4b817e70da5d9731a4c98655af90791b6287870b5ff8d73ad8873",
+  "sourceArchiveMatchesPinnedVcpkgPort": true,
+  "gitMetadataSha256": "83e45f5f2d51b8a2848892a1cfaddfadc883aec992aaa7b870a0d9c5dc7a1d84",
+  "osvRawSha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+  "osvQuery": {
+    "endpoint": "https://api.osv.dev/v1/query",
+    "commit": "5defb4ed1a4293b8e2bf641e16b156fb9de498cc"
+  },
+  "returnedAdvisoryIds": [],
+  "scope": "Exact public source commit query and pinned source archive identity only. Empty query is not a complete database coverage, linked-subset reachability, OS/CPE or security-clearance proof."
+}

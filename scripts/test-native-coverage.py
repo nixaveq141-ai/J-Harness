@@ -23,7 +23,7 @@ class NativeCoverageTest(unittest.TestCase):
             reviewed['b.so']=dict(sha256=coverage.sha(b'original'),origin=dict(runId='separately-reviewed'))
             self.assertEqual('SOURCE_COVERAGE_COMPLETE',coverage.audit(jar,inventory,reviewed)['status'])
             with zipfile.ZipFile(jar,'a') as z:
-                z.writestr('com/sun/jna/aix-unknown/libjnidispatch.a',b'unlisted')
+                z.writestr('com/sun/jna/unknown/native-payload-without-extension',b'unlisted')
             with self.assertRaisesRegex(ValueError,'Uninventoried'):
                 coverage.audit(jar,inventory,reviewed)
 

@@ -4,6 +4,8 @@
 
 ## 当前接续状态
 
+- 2026-11-01本机Win11补验当前统一源码ConPTY：真实输入/Unicode目录/resize/退出/stop/timeout及观察残留空均过，严格编译探针与class/日志/JAR摘要收据保存，仅组件验收。旧9ef运行时诊断41272245266@5d三轮原14项均过，源/截图/原JAR独立核对，未复现不算根因修复。JsonCpp固定1.9.5源归档SHA512与原vcpkg吻合，官方Git提交OSV查询原响应已保存，空结果不算完整数据库/OS-CPE证明。12成员本地备份逐摘要过；原生审计改扫描库容器全部非class资源并排除Java platform文档/模板，未知无扩展名载荷拒绝控制及实际50项核对过。e503修正后三平台41272550578仍运行，全部缺口尚未闭合。
+
 - 2026-11-01规范b3/41271702330 Windows原ZIP72078f14/verify日志已核对，CMD夹具stdout已wrapper-like却exit1/reason PROCESS_LIMIT/tracked2；同用先前tree1预算导致单独shell退出语义检查被树限制打断。保留tree1所有原拒绝/清理断言，shell用独立常规tree8，并加强FAILED/NONZERO_EXIT断言，本机11项过，远端修正待；不推断第二进程身份、不解释后端UNKNOWN或旧Mac。统一新轮增实际50项native覆盖审计，未知来源保持明确；M10-cmd-budget-correction收据。
 
 - 2026-11-01后端失败调查继续：新增固定9ef失败运行时精确JAR的Windows Chromium development三轮专项，只注入白名单任务错误码/工具状态/清理枚举与残留数量，不存参数/正文/PID；各轮冻结原断言、退出码及诊断，任何失败不算验收。仅观察不当根因证明，不解释旧Mac。诊断隐私控制过，远端专项待；b3规范候选三平台另在跑。
