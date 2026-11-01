@@ -1,5 +1,7 @@
 # 固定源码原生候选构建
 
+2026-11-01库存更正：逐资源严格扫描发现此前48项遗漏JNA的AIX ppc/ppc64两项`.a`归档，均与已核官方JNA5.14.0原包（34ed1e1f）逐字节一致；当前完整已识别库存为50项，旧48记录保留。统一载荷实际为11项已验源码输出、39项保留原分发（此前“37项”按旧库存计数），不等于完整源码或OS/CPE证明。新增`audit-native-coverage.py`精确核对每项及拒绝未列原生归档；`--require-source-complete`对当前载荷实际返回2，未知不能算通过。见M10-native-inventory-50-2026-11-01.json与M10-native-coverage-2026-11-01.json。统一候选三平台41270037874仍待，历史异常缺因果证据的继续开放。
+
 2026-11-01统一资源候选入口：`stage-unified-native-runtime.py`只认三份已验收运行时JAR的精确SHA及6/2/3资源范围，将11项源码载荷装配在当轮新应用基线上，保留其他Java/UI/legal条目。真实原三包提取和装配已验证11替换/4526条保留，作用域/摘要漂移和原JVM控制4项过。其余37库存资源保留官方原版，并写入`retainedOriginalNativeResources`；不能称全架构源码替代。新增`gap-unified-source-qualification.yml`，同提交Windows x64、Linux x64、macOS arm64完整Java/应用矩阵和候选安装，当前远端待。各平台成品摘要须独立核对，若构建非相同字节不能冒称同一JAR。完整OS/CPE和历史根因仍开放，无发布。
 
 2026-11-01最新闭合：[41268207915](https://github.com/nixaveq141-ai/J-Harness/actions/runs/41268207915)@99ad72f的Linux x86_64与macOS arm64完整源码运行时验收均成功，并独立审计原ZIP（33b31808/b3a7dbbf）。每侧640个Git输入、735项/124套件零失败错误跳过、7份实际源码JNI加载记录、12个同轮命令回执、精确两/三原生资源替换与其余JAR字节保持、候选62文件与安装、三浏览器33夹具813项和三引擎R4各51项均通过。见[Linux验收](M10-posix-source-linux-2026-11-01.json)、[macOS验收](M10-posix-source-macos-2026-11-01.json)。原两ZIP/两收据/审计器五成员本地备份逐SHA核对，见[备份](M10-posix-source-backup-2026-11-01.json)。这两侧完整源码Java、打包应用及候选安装验收已闭合；Windows保留其既验范围，不能拼成同一提交的统一发行。完整库存/额外CPU资源统一替代、完整OS/CPE及历史macOS、WinPTY、偶发CMD因果仍开放，未新增付费/main合并/Release。后文保留各轮历史状态。

@@ -1,0 +1,132 @@
+{
+  "schemaVersion": 1,
+  "scope": "Eleven exact previously qualified native source outputs; not full OS/CPE clearance",
+  "resources": {
+    "com/sun/jna/win32-x86-64/jnidispatch.dll": {
+      "sha256": "c88e200b240dfa54c5b852a335b28683e64a074d30ceee7c17ffc282058891a2",
+      "origin": {
+        "qualificationRun": "41266807712",
+        "qualificationCommit": "f32a2e6cc88ed0b583876cb073962d5d50a87f05",
+        "acceptedRuntimeJarSha256": "fe32f9eaa19f7944782110157d9aa2663c62f21b3278c61494338b17bfdf72cd",
+        "source": {
+          "runId": "40998915552"
+        }
+      }
+    },
+    "resources/com/pty4j/native/win/x86-64/OpenConsole.exe": {
+      "sha256": "6c065dc55dce7cff61f2cfb157df5668d4421996451fdb6ae7277cd2c42b3fad",
+      "origin": {
+        "qualificationRun": "41266807712",
+        "qualificationCommit": "f32a2e6cc88ed0b583876cb073962d5d50a87f05",
+        "acceptedRuntimeJarSha256": "fe32f9eaa19f7944782110157d9aa2663c62f21b3278c61494338b17bfdf72cd",
+        "source": {
+          "runId": "41179155433"
+        }
+      }
+    },
+    "resources/com/pty4j/native/win/x86-64/conpty.dll": {
+      "sha256": "2f013656ebdc935e184f9b50cfb09875becbfd9425bb1169a66fd031367ef135",
+      "origin": {
+        "qualificationRun": "41266807712",
+        "qualificationCommit": "f32a2e6cc88ed0b583876cb073962d5d50a87f05",
+        "acceptedRuntimeJarSha256": "fe32f9eaa19f7944782110157d9aa2663c62f21b3278c61494338b17bfdf72cd",
+        "source": {
+          "runId": "41179155433"
+        }
+      }
+    },
+    "resources/com/pty4j/native/win/x86-64/win-helper.dll": {
+      "sha256": "edc8a0aa728126f875bed4b02bdf0de2c76d99b25ff3e0b7ac6d1d42512e617f",
+      "origin": {
+        "qualificationRun": "41266807712",
+        "qualificationCommit": "f32a2e6cc88ed0b583876cb073962d5d50a87f05",
+        "acceptedRuntimeJarSha256": "fe32f9eaa19f7944782110157d9aa2663c62f21b3278c61494338b17bfdf72cd",
+        "source": {
+          "runId": "41030432860"
+        }
+      }
+    },
+    "resources/com/pty4j/native/win/x86-64/winpty-agent.exe": {
+      "sha256": "aebed1cca9030bcb6771ce2b40cbbfa4a1de9ad96acb4dd4ca4ca6da24a02c1c",
+      "origin": {
+        "qualificationRun": "41266807712",
+        "qualificationCommit": "f32a2e6cc88ed0b583876cb073962d5d50a87f05",
+        "acceptedRuntimeJarSha256": "fe32f9eaa19f7944782110157d9aa2663c62f21b3278c61494338b17bfdf72cd",
+        "source": {
+          "runId": "41030432860"
+        }
+      }
+    },
+    "resources/com/pty4j/native/win/x86-64/winpty.dll": {
+      "sha256": "013db340ce5e3417b6821a81336965367f88bfd197ddbb7eb4f6e3302fdbb69c",
+      "origin": {
+        "qualificationRun": "41266807712",
+        "qualificationCommit": "f32a2e6cc88ed0b583876cb073962d5d50a87f05",
+        "acceptedRuntimeJarSha256": "fe32f9eaa19f7944782110157d9aa2663c62f21b3278c61494338b17bfdf72cd",
+        "source": {
+          "runId": "41030432860"
+        }
+      }
+    },
+    "com/sun/jna/linux-x86-64/libjnidispatch.so": {
+      "sha256": "c41be9a02e2648c7ee6bf67a0e44575d97862db362f7294cd20a26c4b43c8cec",
+      "origin": {
+        "qualificationRun": "41268207915",
+        "qualificationCommit": "99ad72f376be21536d36ee929dbe4d61cbcf0a9e",
+        "acceptedRuntimeJarSha256": "38f5eb58c6c6b7d2bd1e6097252afc96f6498c124c8e3954064c1973736f84c4",
+        "source": {
+          "commit": "a2dc791bae10addc3b53b3d951b94db897ccc265",
+          "runId": "40995618881"
+        }
+      }
+    },
+    "resources/com/pty4j/native/linux/x86-64/libpty.so": {
+      "sha256": "42127d2ce30c1bd38f3b6f4f71634c7656c6cce7eb2b2d0ed8a478a16a577b5d",
+      "origin": {
+        "qualificationRun": "41268207915",
+        "qualificationCommit": "99ad72f376be21536d36ee929dbe4d61cbcf0a9e",
+        "acceptedRuntimeJarSha256": "38f5eb58c6c6b7d2bd1e6097252afc96f6498c124c8e3954064c1973736f84c4",
+        "source": {
+          "commit": "a2dc791bae10addc3b53b3d951b94db897ccc265",
+          "runId": "40995618881"
+        }
+      }
+    },
+    "com/sun/jna/darwin-aarch64/libjnidispatch.jnilib": {
+      "sha256": "ebd9fd7c720728ddd3c515f5f96ba6c3a7ce06f20c1d0e4a8eaf63e54341f357",
+      "origin": {
+        "qualificationRun": "41268207915",
+        "qualificationCommit": "99ad72f376be21536d36ee929dbe4d61cbcf0a9e",
+        "acceptedRuntimeJarSha256": "88b11e7ff3e19bfe09313072d5d082eba7d2a4b976b7b0c93e5e14df904f897d",
+        "source": {
+          "commit": "3571d2269895644e9888963fbf54a4cf101c9597",
+          "runId": "40998915552"
+        }
+      }
+    },
+    "resources/com/pty4j/native/darwin/libpty.dylib": {
+      "sha256": "db26759cc11b61585dc7fabbf32e4074f7c511f94051a9cb10160b8700b75766",
+      "origin": {
+        "qualificationRun": "41268207915",
+        "qualificationCommit": "99ad72f376be21536d36ee929dbe4d61cbcf0a9e",
+        "acceptedRuntimeJarSha256": "88b11e7ff3e19bfe09313072d5d082eba7d2a4b976b7b0c93e5e14df904f897d",
+        "source": {
+          "commit": "3571d2269895644e9888963fbf54a4cf101c9597",
+          "runId": "40998915552"
+        }
+      }
+    },
+    "resources/com/pty4j/native/darwin/pty4j-unix-spawn-helper": {
+      "sha256": "99dc2da73d03f94efef5d7988f0705551805f2c4e25d7cf4f11ee3e4c80f2e10",
+      "origin": {
+        "qualificationRun": "41268207915",
+        "qualificationCommit": "99ad72f376be21536d36ee929dbe4d61cbcf0a9e",
+        "acceptedRuntimeJarSha256": "88b11e7ff3e19bfe09313072d5d082eba7d2a4b976b7b0c93e5e14df904f897d",
+        "source": {
+          "commit": "3571d2269895644e9888963fbf54a4cf101c9597",
+          "runId": "40998915552"
+        }
+      }
+    }
+  }
+}

@@ -1,5 +1,7 @@
 # 当前实现、验收与未完成项
 
+2026-11-01库存更正：逐资源严格扫描发现此前48项遗漏JNA的AIX ppc/ppc64两项`.a`归档，均与已核官方JNA5.14.0原包（34ed1e1f）逐字节一致；当前完整已识别库存为50项，旧48记录保留。统一载荷实际为11项已验源码输出、39项保留原分发（此前“37项”按旧库存计数），不等于完整源码或OS/CPE证明。新增`audit-native-coverage.py`精确核对每项及拒绝未列原生归档；`--require-source-complete`对当前载荷实际返回2，未知不能算通过。见M10-native-inventory-50-2026-11-01.json与M10-native-coverage-2026-11-01.json。统一候选三平台41270037874仍待，历史异常缺因果证据的继续开放。
+
 2026-11-01最新闭合：[41268207915](https://github.com/nixaveq141-ai/J-Harness/actions/runs/41268207915)@99ad72f的Linux x86_64与macOS arm64完整源码运行时验收均成功，并独立审计原ZIP（33b31808/b3a7dbbf）。每侧640个Git输入、735项/124套件零失败错误跳过、7份实际源码JNI加载记录、12个同轮命令回执、精确两/三原生资源替换与其余JAR字节保持、候选62文件与安装、三浏览器33夹具813项和三引擎R4各51项均通过。见[Linux验收](../testing/M10-posix-source-linux-2026-11-01.json)、[macOS验收](../testing/M10-posix-source-macos-2026-11-01.json)。原两ZIP/两收据/审计器五成员本地备份逐SHA核对，见[备份](../testing/M10-posix-source-backup-2026-11-01.json)。这两侧完整源码Java、打包应用及候选安装验收已闭合；Windows保留其既验范围，不能拼成同一提交的统一发行。完整库存/额外CPU资源统一替代、完整OS/CPE及历史macOS、WinPTY、偶发CMD因果仍开放，未新增付费/main合并/Release。后文保留各轮历史状态。
 
 2026-11-01最新验收：[41266807712](https://github.com/nixaveq141-ai/J-Harness/actions/runs/41266807712)@f32a2e6全部成功。独立核对原ZIP `9c576ba7`、637个Git输入、735项/124套件零失败错误跳过、全部XML源码属性、7份实际源码JNI加载日志、11个同轮命令回执、六原生替换且其余JAR条目保持、候选62个文件及同JAR安装冒烟。Windows源码原生库下的完整Java verify、候选打包与安装验收已闭合，见[验收收据](../testing/M10-source-install-2026-11-01.json)；原包/收据/审计器三成员本地备份已逐摘要核对。第五轮fixture.cmd退出1本轮未复现，触发原因仍未确定；不以本轮通过声称根因修复。其他平台完整源码运行时、统一资源替代、全OS/CPE及历史macOS因果仍开放；未合并main或发布Release、无新增付费模型调用。下文保留各轮历史状态。

@@ -74,7 +74,7 @@ def main():
     with baseline.open('xb') as stream:stream.write(runtime.read_bytes())
     helper=ROOT/'docs/testing/tools/assemble-native-preview.py';spec=importlib.util.spec_from_file_location('unified_assembler',helper)
     assembler=importlib.util.module_from_spec(spec);spec.loader.exec_module(assembler)
-    inventory={v['resource']:v['sha256'] for v in json.loads((ROOT/'docs/testing/M10-native-inventory-48-2026-10-30.json').read_bytes())['binaries']}
+    inventory={v['resource']:v['sha256'] for v in json.loads((ROOT/'docs/testing/M10-native-inventory-50-2026-11-01.json').read_bytes())['binaries']}
     preview=out/'current-source-runtime.jar'
     assembly=assembler.assemble(baseline,preview,replacements,sha(baseline.read_bytes()),inventory,
         'Unified Windows x64, Linux x64, macOS arm64; remaining inventoried resources retain original bytes')
