@@ -195,7 +195,8 @@
       "pty4j-NOTICE",
       "winpty-LICENSE",
       "terminal-LICENSE",
-      "terminal-NOTICE"
+      "terminal-NOTICE",
+      "cli11-LICENSE"
     ]
   },
   {

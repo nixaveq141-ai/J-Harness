@@ -43,5 +43,10 @@
     "file": "annotations-LICENSE",
     "url": "https://raw.githubusercontent.com/JetBrains/java-annotations/24.0.1/LICENSE.txt",
     "sha256": "8c1e966c7855fb54027bcaf6ebe7a43abe4785791e8cf9148c363761d493d097"
+  },
+  {
+    "file": "cli11-LICENSE",
+    "url": "https://raw.githubusercontent.com/CLIUtils/CLI11/v2.4.2/LICENSE",
+    "sha256": "3ee4a90b05dd076b70a36a0330be8bdfecbe75bbd0fc3343a4f289c86e2063aa"
   }
 ]

@@ -1,0 +1,15 @@
+{
+  "status": "EXACT_BUILT_CLI11_LICENSE_AND_LOCAL_PACKAGE_VERIFIED_CI_PENDING",
+  "sourceRun": "41179155433",
+  "sourceCommit": "87ad1090ae64044e813a3f019b8d8c56ca6e825e",
+  "component": "CLI11 2.4.2",
+  "file": "third-party/upstream/cli11-LICENSE",
+  "sha256": "3ee4a90b05dd076b70a36a0330be8bdfecbe75bbd0fc3343a4f289c86e2063aa",
+  "installedCopyrightExactMatch": true,
+  "bundledBy": "harness-cli resource third-party/upstream/*LICENSE*",
+  "candidateRevalidation": "Pending; prior unified CI does not include this new legal file",
+  "scope": "Single dependency legal-resource preservation, not complete native legal or OS/CPE certification",
+  "localPackageLogSha256": "f3709f0745519e6cee77392dbc2af7674f5fcb1bf98522a384d7d68251428dce",
+  "localPackageLicenseSha256": "3ee4a90b05dd076b70a36a0330be8bdfecbe75bbd0fc3343a4f289c86e2063aa",
+  "localPackageTestsSkipped": true
+}

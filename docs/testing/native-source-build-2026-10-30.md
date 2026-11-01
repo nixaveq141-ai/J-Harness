@@ -1,5 +1,7 @@
 # 固定源码原生候选构建
 
+2026-11-01源码Console静态依赖复核：CLI11 2.4.2的官方LICENSE与原成功构建的已安装copyright逐字节SHA一致（3ee4a90b），此前Terminal NOTICE没有单列CLI11，现补许可证、固定来源清单、pty4j supplemental和再生器。本机从成功CI BOM再生18依赖清单与编辑完全一致，实际package检查LICENSE和sources入JAR，五发布工具控制过；本机打包跳过单测，新法律资源的完整CI待，不冒用旧9ef候选验收。Terminal LICENSE/NOTICE与固定源码构建记录摘要也保持一致。本节仅补该依赖材料，不作全原生法律或OS/CPE认证。
+
 2026-11-01库存更正：逐资源严格扫描发现此前48项遗漏JNA的AIX ppc/ppc64两项`.a`归档，均与已核官方JNA5.14.0原包（34ed1e1f）逐字节一致；当前完整已识别库存为50项，旧48记录保留。统一载荷实际为11项已验源码输出、39项保留原分发（此前“37项”按旧库存计数），不等于完整源码或OS/CPE证明。新增`audit-native-coverage.py`精确核对每项及拒绝未列原生归档；`--require-source-complete`对当前载荷实际返回2，未知不能算通过。见M10-native-inventory-50-2026-11-01.json与M10-native-coverage-2026-11-01.json。统一候选三平台41270037874仍待，历史异常缺因果证据的继续开放。
 
 2026-11-01统一资源候选入口：`stage-unified-native-runtime.py`只认三份已验收运行时JAR的精确SHA及6/2/3资源范围，将11项源码载荷装配在当轮新应用基线上，保留其他Java/UI/legal条目。真实原三包提取和装配已验证11替换/4526条保留，作用域/摘要漂移和原JVM控制4项过。其余37库存资源保留官方原版，并写入`retainedOriginalNativeResources`；不能称全架构源码替代。新增`gap-unified-source-qualification.yml`，同提交Windows x64、Linux x64、macOS arm64完整Java/应用矩阵和候选安装，当前远端待。各平台成品摘要须独立核对，若构建非相同字节不能冒称同一JAR。完整OS/CPE和历史根因仍开放，无发布。

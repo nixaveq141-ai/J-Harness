@@ -61,7 +61,7 @@ def main():
                      "url": item.findtext("m:url", namespaces=ns)}
                     for item in model.findall("m:licenses/m:license", ns)]
         supplemental = {"org.jetbrains.pty4j:pty4j": ["pty4j-LICENSE", "pty4j-NOTICE", "winpty-LICENSE",
-                                   "terminal-LICENSE", "terminal-NOTICE"],
+                                   "terminal-LICENSE", "terminal-NOTICE", "cli11-LICENSE"],
                         "org.jetbrains.kotlin:kotlin-stdlib": ["kotlin-LICENSE", "kotlin-NOTICE"],
                         "org.jetbrains:annotations": ["annotations-LICENSE"]}.get(group+":"+name, [])
         if not legal and not supplemental:
