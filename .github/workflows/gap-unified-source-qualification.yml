@@ -127,3 +127,33 @@ jobs:
             target/osv-results.json
             target/candidate-smoke.json
             target/jharness-0.1.0-SNAPSHOT-candidate.zip
+
+  identical-runtime:
+    needs: qualification
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/download-artifact@v4
+        with:
+          name: source-native-unified-windows-2022
+          path: .build-cache/unified-check/windows-2022
+      - uses: actions/download-artifact@v4
+        with:
+          name: source-native-unified-ubuntu-24.04
+          path: .build-cache/unified-check/ubuntu-24.04
+      - uses: actions/download-artifact@v4
+        with:
+          name: source-native-unified-macos-latest
+          path: .build-cache/unified-check/macos-latest
+      - name: Require identical qualified runtime bytes on all platforms
+        run: python scripts/check-unified-qualification.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: unified-runtime-equality
+          include-hidden-files: true
+          path: .build-cache/unified-equality.json

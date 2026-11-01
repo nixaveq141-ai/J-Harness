@@ -29,6 +29,39 @@ RECEIPTS={'windows':'M10-source-install-2026-11-01.json',
 def sha(raw):return hashlib.sha256(raw).hexdigest()
 
 
+def canonicalize_runtime(source,target,normalize_properties=False):
+    """Fix ZIP metadata; normalize only reviewed internal Maven property newlines.
+
+    Classes, UI, legal files and native resources retain their exact bytes.
+    Stored entries avoid platform-specific zlib output in the canonical JAR.
+    """
+    changes={}
+    with zipfile.ZipFile(source) as original:
+        names=original.namelist()
+        if len(names)!=len(set(names)):raise ValueError('Duplicate canonical input entries')
+        entries={}
+        for name in sorted(names):
+            raw=original.read(name);value=raw
+            if normalize_properties and name.startswith('META-INF/maven/io.jharness/') and name.endswith('/pom.properties'):
+                artifact=name.split('/')[-2]
+                expected=('artifactId='+artifact+'\ngroupId=io.jharness\nversion=0.1.0-SNAPSHOT\n').encode()
+                if raw.replace(b'\r\n',b'\n')!=expected:
+                    raise ValueError('Unexpected internal Maven identity metadata')
+                value=expected
+                if value!=raw:changes[name]=dict(beforeSha256=sha(raw),afterSha256=sha(value))
+            entries[name]=value
+        with zipfile.ZipFile(target,'x',compression=zipfile.ZIP_STORED) as output:
+            for name,value in entries.items():
+                info=zipfile.ZipInfo(name,(2026,10,16,0,0,0));info.create_system=3
+                info.compress_type=zipfile.ZIP_STORED
+                info.external_attr=((0o40755 if name.endswith('/') else 0o100644)<<16)|(0x10 if name.endswith('/') else 0)
+                output.writestr(info,value)
+    with zipfile.ZipFile(target) as result:
+        if result.namelist()!=sorted(names) or any(result.read(n)!=v for n,v in entries.items()):
+            raise ValueError('Canonical runtime content drift')
+    return changes
+
+
 def active_scope(system,machine):
     value={('Windows','AMD64'):'windows',('Linux','x86_64'):'linux',('Darwin','arm64'):'macos'}.get((system,machine))
     if not value:raise ValueError('Unreviewed unified target architecture')
@@ -72,18 +105,22 @@ def main():
         raise ValueError('Exact eleven-resource unified scope required')
     runtime=ROOT/'harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar';baseline=out/'baseline-runtime.jar'
     with baseline.open('xb') as stream:stream.write(runtime.read_bytes())
+    canonical=out/'canonical-baseline-runtime.jar'
+    metadata_changes=canonicalize_runtime(baseline,canonical,normalize_properties=True)
     helper=ROOT/'docs/testing/tools/assemble-native-preview.py';spec=importlib.util.spec_from_file_location('unified_assembler',helper)
     assembler=importlib.util.module_from_spec(spec);spec.loader.exec_module(assembler)
     inventory={v['resource']:v['sha256'] for v in json.loads((ROOT/'docs/testing/M10-native-inventory-50-2026-11-01.json').read_bytes())['binaries']}
     preview=out/'current-source-runtime.jar'
-    assembly=assembler.assemble(baseline,preview,replacements,sha(baseline.read_bytes()),inventory,
+    assembly=assembler.assemble(canonical,preview,replacements,sha(canonical.read_bytes()),inventory,
         'Unified Windows x64, Linux x64, macOS arm64; remaining inventoried resources retain original bytes')
+    final=out/'canonical-source-runtime.jar';canonicalize_runtime(preview,final)
     temporary=runtime.with_suffix('.source-stage.tmp')
-    with temporary.open('xb') as stream:stream.write(preview.read_bytes())
+    with temporary.open('xb') as stream:stream.write(final.read_bytes())
     temporary.replace(runtime)
     all_items=assembly['manifest']['replacements']
     report=dict(status='UNIFIED_STAGED_NOT_FUNCTIONALLY_ACCEPTED',runtimeJarSha256=sha(runtime.read_bytes()),
         baselineJarSha256=sha(baseline.read_bytes()),nativeReplacements={n:all_items[n] for n in SCOPES[active]},
+        canonicalBaselineJarSha256=sha(canonical.read_bytes()),internalMavenNewlineChanges=metadata_changes,
         allNativeReplacements=all_items,activeScope=active,acceptedReceiptSha256=receipts,
         retainedOriginalNativeResources=sorted(set(inventory)-set(all_items)),
         preservedEntries=assembly['preservedEntries'],paidRequests=0,releaseApproved=False)

@@ -1,0 +1,66 @@
+{
+  "status": "PRIOR_THREE_PLATFORM_BASELINES_CANONICAL_BYTES_IDENTICAL_NOT_CURRENT_CI",
+  "hashes": {
+    "windows": "f5d6974859b7f5833264f16d9bd85e66560778875c40aa3033bf967959b810da",
+    "linux": "f5d6974859b7f5833264f16d9bd85e66560778875c40aa3033bf967959b810da",
+    "macos": "f5d6974859b7f5833264f16d9bd85e66560778875c40aa3033bf967959b810da"
+  },
+  "metadataChanges": {
+    "windows": {
+      "META-INF/maven/io.jharness/harness-agent/pom.properties": {
+        "beforeSha256": "7fb8633c9877763993f2bf8dfd8afdca6cfd106ce2ae5559c0928f66315197b5",
+        "afterSha256": "d72efd0de95acbb577976d0b45066c7ea7c5c602c47298ccacc3e31e0d6c59a8"
+      },
+      "META-INF/maven/io.jharness/harness-api/pom.properties": {
+        "beforeSha256": "116ae72695d69248fb92b271f9ea3b299c8b1a17d084f8af00dd23f633575f92",
+        "afterSha256": "5aa8c715844269fda45d3a6168de2f54b41c71d25b6a8bba683843626bfe0dc8"
+      },
+      "META-INF/maven/io.jharness/harness-cli/pom.properties": {
+        "beforeSha256": "54d3ec1ba56845c7bd5dcd37bd01ba156624202d5496187571e1905054588523",
+        "afterSha256": "8af006ded3f849c735bf6957045188152d2ed5feb38ca550ee29d32db98abbf4"
+      },
+      "META-INF/maven/io.jharness/harness-ecosystem/pom.properties": {
+        "beforeSha256": "5f4a7429de5c448cacf5339fbec1d3204c85b36c83fa8970d10536fdaa02f85c",
+        "afterSha256": "db3c741e1d4b68eda979001501bc78d6fc654e1a2778ce7827f0d34bd1128768"
+      },
+      "META-INF/maven/io.jharness/harness-events/pom.properties": {
+        "beforeSha256": "1c7e86cb3ffd85e73852ecd4de72ce2f29d814d9fe621078422e867ae5d598dc",
+        "afterSha256": "edcf5d71d3a2c6e8a59541263f01ef58b03b0921ace0020140a8702509dd62bd"
+      },
+      "META-INF/maven/io.jharness/harness-llm/pom.properties": {
+        "beforeSha256": "d390e1409d1cb85dd242573b46960f0fad570431d3f8ef030409a3702cdd1090",
+        "afterSha256": "6f5532dd9dffe778b7ff07506b661b986b2e5dc671d0159d66f4a16bc3d12aa2"
+      },
+      "META-INF/maven/io.jharness/harness-plugin/pom.properties": {
+        "beforeSha256": "7fdb659e707b957bc01a96d0e5daef31bf08ca8f65d61da69b79774ac3543325",
+        "afterSha256": "2ae598368bed4feb8f86e7b65c83081a3698cdd12719de89bb8f5ac6d3d282b9"
+      },
+      "META-INF/maven/io.jharness/harness-policy/pom.properties": {
+        "beforeSha256": "23d0888d0b722c3a2b78407cd64d8f48b795c2528ca1fa0499634f3df3b34b65",
+        "afterSha256": "6bd23af56f85d8b13821060b076598b6440d98f007afe73b3eaf763f6fac962a"
+      },
+      "META-INF/maven/io.jharness/harness-process/pom.properties": {
+        "beforeSha256": "15de3f60c9f2a66a40d9d6dac0825fb766da3611c976112d0e56472241ff6997",
+        "afterSha256": "8c2b654910f555aeba689d0f2a8d24fec8323eab567fa33678e2b0d310eacb25"
+      },
+      "META-INF/maven/io.jharness/harness-session/pom.properties": {
+        "beforeSha256": "13efcdb92dd7da856ac349dfadf3a7827ee1fce8a38f04203481a334092129ae",
+        "afterSha256": "1e72517b593661ce3d6f4df860ec9a70fa4bc651628f3f8210c60cd9b900e093"
+      },
+      "META-INF/maven/io.jharness/harness-tools/pom.properties": {
+        "beforeSha256": "4e064f88084d4a586529e1f47d82bbb1b51ad56e36eee4b8f516d0b7188c5a32",
+        "afterSha256": "c2aee995047cecef8dc56094486256b07fe675de300e196205718bcbeeed2a13"
+      },
+      "META-INF/maven/io.jharness/harness-web/pom.properties": {
+        "beforeSha256": "94f0ca793ea2c1eb3ef727c8c0e49804b46b89364dd583bcac38c92a65bfb739",
+        "afterSha256": "07b3afdd86cea090c0ed7b22572a8cf65b61a07fefbd29ac97fde7900cb9d4a4"
+      },
+      "META-INF/maven/io.jharness/harness-workspace/pom.properties": {
+        "beforeSha256": "ab6d5be05c24e509b3a7cb3feb72ad76ef36d4c65246187a5d201a541f45e2ec",
+        "afterSha256": "2bfe7752d48b2c59608ca1d1cefead46eb2d0348628ba3bd1c6a04f3c5c849ed"
+      }
+    },
+    "linux": {},
+    "macos": {}
+  }
+}

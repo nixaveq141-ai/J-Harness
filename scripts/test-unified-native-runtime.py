@@ -11,6 +11,19 @@ stage=importlib.util.module_from_spec(spec);spec.loader.exec_module(stage)
 
 
 class UnifiedScopeTest(unittest.TestCase):
+    def test_canonical_bytes_ignore_zip_metadata_and_internal_property_newlines(self):
+        with tempfile.TemporaryDirectory() as folder:
+            root=Path(folder)
+            for label,ending in [('windows',b'\r\n'),('posix',b'\n')]:
+                with zipfile.ZipFile(root/(label+'.jar'),'x') as z:
+                    z.writestr('current.class',b'exact-class');z.writestr('LICENSE',b'exact-legal')
+                    z.writestr('META-INF/maven/io.jharness/harness-cli/pom.properties',
+                               b'artifactId=harness-cli'+ending+b'groupId=io.jharness'+ending+b'version=0.1.0-SNAPSHOT'+ending)
+                stage.canonicalize_runtime(root/(label+'.jar'),root/(label+'-canonical.jar'),True)
+            self.assertEqual((root/'windows-canonical.jar').read_bytes(),(root/'posix-canonical.jar').read_bytes())
+            with zipfile.ZipFile(root/'windows-canonical.jar') as z:
+                self.assertEqual(b'exact-class',z.read('current.class'));self.assertEqual(b'exact-legal',z.read('LICENSE'))
+
     def test_exact_scopes_and_architectures(self):
         self.assertEqual(11,len(set.union(*stage.SCOPES.values())))
         self.assertEqual('windows',stage.active_scope('Windows','AMD64'))
