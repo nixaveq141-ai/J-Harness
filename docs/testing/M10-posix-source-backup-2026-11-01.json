@@ -1,0 +1,8 @@
+{
+  "status": "LOCAL_BACKUP_MEMBERS_VERIFIED",
+  "path": ".build-cache/local-evidence-backups/2026-11-01/posix-source-full-pass.zip",
+  "sha256": "4fc85439c857ad0d63f9c6a3ba581f4c28959511e680ba1759eaec68b564064d",
+  "bytes": 167260524,
+  "members": 5,
+  "offsite": false
+}
