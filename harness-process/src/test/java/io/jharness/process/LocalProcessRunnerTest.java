@@ -467,7 +467,7 @@ class LocalProcessRunnerTest {
                                         new ExecPath("."),
                                         Duration.ofSeconds(5)),
                                 CancellationToken.NONE);
-                assertEquals(9, result.value().get("exitCode"));
+                assertEquals(9, result.value().get("exitCode"), () -> result.value().toString());
                 assertTrue(result.value().get("stdout").toString().contains("wrapper-like"));
             }
         } finally {

@@ -1,0 +1,22 @@
+{
+  "status": "FAILED_PROCESS_REGRESSION_CANDIDATE_NOT_RUN",
+  "runId": "41265592833",
+  "commit": "88f4e351fde1b1d49b0a0f1ba691edf80828d7dd",
+  "artifact": {
+    "id": 13066819426,
+    "bytes": 35044706,
+    "sha256": "1c4ebd7bc1cd1a26974691db45410a1aa25314467f73e3bb771f7dd62dc6da54",
+    "path": ".build-cache/source-qualification-fifth/13066819426.zip"
+  },
+  "verifyLogSha256": "bf877f9c21c06752c5d58ff76794074c713593859391fee5df883f345ea7c24c",
+  "failure": "LocalProcessRunnerTest.explicitNativeShellExecutesBatchAndTreeLimitStopsSpawn: expected fixture.cmd exit9, actual1; original evidence lacks ToolResult diagnostics. Cause undetermined.",
+  "localValidation": {
+    "tests": 11,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "logSha256": "6b2236a51c2e4155cc4fd340866d5dd1118016fa3790e5a1d1689c5e4ff2533d"
+  },
+  "change": "Add lazy assertion message for this synthetic fixture ToolResult; expected exit and all other assertions unchanged.",
+  "paidRequests": 0
+}
