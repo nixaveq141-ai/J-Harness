@@ -4,6 +4,8 @@
 
 ## 当前接续状态
 
+- 2026-11-01修正轮41290698971@bfbb的ARM64已越过open EINVAL，但工作区元数据复制被明确的CPU布局门禁拒绝。补ARM64 stat mode16/uid24/gid28，未知CPU仍拒绝；新增POSIX实际C头文件sizeof/offsetof及open标志探针，三类ABI不符即阻断完整CI，尚未远端确认不称已认证。本地API24+工作区43再过，原735用例身份不变。M10-arm64-stat-layout收据；全五目标重验待，不能混用前轮3侧成功或声称全缺口关闭，无付费。
+
 - 2026-11-01五目标41287020806@de81628首轮未过：ARM64原ZIP0b3d4b44在工作区报EINVAL（目录/不跟随链接标志误用x86位），Mac Intel原ZIP4e82bd2f单Git用例5秒超时，两原包/verify日志摘要已核。修正ARM64 O_DIRECTORY/O_NOFOLLOW；本机还真实复现非Git子工作区发现父仓库，增加父目录搜索上界与dot路径限定，原安全回归先失败再通过。API24+工作区43均零失败错误跳过。CI新增同一可信Git --version前置回执，不放宽默认预算，不认定Mac超时根因或旧按钮根因；三JVM/五汇总控制过。收据M10-workspace-architecture-boundary-fix；修正完整五目标远端仍待，未标14候选产品通过。
 
 - 2026-11-01额外架构加载41286273580@c5d461d两侧全成功，独立核验源码原包链/探针Git源与class/真实JNI-PTY正例/缺库UnsatisfiedLinkError及全部日志，四成员本地备份过。统一暂存器新增三载荷（Linux ARM64 JNI+PTY/Mac Intel JNI），保留原Mac通用PTY/helper，隔离目录实际14装配且其余4524条目保持，来源覆盖14/36仅候选控制不算产品验收；5目标CI及等字节门禁准备。来源审计按实际安装字节计数，不将已审未安装候选计入源码数，五回归过；暂存3/一致性5/JVM2控制过。新完整远端待，原已验11/39产品不改，五技术缺口仍OPEN，无付费。

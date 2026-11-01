@@ -96,6 +96,13 @@ jobs:
         run: |
           node frontend/node_modules/playwright/cli.js install chromium firefox webkit
           python scripts/ci-keychain.py setup
+      - name: Verify actual directory ABI from host compiler headers
+        if: runner.os != 'Windows'
+        run: |
+          set -euo pipefail
+          mkdir -p .build-cache/directory-abi
+          cc -Wall -Wextra -Werror docs/testing/tools/directory-abi-probe.c -o .build-cache/directory-abi/probe
+          .build-cache/directory-abi/probe | tee .build-cache/directory-abi/result.json
       - name: Qualify source Java, exact install and full application matrix
         run: |
           set -euo pipefail
@@ -127,6 +134,7 @@ jobs:
             source-client.log
             source-qualification-build.log
             .build-cache/source-qualification/
+            .build-cache/directory-abi/
             .build-cache/M10.5.9/
             .build-cache/R4/
             .build-cache/M10.5.4-native-credentials.json

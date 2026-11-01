@@ -1,0 +1,21 @@
+{
+  "status": "LOCAL_REGRESSION_PASS_HOST_ABI_AND_FULL_REMOTE_PENDING",
+  "failedRun": "41290698971",
+  "failedCommit": "bfbb9bcd19e7920b42f7a82b1eec1522b3d3d3dd",
+  "failure": "Linux ARM64 metadata layout was explicitly rejected; first directory-open failure no longer occurs.",
+  "arm64Offsets": {
+    "mode": 16,
+    "uid": 24,
+    "gid": 28
+  },
+  "hostCompilerProbe": "docs/testing/tools/directory-abi-probe.c",
+  "localJavaTests": 67,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "localLogSha256": "81c47860ac15b0d8969a3a63fb426713177bb5f3d809f6a2613adf55ce92f926",
+  "reference": "https://raw.githubusercontent.com/torvalds/linux/v6.8/include/uapi/asm-generic/stat.h",
+  "fullOsCpeClearance": false,
+  "releaseApproved": false,
+  "paidRequests": 0
+}

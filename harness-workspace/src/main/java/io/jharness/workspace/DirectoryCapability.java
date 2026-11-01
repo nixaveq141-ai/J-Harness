@@ -463,7 +463,10 @@ public final class DirectoryCapability implements Closeable {
     }
 
     private static int[] accessMetadata(int descriptor) throws IOException {
-        if (!MAC && !Set.of("amd64", "x86_64").contains(System.getProperty("os.arch")))
+        boolean linuxArm64 = !MAC && arm64(System.getProperty("os.arch"));
+        if (!MAC
+                && !linuxArm64
+                && !Set.of("amd64", "x86_64").contains(System.getProperty("os.arch")))
             throw new IOException("Native metadata layout not certified for this CPU");
         try (var data = new Memory(512)) {
             if (Api.INSTANCE.fstat(descriptor, data) != 0)
@@ -472,7 +475,9 @@ public final class DirectoryCapability implements Closeable {
                     ? new int[] {
                         Short.toUnsignedInt(data.getShort(4)), data.getInt(16), data.getInt(20)
                     }
-                    : new int[] {data.getInt(24), data.getInt(28), data.getInt(32)};
+                    : linuxArm64
+                            ? new int[] {data.getInt(16), data.getInt(24), data.getInt(28)}
+                            : new int[] {data.getInt(24), data.getInt(28), data.getInt(32)};
         }
     }
 

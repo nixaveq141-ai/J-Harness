@@ -36,7 +36,7 @@ LocalWorkspace 实现 WorkspaceFiles/FileSystemView，工具只调用注入的�
 - 已有文件必须 ATOMIC_MOVE + REPLACE_EXISTING；不支持时拒绝，不降级成可能损坏原文件的覆盖。新建使用同目录不覆盖的 move；必要父目录在受保护通路内创建。
 - 失败或取消会同步结束并清理临时文件，没有后台文件任务继续写。操作超时/取消是协作式检查，无法硬中断正在等待的底层文件系统调用；主体进入后的不确定错误继续按 UNKNOWN 处理。提交后的校验失败明确 UNKNOWN_SIDE_EFFECT，须后续读取/版本核实。
 - FileChange 包含路径、beforeVersion、afterVersion 和统一 Diff；最终工具事件保存版本证据。Diff 使用线性内存的整段替换 hunk，避免大文件 LCS 的平方内存；不追求最短差异。
-- git_diff 在同一根目录执行固定的只读 Git diff，支持 working/staged，禁用 pager、external diff、textconv 和 fsmonitor；不执行模型提供的 Shell 字符串。不含 Git 的项目仍可使用文件级 Diff，git_diff 明确返回不可用。
+- git_diff 在同一根目录执行固定的只读 Git diff，支持 working/staged，禁用 pager、external diff、textconv 和 fsmonitor；不执行模型提供的 Shell 字符串。不含 Git 的项目仍可使用文件级 Diff，git_diff 明确返回不可用。Git 发现不得越过工作区根向父仓库取差异；启动环境清除外部 Git 重定向，搜索上界设为工作区父目录（Git 不把启动目录本身作为上界），并用固定 `-- .` 路径限定。
 
 **M2 快照决策：** 默认不自动创建 Git 提交/索引快照；采用版本守护、同目录替换和可追溯 Diff。可恢复快照仍是可选产品能力，不把这些机制宣称为完整备份。apply_patch 按 FR-07.6 的 V1 后半期安排在 M4，届时需定义多文件冲突与部分完成语义。
 
