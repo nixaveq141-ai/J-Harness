@@ -22,7 +22,7 @@ FOLDERS = ('frontend/src', 'frontend/tests', 'frontend/scripts', 'frontend/publi
 FILES = ('.gitignore', 'jharness', 'jharness.cmd', 'pom.xml', 'mvnw', 'mvnw.cmd', 'frontend/package.json',
          'frontend/package-lock.json', 'frontend/tsconfig.json', 'frontend/vite.config.ts',
          'frontend/index.html', 'frontend/upstream.json', 'frontend/LICENSE-DeepSeek-Harness.txt', 'LICENSE', 'NOTICE', 'web-ui.cmd',
-         'docs/examples/m1059-distribution.md', '.gitattributes')
+         'docs/examples/m1059-distribution.md', 'docs/testing/tools/directory-abi-probe.c', '.gitattributes')
 
 
 def digest(raw):
