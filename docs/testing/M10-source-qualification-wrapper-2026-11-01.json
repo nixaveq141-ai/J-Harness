@@ -1,0 +1,11 @@
+{
+  "status": "FAILED_BEFORE_JAVA_TESTS",
+  "runId": "41186628629",
+  "commit": "3c33ecf832fdbc3cd70671d30047976589b3afa2",
+  "artifactSha256": "cdc7dc9c13bd81681b921db6f6af7a68838604e5524f2d66834ffe7136b047c5",
+  "artifactBytes": 34802259,
+  "logSha256": "ad68a04341687231fe8a1c38de56141da8da0a4f8ade1e92275a751c90895e8f",
+  "failure": "Windows wrapper split embedded quotes in argLine; Maven treated Xlog text as plugin goal.",
+  "correction": "JDK argument file and space-free module-relative reference; actual Windows wrapper to Surefire 24 API tests passed with absolute spaced native path.",
+  "paidRequests": 0
+}

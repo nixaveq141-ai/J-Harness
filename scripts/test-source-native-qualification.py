@@ -9,6 +9,15 @@ qualification=importlib.util.module_from_spec(spec);spec.loader.exec_module(qual
 
 
 class LoadEvidenceTest(unittest.TestCase):
+    def test_jvm_argfile_keeps_quoted_paths_outside_maven_command(self):
+        with tempfile.TemporaryDirectory() as folder:
+            path=Path(folder)/'test-jvm.args'
+            arg=qualification.write_jvm_args(path,['-Djna.boot.library.path=C:\\source native\\jni',
+                                                  '-Xlog:library=info:file=native-load-%p.log'])
+            self.assertEqual('@'+path.resolve().as_posix(),arg)
+            self.assertEqual('"-Djna.boot.library.path=C:/source native/jni"\n'
+                             '"-Xlog:library=info:file=native-load-%p.log"\n',path.read_text())
+
     def test_exact_loaded_source_and_missing_rejected(self):
         with tempfile.TemporaryDirectory() as folder:
             path=Path(folder)/'jnidispatch.dll';path.write_bytes(b'source')

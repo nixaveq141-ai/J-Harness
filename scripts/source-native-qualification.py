@@ -21,6 +21,14 @@ def sha(raw):
     return hashlib.sha256(raw).hexdigest()
 
 
+def write_jvm_args(path, options):
+    # JDK argument files avoid Windows batch re-parsing embedded quotes in a
+    # multi-option Maven -DargLine. JSON string escaping is also valid here for
+    # this fixed set of options; use forward slashes for Windows paths.
+    path.write_bytes(('\n'.join(json.dumps(v.replace('\\','/')) for v in options)+'\n').encode('utf-8'))
+    return '@'+path.resolve().as_posix()
+
+
 def validate_loads(raw_logs, jni_path, expected_sha):
     """Reject any successfully loaded alternate dispatch library, not just errors."""
     if sha(jni_path.read_bytes())!=expected_sha:
@@ -75,7 +83,12 @@ def main():
                  '-Djna.boot.library.path='+str(jni),
                  '-Dpty4j.preferred.native.folder='+str(native/'pty'),
                  '-Xlog:library=info:file=native-load-%p.log']
-        argline=' '.join('"'+v+'"' for v in options)
+        write_jvm_args(out/'test-jvm.args',options)
+        # All reviewed reactor modules are one level below the repository.
+        # A relative argument-file reference has no spaces/embedded quotes for
+        # mvnw.cmd -> PowerShell -> mvn.cmd to split; file contents retain the
+        # absolute source-library paths (including spaces).
+        argline='@../.build-cache/source-qualification/test-jvm.args'
         command('source-verify',['mvnw.cmd','-B','-Prelease-audit','-DargLine='+argline,'clean','verify',
                 'org.cyclonedx:cyclonedx-maven-plugin:2.9.3:makeAggregateBom'],env)
         suites=[];properties={}
