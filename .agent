@@ -4,6 +4,8 @@
 
 ## 当前接续状态
 
+- 2026-11-01第三轮41264579480@e258b7d已进入source-verify后失败；制品上传及多个post步骤失败，原始单测日志未能取回，不能声称735通过或定位失败原因。补同一步骤内失败日志尾部输出，防上传失败丢失诊断；下一轮待。原失败不豁免，无产品/付费改动。
+
 - 2026-11-01源码Java第二轮41186628629在Maven解析参数阶段失败，未跑单测，原ZIPcdc7dc9c/实际日志核对。改JDK参数文件、所有模块一级目录的无空格相对引用，文件内保留绝对源码路径；本机真实Windows包装器到Surefire的24项API单测过，两离线控制过。完整远端重验待，原断言/产品不改，无付费。M10-source-qualification-wrapper收据。
 
 - 2026-10-31源码Java首轮41186303680@4590660失败原ZIPb3200958/命令日志已核对：JAVA_TOOL_OPTIONS的JVM stderr横幅污染R2精确WRITE_CONFLICT跨进程断言，后续模块/安装未跑。改只向Surefire fork传argLine、不改原断言或子进程协议，核对全部XML属性/实际JNI加载日志；改clean verify避免重用已装配JAR。两本地控制过，修正后实际复验待。M10-source-qualification-first收据，无产品改动/付费。

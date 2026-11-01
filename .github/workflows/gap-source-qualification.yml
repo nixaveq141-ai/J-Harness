@@ -48,7 +48,16 @@ jobs:
           github-token: ${{ github.token }}
           path: .build-cache/accepted-console
       - name: Verify Java source libraries and install exact candidate
-        run: python scripts/source-native-qualification.py
+        shell: pwsh
+        run: |
+          python scripts/source-native-qualification.py
+          $qualificationExit = $LASTEXITCODE
+          if ($qualificationExit -ne 0) {
+            if (Test-Path -LiteralPath .build-cache/source-qualification/source-verify.log -PathType Leaf) {
+              Get-Content -LiteralPath .build-cache/source-qualification/source-verify.log -Tail 80
+            }
+          }
+          exit $qualificationExit
       - uses: actions/upload-artifact@v4
         if: always()
         with:

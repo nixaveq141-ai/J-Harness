@@ -1,5 +1,7 @@
 # 固定源码原生候选构建
 
+2026-11-01第三轮41264579480@e258b7d在source-verify失败，制品上传与多个post步骤也失败，无原始单测制品可取；不能判定具体用例失败原因或735通过。新增同一PowerShell步骤内原验证日志末80行输出，保留退出码，待专项复验。
+
 2026-11-01：第二轮41186628629因Windows多层包装器拆分argLine引号，Maven解析失败、单测未跑。改JDK参数文件及无空格模块相对引用；本机含空格绝对路径的实际包装器/Surefire链24项API测试过，两离线控制过。完整远端复验待。见[M10-source-qualification-wrapper-2026-11-01.json](M10-source-qualification-wrapper-2026-11-01.json)。
 
 2026-10-31源码Java首轮41186303680原ZIP `b3200958` 及实际命令日志核对：全局JAVA_TOOL_OPTIONS的标准错误横幅使R2跨进程精确输出断言失败，后续模块/候选未跑。改为Surefire直接argLine，仅限定测试fork的显式源码路径及库日志，避免污染无关子进程协议；不改测试断言。切换clean verify确保干净重建，源码路径属性仍逐XML核对。实际修正复验待，见[M10-source-qualification-first-2026-10-31.json](M10-source-qualification-first-2026-10-31.json)。
