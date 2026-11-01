@@ -25,7 +25,7 @@ def assemble(base, target, replacements, expected_base, inventory, scope):
         raise ValueError('Explicit scope, replacements and accepted base required')
     payload = {}
     for name, item in replacements.items():
-        if name not in inventory or not name.endswith(('.dll', '.exe', '.so', '.dylib', 'pty4j-unix-spawn-helper')):
+        if name not in inventory or not name.endswith(('.dll', '.exe', '.so', '.dylib', '.jnilib', 'pty4j-unix-spawn-helper')):
             raise ValueError('Only inventoried native resources may be replaced')
         source = Path(item['path'])
         if source.is_symlink() or not source.is_file() or source.stat().st_size > 32 * 1024 * 1024:
