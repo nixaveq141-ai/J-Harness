@@ -14,6 +14,8 @@
 
 2026-11-01来源覆盖继续：新增Linux ARM64与macOS Intel专用固定源码候选构建，明确架构到对象名及输出路径的对应，五项离线控制通过；新增hostImage、系统包版本/架构、libc和JDK模块原始命令记录。工作流使用[官方标准运行器标签](https://docs.github.com/en/actions/reference/runners/github-hosted-runners)。实际远端构建、加载与产品装配未完成前，39项计数不变，不当作额外架构已验收或完整OS/CPE证明。
 
+2026-11-01实际扩架构构建：[41285899341](https://github.com/nixaveq141-ai/J-Harness/actions/runs/41285899341)的Linux ARM64与macOS Intel均成功。原包、固定源码全部指纹与既审源、输出字节和全部命令日志已核验，[构建收据](M10-extra-native-source-build-2026-11-01.json)及[本地备份](M10-extra-native-source-backup-2026-11-01.json)保留。新增固定该精确运行的实际加载/禁止回退专项入口，加载前不能标产品替换完成，当前39计数不改。
+
 ## 仍开放的五项
 
 | ID | 缺口及已知事实 | 严格闭合还需要什么 |

@@ -10,7 +10,8 @@ import zipfile
 
 ROOT=Path(__file__).resolve().parents[3]
 SOURCE_RUNS={'40995618881':'a2dc791bae10addc3b53b3d951b94db897ccc265',
-             '40998915552':'3571d2269895644e9888963fbf54a4cf101c9597'}
+             '40998915552':'3571d2269895644e9888963fbf54a4cf101c9597',
+             '41285899341':'130c8aba478d189d435fa385b576d6c3f893dc5f'}
 
 
 def sha(path):return hashlib.sha256(path.read_bytes()).hexdigest()

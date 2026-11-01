@@ -1,0 +1,84 @@
+{
+  "status": "EXTRA_ARCH_SOURCE_BUILD_BYTES_AND_LOGS_VERIFIED_NOT_LOAD_OR_PRODUCT_ACCEPTANCE",
+  "runId": "41285899341",
+  "commit": "130c8aba478d189d435fa385b576d6c3f893dc5f",
+  "platforms": [
+    {
+      "artifactId": "13074972771",
+      "artifactSha256": "c8fc1cbfedae0ff489a2222196edfbc9d39d9e3777d6cee3dbca305b3febbf6e",
+      "architecture": "aarch64",
+      "reportSha256": "296f832f8b97fefc80a55aafb0bda875e11fd829068f1237bfa69d12c31cc8bc",
+      "outputs": {
+        "jna": [
+          {
+            "path": ".build-cache/native-source-build/jna/build/native-linux-aarch64/libjnidispatch.so",
+            "sha256": "e76ac388ef77c25290a1dc57be1929c67be692a5114bed11ab5cd13a9746ffbb"
+          },
+          {
+            "path": ".build-cache/native-source-build/jna/build/classes/com/sun/jna/linux-aarch64/libjnidispatch.so",
+            "sha256": "e76ac388ef77c25290a1dc57be1929c67be692a5114bed11ab5cd13a9746ffbb"
+          }
+        ],
+        "pty": {
+          "path": ".build-cache/native-source-build/pty4j/os/linux/aarch64/libpty.so",
+          "sha256": "21a536f3802aa8bb3f003d99103c15850bf25cbce500746f97743c99b6b0f950",
+          "removedPrebuiltSha256": "f91dbdc91a21735f2982fa8a8e16d04411f3c969d23c888d0b2f52233dfcceb9"
+        }
+      },
+      "commands": 13,
+      "sourceRevisions": {
+        "jna": "c366bc4fd0c50a30ac8d2475603ec564f6611462",
+        "pty4j": "b7554d649f6374183040e6554942b6d5b028b5e5"
+      },
+      "hostImage": {
+        "ImageOS": "ubuntu24-arm64",
+        "ImageVersion": "20261026.166.1",
+        "RUNNER_OS": "Linux",
+        "RUNNER_ARCH": "ARM64"
+      }
+    },
+    {
+      "artifactId": "13074739933",
+      "artifactSha256": "43ab72b227b62c72971ad83ae64587c461a7f61e5c70991ff3044f4183a76dc0",
+      "architecture": "x86_64",
+      "reportSha256": "84b281cf4d8e39d71f0faa47034a306d3dbbd6c86876674270e40708a3932cea",
+      "outputs": {
+        "jna": [
+          {
+            "path": ".build-cache/native-source-build/jna/build/native-darwin-x86-64/libjnidispatch.jnilib",
+            "sha256": "651ae8ae99736877ce0f6248a8768509c44746aecb344da232518654dc8de276"
+          },
+          {
+            "path": ".build-cache/native-source-build/jna/build/classes/com/sun/jna/darwin-x86-64/libjnidispatch.jnilib",
+            "sha256": "651ae8ae99736877ce0f6248a8768509c44746aecb344da232518654dc8de276"
+          }
+        ],
+        "pty": {
+          "path": ".build-cache/native-source-build/pty4j/os/darwin/libpty.dylib",
+          "sha256": "2914982266f17dd95738f1f644cea46881ecfd61dbe6e9c19feb6e916feaa6b0",
+          "removedPrebuiltSha256": "23f58005abd62b014c3da665d15ee9700e58e99fc2f584c69c021a260a7bb5dd"
+        },
+        "ptyHelper": {
+          "path": ".build-cache/native-source-build/pty4j/os/darwin/pty4j-unix-spawn-helper",
+          "sha256": "1421733a03d32112c80b2a1763c11b0b069351754ee715c95462c0e3602a4b9a",
+          "removedPrebuiltSha256": "43804fedb8eb2c3272e1596b73135bf616f0cd12f3075eb8b0a72c6b89d7e4e8"
+        }
+      },
+      "commands": 14,
+      "sourceRevisions": {
+        "jna": "c366bc4fd0c50a30ac8d2475603ec564f6611462",
+        "pty4j": "b7554d649f6374183040e6554942b6d5b028b5e5"
+      },
+      "hostImage": {
+        "ImageOS": "macos15",
+        "ImageVersion": "20260824.0482.1",
+        "RUNNER_OS": "macOS",
+        "RUNNER_ARCH": "X64"
+      }
+    }
+  ],
+  "retainedOriginalInCurrentProduct": 39,
+  "fullOsCpeClearance": false,
+  "paidRequests": 0,
+  "trackedSourceFilesMatchPreviouslyAuditedPinnedSources": true
+}

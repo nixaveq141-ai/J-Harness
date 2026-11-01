@@ -4,6 +4,8 @@
 
 ## 当前接续状态
 
+- 2026-11-01扩架构源码41285899341@130c8ab的Linux ARM64和Mac Intel均成功；原ZIP c8fc1cbf/43ab72b2、固定源码全部trackedFiles与既审源一致、13/14条实际命令日志及JNI/PTY/helper输出摘要独立核验；镜像与OS包/JDK资料保留。四成员本地原包备份逐SHA过。新候选尚未加载/产品验收，当前运行时11/39计数不改；新增该精确源运行白名单与两架构load CI入口，原加载拒绝控制两项过，远端load待，无付费。
+
 - 2026-11-01继续NATIVE-39与OS-CPE：固定pty4j Makefile确认可使用宿主架构对象编译，新增Linux ARM64/aarch64输出选择及未知架构拒绝；专用source-build CI增extra-architectures（ubuntu-24.04-arm/macOS15 Intel），原三平台默认不改。源构建记录镜像身份、uname、Linux全部dpkg包版本/架构、libc及JDK模块，声明不算全CPE认证。五构建控制过，真实构建/加载/产品替换待，不减少39计数；无付费/main/Release。
 
 - 2026-11-01后续实修原生审计门禁：拒绝空库存/无来源证明/无效摘要，执行开始原子撤销陈旧成功并拒绝覆盖输入JAR；四回归过，实际统一50项11源码/39未知复验，严格exit2。收据docs/testing/M10-native-auditor-fail-closed-2026-11-01.json。五项严格缺口仍OPEN，不能恢复已丢失历史因果或冒充厂商构建证明，无付费/推送/发布。
