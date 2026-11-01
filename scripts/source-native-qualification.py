@@ -129,6 +129,10 @@ def main():
                                   '.build-cache/source-qualification/candidate-stage'])
         final=json.loads((out/'candidate-stage/stage.json').read_bytes())
         report['candidateStage']=final
+        if unified:
+            command('native-coverage',[python,'scripts/audit-native-coverage.py',
+                'harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar',str(out/'native-coverage.json')])
+            report['nativeCoverage']=json.loads((out/'native-coverage.json').read_bytes())
         for name,argv in [
             ('sdk-inventory',[python,'scripts/sdk-inventory.py']),
             ('frontend-bom',[python,'scripts/frontend-sbom.py','target/frontend-bom.json']),

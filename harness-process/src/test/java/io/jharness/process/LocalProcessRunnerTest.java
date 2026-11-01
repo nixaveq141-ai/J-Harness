@@ -458,17 +458,25 @@ class LocalProcessRunnerTest {
                 Files.writeString(
                         root.resolve("fixture.cmd"),
                         "@echo off\r\necho wrapper-like\r\nexit /b 9\r\n");
-                ToolResult result =
-                        runner.execute(
-                                new CommandRequest(
-                                        "c",
-                                        CommandRequest.Mode.CMD,
-                                        List.of("fixture.cmd"),
-                                        new ExecPath("."),
-                                        Duration.ofSeconds(5)),
-                                CancellationToken.NONE);
-                assertEquals(9, result.value().get("exitCode"), () -> result.value().toString());
-                assertTrue(result.value().get("stdout").toString().contains("wrapper-like"));
+                // Native shell execution is independent of the one-process tree-limit probe.
+                // CI can observe a second process during cmd execution; that correctly trips
+                // the earlier runner's limit before the batch reaches its explicit exit.
+                try (var shellRunner = runner(8, 8192)) {
+                    ToolResult result =
+                            shellRunner.execute(
+                                    new CommandRequest(
+                                            "c",
+                                            CommandRequest.Mode.CMD,
+                                            List.of("fixture.cmd"),
+                                            new ExecPath("."),
+                                            Duration.ofSeconds(5)),
+                                    CancellationToken.NONE);
+                    assertEquals(
+                            9, result.value().get("exitCode"), () -> result.value().toString());
+                    assertEquals(ToolStatus.FAILED, result.status());
+                    assertEquals("NONZERO_EXIT", result.error().orElseThrow().code());
+                    assertTrue(result.value().get("stdout").toString().contains("wrapper-like"));
+                }
             }
         } finally {
             cleanupLateFixtureChild(Path.of(pidFile + ".child"), limited);

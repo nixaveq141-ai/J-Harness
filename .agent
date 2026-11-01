@@ -4,6 +4,8 @@
 
 ## 当前接续状态
 
+- 2026-11-01规范b3/41271702330 Windows原ZIP72078f14/verify日志已核对，CMD夹具stdout已wrapper-like却exit1/reason PROCESS_LIMIT/tracked2；同用先前tree1预算导致单独shell退出语义检查被树限制打断。保留tree1所有原拒绝/清理断言，shell用独立常规tree8，并加强FAILED/NONZERO_EXIT断言，本机11项过，远端修正待；不推断第二进程身份、不解释后端UNKNOWN或旧Mac。统一新轮增实际50项native覆盖审计，未知来源保持明确；M10-cmd-budget-correction收据。
+
 - 2026-11-01后端失败调查继续：新增固定9ef失败运行时精确JAR的Windows Chromium development三轮专项，只注入白名单任务错误码/工具状态/清理枚举与残留数量，不存参数/正文/PID；各轮冻结原断言、退出码及诊断，任何失败不算验收。仅观察不当根因证明，不解释旧Mac。诊断隐私控制过，远端专项待；b3规范候选三平台另在跑。
 
 - 2026-11-01统一9ef/41270037874 Windows首轮原ZIP59b03c45已核对：735 Java及候选安装过，Chromium development仅首检查后后端UNKNOWN/FAILED，6次替身请求/4审批/页异常0；其余32浏览器夹具通过，R4未执行，整轮拒绝验收，不能归因旧Mac。补只保留白名单错误码/有界工具状态与退出码的诊断，不存正文/参数，隐私控制过，产品与原断言不改。含库存/CLI11/规范打包的新b3完整CI已派发，诊断增强待后续复现。

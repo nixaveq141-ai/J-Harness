@@ -1,0 +1,33 @@
+{
+  "status": "CMD_FIXTURE_BUDGET_COUPLING_IDENTIFIED_REMOTE_CORRECTION_PENDING",
+  "runId": "41271702330",
+  "commit": "b3a0b49e2826f2c32100331340a80c69a723377b",
+  "artifact": {
+    "id": 13070001028,
+    "bytes": 50431418,
+    "sha256": "72078f14b157fdae1bbd35bb7c36d09dfcc96de47ca0cb75837c4d3e5fefbd11",
+    "path": ".build-cache/unified-source-full/13070001028.zip"
+  },
+  "verifyLogSha256": "9b794508fd633627385180ef0f73ceaf91df928254bf1b7f539604ba36060433",
+  "observed": {
+    "exitCode": 1,
+    "reason": "PROCESS_LIMIT",
+    "trackedPidCount": 2,
+    "fixtureTreeBudget": 1,
+    "stdoutContainsExpectedBatchText": true,
+    "stderrEmpty": true
+  },
+  "correction": "Keep original tree-limit1 probe and every assertion; use independent standard tree8 runner for shell semantics. Require exit9, FAILED and NONZERO_EXIT. No production change.",
+  "localTests": {
+    "count": 11,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "logSha256": "1dc7e3de755365e249eb26c36ce71e8ffcc6fff496195c8493941abc18b8d1fa"
+  },
+  "limits": [
+    "Identity and reason for second OS process not established",
+    "Does not explain backend UNKNOWN development failure or historical macOS issue"
+  ],
+  "paidRequests": 0
+}
