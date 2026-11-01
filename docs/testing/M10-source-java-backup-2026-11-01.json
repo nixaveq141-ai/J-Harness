@@ -1,0 +1,8 @@
+{
+  "status": "LOCAL_BACKUP_MEMBERS_VERIFIED",
+  "path": ".build-cache/local-evidence-backups/2026-11-01/source-java-verify.zip",
+  "sha256": "be4ee50444d458a6b16a1cdf58ce9673fc2ffa758b76f3b1e40bef53cf1cfd08",
+  "bytes": 35404702,
+  "members": 2,
+  "offsite": false
+}

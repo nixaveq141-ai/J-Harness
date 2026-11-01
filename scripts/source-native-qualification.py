@@ -97,8 +97,8 @@ def main():
                 row,xml=suite_details(path,module.name);suites.append(row)
                 props={p.get('name'):p.get('value') for p in xml.findall('properties/property')}
                 for key,value in [('jna.nounpack','true'),('jna.nosys','true'),
-                                  ('jna.boot.library.path',str(jni)),
-                                  ('pty4j.preferred.native.folder',str(native/'pty'))]:
+                                  ('jna.boot.library.path',jni.as_posix()),
+                                  ('pty4j.preferred.native.folder',(native/'pty').as_posix())]:
                     if props.get(key)!=value:raise ValueError('Source JVM properties missing: '+path.name)
                 properties[path.relative_to(ROOT).as_posix()]=sha(path.read_bytes())
         report['javaTests']=validate_java_suites(suites,json.loads((ROOT/'scripts/contracts/m1059-java-cases.json').read_bytes()))
