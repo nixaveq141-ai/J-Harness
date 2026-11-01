@@ -1,5 +1,9 @@
 # 当前实现、验收与未完成项
 
+2026-11-01最新完整验收：[41291313781](https://github.com/nixaveq141-ai/J-Harness/actions/runs/41291313781)@5df2372的Windows x64、Linux x64/ARM64、macOS ARM/Intel五目标全部成功，跨目标一致性门禁及本地独立复验也通过。每目标652 Git输入、735项124套件零失败错误跳过、14条同轮命令回执、三浏览器33夹具813项、R4每引擎51项、候选63文件与安装均已核验。实际JAR全部为`49d4404dbe1e7b26e9842a2c765960f066f620105668cca0bb690313d1083f95`，四个POSIX宿主C头文件的stat/目录标志ABI也已验证。当前已验运行时的50原生资源为14项已审源码输出、36项精确官方原版；严格完整来源门禁实际仍exit2，不是完整OS/CPE认证。见[五目标验收](../testing/M10-unified14-final-acceptance-2026-11-01.json)、[实际覆盖](../testing/M10-unified14-final-native-coverage-2026-11-01.json)、[本地备份](../testing/M10-unified14-final-backup-2026-11-01.json)。27成员576485243字节原包与审计材料逐SHA核对，不做异地备份。
+
+本轮真实修复了Linux ARM64目录打开/不跟随链接标志及stat元数据布局，并修复非Git子工作区向上发现父仓库的边界；原安全用例先失败、后通过，默认五秒预算不变。新增组件源码构建与缺库拒绝也已实测。旧失败原包保留，不能把本轮通过认作旧macOS按钮、WinPTY或后端UNKNOWN的因果证明。最新WinPTY源013db340与原版在最小环境仍agent died，持有句柄的直接agent/调试对照仍握手前0xc000013a；有界捕获未确立终止来源。新诊断补实际生产者的CLEANUP_INCOMPLETE/PROCESS_IO/OUTPUT_IO及原因枚举、跟踪进程数量，隐私/计数控制本地过；该诊断变更晚于5df验收，不冒称已在上述CI执行。五项严格缺口仍OPEN，见[当前缺口](../testing/remaining-technical-gaps-2026-11-01.md)，不采用风险归档。无新增付费模型调用、main合并或Release。下文是各轮历史快照；旧11/39与运行中状态不代表当前五目标结果。
+
 2026-11-01五目标完整首轮41287020806尚未通过：ARM64工作区目录标志误用x86位，Mac Intel一个Git用例超时。原始失败包和日志已核；修正ARM64标志，另修复真实复现的非Git子工作区向上发现父仓库边界问题，原安全用例先失败后通过。API24+工作区43本地全过，五秒默认预算不改，增加可信Git前置版本回执以独立记录启动。见[修复收据](../testing/M10-workspace-architecture-boundary-fix-2026-11-01.json)；修正后完整远端验收仍待，不证明旧Mac或本轮Git超时根因。
 
 

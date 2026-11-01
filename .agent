@@ -4,6 +4,8 @@
 
 ## 当前接续状态
 
+- 2026-11-01最终41291313781@5df五目标全部成功：Win x64/Linux x64+ARM64/Mac ARM+Intel各652 Git输入/735项124套件零失败错误跳过/14回执/813浏览器/R4各51/安装63文件，实际JAR均49d4404d；四POSIX宿主C ABI过，严格本地原包重验等于CI一致性收据。实际14源码+36官方原版50项，完整来源严格exit2。27成员576485243字节原包/收据/审计器本地备份逐SHA过。ARM标志/stat与Git父仓库边界实修闭合；五严格缺口仍OPEN，原39剩36。当前WinPTY源013db与原版最小环境仍死，直接agent自有调试均握手前13a，未定因。补诊断实际CLEANUP/IO代码、原因与跟踪数量，本地隐私控制过，不冒称5df执行此后改动。见M10-unified14-final-acceptance/backup及remaining-technical-gaps；不接受风险归档，无付费/main/Release。
+
 - 2026-11-01修正轮41290698971@bfbb的ARM64已越过open EINVAL，但工作区元数据复制被明确的CPU布局门禁拒绝。补ARM64 stat mode16/uid24/gid28，未知CPU仍拒绝；新增POSIX实际C头文件sizeof/offsetof及open标志探针，三类ABI不符即阻断完整CI，尚未远端确认不称已认证。本地API24+工作区43再过，原735用例身份不变。M10-arm64-stat-layout收据；全五目标重验待，不能混用前轮3侧成功或声称全缺口关闭，无付费。
 
 - 2026-11-01五目标41287020806@de81628首轮未过：ARM64原ZIP0b3d4b44在工作区报EINVAL（目录/不跟随链接标志误用x86位），Mac Intel原ZIP4e82bd2f单Git用例5秒超时，两原包/verify日志摘要已核。修正ARM64 O_DIRECTORY/O_NOFOLLOW；本机还真实复现非Git子工作区发现父仓库，增加父目录搜索上界与dot路径限定，原安全回归先失败再通过。API24+工作区43均零失败错误跳过。CI新增同一可信Git --version前置回执，不放宽默认预算，不认定Mac超时根因或旧按钮根因；三JVM/五汇总控制过。收据M10-workspace-architecture-boundary-fix；修正完整五目标远端仍待，未标14候选产品通过。

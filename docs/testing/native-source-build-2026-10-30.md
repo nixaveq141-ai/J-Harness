@@ -1,5 +1,9 @@
 # 固定源码原生候选构建
 
+2026-11-01最新完整验收：[41291313781](https://github.com/nixaveq141-ai/J-Harness/actions/runs/41291313781)@5df2372的Windows x64、Linux x64/ARM64、macOS ARM/Intel五目标全部成功，跨目标一致性门禁及本地独立复验也通过。每目标652 Git输入、735项124套件零失败错误跳过、14条同轮命令回执、三浏览器33夹具813项、R4每引擎51项、候选63文件与安装均已核验。实际JAR全部为`49d4404dbe1e7b26e9842a2c765960f066f620105668cca0bb690313d1083f95`，四个POSIX宿主C头文件的stat/目录标志ABI也已验证。当前已验运行时的50原生资源为14项已审源码输出、36项精确官方原版；严格完整来源门禁实际仍exit2，不是完整OS/CPE认证。见[五目标验收](M10-unified14-final-acceptance-2026-11-01.json)、[实际覆盖](M10-unified14-final-native-coverage-2026-11-01.json)、[本地备份](M10-unified14-final-backup-2026-11-01.json)。27成员576485243字节原包与审计材料逐SHA核对，不做异地备份。
+
+本轮真实修复了Linux ARM64目录打开/不跟随链接标志及stat元数据布局，并修复非Git子工作区向上发现父仓库的边界；原安全用例先失败、后通过，默认五秒预算不变。新增组件源码构建与缺库拒绝也已实测。旧失败原包保留，不能把本轮通过认作旧macOS按钮、WinPTY或后端UNKNOWN的因果证明。最新WinPTY源013db340与原版在最小环境仍agent died，持有句柄的直接agent/调试对照仍握手前0xc000013a；有界捕获未确立终止来源。新诊断补实际生产者的CLEANUP_INCOMPLETE/PROCESS_IO/OUTPUT_IO及原因枚举、跟踪进程数量，隐私/计数控制本地过；该诊断变更晚于5df验收，不冒称已在上述CI执行。五项严格缺口仍OPEN，见[当前缺口](remaining-technical-gaps-2026-11-01.md)，不采用风险归档。无新增付费模型调用、main合并或Release。下文是各轮历史快照；旧11/39与运行中状态不代表当前五目标结果。
+
 2026-11-01最终同提交统一验收：[41272550578](https://github.com/nixaveq141-ai/J-Harness/actions/runs/41272550578)@e503377的Windows2022 x64、Ubuntu24.04 x64与macOS arm64全部成功；每侧651 Git输入、735项/124套件零失败错误跳过、13条实际命令回执、三浏览器33夹具813项、R4每引擎51项、候选63文件及安装均已独立核验。三侧实际运行时JAR SHA256均为`8407dc5d6e9e2879993467e3ddf0c7524b1c75ce110567ca60056cb0d41d99e1`，跨作业一致性门禁也已通过；外围候选ZIP含平台证据，不要求相同。原生50项实际字节为11项已审源码输出+39项保留官方原版；CLI11许可已进入三侧实际JAR。原包/收据/审计器12成员本地备份逐摘要核对，341434347字节，见[M10-unified-final-acceptance](M10-unified-final-acceptance-2026-11-01.json)、[本地备份](M10-unified-final-backup-2026-11-01.json)。
 
 汇总门禁另补R0证据校验：读取实际单测XML并核对精确用例、固定提交完整源码指纹、13条命令的参数/退出码/日志/同轮身份、全浏览器/R4/SDK/原生/安装的实际文件及同JAR摘要；开始即撤销陈旧PASS。加强版本用上述三侧原包在本地复验通过，缺失XML用例、伪命令即使同步重算回执摘要、实际JAR漂移均拒绝；另四个回归控制通过。该加强版本没有冒称已在远端执行，见[M10-unified-gate-revalidation](M10-unified-gate-revalidation-2026-11-01.json)。

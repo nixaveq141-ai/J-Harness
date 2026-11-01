@@ -1,0 +1,130 @@
+{
+  "status": "CURRENT_WINPTY_MINIMAL_ENV_FAILURE_OBSERVED_NOT_ROOT_CAUSE",
+  "records": [
+    {
+      "label": "source",
+      "dllSha256": "013db340ce5e3417b6821a81336965367f88bfd197ddbb7eb4f6e3302fdbb69c",
+      "sessionOpened": false,
+      "error": "agent died"
+    },
+    {
+      "label": "original",
+      "dllSha256": "21c6480093859d4811525dd68ece1905324014bbd8c1a11fea6a78b2933009f4",
+      "sessionOpened": false,
+      "error": "agent died"
+    }
+  ],
+  "scope": "Owned empty sessions using current reviewed source DLL and original DLL; minimal system-only child environment, explicit 3000ms agent startup bound. No user shell or terminal settings changed.",
+  "sourceScriptSha256": "7185ca1cf2806c260e625b17fe71f3fb280a5ca98dec3b8d3ab0ef939bc2166a",
+  "logSha256": "be2fd19d98b973fd867898acf755120bf5dbd1eef6673961d89d1c18da072c06",
+  "systemSettingsChanged": false,
+  "paidRequests": 0,
+  "rootCauseEstablished": false,
+  "directAgentDebugObservation": {
+    "agentSha256": "aebed1cca9030bcb6771ce2b40cbbfa4a1de9ad96acb4dd4ca4ca6da24a02c1c",
+    "records": [
+      {
+        "debug": false,
+        "events": [],
+        "controlConnected": false,
+        "availableBytes": 0,
+        "attached": false,
+        "timedOut": false,
+        "exitCodeBeforeCleanup": "0xc000013a"
+      },
+      {
+        "debug": true,
+        "events": [
+          {
+            "kind": 3
+          },
+          {
+            "kind": 6
+          },
+          {
+            "kind": 2
+          },
+          {
+            "kind": 6
+          },
+          {
+            "kind": 6
+          },
+          {
+            "kind": 6
+          },
+          {
+            "kind": 6
+          },
+          {
+            "kind": 2
+          },
+          {
+            "kind": 6
+          },
+          {
+            "kind": 6
+          },
+          {
+            "kind": 2
+          },
+          {
+            "kind": 6
+          },
+          {
+            "kind": 6
+          },
+          {
+            "kind": 6
+          },
+          {
+            "kind": 6
+          },
+          {
+            "kind": 6
+          },
+          {
+            "kind": 6
+          },
+          {
+            "kind": 6
+          },
+          {
+            "kind": 2
+          },
+          {
+            "kind": 1,
+            "exception": "0x80000003",
+            "firstChance": 1
+          },
+          {
+            "kind": 6
+          },
+          {
+            "kind": 6
+          },
+          {
+            "kind": 6
+          },
+          {
+            "kind": 6
+          },
+          {
+            "kind": 2
+          },
+          {
+            "kind": 4
+          }
+        ],
+        "controlConnected": false,
+        "availableBytes": 0,
+        "attached": true,
+        "timedOut": false,
+        "attachError": 0,
+        "exitCodeBeforeCleanup": "0xc000013a"
+      }
+    ],
+    "reportSha256": "bba0d99561358706d62b77360c6a2ddbe292d26ebc896aafb0dd22a672d2fd6e",
+    "limits": "Owned direct agent only, bounded capture; not a complete causal trace or proof of the termination sender. The initial 0x80000003 is the expected debugger breakpoint, not a product failure."
+  }
+}

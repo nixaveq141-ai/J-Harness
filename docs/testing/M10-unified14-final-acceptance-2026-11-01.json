@@ -1,0 +1,117 @@
+{
+  "status": "FIVE_TARGET_UNIFIED_RUNTIME_IN_SELECTED_SCOPE_ACCEPTED_NOT_RELEASE",
+  "runId": "41291313781",
+  "commit": "5df2372cbe00047e3233650fd37462290a534127",
+  "runtimeJarSha256": "49d4404dbe1e7b26e9842a2c765960f066f620105668cca0bb690313d1083f95",
+  "eachTarget": {
+    "gitInputs": 652,
+    "javaTests": 735,
+    "javaSuites": 124,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "commandReceipts": 14,
+    "browserFixtures": 33,
+    "browserChecks": 813,
+    "r4EachEngine": 51,
+    "candidateFiles": 63
+  },
+  "platformReceiptSha256": {
+    "windows-x64": "fe886523f078265dc1478a844debc4f1824456078907ba0aee1a8fd19c90d42e",
+    "linux-x64": "ecaad00354c91e1e04ab9c92e5cd827791c1a420d01b5278fb94c224dbb991fb",
+    "linux-arm64": "746c979349fbed3c5e647e4184002ed55a34b4c91f413049bfb9b6dcbae3ae28",
+    "macos-arm64": "4294b8719e30b8f9c724ceabcc71c34ebfbefa0d74d66d617cf923da6a8592a8",
+    "macos-intel": "9b3e92cc1dfac79c37b630748938e46bbba0d3a358820f5d3617dfd129940ad7"
+  },
+  "artifacts": [
+    {
+      "id": 13078780474,
+      "name": "source-native-unified-macos-15-intel",
+      "bytes": 116986979,
+      "sha256": "bc9427acf2ab84fb866b0b1765914e180fa114750c0988c3b3ec2115c6db653b"
+    },
+    {
+      "id": 13078026290,
+      "name": "unified-runtime-equality",
+      "bytes": 770,
+      "sha256": "5eddc0e5cecef4655d1d3f43979b602e282e6decb87db90df603622315060da3"
+    },
+    {
+      "id": 13077722973,
+      "name": "source-native-unified-ubuntu-24.04-arm",
+      "bytes": 116270972,
+      "sha256": "0f03a68335b86e1efde9c8f4cce66ab92a656649287fa29d39a630a2f6c4008d"
+    },
+    {
+      "id": 13077594876,
+      "name": "source-native-unified-windows-2022",
+      "bytes": 109764357,
+      "sha256": "87650bdafdfa46d02fc3c83e86326198eafac88134cc7d668269412e2ffe03da"
+    },
+    {
+      "id": 13077319547,
+      "name": "source-native-unified-macos-latest",
+      "bytes": 117000768,
+      "sha256": "3634d7c9629f3a8e5e71ce52b5f44c7bd85d2c90341f9254e42385873c9b2ce4"
+    },
+    {
+      "id": 13077074203,
+      "name": "source-native-unified-ubuntu-24.04",
+      "bytes": 116224654,
+      "sha256": "41753ec18a1ef8d55a9acd676f3ee3f2894562bfa754ee703c0f3987da6780c9"
+    }
+  ],
+  "nativeInventory": {
+    "total": 50,
+    "reviewedSource": 14,
+    "retainedOfficialExactBuildUnknown": 36,
+    "strictSourceCompleteExitCode": 2
+  },
+  "nativeAbi": {
+    "windows-x64": null,
+    "linux-x64": {
+      "statBytes": 144,
+      "modeOffset": 24,
+      "uidOffset": 28,
+      "gidOffset": 32,
+      "directoryFlag": 65536,
+      "noFollowFlag": 131072
+    },
+    "linux-arm64": {
+      "statBytes": 128,
+      "modeOffset": 16,
+      "uidOffset": 24,
+      "gidOffset": 28,
+      "directoryFlag": 16384,
+      "noFollowFlag": 32768
+    },
+    "macos-arm64": {
+      "statBytes": 144,
+      "modeOffset": 4,
+      "uidOffset": 16,
+      "gidOffset": 20,
+      "directoryFlag": 1048576,
+      "noFollowFlag": 256
+    },
+    "macos-intel": {
+      "statBytes": 144,
+      "modeOffset": 4,
+      "uidOffset": 16,
+      "gidOffset": 20,
+      "directoryFlag": 1048576,
+      "noFollowFlag": 256
+    }
+  },
+  "equalityReceiptSha256": "e0ff7359a4a8852047a89cb678921737c1ae8a6e7c5375f5d2bf49475aaaab04",
+  "localIndependentStrongGateRevalidation": true,
+  "fullOsCpeClearance": false,
+  "paidRequests": 0,
+  "releaseApproved": false,
+  "limits": [
+    "36 retained native exact builds remain unproved",
+    "Full OS/JDK/CPE vulnerability applicability is not certified",
+    "Historical macOS button, local legacy WinPTY and intermittent backend UNKNOWN causal roots remain unproved",
+    "Extra physical machines waived; expensive performance horizontal benchmark deferred",
+    "Later diagnostic-only source changes have local privacy controls, not this run execution evidence"
+  ]
+}
