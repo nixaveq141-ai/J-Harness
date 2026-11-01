@@ -12,6 +12,8 @@
 
 2026-11-01后续实修：原生覆盖审计器拒绝空库存、缺失来源及无效摘要，审计开始先原子撤销旧成功，且拒绝输出覆盖输入JAR。四项回归通过；实际统一JAR50项复核仍为11源码/39来源未知，严格模式exit2。见[M10-native-auditor-fail-closed-2026-11-01.json](M10-native-auditor-fail-closed-2026-11-01.json)。此修复防止错误闭合，不补造39项来源或历史因果，五项技术缺口继续OPEN。
 
+2026-11-01来源覆盖继续：新增Linux ARM64与macOS Intel专用固定源码候选构建，明确架构到对象名及输出路径的对应，五项离线控制通过；新增hostImage、系统包版本/架构、libc和JDK模块原始命令记录。工作流使用[官方标准运行器标签](https://docs.github.com/en/actions/reference/runners/github-hosted-runners)。实际远端构建、加载与产品装配未完成前，39项计数不变，不当作额外架构已验收或完整OS/CPE证明。
+
 ## 仍开放的五项
 
 | ID | 缺口及已知事实 | 严格闭合还需要什么 |

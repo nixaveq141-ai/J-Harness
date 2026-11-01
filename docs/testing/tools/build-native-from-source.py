@@ -22,6 +22,17 @@ FFI_BYTES=1362394
 def digest(path):return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def posix_pty_plan(system,machine):
+    arch=machine.lower()
+    if system=='Darwin' and arch in {'arm64','aarch64','x86_64','amd64'}:
+        return 'os/darwin/libpty.dylib',['make','-C','native','-B','x86_64','CC=clang']
+    if system=='Linux' and arch in {'x86_64','amd64','aarch64','arm64'}:
+        target='aarch64' if arch in {'aarch64','arm64'} else 'x86-64'
+        return 'os/linux/'+target+'/libpty.so',['make','-C','native','-B','linux_x86_64',
+                'ARCH_FLAG_X86_64=','ARCH_X86_64='+target]
+    raise ValueError('Unreviewed POSIX source architecture')
+
+
 def backport_aarch64_cfi(path):
     before=path.read_bytes();after=before
     for label in ['ffi_call_SYSV','ffi_closure_SYSV','ffi_go_closure_SYSV']:
@@ -79,6 +90,8 @@ def main():
     report=dict(status='INCOMPLETE',commit=os.environ.get('GITHUB_SHA'),runId=os.environ.get('GITHUB_RUN_ID'),
                 os=platform.platform(),architecture=platform.machine(),commands=[],sources={},outputs={},
                 productReplacement=False,windowsPty='NOT_SOURCE_BUILT')
+    report['hostImage']={k:os.environ.get(k) for k in ['ImageOS','ImageVersion','RUNNER_OS','RUNNER_ARCH']}
+    report['fullOsCpeClearance']=False
     def run(command,cwd,seconds=900):
         index=len(report['commands'])+1;log=out/(str(index)+'.log');begin=time.monotonic()
         record=dict(argv=command,cwd=Path(cwd).relative_to(ROOT).as_posix(),exitCode=None,log=log.name)
@@ -97,7 +110,16 @@ def main():
         if result.returncode:raise ValueError('Source build command failed; see fixed command log')
         return log
     try:
+        if os.name=='posix':
+            posix_pty_plan(platform.system(),platform.machine())
+            run(['uname','-a'],ROOT,30)
+            if platform.system()=='Linux':
+                run(['dpkg-query','-W','-f=${binary:Package}\t${Version}\t${Architecture}\n'],ROOT,60)
+                run(['ldd','--version'],ROOT,30)
+            else:
+                run(['sw_vers'],ROOT,30)
         run(['java','-version'],ROOT,30);run(['ant','-version'],ROOT,30)
+        run(['java','--list-modules'],ROOT,30)
         for name,(repo,revision) in REVISIONS.items():
             target=out/name
             run(['git','-c','http.https://github.com/.extraheader=','clone','--no-checkout','--filter=blob:none',
@@ -133,11 +155,11 @@ def main():
         report['outputs']['jna']=[dict(path=p.relative_to(ROOT).as_posix(),sha256=digest(p)) for p in candidates]
         if os.name=='posix':
             pty=out/'pty4j';mac=platform.system()=='Darwin'
-            output=pty/('os/darwin/libpty.dylib' if mac else 'os/linux/x86-64/libpty.so')
+            relative,command=posix_pty_plan(platform.system(),platform.machine())
+            output=pty/relative
             if not output.resolve().is_relative_to(pty.resolve()):raise ValueError('Output path bound')
             previous=digest(output) if output.exists() else None
             output.unlink(missing_ok=True)
-            command=['make','-C','native','-B','x86_64','CC=clang'] if mac else ['make','-C','native','-B','linux_x86_64','ARCH_FLAG_X86_64=','ARCH_X86_64=x86-64']
             run(command,pty)
             if not output.is_file():raise ValueError('Compiled PTY candidate missing')
             report['outputs']['pty']=dict(path=output.relative_to(ROOT).as_posix(),sha256=digest(output),removedPrebuiltSha256=previous)

@@ -16,6 +16,16 @@ builder=importlib.util.module_from_spec(spec);spec.loader.exec_module(builder)
 
 
 class SourceBuildTest(unittest.TestCase):
+    def test_linux_arm_output_and_compiler_object_identity_match(self):
+        path,command=builder.posix_pty_plan('Linux','aarch64')
+        self.assertEqual('os/linux/aarch64/libpty.so',path)
+        self.assertIn('ARCH_X86_64=aarch64',command)
+        self.assertIn('ARCH_FLAG_X86_64=',command)
+        self.assertEqual(builder.posix_pty_plan('Linux','arm64'),(path,command))
+        self.assertEqual('os/linux/x86-64/libpty.so',builder.posix_pty_plan('Linux','x86_64')[0])
+        self.assertEqual('os/darwin/libpty.dylib',builder.posix_pty_plan('Darwin','x86_64')[0])
+        with self.assertRaises(ValueError):builder.posix_pty_plan('Linux','s390x')
+
     def test_cfi_backport_moves_only_three_directives_and_rejects_unknown_source(self):
         raw=b''.join(b'\tcfi_startproc\nCNAME('+s+b'):\n\tunchanged_instruction\n' for s in [b'ffi_call_SYSV',b'ffi_closure_SYSV',b'ffi_go_closure_SYSV'])
         with tempfile.TemporaryDirectory() as temp:
