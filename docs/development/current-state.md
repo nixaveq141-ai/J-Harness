@@ -1,5 +1,11 @@
 # 当前实现、验收与未完成项
 
+2026-11-01最终同提交统一验收：[41272550578](https://github.com/nixaveq141-ai/J-Harness/actions/runs/41272550578)@e503377的Windows2022 x64、Ubuntu24.04 x64与macOS arm64全部成功；每侧651 Git输入、735项/124套件零失败错误跳过、13条实际命令回执、三浏览器33夹具813项、R4每引擎51项、候选63文件及安装均已独立核验。三侧实际运行时JAR SHA256均为`8407dc5d6e9e2879993467e3ddf0c7524b1c75ce110567ca60056cb0d41d99e1`，跨作业一致性门禁也已通过；外围候选ZIP含平台证据，不要求相同。原生50项实际字节为11项已审源码输出+39项保留官方原版；CLI11许可已进入三侧实际JAR。原包/收据/审计器12成员本地备份逐摘要核对，341434347字节，见[M10-unified-final-acceptance](../testing/M10-unified-final-acceptance-2026-11-01.json)、[本地备份](../testing/M10-unified-final-backup-2026-11-01.json)。
+
+汇总门禁另补R0证据校验：读取实际单测XML并核对精确用例、固定提交完整源码指纹、13条命令的参数/退出码/日志/同轮身份、全浏览器/R4/SDK/原生/安装的实际文件及同JAR摘要；开始即撤销陈旧PASS。加强版本用上述三侧原包在本地复验通过，缺失XML用例、伪命令即使同步重算回执摘要、实际JAR漂移均拒绝；另四个回归控制通过。该加强版本没有冒称已在远端执行，见[M10-unified-gate-revalidation](../testing/M10-unified-gate-revalidation-2026-11-01.json)。
+
+当前统一运行时功能验收已闭合；严格来源/安全和历史因果尚有五项开放，见[逐项清单](../testing/remaining-technical-gaps-2026-11-01.md)。不以重复通过代替历史根因、不接受风险归档、不宣称完整OS/CPE认证。额外实体OS/CPU验收按用户指令跳过，昂贵性能横测后置，证据仅本地备份；没有新增付费模型请求、main合并或Release。下文“待/仍运行/失败”为各轮历史快照，最新成功范围以上述精确提交与收据为准。
+
 2026-11-01补证：本机Win11当前统一源码ConPTY通过真实输入/非ASCII目录/resize/退出/停止/超时和观察残留空，见M10-local-unified-conpty收据，仅组件范围。固定旧失败9ef JAR的41272245266三轮各14项原development检查通过，Git输入/截图/实际JAR已独立核对，见M10-development-observations；未复现不等于根因修复。固定JsonCpp1.9.5归档与原vcpkg SHA512匹配，Git提交OSV查询快照保存，不将空返回当完整漏洞覆盖。12成员本地补证备份逐摘要过。当前严格原生审计覆盖容器内全部非class载荷（Java platform文档/模板另属原Maven资源），未知无扩展名资源也拒绝，实际50项仍11源码/39原版。修正CMD测试条件后的完整同提交三平台41272550578@e503仍在运行；全库存来源/OS-CPE及历史macOS、WinPTY和后端UNKNOWN根因未闭合。
 
 2026-11-01新状态：9ef统一轮Windows 735单测与安装过，Chromium development后端UNKNOWN/FAILED，R4未跑，整轮不验收；Linux/Mac通过范围保留。b3规范打包轮Windows又在单测被CMD夹具tree1预算打断，原ZIP72078f14及log核对，reason=PROCESS_LIMIT、tracked2、预期9实际1。当前修正只分离两个测试条件：保留tree1所有限制/清理断言，shell语义用独立常规tree8，仍要求9且新增FAILED/NONZERO_EXIT；本机11项通过，远端修正待。这不证明第二进程身份、浏览器后端失败或旧Mac原因。50项库存的11源码/39原版边界及CLI11材料修正保留，统一资格新轮将输出实际覆盖审计；整体验收、全OS/CPE与历史根因尚未闭合。

@@ -1,0 +1,59 @@
+{
+  "status": "THREE_PLATFORM_IDENTICAL_UNIFIED_RUNTIME_IN_SELECTED_SCOPE_ACCEPTED_NOT_RELEASE",
+  "runId": "41272550578",
+  "commit": "e503377072f7e6f2c0ff8e390e69486ffb059d76",
+  "runtimeJarSha256": "8407dc5d6e9e2879993467e3ddf0c7524b1c75ce110567ca60056cb0d41d99e1",
+  "platformReceiptSha256": {
+    "windows": "c7c152d9d0d9b402b0698a80482a2035a8de2fa5e20c801d59db474bbcdf4914",
+    "linux": "2f82e44c3567499f20a19ad97d7a94ce5576511c21c5559a208f6cdfcf3868ba",
+    "macos": "ff73a689547d18e8d1cd700fbf5ab822d08ea40b97aee54f279b9d610494a329"
+  },
+  "eachPlatform": {
+    "gitInputs": 651,
+    "javaTests": 735,
+    "javaSuites": 124,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "browserFixtures": 33,
+    "browserChecks": 813,
+    "r4EachEngine": 51,
+    "commandReceipts": 13,
+    "candidateFiles": 63
+  },
+  "nativeInventory": {
+    "total": 50,
+    "reviewedSource": 11,
+    "retainedOfficialExactBuildUnknown": 39
+  },
+  "crossPlatformEquality": {
+    "status": "THREE_PLATFORM_IDENTICAL_RUNTIME_JAR_QUALIFIED_NOT_RELEASE",
+    "commit": "e503377072f7e6f2c0ff8e390e69486ffb059d76",
+    "runId": "41272550578",
+    "platforms": {
+      "windows-2022": {
+        "runtimeJarSha256": "8407dc5d6e9e2879993467e3ddf0c7524b1c75ce110567ca60056cb0d41d99e1",
+        "candidateZipSha256": "290f0dd5559b3577e3a1f994f0d9eb05308113e0b4c94b9c6f7d0792bcb84e10"
+      },
+      "ubuntu-24.04": {
+        "runtimeJarSha256": "8407dc5d6e9e2879993467e3ddf0c7524b1c75ce110567ca60056cb0d41d99e1",
+        "candidateZipSha256": "f41604213473afef56c4b5d336ccefb681959613bd2a31096ae18f7c809dca49"
+      },
+      "macos-latest": {
+        "runtimeJarSha256": "8407dc5d6e9e2879993467e3ddf0c7524b1c75ce110567ca60056cb0d41d99e1",
+        "candidateZipSha256": "0d605b800c82f9d49f117fa9b40b492dbd7f8b6ddc5064b71e1f1d67234ff5d7"
+      }
+    },
+    "releaseApproved": false,
+    "scope": "Byte-identical runtime only; outer candidate ZIPs include platform-specific evidence. Not full native provenance or OS/CPE certification."
+  },
+  "aggregateArtifactSha256": "b6ad9054a3716000648eb90bea9374495fe0a386f90b85cc01474034e177552d",
+  "limits": [
+    "Full source provenance of39 retained resources is not proved",
+    "Full OS/CPE vulnerability coverage is not complete",
+    "Historical macOS, legacy local WinPTY and intermittent backend UNKNOWN causal roots are not established",
+    "No physical extra OS/CPU acceptance or expensive performance horizontal benchmark claimed",
+    "No Release approval, publication or main merge"
+  ],
+  "paidRequests": 0
+}

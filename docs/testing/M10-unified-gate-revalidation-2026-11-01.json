@@ -1,0 +1,48 @@
+{
+  "status": "LOCAL_STRONG_GATE_REAL_ARTIFACT_REVALIDATION_AND_NEGATIVES_PASS",
+  "commit": "e503377072f7e6f2c0ff8e390e69486ffb059d76",
+  "runId": "41272550578",
+  "gateSha256": "2dcc873515d04bf39502f4f31ff8951091c0ce2309978a0b2fa8d9bdc29f92ef",
+  "positive": {
+    "status": "THREE_PLATFORM_IDENTICAL_RUNTIME_JAR_QUALIFIED_NOT_RELEASE",
+    "commit": "e503377072f7e6f2c0ff8e390e69486ffb059d76",
+    "runId": "41272550578",
+    "platforms": {
+      "windows-2022": {
+        "runtimeJarSha256": "8407dc5d6e9e2879993467e3ddf0c7524b1c75ce110567ca60056cb0d41d99e1",
+        "candidateZipSha256": "290f0dd5559b3577e3a1f994f0d9eb05308113e0b4c94b9c6f7d0792bcb84e10"
+      },
+      "ubuntu-24.04": {
+        "runtimeJarSha256": "8407dc5d6e9e2879993467e3ddf0c7524b1c75ce110567ca60056cb0d41d99e1",
+        "candidateZipSha256": "f41604213473afef56c4b5d336ccefb681959613bd2a31096ae18f7c809dca49"
+      },
+      "macos-latest": {
+        "runtimeJarSha256": "8407dc5d6e9e2879993467e3ddf0c7524b1c75ce110567ca60056cb0d41d99e1",
+        "candidateZipSha256": "0d605b800c82f9d49f117fa9b40b492dbd7f8b6ddc5064b71e1f1d67234ff5d7"
+      }
+    },
+    "releaseApproved": false,
+    "scope": "Byte-identical runtime only; outer candidate ZIPs include platform-specific evidence. Not full native provenance or OS/CPE certification."
+  },
+  "negativeControls": [
+    {
+      "case": "missing actual XML testcase despite unchanged PASS report",
+      "rejected": true,
+      "reason": "XML case/counter mismatch"
+    },
+    {
+      "case": "wrong executable with recomputed report receipt SHA",
+      "rejected": true,
+      "reason": "Python evidence driver required"
+    },
+    {
+      "case": "changed actual JAR with original successful report",
+      "rejected": true,
+      "reason": "Qualified JAR bytes changed"
+    }
+  ],
+  "originalRawArchivesModified": false,
+  "remoteExecutionOfStrengthenedGate": false,
+  "releaseApproved": false,
+  "paidRequests": 0
+}

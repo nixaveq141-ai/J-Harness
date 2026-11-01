@@ -1,0 +1,493 @@
+{
+  "status": "SOURCE_COVERAGE_INCOMPLETE",
+  "jarSha256": "8407dc5d6e9e2879993467e3ddf0c7524b1c75ce110567ca60056cb0d41d99e1",
+  "resources": [
+    {
+      "resource": "com/sun/jna/aix-ppc/libjnidispatch.a",
+      "sha256": "993d6799faa5e2c6363e99050c65ef6efea10059b3a07b80d3854d6d3142ca1a",
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "provenance": "OFFICIAL_BYTES_EXACT_BUILD_UNRESOLVED",
+      "sourceOrigin": null,
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "com/sun/jna/aix-ppc64/libjnidispatch.a",
+      "sha256": "66a4b348b959d26a143ce54277330d767ae01f90e36308df09d5d110696445df",
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "provenance": "OFFICIAL_BYTES_EXACT_BUILD_UNRESOLVED",
+      "sourceOrigin": null,
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "com/sun/jna/darwin-aarch64/libjnidispatch.jnilib",
+      "sha256": "ebd9fd7c720728ddd3c515f5f96ba6c3a7ce06f20c1d0e4a8eaf63e54341f357",
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "provenance": "REVIEWED_SOURCE_BUILD",
+      "sourceOrigin": {
+        "qualificationRun": "41268207915",
+        "qualificationCommit": "99ad72f376be21536d36ee929dbe4d61cbcf0a9e",
+        "acceptedRuntimeJarSha256": "88b11e7ff3e19bfe09313072d5d082eba7d2a4b976b7b0c93e5e14df904f897d",
+        "source": {
+          "commit": "3571d2269895644e9888963fbf54a4cf101c9597",
+          "runId": "40998915552"
+        }
+      },
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "com/sun/jna/darwin-x86-64/libjnidispatch.jnilib",
+      "sha256": "12d88138ce3c0a20d4bb3cfbd091b7ccb1f6365a79ab07b2d786a52d104d418e",
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "provenance": "OFFICIAL_BYTES_EXACT_BUILD_UNRESOLVED",
+      "sourceOrigin": null,
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "com/sun/jna/freebsd-x86-64/libjnidispatch.so",
+      "sha256": "13281e25bf8614ab1aeb5f93d32ce4af02d986b0ca49f7692d08fce981eb1d5e",
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "provenance": "OFFICIAL_BYTES_EXACT_BUILD_UNRESOLVED",
+      "sourceOrigin": null,
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "com/sun/jna/freebsd-x86/libjnidispatch.so",
+      "sha256": "c1d200c601baf9f26db1b0ba0d152fb517dd929f01cbbe1ac3320bbe40adb827",
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "provenance": "OFFICIAL_BYTES_EXACT_BUILD_UNRESOLVED",
+      "sourceOrigin": null,
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "com/sun/jna/linux-aarch64/libjnidispatch.so",
+      "sha256": "5c894177c2c4a1a422047886f5f526959e4f1a8c1561bb3cb2277fe0da85b744",
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "provenance": "OFFICIAL_BYTES_EXACT_BUILD_UNRESOLVED",
+      "sourceOrigin": null,
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "com/sun/jna/linux-arm/libjnidispatch.so",
+      "sha256": "00a35890dde5b4174d6646d1ebdc553bac3b7d99c1a793899eddaa002b5a16a2",
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "provenance": "OFFICIAL_BYTES_EXACT_BUILD_UNRESOLVED",
+      "sourceOrigin": null,
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "com/sun/jna/linux-armel/libjnidispatch.so",
+      "sha256": "257d627bce7ddccf539f8a32dd293e4d0ed8ba64070dab07d5ae40d4932d60a6",
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "provenance": "OFFICIAL_BYTES_EXACT_BUILD_UNRESOLVED",
+      "sourceOrigin": null,
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "com/sun/jna/linux-loongarch64/libjnidispatch.so",
+      "sha256": "2e91afb910bf56ca578786861fb87845f7bae1dc91b3ec6374540f3a946f170a",
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "provenance": "OFFICIAL_BYTES_EXACT_BUILD_UNRESOLVED",
+      "sourceOrigin": null,
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "com/sun/jna/linux-mips64el/libjnidispatch.so",
+      "sha256": "5e7a37f9cc6c0dc7cfa2b6d0944788c448ff2e87d4aab894a241269a8b6335ed",
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "provenance": "OFFICIAL_BYTES_EXACT_BUILD_UNRESOLVED",
+      "sourceOrigin": null,
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "com/sun/jna/linux-ppc/libjnidispatch.so",
+      "sha256": "c974c4ec9701655a30d7601389c3b3246447fdbc90240e809b37cb283224a2ff",
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "provenance": "OFFICIAL_BYTES_EXACT_BUILD_UNRESOLVED",
+      "sourceOrigin": null,
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "com/sun/jna/linux-ppc64le/libjnidispatch.so",
+      "sha256": "bb026410e75b3e928cb3ccddc0f9418e3fb40aad1f6c80cf046b72d62e5eb062",
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "provenance": "OFFICIAL_BYTES_EXACT_BUILD_UNRESOLVED",
+      "sourceOrigin": null,
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "com/sun/jna/linux-riscv64/libjnidispatch.so",
+      "sha256": "938f42166508c30d5b5ed3eb094219f9b2df736b1ea38ed7586c0ce79c12ee97",
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "provenance": "OFFICIAL_BYTES_EXACT_BUILD_UNRESOLVED",
+      "sourceOrigin": null,
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "com/sun/jna/linux-s390x/libjnidispatch.so",
+      "sha256": "3f33fab801dc3a43a5d269fa0e8f43e54b0f7e29f02c4821901c62aafb3aee6c",
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "provenance": "OFFICIAL_BYTES_EXACT_BUILD_UNRESOLVED",
+      "sourceOrigin": null,
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "com/sun/jna/linux-x86-64/libjnidispatch.so",
+      "sha256": "c41be9a02e2648c7ee6bf67a0e44575d97862db362f7294cd20a26c4b43c8cec",
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "provenance": "REVIEWED_SOURCE_BUILD",
+      "sourceOrigin": {
+        "qualificationRun": "41268207915",
+        "qualificationCommit": "99ad72f376be21536d36ee929dbe4d61cbcf0a9e",
+        "acceptedRuntimeJarSha256": "38f5eb58c6c6b7d2bd1e6097252afc96f6498c124c8e3954064c1973736f84c4",
+        "source": {
+          "commit": "a2dc791bae10addc3b53b3d951b94db897ccc265",
+          "runId": "40995618881"
+        }
+      },
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "com/sun/jna/linux-x86/libjnidispatch.so",
+      "sha256": "caf3d95b12a6f907fa0b647e1d785c6505415fc266e11733b24eec22da6ae3d9",
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "provenance": "OFFICIAL_BYTES_EXACT_BUILD_UNRESOLVED",
+      "sourceOrigin": null,
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "com/sun/jna/openbsd-x86-64/libjnidispatch.so",
+      "sha256": "f15ad5da6b5ab33a9fe51992247fa3fe4da6a6ec0a4678d186611bb1258b4fff",
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "provenance": "OFFICIAL_BYTES_EXACT_BUILD_UNRESOLVED",
+      "sourceOrigin": null,
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "com/sun/jna/openbsd-x86/libjnidispatch.so",
+      "sha256": "c99db52a1c9ffd791ec0dda9b39ad8aec0b7514dce881e230882210dfc9d9fb7",
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "provenance": "OFFICIAL_BYTES_EXACT_BUILD_UNRESOLVED",
+      "sourceOrigin": null,
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "com/sun/jna/sunos-sparc/libjnidispatch.so",
+      "sha256": "58e637222be67679df8f2473967555b9697908e65ca2ddf32719d1d5e35769db",
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "provenance": "OFFICIAL_BYTES_EXACT_BUILD_UNRESOLVED",
+      "sourceOrigin": null,
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "com/sun/jna/sunos-sparcv9/libjnidispatch.so",
+      "sha256": "58e637222be67679df8f2473967555b9697908e65ca2ddf32719d1d5e35769db",
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "provenance": "OFFICIAL_BYTES_EXACT_BUILD_UNRESOLVED",
+      "sourceOrigin": null,
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "com/sun/jna/sunos-x86-64/libjnidispatch.so",
+      "sha256": "7af04db1da25981579214bdcbf761a8cd1ac5a76c9ac95fc226303ee65dfaeba",
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "provenance": "OFFICIAL_BYTES_EXACT_BUILD_UNRESOLVED",
+      "sourceOrigin": null,
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "com/sun/jna/sunos-x86/libjnidispatch.so",
+      "sha256": "7af04db1da25981579214bdcbf761a8cd1ac5a76c9ac95fc226303ee65dfaeba",
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "provenance": "OFFICIAL_BYTES_EXACT_BUILD_UNRESOLVED",
+      "sourceOrigin": null,
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "com/sun/jna/win32-aarch64/jnidispatch.dll",
+      "sha256": "b9d1479b9619b7ece4a36b6ae31365ffaf15a1355d4f6da02f8b5f09df2fa82f",
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "provenance": "OFFICIAL_BYTES_EXACT_BUILD_UNRESOLVED",
+      "sourceOrigin": null,
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "com/sun/jna/win32-x86-64/jnidispatch.dll",
+      "sha256": "c88e200b240dfa54c5b852a335b28683e64a074d30ceee7c17ffc282058891a2",
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "provenance": "REVIEWED_SOURCE_BUILD",
+      "sourceOrigin": {
+        "qualificationRun": "41266807712",
+        "qualificationCommit": "f32a2e6cc88ed0b583876cb073962d5d50a87f05",
+        "acceptedRuntimeJarSha256": "fe32f9eaa19f7944782110157d9aa2663c62f21b3278c61494338b17bfdf72cd",
+        "source": {
+          "runId": "40998915552"
+        }
+      },
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "com/sun/jna/win32-x86/jnidispatch.dll",
+      "sha256": "38650a0612730c52580c9f32ff766b44b1c5a426d52e7dd7a53687bf3389ac2c",
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "provenance": "OFFICIAL_BYTES_EXACT_BUILD_UNRESOLVED",
+      "sourceOrigin": null,
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "resources/com/pty4j/native/darwin/libpty.dylib",
+      "sha256": "db26759cc11b61585dc7fabbf32e4074f7c511f94051a9cb10160b8700b75766",
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "provenance": "REVIEWED_SOURCE_BUILD",
+      "sourceOrigin": {
+        "qualificationRun": "41268207915",
+        "qualificationCommit": "99ad72f376be21536d36ee929dbe4d61cbcf0a9e",
+        "acceptedRuntimeJarSha256": "88b11e7ff3e19bfe09313072d5d082eba7d2a4b976b7b0c93e5e14df904f897d",
+        "source": {
+          "commit": "3571d2269895644e9888963fbf54a4cf101c9597",
+          "runId": "40998915552"
+        }
+      },
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "resources/com/pty4j/native/darwin/pty4j-unix-spawn-helper",
+      "sha256": "99dc2da73d03f94efef5d7988f0705551805f2c4e25d7cf4f11ee3e4c80f2e10",
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "provenance": "REVIEWED_SOURCE_BUILD",
+      "sourceOrigin": {
+        "qualificationRun": "41268207915",
+        "qualificationCommit": "99ad72f376be21536d36ee929dbe4d61cbcf0a9e",
+        "acceptedRuntimeJarSha256": "88b11e7ff3e19bfe09313072d5d082eba7d2a4b976b7b0c93e5e14df904f897d",
+        "source": {
+          "commit": "3571d2269895644e9888963fbf54a4cf101c9597",
+          "runId": "40998915552"
+        }
+      },
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "resources/com/pty4j/native/freebsd/x86-64/libpty.so",
+      "sha256": "6bf2cf3a6ac0929d0f23529b4bfc7f97348219260f86dc84f2a0140ec611dd7c",
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "provenance": "OFFICIAL_BYTES_EXACT_BUILD_UNRESOLVED",
+      "sourceOrigin": null,
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "resources/com/pty4j/native/freebsd/x86/libpty.so",
+      "sha256": "67088c6eb1ac32f4c82c43e0386cb86e9df68f6869ee4900cb68039cb0121598",
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "provenance": "OFFICIAL_BYTES_EXACT_BUILD_UNRESOLVED",
+      "sourceOrigin": null,
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "resources/com/pty4j/native/linux/aarch64/libpty.so",
+      "sha256": "f91dbdc91a21735f2982fa8a8e16d04411f3c969d23c888d0b2f52233dfcceb9",
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "provenance": "OFFICIAL_BYTES_EXACT_BUILD_UNRESOLVED",
+      "sourceOrigin": null,
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "resources/com/pty4j/native/linux/arm/libpty.so",
+      "sha256": "a272c1d2495138007654cf9dd1e8e57faab62e9c3eb2a1a0cc32b1a613a79a58",
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "provenance": "OFFICIAL_BYTES_EXACT_BUILD_UNRESOLVED",
+      "sourceOrigin": null,
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "resources/com/pty4j/native/linux/mips64el/libpty.so",
+      "sha256": "7d97ff835049dcfe1137812e17a09f1d70c4b5fd32cdcfc54a6f7d703f9dc69d",
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "provenance": "OFFICIAL_BYTES_EXACT_BUILD_UNRESOLVED",
+      "sourceOrigin": null,
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "resources/com/pty4j/native/linux/ppc64le/libpty.so",
+      "sha256": "60d5f3c23625eae9cd19b4c36a1b1cc540b03d500bae2bae7891cdd7be5533d8",
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "provenance": "OFFICIAL_BYTES_EXACT_BUILD_UNRESOLVED",
+      "sourceOrigin": null,
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "resources/com/pty4j/native/linux/riscv64/libpty.so",
+      "sha256": "e101b0a4282fef079d32bb0202d2ec5e2869579f45e72f09ceae5c6d0388f372",
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "provenance": "OFFICIAL_BYTES_EXACT_BUILD_UNRESOLVED",
+      "sourceOrigin": null,
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "resources/com/pty4j/native/linux/x86-64/libpty.so",
+      "sha256": "42127d2ce30c1bd38f3b6f4f71634c7656c6cce7eb2b2d0ed8a478a16a577b5d",
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "provenance": "REVIEWED_SOURCE_BUILD",
+      "sourceOrigin": {
+        "qualificationRun": "41268207915",
+        "qualificationCommit": "99ad72f376be21536d36ee929dbe4d61cbcf0a9e",
+        "acceptedRuntimeJarSha256": "38f5eb58c6c6b7d2bd1e6097252afc96f6498c124c8e3954064c1973736f84c4",
+        "source": {
+          "commit": "a2dc791bae10addc3b53b3d951b94db897ccc265",
+          "runId": "40995618881"
+        }
+      },
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "resources/com/pty4j/native/linux/x86/libpty.so",
+      "sha256": "a0502637d32147f81e43b46ec31789ca06e89747ec12fbb24f1ebd1b6a0f67f7",
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "provenance": "OFFICIAL_BYTES_EXACT_BUILD_UNRESOLVED",
+      "sourceOrigin": null,
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "resources/com/pty4j/native/win/aarch64/OpenConsole.exe",
+      "sha256": "8a1b1f024040579b8c656eed59c068da1f544743165f2a4cb8e78e28c1c72836",
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "provenance": "OFFICIAL_BYTES_EXACT_BUILD_UNRESOLVED",
+      "sourceOrigin": null,
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "resources/com/pty4j/native/win/aarch64/conpty.dll",
+      "sha256": "0e7dc377e2cf5f90f3b221a53193fb1b0f99634d7911241a9a80cb7650f67526",
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "provenance": "OFFICIAL_BYTES_EXACT_BUILD_UNRESOLVED",
+      "sourceOrigin": null,
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "resources/com/pty4j/native/win/aarch64/win-helper.dll",
+      "sha256": "b4d01792ba6ec8a7c5df2516a1170e19a0a82f0937a506673818a9510052802a",
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "provenance": "OFFICIAL_BYTES_EXACT_BUILD_UNRESOLVED",
+      "sourceOrigin": null,
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "resources/com/pty4j/native/win/aarch64/winpty-agent.exe",
+      "sha256": "055ab03294342b665d666f2e7fce2ec1fe182e3bd97af6b95219d046af9bf36b",
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "provenance": "OFFICIAL_BYTES_EXACT_BUILD_UNRESOLVED",
+      "sourceOrigin": null,
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "resources/com/pty4j/native/win/aarch64/winpty.dll",
+      "sha256": "99c8aa61319c2a83278e4da60cdc584fe29a6818e24edc362399314d3a3e5808",
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "provenance": "OFFICIAL_BYTES_EXACT_BUILD_UNRESOLVED",
+      "sourceOrigin": null,
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "resources/com/pty4j/native/win/x86-64/OpenConsole.exe",
+      "sha256": "6c065dc55dce7cff61f2cfb157df5668d4421996451fdb6ae7277cd2c42b3fad",
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "provenance": "REVIEWED_SOURCE_BUILD",
+      "sourceOrigin": {
+        "qualificationRun": "41266807712",
+        "qualificationCommit": "f32a2e6cc88ed0b583876cb073962d5d50a87f05",
+        "acceptedRuntimeJarSha256": "fe32f9eaa19f7944782110157d9aa2663c62f21b3278c61494338b17bfdf72cd",
+        "source": {
+          "runId": "41179155433"
+        }
+      },
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "resources/com/pty4j/native/win/x86-64/conpty.dll",
+      "sha256": "2f013656ebdc935e184f9b50cfb09875becbfd9425bb1169a66fd031367ef135",
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "provenance": "REVIEWED_SOURCE_BUILD",
+      "sourceOrigin": {
+        "qualificationRun": "41266807712",
+        "qualificationCommit": "f32a2e6cc88ed0b583876cb073962d5d50a87f05",
+        "acceptedRuntimeJarSha256": "fe32f9eaa19f7944782110157d9aa2663c62f21b3278c61494338b17bfdf72cd",
+        "source": {
+          "runId": "41179155433"
+        }
+      },
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "resources/com/pty4j/native/win/x86-64/cyglaunch.exe",
+      "sha256": "5d2d8da1066eb931bf86aa0895bb5cec3d7320faf258b7b20d722f16136cb3ca",
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "provenance": "OFFICIAL_BYTES_EXACT_BUILD_UNRESOLVED",
+      "sourceOrigin": null,
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "resources/com/pty4j/native/win/x86-64/win-helper.dll",
+      "sha256": "edc8a0aa728126f875bed4b02bdf0de2c76d99b25ff3e0b7ac6d1d42512e617f",
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "provenance": "REVIEWED_SOURCE_BUILD",
+      "sourceOrigin": {
+        "qualificationRun": "41266807712",
+        "qualificationCommit": "f32a2e6cc88ed0b583876cb073962d5d50a87f05",
+        "acceptedRuntimeJarSha256": "fe32f9eaa19f7944782110157d9aa2663c62f21b3278c61494338b17bfdf72cd",
+        "source": {
+          "runId": "41030432860"
+        }
+      },
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "resources/com/pty4j/native/win/x86-64/winpty-agent.exe",
+      "sha256": "aebed1cca9030bcb6771ce2b40cbbfa4a1de9ad96acb4dd4ca4ca6da24a02c1c",
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "provenance": "REVIEWED_SOURCE_BUILD",
+      "sourceOrigin": {
+        "qualificationRun": "41266807712",
+        "qualificationCommit": "f32a2e6cc88ed0b583876cb073962d5d50a87f05",
+        "acceptedRuntimeJarSha256": "fe32f9eaa19f7944782110157d9aa2663c62f21b3278c61494338b17bfdf72cd",
+        "source": {
+          "runId": "41030432860"
+        }
+      },
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "resources/com/pty4j/native/win/x86-64/winpty.dll",
+      "sha256": "013db340ce5e3417b6821a81336965367f88bfd197ddbb7eb4f6e3302fdbb69c",
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "provenance": "REVIEWED_SOURCE_BUILD",
+      "sourceOrigin": {
+        "qualificationRun": "41266807712",
+        "qualificationCommit": "f32a2e6cc88ed0b583876cb073962d5d50a87f05",
+        "acceptedRuntimeJarSha256": "fe32f9eaa19f7944782110157d9aa2663c62f21b3278c61494338b17bfdf72cd",
+        "source": {
+          "runId": "41030432860"
+        }
+      },
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "resources/com/pty4j/native/win/x86/winpty-agent.exe",
+      "sha256": "1ecf08c02b534c4aed342e8a0d5a5d31d6956638d199a59ad6fbbe6519b6aa33",
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "provenance": "OFFICIAL_BYTES_EXACT_BUILD_UNRESOLVED",
+      "sourceOrigin": null,
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    },
+    {
+      "resource": "resources/com/pty4j/native/win/x86/winpty.dll",
+      "sha256": "c77c5b1b19bd72d714e64c783bc0a4f0afa06dfaa684ce4105eb55be3cf3e705",
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "provenance": "OFFICIAL_BYTES_EXACT_BUILD_UNRESOLVED",
+      "sourceOrigin": null,
+      "vulnerabilityCoverage": "NOT_COMPLETE_OS_CPE_CLEARANCE"
+    }
+  ],
+  "inventoryCount": 50,
+  "reviewedSourceCount": 11,
+  "retainedOriginalCount": 39,
+  "fullOsCpeClearance": false,
+  "releaseApproved": false
+}
