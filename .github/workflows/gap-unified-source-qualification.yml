@@ -1,0 +1,129 @@
+name: Unified source-native three-platform qualification
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/m1059-full-validation]
+    paths: [.github/workflows/gap-unified-source-qualification.yml]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  qualification:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-2022
+          - os: ubuntu-24.04
+          - os: macos-latest
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    defaults:
+      run:
+        shell: bash
+    env:
+      JHARNESS_EVIDENCE_RUN_ID: unified-source-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.os }}-${{ github.sha }}
+      JHARNESS_MATRIX_KEEP_GOING: '1'
+      JHARNESS_UNIFIED_SOURCE: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Build current application and check native staging guards
+        run: |
+          set -euo pipefail
+          python scripts/test-unified-native-runtime.py
+          python scripts/test-posix-native-runtime.py
+          python scripts/test-source-native-qualification.py
+          npm --prefix frontend ci
+          npm --prefix frontend test > source-client.log 2>&1
+          npm --prefix frontend run build
+          sh ./mvnw -B -DskipTests package > source-qualification-build.log 2>&1
+      - uses: actions/download-artifact@v4
+        with:
+          name: source-native-java-install-windows
+          run-id: 41266807712
+          github-token: ${{ github.token }}
+          path: .build-cache/unified-inputs/windows
+      - uses: actions/download-artifact@v4
+        with:
+          name: source-native-full-ubuntu-24.04
+          run-id: 41268207915
+          github-token: ${{ github.token }}
+          path: .build-cache/unified-inputs/linux
+      - uses: actions/download-artifact@v4
+        with:
+          name: source-native-full-macos-latest
+          run-id: 41268207915
+          github-token: ${{ github.token }}
+          path: .build-cache/unified-inputs/macos
+      - name: Install browser dependencies on Linux
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get -o Acquire::Retries=1 -o Acquire::http::Timeout=30 update
+          sudo apt-get -o Acquire::Retries=1 -o Acquire::http::Timeout=30 install -y dbus-x11 libsecret-1-0 gnome-keyring
+          node frontend/node_modules/playwright/cli.js install --with-deps chromium firefox webkit
+      - name: Install Windows browsers
+        if: runner.os == 'Windows'
+        run: node frontend/node_modules/playwright/cli.js install chromium firefox webkit
+      - name: Prepare macOS browsers and isolated keychain
+        if: runner.os == 'macOS'
+        run: |
+          node frontend/node_modules/playwright/cli.js install chromium firefox webkit
+          python scripts/ci-keychain.py setup
+      - name: Qualify source Java, exact install and full application matrix
+        run: |
+          set -euo pipefail
+          failure_tail() {
+            for logfile in .build-cache/source-qualification/*.log; do
+              if [[ -f "$logfile" ]]; then tail -n 50 -- "$logfile"; fi
+            done
+          }
+          trap failure_tail ERR
+          if [[ "$RUNNER_OS" == Linux ]]; then
+            dbus-run-session -- bash -eu -c '
+              python -c "import secrets; print(secrets.token_hex(32))" | gnome-keyring-daemon --unlock --components=secrets >/dev/null
+              python scripts/ci-secret-service.py ready
+              python scripts/source-native-qualification.py
+            '
+          else
+            python scripts/source-native-qualification.py
+          fi
+      - name: Remove isolated macOS keychain
+        if: always() && runner.os == 'macOS'
+        run: python scripts/ci-keychain.py cleanup
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: source-native-unified-${{ matrix.os }}
+          include-hidden-files: true
+          retention-days: 90
+          path: |
+            source-client.log
+            source-qualification-build.log
+            .build-cache/source-qualification/
+            .build-cache/M10.5.9/
+            .build-cache/R4/
+            .build-cache/M10.5.4-native-credentials.json
+            .build-cache/M10.5.8-sdk-results.json
+            .build-cache/M10.5.8-examples-results.json
+            .build-cache/M10-launcher-results.json
+            native-load-*.log
+            harness-*/native-load-*.log
+            harness-*/target/surefire-reports/
+            harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar
+            target/bom.json
+            target/osv-results.json
+            target/candidate-smoke.json
+            target/jharness-0.1.0-SNAPSHOT-candidate.zip

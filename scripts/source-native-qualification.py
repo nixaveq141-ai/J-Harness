@@ -53,6 +53,8 @@ def main():
         raise ValueError('Dedicated qualification CI required')
     windows=os.name=='nt'
     stage_script='scripts/stage-source-native-runtime.py' if windows else 'scripts/stage-posix-native-runtime.py'
+    unified=os.environ.get('JHARNESS_UNIFIED_SOURCE')=='1'
+    if unified:stage_script='scripts/stage-unified-native-runtime.py'
     out=ROOT/'.build-cache/source-qualification';out.mkdir()
     run_id=os.environ['JHARNESS_EVIDENCE_RUN_ID']
     report=dict(status='INCOMPLETE',runId=run_id,commit=os.environ['GITHUB_SHA'],
@@ -144,7 +146,7 @@ def main():
                 raise ValueError('Installed candidate does not contain source runtime')
         smoke=json.loads((ROOT/'target/candidate-smoke.json').read_bytes())
         if smoke['status']!='PASS' or smoke['paidRequests']!=0:raise ValueError('Install smoke incomplete')
-        if not windows:
+        if not windows or unified:
             command('packaged-matrix',[python,'scripts/run-m1059-platform.py'])
             if sha(runtime.read_bytes())!=final['runtimeJarSha256']:
                 raise ValueError('Runtime changed during packaged matrix')
