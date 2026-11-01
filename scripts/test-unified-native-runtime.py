@@ -29,7 +29,13 @@ class UnifiedScopeTest(unittest.TestCase):
         self.assertEqual('windows',stage.active_scope('Windows','AMD64'))
         self.assertEqual('linux',stage.active_scope('Linux','x86_64'))
         self.assertEqual('macos',stage.active_scope('Darwin','arm64'))
-        with self.assertRaises(ValueError):stage.active_scope('Darwin','x86_64')
+        self.assertEqual('macos-intel',stage.active_scope('Darwin','x86_64'))
+        self.assertEqual('linux-arm64',stage.active_scope('Linux','aarch64'))
+        self.assertEqual(3,len(stage.active_resources('macos-intel')))
+        self.assertIn('resources/com/pty4j/native/darwin/pty4j-unix-spawn-helper',stage.active_resources('macos-intel'))
+        self.assertNotIn('com/sun/jna/darwin-aarch64/libjnidispatch.jnilib',stage.active_resources('macos-intel'))
+        self.assertEqual(14,len(set.union(*stage.SCOPES.values(),*stage.EXTRA_SCOPES.values())))
+        with self.assertRaises(ValueError):stage.active_scope('Linux','s390x')
 
     def test_reviewed_extraction_and_missing_scope_rejection(self):
         with tempfile.TemporaryDirectory() as folder:

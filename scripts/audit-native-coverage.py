@@ -43,7 +43,8 @@ def audit(jar,inventory,reviewed):
                 raise ValueError('Uninventoried native runtime resource: '+name)
         for name,item in sorted(original.items()):
             raw=z.read(name);digest=sha(raw)
-            source=reviewed.get(name)
+            candidate=reviewed.get(name)
+            source=candidate if candidate and digest==candidate['sha256'] else None
             expected=source['sha256'] if source else item['sha256']
             if digest!=expected:raise ValueError('Unreviewed runtime native bytes: '+name)
             rows.append(dict(resource=name,sha256=digest,coordinate=item['coordinate'],
@@ -51,9 +52,10 @@ def audit(jar,inventory,reviewed):
                 sourceOrigin=source['origin'] if source else None,
                 vulnerabilityCoverage='NOT_COMPLETE_OS_CPE_CLEARANCE'))
     complete=all(v['provenance']=='REVIEWED_SOURCE_BUILD' for v in rows)
+    installed_source=sum(v['provenance']=='REVIEWED_SOURCE_BUILD' for v in rows)
     return dict(status='SOURCE_COVERAGE_COMPLETE' if complete else 'SOURCE_COVERAGE_INCOMPLETE',
         jarSha256=stream_sha256(jar),resources=rows,inventoryCount=len(rows),
-        reviewedSourceCount=len(reviewed),retainedOriginalCount=len(rows)-len(reviewed),
+        reviewedSourceCount=installed_source,retainedOriginalCount=len(rows)-installed_source,
         fullOsCpeClearance=False,releaseApproved=False)
 
 

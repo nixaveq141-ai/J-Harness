@@ -1,0 +1,127 @@
+{
+  "status": "EXTRA_ARCH_SOURCE_COMPONENT_LOAD_AND_NO_FALLBACK_ACCEPTED_NOT_PRODUCT_ACCEPTANCE",
+  "runId": "41286273580",
+  "commit": "c5d461d1639f6fa13903695ecab060b912e893d6",
+  "sourceRun": "41285899341",
+  "platforms": [
+    {
+      "artifactId": "13075806277",
+      "artifactSha256": "6d2131db1329f626c20489f0ecfff34520c6a0440df348de68f676297a74a879",
+      "sourceArtifactId": "13074972771",
+      "reportSha256": "99054456da00f642d8a71b5024969991b71d5e5838b06d772af0b19828282ab0",
+      "jniSha256": "e76ac388ef77c25290a1dc57be1929c67be692a5114bed11ab5cd13a9746ffbb",
+      "ptySha256": "21a536f3802aa8bb3f003d99103c15850bf25cbce500746f97743c99b6b0f950",
+      "ptyHelperSha256": null,
+      "probes": [
+        {
+          "label": "jni-positive",
+          "exitCode": 0,
+          "logSha256": "5657946b89e7710b13b2bcab5ec453fb8182fcd2bc10961d62f289476e907938",
+          "behaviorPassed": true,
+          "required": true
+        },
+        {
+          "label": "jni-missing-rejected",
+          "exitCode": 1,
+          "logSha256": "3e91e3f85c1e610ff85fc905e732c12bd021d30deaf31147a3737004797ea765",
+          "behaviorPassed": false,
+          "required": true
+        },
+        {
+          "label": "pty-positive",
+          "exitCode": 0,
+          "logSha256": "4ffdeaacba951cba22cbb5740cb0f0c968e0e1f5bac326e2686a9d98cf4ed5a1",
+          "behaviorPassed": true,
+          "required": true
+        },
+        {
+          "label": "pty-missing-rejected",
+          "exitCode": 1,
+          "logSha256": "db6b0a35d7183d69488032d7202503c92945b9e8e040c23c7d4a90ba3cd3685b",
+          "behaviorPassed": false,
+          "required": true
+        }
+      ],
+      "probeClassSha256": "9f9dbccc1ab245785d5909ec0ce0c9f7b96c393b373029b621a76ab4921e9054"
+    },
+    {
+      "artifactId": "13075317822",
+      "artifactSha256": "d13f3ead3f8dcf9fe0921cc7144bba06a9b675ac67a6a2e54694ba0243433ad2",
+      "sourceArtifactId": "13074739933",
+      "reportSha256": "34dad12dac13a556c409122d77d96249dc3f53100a28e4ea24759955a6a6dab1",
+      "jniSha256": "651ae8ae99736877ce0f6248a8768509c44746aecb344da232518654dc8de276",
+      "ptySha256": "2914982266f17dd95738f1f644cea46881ecfd61dbe6e9c19feb6e916feaa6b0",
+      "ptyHelperSha256": "1421733a03d32112c80b2a1763c11b0b069351754ee715c95462c0e3602a4b9a",
+      "probes": [
+        {
+          "label": "jni-positive",
+          "exitCode": 0,
+          "logSha256": "5657946b89e7710b13b2bcab5ec453fb8182fcd2bc10961d62f289476e907938",
+          "behaviorPassed": true,
+          "required": true
+        },
+        {
+          "label": "jni-missing-rejected",
+          "exitCode": 1,
+          "logSha256": "3e91e3f85c1e610ff85fc905e732c12bd021d30deaf31147a3737004797ea765",
+          "behaviorPassed": false,
+          "required": true
+        },
+        {
+          "label": "original-jni-original-pty",
+          "exitCode": 0,
+          "logSha256": "4ffdeaacba951cba22cbb5740cb0f0c968e0e1f5bac326e2686a9d98cf4ed5a1",
+          "behaviorPassed": true,
+          "required": false
+        },
+        {
+          "label": "source-jni-original-pty",
+          "exitCode": 0,
+          "logSha256": "4ffdeaacba951cba22cbb5740cb0f0c968e0e1f5bac326e2686a9d98cf4ed5a1",
+          "behaviorPassed": true,
+          "required": false
+        },
+        {
+          "label": "original-jni-source-pty",
+          "exitCode": 0,
+          "logSha256": "4ffdeaacba951cba22cbb5740cb0f0c968e0e1f5bac326e2686a9d98cf4ed5a1",
+          "behaviorPassed": true,
+          "required": false
+        },
+        {
+          "label": "original-pty-deferred-drain",
+          "exitCode": 0,
+          "logSha256": "aeda87a868148715816d8aaa42c238fdff8323899ec3a1320c11d1e65c99ba24",
+          "behaviorPassed": true,
+          "required": true
+        },
+        {
+          "label": "source-pty-deferred-drain",
+          "exitCode": 0,
+          "logSha256": "aeda87a868148715816d8aaa42c238fdff8323899ec3a1320c11d1e65c99ba24",
+          "behaviorPassed": true,
+          "required": true
+        },
+        {
+          "label": "pty-positive",
+          "exitCode": 0,
+          "logSha256": "4ffdeaacba951cba22cbb5740cb0f0c968e0e1f5bac326e2686a9d98cf4ed5a1",
+          "behaviorPassed": true,
+          "required": true
+        },
+        {
+          "label": "pty-missing-rejected",
+          "exitCode": 1,
+          "logSha256": "927813dd1345027312be3544cb2eb77d366e29cc0c565108d2032a9c5f79bbb4",
+          "behaviorPassed": false,
+          "required": true
+        }
+      ],
+      "probeClassSha256": "9f9dbccc1ab245785d5909ec0ce0c9f7b96c393b373029b621a76ab4921e9054"
+    }
+  ],
+  "currentProductRetainedOriginalCount": 39,
+  "fullOsCpeClearance": false,
+  "productReplacement": false,
+  "paidRequests": 0
+}

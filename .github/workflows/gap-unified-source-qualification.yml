@@ -1,4 +1,4 @@
-name: Unified source-native three-platform qualification
+name: Unified source-native five-target qualification
 on:
   workflow_dispatch:
   push:
@@ -16,6 +16,8 @@ jobs:
           - os: windows-2022
           - os: ubuntu-24.04
           - os: macos-latest
+          - os: ubuntu-24.04-arm
+          - os: macos-15-intel
     runs-on: ${{ matrix.os }}
     timeout-minutes: 60
     defaults:
@@ -68,6 +70,18 @@ jobs:
           run-id: 41268207915
           github-token: ${{ github.token }}
           path: .build-cache/unified-inputs/macos
+      - uses: actions/download-artifact@v4
+        with:
+          name: native-source-ubuntu-24.04-arm
+          run-id: 41285899341
+          github-token: ${{ github.token }}
+          path: .build-cache/unified-extra-inputs/linux-arm64
+      - uses: actions/download-artifact@v4
+        with:
+          name: native-source-macos-15-intel
+          run-id: 41285899341
+          github-token: ${{ github.token }}
+          path: .build-cache/unified-extra-inputs/macos-intel
       - name: Install browser dependencies on Linux
         if: runner.os == 'Linux'
         run: |
@@ -132,6 +146,8 @@ jobs:
     needs: qualification
     runs-on: ubuntu-24.04
     timeout-minutes: 15
+    env:
+      JHARNESS_EXTENDED_SOURCE: '1'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -149,7 +165,15 @@ jobs:
         with:
           name: source-native-unified-macos-latest
           path: .build-cache/unified-check/macos-latest
-      - name: Require identical qualified runtime bytes on all platforms
+      - uses: actions/download-artifact@v4
+        with:
+          name: source-native-unified-ubuntu-24.04-arm
+          path: .build-cache/unified-check/ubuntu-24.04-arm
+      - uses: actions/download-artifact@v4
+        with:
+          name: source-native-unified-macos-15-intel
+          path: .build-cache/unified-check/macos-15-intel
+      - name: Require identical qualified runtime bytes on all targets
         run: python scripts/check-unified-qualification.py
       - uses: actions/upload-artifact@v4
         if: always()

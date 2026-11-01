@@ -42,6 +42,14 @@ class EqualityGateTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             equality.verify_command_identity('source-verify',['echo','PASS'],True)
 
+    def test_extended_gate_requires_both_new_targets(self):
+        rows={label:dict(runtimeJarSha256='same') for label in ['windows-2022','ubuntu-24.04','macos-latest']}
+        with self.assertRaises(ValueError):equality.require_identical_hashes(rows,True)
+        rows.update({label:dict(runtimeJarSha256='same') for label in ['ubuntu-24.04-arm','macos-15-intel']})
+        equality.require_identical_hashes(rows,True)
+        rows['ubuntu-24.04-arm']['runtimeJarSha256']='different'
+        with self.assertRaises(ValueError):equality.require_identical_hashes(rows,True)
+
     def test_failure_revokes_stale_success_before_reading_inputs(self):
         with tempfile.TemporaryDirectory() as folder:
             root=Path(folder);output=root/'.build-cache/unified-equality.json';output.parent.mkdir()

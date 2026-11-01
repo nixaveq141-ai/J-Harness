@@ -16,6 +16,8 @@
 
 2026-11-01实际扩架构构建：[41285899341](https://github.com/nixaveq141-ai/J-Harness/actions/runs/41285899341)的Linux ARM64与macOS Intel均成功。原包、固定源码全部指纹与既审源、输出字节和全部命令日志已核验，[构建收据](M10-extra-native-source-build-2026-11-01.json)及[本地备份](M10-extra-native-source-backup-2026-11-01.json)保留。新增固定该精确运行的实际加载/禁止回退专项入口，加载前不能标产品替换完成，当前39计数不改。
 
+2026-11-01组件加载闭合：[41286273580](https://github.com/nixaveq141-ai/J-Harness/actions/runs/41286273580)的Linux ARM64与macOS Intel均通过真实JNI、PTY交互及缺库拒绝，[收据](M10-extra-native-load-2026-11-01.json)/[备份](M10-extra-native-load-backup-2026-11-01.json)已逐摘要核验。新统一候选装配14项源码、36项原版，新增仅三个独立资源，Mac通用PTY/helper仍保留先前已验输出；[实际装配控制](M10-unified14-assembly-control-2026-11-01.json)证明其他4524条目保持。五目标完整Java/应用/安装及同JAR门禁待远端实测；此前已验11/39产品记录不被覆盖，不把候选控制当产品闭合。来源审计现按实际安装字节计数，已审但未安装的新载荷不算进源码数。
+
 ## 仍开放的五项
 
 | ID | 缺口及已知事实 | 严格闭合还需要什么 |

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "scope": "Eleven exact previously qualified native source outputs; not full OS/CPE clearance",
+  "scope": "Fourteen reviewed source outputs; three new outputs have component acceptance only until the new full runtime qualification succeeds. No full OS/CPE clearance.",
   "resources": {
     "com/sun/jna/win32-x86-64/jnidispatch.dll": {
       "sha256": "c88e200b240dfa54c5b852a335b28683e64a074d30ceee7c17ffc282058891a2",
@@ -126,6 +126,36 @@
           "commit": "3571d2269895644e9888963fbf54a4cf101c9597",
           "runId": "40998915552"
         }
+      }
+    },
+    "com/sun/jna/linux-aarch64/libjnidispatch.so": {
+      "sha256": "e76ac388ef77c25290a1dc57be1929c67be692a5114bed11ab5cd13a9746ffbb",
+      "origin": {
+        "sourceBuildRun": "41285899341",
+        "sourceBuildCommit": "130c8aba478d189d435fa385b576d6c3f893dc5f",
+        "componentLoadRun": "41286273580",
+        "componentLoadCommit": "c5d461d1639f6fa13903695ecab060b912e893d6",
+        "sourceReportSha256": "296f832f8b97fefc80a55aafb0bda875e11fd829068f1237bfa69d12c31cc8bc"
+      }
+    },
+    "resources/com/pty4j/native/linux/aarch64/libpty.so": {
+      "sha256": "21a536f3802aa8bb3f003d99103c15850bf25cbce500746f97743c99b6b0f950",
+      "origin": {
+        "sourceBuildRun": "41285899341",
+        "sourceBuildCommit": "130c8aba478d189d435fa385b576d6c3f893dc5f",
+        "componentLoadRun": "41286273580",
+        "componentLoadCommit": "c5d461d1639f6fa13903695ecab060b912e893d6",
+        "sourceReportSha256": "296f832f8b97fefc80a55aafb0bda875e11fd829068f1237bfa69d12c31cc8bc"
+      }
+    },
+    "com/sun/jna/darwin-x86-64/libjnidispatch.jnilib": {
+      "sha256": "651ae8ae99736877ce0f6248a8768509c44746aecb344da232518654dc8de276",
+      "origin": {
+        "sourceBuildRun": "41285899341",
+        "sourceBuildCommit": "130c8aba478d189d435fa385b576d6c3f893dc5f",
+        "componentLoadRun": "41286273580",
+        "componentLoadCommit": "c5d461d1639f6fa13903695ecab060b912e893d6",
+        "sourceReportSha256": "84b281cf4d8e39d71f0faa47034a306d3dbbd6c86876674270e40708a3932cea"
       }
     }
   }

@@ -1,5 +1,8 @@
 # 当前实现、验收与未完成项
 
+2026-11-01组件加载闭合：[41286273580](https://github.com/nixaveq141-ai/J-Harness/actions/runs/41286273580)的Linux ARM64与macOS Intel均通过真实JNI、PTY交互及缺库拒绝，[收据](../testing/M10-extra-native-load-2026-11-01.json)/[备份](../testing/M10-extra-native-load-backup-2026-11-01.json)已逐摘要核验。新统一候选装配14项源码、36项原版，新增仅三个独立资源，Mac通用PTY/helper仍保留先前已验输出；[实际装配控制](../testing/M10-unified14-assembly-control-2026-11-01.json)证明其他4524条目保持。五目标完整Java/应用/安装及同JAR门禁待远端实测；此前已验11/39产品记录不被覆盖，不把候选控制当产品闭合。来源审计现按实际安装字节计数，已审但未安装的新载荷不算进源码数。
+
+
 2026-11-01门禁后续：修复原生审计空库存误报完整、失败留下旧成功、输出覆盖输入风险；四项回归通过，实际候选50项仍11源码/39未知且严格exit2。见[回执](../testing/M10-native-auditor-fail-closed-2026-11-01.json)。五项技术缺口仍按[清单](../testing/remaining-technical-gaps-2026-11-01.md)开放，没有新增来源/根因完成声明。
 
 2026-11-01最终同提交统一验收：[41272550578](https://github.com/nixaveq141-ai/J-Harness/actions/runs/41272550578)@e503377的Windows2022 x64、Ubuntu24.04 x64与macOS arm64全部成功；每侧651 Git输入、735项/124套件零失败错误跳过、13条实际命令回执、三浏览器33夹具813项、R4每引擎51项、候选63文件及安装均已独立核验。三侧实际运行时JAR SHA256均为`8407dc5d6e9e2879993467e3ddf0c7524b1c75ce110567ca60056cb0d41d99e1`，跨作业一致性门禁也已通过；外围候选ZIP含平台证据，不要求相同。原生50项实际字节为11项已审源码输出+39项保留官方原版；CLI11许可已进入三侧实际JAR。原包/收据/审计器12成员本地备份逐摘要核对，341434347字节，见[M10-unified-final-acceptance](../testing/M10-unified-final-acceptance-2026-11-01.json)、[本地备份](../testing/M10-unified-final-backup-2026-11-01.json)。

@@ -1,4 +1,4 @@
-"""Require exact runtime JAR byte equality across all three qualification jobs."""
+"""Require exact runtime JAR byte equality across every selected target."""
 import hashlib
 import os
 from pathlib import Path
@@ -15,11 +15,13 @@ COMMANDS={'stage-unit','source-verify','stage-candidate','native-coverage','sdk-
           'frontend-bom','frontend-audit','legal','legal-drift','osv','candidate','install-smoke','packaged-matrix'}
 
 
-def require_identical_hashes(results):
-    if set(results)!={'windows-2022','ubuntu-24.04','macos-latest'}:
-        raise ValueError('All three platform identities required')
+def require_identical_hashes(results,extended=False):
+    expected={'windows-2022','ubuntu-24.04','macos-latest'}
+    if extended:expected|={'ubuntu-24.04-arm','macos-15-intel'}
+    if set(results)!=expected:
+        raise ValueError('All selected target identities required')
     if len({v['runtimeJarSha256'] for v in results.values()})!=1:
-        raise ValueError('All three qualified runtime JARs must be byte-identical')
+        raise ValueError('All selected qualified runtime JARs must be byte-identical')
 
 
 def verify_command_identity(name,command,windows):
@@ -135,13 +137,15 @@ def verify_packaged_matrix(base,run_id,source,digest,windows,commit):
         validate(receipt,name=name,log=bounded_path(base,'.build-cache/M10.5.9/'+name+'.log'),run_id=run_id,source=source,cwd='.')
 
 
-def check(directory,commit,run,attempt='1'):
+def check(directory,commit,run,attempt='1',extended=False):
     results={}
     contract=read_json_snapshot(ROOT,'scripts/contracts/m1059-java-cases.json').data
-    for label in ['windows-2022','ubuntu-24.04','macos-latest']:
+    labels=['windows-2022','ubuntu-24.04','macos-latest']+(['ubuntu-24.04-arm','macos-15-intel'] if extended else [])
+    for label in labels:
         base=directory/label
         r=read_json_snapshot(base,'.build-cache/source-qualification/result.json').data
-        expected_platform={'windows-2022':'WINDOWS','ubuntu-24.04':'LINUX','macos-latest':'DARWIN'}[label]
+        expected_platform={'windows-2022':'WINDOWS','ubuntu-24.04':'LINUX','macos-latest':'DARWIN',
+                           'ubuntu-24.04-arm':'LINUX','macos-15-intel':'DARWIN'}[label]
         if (r['commit']!=commit or r['runId']!='unified-source-'+run+'-'+attempt+'-'+label+'-'+commit
                 or r['status']!=expected_platform+'_SOURCE_JAVA_VERIFY_AND_CANDIDATE_INSTALL_PASS_NOT_RELEASE'
                 or r['javaTests']!=735 or len(r['javaSuites'])!=124 or r['paidRequests']!=0):
@@ -184,8 +188,8 @@ def check(directory,commit,run,attempt='1'):
                 installed=hashlib.file_digest(stream,'sha256').hexdigest()
             if installed!=digest:raise ValueError('Installed JAR differs from qualified runtime')
         results[label]=dict(runtimeJarSha256=digest,candidateZipSha256=r['candidateZipSha256'])
-    require_identical_hashes(results)
-    return dict(status='THREE_PLATFORM_IDENTICAL_RUNTIME_JAR_QUALIFIED_NOT_RELEASE',
+    require_identical_hashes(results,extended)
+    return dict(status=('FIVE_TARGET' if extended else 'THREE_PLATFORM')+'_IDENTICAL_RUNTIME_JAR_QUALIFIED_NOT_RELEASE',
                 commit=commit,runId=run,platforms=results,releaseApproved=False,
                 scope='Byte-identical runtime only; outer candidate ZIPs include platform-specific evidence. Not full native provenance or OS/CPE certification.')
 
@@ -193,7 +197,7 @@ def check(directory,commit,run,attempt='1'):
 def main():
     output=ROOT/'.build-cache/unified-equality.json'
     atomic_write_json(output,dict(status='INCOMPLETE',releaseApproved=False))
-    r=check(ROOT/'.build-cache/unified-check',os.environ['GITHUB_SHA'],os.environ['GITHUB_RUN_ID'],os.environ['GITHUB_RUN_ATTEMPT'])
+    r=check(ROOT/'.build-cache/unified-check',os.environ['GITHUB_SHA'],os.environ['GITHUB_RUN_ID'],os.environ['GITHUB_RUN_ATTEMPT'],os.environ.get('JHARNESS_EXTENDED_SOURCE')=='1')
     atomic_write_json(output,r);print(r['status'])
 
 

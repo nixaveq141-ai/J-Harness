@@ -1,0 +1,10 @@
+{
+  "status": "REAL_FOURTEEN_SOURCE_PAYLOAD_ASSEMBLY_CONTROL_PASS_NOT_PRODUCT_QUALIFICATION",
+  "runtimeJarSha256": "a59fcbefd354c17f1327525f427fda50e9833d4ddb25da89635ecfeee63c93f2",
+  "sourceCount": 14,
+  "retainedOriginalCount": 36,
+  "preservedEntries": 4524,
+  "activeScope": "windows",
+  "paidRequests": 0,
+  "fullOsCpeClearance": false
+}

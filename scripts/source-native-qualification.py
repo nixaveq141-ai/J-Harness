@@ -72,11 +72,15 @@ def main():
         command('stage-unit',[python,stage_script,'--output',
                               '.build-cache/source-qualification/unit-stage'])
         stage=json.loads((out/'unit-stage/stage.json').read_bytes())
-        pty_suffix='win/x86-64' if windows else ('darwin' if platform.system()=='Darwin' else 'linux/x86-64')
+        linux_arch='aarch64' if platform.machine() in {'aarch64','arm64'} else 'x86-64'
+        pty_suffix='win/x86-64' if windows else ('darwin' if platform.system()=='Darwin' else 'linux/'+linux_arch)
         native=out/'native';jni=native/'jni';pty=native/'pty'/pty_suffix
         jni.mkdir(parents=True);pty.mkdir(parents=True)
         for resource,item in stage['nativeReplacements'].items():
-            raw=(out/'unit-stage/native-inputs'/Path(resource).name).read_bytes()
+            relative=stage.get('nativeInputPaths',{}).get(resource,'native-inputs/'+Path(resource).name)
+            input_path=out/'unit-stage'/relative
+            if not input_path.resolve().is_relative_to((out/'unit-stage').resolve()):raise ValueError('Native input path escape')
+            raw=input_path.read_bytes()
             if sha(raw)!=item['sha256']:raise ValueError('Accepted payload drift')
             target=jni/Path(resource).name if resource.startswith('com/sun/jna/') else pty/Path(resource).name
             target.write_bytes(raw)

@@ -12,6 +12,16 @@ coverage=importlib.util.module_from_spec(spec);spec.loader.exec_module(coverage)
 
 
 class NativeCoverageTest(unittest.TestCase):
+    def test_reviewed_candidate_not_installed_is_still_original_unknown(self):
+        with tempfile.TemporaryDirectory() as folder:
+            jar=Path(folder)/'old.jar'
+            with zipfile.ZipFile(jar,'x') as z:z.writestr('a.so',b'original')
+            inventory=dict(binaries=[dict(resource='a.so',coordinate='fixed:1',sha256=coverage.sha(b'original'))])
+            reviewed={'a.so':dict(sha256=coverage.sha(b'new-source'),origin=dict(runId='reviewed'))}
+            r=coverage.audit(jar,inventory,reviewed)
+            self.assertEqual('SOURCE_COVERAGE_INCOMPLETE',r['status'])
+            self.assertEqual(0,r['reviewedSourceCount']);self.assertEqual(1,r['retainedOriginalCount'])
+
     def test_empty_inventory_cannot_certify_empty_jar(self):
         with tempfile.TemporaryDirectory() as folder:
             jar=Path(folder)/'empty.jar'
