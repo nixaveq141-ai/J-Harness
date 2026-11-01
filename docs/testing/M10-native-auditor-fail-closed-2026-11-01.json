@@ -1,0 +1,17 @@
+{
+  "status": "AUDITOR_FAIL_CLOSED_REGRESSIONS_PASS_NOT_SOURCE_COMPLETE",
+  "tests": 4,
+  "actualRuntimeSha256": "8407dc5d6e9e2879993467e3ddf0c7524b1c75ce110567ca60056cb0d41d99e1",
+  "actualStatus": "SOURCE_COVERAGE_INCOMPLETE",
+  "strictExitCode": 2,
+  "inventoryCount": 50,
+  "reviewedSourceCount": 11,
+  "retainedOriginalCount": 39,
+  "fullOsCpeClearance": false,
+  "releaseApproved": false,
+  "paidRequests": 0,
+  "sourceSha256": {
+    "scripts/audit-native-coverage.py": "b4317b1a20199a690794da0cfbf9eedc162370eeee1303b9a5d742562170d2b9",
+    "scripts/test-native-coverage.py": "743d6eedb107d25d1f4eb8202562d81202084238aecc8d5193c97a3a60a967f1"
+  }
+}
