@@ -1,0 +1,279 @@
+{
+  "status": "BASELINE_ELF_HEADER_AUDIT_NOT_SOURCE_OR_RUNTIME_CLEARANCE",
+  "baselineCommit": "6aa61ac9721b7b93afc54aed9a373044a9f72665",
+  "runtimeCommit": "5df2372cbe00047e3233650fd37462290a534127",
+  "runtimeJarSha256": "49d4404dbe1e7b26e9842a2c765960f066f620105668cca0bb690313d1083f95",
+  "unresolvedResources": 36,
+  "elfResources": 24,
+  "mismatches": 3,
+  "resources": [
+    {
+      "taskId": "NATIVE-03",
+      "resource": "com/sun/jna/freebsd-x86-64/libjnidispatch.so",
+      "sha256": "13281e25bf8614ab1aeb5f93d32ce4af02d986b0ca49f7692d08fce981eb1d5e",
+      "elfClass": 2,
+      "endianness": 1,
+      "machine": 62,
+      "expectedClass": 2,
+      "expectedMachine": 62,
+      "status": "MATCH"
+    },
+    {
+      "taskId": "NATIVE-04",
+      "resource": "com/sun/jna/freebsd-x86/libjnidispatch.so",
+      "sha256": "c1d200c601baf9f26db1b0ba0d152fb517dd929f01cbbe1ac3320bbe40adb827",
+      "elfClass": 1,
+      "endianness": 1,
+      "machine": 3,
+      "expectedClass": 1,
+      "expectedMachine": 3,
+      "status": "MATCH"
+    },
+    {
+      "taskId": "NATIVE-05",
+      "resource": "com/sun/jna/linux-arm/libjnidispatch.so",
+      "sha256": "00a35890dde5b4174d6646d1ebdc553bac3b7d99c1a793899eddaa002b5a16a2",
+      "elfClass": 1,
+      "endianness": 1,
+      "machine": 40,
+      "expectedClass": 1,
+      "expectedMachine": 40,
+      "status": "MATCH"
+    },
+    {
+      "taskId": "NATIVE-06",
+      "resource": "com/sun/jna/linux-armel/libjnidispatch.so",
+      "sha256": "257d627bce7ddccf539f8a32dd293e4d0ed8ba64070dab07d5ae40d4932d60a6",
+      "elfClass": 1,
+      "endianness": 1,
+      "machine": 40,
+      "expectedClass": 1,
+      "expectedMachine": 40,
+      "status": "MATCH"
+    },
+    {
+      "taskId": "NATIVE-07",
+      "resource": "com/sun/jna/linux-loongarch64/libjnidispatch.so",
+      "sha256": "2e91afb910bf56ca578786861fb87845f7bae1dc91b3ec6374540f3a946f170a",
+      "elfClass": 2,
+      "endianness": 1,
+      "machine": 258,
+      "expectedClass": 2,
+      "expectedMachine": 258,
+      "status": "MATCH"
+    },
+    {
+      "taskId": "NATIVE-08",
+      "resource": "com/sun/jna/linux-mips64el/libjnidispatch.so",
+      "sha256": "5e7a37f9cc6c0dc7cfa2b6d0944788c448ff2e87d4aab894a241269a8b6335ed",
+      "elfClass": 2,
+      "endianness": 1,
+      "machine": 8,
+      "expectedClass": 2,
+      "expectedMachine": 8,
+      "status": "MATCH"
+    },
+    {
+      "taskId": "NATIVE-09",
+      "resource": "com/sun/jna/linux-ppc/libjnidispatch.so",
+      "sha256": "c974c4ec9701655a30d7601389c3b3246447fdbc90240e809b37cb283224a2ff",
+      "elfClass": 1,
+      "endianness": 2,
+      "machine": 20,
+      "expectedClass": 1,
+      "expectedMachine": 20,
+      "status": "MATCH"
+    },
+    {
+      "taskId": "NATIVE-10",
+      "resource": "com/sun/jna/linux-ppc64le/libjnidispatch.so",
+      "sha256": "bb026410e75b3e928cb3ccddc0f9418e3fb40aad1f6c80cf046b72d62e5eb062",
+      "elfClass": 2,
+      "endianness": 1,
+      "machine": 21,
+      "expectedClass": 2,
+      "expectedMachine": 21,
+      "status": "MATCH"
+    },
+    {
+      "taskId": "NATIVE-11",
+      "resource": "com/sun/jna/linux-riscv64/libjnidispatch.so",
+      "sha256": "938f42166508c30d5b5ed3eb094219f9b2df736b1ea38ed7586c0ce79c12ee97",
+      "elfClass": 2,
+      "endianness": 1,
+      "machine": 243,
+      "expectedClass": 2,
+      "expectedMachine": 243,
+      "status": "MATCH"
+    },
+    {
+      "taskId": "NATIVE-12",
+      "resource": "com/sun/jna/linux-s390x/libjnidispatch.so",
+      "sha256": "3f33fab801dc3a43a5d269fa0e8f43e54b0f7e29f02c4821901c62aafb3aee6c",
+      "elfClass": 2,
+      "endianness": 2,
+      "machine": 22,
+      "expectedClass": 2,
+      "expectedMachine": 22,
+      "status": "MATCH"
+    },
+    {
+      "taskId": "NATIVE-13",
+      "resource": "com/sun/jna/linux-x86/libjnidispatch.so",
+      "sha256": "caf3d95b12a6f907fa0b647e1d785c6505415fc266e11733b24eec22da6ae3d9",
+      "elfClass": 1,
+      "endianness": 1,
+      "machine": 3,
+      "expectedClass": 1,
+      "expectedMachine": 3,
+      "status": "MATCH"
+    },
+    {
+      "taskId": "NATIVE-14",
+      "resource": "com/sun/jna/openbsd-x86-64/libjnidispatch.so",
+      "sha256": "f15ad5da6b5ab33a9fe51992247fa3fe4da6a6ec0a4678d186611bb1258b4fff",
+      "elfClass": 2,
+      "endianness": 1,
+      "machine": 62,
+      "expectedClass": 2,
+      "expectedMachine": 62,
+      "status": "MATCH"
+    },
+    {
+      "taskId": "NATIVE-15",
+      "resource": "com/sun/jna/openbsd-x86/libjnidispatch.so",
+      "sha256": "c99db52a1c9ffd791ec0dda9b39ad8aec0b7514dce881e230882210dfc9d9fb7",
+      "elfClass": 1,
+      "endianness": 1,
+      "machine": 3,
+      "expectedClass": 1,
+      "expectedMachine": 3,
+      "status": "MATCH"
+    },
+    {
+      "taskId": "NATIVE-16",
+      "resource": "com/sun/jna/sunos-sparc/libjnidispatch.so",
+      "sha256": "58e637222be67679df8f2473967555b9697908e65ca2ddf32719d1d5e35769db",
+      "elfClass": 2,
+      "endianness": 2,
+      "machine": 43,
+      "expectedClass": 1,
+      "expectedMachine": 2,
+      "status": "ARCHITECTURE_MISMATCH"
+    },
+    {
+      "taskId": "NATIVE-17",
+      "resource": "com/sun/jna/sunos-sparcv9/libjnidispatch.so",
+      "sha256": "58e637222be67679df8f2473967555b9697908e65ca2ddf32719d1d5e35769db",
+      "elfClass": 2,
+      "endianness": 2,
+      "machine": 43,
+      "expectedClass": 2,
+      "expectedMachine": 43,
+      "status": "MATCH"
+    },
+    {
+      "taskId": "NATIVE-18",
+      "resource": "com/sun/jna/sunos-x86-64/libjnidispatch.so",
+      "sha256": "7af04db1da25981579214bdcbf761a8cd1ac5a76c9ac95fc226303ee65dfaeba",
+      "elfClass": 2,
+      "endianness": 1,
+      "machine": 62,
+      "expectedClass": 2,
+      "expectedMachine": 62,
+      "status": "MATCH"
+    },
+    {
+      "taskId": "NATIVE-19",
+      "resource": "com/sun/jna/sunos-x86/libjnidispatch.so",
+      "sha256": "7af04db1da25981579214bdcbf761a8cd1ac5a76c9ac95fc226303ee65dfaeba",
+      "elfClass": 2,
+      "endianness": 1,
+      "machine": 62,
+      "expectedClass": 1,
+      "expectedMachine": 3,
+      "status": "ARCHITECTURE_MISMATCH"
+    },
+    {
+      "taskId": "NATIVE-22",
+      "resource": "resources/com/pty4j/native/freebsd/x86-64/libpty.so",
+      "sha256": "6bf2cf3a6ac0929d0f23529b4bfc7f97348219260f86dc84f2a0140ec611dd7c",
+      "elfClass": 2,
+      "endianness": 1,
+      "machine": 62,
+      "expectedClass": 2,
+      "expectedMachine": 62,
+      "status": "MATCH"
+    },
+    {
+      "taskId": "NATIVE-23",
+      "resource": "resources/com/pty4j/native/freebsd/x86/libpty.so",
+      "sha256": "67088c6eb1ac32f4c82c43e0386cb86e9df68f6869ee4900cb68039cb0121598",
+      "elfClass": 1,
+      "endianness": 1,
+      "machine": 3,
+      "expectedClass": 1,
+      "expectedMachine": 3,
+      "status": "MATCH"
+    },
+    {
+      "taskId": "NATIVE-24",
+      "resource": "resources/com/pty4j/native/linux/arm/libpty.so",
+      "sha256": "a272c1d2495138007654cf9dd1e8e57faab62e9c3eb2a1a0cc32b1a613a79a58",
+      "elfClass": 1,
+      "endianness": 1,
+      "machine": 40,
+      "expectedClass": 1,
+      "expectedMachine": 40,
+      "status": "MATCH"
+    },
+    {
+      "taskId": "NATIVE-25",
+      "resource": "resources/com/pty4j/native/linux/mips64el/libpty.so",
+      "sha256": "7d97ff835049dcfe1137812e17a09f1d70c4b5fd32cdcfc54a6f7d703f9dc69d",
+      "elfClass": 2,
+      "endianness": 1,
+      "machine": 62,
+      "expectedClass": 2,
+      "expectedMachine": 8,
+      "status": "ARCHITECTURE_MISMATCH"
+    },
+    {
+      "taskId": "NATIVE-26",
+      "resource": "resources/com/pty4j/native/linux/ppc64le/libpty.so",
+      "sha256": "60d5f3c23625eae9cd19b4c36a1b1cc540b03d500bae2bae7891cdd7be5533d8",
+      "elfClass": 2,
+      "endianness": 1,
+      "machine": 21,
+      "expectedClass": 2,
+      "expectedMachine": 21,
+      "status": "MATCH"
+    },
+    {
+      "taskId": "NATIVE-27",
+      "resource": "resources/com/pty4j/native/linux/riscv64/libpty.so",
+      "sha256": "e101b0a4282fef079d32bb0202d2ec5e2869579f45e72f09ceae5c6d0388f372",
+      "elfClass": 2,
+      "endianness": 1,
+      "machine": 243,
+      "expectedClass": 2,
+      "expectedMachine": 243,
+      "status": "MATCH"
+    },
+    {
+      "taskId": "NATIVE-28",
+      "resource": "resources/com/pty4j/native/linux/x86/libpty.so",
+      "sha256": "a0502637d32147f81e43b46ec31789ca06e89747ec12fbb24f1ebd1b6a0f67f7",
+      "elfClass": 1,
+      "endianness": 1,
+      "machine": 3,
+      "expectedClass": 1,
+      "expectedMachine": 3,
+      "status": "MATCH"
+    }
+  ],
+  "limits": [
+    "Only ELF class and e_machine compared to existing resource architecture names",
+    "Non-ELF resources, byte order/OS ABI/symbols and actual execution are not certified by this header audit"
+  ]
+}
