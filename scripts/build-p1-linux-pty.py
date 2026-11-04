@@ -58,10 +58,13 @@ def main():
                   hostImage={k: os.environ.get(k) for k in ['ImageOS', 'ImageVersion', 'RUNNER_ARCH']}, commands=[])
     def command(argv, name, cwd=ROOT, timeout=300):
         receipt = out / (name + '-command.json')
-        run(argv, name=name, log=out/(name+'.log'), receipt=receipt, run_id=rid, cwd=cwd,
-            timeout=timeout)
-        report['commands'].append(dict(name=name, receipt=receipt.relative_to(ROOT).as_posix(),
-                                       sha256=stream_sha256(receipt)))
+        try:
+            run(argv, name=name, log=out/(name+'.log'), receipt=receipt, run_id=rid, cwd=cwd,
+                timeout=timeout)
+        finally:
+            if receipt.is_file():
+                report['commands'].append(dict(name=name, receipt=receipt.relative_to(ROOT).as_posix(),
+                                               sha256=stream_sha256(receipt)))
     try:
         command(['dpkg-query', '-W', '-f=${binary:Package}\t${Version}\t${Architecture}\n'], 'host-packages')
         command([prefix+'-gcc', '--version'], 'compiler')

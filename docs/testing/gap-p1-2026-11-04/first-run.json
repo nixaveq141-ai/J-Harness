@@ -1,0 +1,44 @@
+{
+  "status": "FAILED_COMPONENT_RUN_NOT_ACCEPTED",
+  "runId": "41822880250",
+  "commit": "9a5863e7f088a7b5460524c5a65efcfe5e149575",
+  "platforms": [
+    {
+      "target": "mips64el",
+      "artifactId": "13317024497",
+      "artifactSha256": "cab93cd91434bf33e039989f98a386b2d7072c3e4bce7b5e9f68d1c67ece688c",
+      "candidateProbeExitCode": 21,
+      "candidateProbeLogSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "target": "x86",
+      "artifactId": "13317587418",
+      "artifactSha256": "e340a7dbb8c1ca4eec5ba6af0c5e693f404ebe02bba48ef306c4a282a7e5d502",
+      "candidateProbeExitCode": 21,
+      "candidateProbeLogSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "target": "arm",
+      "artifactId": "13317848371",
+      "artifactSha256": "5d238f594221ba689f030e99a256db22b49f719ac125597dcf98b940747b44cd",
+      "candidateProbeExitCode": 21,
+      "candidateProbeLogSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "target": "ppc64le",
+      "artifactId": "13317918303",
+      "artifactSha256": "630e07cc971d9e047fd367e0879591306de2aab3b76e2e80d4b66aef794623e0",
+      "candidateProbeExitCode": 21,
+      "candidateProbeLogSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "target": "riscv64",
+      "artifactId": "13318380233",
+      "artifactSha256": "7c09d0f1803eac989d2293f8eba9fdf74757cc929ba2d5acd5e1f1e5f7146fff",
+      "candidateProbeExitCode": 21,
+      "candidateProbeLogSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "correction": "Probe keeps initial slave open until native child has reopened it; investigate exit21 without relaxing exchange/exit23 assertions",
+  "productCoverageChanged": false
+}

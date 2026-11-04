@@ -35,6 +35,10 @@ jobs:
           sudo apt-get -o Acquire::Retries=1 -o Acquire::http::Timeout=30 update
           sudo apt-get -o Acquire::Retries=1 -o Acquire::http::Timeout=30 install -y --no-install-recommends make qemu-user ${{ matrix.packages }}
       - run: python scripts/build-p1-linux-pty.py ${{ matrix.target }}
+      - name: Show bounded synthetic probe failure
+        if: failure()
+        run: |
+          python -c "from pathlib import Path; p=Path('.build-cache/p1-linux-pty/${{ matrix.target }}/candidate-probe.log'); print(p.read_text(errors='replace')[-2048:] if p.is_file() else 'Probe did not execute')"
       - uses: actions/upload-artifact@v4
         if: always()
         with:

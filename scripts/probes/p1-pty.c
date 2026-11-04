@@ -62,7 +62,8 @@ int main(int argc, char **argv) {
     item.fd = slave;
     if (poll(&item, 1, 2000) != 1 || read(slave, buffer, sizeof(buffer)) != (ssize_t)sizeof(buffer) ||
         memcmp(buffer, payload, sizeof(payload))) return 17;
-    if (close(slave)) return 18;
+    /* Keep the slave open until the child is ready. Otherwise the master can
+       report HUP before the emulated child has reopened the slave. */
     char *child_argv[] = {argv[3], "-L", argv[4], argv[0], "--child", NULL};
     char *child_env[] = {"PATH=/usr/bin:/bin", NULL};
     pid_t child = spawn(argv[3], child_argv, child_env, "/", name, master, NULL, -1, 0);
@@ -70,12 +71,18 @@ int main(int argc, char **argv) {
     const char ready[] = "P1-child-ready";
     char child_output[sizeof(ready)] = {0};
     item.fd = master;
-    if (poll(&item, 1, 3000) != 1 || read(master, child_output, sizeof(child_output)) != (ssize_t)sizeof(child_output) ||
+    int polled = poll(&item, 1, 3000);
+    ssize_t count = polled == 1 ? read(master, child_output, sizeof(child_output)) : -1;
+    if (polled != 1 || count != (ssize_t)sizeof(child_output) ||
         memcmp(child_output, ready, sizeof(ready)) || write(master, "go!", 3) != 3) {
-        kill(child, SIGKILL); wait_child(child); close(master); dlclose(library); return 21;
+        fprintf(stderr, "child exchange failed poll=%d revents=%d read=%ld errno=%d\n", polled, item.revents, (long)count, errno);
+        kill(child, SIGKILL); wait_child(child); close(slave); close(master); dlclose(library); return 21;
     }
+    if (close(slave)) { kill(child, SIGKILL); wait_child(child); return 18; }
     int status = wait_child(child);
-    if (status != 23 || close(master) || dlclose(library)) return 22;
+    if (status != 23 || close(master) || dlclose(library)) {
+        fprintf(stderr, "child wait/close failed status=%d\n", status); return 22;
+    }
     puts("PASS exact dlopen, exports, fd validity, native resize, invalid fd rejection, bidirectional PTY bytes, native fork/exec child exchange, exit23, close");
     return 0;
 }
