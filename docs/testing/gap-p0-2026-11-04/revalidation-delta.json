@@ -1,0 +1,241 @@
+{
+  "schemaVersion": 1,
+  "fromCommit": "5df2372cbe00047e3233650fd37462290a534127",
+  "toCommit": "b134d93faa9ccd85d32303dc4d1d8cc5c0e93d67",
+  "changes": [
+    {
+      "path": ".agent",
+      "change": "M",
+      "sha256": "5422587230e1bcb555a27a08cd850372883c2b1561524e6f3d30cc63745e1ac1",
+      "category": "DOCUMENT_OR_RECEIPT",
+      "requiredRevalidation": "核验来源/摘要/链接；不作为产品实现变更"
+    },
+    {
+      "path": ".github/workflows/gap-runtime-oval.yml",
+      "change": "A",
+      "sha256": "1910836cb487f9dc4cf89bab2f22c4134f5a0c0e397095127793be92f9fb1f28",
+      "category": "AUDIT_OR_TEST_CHANGE",
+      "requiredRevalidation": "相应脚本控制/工作流实跑已验范围逐项引用；最终候选需要同轮输入绑定，不借旧完整验收"
+    },
+    {
+      "path": ".github/workflows/gap-ubuntu-oval.yml",
+      "change": "A",
+      "sha256": "106e115c7f978b97d33b2793a2614ecc6b1d923ded134c4d8c22c752beeefc60",
+      "category": "AUDIT_OR_TEST_CHANGE",
+      "requiredRevalidation": "相应脚本控制/工作流实跑已验范围逐项引用；最终候选需要同轮输入绑定，不借旧完整验收"
+    },
+    {
+      "path": "docs/development/current-state.md",
+      "change": "M",
+      "sha256": "7434b0ef2a13fbb3e0a1c754509c1cf83cf03c3d0f72386dc2f5394303149d92",
+      "category": "DOCUMENT_OR_RECEIPT",
+      "requiredRevalidation": "核验来源/摘要/链接；不作为产品实现变更"
+    },
+    {
+      "path": "docs/requirements/remaining-gap-closure-plan-2026-11-04.md",
+      "change": "A",
+      "sha256": "b8ba1a77b7268e0307877e353821622908be79a560b38a254a109d048b0ce1ae",
+      "category": "DOCUMENT_OR_RECEIPT",
+      "requiredRevalidation": "核验来源/摘要/链接；不作为产品实现变更"
+    },
+    {
+      "path": "docs/testing/M10-runtime-oval-acceptance-2026-11-04.json",
+      "change": "A",
+      "sha256": "464374f85944a835082db006db3ed4c1bdffffa1c44f2a153636b27672705efd",
+      "category": "DOCUMENT_OR_RECEIPT",
+      "requiredRevalidation": "核验来源/摘要/链接；不作为产品实现变更"
+    },
+    {
+      "path": "docs/testing/M10-runtime-oval-backup-2026-11-04.json",
+      "change": "A",
+      "sha256": "dc2762ed98d9a37dc2059e959d17b8350471faf9601179ab105e512aa3de83f6",
+      "category": "DOCUMENT_OR_RECEIPT",
+      "requiredRevalidation": "核验来源/摘要/链接；不作为产品实现变更"
+    },
+    {
+      "path": "docs/testing/M10-ubuntu-oval-backup-2026-11-04.json",
+      "change": "A",
+      "sha256": "d57b3937a1ee8e68bbfc9a6f9c024c8e9cb220290ae968597004008483ac69f0",
+      "category": "DOCUMENT_OR_RECEIPT",
+      "requiredRevalidation": "核验来源/摘要/链接；不作为产品实现变更"
+    },
+    {
+      "path": "docs/testing/M10-ubuntu-oval-initial-2026-11-04.json",
+      "change": "A",
+      "sha256": "e977632d155e3a4f6ffb359748e82aee9eeb1287d7f608f0bd69b9363e9c8730",
+      "category": "DOCUMENT_OR_RECEIPT",
+      "requiredRevalidation": "核验来源/摘要/链接；不作为产品实现变更"
+    },
+    {
+      "path": "docs/testing/M10-ubuntu-oval-updates-2026-11-04.json",
+      "change": "A",
+      "sha256": "5206c05e8b746fe7f7ab7621363a6330ac9fbc10c59878df667dc04d1885ce17",
+      "category": "DOCUMENT_OR_RECEIPT",
+      "requiredRevalidation": "核验来源/摘要/链接；不作为产品实现变更"
+    },
+    {
+      "path": "docs/testing/M10-unified14-final-acceptance-2026-11-01.json",
+      "change": "A",
+      "sha256": "ebaf5e67307c5a6d2d80171c22fdebab66ab024199a7a4593d8218553b3d0f1f",
+      "category": "DOCUMENT_OR_RECEIPT",
+      "requiredRevalidation": "核验来源/摘要/链接；不作为产品实现变更"
+    },
+    {
+      "path": "docs/testing/M10-unified14-final-backup-2026-11-01.json",
+      "change": "A",
+      "sha256": "791176b98e93c5c58b2645de5912cedb3304beeae06d0b1c0ff221135f60f50c",
+      "category": "DOCUMENT_OR_RECEIPT",
+      "requiredRevalidation": "核验来源/摘要/链接；不作为产品实现变更"
+    },
+    {
+      "path": "docs/testing/M10-unified14-final-equality-2026-11-01.json",
+      "change": "A",
+      "sha256": "e0ff7359a4a8852047a89cb678921737c1ae8a6e7c5375f5d2bf49475aaaab04",
+      "category": "DOCUMENT_OR_RECEIPT",
+      "requiredRevalidation": "核验来源/摘要/链接；不作为产品实现变更"
+    },
+    {
+      "path": "docs/testing/M10-unified14-final-linux-arm64-2026-11-01.json",
+      "change": "A",
+      "sha256": "746c979349fbed3c5e647e4184002ed55a34b4c91f413049bfb9b6dcbae3ae28",
+      "category": "DOCUMENT_OR_RECEIPT",
+      "requiredRevalidation": "核验来源/摘要/链接；不作为产品实现变更"
+    },
+    {
+      "path": "docs/testing/M10-unified14-final-linux-x64-2026-11-01.json",
+      "change": "A",
+      "sha256": "ecaad00354c91e1e04ab9c92e5cd827791c1a420d01b5278fb94c224dbb991fb",
+      "category": "DOCUMENT_OR_RECEIPT",
+      "requiredRevalidation": "核验来源/摘要/链接；不作为产品实现变更"
+    },
+    {
+      "path": "docs/testing/M10-unified14-final-macos-arm64-2026-11-01.json",
+      "change": "A",
+      "sha256": "4294b8719e30b8f9c724ceabcc71c34ebfbefa0d74d66d617cf923da6a8592a8",
+      "category": "DOCUMENT_OR_RECEIPT",
+      "requiredRevalidation": "核验来源/摘要/链接；不作为产品实现变更"
+    },
+    {
+      "path": "docs/testing/M10-unified14-final-macos-intel-2026-11-01.json",
+      "change": "A",
+      "sha256": "9b3e92cc1dfac79c37b630748938e46bbba0d3a358820f5d3617dfd129940ad7",
+      "category": "DOCUMENT_OR_RECEIPT",
+      "requiredRevalidation": "核验来源/摘要/链接；不作为产品实现变更"
+    },
+    {
+      "path": "docs/testing/M10-unified14-final-native-coverage-2026-11-01.json",
+      "change": "A",
+      "sha256": "5be0a7c99a2b1d79f3ceac4585cac47e8adb8cf89d30841b8dae22f1d13f7028",
+      "category": "DOCUMENT_OR_RECEIPT",
+      "requiredRevalidation": "核验来源/摘要/链接；不作为产品实现变更"
+    },
+    {
+      "path": "docs/testing/M10-unified14-final-windows-x64-2026-11-01.json",
+      "change": "A",
+      "sha256": "fe886523f078265dc1478a844debc4f1824456078907ba0aee1a8fd19c90d42e",
+      "category": "DOCUMENT_OR_RECEIPT",
+      "requiredRevalidation": "核验来源/摘要/链接；不作为产品实现变更"
+    },
+    {
+      "path": "docs/testing/M10-winpty-current-minimal-env-2026-11-01.json",
+      "change": "A",
+      "sha256": "7a4ead0f0e1209f3a9d6f8309d13ac6591a255939ce61b1f90f83e432f108165",
+      "category": "DOCUMENT_OR_RECEIPT",
+      "requiredRevalidation": "核验来源/摘要/链接；不作为产品实现变更"
+    },
+    {
+      "path": "docs/testing/M10.5.9-validation.md",
+      "change": "M",
+      "sha256": "a386cbfeb075f7ecd787db3f1feeaeadd8d61de14adc9b736307dca5b0c3448d",
+      "category": "DOCUMENT_OR_RECEIPT",
+      "requiredRevalidation": "核验来源/摘要/链接；不作为产品实现变更"
+    },
+    {
+      "path": "docs/testing/native-security/reviewed-native-source-map.json",
+      "change": "M",
+      "sha256": "f2794796e603c786b91738fda08ee1aa5d74a1e0f0c86f86a7d27096769fa22f",
+      "category": "PROVENANCE_METADATA_CHANGE",
+      "requiredRevalidation": "核对14项映射与实际JAR逐文件SHA；不可将36未知变已审"
+    },
+    {
+      "path": "docs/testing/native-source-build-2026-10-30.md",
+      "change": "M",
+      "sha256": "cf3f6102272bfd5008b66027a95458e4c34a5089206ab2f82aa6bbd382cc8c3a",
+      "category": "DOCUMENT_OR_RECEIPT",
+      "requiredRevalidation": "核验来源/摘要/链接；不作为产品实现变更"
+    },
+    {
+      "path": "docs/testing/remaining-technical-gaps-2026-11-01.md",
+      "change": "M",
+      "sha256": "52d1adeb26aa6ba0625641ededc3ea26beabb28743e363c881fcc93a462394f7",
+      "category": "DOCUMENT_OR_RECEIPT",
+      "requiredRevalidation": "核验来源/摘要/链接；不作为产品实现变更"
+    },
+    {
+      "path": "docs/testing/runtime-security-profile-2026-11-04.md",
+      "change": "A",
+      "sha256": "d525bdaa8222885d062a99fbf5e2f1cfeec064a042ae76ca823492f900aa3879",
+      "category": "DOCUMENT_OR_RECEIPT",
+      "requiredRevalidation": "核验来源/摘要/链接；不作为产品实现变更"
+    },
+    {
+      "path": "docs/testing/ubuntu-runtime-image-lock-2026-11-04.json",
+      "change": "A",
+      "sha256": "99c3d28c0bc246f8b70a1f29c6aec4c6a968f1f9548b0f628d2e202bc1461231",
+      "category": "DOCUMENT_OR_RECEIPT",
+      "requiredRevalidation": "核验来源/摘要/链接；不作为产品实现变更"
+    },
+    {
+      "path": "frontend/tests/development-diagnostics.mjs",
+      "change": "M",
+      "sha256": "38acb795dfb17900431a467ee2a24ed9e074f480c274096284692f3ca8aca316",
+      "category": "FIXTURE_DIAGNOSTIC_CHANGE",
+      "requiredRevalidation": "白名单代码/原因/计数隐私控制，纳入最终浏览器development及五目标完整重验"
+    },
+    {
+      "path": "scripts/run-runtime-oval.py",
+      "change": "A",
+      "sha256": "475a27770c57f34cdb2c02bf4326be64629a577c7e50f46cac0e8009285db30f",
+      "category": "AUDIT_OR_TEST_CHANGE",
+      "requiredRevalidation": "相应脚本控制/工作流实跑已验范围逐项引用；最终候选需要同轮输入绑定，不借旧完整验收"
+    },
+    {
+      "path": "scripts/scan-ubuntu-oval.py",
+      "change": "A",
+      "sha256": "f200a790873d8247cb9433aef3bb8c180ad124ce425836dac532ee83ca98e1cd",
+      "category": "AUDIT_OR_TEST_CHANGE",
+      "requiredRevalidation": "相应脚本控制/工作流实跑已验范围逐项引用；最终候选需要同轮输入绑定，不借旧完整验收"
+    },
+    {
+      "path": "scripts/test-development-diagnostics.mjs",
+      "change": "M",
+      "sha256": "d6d6021c3d4747f3ccb052666cecf1539aa486417a7fee8a1b5c53d74778800a",
+      "category": "AUDIT_OR_TEST_CHANGE",
+      "requiredRevalidation": "相应脚本控制/工作流实跑已验范围逐项引用；最终候选需要同轮输入绑定，不借旧完整验收"
+    },
+    {
+      "path": "scripts/test-runtime-oval.py",
+      "change": "A",
+      "sha256": "3203477fd4315b1aac46ef521f56e43beb5e3ce3418b552d0cedeb0697050227",
+      "category": "AUDIT_OR_TEST_CHANGE",
+      "requiredRevalidation": "相应脚本控制/工作流实跑已验范围逐项引用；最终候选需要同轮输入绑定，不借旧完整验收"
+    },
+    {
+      "path": "scripts/test-ubuntu-oval.py",
+      "change": "A",
+      "sha256": "f8b8a47f52fe088ebec96ce052b042b21401e2a64c178e103e57db936d1c004b",
+      "category": "AUDIT_OR_TEST_CHANGE",
+      "requiredRevalidation": "相应脚本控制/工作流实跑已验范围逐项引用；最终候选需要同轮输入绑定，不借旧完整验收"
+    }
+  ],
+  "productionJavaChanges": [],
+  "importantCorrection": "晚于5df的诊断变更位于frontend/tests夹具及其控制脚本，并非Java产品生产者改动；仍需纳入最终候选测试快照",
+  "nextRevalidation": [
+    "P1实际替换后来源覆盖/合法材料/ABI加载",
+    "P2具体环境修补后同feed对照",
+    "P3/P4修复前后因果回归",
+    "P5同一候选五目标完整功能/安装/一致性"
+  ],
+  "unknownReplayPolicy": "保持UNKNOWN禁止自动重放与显式恢复",
+  "alreadyAcceptedScope": "现有5df完整验收及独立安全专项保持各自绑定，不宣布新增候选完整通过"
+}

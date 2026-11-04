@@ -1,0 +1,88 @@
+{
+  "schemaVersion": 1,
+  "status": "P0_INVENTORY_AND_TASK_DECOMPOSITION_COMPLETE",
+  "planningCommit": "b134d93faa9ccd85d32303dc4d1d8cc5c0e93d67",
+  "runtimeCommit": "5df2372cbe00047e3233650fd37462290a534127",
+  "outputs": {
+    "environment-scope.json": "78fbb207bcebed32b11206754a478f81e61d4fb3db6de8924c30e0eb28db5939",
+    "historical-evidence.json": "47e50fdd139dc1e6d645204b05d08ab7f74d410fc6a083e93d469098c82974b4",
+    "native-tasks.json": "36b0f21a6b5d7e9e67ade518a38c95f966c4b4145897038ff42d4961a289cabb",
+    "revalidation-delta.json": "c6dc3b34ed7c62fcf12126e03dfb591e76cb603f6bd4ef81412ca36813462e52"
+  },
+  "nativeTasks": 36,
+  "gapStatuses": {
+    "NATIVE-39": "OPEN",
+    "OS-CPE": "OPEN",
+    "WINPTY-LOCAL": "OPEN",
+    "MAC-HISTORY": "OPEN",
+    "DEVELOPMENT-UNKNOWN": "OPEN"
+  },
+  "primaryEnvironments": 7,
+  "baselineDeltaFiles": 32,
+  "verifiedLocalBackups": [
+    {
+      "receipt": "docs/testing/M10-unified14-final-backup-2026-11-01.json",
+      "path": ".build-cache/local-evidence-backups/2026-11-01/unified14-five-target-final-5df.zip",
+      "sha256": "fc50386886e878a23c6c3e1c06110f13179b1f72f7148c12bc246d8199faeb84",
+      "members": 27,
+      "status": "READABLE_CRC_AND_SHA256_VERIFIED",
+      "memberShaCoverage": "ALL_MEMBERS"
+    },
+    {
+      "receipt": "docs/testing/M10-runtime-oval-backup-2026-11-04.json",
+      "path": ".build-cache/local-evidence-backups/2026-11-04/minimal-runtime-oval-and-install.zip",
+      "sha256": "6fe426c1d6648e90c9434ee8f4f5742f6be1d5a1e0fb016a0fb0dbb087eb95c1",
+      "members": 13,
+      "status": "READABLE_CRC_AND_SHA256_VERIFIED",
+      "memberShaCoverage": "ALL_MEMBERS"
+    },
+    {
+      "receipt": "docs/testing/M10-ubuntu-oval-backup-2026-11-04.json",
+      "path": ".build-cache/local-evidence-backups/2026-11-04/ubuntu-oval-before-after.zip",
+      "sha256": "0259f36bd383eba52f20dda88286b56043c83e096437cd229c4637e15b284d89",
+      "members": 11,
+      "status": "READABLE_CRC_AND_SHA256_VERIFIED",
+      "memberShaCoverage": "ALL_MEMBERS"
+    },
+    {
+      "receipt": "docs/testing/M10-two-gap-local-backup-2026-10-30.json",
+      "path": ".build-cache/local-evidence-backups/2026-10-30/two-gap-investigation.zip",
+      "sha256": "41f128a5b3f94e232547522f639b674814402ea425d1b1e6d0c7b7d3d53909f8",
+      "members": 7,
+      "status": "READABLE_CRC_AND_SHA256_VERIFIED",
+      "memberShaCoverage": "ALL_MEMBERS"
+    },
+    {
+      "receipt": "docs/testing/M10-local-followup-backup-2026-11-01.json",
+      "path": ".build-cache/local-evidence-backups/2026-11-01/local-terminal-and-diagnostic-observations.zip",
+      "sha256": "d34c9927c0105c3c4be39ac42101ceb15b69fbb75293eb77a29cb8735f5d6857",
+      "members": 12,
+      "status": "READABLE_CRC_AND_SHA256_VERIFIED",
+      "memberShaCoverage": "ARCHIVE_SHA_AND_ALL_CRC"
+    }
+  ],
+  "p0LocalBackup": {
+    "path": ".build-cache/local-evidence-backups/2026-11-04/p0-originals-and-ledgers-v2.zip",
+    "sha256": "d0b78a3771843916b64c4e08220c8d28ccbaa81cff09383dfd48fcbeea8427fe",
+    "bytes": 97972747,
+    "members": 7,
+    "memberSha256": {
+      ".build-cache/publication-2026-10-25/full-1.zip": "099baa31c47228d5543c4955c79c7cd1a96a1efa4c1907fe6c9f530d27d712f5",
+      ".build-cache/unified-source-full/13069561344.zip": "59b03c453d9e2f64af79edffca65214a918b9a966e5003b6401808d60c6c04e4",
+      ".build-cache/build-gap-p0.py": "709678dc710b6bff201ad500fc9598df13acc63e247cd8ce9d6288200c3e95a4",
+      "docs/testing/gap-p0-2026-11-04/environment-scope.json": "78fbb207bcebed32b11206754a478f81e61d4fb3db6de8924c30e0eb28db5939",
+      "docs/testing/gap-p0-2026-11-04/historical-evidence.json": "47e50fdd139dc1e6d645204b05d08ab7f74d410fc6a083e93d469098c82974b4",
+      "docs/testing/gap-p0-2026-11-04/native-tasks.json": "36b0f21a6b5d7e9e67ade518a38c95f966c4b4145897038ff42d4961a289cabb",
+      "docs/testing/gap-p0-2026-11-04/revalidation-delta.json": "c6dc3b34ed7c62fcf12126e03dfb591e76cb603f6bd4ef81412ca36813462e52"
+    },
+    "offsite": false
+  },
+  "productionTestsRun": false,
+  "newCiRuns": 0,
+  "paidRequests": 0,
+  "limits": [
+    "P0盘点完成；P1-P5技术问题未修复",
+    "宿主镜像/完整JDK模块与历史Mac精确JAR缺失均显式列账；JVM精确build已从原XML提取",
+    "跳过额外实体机器不等于该平台验收通过"
+  ]
+}

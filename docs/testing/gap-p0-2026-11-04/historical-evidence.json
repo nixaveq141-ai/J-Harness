@@ -1,0 +1,94 @@
+{
+  "schemaVersion": 1,
+  "planningCommit": "b134d93faa9ccd85d32303dc4d1d8cc5c0e93d67",
+  "readOnlyOriginals": true,
+  "records": [
+    {
+      "gap": "MAC-HISTORY",
+      "phase": "P4-M",
+      "status": "OPEN",
+      "runId": "40195474698",
+      "commit": "11e4024c090bf1c63c0adecc823de8a86c541d69",
+      "originalArtifact": {
+        "path": ".build-cache/publication-2026-10-25/full-1.zip",
+        "sha256": "099baa31c47228d5543c4955c79c7cd1a96a1efa4c1907fe6c9f530d27d712f5",
+        "bytes": 19360642
+      },
+      "log": {
+        "member": ".build-cache/M10.5.9/browser/webkit/models.log",
+        "sha256": "6d4f7bcace972b34c550301f0f86dbc4e5c3013880dd463ab46492a29d2978df"
+      },
+      "exactRuntimeJarSha256": null,
+      "jarAvailability": "原失败ZIP不含JAR；旧版十轮重建不能证明当时精确运行JAR字节",
+      "availableEvidence": [
+        "docs/testing/four-followups-2026-10-29.md",
+        "docs/testing/M10-historical-mac-reproduction-2026-10-30.json",
+        "docs/testing/M10-two-gap-investigation-2026-10-30.json"
+      ],
+      "missingEvidence": [
+        "原时刻DOM/React/请求/任务联合时间线",
+        "原运行时精确JAR",
+        "原旧执行器镜像状态"
+      ],
+      "nextAction": "精确旧提交可恢复部分的联合诊断与单条件复现，不无信息重复跑轮数",
+      "exitCriteria": "充分关联原阶段的因果复现和修复前失败/修复后通过"
+    },
+    {
+      "gap": "WINPTY-LOCAL",
+      "phase": "P3",
+      "status": "OPEN",
+      "runId": null,
+      "commitScope": "本机专项；对应各脚本/载荷摘要，不借用远端run身份",
+      "exactDlls": [
+        {
+          "label": "source",
+          "dllSha256": "013db340ce5e3417b6821a81336965367f88bfd197ddbb7eb4f6e3302fdbb69c",
+          "sessionOpened": false,
+          "error": "agent died"
+        },
+        {
+          "label": "original",
+          "dllSha256": "21c6480093859d4811525dd68ece1905324014bbd8c1a11fea6a78b2933009f4",
+          "sessionOpened": false,
+          "error": "agent died"
+        }
+      ],
+      "agentSha256": "aebed1cca9030bcb6771ce2b40cbbfa4a1de9ad96acb4dd4ca4ca6da24a02c1c",
+      "availableEvidence": [
+        "docs/testing/M10-winpty-current-minimal-env-2026-11-01.json",
+        "docs/testing/M10-local-unified-conpty-2026-11-01.json"
+      ],
+      "localBackup": "docs/testing/M10-unified14-final-backup-2026-11-01.json",
+      "missingEvidence": [
+        "0xC000013A终止来源/控制事件或退出调用链"
+      ],
+      "nextAction": "仅自有进程单条件控制与有界退出跟踪",
+      "exitCriteria": "同条件故障因果成立，修复后握手/交互/退出/清理通过"
+    },
+    {
+      "gap": "DEVELOPMENT-UNKNOWN",
+      "phase": "P4-D",
+      "status": "OPEN",
+      "runId": "41270037874",
+      "commit": "9ef7f5b69b5765b5541edca0cd163151ce0d0ba0",
+      "originalArtifact": {
+        "id": 13069561344,
+        "bytes": 78477051,
+        "sha256": "59b03c453d9e2f64af79edffca65214a918b9a966e5003b6401808d60c6c04e4",
+        "path": ".build-cache/unified-source-full/13069561344.zip"
+      },
+      "exactRuntimeJarSha256": "c0610ba2ed0a14fde6f840c97ac1e623aab3ca7ce52ccca45469f2cbafff515e",
+      "jarMember": "harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar",
+      "availableEvidence": [
+        "docs/testing/M10-unified-windows-failure-2026-11-01.json",
+        "docs/testing/M10-development-observations-2026-11-01.json"
+      ],
+      "missingEvidence": [
+        "原后端精确错误码与工具退出/清理关联时序"
+      ],
+      "nextAction": "固定旧JAR和审批后阶段；按白名单诊断与受控边界复现",
+      "exitCriteria": "与原失败阶段关联的因果修复对照及UNKNOWN禁止重放回归"
+    }
+  ],
+  "rule": "后续通过、替代组件通过和独立故障注入均不能单独证明历史根因"
+}

@@ -1,0 +1,360 @@
+{
+  "schemaVersion": 1,
+  "planningCommit": "b134d93faa9ccd85d32303dc4d1d8cc5c0e93d67",
+  "primaryTargets": [
+    {
+      "id": "windows-x64",
+      "kind": "HOSTED_BUILD_AND_PRODUCT_TEST",
+      "phase": "P2",
+      "workflow": ".github/workflows/gap-unified-source-qualification.yml",
+      "declaredRunnerLabel": "windows-2022",
+      "observedImageVersion": null,
+      "observedImageStatus": "未在本次盘点的原包中发现独立完整宿主镜像快照；P2补采，不由标签推定",
+      "runId": "41291313781",
+      "commit": "5df2372cbe00047e3233650fd37462290a534127",
+      "receipt": "docs/testing/M10-unified14-final-windows-x64-2026-11-01.json",
+      "artifact": {
+        "id": 13077594876,
+        "bytes": 109764357,
+        "sha256": "87650bdafdfa46d02fc3c83e86326198eafac88134cc7d668269412e2ffe03da",
+        "path": ".build-cache/unified14-final-5df/13077594876.zip"
+      },
+      "observedTestTime": "2026-11-01T09:09:41.163376+00:00",
+      "declaredJdk": {
+        "distribution": "temurin",
+        "major": 21
+      },
+      "observedExactJdkBuild": "21.0.12.1+1-LTS",
+      "observedJvmAndOs": {
+        "java.version": "21.0.12.1",
+        "java.runtime.version": "21.0.12.1+1-LTS",
+        "java.vendor": "Eclipse Adoptium",
+        "java.vm.version": "21.0.12.1+1-LTS",
+        "java.vm.name": "OpenJDK 64-Bit Server VM",
+        "os.name": "Windows Server 2022",
+        "os.version": "10.0",
+        "os.arch": "amd64"
+      },
+      "observedProof": {
+        "member": "harness-agent/target/surefire-reports/TEST-io.jharness.agent.R3CompactionBoundaryTest.xml",
+        "sha256": "eed9cec25ebd595f1231127062ab1d83b094e0aa140805da7246fef6514372c2",
+        "consistentSuites": 124
+      },
+      "jdkEvidenceStatus": "原包124套件XML属性一致，已提取精确JVM/OS属性；完整JDK模块/供应链与宿主镜像版本仍待P2",
+      "productJarSha256": "49d4404dbe1e7b26e9842a2c765960f066f620105668cca0bb690313d1083f95",
+      "candidateZipSha256": "ce04c68c75141032ddea53a0cf95460a3cf0c96189438c3a5d9b1785cf826978",
+      "scope": "该时刻托管CI上的功能/安装验收，不等于任意用户系统或完整OS/JDK安全认证",
+      "nativeScope": "实际50项：14已审源码、36原版来源未知；加载只覆盖本目标",
+      "nextAction": "补采系统/JDK/动态和静态依赖完整清单及官方漏洞适用性"
+    },
+    {
+      "id": "linux-x64",
+      "kind": "HOSTED_BUILD_AND_PRODUCT_TEST",
+      "phase": "P2",
+      "workflow": ".github/workflows/gap-unified-source-qualification.yml",
+      "declaredRunnerLabel": "ubuntu-24.04",
+      "observedImageVersion": null,
+      "observedImageStatus": "未在本次盘点的原包中发现独立完整宿主镜像快照；P2补采，不由标签推定",
+      "runId": "41291313781",
+      "commit": "5df2372cbe00047e3233650fd37462290a534127",
+      "receipt": "docs/testing/M10-unified14-final-linux-x64-2026-11-01.json",
+      "artifact": {
+        "id": 13077074203,
+        "bytes": 116224654,
+        "sha256": "41753ec18a1ef8d55a9acd676f3ee3f2894562bfa754ee703c0f3987da6780c9",
+        "path": ".build-cache/unified14-final-5df/13077074203.zip"
+      },
+      "observedTestTime": "2026-11-01T09:06:37.752607+00:00",
+      "declaredJdk": {
+        "distribution": "temurin",
+        "major": 21
+      },
+      "observedExactJdkBuild": "21.0.13+9-LTS",
+      "observedJvmAndOs": {
+        "java.version": "21.0.13",
+        "java.runtime.version": "21.0.13+9-LTS",
+        "java.vendor": "Eclipse Adoptium",
+        "java.vm.version": "21.0.13+9-LTS",
+        "java.vm.name": "OpenJDK 64-Bit Server VM",
+        "os.name": "Linux",
+        "os.version": "7.0.0-1017-azure",
+        "os.arch": "amd64"
+      },
+      "observedProof": {
+        "member": "harness-agent/target/surefire-reports/TEST-io.jharness.agent.R3CompactionBoundaryTest.xml",
+        "sha256": "dead5a8927e8e12c78b64320ae91b26366060fcfea5fb803569c0af94e452f17",
+        "consistentSuites": 124
+      },
+      "jdkEvidenceStatus": "原包124套件XML属性一致，已提取精确JVM/OS属性；完整JDK模块/供应链与宿主镜像版本仍待P2",
+      "productJarSha256": "49d4404dbe1e7b26e9842a2c765960f066f620105668cca0bb690313d1083f95",
+      "candidateZipSha256": "ebd9b1fcaccf588c79c68f57015e3ebcd6a8c111f7fbf38f256ce0b025700b8d",
+      "scope": "该时刻托管CI上的功能/安装验收，不等于任意用户系统或完整OS/JDK安全认证",
+      "nativeScope": "实际50项：14已审源码、36原版来源未知；加载只覆盖本目标",
+      "nextAction": "补采系统/JDK/动态和静态依赖完整清单及官方漏洞适用性"
+    },
+    {
+      "id": "linux-arm64",
+      "kind": "HOSTED_BUILD_AND_PRODUCT_TEST",
+      "phase": "P2",
+      "workflow": ".github/workflows/gap-unified-source-qualification.yml",
+      "declaredRunnerLabel": "ubuntu-24.04-arm",
+      "observedImageVersion": null,
+      "observedImageStatus": "未在本次盘点的原包中发现独立完整宿主镜像快照；P2补采，不由标签推定",
+      "runId": "41291313781",
+      "commit": "5df2372cbe00047e3233650fd37462290a534127",
+      "receipt": "docs/testing/M10-unified14-final-linux-arm64-2026-11-01.json",
+      "artifact": {
+        "id": 13077722973,
+        "bytes": 116270972,
+        "sha256": "0f03a68335b86e1efde9c8f4cce66ab92a656649287fa29d39a630a2f6c4008d",
+        "path": ".build-cache/unified14-final-5df/13077722973.zip"
+      },
+      "observedTestTime": "2026-11-01T09:06:17.183787+00:00",
+      "declaredJdk": {
+        "distribution": "temurin",
+        "major": 21
+      },
+      "observedExactJdkBuild": "21.0.13+9-LTS",
+      "observedJvmAndOs": {
+        "java.version": "21.0.13",
+        "java.runtime.version": "21.0.13+9-LTS",
+        "java.vendor": "Eclipse Adoptium",
+        "java.vm.version": "21.0.13+9-LTS",
+        "java.vm.name": "OpenJDK 64-Bit Server VM",
+        "os.name": "Linux",
+        "os.version": "7.0.0-1017-azure",
+        "os.arch": "aarch64"
+      },
+      "observedProof": {
+        "member": "harness-agent/target/surefire-reports/TEST-io.jharness.agent.R3CompactionBoundaryTest.xml",
+        "sha256": "a4464d99cc027da6f8edf55179a4ac258cdc2838f08d69395e4b34e7d31a6ecf",
+        "consistentSuites": 124
+      },
+      "jdkEvidenceStatus": "原包124套件XML属性一致，已提取精确JVM/OS属性；完整JDK模块/供应链与宿主镜像版本仍待P2",
+      "productJarSha256": "49d4404dbe1e7b26e9842a2c765960f066f620105668cca0bb690313d1083f95",
+      "candidateZipSha256": "18d864b2eb1456595bdae8a7ae1293a079eaebc6995f8f20ea2250cd8c304c91",
+      "scope": "该时刻托管CI上的功能/安装验收，不等于任意用户系统或完整OS/JDK安全认证",
+      "nativeScope": "实际50项：14已审源码、36原版来源未知；加载只覆盖本目标",
+      "nextAction": "补采系统/JDK/动态和静态依赖完整清单及官方漏洞适用性"
+    },
+    {
+      "id": "macos-arm64",
+      "kind": "HOSTED_BUILD_AND_PRODUCT_TEST",
+      "phase": "P2",
+      "workflow": ".github/workflows/gap-unified-source-qualification.yml",
+      "declaredRunnerLabel": "macos-latest",
+      "observedImageVersion": null,
+      "observedImageStatus": "未在本次盘点的原包中发现独立完整宿主镜像快照；P2补采，不由标签推定",
+      "runId": "41291313781",
+      "commit": "5df2372cbe00047e3233650fd37462290a534127",
+      "receipt": "docs/testing/M10-unified14-final-macos-arm64-2026-11-01.json",
+      "artifact": {
+        "id": 13077319547,
+        "bytes": 117000768,
+        "sha256": "3634d7c9629f3a8e5e71ce52b5f44c7bd85d2c90341f9254e42385873c9b2ce4",
+        "path": ".build-cache/unified14-final-5df/13077319547.zip"
+      },
+      "observedTestTime": "2026-11-01T09:06:04.534084+00:00",
+      "declaredJdk": {
+        "distribution": "temurin",
+        "major": 21
+      },
+      "observedExactJdkBuild": "21.0.13+9-LTS",
+      "observedJvmAndOs": {
+        "java.version": "21.0.13",
+        "java.runtime.version": "21.0.13+9-LTS",
+        "java.vendor": "Eclipse Adoptium",
+        "java.vm.version": "21.0.13+9-LTS",
+        "java.vm.name": "OpenJDK 64-Bit Server VM",
+        "os.name": "Mac OS X",
+        "os.version": "26.6.2",
+        "os.arch": "aarch64"
+      },
+      "observedProof": {
+        "member": "harness-agent/target/surefire-reports/TEST-io.jharness.agent.R3CompactionBoundaryTest.xml",
+        "sha256": "6e1b958ef5f1c01508397804d2907e36a77e77a33163602170b4f4932daec780",
+        "consistentSuites": 124
+      },
+      "jdkEvidenceStatus": "原包124套件XML属性一致，已提取精确JVM/OS属性；完整JDK模块/供应链与宿主镜像版本仍待P2",
+      "productJarSha256": "49d4404dbe1e7b26e9842a2c765960f066f620105668cca0bb690313d1083f95",
+      "candidateZipSha256": "32d92e3906f269adc10e08b74ceb186d03232219cca9e94b8e8e333550cd3166",
+      "scope": "该时刻托管CI上的功能/安装验收，不等于任意用户系统或完整OS/JDK安全认证",
+      "nativeScope": "实际50项：14已审源码、36原版来源未知；加载只覆盖本目标",
+      "nextAction": "补采系统/JDK/动态和静态依赖完整清单及官方漏洞适用性"
+    },
+    {
+      "id": "macos-intel",
+      "kind": "HOSTED_BUILD_AND_PRODUCT_TEST",
+      "phase": "P2",
+      "workflow": ".github/workflows/gap-unified-source-qualification.yml",
+      "declaredRunnerLabel": "macos-15-intel",
+      "observedImageVersion": null,
+      "observedImageStatus": "未在本次盘点的原包中发现独立完整宿主镜像快照；P2补采，不由标签推定",
+      "runId": "41291313781",
+      "commit": "5df2372cbe00047e3233650fd37462290a534127",
+      "receipt": "docs/testing/M10-unified14-final-macos-intel-2026-11-01.json",
+      "artifact": {
+        "id": 13078780474,
+        "bytes": 116986979,
+        "sha256": "bc9427acf2ab84fb866b0b1765914e180fa114750c0988c3b3ec2115c6db653b",
+        "path": ".build-cache/unified14-final-5df/13078780474.zip"
+      },
+      "observedTestTime": "2026-11-01T09:10:59.592131+00:00",
+      "declaredJdk": {
+        "distribution": "temurin",
+        "major": 21
+      },
+      "observedExactJdkBuild": "21.0.12.1+1-LTS",
+      "observedJvmAndOs": {
+        "java.version": "21.0.12.1",
+        "java.runtime.version": "21.0.12.1+1-LTS",
+        "java.vendor": "Eclipse Adoptium",
+        "java.vm.version": "21.0.12.1+1-LTS",
+        "java.vm.name": "OpenJDK 64-Bit Server VM",
+        "os.name": "Mac OS X",
+        "os.version": "15.7.9",
+        "os.arch": "x86_64"
+      },
+      "observedProof": {
+        "member": "harness-agent/target/surefire-reports/TEST-io.jharness.agent.R3CompactionBoundaryTest.xml",
+        "sha256": "51409a09f8c4bee59c3e270fc8092a8224b02454f2fa048b2e8f4eec5db5b95e",
+        "consistentSuites": 124
+      },
+      "jdkEvidenceStatus": "原包124套件XML属性一致，已提取精确JVM/OS属性；完整JDK模块/供应链与宿主镜像版本仍待P2",
+      "productJarSha256": "49d4404dbe1e7b26e9842a2c765960f066f620105668cca0bb690313d1083f95",
+      "candidateZipSha256": "d7251ea83a690d8679d510f541eaf885d2f496fd9645570e29047f0fc91b91da",
+      "scope": "该时刻托管CI上的功能/安装验收，不等于任意用户系统或完整OS/JDK安全认证",
+      "nativeScope": "实际50项：14已审源码、36原版来源未知；加载只覆盖本目标",
+      "nextAction": "补采系统/JDK/动态和静态依赖完整清单及官方漏洞适用性"
+    },
+    {
+      "id": "minimal-runtime-amd64",
+      "kind": "SELECTED_CONTAINER_RUNTIME",
+      "phase": "P2",
+      "runId": "41816882486",
+      "commit": "31599bb8851efcf924b2d67296515a6646dca956",
+      "runtimeCommit": "5df2372cbe00047e3233650fd37462290a534127",
+      "observedTestTime": "2026-11-04T10:51:30.390078+00:00",
+      "receipt": "docs/testing/M10-runtime-oval-acceptance-2026-11-04.json",
+      "artifact": {
+        "path": ".build-cache/runtime-oval-20261104/13315371510.zip",
+        "sha256": "c9b6b3cb2936e989a00d3f7df9e552ced0f11dd1f4cebe8391f2114e8f64de18"
+      },
+      "image": "eclipse-temurin@sha256:db724162e4ff5f71fa0a2815026314d9e5e0e9a139f49be1d4717e6930e93341",
+      "imageId": "sha256:4291fbae5ec045e2801c51b7db0b75e4371f04b385f124561068384c465bcd67",
+      "hostImage": {
+        "ImageOS": "pinned-temurin-noble-runtime",
+        "ImageVersion": "sha256:db724162e4ff5f71fa0a2815026314d9e5e0e9a139f49be1d4717e6930e93341",
+        "RUNNER_ARCH": "amd64"
+      },
+      "declaredJdk": {
+        "distribution": "temurin",
+        "major": 21,
+        "variant": "JRE Noble"
+      },
+      "observedExactJdkBuild": null,
+      "baseImageJavaVersion": "jdk-21.0.13+9",
+      "imageInspectLogSha256": "fcb2e8ec342e4323351e4d211cd455c6b6e980cfd149e5456b3b813a38e32e6c",
+      "jdkEvidenceStatus": "实际inspect的JAVA_VERSION仅证明基础镜像配置；更新后java命令/模块快照待P2，不将配置值冒称运行值",
+      "productJarSha256": "49d4404dbe1e7b26e9842a2c765960f066f620105668cca0bb690313d1083f95",
+      "candidateZipSha256": "ebd9b1fcaccf588c79c68f57015e3ebcd6a8c111f7fbf38f256ce0b025700b8d",
+      "packageInventorySha256": "b89de000c9dd1f323e73ad98e8fd938834ca33b33e8472611ad26dd323721445",
+      "scanRecord": "scans/after/report.json",
+      "scope": "该配置该时刻官方USN补丁检查与五项离线安装通过；非全CVE/JDK/原生认证",
+      "nextAction": "提取并映射全部运行依赖；需要整个rootfs可复现声明时另固定更新后镜像字节"
+    },
+    {
+      "id": "minimal-runtime-arm64",
+      "kind": "SELECTED_CONTAINER_RUNTIME",
+      "phase": "P2",
+      "runId": "41816882486",
+      "commit": "31599bb8851efcf924b2d67296515a6646dca956",
+      "runtimeCommit": "5df2372cbe00047e3233650fd37462290a534127",
+      "observedTestTime": "2026-11-04T10:51:28.417372+00:00",
+      "receipt": "docs/testing/M10-runtime-oval-acceptance-2026-11-04.json",
+      "artifact": {
+        "path": ".build-cache/runtime-oval-20261104/13314617795.zip",
+        "sha256": "2eff29b565578c4bc24b606dbddbe2749cf12e2ba4a944eb492290002470b1c8"
+      },
+      "image": "eclipse-temurin@sha256:e29bfdff2f7245d8be69ee092651149c026e1b8c2b2d4967c9563963f30076f3",
+      "imageId": "sha256:5aabab701b2cf5dec87d5756b22e02c82f3796298b42e67541eaf2d95a95e33f",
+      "hostImage": {
+        "ImageOS": "pinned-temurin-noble-runtime",
+        "ImageVersion": "sha256:e29bfdff2f7245d8be69ee092651149c026e1b8c2b2d4967c9563963f30076f3",
+        "RUNNER_ARCH": "arm64"
+      },
+      "declaredJdk": {
+        "distribution": "temurin",
+        "major": 21,
+        "variant": "JRE Noble"
+      },
+      "observedExactJdkBuild": null,
+      "baseImageJavaVersion": "jdk-21.0.13+9",
+      "imageInspectLogSha256": "7ad7fc85ea1934c4322e83e2c1a1a75db8eb074ef5d31725dce3b67afa1e90e4",
+      "jdkEvidenceStatus": "实际inspect的JAVA_VERSION仅证明基础镜像配置；更新后java命令/模块快照待P2，不将配置值冒称运行值",
+      "productJarSha256": "49d4404dbe1e7b26e9842a2c765960f066f620105668cca0bb690313d1083f95",
+      "candidateZipSha256": "ebd9b1fcaccf588c79c68f57015e3ebcd6a8c111f7fbf38f256ce0b025700b8d",
+      "packageInventorySha256": "8c473546d63ebac40737157127b81e8609ca7b7ca2833fc17d94a06036248c44",
+      "scanRecord": "scans/after/report.json",
+      "scope": "该配置该时刻官方USN补丁检查与五项离线安装通过；非全CVE/JDK/原生认证",
+      "nextAction": "提取并映射全部运行依赖；需要整个rootfs可复现声明时另固定更新后镜像字节"
+    }
+  ],
+  "securityHostSnapshots": [
+    {
+      "id": "usn-host-1",
+      "kind": "DISPOSABLE_HOST_SECURITY_ONLY",
+      "runId": "41814311453",
+      "commit": "f32ba0d576f68a4b16b884b66e74d1eff6ba60d5",
+      "hostImage": {
+        "ImageOS": "ubuntu24-arm64",
+        "ImageVersion": "20261101.172.1",
+        "RUNNER_ARCH": "ARM64"
+      },
+      "artifactId": "13313842708",
+      "receipt": "docs/testing/M10-ubuntu-oval-updates-2026-11-04.json",
+      "before": 24,
+      "after": 21,
+      "scope": "系统包整改前后对照；不是5df完整功能验收宿主，也不是最小容器",
+      "nextAction": "P2逐项处理21条ESM并审查JDK/第三方适用性"
+    },
+    {
+      "id": "usn-host-2",
+      "kind": "DISPOSABLE_HOST_SECURITY_ONLY",
+      "runId": "41814311453",
+      "commit": "f32ba0d576f68a4b16b884b66e74d1eff6ba60d5",
+      "hostImage": {
+        "ImageOS": "ubuntu24",
+        "ImageVersion": "20261101.360.1",
+        "RUNNER_ARCH": "X64"
+      },
+      "artifactId": "13313662449",
+      "receipt": "docs/testing/M10-ubuntu-oval-updates-2026-11-04.json",
+      "before": 24,
+      "after": 21,
+      "scope": "系统包整改前后对照；不是5df完整功能验收宿主，也不是最小容器",
+      "nextAction": "P2逐项处理21条ESM并审查JDK/第三方适用性"
+    }
+  ],
+  "componentScopes": [
+    {
+      "id": "BUILD_HOST",
+      "scope": "编译器/SDK/构建工具/系统包；与交付依赖分开"
+    },
+    {
+      "id": "PRODUCT_RUNTIME",
+      "scope": "候选JAR/启动器/实际OS及动态依赖"
+    },
+    {
+      "id": "JDK",
+      "scope": "运行与构建发行版/精确build/模块/公告"
+    },
+    {
+      "id": "BUNDLED_NATIVE",
+      "scope": "50项及其静态依赖，未知构建36项单列"
+    }
+  ],
+  "otherBundledArchitectures": "仅分发库存，不自动获得支持或运行认证",
+  "physicalExtraMachines": "SKIPPED_BY_USER",
+  "fullOsCpeClearance": false
+}
