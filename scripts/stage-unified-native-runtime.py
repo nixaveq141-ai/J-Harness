@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import importlib.util
 import json
+import os
 from pathlib import Path
 import platform
 import zipfile
@@ -144,6 +145,17 @@ def main():
     scopes={**SCOPES,**EXTRA_SCOPES}
     if len(replacements)!=14 or set(replacements)!=set.union(*scopes.values()):
         raise ValueError('Exact fourteen-resource unified scope required')
+    if os.environ.get('JHARNESS_P1_LINUX_PTY')=='1':
+        spec=importlib.util.spec_from_file_location('p1_components',ROOT/'scripts/stage-p1-linux-pty.py')
+        p1=importlib.util.module_from_spec(spec);spec.loader.exec_module(p1)
+        extra=p1.load_components(ROOT/'.build-cache/p1-inputs')
+        if set(extra)&set(replacements) or len(extra)!=5:
+            raise ValueError('Five disjoint P1 resource replacements required')
+        for name,item in extra.items():
+            target=payload/'p1'/name.split('/')[-2];target.mkdir(parents=True)
+            dest=target/'libpty.so';dest.write_bytes(item['path'].read_bytes())
+            replacements[name]={**item,'path':dest}
+        receipts['p1-linux-pty']=sha((ROOT/p1.RECEIPT).read_bytes())
     runtime=ROOT/'harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar';baseline=out/'baseline-runtime.jar'
     with baseline.open('xb') as stream:stream.write(runtime.read_bytes())
     canonical=out/'canonical-baseline-runtime.jar'
@@ -153,7 +165,7 @@ def main():
     inventory={v['resource']:v['sha256'] for v in json.loads((ROOT/'docs/testing/M10-native-inventory-50-2026-11-01.json').read_bytes())['binaries']}
     preview=out/'current-source-runtime.jar'
     assembly=assembler.assemble(canonical,preview,replacements,sha(canonical.read_bytes()),inventory,
-        'Unified Windows x64, Linux x64/arm64, macOS arm64/Intel; remaining inventoried resources retain original bytes')
+        'Unified five-target runtime; optional P1 extra-architecture PTY components; remaining inventoried resources retain original bytes')
     final=out/'canonical-source-runtime.jar';canonicalize_runtime(preview,final)
     temporary=runtime.with_suffix('.source-stage.tmp')
     with temporary.open('xb') as stream:stream.write(final.read_bytes())

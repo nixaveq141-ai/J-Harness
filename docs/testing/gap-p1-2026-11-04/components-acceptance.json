@@ -1,0 +1,181 @@
+{
+  "status": "FIVE_PTY_SOURCE_COMPONENTS_INDEPENDENTLY_VERIFIED_NOT_PRODUCT_ACCEPTANCE",
+  "runId": "41823433458",
+  "commit": "1c4cc6da5fd62d6f23c0459036cd9b560403b8b7",
+  "sourceRevision": "b7554d649f6374183040e6554942b6d5b028b5e5",
+  "platforms": [
+    {
+      "target": "ppc64le",
+      "artifactId": "13318650302",
+      "artifactSha256": "4b162c784dd4fae20535b5ceaedf0cb439bb0c4ee338d82f61e5819debc1ac2a",
+      "reportSha256": "3844b845b8dad22599af11980c4b8f693834a62de1efd9335da1d88175963538",
+      "resource": "resources/com/pty4j/native/linux/ppc64le/libpty.so",
+      "outputSha256": "c3b8e7e08ca1657d7557baefe479532fd2089a573b0d550799b8dc85f90c0e0b",
+      "originalSha256": "60d5f3c23625eae9cd19b4c36a1b1cc540b03d500bae2bae7891cdd7be5533d8",
+      "elf": {
+        "elfClass": 2,
+        "machine": 21,
+        "kind": 3,
+        "flags": 2
+      },
+      "originalElf": {
+        "elfClass": 2,
+        "machine": 21,
+        "kind": 3,
+        "flags": 2
+      },
+      "originalControl": "SAME_COMPONENT_PROBE_PASS",
+      "sourceFiles": 134,
+      "sourceTreeSha256": "cb9df89097ecb1b3bc71555db5ebaa6ad856ba529abd8e91eb9870f50052501e",
+      "commandReceipts": 12,
+      "hostInputs": 663,
+      "hostImage": {
+        "ImageOS": "ubuntu24",
+        "ImageVersion": "20261018.96.1",
+        "RUNNER_ARCH": "X64"
+      },
+      "probeSha256": "db268757c71f97211444658fcf2129a238de84272c205ff3377df3f566c26f02",
+      "probeSourceSha256": "91a5e259446620c4eb1eb62fc7d82039fff8146da6806d7ecd48a95324d10057"
+    },
+    {
+      "target": "riscv64",
+      "artifactId": "13318520417",
+      "artifactSha256": "262816ff487ec2e310b24cb1e6df01df484529d6d9dce6751f0c31f20ea568cf",
+      "reportSha256": "974a07484c12b0deca1abe5b11e17e7587ff21a6d283b47873777359db19bc65",
+      "resource": "resources/com/pty4j/native/linux/riscv64/libpty.so",
+      "outputSha256": "40b774439860e413d35bb9f09f6eb24a852373f821493bd5af30a8d525bb29b4",
+      "originalSha256": "e101b0a4282fef079d32bb0202d2ec5e2869579f45e72f09ceae5c6d0388f372",
+      "elf": {
+        "elfClass": 2,
+        "machine": 243,
+        "kind": 3,
+        "flags": 5
+      },
+      "originalElf": {
+        "elfClass": 2,
+        "machine": 243,
+        "kind": 3,
+        "flags": 5
+      },
+      "originalControl": "SAME_COMPONENT_PROBE_PASS",
+      "sourceFiles": 134,
+      "sourceTreeSha256": "cb9df89097ecb1b3bc71555db5ebaa6ad856ba529abd8e91eb9870f50052501e",
+      "commandReceipts": 12,
+      "hostInputs": 663,
+      "hostImage": {
+        "ImageOS": "ubuntu24",
+        "ImageVersion": "20261026.354.1",
+        "RUNNER_ARCH": "X64"
+      },
+      "probeSha256": "e3dc6524d3e03e4c06d5ac48468eaa5b8c1b7e2a93820e8e9a87fbe613c69529",
+      "probeSourceSha256": "91a5e259446620c4eb1eb62fc7d82039fff8146da6806d7ecd48a95324d10057"
+    },
+    {
+      "target": "arm",
+      "artifactId": "13318460785",
+      "artifactSha256": "0f6d1c90437c1c2133901db42ff42c746aaf904d2f8164464a7eae0403049163",
+      "reportSha256": "2d439fe0642b0dab8f492c89865df2994ab450984be4f060ec08800b7395ec7d",
+      "resource": "resources/com/pty4j/native/linux/arm/libpty.so",
+      "outputSha256": "f93032e5631ce7cff263b4ffbaebff48b0d6bf0f9b921234b66acfa440bc77d7",
+      "originalSha256": "a272c1d2495138007654cf9dd1e8e57faab62e9c3eb2a1a0cc32b1a613a79a58",
+      "elf": {
+        "elfClass": 1,
+        "machine": 40,
+        "kind": 3,
+        "flags": 83887104
+      },
+      "originalElf": {
+        "elfClass": 1,
+        "machine": 40,
+        "kind": 3,
+        "flags": 83887104
+      },
+      "originalControl": "SAME_COMPONENT_PROBE_PASS",
+      "sourceFiles": 134,
+      "sourceTreeSha256": "cb9df89097ecb1b3bc71555db5ebaa6ad856ba529abd8e91eb9870f50052501e",
+      "commandReceipts": 12,
+      "hostInputs": 663,
+      "hostImage": {
+        "ImageOS": "ubuntu24",
+        "ImageVersion": "20261026.354.1",
+        "RUNNER_ARCH": "X64"
+      },
+      "probeSha256": "385577eac716e71589695c01a40577a9c9fddc66a9f3d4ec85a58269518cdc5d",
+      "probeSourceSha256": "91a5e259446620c4eb1eb62fc7d82039fff8146da6806d7ecd48a95324d10057"
+    },
+    {
+      "target": "mips64el",
+      "artifactId": "13317373744",
+      "artifactSha256": "9d1304f6c2ea884e1bf144e5702aa05a2c0483d2a321e764ff3aae873552f715",
+      "reportSha256": "62b70c94665eea88a2db47a6f3f40f1027fd74ef91f1867b840f0ee4da9dc9f3",
+      "resource": "resources/com/pty4j/native/linux/mips64el/libpty.so",
+      "outputSha256": "d97db322f338bd35a58d4e4683df4b08830d048e7269367970a57a56120a80b4",
+      "originalSha256": "7d97ff835049dcfe1137812e17a09f1d70c4b5fd32cdcfc54a6f7d703f9dc69d",
+      "elf": {
+        "elfClass": 2,
+        "machine": 8,
+        "kind": 3,
+        "flags": 2147483655
+      },
+      "originalElf": {
+        "elfClass": 2,
+        "machine": 62,
+        "kind": 3,
+        "flags": 0
+      },
+      "originalControl": "REJECTED_WRONG_ELF_ARCHITECTURE",
+      "sourceFiles": 134,
+      "sourceTreeSha256": "cb9df89097ecb1b3bc71555db5ebaa6ad856ba529abd8e91eb9870f50052501e",
+      "commandReceipts": 11,
+      "hostInputs": 663,
+      "hostImage": {
+        "ImageOS": "ubuntu24",
+        "ImageVersion": "20261026.354.1",
+        "RUNNER_ARCH": "X64"
+      },
+      "probeSha256": "41b4f76db59e1bd15482a5fee3bf256436dc0052bb45dc0cdc3b8c18e0dd9148",
+      "probeSourceSha256": "91a5e259446620c4eb1eb62fc7d82039fff8146da6806d7ecd48a95324d10057"
+    },
+    {
+      "target": "x86",
+      "artifactId": "13317199560",
+      "artifactSha256": "9e2f426feed2c6564ebe5871466f970044539f1877192bb8ae80910ed7b1109e",
+      "reportSha256": "f9ec453a760cf43220f2897273593d471b429c56700a4d658d716001b95387e7",
+      "resource": "resources/com/pty4j/native/linux/x86/libpty.so",
+      "outputSha256": "5dc002dc2f92683d4e235b4904667b321e3a04a6469d25d83c5c887a4c10ab74",
+      "originalSha256": "a0502637d32147f81e43b46ec31789ca06e89747ec12fbb24f1ebd1b6a0f67f7",
+      "elf": {
+        "elfClass": 1,
+        "machine": 3,
+        "kind": 3,
+        "flags": 0
+      },
+      "originalElf": {
+        "elfClass": 1,
+        "machine": 3,
+        "kind": 3,
+        "flags": 0
+      },
+      "originalControl": "SAME_COMPONENT_PROBE_PASS",
+      "sourceFiles": 134,
+      "sourceTreeSha256": "cb9df89097ecb1b3bc71555db5ebaa6ad856ba529abd8e91eb9870f50052501e",
+      "commandReceipts": 12,
+      "hostInputs": 663,
+      "hostImage": {
+        "ImageOS": "ubuntu24",
+        "ImageVersion": "20261026.354.1",
+        "RUNNER_ARCH": "X64"
+      },
+      "probeSha256": "a1738270095c767fce83461a37d81df321150bea688155d234639f907785c264",
+      "probeSourceSha256": "91a5e259446620c4eb1eb62fc7d82039fff8146da6806d7ecd48a95324d10057"
+    }
+  ],
+  "formalProductReviewedSourceCount": 14,
+  "formalProductUnresolvedCount": 36,
+  "paidRequests": 0,
+  "limits": [
+    "Five component source/ABI/interaction probes only; no full Java product qualification yet",
+    "MIPS original has wrong architecture; replacement not yet integrated",
+    "No full OS/CPE or arbitrary libc compatibility proof"
+  ]
+}

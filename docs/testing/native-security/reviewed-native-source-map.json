@@ -157,6 +157,66 @@
         "componentLoadCommit": "c5d461d1639f6fa13903695ecab060b912e893d6",
         "sourceReportSha256": "84b281cf4d8e39d71f0faa47034a306d3dbbd6c86876674270e40708a3932cea"
       }
+    },
+    "resources/com/pty4j/native/linux/ppc64le/libpty.so": {
+      "sha256": "c3b8e7e08ca1657d7557baefe479532fd2089a573b0d550799b8dc85f90c0e0b",
+      "origin": {
+        "sourceBuildRun": "41823433458",
+        "sourceBuildCommit": "1c4cc6da5fd62d6f23c0459036cd9b560403b8b7",
+        "sourceRevision": "b7554d649f6374183040e6554942b6d5b028b5e5",
+        "componentProbeRun": "41823433458",
+        "componentReportSha256": "3844b845b8dad22599af11980c4b8f693834a62de1efd9335da1d88175963538",
+        "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/components-acceptance.json",
+        "scope": "QEMU native component ABI/interaction; target Java product not certified"
+      }
+    },
+    "resources/com/pty4j/native/linux/riscv64/libpty.so": {
+      "sha256": "40b774439860e413d35bb9f09f6eb24a852373f821493bd5af30a8d525bb29b4",
+      "origin": {
+        "sourceBuildRun": "41823433458",
+        "sourceBuildCommit": "1c4cc6da5fd62d6f23c0459036cd9b560403b8b7",
+        "sourceRevision": "b7554d649f6374183040e6554942b6d5b028b5e5",
+        "componentProbeRun": "41823433458",
+        "componentReportSha256": "974a07484c12b0deca1abe5b11e17e7587ff21a6d283b47873777359db19bc65",
+        "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/components-acceptance.json",
+        "scope": "QEMU native component ABI/interaction; target Java product not certified"
+      }
+    },
+    "resources/com/pty4j/native/linux/arm/libpty.so": {
+      "sha256": "f93032e5631ce7cff263b4ffbaebff48b0d6bf0f9b921234b66acfa440bc77d7",
+      "origin": {
+        "sourceBuildRun": "41823433458",
+        "sourceBuildCommit": "1c4cc6da5fd62d6f23c0459036cd9b560403b8b7",
+        "sourceRevision": "b7554d649f6374183040e6554942b6d5b028b5e5",
+        "componentProbeRun": "41823433458",
+        "componentReportSha256": "2d439fe0642b0dab8f492c89865df2994ab450984be4f060ec08800b7395ec7d",
+        "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/components-acceptance.json",
+        "scope": "QEMU native component ABI/interaction; target Java product not certified"
+      }
+    },
+    "resources/com/pty4j/native/linux/mips64el/libpty.so": {
+      "sha256": "d97db322f338bd35a58d4e4683df4b08830d048e7269367970a57a56120a80b4",
+      "origin": {
+        "sourceBuildRun": "41823433458",
+        "sourceBuildCommit": "1c4cc6da5fd62d6f23c0459036cd9b560403b8b7",
+        "sourceRevision": "b7554d649f6374183040e6554942b6d5b028b5e5",
+        "componentProbeRun": "41823433458",
+        "componentReportSha256": "62b70c94665eea88a2db47a6f3f40f1027fd74ef91f1867b840f0ee4da9dc9f3",
+        "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/components-acceptance.json",
+        "scope": "QEMU native component ABI/interaction; target Java product not certified"
+      }
+    },
+    "resources/com/pty4j/native/linux/x86/libpty.so": {
+      "sha256": "5dc002dc2f92683d4e235b4904667b321e3a04a6469d25d83c5c887a4c10ab74",
+      "origin": {
+        "sourceBuildRun": "41823433458",
+        "sourceBuildCommit": "1c4cc6da5fd62d6f23c0459036cd9b560403b8b7",
+        "sourceRevision": "b7554d649f6374183040e6554942b6d5b028b5e5",
+        "componentProbeRun": "41823433458",
+        "componentReportSha256": "f9ec453a760cf43220f2897273593d471b429c56700a4d658d716001b95387e7",
+        "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/components-acceptance.json",
+        "scope": "QEMU native component ABI/interaction; target Java product not certified"
+      }
     }
   },
   "fullRuntimeQualification": {

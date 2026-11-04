@@ -27,6 +27,7 @@ jobs:
       JHARNESS_EVIDENCE_RUN_ID: unified-source-${{ github.run_id }}-${{ github.run_attempt }}-${{ matrix.os }}-${{ github.sha }}
       JHARNESS_MATRIX_KEEP_GOING: '1'
       JHARNESS_UNIFIED_SOURCE: '1'
+      JHARNESS_P1_LINUX_PTY: '1'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -82,6 +83,14 @@ jobs:
           run-id: 41285899341
           github-token: ${{ github.token }}
           path: .build-cache/unified-extra-inputs/macos-intel
+      # Use the same fixed accepted component bytes on every target.
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: p1-linux-pty-*
+          run-id: 41823433458
+          github-token: ${{ github.token }}
+          path: .build-cache/p1-inputs
+      - run: python scripts/test-p1-component-stage.py
       - name: Install browser dependencies on Linux
         if: runner.os == 'Linux'
         run: |
