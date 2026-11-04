@@ -1,5 +1,7 @@
 # 当前实现、验收与未完成项
 
+2026-11-04规划入口：[剩余缺口分阶段规划](../requirements/remaining-gap-closure-plan-2026-11-04.md)。按P0～P5拆解五项OPEN缺口，列明任务、依赖、闭合证据及阻塞条件；仅规划，不新增完成声明。
+
 2026-11-04独立最小Linux运行配置已验：[41816882486](https://github.com/nixaveq141-ai/J-Harness/actions/runs/41816882486)的amd64/arm64两侧固定OCI镜像、同一既验候选、14实际命令和完整宿主源码指纹均核验；1581定义完整评估中，各1条补丁命中经公开更新消除，1580条补丁定义全false、无未知。原宿主命中的ESM开发工具不在该配置包集合。断开外部网络后五项原候选安装/审批/拒绝/取消恢复检查全过，容器清理退出0。见[验收](../testing/M10-runtime-oval-acceptance-2026-11-04.json)、[本地备份](../testing/M10-runtime-oval-backup-2026-11-04.json)、[精确范围](../testing/runtime-security-profile-2026-11-04.md)。闭合的是这两个选定运行配置的USN包整改与离线安装验证；原CI宿主21条ESM仍开放，整个OS/JDK/原生CPE与36来源、历史因果均未冒称关闭。
 
 
