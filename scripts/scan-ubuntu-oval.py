@@ -1,5 +1,6 @@
 """Snapshot Canonical USN evaluation; findings/unknowns never imply clearance."""
 import bz2
+import argparse
 import collections
 import datetime as dt
 import json
@@ -43,7 +44,8 @@ def summarize(raw,classes):
 
 def main():
     if os.environ.get('GITHUB_ACTIONS')!='true':raise ValueError('Dedicated disposable CI host required')
-    out=ROOT/'.build-cache/ubuntu-oval';out.mkdir(parents=True)
+    parser=argparse.ArgumentParser();parser.add_argument('--phase',choices=['before','after'],default='before');args=parser.parse_args()
+    out=ROOT/'.build-cache/ubuntu-oval'/args.phase;out.mkdir(parents=True)
     report=dict(status='INCOMPLETE',commit=os.environ['GITHUB_SHA'],runId=os.environ['GITHUB_RUN_ID'],
         capturedAt=dt.datetime.now(dt.timezone.utc).isoformat(),commands=[],sourceUrl=URL,
         hostImage={k:os.environ.get(k) for k in ['ImageOS','ImageVersion','RUNNER_ARCH']},
@@ -61,7 +63,12 @@ def main():
         (out/'os-release').write_text(release)
         command(['dpkg-query','-W','-f=${binary:Package}\t${Version}\t${Architecture}\n'],'packages')
         command(['oscap','--version'],'scanner-version')
-        with urllib.request.urlopen(URL,timeout=45) as response:data=response.read(16*1024*1024+1)
+        if args.phase=='after':
+            with (out.parent/'before/feed.xml.bz2').open('rb') as stream:data=stream.read(16*1024*1024+1)
+            report['feedPolicy']='SAME_FROZEN_FEED_AS_BEFORE'
+        else:
+            with urllib.request.urlopen(URL,timeout=45) as response:data=response.read(16*1024*1024+1)
+            report['feedPolicy']='OFFICIAL_HTTPS_SNAPSHOT'
         if len(data)>16*1024*1024:raise ValueError('Compressed feed bound')
         (out/'feed.xml.bz2').write_bytes(data)
         decoder=bz2.BZ2Decompressor();xml=decoder.decompress(data,max_length=128*1024*1024+1)

@@ -1,5 +1,7 @@
 # 严格技术缺口与当前验收边界
 
+2026-11-04真实USN首次扫描：41813802977的x64/ARM64分别命中24/26条补丁定义，1581定义完整结果、原包和日志已核，见[M10-ubuntu-oval-initial](M10-ubuntu-oval-initial-2026-11-04.json)。新增一次性主机系统更新与同一冻结feed前后复扫，实际修复效果待验；不得以工作流成功当无漏洞。
+
 2026-11-04接续：新增Ubuntu24.04 x64/ARM64的[官方USN OVAL专项](../../.github/workflows/gap-ubuntu-oval.yml)，按[Canonical官方流程](https://documentation.ubuntu.com/security/security-updates/oval/)执行OpenSCAP，保留完整feed、结果、包清单、源前后指纹及退出码；三项解析控制通过，真实扫描待。此范围仅检查已发布USN涉及的缺失补丁，未知/错误不得当零发现；不能补称整个OS/CPE项闭合。
 
 2026-11-01最新完整验收：[41291313781](https://github.com/nixaveq141-ai/J-Harness/actions/runs/41291313781)@5df2372的Windows x64、Linux x64/ARM64、macOS ARM/Intel五目标全部成功，跨目标一致性门禁及本地独立复验也通过。每目标652 Git输入、735项124套件零失败错误跳过、14条同轮命令回执、三浏览器33夹具813项、R4每引擎51项、候选63文件与安装均已核验。实际JAR全部为`49d4404dbe1e7b26e9842a2c765960f066f620105668cca0bb690313d1083f95`，四个POSIX宿主C头文件的stat/目录标志ABI也已验证。当前已验运行时的50原生资源为14项已审源码输出、36项精确官方原版；严格完整来源门禁实际仍exit2，不是完整OS/CPE认证。见[五目标验收](M10-unified14-final-acceptance-2026-11-01.json)、[实际覆盖](M10-unified14-final-native-coverage-2026-11-01.json)、[本地备份](M10-unified14-final-backup-2026-11-01.json)。27成员576485243字节原包与审计材料逐SHA核对，不做异地备份。

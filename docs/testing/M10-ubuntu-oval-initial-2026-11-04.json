@@ -1,0 +1,115 @@
+{
+  "status": "INDEPENDENTLY_VERIFIED_USN_FINDINGS_NOT_CLEARANCE",
+  "runId": "41813802977",
+  "commit": "cefe42fa4026f06cee1de478ddbbb4f64b40204e",
+  "platforms": [
+    {
+      "artifactId": "13313521872",
+      "artifactSha256": "c159f25eaade1aaee63e6e05a8ff85a90daa804ceb14e85064eb8fb07c026e93",
+      "hostImage": {
+        "ImageOS": "ubuntu24",
+        "ImageVersion": "20261101.360.1",
+        "RUNNER_ARCH": "X64"
+      },
+      "status": "FINDINGS",
+      "definitionCount": 1581,
+      "affectedDefinitions": [
+        "oval:com.ubuntu.noble:def:897410000000",
+        "oval:com.ubuntu.noble:def:897310000000",
+        "oval:com.ubuntu.noble:def:896910000000",
+        "oval:com.ubuntu.noble:def:885910000000",
+        "oval:com.ubuntu.noble:def:881010000000",
+        "oval:com.ubuntu.noble:def:873920000000",
+        "oval:com.ubuntu.noble:def:859210000000",
+        "oval:com.ubuntu.noble:def:855810000000",
+        "oval:com.ubuntu.noble:def:846810000000",
+        "oval:com.ubuntu.noble:def:835810000000",
+        "oval:com.ubuntu.noble:def:834430000000",
+        "oval:com.ubuntu.noble:def:834420000000",
+        "oval:com.ubuntu.noble:def:834410000000",
+        "oval:com.ubuntu.noble:def:826310000000",
+        "oval:com.ubuntu.noble:def:822110000000",
+        "oval:com.ubuntu.noble:def:812710000000",
+        "oval:com.ubuntu.noble:def:806910000000",
+        "oval:com.ubuntu.noble:def:802110000000",
+        "oval:com.ubuntu.noble:def:800710000000",
+        "oval:com.ubuntu.noble:def:787610000000",
+        "oval:com.ubuntu.noble:def:781210000000",
+        "oval:com.ubuntu.noble:def:775610000000",
+        "oval:com.ubuntu.noble:def:772810000000",
+        "oval:com.ubuntu.noble:def:743810000000"
+      ],
+      "assessmentCounts": {
+        "false": 1556,
+        "true": 24
+      },
+      "sourceInputs": 655,
+      "fileSha256": {
+        "results.html": "54c46f696fa62fd69bf60b675592ad11b35d164506043e91e745ca0e66101251",
+        "scanner-version.log": "129e0de9716c2fd711e26a17f6262d5ea6995b155784b8d07aed2650631584b7",
+        "feed.xml.bz2": "c2b52df4ad6ac8d5dabfecc3833069d53f03f9961521dab4a181041a7a0ca53c",
+        "packages.log": "6b6359ca97840f945d4241594a12e76371c65d8585178af4533a6273afc6bd95",
+        "results.xml": "c69d6b88072f3d08061b2d619893213037b3924f13b946fd25be0e5725ed96f5",
+        "evaluation.log": "21ed1fe9cd091b94ea876413abb0a08deb645542e06222b1f574dff027491006",
+        "os-release": "87458b3b1f1ca0e5c693ade771de7007c3783bdc692fa6b39eb6414bf2af2763",
+        "feed.xml": "60b724c4dd04df2e8f146e2dc694db6c5afe7e0c5a0bc6d900ebd3e1884b4bd0"
+      }
+    },
+    {
+      "artifactId": "13312979487",
+      "artifactSha256": "94a9ca0b734403fbe5e2dc801aa2172ebf3fdc970b32b53e84cf90de3ec55583",
+      "hostImage": {
+        "ImageOS": "ubuntu24-arm64",
+        "ImageVersion": "20261026.166.1",
+        "RUNNER_ARCH": "ARM64"
+      },
+      "status": "FINDINGS",
+      "definitionCount": 1581,
+      "affectedDefinitions": [
+        "oval:com.ubuntu.noble:def:897410000000",
+        "oval:com.ubuntu.noble:def:897310000000",
+        "oval:com.ubuntu.noble:def:896910000000",
+        "oval:com.ubuntu.noble:def:895610000000",
+        "oval:com.ubuntu.noble:def:895510000000",
+        "oval:com.ubuntu.noble:def:885910000000",
+        "oval:com.ubuntu.noble:def:881010000000",
+        "oval:com.ubuntu.noble:def:873920000000",
+        "oval:com.ubuntu.noble:def:859210000000",
+        "oval:com.ubuntu.noble:def:855810000000",
+        "oval:com.ubuntu.noble:def:846810000000",
+        "oval:com.ubuntu.noble:def:835810000000",
+        "oval:com.ubuntu.noble:def:834430000000",
+        "oval:com.ubuntu.noble:def:834420000000",
+        "oval:com.ubuntu.noble:def:834410000000",
+        "oval:com.ubuntu.noble:def:826310000000",
+        "oval:com.ubuntu.noble:def:822110000000",
+        "oval:com.ubuntu.noble:def:812710000000",
+        "oval:com.ubuntu.noble:def:806910000000",
+        "oval:com.ubuntu.noble:def:802110000000",
+        "oval:com.ubuntu.noble:def:800710000000",
+        "oval:com.ubuntu.noble:def:787610000000",
+        "oval:com.ubuntu.noble:def:781210000000",
+        "oval:com.ubuntu.noble:def:775610000000",
+        "oval:com.ubuntu.noble:def:772810000000",
+        "oval:com.ubuntu.noble:def:743810000000"
+      ],
+      "assessmentCounts": {
+        "false": 1554,
+        "true": 26
+      },
+      "sourceInputs": 655,
+      "fileSha256": {
+        "os-release": "87458b3b1f1ca0e5c693ade771de7007c3783bdc692fa6b39eb6414bf2af2763",
+        "evaluation.log": "b090e665a6daf407f3536aa546b47d0986d2eaf4ec65d841ae27853c7ec9455a",
+        "results.xml": "f4b7b2c158a733bd3f6f78af72f83f17b1c1e9a16dac83f1764d89b647b06bc0",
+        "feed.xml.bz2": "c2b52df4ad6ac8d5dabfecc3833069d53f03f9961521dab4a181041a7a0ca53c",
+        "scanner-version.log": "129e0de9716c2fd711e26a17f6262d5ea6995b155784b8d07aed2650631584b7",
+        "feed.xml": "60b724c4dd04df2e8f146e2dc694db6c5afe7e0c5a0bc6d900ebd3e1884b4bd0",
+        "packages.log": "8d195c687dfd43eff2c20d12fa0efbc6c9c52341f96f7322f50911b5605e9bcc",
+        "results.html": "c9308b6fdbd5c4e8b093108b3ada8a7f79c94654d9979056e891873fb029d1b6"
+      }
+    }
+  ],
+  "fullOsCpeClearance": false,
+  "paidRequests": 0
+}

@@ -26,6 +26,13 @@ jobs:
           sudo apt-get -o Acquire::Retries=1 -o Acquire::http::Timeout=30 install -y --no-install-recommends openscap-scanner
       - name: Evaluate complete official noble USN feed
         run: python scripts/scan-ubuntu-oval.py
+      - name: Apply available updates on disposable CI host
+        run: |
+          set -o pipefail
+          sudo env DEBIAN_FRONTEND=noninteractive apt-get -o Acquire::Retries=1 -o Acquire::http::Timeout=30 -y --no-install-recommends upgrade 2>&1 | tee .build-cache/ubuntu-oval/upgrade.log
+      - name: Reevaluate host after package updates
+        if: always()
+        run: python scripts/scan-ubuntu-oval.py --phase after
       - uses: actions/upload-artifact@v4
         if: always()
         with:
