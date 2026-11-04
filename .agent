@@ -1,8 +1,10 @@
 # J-Harness 项目接续说明
 
-最后更新：2026-11-01（Asia/Shanghai）。根目录 AGENTS.md 引用本文件。开始实现前阅读，并以当前源码、Git 与验收记录核实日期快照。
+最后更新：2026-11-04（Asia/Shanghai）。根目录 AGENTS.md 引用本文件。开始实现前阅读，并以当前源码、Git 与验收记录核实日期快照。
 
 ## 当前接续状态
+
+- 2026-11-04继续OS-CPE：新增Ubuntu24.04 x64/ARM64官方USN OVAL/OpenSCAP专项，绑定完整源码前后指纹、真实包版本/宿主镜像、feed与结果摘要、命令退出日志；空/重复/未知结果拒绝当清白，首次即撤陈旧结果。三项解析反例控制过，远端真实扫描待。仅USN缺补丁审查，不代替未修复CVE、第三方软件、Windows/macOS/JDK或36项原生来源；其余历史因果保持OPEN，无付费模型。
 
 - 2026-11-01最终41291313781@5df五目标全部成功：Win x64/Linux x64+ARM64/Mac ARM+Intel各652 Git输入/735项124套件零失败错误跳过/14回执/813浏览器/R4各51/安装63文件，实际JAR均49d4404d；四POSIX宿主C ABI过，严格本地原包重验等于CI一致性收据。实际14源码+36官方原版50项，完整来源严格exit2。27成员576485243字节原包/收据/审计器本地备份逐SHA过。ARM标志/stat与Git父仓库边界实修闭合；五严格缺口仍OPEN，原39剩36。当前WinPTY源013db与原版最小环境仍死，直接agent自有调试均握手前13a，未定因。补诊断实际CLEANUP/IO代码、原因与跟踪数量，本地隐私控制过，不冒称5df执行此后改动。见M10-unified14-final-acceptance/backup及remaining-technical-gaps；不接受风险归档，无付费/main/Release。
 

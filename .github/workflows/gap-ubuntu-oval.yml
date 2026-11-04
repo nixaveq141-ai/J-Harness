@@ -1,0 +1,34 @@
+name: Ubuntu official USN host snapshot
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/m1059-full-validation]
+    paths: [.github/workflows/gap-ubuntu-oval.yml]
+permissions:
+  contents: read
+jobs:
+  evaluate:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python scripts/test-ubuntu-oval.py
+      - name: Install distribution scanner on disposable host
+        run: |
+          sudo apt-get -o Acquire::Retries=1 -o Acquire::http::Timeout=30 update
+          sudo apt-get -o Acquire::Retries=1 -o Acquire::http::Timeout=30 install -y --no-install-recommends openscap-scanner
+      - name: Evaluate complete official noble USN feed
+        run: python scripts/scan-ubuntu-oval.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ubuntu-oval-${{ matrix.os }}
+          include-hidden-files: true
+          path: .build-cache/ubuntu-oval/
