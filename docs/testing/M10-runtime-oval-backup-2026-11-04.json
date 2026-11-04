@@ -1,0 +1,24 @@
+{
+  "status": "LOCAL_BACKUP_MEMBERS_VERIFIED",
+  "path": ".build-cache/local-evidence-backups/2026-11-04/minimal-runtime-oval-and-install.zip",
+  "sha256": "6fe426c1d6648e90c9434ee8f4f5742f6be1d5a1e0fb016a0fb0dbb087eb95c1",
+  "members": 13,
+  "bytes": 57240920,
+  "memberSha256": {
+    ".build-cache/runtime-oval-20261104/13315371510.zip": "c9b6b3cb2936e989a00d3f7df9e552ced0f11dd1f4cebe8391f2114e8f64de18",
+    ".build-cache/runtime-oval-20261104/13314617795.zip": "2eff29b565578c4bc24b606dbddbe2749cf12e2ba4a944eb492290002470b1c8",
+    "docs/testing/M10-runtime-oval-acceptance-2026-11-04.json": "464374f85944a835082db006db3ed4c1bdffffa1c44f2a153636b27672705efd",
+    "docs/testing/ubuntu-runtime-image-lock-2026-11-04.json": "99c3d28c0bc246f8b70a1f29c6aec4c6a968f1f9548b0f628d2e202bc1461231",
+    "scripts/run-runtime-oval.py": "475a27770c57f34cdb2c02bf4326be64629a577c7e50f46cac0e8009285db30f",
+    "scripts/test-runtime-oval.py": "3203477fd4315b1aac46ef521f56e43beb5e3ce3418b552d0cedeb0697050227",
+    "scripts/scan-ubuntu-oval.py": "f200a790873d8247cb9433aef3bb8c180ad124ce425836dac532ee83ca98e1cd",
+    "scripts/test-ubuntu-oval.py": "f8b8a47f52fe088ebec96ce052b042b21401e2a64c178e103e57db936d1c004b",
+    "scripts/evidence_io.py": "c1ceea1f14da38bb619efa6f261575115252b8bc89666918263f1c1ff2226dac",
+    "scripts/evidence_run.py": "ba03a91bd450c6d513320f3163bf175230919d5282df41fb036ee8175fed7d83",
+    ".github/workflows/gap-runtime-oval.yml": "1910836cb487f9dc4cf89bab2f22c4134f5a0c0e397095127793be92f9fb1f28",
+    ".build-cache/audit-runtime-oval.py": "3e39cabe742afc65df46523169b8841952704415e099c7807ca4ac72d9b05ba5",
+    ".build-cache/record-runtime-oval-final.py": "dcdd1a203290ab55ac1a823859598bcad423d9c28d6ae8a99e6de5b7d9f22f17"
+  },
+  "acceptedCandidateBackupReceipt": "docs/testing/M10-unified14-final-backup-2026-11-01.json",
+  "offsite": false
+}

@@ -1,0 +1,218 @@
+{
+  "status": "SELECTED_LINUX_RUNTIME_USN_AND_OFFLINE_INSTALL_INDEPENDENTLY_ACCEPTED",
+  "runId": "41816882486",
+  "commit": "31599bb8851efcf924b2d67296515a6646dca956",
+  "runtimeCommit": "5df2372cbe00047e3233650fd37462290a534127",
+  "platforms": [
+    {
+      "artifactId": "13315371510",
+      "artifactSha256": "c9b6b3cb2936e989a00d3f7df9e552ced0f11dd1f4cebe8391f2114e8f64de18",
+      "image": "eclipse-temurin@sha256:db724162e4ff5f71fa0a2815026314d9e5e0e9a139f49be1d4717e6930e93341",
+      "imageId": "sha256:4291fbae5ec045e2801c51b7db0b75e4371f04b385f124561068384c465bcd67",
+      "architecture": "amd64",
+      "sourceFiles": 658,
+      "commandReceipts": 14,
+      "contextFileSha256": {
+        "LICENSE": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+        "NOTICE": "a92f9404e5ebe32563b19b749d341be59f8dde0f5cc00a04c03a1063d034969d",
+        "third-party/README.md": "fa19895a3909237c8293fc6099ce0cdc2f188f87b62b3976c5a7aa42357dd0c4",
+        "third-party/inventory.json": "b9e42a304534aebb6145f67063768c7a58c3300a40d12b6d4de5617f1d918168",
+        "target/jharness-0.1.0-SNAPSHOT-candidate.zip": "ebd9b1fcaccf588c79c68f57015e3ebcd6a8c111f7fbf38f256ce0b025700b8d",
+        "scripts/evidence_run.py": "ba03a91bd450c6d513320f3163bf175230919d5282df41fb036ee8175fed7d83",
+        "scripts/smoke-candidate.py": "37afbb3b1a45021ae3adac621fc4353505a1378795c9a97225940fced2430c45",
+        "scripts/evidence_io.py": "c1ceea1f14da38bb619efa6f261575115252b8bc89666918263f1c1ff2226dac",
+        "scripts/scan-ubuntu-oval.py": "f200a790873d8247cb9433aef3bb8c180ad124ce425836dac532ee83ca98e1cd",
+        "third-party/upstream/cli11-LICENSE": "3ee4a90b05dd076b70a36a0330be8bdfecbe75bbd0fc3343a4f289c86e2063aa",
+        "third-party/upstream/kotlin-LICENSE": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+        "third-party/upstream/kotlin-NOTICE": "0b09a83d3ef7795c7dec65e815866597c066c53898f2852a76599b8f5552941a",
+        "third-party/upstream/sources.json": "9b7e037b845ad412ecf860a78aab626454645c08fa1fa3763f885844c4ecf40b",
+        "third-party/upstream/terminal-LICENSE": "5d177f23ecfeb0ea8e050b6a5a16355e1ae9a0b286436ca8f83ed08b3795be6b",
+        "third-party/upstream/pty4j-LICENSE": "3a4a6fe55f67f02b92be0ec9907e347de8ab5c8edf9214c5c8019e5820517884",
+        "third-party/upstream/pty4j-NOTICE": "7f1b01b809cecc274e9a0aaeba288ccb36a18cb96a97b8cc1fde58c1e713e845",
+        "third-party/upstream/annotations-LICENSE": "8c1e966c7855fb54027bcaf6ebe7a43abe4785791e8cf9148c363761d493d097",
+        "third-party/upstream/terminal-NOTICE": "e7fbaadee6ab20c28b87730a510ee5f5815d8fb4bd88d1d54d282dc2a74c0726",
+        "third-party/upstream/winpty-LICENSE": "c39e428064b4f3e4fe81a975bf0fd3b845922b431bc4d9a7ffc8bfb091981836",
+        "third-party/upstream/wrapper-NOTICE": "706530c7c8baaa8dd4b37f3f12c87042c73b9d53051a0197770373516d85ec0f",
+        "third-party/artifacts/org.slf4j/slf4j-api/2.0.13/META-INF/LICENSE.txt": "4e7f90c86ab51278228bce153122f1d8df30149d13ce9ef524c8444a84c32dcc",
+        "third-party/artifacts/org.slf4j/slf4j-nop/2.0.13/META-INF/LICENSE.txt": "4e7f90c86ab51278228bce153122f1d8df30149d13ce9ef524c8444a84c32dcc",
+        "third-party/artifacts/org.apiguardian/apiguardian-api/1.1.2/META-INF/LICENSE": "b40930bbcf80744c86c46a12bc9da056641d722716c378f5659b9e555ef833e1",
+        "third-party/artifacts/net.java.dev.jna/jna/5.14.0/META-INF/LICENSE": "521bb271ac56e0e29a1b1b688b94af17d00d378fc8e63478d8c8b2a7c4a229d0",
+        "third-party/artifacts/net.java.dev.jna/jna-platform/5.14.0/META-INF/LICENSE": "521bb271ac56e0e29a1b1b688b94af17d00d378fc8e63478d8c8b2a7c4a229d0",
+        "third-party/artifacts/org.junit.jupiter/junit-jupiter-engine/5.12.2/META-INF/LICENSE.md": "5aa4cd44c111add178d1c2e2fe36d58a484012c80167df925f826cd64d411bf0",
+        "third-party/artifacts/org.junit.jupiter/junit-jupiter-engine/5.12.2/META-INF/LICENSE-notice.md": "c7d843e0faf8a251278c9220f6b5326a42a01f08b855c1ec871bcef6211a7e2a",
+        "third-party/artifacts/org.junit.jupiter/junit-jupiter-params/5.12.2/META-INF/LICENSE.md": "5aa4cd44c111add178d1c2e2fe36d58a484012c80167df925f826cd64d411bf0",
+        "third-party/artifacts/org.junit.jupiter/junit-jupiter-params/5.12.2/META-INF/LICENSE-univocity-parsers.md": "d25d17d20162cce14cdbb467a0f6d75a35ba488a4144637b17392eaa8042c122",
+        "third-party/artifacts/org.junit.jupiter/junit-jupiter-params/5.12.2/META-INF/LICENSE-notice.md": "c7d843e0faf8a251278c9220f6b5326a42a01f08b855c1ec871bcef6211a7e2a",
+        "third-party/artifacts/org.junit.jupiter/junit-jupiter/5.12.2/META-INF/LICENSE.md": "5aa4cd44c111add178d1c2e2fe36d58a484012c80167df925f826cd64d411bf0",
+        "third-party/artifacts/org.junit.jupiter/junit-jupiter/5.12.2/META-INF/LICENSE-notice.md": "c7d843e0faf8a251278c9220f6b5326a42a01f08b855c1ec871bcef6211a7e2a",
+        "third-party/artifacts/org.junit.jupiter/junit-jupiter-api/5.12.2/META-INF/LICENSE.md": "5aa4cd44c111add178d1c2e2fe36d58a484012c80167df925f826cd64d411bf0",
+        "third-party/artifacts/org.junit.jupiter/junit-jupiter-api/5.12.2/META-INF/LICENSE-notice.md": "c7d843e0faf8a251278c9220f6b5326a42a01f08b855c1ec871bcef6211a7e2a",
+        "third-party/artifacts/org.junit.platform/junit-platform-engine/1.12.2/META-INF/LICENSE.md": "5aa4cd44c111add178d1c2e2fe36d58a484012c80167df925f826cd64d411bf0",
+        "third-party/artifacts/org.junit.platform/junit-platform-engine/1.12.2/META-INF/LICENSE-notice.md": "c7d843e0faf8a251278c9220f6b5326a42a01f08b855c1ec871bcef6211a7e2a",
+        "third-party/artifacts/org.junit.platform/junit-platform-commons/1.12.2/META-INF/LICENSE.md": "5aa4cd44c111add178d1c2e2fe36d58a484012c80167df925f826cd64d411bf0",
+        "third-party/artifacts/org.junit.platform/junit-platform-commons/1.12.2/META-INF/LICENSE-notice.md": "c7d843e0faf8a251278c9220f6b5326a42a01f08b855c1ec871bcef6211a7e2a",
+        "third-party/artifacts/com.fasterxml.jackson.core/jackson-annotations/2.21/META-INF/LICENSE": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+        "third-party/artifacts/com.fasterxml.jackson.core/jackson-annotations/2.21/META-INF/NOTICE": "612b14bc77c944ce229cbba0d14919162cfea8ed802cbf06a8e865e032d03201",
+        "third-party/artifacts/com.fasterxml.jackson.core/jackson-databind/2.21.7/META-INF/LICENSE": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+        "third-party/artifacts/com.fasterxml.jackson.core/jackson-databind/2.21.7/META-INF/NOTICE": "612b14bc77c944ce229cbba0d14919162cfea8ed802cbf06a8e865e032d03201",
+        "third-party/artifacts/com.fasterxml.jackson.core/jackson-core/2.21.7/META-INF/LICENSE": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+        "third-party/artifacts/com.fasterxml.jackson.core/jackson-core/2.21.7/META-INF/FastDoubleParser-ThirdParty-LICENSE": "dbc36f9422a40d58d1a214080583667cfd37d61c2fae1657d981edda2a60727f",
+        "third-party/artifacts/com.fasterxml.jackson.core/jackson-core/2.21.7/META-INF/Schubfach-LICENSE": "12d39a6615219d73202300715e365bec2b958f858d1e837c8f2dace57f905969",
+        "third-party/artifacts/com.fasterxml.jackson.core/jackson-core/2.21.7/META-INF/FastDoubleParser-LICENSE": "59067508e44346bf93dc9c5e4d673a67ecd77988c2020bb5e0f8667eb199f396",
+        "third-party/artifacts/com.fasterxml.jackson.core/jackson-core/2.21.7/META-INF/NOTICE": "e6aef1c0f4cf5b0f802c16b31fce309b3c3737450b93c40d6291bf6540aae3d1",
+        "third-party/artifacts/org.opentest4j/opentest4j/1.3.0/META-INF/LICENSE": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08"
+      },
+      "before": {
+        "status": "FINDINGS",
+        "counts": {
+          "false": 1579,
+          "true": 2
+        },
+        "assessmentCounts": {
+          "false": 1579,
+          "true": 1
+        },
+        "definitions": 1581,
+        "affectedDefinitions": [
+          "oval:com.ubuntu.noble:def:897410000000"
+        ]
+      },
+      "after": {
+        "status": "NO_USN_FINDINGS_IN_SELECTED_HOST_SCOPE",
+        "counts": {
+          "false": 1580,
+          "true": 1
+        },
+        "assessmentCounts": {
+          "false": 1580
+        },
+        "definitions": 1581,
+        "affectedDefinitions": []
+      },
+      "frozenFeedSha256": "c2b52df4ad6ac8d5dabfecc3833069d53f03f9961521dab4a181041a7a0ca53c",
+      "offlineNetworkVerified": true,
+      "installationChecks": {
+        "installedManifest": true,
+        "launcherDoctorNoNetwork": true,
+        "approvedWriteAndReport": true,
+        "approvalEofDenies": true,
+        "cancelUnknownRefusesReplayAndExplicitRecovery": true
+      },
+      "candidateZipSha256": "ebd9b1fcaccf588c79c68f57015e3ebcd6a8c111f7fbf38f256ce0b025700b8d",
+      "runtimeJarSha256": "49d4404dbe1e7b26e9842a2c765960f066f620105668cca0bb690313d1083f95",
+      "cleanupExitCode": 0,
+      "afterPackagesSha256": "b89de000c9dd1f323e73ad98e8fd938834ca33b33e8472611ad26dd323721445",
+      "originalHostEsmToolFamiliesAbsentFromSelectedPackageSet": true
+    },
+    {
+      "artifactId": "13314617795",
+      "artifactSha256": "2eff29b565578c4bc24b606dbddbe2749cf12e2ba4a944eb492290002470b1c8",
+      "image": "eclipse-temurin@sha256:e29bfdff2f7245d8be69ee092651149c026e1b8c2b2d4967c9563963f30076f3",
+      "imageId": "sha256:5aabab701b2cf5dec87d5756b22e02c82f3796298b42e67541eaf2d95a95e33f",
+      "architecture": "arm64",
+      "sourceFiles": 658,
+      "commandReceipts": 14,
+      "contextFileSha256": {
+        "LICENSE": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+        "NOTICE": "a92f9404e5ebe32563b19b749d341be59f8dde0f5cc00a04c03a1063d034969d",
+        "third-party/README.md": "fa19895a3909237c8293fc6099ce0cdc2f188f87b62b3976c5a7aa42357dd0c4",
+        "third-party/inventory.json": "b9e42a304534aebb6145f67063768c7a58c3300a40d12b6d4de5617f1d918168",
+        "scripts/scan-ubuntu-oval.py": "f200a790873d8247cb9433aef3bb8c180ad124ce425836dac532ee83ca98e1cd",
+        "scripts/evidence_io.py": "c1ceea1f14da38bb619efa6f261575115252b8bc89666918263f1c1ff2226dac",
+        "scripts/evidence_run.py": "ba03a91bd450c6d513320f3163bf175230919d5282df41fb036ee8175fed7d83",
+        "scripts/smoke-candidate.py": "37afbb3b1a45021ae3adac621fc4353505a1378795c9a97225940fced2430c45",
+        "target/jharness-0.1.0-SNAPSHOT-candidate.zip": "ebd9b1fcaccf588c79c68f57015e3ebcd6a8c111f7fbf38f256ce0b025700b8d",
+        "third-party/upstream/kotlin-LICENSE": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+        "third-party/upstream/sources.json": "9b7e037b845ad412ecf860a78aab626454645c08fa1fa3763f885844c4ecf40b",
+        "third-party/upstream/terminal-NOTICE": "e7fbaadee6ab20c28b87730a510ee5f5815d8fb4bd88d1d54d282dc2a74c0726",
+        "third-party/upstream/annotations-LICENSE": "8c1e966c7855fb54027bcaf6ebe7a43abe4785791e8cf9148c363761d493d097",
+        "third-party/upstream/cli11-LICENSE": "3ee4a90b05dd076b70a36a0330be8bdfecbe75bbd0fc3343a4f289c86e2063aa",
+        "third-party/upstream/wrapper-NOTICE": "706530c7c8baaa8dd4b37f3f12c87042c73b9d53051a0197770373516d85ec0f",
+        "third-party/upstream/pty4j-NOTICE": "7f1b01b809cecc274e9a0aaeba288ccb36a18cb96a97b8cc1fde58c1e713e845",
+        "third-party/upstream/kotlin-NOTICE": "0b09a83d3ef7795c7dec65e815866597c066c53898f2852a76599b8f5552941a",
+        "third-party/upstream/terminal-LICENSE": "5d177f23ecfeb0ea8e050b6a5a16355e1ae9a0b286436ca8f83ed08b3795be6b",
+        "third-party/upstream/pty4j-LICENSE": "3a4a6fe55f67f02b92be0ec9907e347de8ab5c8edf9214c5c8019e5820517884",
+        "third-party/upstream/winpty-LICENSE": "c39e428064b4f3e4fe81a975bf0fd3b845922b431bc4d9a7ffc8bfb091981836",
+        "third-party/artifacts/org.junit.platform/junit-platform-commons/1.12.2/META-INF/LICENSE-notice.md": "c7d843e0faf8a251278c9220f6b5326a42a01f08b855c1ec871bcef6211a7e2a",
+        "third-party/artifacts/org.junit.platform/junit-platform-commons/1.12.2/META-INF/LICENSE.md": "5aa4cd44c111add178d1c2e2fe36d58a484012c80167df925f826cd64d411bf0",
+        "third-party/artifacts/org.junit.platform/junit-platform-engine/1.12.2/META-INF/LICENSE-notice.md": "c7d843e0faf8a251278c9220f6b5326a42a01f08b855c1ec871bcef6211a7e2a",
+        "third-party/artifacts/org.junit.platform/junit-platform-engine/1.12.2/META-INF/LICENSE.md": "5aa4cd44c111add178d1c2e2fe36d58a484012c80167df925f826cd64d411bf0",
+        "third-party/artifacts/org.junit.jupiter/junit-jupiter-engine/5.12.2/META-INF/LICENSE-notice.md": "c7d843e0faf8a251278c9220f6b5326a42a01f08b855c1ec871bcef6211a7e2a",
+        "third-party/artifacts/org.junit.jupiter/junit-jupiter-engine/5.12.2/META-INF/LICENSE.md": "5aa4cd44c111add178d1c2e2fe36d58a484012c80167df925f826cd64d411bf0",
+        "third-party/artifacts/org.junit.jupiter/junit-jupiter/5.12.2/META-INF/LICENSE-notice.md": "c7d843e0faf8a251278c9220f6b5326a42a01f08b855c1ec871bcef6211a7e2a",
+        "third-party/artifacts/org.junit.jupiter/junit-jupiter/5.12.2/META-INF/LICENSE.md": "5aa4cd44c111add178d1c2e2fe36d58a484012c80167df925f826cd64d411bf0",
+        "third-party/artifacts/org.junit.jupiter/junit-jupiter-params/5.12.2/META-INF/LICENSE-univocity-parsers.md": "d25d17d20162cce14cdbb467a0f6d75a35ba488a4144637b17392eaa8042c122",
+        "third-party/artifacts/org.junit.jupiter/junit-jupiter-params/5.12.2/META-INF/LICENSE-notice.md": "c7d843e0faf8a251278c9220f6b5326a42a01f08b855c1ec871bcef6211a7e2a",
+        "third-party/artifacts/org.junit.jupiter/junit-jupiter-params/5.12.2/META-INF/LICENSE.md": "5aa4cd44c111add178d1c2e2fe36d58a484012c80167df925f826cd64d411bf0",
+        "third-party/artifacts/org.junit.jupiter/junit-jupiter-api/5.12.2/META-INF/LICENSE-notice.md": "c7d843e0faf8a251278c9220f6b5326a42a01f08b855c1ec871bcef6211a7e2a",
+        "third-party/artifacts/org.junit.jupiter/junit-jupiter-api/5.12.2/META-INF/LICENSE.md": "5aa4cd44c111add178d1c2e2fe36d58a484012c80167df925f826cd64d411bf0",
+        "third-party/artifacts/org.apiguardian/apiguardian-api/1.1.2/META-INF/LICENSE": "b40930bbcf80744c86c46a12bc9da056641d722716c378f5659b9e555ef833e1",
+        "third-party/artifacts/com.fasterxml.jackson.core/jackson-annotations/2.21/META-INF/LICENSE": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+        "third-party/artifacts/com.fasterxml.jackson.core/jackson-annotations/2.21/META-INF/NOTICE": "612b14bc77c944ce229cbba0d14919162cfea8ed802cbf06a8e865e032d03201",
+        "third-party/artifacts/com.fasterxml.jackson.core/jackson-core/2.21.7/META-INF/Schubfach-LICENSE": "12d39a6615219d73202300715e365bec2b958f858d1e837c8f2dace57f905969",
+        "third-party/artifacts/com.fasterxml.jackson.core/jackson-core/2.21.7/META-INF/FastDoubleParser-LICENSE": "59067508e44346bf93dc9c5e4d673a67ecd77988c2020bb5e0f8667eb199f396",
+        "third-party/artifacts/com.fasterxml.jackson.core/jackson-core/2.21.7/META-INF/LICENSE": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+        "third-party/artifacts/com.fasterxml.jackson.core/jackson-core/2.21.7/META-INF/FastDoubleParser-ThirdParty-LICENSE": "dbc36f9422a40d58d1a214080583667cfd37d61c2fae1657d981edda2a60727f",
+        "third-party/artifacts/com.fasterxml.jackson.core/jackson-core/2.21.7/META-INF/NOTICE": "e6aef1c0f4cf5b0f802c16b31fce309b3c3737450b93c40d6291bf6540aae3d1",
+        "third-party/artifacts/com.fasterxml.jackson.core/jackson-databind/2.21.7/META-INF/LICENSE": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+        "third-party/artifacts/com.fasterxml.jackson.core/jackson-databind/2.21.7/META-INF/NOTICE": "612b14bc77c944ce229cbba0d14919162cfea8ed802cbf06a8e865e032d03201",
+        "third-party/artifacts/org.slf4j/slf4j-api/2.0.13/META-INF/LICENSE.txt": "4e7f90c86ab51278228bce153122f1d8df30149d13ce9ef524c8444a84c32dcc",
+        "third-party/artifacts/org.slf4j/slf4j-nop/2.0.13/META-INF/LICENSE.txt": "4e7f90c86ab51278228bce153122f1d8df30149d13ce9ef524c8444a84c32dcc",
+        "third-party/artifacts/net.java.dev.jna/jna-platform/5.14.0/META-INF/LICENSE": "521bb271ac56e0e29a1b1b688b94af17d00d378fc8e63478d8c8b2a7c4a229d0",
+        "third-party/artifacts/net.java.dev.jna/jna/5.14.0/META-INF/LICENSE": "521bb271ac56e0e29a1b1b688b94af17d00d378fc8e63478d8c8b2a7c4a229d0",
+        "third-party/artifacts/org.opentest4j/opentest4j/1.3.0/META-INF/LICENSE": "c6596eb7be8581c18be736c846fb9173b69eccf6ef94c5135893ec56bd92ba08"
+      },
+      "before": {
+        "status": "FINDINGS",
+        "counts": {
+          "false": 1579,
+          "true": 2
+        },
+        "assessmentCounts": {
+          "false": 1579,
+          "true": 1
+        },
+        "definitions": 1581,
+        "affectedDefinitions": [
+          "oval:com.ubuntu.noble:def:897410000000"
+        ]
+      },
+      "after": {
+        "status": "NO_USN_FINDINGS_IN_SELECTED_HOST_SCOPE",
+        "counts": {
+          "false": 1580,
+          "true": 1
+        },
+        "assessmentCounts": {
+          "false": 1580
+        },
+        "definitions": 1581,
+        "affectedDefinitions": []
+      },
+      "frozenFeedSha256": "c2b52df4ad6ac8d5dabfecc3833069d53f03f9961521dab4a181041a7a0ca53c",
+      "offlineNetworkVerified": true,
+      "installationChecks": {
+        "installedManifest": true,
+        "launcherDoctorNoNetwork": true,
+        "approvedWriteAndReport": true,
+        "approvalEofDenies": true,
+        "cancelUnknownRefusesReplayAndExplicitRecovery": true
+      },
+      "candidateZipSha256": "ebd9b1fcaccf588c79c68f57015e3ebcd6a8c111f7fbf38f256ce0b025700b8d",
+      "runtimeJarSha256": "49d4404dbe1e7b26e9842a2c765960f066f620105668cca0bb690313d1083f95",
+      "cleanupExitCode": 0,
+      "afterPackagesSha256": "8c473546d63ebac40737157127b81e8609ca7b7ca2833fc17d94a06036248c44",
+      "originalHostEsmToolFamiliesAbsentFromSelectedPackageSet": true
+    }
+  ],
+  "originalHostEsmFindingsStillOpen": 21,
+  "fullOsCpeClearance": false,
+  "paidRequests": 0,
+  "releaseApproved": false,
+  "limits": [
+    "Only official noble USN patch definitions in these selected runtime containers; not all CVEs or JDK/native vulnerability applicability",
+    "Original build hosts still have 21 ESM patch findings",
+    "Base OCI digests are fixed; updates used repositories at test time and the updated root filesystem is not claimed byte-reproducible",
+    "Existing candidate runtime is 5df2372, orchestration is 31599bb; no new release or published image"
+  ]
+}

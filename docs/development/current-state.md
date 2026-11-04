@@ -1,5 +1,8 @@
 # 当前实现、验收与未完成项
 
+2026-11-04独立最小Linux运行配置已验：[41816882486](https://github.com/nixaveq141-ai/J-Harness/actions/runs/41816882486)的amd64/arm64两侧固定OCI镜像、同一既验候选、14实际命令和完整宿主源码指纹均核验；1581定义完整评估中，各1条补丁命中经公开更新消除，1580条补丁定义全false、无未知。原宿主命中的ESM开发工具不在该配置包集合。断开外部网络后五项原候选安装/审批/拒绝/取消恢复检查全过，容器清理退出0。见[验收](../testing/M10-runtime-oval-acceptance-2026-11-04.json)、[本地备份](../testing/M10-runtime-oval-backup-2026-11-04.json)、[精确范围](../testing/runtime-security-profile-2026-11-04.md)。闭合的是这两个选定运行配置的USN包整改与离线安装验证；原CI宿主21条ESM仍开放，整个OS/JDK/原生CPE与36来源、历史因果均未冒称关闭。
+
+
 2026-11-04 OS补丁实际进展：[41814311453](https://github.com/nixaveq141-ai/J-Harness/actions/runs/41814311453)@f32的Ubuntu x64/ARM64系统更新和同feed复扫已独立核验。两侧1581条定义中，补丁命中各24→21；Bind、libmspack、PCRE2三项USN命中消除。剩21项均属于官方esm-apps/noble通道，普通仓库升级未修，未附加账户或购买订阅。见[前后证据](../testing/M10-ubuntu-oval-updates-2026-11-04.json)、[11成员本地备份](../testing/M10-ubuntu-oval-backup-2026-11-04.json)。仅证明这些一次性CI主机的已装包修补效果，不证明旧运行时CI或用户系统已更新、运行进程/内核已重启，也不覆盖所有未修复CVE、第三方软件/JDK及完整OS-CPE。36原生来源及三类历史因果继续开放。
 
 
