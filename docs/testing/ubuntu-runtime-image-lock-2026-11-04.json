@@ -1,0 +1,8 @@
+{
+  "source": "https://github.com/docker-library/repo-info/blob/master/repos/eclipse-temurin/remote/21-jre-noble.md",
+  "index": "sha256:161310cd5bd41fd549d19cf9f90b614897cb4a1532555c613b43b7e0628fe5d6",
+  "images": {
+    "x86_64": {"architecture": "amd64", "digest": "sha256:db724162e4ff5f71fa0a2815026314d9e5e0e9a139f49be1d4717e6930e93341"},
+    "aarch64": {"architecture": "arm64", "digest": "sha256:e29bfdff2f7245d8be69ee092651149c026e1b8c2b2d4967c9563963f30076f3"}
+  }
+}

@@ -1,0 +1,38 @@
+name: Pinned Linux runtime USN and offline install
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/m1059-full-validation]
+    paths: [.github/workflows/gap-runtime-oval.yml]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  runtime:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python scripts/test-runtime-oval.py
+      - uses: actions/download-artifact@v4
+        with:
+          name: source-native-unified-ubuntu-24.04
+          run-id: 41291313781
+          github-token: ${{ github.token }}
+          path: .build-cache/runtime-input
+      - run: python scripts/run-runtime-oval.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: runtime-oval-${{ matrix.os }}
+          include-hidden-files: true
+          path: |
+            .build-cache/runtime-oval/
+            !.build-cache/runtime-oval/context/**
