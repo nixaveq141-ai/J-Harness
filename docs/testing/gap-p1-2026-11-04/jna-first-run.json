@@ -1,0 +1,65 @@
+{
+  "status": "JNA_FIRST_RUN_FAILED_NOT_ACCEPTED",
+  "runId": "41826192147",
+  "commit": "06091546b03e90cefb90922550e524067519382a",
+  "artifacts": [
+    {
+      "id": 13320525003,
+      "name": "p1-linux-jna-arm",
+      "digest": "sha256:baa28953209c6d014a4fe07e6d4c9cd54d50e9e52f6953679e2cf56736e8a93e",
+      "size_in_bytes": 2002328
+    },
+    {
+      "id": 13320110065,
+      "name": "p1-linux-jna-x86",
+      "digest": "sha256:1cc836e701f325e6c25ced7248554cd70075b77689129fec216933387ced455b",
+      "size_in_bytes": 1996568
+    },
+    {
+      "id": 13319990606,
+      "name": "p1-linux-jna-s390x",
+      "digest": "sha256:be779ee72e06562844bf82737ab3138bfb6f911080334e44b50a425e1405f4fa",
+      "size_in_bytes": 1999878
+    },
+    {
+      "id": 13319776264,
+      "name": "p1-linux-jna-riscv64",
+      "digest": "sha256:0c4a940fdf4c4062b11fbdafbb4b79f1bac68652388e2609e7a3c4e2f56cd18d",
+      "size_in_bytes": 1995330
+    },
+    {
+      "id": 13319342576,
+      "name": "p1-linux-jna-ppc64le",
+      "digest": "sha256:1d477c3952e18a4c6be353e09f61aa5cff603d13f29e5ee89360aaaa31598e57",
+      "size_in_bytes": 1999144
+    },
+    {
+      "id": 13319227647,
+      "name": "p1-linux-jna-armel",
+      "digest": "sha256:745914c5bcefca08e1408e992ee778ea01c993b7a06f1a823a5f7044d2980d00",
+      "size_in_bytes": 2002842
+    },
+    {
+      "id": 13319061905,
+      "name": "p1-linux-jna-ppc",
+      "digest": "sha256:9afc7d28bea918566336054d9c23dcbbb4f75f9979c3037fc8339437e48ea990",
+      "size_in_bytes": 1999308
+    },
+    {
+      "id": 13317979821,
+      "name": "p1-linux-jna-mips64el",
+      "digest": "sha256:fdd39db9d7880fd9f653f6ebb77f19770adcfc5394c0ee80bd05980230e1245d",
+      "size_in_bytes": 1999714
+    }
+  ],
+  "observedX86": {
+    "jobId": "126561421289",
+    "jobLogSha256": "4e79a5f5cd5e78907e1b2fb191465726315dd5e47f4844c1e9f4dcda93741fc4",
+    "build": "Ant BUILD SUCCESSFUL",
+    "failure": "Output enumerator rejected extra identical copies that Ant creates in class directories",
+    "probeExecuted": false
+  },
+  "correction": "Select exact fresh build/native-linux-target/libjnidispatch.so; reject any divergent Ant class copy",
+  "otherPlatforms": "Failure status confirmed; raw logs pending per-platform audit",
+  "productCoverageChanged": false
+}

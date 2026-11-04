@@ -37,6 +37,15 @@ def require_elf(raw,target):
  return dict(elfClass=width,endianness=endian,machine=actual,flags=flags)
 
 
+def compiled_library(source,target):
+ library=source/'build'/('native-linux-'+target)/'libjnidispatch.so'
+ if library.is_symlink() or not library.is_file():raise ValueError('Fresh native build output required')
+ expected=stream_sha256(library)
+ copies=[p for p in (source/'build').rglob('libjnidispatch.so') if p.is_file()]
+ if any(p.is_symlink() or stream_sha256(p)!=expected for p in copies):raise ValueError('Ant native/class copies differ')
+ return library
+
+
 def main():
  parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('target',choices=TARGETS);a=parser.parse_args()
  if os.environ.get('GITHUB_ACTIONS')!='true' or not os.environ.get('GITHUB_RUN_ID','').isdigit():raise ValueError('Dedicated CI required')
@@ -78,9 +87,7 @@ def main():
   command(['ant','-Dbuild-native=true','-Dos.prefix=linux-'+target,'-DARCH='+arch,'-DCC='+prefix+'-gcc',
    '-Dcflags_extra.native=-idirafter /usr/include',
    '-DEXTRA_MAKE_OPTS=HOST_CONFIG=--host='+prefix+' STRIP='+prefix+'-strip','native'],'build',source)
-  outputs=[p for p in (source/'build').rglob('libjnidispatch.so') if p.is_file()]
-  if len(outputs)!=1:raise ValueError('One fresh compiled JNA output required')
-  library=outputs[0];identity=require_elf(library.read_bytes(),target);output=out/'libjnidispatch.so';output.write_bytes(library.read_bytes())
+  library=compiled_library(source,target);identity=require_elf(library.read_bytes(),target);output=out/'libjnidispatch.so';output.write_bytes(library.read_bytes())
   command([prefix+'-readelf','-h','-d','-V','-Ws',str(output)],'elf-audit')
   ffi_headers=library.parent/'libffi/include';probe=out/'jni-probe';java=Path(os.environ['JAVA_HOME'])
   command([prefix+'-gcc','-std=c11','-Wall','-Wextra','-Werror','-O2','-I'+str(ffi_headers),'-I'+str(source/'build/headers'),
