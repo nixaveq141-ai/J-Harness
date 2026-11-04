@@ -1,0 +1,388 @@
+{
+  "status": "SELECTED_HOST_PUBLIC_UPDATES_VERIFIED_ESM_FINDINGS_REMAIN",
+  "runId": "41814311453",
+  "commit": "f32ba0d576f68a4b16b884b66e74d1eff6ba60d5",
+  "platforms": [
+    {
+      "artifactId": "13313842708",
+      "artifactSha256": "a5b4dcd7752f527f7b32143e042d827f6236b6b21b300563160cd92aa85ac3e8",
+      "hostImage": {
+        "ImageOS": "ubuntu24-arm64",
+        "ImageVersion": "20261101.172.1",
+        "RUNNER_ARCH": "ARM64"
+      },
+      "definitions": 1581,
+      "beforeCount": 24,
+      "afterCount": 21,
+      "cleared": [
+        {
+          "id": "oval:com.ubuntu.noble:def:896910000000",
+          "title": "USN-8969-1 -- Bind vulnerabilities",
+          "criteriaComments": [
+            "bind9 source package in noble, is affected and has been fixed (note: '1:9.18.39-0ubuntu0.24.04.9')."
+          ]
+        },
+        {
+          "id": "oval:com.ubuntu.noble:def:897310000000",
+          "title": "USN-8973-1 -- libmspack vulnerability",
+          "criteriaComments": [
+            "libmspack source package in noble, is affected and has been fixed (note: '0.11-1.1ubuntu0.24.04.1')."
+          ]
+        },
+        {
+          "id": "oval:com.ubuntu.noble:def:897410000000",
+          "title": "USN-8974-1 -- PCRE2 vulnerabilities",
+          "criteriaComments": [
+            "pcre2 source package in noble, is affected and has been fixed (note: '10.42-4ubuntu2.2')."
+          ]
+        }
+      ],
+      "remaining": [
+        {
+          "id": "oval:com.ubuntu.noble:def:743810000000",
+          "title": "USN-7438-1 -- 7-Zip vulnerabilities",
+          "criteriaComments": [
+            "7zip source package in esm-apps/noble, is affected and has been fixed (note: '23.01+dfsg-11ubuntu0.1~esm1')."
+          ]
+        },
+        {
+          "id": "oval:com.ubuntu.noble:def:772810000000",
+          "title": "USN-7728-1 -- ImageMagick vulnerabilities",
+          "criteriaComments": [
+            "imagemagick source package in esm-apps/noble, is affected and has been fixed (note: '8:6.9.12.98+dfsg1-5.2ubuntu0.1~esm1')."
+          ]
+        },
+        {
+          "id": "oval:com.ubuntu.noble:def:775610000000",
+          "title": "USN-7756-1 -- ImageMagick vulnerabilities",
+          "criteriaComments": [
+            "imagemagick source package in esm-apps/noble, is affected and has been fixed (note: '8:6.9.12.98+dfsg1-5.2ubuntu0.1~esm2')."
+          ]
+        },
+        {
+          "id": "oval:com.ubuntu.noble:def:781210000000",
+          "title": "USN-7812-1 -- ImageMagick vulnerabilities",
+          "criteriaComments": [
+            "imagemagick source package in esm-apps/noble, is affected and has been fixed (note: '8:6.9.12.98+dfsg1-5.2ubuntu0.1~esm3')."
+          ]
+        },
+        {
+          "id": "oval:com.ubuntu.noble:def:787610000000",
+          "title": "USN-7876-1 -- ImageMagick vulnerabilities",
+          "criteriaComments": [
+            "imagemagick source package in esm-apps/noble, is affected and has been fixed (note: '8:6.9.12.98+dfsg1-5.2ubuntu0.1~esm4')."
+          ]
+        },
+        {
+          "id": "oval:com.ubuntu.noble:def:800710000000",
+          "title": "USN-8007-1 -- ImageMagick vulnerabilities",
+          "criteriaComments": [
+            "imagemagick source package in esm-apps/noble, is affected and has been fixed (note: '8:6.9.12.98+dfsg1-5.2ubuntu0.1~esm5')."
+          ]
+        },
+        {
+          "id": "oval:com.ubuntu.noble:def:802110000000",
+          "title": "USN-8021-1 -- ImageMagick vulnerability",
+          "criteriaComments": [
+            "imagemagick source package in esm-apps/noble, is affected and has been fixed (note: '8:6.9.12.98+dfsg1-5.2ubuntu0.1~esm6')."
+          ]
+        },
+        {
+          "id": "oval:com.ubuntu.noble:def:806910000000",
+          "title": "USN-8069-1 -- ImageMagick vulnerabilities",
+          "criteriaComments": [
+            "imagemagick source package in esm-apps/noble, is affected and has been fixed (note: '8:6.9.12.98+dfsg1-5.2ubuntu0.1~esm7')."
+          ]
+        },
+        {
+          "id": "oval:com.ubuntu.noble:def:812710000000",
+          "title": "USN-8127-1 -- ImageMagick vulnerabilities",
+          "criteriaComments": [
+            "imagemagick source package in esm-apps/noble, is affected and has been fixed (note: '8:6.9.12.98+dfsg1-5.2ubuntu0.1~esm8')."
+          ]
+        },
+        {
+          "id": "oval:com.ubuntu.noble:def:822110000000",
+          "title": "USN-8221-1 -- wheel vulnerability",
+          "criteriaComments": [
+            "wheel source package in esm-apps/noble, is affected and has been fixed (note: '0.42.0-2ubuntu0.1~esm1')."
+          ]
+        },
+        {
+          "id": "oval:com.ubuntu.noble:def:826310000000",
+          "title": "USN-8263-1 -- ImageMagick vulnerabilities",
+          "criteriaComments": [
+            "imagemagick source package in esm-apps/noble, is affected and has been fixed (note: '8:6.9.12.98+dfsg1-5.2ubuntu0.1~esm9')."
+          ]
+        },
+        {
+          "id": "oval:com.ubuntu.noble:def:834410000000",
+          "title": "USN-8344-1 -- pip vulnerabilities",
+          "criteriaComments": [
+            "python-pip source package in esm-apps/noble, is affected and has been fixed (note: '24.0+dfsg-1ubuntu1.3+esm1')."
+          ]
+        },
+        {
+          "id": "oval:com.ubuntu.noble:def:834420000000",
+          "title": "USN-8344-2 -- pip regression",
+          "criteriaComments": [
+            "python-pip source package in esm-apps/noble, is affected and has been fixed (note: '24.0+dfsg-1ubuntu1.3+esm2')."
+          ]
+        },
+        {
+          "id": "oval:com.ubuntu.noble:def:834430000000",
+          "title": "USN-8344-3 -- pip vulnerability",
+          "criteriaComments": [
+            "python-pip source package in esm-apps/noble, is affected and has been fixed (note: '24.0+dfsg-1ubuntu1.3+esm3')."
+          ]
+        },
+        {
+          "id": "oval:com.ubuntu.noble:def:835810000000",
+          "title": "USN-8358-1 -- haveged vulnerability",
+          "criteriaComments": [
+            "haveged source package in esm-apps/noble, is affected and has been fixed (note: '1.9.14-1ubuntu2+esm1~24.04.1')."
+          ]
+        },
+        {
+          "id": "oval:com.ubuntu.noble:def:846810000000",
+          "title": "USN-8468-1 -- ImageMagick vulnerabilities",
+          "criteriaComments": [
+            "imagemagick source package in esm-apps/noble, is affected and has been fixed (note: '8:6.9.12.98+dfsg1-5.2ubuntu0.1~esm10')."
+          ]
+        },
+        {
+          "id": "oval:com.ubuntu.noble:def:855810000000",
+          "title": "USN-8558-1 -- ImageMagick vulnerabilities",
+          "criteriaComments": [
+            "imagemagick source package in esm-apps/noble, is affected and has been fixed (note: '8:6.9.12.98+dfsg1-5.2ubuntu0.1~esm11')."
+          ]
+        },
+        {
+          "id": "oval:com.ubuntu.noble:def:859210000000",
+          "title": "USN-8592-1 -- ImageMagick vulnerabilities",
+          "criteriaComments": [
+            "imagemagick source package in esm-apps/noble, is affected and has been fixed (note: '8:6.9.12.98+dfsg1-5.2ubuntu0.1~esm12')."
+          ]
+        },
+        {
+          "id": "oval:com.ubuntu.noble:def:873920000000",
+          "title": "USN-8739-2 -- ImageMagick vulnerabilities",
+          "criteriaComments": [
+            "imagemagick source package in esm-apps/noble, is affected and has been fixed (note: '8:6.9.12.98+dfsg1-5.2ubuntu0.1~esm13')."
+          ]
+        },
+        {
+          "id": "oval:com.ubuntu.noble:def:881010000000",
+          "title": "USN-8810-1 -- ImageMagick vulnerabilities",
+          "criteriaComments": [
+            "imagemagick source package in esm-apps/noble, is affected and has been fixed (note: '8:6.9.12.98+dfsg1-5.2ubuntu0.1~esm14')."
+          ]
+        },
+        {
+          "id": "oval:com.ubuntu.noble:def:885910000000",
+          "title": "USN-8859-1 -- ImageMagick vulnerabilities",
+          "criteriaComments": [
+            "imagemagick source package in esm-apps/noble, is affected and has been fixed (note: '8:6.9.12.98+dfsg1-5.2ubuntu0.1~esm15')."
+          ]
+        }
+      ],
+      "frozenFeedSha256": "c2b52df4ad6ac8d5dabfecc3833069d53f03f9961521dab4a181041a7a0ca53c",
+      "upgradeLogSha256": "23859c124c70b84d268ca84a756e15f3ef30261a1471347c15462280479a9fee",
+      "afterPackagesSha256": "29def3096de2222ac1b990ca9352d8d220c7b2b8520ff5f7fa3211842073b0d8"
+    },
+    {
+      "artifactId": "13313662449",
+      "artifactSha256": "15d3dec06e43abcf4d156f4a69ba1f1f80831b2383723b51ef0d955a280ec68b",
+      "hostImage": {
+        "ImageOS": "ubuntu24",
+        "ImageVersion": "20261101.360.1",
+        "RUNNER_ARCH": "X64"
+      },
+      "definitions": 1581,
+      "beforeCount": 24,
+      "afterCount": 21,
+      "cleared": [
+        {
+          "id": "oval:com.ubuntu.noble:def:896910000000",
+          "title": "USN-8969-1 -- Bind vulnerabilities",
+          "criteriaComments": [
+            "bind9 source package in noble, is affected and has been fixed (note: '1:9.18.39-0ubuntu0.24.04.9')."
+          ]
+        },
+        {
+          "id": "oval:com.ubuntu.noble:def:897310000000",
+          "title": "USN-8973-1 -- libmspack vulnerability",
+          "criteriaComments": [
+            "libmspack source package in noble, is affected and has been fixed (note: '0.11-1.1ubuntu0.24.04.1')."
+          ]
+        },
+        {
+          "id": "oval:com.ubuntu.noble:def:897410000000",
+          "title": "USN-8974-1 -- PCRE2 vulnerabilities",
+          "criteriaComments": [
+            "pcre2 source package in noble, is affected and has been fixed (note: '10.42-4ubuntu2.2')."
+          ]
+        }
+      ],
+      "remaining": [
+        {
+          "id": "oval:com.ubuntu.noble:def:743810000000",
+          "title": "USN-7438-1 -- 7-Zip vulnerabilities",
+          "criteriaComments": [
+            "7zip source package in esm-apps/noble, is affected and has been fixed (note: '23.01+dfsg-11ubuntu0.1~esm1')."
+          ]
+        },
+        {
+          "id": "oval:com.ubuntu.noble:def:772810000000",
+          "title": "USN-7728-1 -- ImageMagick vulnerabilities",
+          "criteriaComments": [
+            "imagemagick source package in esm-apps/noble, is affected and has been fixed (note: '8:6.9.12.98+dfsg1-5.2ubuntu0.1~esm1')."
+          ]
+        },
+        {
+          "id": "oval:com.ubuntu.noble:def:775610000000",
+          "title": "USN-7756-1 -- ImageMagick vulnerabilities",
+          "criteriaComments": [
+            "imagemagick source package in esm-apps/noble, is affected and has been fixed (note: '8:6.9.12.98+dfsg1-5.2ubuntu0.1~esm2')."
+          ]
+        },
+        {
+          "id": "oval:com.ubuntu.noble:def:781210000000",
+          "title": "USN-7812-1 -- ImageMagick vulnerabilities",
+          "criteriaComments": [
+            "imagemagick source package in esm-apps/noble, is affected and has been fixed (note: '8:6.9.12.98+dfsg1-5.2ubuntu0.1~esm3')."
+          ]
+        },
+        {
+          "id": "oval:com.ubuntu.noble:def:787610000000",
+          "title": "USN-7876-1 -- ImageMagick vulnerabilities",
+          "criteriaComments": [
+            "imagemagick source package in esm-apps/noble, is affected and has been fixed (note: '8:6.9.12.98+dfsg1-5.2ubuntu0.1~esm4')."
+          ]
+        },
+        {
+          "id": "oval:com.ubuntu.noble:def:800710000000",
+          "title": "USN-8007-1 -- ImageMagick vulnerabilities",
+          "criteriaComments": [
+            "imagemagick source package in esm-apps/noble, is affected and has been fixed (note: '8:6.9.12.98+dfsg1-5.2ubuntu0.1~esm5')."
+          ]
+        },
+        {
+          "id": "oval:com.ubuntu.noble:def:802110000000",
+          "title": "USN-8021-1 -- ImageMagick vulnerability",
+          "criteriaComments": [
+            "imagemagick source package in esm-apps/noble, is affected and has been fixed (note: '8:6.9.12.98+dfsg1-5.2ubuntu0.1~esm6')."
+          ]
+        },
+        {
+          "id": "oval:com.ubuntu.noble:def:806910000000",
+          "title": "USN-8069-1 -- ImageMagick vulnerabilities",
+          "criteriaComments": [
+            "imagemagick source package in esm-apps/noble, is affected and has been fixed (note: '8:6.9.12.98+dfsg1-5.2ubuntu0.1~esm7')."
+          ]
+        },
+        {
+          "id": "oval:com.ubuntu.noble:def:812710000000",
+          "title": "USN-8127-1 -- ImageMagick vulnerabilities",
+          "criteriaComments": [
+            "imagemagick source package in esm-apps/noble, is affected and has been fixed (note: '8:6.9.12.98+dfsg1-5.2ubuntu0.1~esm8')."
+          ]
+        },
+        {
+          "id": "oval:com.ubuntu.noble:def:822110000000",
+          "title": "USN-8221-1 -- wheel vulnerability",
+          "criteriaComments": [
+            "wheel source package in esm-apps/noble, is affected and has been fixed (note: '0.42.0-2ubuntu0.1~esm1')."
+          ]
+        },
+        {
+          "id": "oval:com.ubuntu.noble:def:826310000000",
+          "title": "USN-8263-1 -- ImageMagick vulnerabilities",
+          "criteriaComments": [
+            "imagemagick source package in esm-apps/noble, is affected and has been fixed (note: '8:6.9.12.98+dfsg1-5.2ubuntu0.1~esm9')."
+          ]
+        },
+        {
+          "id": "oval:com.ubuntu.noble:def:834410000000",
+          "title": "USN-8344-1 -- pip vulnerabilities",
+          "criteriaComments": [
+            "python-pip source package in esm-apps/noble, is affected and has been fixed (note: '24.0+dfsg-1ubuntu1.3+esm1')."
+          ]
+        },
+        {
+          "id": "oval:com.ubuntu.noble:def:834420000000",
+          "title": "USN-8344-2 -- pip regression",
+          "criteriaComments": [
+            "python-pip source package in esm-apps/noble, is affected and has been fixed (note: '24.0+dfsg-1ubuntu1.3+esm2')."
+          ]
+        },
+        {
+          "id": "oval:com.ubuntu.noble:def:834430000000",
+          "title": "USN-8344-3 -- pip vulnerability",
+          "criteriaComments": [
+            "python-pip source package in esm-apps/noble, is affected and has been fixed (note: '24.0+dfsg-1ubuntu1.3+esm3')."
+          ]
+        },
+        {
+          "id": "oval:com.ubuntu.noble:def:835810000000",
+          "title": "USN-8358-1 -- haveged vulnerability",
+          "criteriaComments": [
+            "haveged source package in esm-apps/noble, is affected and has been fixed (note: '1.9.14-1ubuntu2+esm1~24.04.1')."
+          ]
+        },
+        {
+          "id": "oval:com.ubuntu.noble:def:846810000000",
+          "title": "USN-8468-1 -- ImageMagick vulnerabilities",
+          "criteriaComments": [
+            "imagemagick source package in esm-apps/noble, is affected and has been fixed (note: '8:6.9.12.98+dfsg1-5.2ubuntu0.1~esm10')."
+          ]
+        },
+        {
+          "id": "oval:com.ubuntu.noble:def:855810000000",
+          "title": "USN-8558-1 -- ImageMagick vulnerabilities",
+          "criteriaComments": [
+            "imagemagick source package in esm-apps/noble, is affected and has been fixed (note: '8:6.9.12.98+dfsg1-5.2ubuntu0.1~esm11')."
+          ]
+        },
+        {
+          "id": "oval:com.ubuntu.noble:def:859210000000",
+          "title": "USN-8592-1 -- ImageMagick vulnerabilities",
+          "criteriaComments": [
+            "imagemagick source package in esm-apps/noble, is affected and has been fixed (note: '8:6.9.12.98+dfsg1-5.2ubuntu0.1~esm12')."
+          ]
+        },
+        {
+          "id": "oval:com.ubuntu.noble:def:873920000000",
+          "title": "USN-8739-2 -- ImageMagick vulnerabilities",
+          "criteriaComments": [
+            "imagemagick source package in esm-apps/noble, is affected and has been fixed (note: '8:6.9.12.98+dfsg1-5.2ubuntu0.1~esm13')."
+          ]
+        },
+        {
+          "id": "oval:com.ubuntu.noble:def:881010000000",
+          "title": "USN-8810-1 -- ImageMagick vulnerabilities",
+          "criteriaComments": [
+            "imagemagick source package in esm-apps/noble, is affected and has been fixed (note: '8:6.9.12.98+dfsg1-5.2ubuntu0.1~esm14')."
+          ]
+        },
+        {
+          "id": "oval:com.ubuntu.noble:def:885910000000",
+          "title": "USN-8859-1 -- ImageMagick vulnerabilities",
+          "criteriaComments": [
+            "imagemagick source package in esm-apps/noble, is affected and has been fixed (note: '8:6.9.12.98+dfsg1-5.2ubuntu0.1~esm15')."
+          ]
+        }
+      ],
+      "frozenFeedSha256": "c2b52df4ad6ac8d5dabfecc3833069d53f03f9961521dab4a181041a7a0ca53c",
+      "upgradeLogSha256": "a56a2d61ed289ebba7773334e11b81d233bbba0dfe0b6569b78c93f30de20034",
+      "afterPackagesSha256": "02b3decb9844bc23d5efdef79e90755451da87d9309f57a7c12aee80d1d75830"
+    }
+  ],
+  "fullOsCpeClearance": false,
+  "limits": [
+    "USN patch definitions only; not all unfixed CVEs or third-party/JDK/native coverage",
+    "Disposable CI hosts only; not retroactive certification of prior runtime CI or user systems",
+    "Package updates do not establish running-process restart or kernel-reboot clearance"
+  ],
+  "paidRequests": 0
+}

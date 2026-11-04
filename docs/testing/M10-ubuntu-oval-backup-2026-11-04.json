@@ -1,0 +1,21 @@
+{
+  "status": "LOCAL_BACKUP_MEMBERS_VERIFIED",
+  "path": ".build-cache/local-evidence-backups/2026-11-04/ubuntu-oval-before-after.zip",
+  "members": 11,
+  "bytes": 42095381,
+  "sha256": "0259f36bd383eba52f20dda88286b56043c83e096437cd229c4637e15b284d89",
+  "memberSha256": {
+    ".build-cache/ubuntu-oval-20261104/13313521872.zip": "c159f25eaade1aaee63e6e05a8ff85a90daa804ceb14e85064eb8fb07c026e93",
+    ".build-cache/ubuntu-oval-20261104/13312979487.zip": "94a9ca0b734403fbe5e2dc801aa2172ebf3fdc970b32b53e84cf90de3ec55583",
+    ".build-cache/ubuntu-oval-20261104/13313842708.zip": "a5b4dcd7752f527f7b32143e042d827f6236b6b21b300563160cd92aa85ac3e8",
+    ".build-cache/ubuntu-oval-20261104/13313662449.zip": "15d3dec06e43abcf4d156f4a69ba1f1f80831b2383723b51ef0d955a280ec68b",
+    "docs/testing/M10-ubuntu-oval-initial-2026-11-04.json": "e977632d155e3a4f6ffb359748e82aee9eeb1287d7f608f0bd69b9363e9c8730",
+    "docs/testing/M10-ubuntu-oval-updates-2026-11-04.json": "5206c05e8b746fe7f7ab7621363a6330ac9fbc10c59878df667dc04d1885ce17",
+    ".build-cache/audit-oval-initial.py": "f1202ed14b96a3d52f8437fa350084fce98457246de42fd3158c0afca2a82a5e",
+    ".build-cache/audit-oval-repair.py": "be0c53040bbcc94c62e0a0a3cb3eaace2707e616e7bf54da6b37ded339f96710",
+    "scripts/scan-ubuntu-oval.py": "f200a790873d8247cb9433aef3bb8c180ad124ce425836dac532ee83ca98e1cd",
+    "scripts/test-ubuntu-oval.py": "f8b8a47f52fe088ebec96ce052b042b21401e2a64c178e103e57db936d1c004b",
+    ".github/workflows/gap-ubuntu-oval.yml": "106e115c7f978b97d33b2793a2614ecc6b1d923ded134c4d8c22c752beeefc60"
+  },
+  "offsite": false
+}

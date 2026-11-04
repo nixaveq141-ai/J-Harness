@@ -1,5 +1,8 @@
 # 严格技术缺口与当前验收边界
 
+2026-11-04 OS补丁实际进展：[41814311453](https://github.com/nixaveq141-ai/J-Harness/actions/runs/41814311453)@f32的Ubuntu x64/ARM64系统更新和同feed复扫已独立核验。两侧1581条定义中，补丁命中各24→21；Bind、libmspack、PCRE2三项USN命中消除。剩21项均属于官方esm-apps/noble通道，普通仓库升级未修，未附加账户或购买订阅。见[前后证据](M10-ubuntu-oval-updates-2026-11-04.json)、[11成员本地备份](M10-ubuntu-oval-backup-2026-11-04.json)。仅证明这些一次性CI主机的已装包修补效果，不证明旧运行时CI或用户系统已更新、运行进程/内核已重启，也不覆盖所有未修复CVE、第三方软件/JDK及完整OS-CPE。36原生来源及三类历史因果继续开放。
+
+
 2026-11-04真实USN首次扫描：41813802977的x64/ARM64分别命中24/26条补丁定义，1581定义完整结果、原包和日志已核，见[M10-ubuntu-oval-initial](M10-ubuntu-oval-initial-2026-11-04.json)。新增一次性主机系统更新与同一冻结feed前后复扫，实际修复效果待验；不得以工作流成功当无漏洞。
 
 2026-11-04接续：新增Ubuntu24.04 x64/ARM64的[官方USN OVAL专项](../../.github/workflows/gap-ubuntu-oval.yml)，按[Canonical官方流程](https://documentation.ubuntu.com/security/security-updates/oval/)执行OpenSCAP，保留完整feed、结果、包清单、源前后指纹及退出码；三项解析控制通过，真实扫描待。此范围仅检查已发布USN涉及的缺失补丁，未知/错误不得当零发现；不能补称整个OS/CPE项闭合。
