@@ -1,0 +1,21 @@
+{
+  "status": "LOCAL_ACTUAL_C_CALLBACK_PROMOTION_RED_GREEN",
+  "records": [
+    {
+      "phase": "before",
+      "sourceSha256": "5e9f761a023a238e5de1ff70dc8f9709ca094c2599de61b9723bae7fc3736f96",
+      "exeSha256": "dcba06196d1e2797f86472f476397f7d852167daad7ec9168bb546440b072541",
+      "exitCode": 1,
+      "output": "callback register promotion incomplete; ffi_arg_bytes=8\r\n"
+    },
+    {
+      "phase": "after",
+      "sourceSha256": "b98767a0716476d59b8a81af7cd5c5550a348bb8ce9b0b55fff294009bd94887",
+      "exeSha256": "e7ec5319fd118fcc05aed5a2b89490696ca0cfa56b7bbbdf5e36fbbc9e6e8f39",
+      "exitCode": 0,
+      "output": "PASS complete ffi_arg result and adjacent guards\r\n"
+    }
+  ],
+  "scope": "Probe correction only; no library or product defect claim",
+  "officialContract": "https://github.com/libffi/libffi/blob/v3.4.4/doc/libffi.texi"
+}

@@ -90,6 +90,10 @@ def main():
   library=compiled_library(source,target);identity=require_elf(library.read_bytes(),target);output=out/'libjnidispatch.so';output.write_bytes(library.read_bytes())
   command([prefix+'-readelf','-h','-d','-V','-Ws',str(output)],'elf-audit')
   ffi_headers=library.parent/'libffi/include';probe=out/'jni-probe';java=Path(os.environ['JAVA_HOME'])
+  promotion=out/'callback-control'
+  command([prefix+'-gcc','-std=c11','-Wall','-Wextra','-Werror','-I'+str(ffi_headers),
+   str(ROOT/'scripts/probes/p1-jna-callback-control.c'),'-o',str(promotion)],'promotion-build')
+  command(['qemu-'+emulator,'-L','/usr/'+prefix,str(promotion)],'promotion-control',timeout=30)
   command([prefix+'-gcc','-std=c11','-Wall','-Wextra','-Werror','-O2','-I'+str(ffi_headers),'-I'+str(source/'build/headers'),
    '-I'+str(java/'include'),'-I'+str(java/'include/linux'),str(ROOT/'scripts/probes/p1-jna.c'),'-ldl','-o',str(probe)],'probe-build')
   qemu=['qemu-'+emulator,'-L','/usr/'+prefix,str(probe)]
@@ -104,6 +108,7 @@ def main():
   command(['git','diff','--binary'],'source-diff',source)
   report.update(status='SOURCE_JNA_ABI_AND_FFI_PROBE_PASS_NOT_PRODUCT_ACCEPTANCE',resource=resource,
    outputSha256=stream_sha256(output),elf=identity,probeSha256=stream_sha256(probe),probeSourceSha256=stream_sha256(ROOT/'scripts/probes/p1-jna.c'),
+   probeSupportSha256={n:stream_sha256(ROOT/n) for n in ['scripts/probes/p1-jna-callback.h','scripts/probes/p1-jna-callback-control.c']},
    limits=['C-level JNI primitives and real bundled ffi/closure only; no complete JVM loading/initIDs proof','No product replacement or full OS/CPE clearance','No claim of arbitrary Linux/libc compatibility'])
  except Exception as error:
   report['failureType']=type(error).__name__;raise

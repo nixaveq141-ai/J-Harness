@@ -1,6 +1,7 @@
 #define _GNU_SOURCE
 #include <dlfcn.h>
 #include <ffi.h>
+#include "p1-jna-callback.h"
 #include <jni.h>
 #include "com_sun_jna_Native.h"
 #include <stdint.h>
@@ -11,10 +12,6 @@
 #include <wchar.h>
 
 static int add(int a, int b) { return a+b; }
-static void callback(ffi_cif *cif, void *result, void **args, void *data) {
-    (void)cif;
-    *(int *)result=*(int *)args[0]+*(int *)args[1]+*(int *)data;
-}
 int main(int argc, char **argv) {
     if(argc!=3 || argv[1][0]!='/') return 2;
     void *library=dlopen(argv[1],RTLD_NOW|RTLD_LOCAL);
@@ -47,7 +44,7 @@ int main(int argc, char **argv) {
     call(&cif,FFI_FN(add),&result,av);if(result!=41) return 10;
     void *code=NULL;ffi_closure *closure=closure_alloc(sizeof(ffi_closure),&code);
     if(!closure || !code) return 11;
-    if(closure_prep(closure,&cif,callback,&bias,code)!=FFI_OK) return 12;
+    if(closure_prep(closure,&cif,p1_callback,&bias,code)!=FFI_OK) return 12;
     result=0;call(&cif,FFI_FN(code),&result,av);closure_free(closure);if(result!=46) return 13;
     if(dlclose(library)) return 14;
     puts("PASS exact JNI dlopen, six native sizeof values, Native malloc/free, bundled ffi call41 and closure46, close");return 0;

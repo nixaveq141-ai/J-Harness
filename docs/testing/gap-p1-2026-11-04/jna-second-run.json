@@ -1,0 +1,73 @@
+{
+  "status": "SIX_COMPONENTS_PASS_TWO_CALLBACK_PROBES_FAILED_NOT_FULL_ACCEPTANCE",
+  "runId": "41827560374",
+  "commit": "0ae114266dcdd01e88bf9cd1896aaf330ed1ccf0",
+  "platforms": [
+    {
+      "target": "x86",
+      "artifactId": "13319144620",
+      "artifactSha256": "698cb1926c150d756c544853f24b2e226760207a29d0c9c81ded10a411ab5c64",
+      "status": "SOURCE_JNA_ABI_AND_FFI_PROBE_PASS_NOT_PRODUCT_ACCEPTANCE",
+      "candidateProbeExitCode": 0,
+      "probeLogSha256": "e56b1e1e6bfed993a956fee6a180f26d246e3830b077323c68234706763bef8b"
+    },
+    {
+      "target": "armel",
+      "artifactId": "13319488648",
+      "artifactSha256": "37d6374ceaeaa8b58053fd2af6f22c7154f882288e9ad8b537ffd88f6185eb19",
+      "status": "SOURCE_JNA_ABI_AND_FFI_PROBE_PASS_NOT_PRODUCT_ACCEPTANCE",
+      "candidateProbeExitCode": 0,
+      "probeLogSha256": "e56b1e1e6bfed993a956fee6a180f26d246e3830b077323c68234706763bef8b"
+    },
+    {
+      "target": "ppc64le",
+      "artifactId": "13319498974",
+      "artifactSha256": "b5c0b6668e1f184dc8bb008dbef91309a51f17923aae16278f16f9d2e9158699",
+      "status": "SOURCE_JNA_ABI_AND_FFI_PROBE_PASS_NOT_PRODUCT_ACCEPTANCE",
+      "candidateProbeExitCode": 0,
+      "probeLogSha256": "e56b1e1e6bfed993a956fee6a180f26d246e3830b077323c68234706763bef8b"
+    },
+    {
+      "target": "riscv64",
+      "artifactId": "13319623378",
+      "artifactSha256": "4b9606ec8ee58cb4274145a62e9abff1eda13b4881ea1201047e2c1a42e3fcd2",
+      "status": "SOURCE_JNA_ABI_AND_FFI_PROBE_PASS_NOT_PRODUCT_ACCEPTANCE",
+      "candidateProbeExitCode": 0,
+      "probeLogSha256": "e56b1e1e6bfed993a956fee6a180f26d246e3830b077323c68234706763bef8b"
+    },
+    {
+      "target": "mips64el",
+      "artifactId": "13319699130",
+      "artifactSha256": "8aee895cf45352844501c9ad8e0cc5e710c80160485464e05cc2e928663cc712",
+      "status": "INCOMPLETE",
+      "candidateProbeExitCode": 13,
+      "probeLogSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "target": "arm",
+      "artifactId": "13320740065",
+      "artifactSha256": "7c2e7ffba6f7c2e79ee802dc8e01565532fbb9ec5cd4c7284e0d3acf785bd3a6",
+      "status": "SOURCE_JNA_ABI_AND_FFI_PROBE_PASS_NOT_PRODUCT_ACCEPTANCE",
+      "candidateProbeExitCode": 0,
+      "probeLogSha256": "e56b1e1e6bfed993a956fee6a180f26d246e3830b077323c68234706763bef8b"
+    },
+    {
+      "target": "s390x",
+      "artifactId": "13321290217",
+      "artifactSha256": "41603e672a274364c1cfc6f26c6b93a5b96a34738779070bf602950b1cb689cf",
+      "status": "INCOMPLETE",
+      "candidateProbeExitCode": 13,
+      "probeLogSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "target": "ppc",
+      "artifactId": "13321300210",
+      "artifactSha256": "9771730735f13e0cede2998a8d35d009da263610fb472dc725242fecbfa91894",
+      "status": "SOURCE_JNA_ABI_AND_FFI_PROBE_PASS_NOT_PRODUCT_ACCEPTANCE",
+      "candidateProbeExitCode": 0,
+      "probeLogSha256": "e56b1e1e6bfed993a956fee6a180f26d246e3830b077323c68234706763bef8b"
+    }
+  ],
+  "probeCorrection": "Write register-width ffi_arg in callback per fixed libffi3.4.4 contract; preserve result46 assertion",
+  "productCoverageChanged": false
+}

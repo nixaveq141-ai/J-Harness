@@ -5,6 +5,7 @@ import { mkdir, writeFile, readFile } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 import { createHash, randomUUID } from 'node:crypto'
 import assert from 'node:assert/strict'
+import { installModelInputTrace } from './model-input-trace.mjs'
 
 const root = resolve(import.meta.dirname, '../..'), out = join(root, '.build-cache'), workspace = join(out, `M10.5.3-turns-${Date.now()}`)
 const config = join(workspace, 'fixture.json'), jar = join(root, 'harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar')
@@ -70,7 +71,7 @@ async function maintain(args) {
 }
 try {
   await start(); browser = await chromium.launch(process.env.JHARNESS_BROWSER_CHANNEL ? { channel: process.env.JHARNESS_BROWSER_CHANNEL } : {})
-  context = await browser.newContext({ viewport: { width: 1440, height: 1100 } }); page = await context.newPage(); navigation=trackNavigationReads(page);page.on('pageerror', e => {if(stoppedHostDiagnostic(e.message,stoppedOrigins)||navigation.diagnostic(e.message))transportDiagnostics.push(e.message);else {errors.push(e.message);console.log('PAGE_ERROR_STATE',JSON.stringify({message:e.message,base,pageUrl:page.url(),stoppedOrigins:[...stoppedOrigins],navigation:navigation.snapshot(),readFailures:readFailures.slice(-8)}))}})
+  context = await browser.newContext({ viewport: { width: 1440, height: 1100 } }); await context.addInitScript(installModelInputTrace); page = await context.newPage(); navigation=trackNavigationReads(page);page.on('pageerror', e => {if(stoppedHostDiagnostic(e.message,stoppedOrigins)||navigation.diagnostic(e.message))transportDiagnostics.push(e.message);else {errors.push(e.message);console.log('PAGE_ERROR_STATE',JSON.stringify({message:e.message,base,pageUrl:page.url(),stoppedOrigins:[...stoppedOrigins],navigation:navigation.snapshot(),readFailures:readFailures.slice(-8)}))}})
   page.on('requestfailed', request => {if(request.method()==='GET'&&new URL(request.url()).pathname.endsWith('/display'))readFailures.push({url:request.url(),error:request.failure()?.errorText,base,pageUrl:page.url(),stoppedOrigins:[...stoppedOrigins]})})
   page.on('request', r => {if (r.method() === 'POST' && /\/turns$/.test(r.url())) submissionPosts++ })
   await connected(); await page.getByLabel('任务目标').fill('first input'); await page.getByRole('button', { name: '创建任务', exact: true }).click()
@@ -135,6 +136,16 @@ try {
   await stop()
   await writeFile(join(out,'M10.5.3-turns-results.json'),JSON.stringify({ status:'PASS',capturedAt:new Date().toISOString(),checks,screenshots,transportDiagnostics,jarSha256:createHash('sha256').update(await readFile(jar)).digest('hex'),browserEngine:process.env.JHARNESS_BROWSER_ENGINE??'chromium',browserVersion:browser.version(),paidRequests:0,hostStopped:host.exitCode===0,modelRequests:wire.length },null,2)+'\n')
 } catch (e) {
+  let inputTrace=[], backendPhase='UNAVAILABLE', backendStatus='UNAVAILABLE', eventTypes=[]
+  try { inputTrace=(await page.evaluate(()=>window.__jhModelInputTrace??[])).slice(-64) } catch {}
+  try {
+    const task=(await api(taskPath(''))).body
+    backendPhase=['FINISHED','ACTIVE','UNKNOWN','WAITING_APPROVAL','RUNNING','NEW'].includes(task.phase)?task.phase:'OTHER'
+    backendStatus=['RUNNING','COMPLETED','FAILED','CANCELLED','QUEUED'].includes(task.status)?task.status:'OTHER'
+    const allowed=new Set(['tool.started','tool.completed','turn.started','turn.ended','model.requested','model.responded','input.received'])
+    eventTypes=(await events()).slice(-32).map(row=>allowed.has(row.type)?row.type:'OTHER')
+  } catch {}
+  await writeFile(join(out,'M10.5.3-turns-failure.json'),JSON.stringify({checksCompleted:checks.length,modelRequests:wire.length,submissionPosts,inputTrace,backendPhase,backendStatus,eventTypes},null,2)+'\n')
   console.log('BROWSER_DIAGNOSTIC',JSON.stringify(errors).replaceAll(key,'[REDACTED]').replaceAll(token,'[REDACTED]'))
   if (page && !page.isClosed()) await page.screenshot({ path:join(out,'M10.5.3-turns-failure.png'),fullPage:true })
   await writeFile(join(out,'M10.5.3-turns-failure.txt'),(String(e.stack)+'\n'+output).replaceAll(key,'[REDACTED]').replaceAll(token,'[REDACTED]')); throw e

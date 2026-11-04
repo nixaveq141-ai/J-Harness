@@ -1,0 +1,57 @@
+{
+  "status": "WINDOWS_CANDIDATE_FULL_RUN_FAILED_WEBKIT_TURNS_AND_SOURCE_EOL_GATE",
+  "runId": "41824728486",
+  "commit": "55c87bc56a7b5c1215cfb541ca1117a6e57bf060",
+  "artifactId": "13320042516",
+  "artifactSha256": "9b422cc5516ebdffe0741e7dfd12c15a27e19ce7785312b20aa015add7422e3d",
+  "artifactPath": ".build-cache/p1-unified19-first/13320042516.zip",
+  "runtimeJarSha256": "3ca4716ec2d5c423255dd0f9673aeb0951319356a8a9a2a31313090a3ab12ee4",
+  "javaTests": 735,
+  "javaSuites": 124,
+  "sourceInputCount": 665,
+  "strictCommittedSourceGatePassed": false,
+  "eolMismatches": [
+    {
+      "path": "scripts/probes/p1-pty.c",
+      "actual": "CRLF",
+      "git": "LF",
+      "equivalentAfterNormalization": true
+    }
+  ],
+  "remainingSourceGate": "Other input identities equivalent after this explicitly recorded normalization and original declared CMD exception; not a strict exact-source acceptance",
+  "reviewedCandidateSources": 19,
+  "unresolvedCandidateSources": 31,
+  "installedCandidateChecks": {
+    "installedManifest": true,
+    "launcherDoctorNoNetwork": true,
+    "approvedWriteAndReport": true,
+    "approvalEofDenies": true,
+    "cancelUnknownRefusesReplayAndExplicitRecovery": true
+  },
+  "failedFixture": {
+    "engine": "webkit",
+    "fixture": "turns",
+    "command": {
+      "exitCode": 1,
+      "signal": null,
+      "timedOut": false,
+      "overflow": false,
+      "cleanup": {
+        "attempted": false
+      }
+    },
+    "error": "Fixture command failed, timed out or exceeded output limit",
+    "diagnostics": [],
+    "diagnosticCaptureIncomplete": false,
+    "log": ".build-cache/M10.5.9/browser/webkit/turns.log"
+  },
+  "fixtureLogSha256": "d94d130c03776d5c15033d0d9a62a6685648328f09ca9295286b8f682fe94f46",
+  "paidRequests": 0,
+  "rootCauseEstablished": false,
+  "limits": [
+    "Full run rejected despite Java/install pass",
+    "Button disabled30s in turns fixture is not proof of historical macOS cause",
+    "New C source had undeclared CRLF checkout; fixed future attributes, do not approve this run",
+    "Raw exact runtime retained for diagnostic observation"
+  ]
+}

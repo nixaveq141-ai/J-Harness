@@ -8,6 +8,7 @@ import {fileURLToPath} from 'node:url'
 export const sha=b=>createHash('sha256').update(b).digest('hex')
 export const failureDiagnostics={
  questions:['M10.5.5-questions-failure.json'],
+ turns:['M10.5.3-turns-failure.json'],
  development:['M10.5.9-development-diagnostic-failure.txt'],
  models:['M10.5.4-models-failure.txt'],
 }

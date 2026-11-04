@@ -1,0 +1,44 @@
+name: P1 exact candidate Windows WebKit turns observation
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/m1059-full-validation]
+    paths: [.github/workflows/gap-p1-turn-diagnostic.yml]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  observation:
+    runs-on: windows-2022
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm --prefix frontend ci
+      - run: node frontend/node_modules/playwright/cli.js install webkit
+      - uses: actions/download-artifact@v4
+        with:
+          name: source-native-unified-windows-2022
+          run-id: 41824728486
+          github-token: ${{ github.token }}
+          path: .build-cache/p1-turn-input
+      - run: python scripts/run-p1-turn-diagnostic.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: p1-exact-windows-webkit-turns
+          include-hidden-files: true
+          path: |
+            .build-cache/p1-turn-diagnostic/
+            .build-cache/M10.5.3-*.json
+            .build-cache/M10.5.3-*.png
+            .build-cache/M10.5.3-turns-failure.txt

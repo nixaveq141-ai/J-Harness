@@ -45,3 +45,11 @@
 JNA首轮[41826192147](https://github.com/nixaveq141-ai/J-Harness/actions/runs/41826192147)@0609154八侧失败，[首轮记录](jna-first-run.json)保留原制品索引与x86作业日志摘要。x86实际Ant构建成功，但Ant会将同一JNI库复制进类目录，原枚举器要求全build目录只能出现一个文件而拒绝。改为固定native-linux-target编译产物路径，并拒绝类副本与其字节不一致；该原生输出/镜像差异控制及原两ABI控制共三项通过，修正后的真实组件探针仍待远端。
 
 [PTY实际链接需求](compatibility-scope.json)解析原包内DT_NEEDED与GNU version-needed节，记录五个新/旧载荷的依赖。新ARM要求GLIBC_2.34、x86要求GLIBC_2.28；实际替换与后续支持范围/P2需考虑这些要求，不能以QEMU组件通过认证所有旧Linux。
+
+## 复验中的阻断与修正
+
+JNA[第二轮](jna-second-run.json)六侧组件通过，MIPS64EL/s390x真实探针均exit13；原八ZIP均保留。原因定位为本项目C探针回调只写int，未按[固定libffi3.4.4 closure约定](https://github.com/libffi/libffi/blob/v3.4.4/doc/libffi.texi)提升到ffi_arg。共享回调已按约定修正，保持真实调用41/回调46断言；[本机实际C红绿控制](callback-promotion-control.json)显示旧写法exit1、修正exit0且邻接保护值保持。各目标新增寄存器宽度控制，修正后的八目标仍待实测，不称libffi或产品缺陷已修复。
+
+19项统一候选首轮41824728486的[Windows原包复核](unified19-first-windows.json)：735项Java与安装过，WebKit turns在第11项检查后发送按钮disabled30秒，整轮拒绝验收。另严格源门禁发现新C探针在Windows被转成CRLF；旧运行保留该不符，不扩大旧门禁的例外，未来通过Git属性固定scripts/probes C/H为LF。诊断专项只运行原失败精确JAR，并给turns增加有界无正文DOM/React长度、任务枚举和事件类型观察；原15项断言及UNKNOWN不重放语义不变，不把同症状当旧Mac根因。
+
+P0/P1嵌套JSON增加原字节保留属性，避免跨平台checkout改变已有摘要；现有JSON语义未变，P0校验仍通过。完整候选验收、所有剩余来源和其他OS/CPE问题均不因诊断或字节策略调整而视为完成。
