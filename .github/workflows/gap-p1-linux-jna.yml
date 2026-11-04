@@ -1,0 +1,62 @@
+name: P1 pinned Linux JNA cross-source components
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/m1059-full-validation]
+    paths: [.github/workflows/gap-p1-linux-jna.yml]
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: x86
+            packages: gcc-i686-linux-gnu libc6-dev-i386-cross
+          - target: arm
+            packages: gcc-arm-linux-gnueabihf libc6-dev-armhf-cross
+          - target: armel
+            packages: gcc-arm-linux-gnueabi libc6-dev-armel-cross
+          - target: mips64el
+            packages: gcc-mips64el-linux-gnuabi64 libc6-dev-mips64el-cross
+          - target: ppc
+            packages: gcc-powerpc-linux-gnu libc6-dev-powerpc-cross
+          - target: ppc64le
+            packages: gcc-powerpc64le-linux-gnu libc6-dev-ppc64el-cross
+          - target: riscv64
+            packages: gcc-riscv64-linux-gnu libc6-dev-riscv64-cross
+          - target: s390x
+            packages: gcc-s390x-linux-gnu libc6-dev-s390x-cross
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python scripts/test-p1-linux-jna.py
+      - name: Install target compiler and emulator
+        run: |
+          sudo apt-get -o Acquire::Retries=1 -o Acquire::http::Timeout=30 update
+          sudo apt-get -o Acquire::Retries=1 -o Acquire::http::Timeout=30 install -y --no-install-recommends ant make qemu-user libx11-dev ${{ matrix.packages }}
+      - run: python scripts/build-p1-linux-jna.py ${{ matrix.target }}
+      - name: Show bounded source or component failure
+        if: failure()
+        run: |
+          python -c "from pathlib import Path; base=Path('.build-cache/p1-linux-jna/${{ matrix.target }}'); [(print(p.name),print(p.read_text(errors='replace')[-4096:])) for p in [base/'build.log',base/'probe-build.log',base/'candidate-probe.log'] if p.is_file()]"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: p1-linux-jna-${{ matrix.target }}
+          include-hidden-files: true
+          path: |
+            .build-cache/p1-linux-jna/${{ matrix.target }}/*.json
+            .build-cache/p1-linux-jna/${{ matrix.target }}/*.log
+            .build-cache/p1-linux-jna/${{ matrix.target }}/*.so
+            .build-cache/p1-linux-jna/${{ matrix.target }}/jni-probe
+            .build-cache/p1-linux-jna/${{ matrix.target }}/libffi-release-3.4.4.tar.gz

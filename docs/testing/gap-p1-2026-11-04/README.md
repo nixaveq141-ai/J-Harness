@@ -37,3 +37,7 @@
 [真实统一装配控制](assembly-control.json)将五新载荷加入既有14项，共19项来源已审候选、31项原版未决，其他4519个条目保持。操作后本机旧生成JAR逐字节恢复。新增stager锁定精确组件收据/字节/命令，真实原包控制与载荷漂移、回执篡改、重复目标拒绝通过。来源映射中的新增五项只在实际安装字节匹配时计数，不将已验5df JAR的14/36改成19/31。
 
 五目标完整产品CI已配置复用同一轮五组件原包，新增C组件加载不宣称额外架构Java应用已认证；远端新候选完整验收仍待。P1全50来源门槛尚未达到。
+
+## 第二批：Linux JNA八目标
+
+新增固定JNA c366bc4源码与已有精确libffi3.4.4生成输入的交叉构建入口，覆盖x86/ARM硬浮点/ARM软浮点/MIPS64EL/PPC/PPC64LE/RISCV64/s390x。保留目标GCC、host tuple、sysroot、JDK/Ant版本、源前后指纹和具体补丁。C级探针检查JNI六类sizeof、Native malloc/free、真实静态libffi调用及closure、精确缺库拒绝；不冒称完整JVM initIDs/类加载或目标Java应用通过。字宽/端序/ARM软硬浮点两控制本地通过，真实构建与探针结果待CI。LoongArch工具链未确认，不隐含计入本批。
