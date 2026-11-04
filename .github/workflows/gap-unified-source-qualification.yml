@@ -28,6 +28,7 @@ jobs:
       JHARNESS_MATRIX_KEEP_GOING: '1'
       JHARNESS_UNIFIED_SOURCE: '1'
       JHARNESS_P1_LINUX_PTY: '1'
+      JHARNESS_P1_LINUX_JNA: '1'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -91,6 +92,13 @@ jobs:
           github-token: ${{ github.token }}
           path: .build-cache/p1-inputs
       - run: python scripts/test-p1-component-stage.py
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: p1-linux-jna-*
+          run-id: 41830641417
+          github-token: ${{ github.token }}
+          path: .build-cache/p1-jna-inputs
+      - run: python scripts/test-p1-jna-stage.py
       - name: Install browser dependencies on Linux
         if: runner.os == 'Linux'
         run: |

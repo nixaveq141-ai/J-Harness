@@ -1,0 +1,318 @@
+{
+  "status": "EIGHT_JNA_SOURCE_ABI_FFI_COMPONENTS_INDEPENDENTLY_VERIFIED_NOT_PRODUCT_ACCEPTANCE",
+  "runId": "41830641417",
+  "commit": "8ad5356513e63756298e8eb4d3e697ba72cf303f",
+  "sourceRevision": "c366bc4fd0c50a30ac8d2475603ec564f6611462",
+  "platforms": [
+    {
+      "target": "arm",
+      "artifactId": "13323167382",
+      "artifactSha256": "f5a576d758f643ab7e938d73cb992dd3b0eb7023acb85695ed9d75a42db7db37",
+      "reportSha256": "71c95faa6890c11ee0acdf2e9d1c8637227aa0b3e56c1eec6e8743e6f8f86e0d",
+      "resource": "com/sun/jna/linux-arm/libjnidispatch.so",
+      "outputSha256": "cf97421daabc0372c309a732b5fbdbf77163b9b9ab7d1574349cdb4f5707558c",
+      "originalSha256": "00a35890dde5b4174d6646d1ebdc553bac3b7d99c1a793899eddaa002b5a16a2",
+      "elf": {
+        "elfClass": 1,
+        "endianness": 1,
+        "machine": 40,
+        "flags": 83887104
+      },
+      "originalElf": {
+        "elfClass": 1,
+        "endianness": 1,
+        "machine": 40,
+        "flags": 83887104
+      },
+      "sourceFiles": 1297,
+      "sourceTreeSha256": "a57c7c4ca1cb816f01ba91274922b6f0c0882b8b1a122121ac5d82f67ccce73b",
+      "commandReceipts": 15,
+      "hostInputs": 673,
+      "hostImage": {
+        "ImageOS": "ubuntu24",
+        "ImageVersion": "20261101.360.1",
+        "RUNNER_ARCH": "X64"
+      },
+      "probeSha256": "8f63d33b5f47ba44ecd584a453424400b1ecb7098a04e1d4aed2a2f0fcebb1b8",
+      "probeSourceSha256": "9e17cb4e0b519249d4af3b5e34a0cbe15258a3caf9fef4be6626e929abcc7d31",
+      "probeSupportSha256": {
+        "scripts/probes/p1-jna-callback.h": "b98767a0716476d59b8a81af7cd5c5550a348bb8ce9b0b55fff294009bd94887",
+        "scripts/probes/p1-jna-callback-control.c": "5de3b07abad6498268ed2c5f82a12806da31e86d41fffcb0c75c17cd5f638937"
+      },
+      "generatedHelperSha256": "6f982d61798a2c819c7928c3214b81394a1248c35c6b650ed0beb21c4b7c3d2f",
+      "libffiReleaseSha256": "d66c56ad259a82cf2a9dfc408b32bf5da52371500b84745f7fb8b645712df676"
+    },
+    {
+      "target": "ppc64le",
+      "artifactId": "13322737260",
+      "artifactSha256": "e38f9c8bb804101557fd1f053a494bf34f6e5fc0739aaac16d4f15b175943a76",
+      "reportSha256": "5217aa059dfb60318f02cea6922aedcdf40a1320aee2243ad68003698743c217",
+      "resource": "com/sun/jna/linux-ppc64le/libjnidispatch.so",
+      "outputSha256": "91927cdce2e5befd4b72679635f9714f3f0aa217e16d0e41c336b3a285b3cbfb",
+      "originalSha256": "bb026410e75b3e928cb3ccddc0f9418e3fb40aad1f6c80cf046b72d62e5eb062",
+      "elf": {
+        "elfClass": 2,
+        "endianness": 1,
+        "machine": 21,
+        "flags": 2
+      },
+      "originalElf": {
+        "elfClass": 2,
+        "endianness": 1,
+        "machine": 21,
+        "flags": 2
+      },
+      "sourceFiles": 1297,
+      "sourceTreeSha256": "a57c7c4ca1cb816f01ba91274922b6f0c0882b8b1a122121ac5d82f67ccce73b",
+      "commandReceipts": 15,
+      "hostInputs": 673,
+      "hostImage": {
+        "ImageOS": "ubuntu24",
+        "ImageVersion": "20261026.354.1",
+        "RUNNER_ARCH": "X64"
+      },
+      "probeSha256": "a91de982d22e1bb6b8ccca111ebbde3667d00bae79a23df27e372603cdea99a5",
+      "probeSourceSha256": "9e17cb4e0b519249d4af3b5e34a0cbe15258a3caf9fef4be6626e929abcc7d31",
+      "probeSupportSha256": {
+        "scripts/probes/p1-jna-callback.h": "b98767a0716476d59b8a81af7cd5c5550a348bb8ce9b0b55fff294009bd94887",
+        "scripts/probes/p1-jna-callback-control.c": "5de3b07abad6498268ed2c5f82a12806da31e86d41fffcb0c75c17cd5f638937"
+      },
+      "generatedHelperSha256": "6f982d61798a2c819c7928c3214b81394a1248c35c6b650ed0beb21c4b7c3d2f",
+      "libffiReleaseSha256": "d66c56ad259a82cf2a9dfc408b32bf5da52371500b84745f7fb8b645712df676"
+    },
+    {
+      "target": "ppc",
+      "artifactId": "13322652686",
+      "artifactSha256": "93f89e74f0624aa1b81898adf3e9001cfd28496aa599391c8aa47482b10eb30c",
+      "reportSha256": "9d3ea3e72a10e0c015723cc48b701209eb3de6b5fa10fb53ebd9583194be8722",
+      "resource": "com/sun/jna/linux-ppc/libjnidispatch.so",
+      "outputSha256": "f85858b03b58f53b1dac83843c364e51be436decde2b418ae973be379f5e8b6e",
+      "originalSha256": "c974c4ec9701655a30d7601389c3b3246447fdbc90240e809b37cb283224a2ff",
+      "elf": {
+        "elfClass": 1,
+        "endianness": 2,
+        "machine": 20,
+        "flags": 0
+      },
+      "originalElf": {
+        "elfClass": 1,
+        "endianness": 2,
+        "machine": 20,
+        "flags": 0
+      },
+      "sourceFiles": 1297,
+      "sourceTreeSha256": "a57c7c4ca1cb816f01ba91274922b6f0c0882b8b1a122121ac5d82f67ccce73b",
+      "commandReceipts": 15,
+      "hostInputs": 673,
+      "hostImage": {
+        "ImageOS": "ubuntu24",
+        "ImageVersion": "20261026.354.1",
+        "RUNNER_ARCH": "X64"
+      },
+      "probeSha256": "cb78f018d1551a3750ef27e2c5ab709eb764b25c3fcc475f75e95d032f07ff43",
+      "probeSourceSha256": "9e17cb4e0b519249d4af3b5e34a0cbe15258a3caf9fef4be6626e929abcc7d31",
+      "probeSupportSha256": {
+        "scripts/probes/p1-jna-callback.h": "b98767a0716476d59b8a81af7cd5c5550a348bb8ce9b0b55fff294009bd94887",
+        "scripts/probes/p1-jna-callback-control.c": "5de3b07abad6498268ed2c5f82a12806da31e86d41fffcb0c75c17cd5f638937"
+      },
+      "generatedHelperSha256": "6f982d61798a2c819c7928c3214b81394a1248c35c6b650ed0beb21c4b7c3d2f",
+      "libffiReleaseSha256": "d66c56ad259a82cf2a9dfc408b32bf5da52371500b84745f7fb8b645712df676"
+    },
+    {
+      "target": "riscv64",
+      "artifactId": "13322597266",
+      "artifactSha256": "897033aa5c52a34e417b6d05c7e77830047b44b54a10d73fb4cf5207d2dad0ca",
+      "reportSha256": "ad410d9db14028bb032d9c323d9b19c38f7dda9bdb4952fd5f2b488b8a55d8e9",
+      "resource": "com/sun/jna/linux-riscv64/libjnidispatch.so",
+      "outputSha256": "fe4b909479d304da5911fbf848e458e42b7b9f84a7c06c997cae70e2d2b4e79b",
+      "originalSha256": "938f42166508c30d5b5ed3eb094219f9b2df736b1ea38ed7586c0ce79c12ee97",
+      "elf": {
+        "elfClass": 2,
+        "endianness": 1,
+        "machine": 243,
+        "flags": 5
+      },
+      "originalElf": {
+        "elfClass": 2,
+        "endianness": 1,
+        "machine": 243,
+        "flags": 5
+      },
+      "sourceFiles": 1297,
+      "sourceTreeSha256": "a57c7c4ca1cb816f01ba91274922b6f0c0882b8b1a122121ac5d82f67ccce73b",
+      "commandReceipts": 15,
+      "hostInputs": 673,
+      "hostImage": {
+        "ImageOS": "ubuntu24",
+        "ImageVersion": "20261101.360.1",
+        "RUNNER_ARCH": "X64"
+      },
+      "probeSha256": "a93f611705a640d9141da16dc1eeb6d240fafbece87419515ac16bd174ecc73e",
+      "probeSourceSha256": "9e17cb4e0b519249d4af3b5e34a0cbe15258a3caf9fef4be6626e929abcc7d31",
+      "probeSupportSha256": {
+        "scripts/probes/p1-jna-callback.h": "b98767a0716476d59b8a81af7cd5c5550a348bb8ce9b0b55fff294009bd94887",
+        "scripts/probes/p1-jna-callback-control.c": "5de3b07abad6498268ed2c5f82a12806da31e86d41fffcb0c75c17cd5f638937"
+      },
+      "generatedHelperSha256": "6f982d61798a2c819c7928c3214b81394a1248c35c6b650ed0beb21c4b7c3d2f",
+      "libffiReleaseSha256": "d66c56ad259a82cf2a9dfc408b32bf5da52371500b84745f7fb8b645712df676"
+    },
+    {
+      "target": "x86",
+      "artifactId": "13322252722",
+      "artifactSha256": "66d0b39332d6500d68e8a4353888c3c7c934ebafee221a6ec0af49fa2ec7eb27",
+      "reportSha256": "60b996b74d1d53afc62c4e2ac6ce3ed9796ec244dbd90be1f07032f599af48f3",
+      "resource": "com/sun/jna/linux-x86/libjnidispatch.so",
+      "outputSha256": "f311048c77c8cbfaf90c146cd1aadc1cbcdff1490839e0c8e1ea8ff3363d1d36",
+      "originalSha256": "caf3d95b12a6f907fa0b647e1d785c6505415fc266e11733b24eec22da6ae3d9",
+      "elf": {
+        "elfClass": 1,
+        "endianness": 1,
+        "machine": 3,
+        "flags": 0
+      },
+      "originalElf": {
+        "elfClass": 1,
+        "endianness": 1,
+        "machine": 3,
+        "flags": 0
+      },
+      "sourceFiles": 1297,
+      "sourceTreeSha256": "a57c7c4ca1cb816f01ba91274922b6f0c0882b8b1a122121ac5d82f67ccce73b",
+      "commandReceipts": 15,
+      "hostInputs": 673,
+      "hostImage": {
+        "ImageOS": "ubuntu24",
+        "ImageVersion": "20261026.354.1",
+        "RUNNER_ARCH": "X64"
+      },
+      "probeSha256": "a93fbc4ba75794b91e4eb8db73be7478700a4613bb8b0db82028cf20e4eef6d1",
+      "probeSourceSha256": "9e17cb4e0b519249d4af3b5e34a0cbe15258a3caf9fef4be6626e929abcc7d31",
+      "probeSupportSha256": {
+        "scripts/probes/p1-jna-callback.h": "b98767a0716476d59b8a81af7cd5c5550a348bb8ce9b0b55fff294009bd94887",
+        "scripts/probes/p1-jna-callback-control.c": "5de3b07abad6498268ed2c5f82a12806da31e86d41fffcb0c75c17cd5f638937"
+      },
+      "generatedHelperSha256": "6f982d61798a2c819c7928c3214b81394a1248c35c6b650ed0beb21c4b7c3d2f",
+      "libffiReleaseSha256": "d66c56ad259a82cf2a9dfc408b32bf5da52371500b84745f7fb8b645712df676"
+    },
+    {
+      "target": "mips64el",
+      "artifactId": "13321783390",
+      "artifactSha256": "97b63e065d29c4308a6c42907c0e6ccc51c2bd203208bb8d87e264ec9e19e3cc",
+      "reportSha256": "1805d0248c07af88648f980d3eafcc89cc7fe5556a665d963927e8fcff99c0fb",
+      "resource": "com/sun/jna/linux-mips64el/libjnidispatch.so",
+      "outputSha256": "aa86a21a946f116340a4c6b3ff98836e9de2a89c67cd50a3805ec296dedc8112",
+      "originalSha256": "5e7a37f9cc6c0dc7cfa2b6d0944788c448ff2e87d4aab894a241269a8b6335ed",
+      "elf": {
+        "elfClass": 2,
+        "endianness": 1,
+        "machine": 8,
+        "flags": 2147483655
+      },
+      "originalElf": {
+        "elfClass": 2,
+        "endianness": 1,
+        "machine": 8,
+        "flags": 2147483655
+      },
+      "sourceFiles": 1297,
+      "sourceTreeSha256": "a57c7c4ca1cb816f01ba91274922b6f0c0882b8b1a122121ac5d82f67ccce73b",
+      "commandReceipts": 15,
+      "hostInputs": 673,
+      "hostImage": {
+        "ImageOS": "ubuntu24",
+        "ImageVersion": "20261026.354.1",
+        "RUNNER_ARCH": "X64"
+      },
+      "probeSha256": "64ad6bf128192c9ea36faf4f65c536471d48c59272458db68a80115b8b0534e3",
+      "probeSourceSha256": "9e17cb4e0b519249d4af3b5e34a0cbe15258a3caf9fef4be6626e929abcc7d31",
+      "probeSupportSha256": {
+        "scripts/probes/p1-jna-callback.h": "b98767a0716476d59b8a81af7cd5c5550a348bb8ce9b0b55fff294009bd94887",
+        "scripts/probes/p1-jna-callback-control.c": "5de3b07abad6498268ed2c5f82a12806da31e86d41fffcb0c75c17cd5f638937"
+      },
+      "generatedHelperSha256": "6f982d61798a2c819c7928c3214b81394a1248c35c6b650ed0beb21c4b7c3d2f",
+      "libffiReleaseSha256": "d66c56ad259a82cf2a9dfc408b32bf5da52371500b84745f7fb8b645712df676"
+    },
+    {
+      "target": "armel",
+      "artifactId": "13321633631",
+      "artifactSha256": "a2b6373935bc778bbee117849e36c3f1ceab2f5b6bbc08b679d10cb5aefed0ed",
+      "reportSha256": "66c5b27b6d7aaf3ef4619864ec52fa285a9bb85b2283688911c08eb5148ae2fc",
+      "resource": "com/sun/jna/linux-armel/libjnidispatch.so",
+      "outputSha256": "954e1b5d9b5d4dd1823bccc505e58e56e9fabdcfefb96ccbaf0cbeb69ebf35b5",
+      "originalSha256": "257d627bce7ddccf539f8a32dd293e4d0ed8ba64070dab07d5ae40d4932d60a6",
+      "elf": {
+        "elfClass": 1,
+        "endianness": 1,
+        "machine": 40,
+        "flags": 83886592
+      },
+      "originalElf": {
+        "elfClass": 1,
+        "endianness": 1,
+        "machine": 40,
+        "flags": 83886594
+      },
+      "sourceFiles": 1297,
+      "sourceTreeSha256": "a57c7c4ca1cb816f01ba91274922b6f0c0882b8b1a122121ac5d82f67ccce73b",
+      "commandReceipts": 15,
+      "hostInputs": 673,
+      "hostImage": {
+        "ImageOS": "ubuntu24",
+        "ImageVersion": "20261026.354.1",
+        "RUNNER_ARCH": "X64"
+      },
+      "probeSha256": "fd9ceab656448c5c6e80fd197e7ee59d7742fdabaca15e05909771e344dffa92",
+      "probeSourceSha256": "9e17cb4e0b519249d4af3b5e34a0cbe15258a3caf9fef4be6626e929abcc7d31",
+      "probeSupportSha256": {
+        "scripts/probes/p1-jna-callback.h": "b98767a0716476d59b8a81af7cd5c5550a348bb8ce9b0b55fff294009bd94887",
+        "scripts/probes/p1-jna-callback-control.c": "5de3b07abad6498268ed2c5f82a12806da31e86d41fffcb0c75c17cd5f638937"
+      },
+      "generatedHelperSha256": "6f982d61798a2c819c7928c3214b81394a1248c35c6b650ed0beb21c4b7c3d2f",
+      "libffiReleaseSha256": "d66c56ad259a82cf2a9dfc408b32bf5da52371500b84745f7fb8b645712df676"
+    },
+    {
+      "target": "s390x",
+      "artifactId": "13321533854",
+      "artifactSha256": "53ec7f15a645b788cf10850350ce040518e5f8147911f054eed84f777f8cbbd9",
+      "reportSha256": "db001b3085d8181c52690e6cd711c7538ca0d1ce479c1c907989b6a76ecc5cf4",
+      "resource": "com/sun/jna/linux-s390x/libjnidispatch.so",
+      "outputSha256": "d5872cd82035b0a4080bb6292a4ca0c6e20726a411d823d000866f620089b2d6",
+      "originalSha256": "3f33fab801dc3a43a5d269fa0e8f43e54b0f7e29f02c4821901c62aafb3aee6c",
+      "elf": {
+        "elfClass": 2,
+        "endianness": 2,
+        "machine": 22,
+        "flags": 0
+      },
+      "originalElf": {
+        "elfClass": 2,
+        "endianness": 2,
+        "machine": 22,
+        "flags": 0
+      },
+      "sourceFiles": 1297,
+      "sourceTreeSha256": "a57c7c4ca1cb816f01ba91274922b6f0c0882b8b1a122121ac5d82f67ccce73b",
+      "commandReceipts": 15,
+      "hostInputs": 673,
+      "hostImage": {
+        "ImageOS": "ubuntu24",
+        "ImageVersion": "20261026.354.1",
+        "RUNNER_ARCH": "X64"
+      },
+      "probeSha256": "48f5b2ad8e596ea367a083ead99c55610c3f51947d69a9d236e2aa0767e732b2",
+      "probeSourceSha256": "9e17cb4e0b519249d4af3b5e34a0cbe15258a3caf9fef4be6626e929abcc7d31",
+      "probeSupportSha256": {
+        "scripts/probes/p1-jna-callback.h": "b98767a0716476d59b8a81af7cd5c5550a348bb8ce9b0b55fff294009bd94887",
+        "scripts/probes/p1-jna-callback-control.c": "5de3b07abad6498268ed2c5f82a12806da31e86d41fffcb0c75c17cd5f638937"
+      },
+      "generatedHelperSha256": "6f982d61798a2c819c7928c3214b81394a1248c35c6b650ed0beb21c4b7c3d2f",
+      "libffiReleaseSha256": "d66c56ad259a82cf2a9dfc408b32bf5da52371500b84745f7fb8b645712df676"
+    }
+  ],
+  "paidRequests": 0,
+  "limits": [
+    "Actual C-level JNI primitives and bundled libffi call/closure, not complete target JVM initIDs or Java application proof",
+    "No product replacement yet",
+    "No full OS/CPE or arbitrary libc compatibility proof"
+  ]
+}

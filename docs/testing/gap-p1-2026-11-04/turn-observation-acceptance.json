@@ -1,0 +1,79 @@
+{
+  "status": "EXACT_FAILED_CANDIDATE_OBSERVATION_PASS_NOT_ROOT_CAUSE",
+  "runId": "41830641429",
+  "commit": "8ad5356513e63756298e8eb4d3e697ba72cf303f",
+  "artifactId": "13322042444",
+  "artifactSha256": "90b2da4f80d2170c8dc72de4ebf4cf5be424f3847cdb013f1fc988935bc9ce50",
+  "runtimeSourceRun": "41824728486",
+  "runtimeSourceCommit": "55c87bc56a7b5c1215cfb541ca1117a6e57bf060",
+  "runtimeJarSha256": "3ca4716ec2d5c423255dd0f9673aeb0951319356a8a9a2a31313090a3ab12ee4",
+  "checks": [
+    {
+      "name": "completed session retains a continuation composer",
+      "passed": true
+    },
+    {
+      "name": "unsent draft protects navigation and never enters browser storage",
+      "passed": true
+    },
+    {
+      "name": "double click sends one independently admitted continuation",
+      "passed": true
+    },
+    {
+      "name": "lost response and refresh reconcile by GET without duplicate POST",
+      "passed": true
+    },
+    {
+      "name": "three actual SDK turns share original session and distinct loop turn identities",
+      "passed": true
+    },
+    {
+      "name": "prepared request history includes prior turns with secrets sanitized",
+      "passed": true
+    },
+    {
+      "name": "busy input queue supports cancellation and defers supplements",
+      "passed": true
+    },
+    {
+      "name": "background queue settlement preserves reading position in earlier history",
+      "passed": true
+    },
+    {
+      "name": "supplement applies at next full-turn boundary and cancelled text never applies",
+      "passed": true
+    },
+    {
+      "name": "two concurrent clients receive the same submission and one execution",
+      "passed": true
+    },
+    {
+      "name": "mobile continuation has no horizontal overflow and keyboard input is reachable",
+      "passed": true
+    },
+    {
+      "name": "restart does not replay active or queued messages and UNKNOWN blocks continuing",
+      "passed": true
+    },
+    {
+      "name": "offline verification leaves queued message paused until explicit operator action",
+      "passed": true
+    },
+    {
+      "name": "explicit start continues same session once after recovery",
+      "passed": true
+    },
+    {
+      "name": "no browser errors or credential leaks in persistent UI storage",
+      "passed": true
+    }
+  ],
+  "sourceInputs": 673,
+  "paidRequests": 0,
+  "rootCauseEstablished": false,
+  "limits": [
+    "One new observation passed; original button-disabled root is still unknown",
+    "Not a full candidate or P1 acceptance"
+  ]
+}

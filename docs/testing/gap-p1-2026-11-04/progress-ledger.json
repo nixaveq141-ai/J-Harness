@@ -1,0 +1,540 @@
+{
+  "status": "P1_IN_PROGRESS_NOT_COMPLETE",
+  "frozenP0Tasks": 36,
+  "independentlyVerifiedNewSourceComponents": 13,
+  "assembledCandidateReviewedCount": 27,
+  "assembledCandidateUnresolvedCount": 23,
+  "formalAcceptedRuntimeCommit": "5df2372cbe00047e3233650fd37462290a534127",
+  "formalAcceptedRuntimeReviewedCount": 14,
+  "formalAcceptedRuntimeUnresolvedCount": 36,
+  "physicalExtraMachineAcceptance": "SKIPPED_BY_USER_NOT_RUNTIME_CERTIFIED",
+  "tasks": [
+    {
+      "taskId": "NATIVE-01",
+      "resource": "com/sun/jna/aix-ppc/libjnidispatch.a",
+      "originalSha256": "993d6799faa5e2c6363e99050c65ef6efea10059b3a07b80d3854d6d3142ca1a",
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "os": "aix",
+      "cpu": "ppc",
+      "status": "OPEN",
+      "requiredToolchain": "aix目标SDK/系统头文件与原生或交叉编译器",
+      "nextAction": "核上游逐文件构建证明或盘点目标SDK/工具链，再固定源构建和验证",
+      "blockers": [
+        "目标工具链/SDK或上游构建证明未确认",
+        "目标运行条件未确认；额外实体机器按用户指令跳过但不计运行通过"
+      ]
+    },
+    {
+      "taskId": "NATIVE-02",
+      "resource": "com/sun/jna/aix-ppc64/libjnidispatch.a",
+      "originalSha256": "66a4b348b959d26a143ce54277330d767ae01f90e36308df09d5d110696445df",
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "os": "aix",
+      "cpu": "ppc64",
+      "status": "OPEN",
+      "requiredToolchain": "aix目标SDK/系统头文件与原生或交叉编译器",
+      "nextAction": "核上游逐文件构建证明或盘点目标SDK/工具链，再固定源构建和验证",
+      "blockers": [
+        "目标工具链/SDK或上游构建证明未确认",
+        "目标运行条件未确认；额外实体机器按用户指令跳过但不计运行通过"
+      ]
+    },
+    {
+      "taskId": "NATIVE-03",
+      "resource": "com/sun/jna/freebsd-x86-64/libjnidispatch.so",
+      "originalSha256": "13281e25bf8614ab1aeb5f93d32ce4af02d986b0ca49f7692d08fce981eb1d5e",
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "os": "freebsd",
+      "cpu": "x86-64",
+      "status": "OPEN",
+      "requiredToolchain": "freebsd目标SDK/系统头文件与原生或交叉编译器",
+      "nextAction": "核上游逐文件构建证明或盘点目标SDK/工具链，再固定源构建和验证",
+      "blockers": [
+        "目标工具链/SDK或上游构建证明未确认",
+        "目标运行条件未确认；额外实体机器按用户指令跳过但不计运行通过"
+      ]
+    },
+    {
+      "taskId": "NATIVE-04",
+      "resource": "com/sun/jna/freebsd-x86/libjnidispatch.so",
+      "originalSha256": "c1d200c601baf9f26db1b0ba0d152fb517dd929f01cbbe1ac3320bbe40adb827",
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "os": "freebsd",
+      "cpu": "x86",
+      "status": "OPEN",
+      "requiredToolchain": "freebsd目标SDK/系统头文件与原生或交叉编译器",
+      "nextAction": "核上游逐文件构建证明或盘点目标SDK/工具链，再固定源构建和验证",
+      "blockers": [
+        "目标工具链/SDK或上游构建证明未确认",
+        "目标运行条件未确认；额外实体机器按用户指令跳过但不计运行通过"
+      ]
+    },
+    {
+      "taskId": "NATIVE-05",
+      "resource": "com/sun/jna/linux-arm/libjnidispatch.so",
+      "originalSha256": "00a35890dde5b4174d6646d1ebdc553bac3b7d99c1a793899eddaa002b5a16a2",
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "os": "linux",
+      "cpu": "arm",
+      "status": "COMPONENT_SOURCE_VERIFIED_AND_ASSEMBLED_FULL_PRODUCT_PENDING",
+      "candidateSha256": "cf97421daabc0372c309a732b5fbdbf77163b9b9ab7d1574349cdb4f5707558c",
+      "componentRunId": "41830641417",
+      "componentCommit": "8ad5356513e63756298e8eb4d3e697ba72cf303f",
+      "componentReceipt": "docs/testing/gap-p1-2026-11-04/jna-components-acceptance.json",
+      "nextAction": "同提交同候选五目标完整功能验收；额外CPU的Java平台支持仍不由组件探针推定"
+    },
+    {
+      "taskId": "NATIVE-06",
+      "resource": "com/sun/jna/linux-armel/libjnidispatch.so",
+      "originalSha256": "257d627bce7ddccf539f8a32dd293e4d0ed8ba64070dab07d5ae40d4932d60a6",
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "os": "linux",
+      "cpu": "armel",
+      "status": "COMPONENT_SOURCE_VERIFIED_AND_ASSEMBLED_FULL_PRODUCT_PENDING",
+      "candidateSha256": "954e1b5d9b5d4dd1823bccc505e58e56e9fabdcfefb96ccbaf0cbeb69ebf35b5",
+      "componentRunId": "41830641417",
+      "componentCommit": "8ad5356513e63756298e8eb4d3e697ba72cf303f",
+      "componentReceipt": "docs/testing/gap-p1-2026-11-04/jna-components-acceptance.json",
+      "nextAction": "同提交同候选五目标完整功能验收；额外CPU的Java平台支持仍不由组件探针推定"
+    },
+    {
+      "taskId": "NATIVE-07",
+      "resource": "com/sun/jna/linux-loongarch64/libjnidispatch.so",
+      "originalSha256": "2e91afb910bf56ca578786861fb87845f7bae1dc91b3ec6374540f3a946f170a",
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "os": "linux",
+      "cpu": "loongarch64",
+      "status": "OPEN",
+      "requiredToolchain": "Linux loongarch64交叉编译器、sysroot、libc/内核头文件",
+      "nextAction": "核上游逐文件构建证明或盘点目标SDK/工具链，再固定源构建和验证",
+      "blockers": [
+        "目标工具链/SDK或上游构建证明未确认",
+        "目标运行条件未确认；额外实体机器按用户指令跳过但不计运行通过"
+      ]
+    },
+    {
+      "taskId": "NATIVE-08",
+      "resource": "com/sun/jna/linux-mips64el/libjnidispatch.so",
+      "originalSha256": "5e7a37f9cc6c0dc7cfa2b6d0944788c448ff2e87d4aab894a241269a8b6335ed",
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "os": "linux",
+      "cpu": "mips64el",
+      "status": "COMPONENT_SOURCE_VERIFIED_AND_ASSEMBLED_FULL_PRODUCT_PENDING",
+      "candidateSha256": "aa86a21a946f116340a4c6b3ff98836e9de2a89c67cd50a3805ec296dedc8112",
+      "componentRunId": "41830641417",
+      "componentCommit": "8ad5356513e63756298e8eb4d3e697ba72cf303f",
+      "componentReceipt": "docs/testing/gap-p1-2026-11-04/jna-components-acceptance.json",
+      "nextAction": "同提交同候选五目标完整功能验收；额外CPU的Java平台支持仍不由组件探针推定"
+    },
+    {
+      "taskId": "NATIVE-09",
+      "resource": "com/sun/jna/linux-ppc/libjnidispatch.so",
+      "originalSha256": "c974c4ec9701655a30d7601389c3b3246447fdbc90240e809b37cb283224a2ff",
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "os": "linux",
+      "cpu": "ppc",
+      "status": "COMPONENT_SOURCE_VERIFIED_AND_ASSEMBLED_FULL_PRODUCT_PENDING",
+      "candidateSha256": "f85858b03b58f53b1dac83843c364e51be436decde2b418ae973be379f5e8b6e",
+      "componentRunId": "41830641417",
+      "componentCommit": "8ad5356513e63756298e8eb4d3e697ba72cf303f",
+      "componentReceipt": "docs/testing/gap-p1-2026-11-04/jna-components-acceptance.json",
+      "nextAction": "同提交同候选五目标完整功能验收；额外CPU的Java平台支持仍不由组件探针推定"
+    },
+    {
+      "taskId": "NATIVE-10",
+      "resource": "com/sun/jna/linux-ppc64le/libjnidispatch.so",
+      "originalSha256": "bb026410e75b3e928cb3ccddc0f9418e3fb40aad1f6c80cf046b72d62e5eb062",
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "os": "linux",
+      "cpu": "ppc64le",
+      "status": "COMPONENT_SOURCE_VERIFIED_AND_ASSEMBLED_FULL_PRODUCT_PENDING",
+      "candidateSha256": "91927cdce2e5befd4b72679635f9714f3f0aa217e16d0e41c336b3a285b3cbfb",
+      "componentRunId": "41830641417",
+      "componentCommit": "8ad5356513e63756298e8eb4d3e697ba72cf303f",
+      "componentReceipt": "docs/testing/gap-p1-2026-11-04/jna-components-acceptance.json",
+      "nextAction": "同提交同候选五目标完整功能验收；额外CPU的Java平台支持仍不由组件探针推定"
+    },
+    {
+      "taskId": "NATIVE-11",
+      "resource": "com/sun/jna/linux-riscv64/libjnidispatch.so",
+      "originalSha256": "938f42166508c30d5b5ed3eb094219f9b2df736b1ea38ed7586c0ce79c12ee97",
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "os": "linux",
+      "cpu": "riscv64",
+      "status": "COMPONENT_SOURCE_VERIFIED_AND_ASSEMBLED_FULL_PRODUCT_PENDING",
+      "candidateSha256": "fe4b909479d304da5911fbf848e458e42b7b9f84a7c06c997cae70e2d2b4e79b",
+      "componentRunId": "41830641417",
+      "componentCommit": "8ad5356513e63756298e8eb4d3e697ba72cf303f",
+      "componentReceipt": "docs/testing/gap-p1-2026-11-04/jna-components-acceptance.json",
+      "nextAction": "同提交同候选五目标完整功能验收；额外CPU的Java平台支持仍不由组件探针推定"
+    },
+    {
+      "taskId": "NATIVE-12",
+      "resource": "com/sun/jna/linux-s390x/libjnidispatch.so",
+      "originalSha256": "3f33fab801dc3a43a5d269fa0e8f43e54b0f7e29f02c4821901c62aafb3aee6c",
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "os": "linux",
+      "cpu": "s390x",
+      "status": "COMPONENT_SOURCE_VERIFIED_AND_ASSEMBLED_FULL_PRODUCT_PENDING",
+      "candidateSha256": "d5872cd82035b0a4080bb6292a4ca0c6e20726a411d823d000866f620089b2d6",
+      "componentRunId": "41830641417",
+      "componentCommit": "8ad5356513e63756298e8eb4d3e697ba72cf303f",
+      "componentReceipt": "docs/testing/gap-p1-2026-11-04/jna-components-acceptance.json",
+      "nextAction": "同提交同候选五目标完整功能验收；额外CPU的Java平台支持仍不由组件探针推定"
+    },
+    {
+      "taskId": "NATIVE-13",
+      "resource": "com/sun/jna/linux-x86/libjnidispatch.so",
+      "originalSha256": "caf3d95b12a6f907fa0b647e1d785c6505415fc266e11733b24eec22da6ae3d9",
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "os": "linux",
+      "cpu": "x86",
+      "status": "COMPONENT_SOURCE_VERIFIED_AND_ASSEMBLED_FULL_PRODUCT_PENDING",
+      "candidateSha256": "f311048c77c8cbfaf90c146cd1aadc1cbcdff1490839e0c8e1ea8ff3363d1d36",
+      "componentRunId": "41830641417",
+      "componentCommit": "8ad5356513e63756298e8eb4d3e697ba72cf303f",
+      "componentReceipt": "docs/testing/gap-p1-2026-11-04/jna-components-acceptance.json",
+      "nextAction": "同提交同候选五目标完整功能验收；额外CPU的Java平台支持仍不由组件探针推定"
+    },
+    {
+      "taskId": "NATIVE-14",
+      "resource": "com/sun/jna/openbsd-x86-64/libjnidispatch.so",
+      "originalSha256": "f15ad5da6b5ab33a9fe51992247fa3fe4da6a6ec0a4678d186611bb1258b4fff",
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "os": "openbsd",
+      "cpu": "x86-64",
+      "status": "OPEN",
+      "requiredToolchain": "openbsd目标SDK/系统头文件与原生或交叉编译器",
+      "nextAction": "核上游逐文件构建证明或盘点目标SDK/工具链，再固定源构建和验证",
+      "blockers": [
+        "目标工具链/SDK或上游构建证明未确认",
+        "目标运行条件未确认；额外实体机器按用户指令跳过但不计运行通过"
+      ]
+    },
+    {
+      "taskId": "NATIVE-15",
+      "resource": "com/sun/jna/openbsd-x86/libjnidispatch.so",
+      "originalSha256": "c99db52a1c9ffd791ec0dda9b39ad8aec0b7514dce881e230882210dfc9d9fb7",
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "os": "openbsd",
+      "cpu": "x86",
+      "status": "OPEN",
+      "requiredToolchain": "openbsd目标SDK/系统头文件与原生或交叉编译器",
+      "nextAction": "核上游逐文件构建证明或盘点目标SDK/工具链，再固定源构建和验证",
+      "blockers": [
+        "目标工具链/SDK或上游构建证明未确认",
+        "目标运行条件未确认；额外实体机器按用户指令跳过但不计运行通过"
+      ]
+    },
+    {
+      "taskId": "NATIVE-16",
+      "resource": "com/sun/jna/sunos-sparc/libjnidispatch.so",
+      "originalSha256": "58e637222be67679df8f2473967555b9697908e65ca2ddf32719d1d5e35769db",
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "os": "sunos",
+      "cpu": "sparc",
+      "status": "OPEN",
+      "requiredToolchain": "sunos目标SDK/系统头文件与原生或交叉编译器",
+      "nextAction": "核上游逐文件构建证明或盘点目标SDK/工具链，再固定源构建和验证",
+      "blockers": [
+        "目标工具链/SDK或上游构建证明未确认",
+        "目标运行条件未确认；额外实体机器按用户指令跳过但不计运行通过"
+      ]
+    },
+    {
+      "taskId": "NATIVE-17",
+      "resource": "com/sun/jna/sunos-sparcv9/libjnidispatch.so",
+      "originalSha256": "58e637222be67679df8f2473967555b9697908e65ca2ddf32719d1d5e35769db",
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "os": "sunos",
+      "cpu": "sparcv9",
+      "status": "OPEN",
+      "requiredToolchain": "sunos目标SDK/系统头文件与原生或交叉编译器",
+      "nextAction": "核上游逐文件构建证明或盘点目标SDK/工具链，再固定源构建和验证",
+      "blockers": [
+        "目标工具链/SDK或上游构建证明未确认",
+        "目标运行条件未确认；额外实体机器按用户指令跳过但不计运行通过"
+      ]
+    },
+    {
+      "taskId": "NATIVE-18",
+      "resource": "com/sun/jna/sunos-x86-64/libjnidispatch.so",
+      "originalSha256": "7af04db1da25981579214bdcbf761a8cd1ac5a76c9ac95fc226303ee65dfaeba",
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "os": "sunos",
+      "cpu": "x86-64",
+      "status": "OPEN",
+      "requiredToolchain": "sunos目标SDK/系统头文件与原生或交叉编译器",
+      "nextAction": "核上游逐文件构建证明或盘点目标SDK/工具链，再固定源构建和验证",
+      "blockers": [
+        "目标工具链/SDK或上游构建证明未确认",
+        "目标运行条件未确认；额外实体机器按用户指令跳过但不计运行通过"
+      ]
+    },
+    {
+      "taskId": "NATIVE-19",
+      "resource": "com/sun/jna/sunos-x86/libjnidispatch.so",
+      "originalSha256": "7af04db1da25981579214bdcbf761a8cd1ac5a76c9ac95fc226303ee65dfaeba",
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "os": "sunos",
+      "cpu": "x86",
+      "status": "OPEN",
+      "requiredToolchain": "sunos目标SDK/系统头文件与原生或交叉编译器",
+      "nextAction": "核上游逐文件构建证明或盘点目标SDK/工具链，再固定源构建和验证",
+      "blockers": [
+        "目标工具链/SDK或上游构建证明未确认",
+        "目标运行条件未确认；额外实体机器按用户指令跳过但不计运行通过"
+      ]
+    },
+    {
+      "taskId": "NATIVE-20",
+      "resource": "com/sun/jna/win32-aarch64/jnidispatch.dll",
+      "originalSha256": "b9d1479b9619b7ece4a36b6ae31365ffaf15a1355d4f6da02f8b5f09df2fa82f",
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "os": "win32",
+      "cpu": "aarch64",
+      "status": "OPEN",
+      "requiredToolchain": "MSVC/Windows SDK aarch64；构建WinPTY/Console/helper所需依赖",
+      "nextAction": "核上游逐文件构建证明或盘点目标SDK/工具链，再固定源构建和验证",
+      "blockers": [
+        "目标工具链/SDK或上游构建证明未确认",
+        "目标运行条件未确认；额外实体机器按用户指令跳过但不计运行通过"
+      ]
+    },
+    {
+      "taskId": "NATIVE-21",
+      "resource": "com/sun/jna/win32-x86/jnidispatch.dll",
+      "originalSha256": "38650a0612730c52580c9f32ff766b44b1c5a426d52e7dd7a53687bf3389ac2c",
+      "coordinate": "net.java.dev.jna:jna:5.14.0",
+      "os": "win32",
+      "cpu": "x86",
+      "status": "OPEN",
+      "requiredToolchain": "MSVC/Windows SDK x86；构建WinPTY/Console/helper所需依赖",
+      "nextAction": "核上游逐文件构建证明或盘点目标SDK/工具链，再固定源构建和验证",
+      "blockers": [
+        "目标工具链/SDK或上游构建证明未确认",
+        "目标运行条件未确认；额外实体机器按用户指令跳过但不计运行通过"
+      ]
+    },
+    {
+      "taskId": "NATIVE-22",
+      "resource": "resources/com/pty4j/native/freebsd/x86-64/libpty.so",
+      "originalSha256": "6bf2cf3a6ac0929d0f23529b4bfc7f97348219260f86dc84f2a0140ec611dd7c",
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "os": "freebsd",
+      "cpu": "x86-64",
+      "status": "OPEN",
+      "requiredToolchain": "freebsd目标SDK/系统头文件与原生或交叉编译器",
+      "nextAction": "核上游逐文件构建证明或盘点目标SDK/工具链，再固定源构建和验证",
+      "blockers": [
+        "目标工具链/SDK或上游构建证明未确认",
+        "目标运行条件未确认；额外实体机器按用户指令跳过但不计运行通过"
+      ]
+    },
+    {
+      "taskId": "NATIVE-23",
+      "resource": "resources/com/pty4j/native/freebsd/x86/libpty.so",
+      "originalSha256": "67088c6eb1ac32f4c82c43e0386cb86e9df68f6869ee4900cb68039cb0121598",
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "os": "freebsd",
+      "cpu": "x86",
+      "status": "OPEN",
+      "requiredToolchain": "freebsd目标SDK/系统头文件与原生或交叉编译器",
+      "nextAction": "核上游逐文件构建证明或盘点目标SDK/工具链，再固定源构建和验证",
+      "blockers": [
+        "目标工具链/SDK或上游构建证明未确认",
+        "目标运行条件未确认；额外实体机器按用户指令跳过但不计运行通过"
+      ]
+    },
+    {
+      "taskId": "NATIVE-24",
+      "resource": "resources/com/pty4j/native/linux/arm/libpty.so",
+      "originalSha256": "a272c1d2495138007654cf9dd1e8e57faab62e9c3eb2a1a0cc32b1a613a79a58",
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "os": "linux",
+      "cpu": "arm",
+      "status": "COMPONENT_SOURCE_VERIFIED_AND_ASSEMBLED_FULL_PRODUCT_PENDING",
+      "candidateSha256": "f93032e5631ce7cff263b4ffbaebff48b0d6bf0f9b921234b66acfa440bc77d7",
+      "componentRunId": "41823433458",
+      "componentCommit": "1c4cc6da5fd62d6f23c0459036cd9b560403b8b7",
+      "componentReceipt": "docs/testing/gap-p1-2026-11-04/components-acceptance.json",
+      "nextAction": "同提交同候选五目标完整功能验收；额外CPU的Java平台支持仍不由组件探针推定"
+    },
+    {
+      "taskId": "NATIVE-25",
+      "resource": "resources/com/pty4j/native/linux/mips64el/libpty.so",
+      "originalSha256": "7d97ff835049dcfe1137812e17a09f1d70c4b5fd32cdcfc54a6f7d703f9dc69d",
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "os": "linux",
+      "cpu": "mips64el",
+      "status": "COMPONENT_SOURCE_VERIFIED_AND_ASSEMBLED_FULL_PRODUCT_PENDING",
+      "candidateSha256": "d97db322f338bd35a58d4e4683df4b08830d048e7269367970a57a56120a80b4",
+      "componentRunId": "41823433458",
+      "componentCommit": "1c4cc6da5fd62d6f23c0459036cd9b560403b8b7",
+      "componentReceipt": "docs/testing/gap-p1-2026-11-04/components-acceptance.json",
+      "nextAction": "同提交同候选五目标完整功能验收；额外CPU的Java平台支持仍不由组件探针推定"
+    },
+    {
+      "taskId": "NATIVE-26",
+      "resource": "resources/com/pty4j/native/linux/ppc64le/libpty.so",
+      "originalSha256": "60d5f3c23625eae9cd19b4c36a1b1cc540b03d500bae2bae7891cdd7be5533d8",
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "os": "linux",
+      "cpu": "ppc64le",
+      "status": "COMPONENT_SOURCE_VERIFIED_AND_ASSEMBLED_FULL_PRODUCT_PENDING",
+      "candidateSha256": "c3b8e7e08ca1657d7557baefe479532fd2089a573b0d550799b8dc85f90c0e0b",
+      "componentRunId": "41823433458",
+      "componentCommit": "1c4cc6da5fd62d6f23c0459036cd9b560403b8b7",
+      "componentReceipt": "docs/testing/gap-p1-2026-11-04/components-acceptance.json",
+      "nextAction": "同提交同候选五目标完整功能验收；额外CPU的Java平台支持仍不由组件探针推定"
+    },
+    {
+      "taskId": "NATIVE-27",
+      "resource": "resources/com/pty4j/native/linux/riscv64/libpty.so",
+      "originalSha256": "e101b0a4282fef079d32bb0202d2ec5e2869579f45e72f09ceae5c6d0388f372",
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "os": "linux",
+      "cpu": "riscv64",
+      "status": "COMPONENT_SOURCE_VERIFIED_AND_ASSEMBLED_FULL_PRODUCT_PENDING",
+      "candidateSha256": "40b774439860e413d35bb9f09f6eb24a852373f821493bd5af30a8d525bb29b4",
+      "componentRunId": "41823433458",
+      "componentCommit": "1c4cc6da5fd62d6f23c0459036cd9b560403b8b7",
+      "componentReceipt": "docs/testing/gap-p1-2026-11-04/components-acceptance.json",
+      "nextAction": "同提交同候选五目标完整功能验收；额外CPU的Java平台支持仍不由组件探针推定"
+    },
+    {
+      "taskId": "NATIVE-28",
+      "resource": "resources/com/pty4j/native/linux/x86/libpty.so",
+      "originalSha256": "a0502637d32147f81e43b46ec31789ca06e89747ec12fbb24f1ebd1b6a0f67f7",
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "os": "linux",
+      "cpu": "x86",
+      "status": "COMPONENT_SOURCE_VERIFIED_AND_ASSEMBLED_FULL_PRODUCT_PENDING",
+      "candidateSha256": "5dc002dc2f92683d4e235b4904667b321e3a04a6469d25d83c5c887a4c10ab74",
+      "componentRunId": "41823433458",
+      "componentCommit": "1c4cc6da5fd62d6f23c0459036cd9b560403b8b7",
+      "componentReceipt": "docs/testing/gap-p1-2026-11-04/components-acceptance.json",
+      "nextAction": "同提交同候选五目标完整功能验收；额外CPU的Java平台支持仍不由组件探针推定"
+    },
+    {
+      "taskId": "NATIVE-29",
+      "resource": "resources/com/pty4j/native/win/aarch64/OpenConsole.exe",
+      "originalSha256": "8a1b1f024040579b8c656eed59c068da1f544743165f2a4cb8e78e28c1c72836",
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "os": "win",
+      "cpu": "aarch64",
+      "status": "OPEN",
+      "requiredToolchain": "MSVC/Windows SDK aarch64；构建WinPTY/Console/helper所需依赖",
+      "nextAction": "核上游逐文件构建证明或盘点目标SDK/工具链，再固定源构建和验证",
+      "blockers": [
+        "目标工具链/SDK或上游构建证明未确认",
+        "目标运行条件未确认；额外实体机器按用户指令跳过但不计运行通过"
+      ]
+    },
+    {
+      "taskId": "NATIVE-30",
+      "resource": "resources/com/pty4j/native/win/aarch64/conpty.dll",
+      "originalSha256": "0e7dc377e2cf5f90f3b221a53193fb1b0f99634d7911241a9a80cb7650f67526",
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "os": "win",
+      "cpu": "aarch64",
+      "status": "OPEN",
+      "requiredToolchain": "MSVC/Windows SDK aarch64；构建WinPTY/Console/helper所需依赖",
+      "nextAction": "核上游逐文件构建证明或盘点目标SDK/工具链，再固定源构建和验证",
+      "blockers": [
+        "目标工具链/SDK或上游构建证明未确认",
+        "目标运行条件未确认；额外实体机器按用户指令跳过但不计运行通过"
+      ]
+    },
+    {
+      "taskId": "NATIVE-31",
+      "resource": "resources/com/pty4j/native/win/aarch64/win-helper.dll",
+      "originalSha256": "b4d01792ba6ec8a7c5df2516a1170e19a0a82f0937a506673818a9510052802a",
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "os": "win",
+      "cpu": "aarch64",
+      "status": "OPEN",
+      "requiredToolchain": "MSVC/Windows SDK aarch64；构建WinPTY/Console/helper所需依赖",
+      "nextAction": "核上游逐文件构建证明或盘点目标SDK/工具链，再固定源构建和验证",
+      "blockers": [
+        "目标工具链/SDK或上游构建证明未确认",
+        "目标运行条件未确认；额外实体机器按用户指令跳过但不计运行通过"
+      ]
+    },
+    {
+      "taskId": "NATIVE-32",
+      "resource": "resources/com/pty4j/native/win/aarch64/winpty-agent.exe",
+      "originalSha256": "055ab03294342b665d666f2e7fce2ec1fe182e3bd97af6b95219d046af9bf36b",
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "os": "win",
+      "cpu": "aarch64",
+      "status": "OPEN",
+      "requiredToolchain": "MSVC/Windows SDK aarch64；构建WinPTY/Console/helper所需依赖",
+      "nextAction": "核上游逐文件构建证明或盘点目标SDK/工具链，再固定源构建和验证",
+      "blockers": [
+        "目标工具链/SDK或上游构建证明未确认",
+        "目标运行条件未确认；额外实体机器按用户指令跳过但不计运行通过"
+      ]
+    },
+    {
+      "taskId": "NATIVE-33",
+      "resource": "resources/com/pty4j/native/win/aarch64/winpty.dll",
+      "originalSha256": "99c8aa61319c2a83278e4da60cdc584fe29a6818e24edc362399314d3a3e5808",
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "os": "win",
+      "cpu": "aarch64",
+      "status": "OPEN",
+      "requiredToolchain": "MSVC/Windows SDK aarch64；构建WinPTY/Console/helper所需依赖",
+      "nextAction": "核上游逐文件构建证明或盘点目标SDK/工具链，再固定源构建和验证",
+      "blockers": [
+        "目标工具链/SDK或上游构建证明未确认",
+        "目标运行条件未确认；额外实体机器按用户指令跳过但不计运行通过"
+      ]
+    },
+    {
+      "taskId": "NATIVE-34",
+      "resource": "resources/com/pty4j/native/win/x86-64/cyglaunch.exe",
+      "originalSha256": "5d2d8da1066eb931bf86aa0895bb5cec3d7320faf258b7b20d722f16136cb3ca",
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "os": "win",
+      "cpu": "x86-64",
+      "status": "OPEN",
+      "requiredToolchain": "MSVC/Windows SDK x86-64；构建WinPTY/Console/helper所需依赖",
+      "nextAction": "核上游逐文件构建证明或盘点目标SDK/工具链，再固定源构建和验证",
+      "blockers": [
+        "目标工具链/SDK或上游构建证明未确认",
+        "目标运行条件未确认；额外实体机器按用户指令跳过但不计运行通过"
+      ]
+    },
+    {
+      "taskId": "NATIVE-35",
+      "resource": "resources/com/pty4j/native/win/x86/winpty-agent.exe",
+      "originalSha256": "1ecf08c02b534c4aed342e8a0d5a5d31d6956638d199a59ad6fbbe6519b6aa33",
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "os": "win",
+      "cpu": "x86",
+      "status": "OPEN",
+      "requiredToolchain": "MSVC/Windows SDK x86；构建WinPTY/Console/helper所需依赖",
+      "nextAction": "核上游逐文件构建证明或盘点目标SDK/工具链，再固定源构建和验证",
+      "blockers": [
+        "目标工具链/SDK或上游构建证明未确认",
+        "目标运行条件未确认；额外实体机器按用户指令跳过但不计运行通过"
+      ]
+    },
+    {
+      "taskId": "NATIVE-36",
+      "resource": "resources/com/pty4j/native/win/x86/winpty.dll",
+      "originalSha256": "c77c5b1b19bd72d714e64c783bc0a4f0afa06dfaa684ce4105eb55be3cf3e705",
+      "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
+      "os": "win",
+      "cpu": "x86",
+      "status": "OPEN",
+      "requiredToolchain": "MSVC/Windows SDK x86；构建WinPTY/Console/helper所需依赖",
+      "nextAction": "核上游逐文件构建证明或盘点目标SDK/工具链，再固定源构建和验证",
+      "blockers": [
+        "目标工具链/SDK或上游构建证明未确认",
+        "目标运行条件未确认；额外实体机器按用户指令跳过但不计运行通过"
+      ]
+    }
+  ]
+}

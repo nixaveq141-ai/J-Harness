@@ -1,4 +1,4 @@
-"""Combine fourteen reviewed native resources on the current application baseline.
+"""Combine fourteen base natives and optional reviewed P1 components.
 
 The remaining inventoried resources are retained and explicitly not certified as
 source built. No accepted application classes or prior verify receipts are reused.
@@ -156,6 +156,17 @@ def main():
             dest=target/'libpty.so';dest.write_bytes(item['path'].read_bytes())
             replacements[name]={**item,'path':dest}
         receipts['p1-linux-pty']=sha((ROOT/p1.RECEIPT).read_bytes())
+    if os.environ.get('JHARNESS_P1_LINUX_JNA')=='1':
+        spec=importlib.util.spec_from_file_location('p1_jna_components',ROOT/'scripts/stage-p1-linux-jna.py')
+        p1jna=importlib.util.module_from_spec(spec);spec.loader.exec_module(p1jna)
+        extra=p1jna.load_components(ROOT/'.build-cache/p1-jna-inputs')
+        if set(extra)&set(replacements) or len(extra)!=8:
+            raise ValueError('Eight disjoint P1 JNA replacements required')
+        for name,item in extra.items():
+            target=payload/'p1-jna'/name.split('/')[-2];target.mkdir(parents=True)
+            dest=target/'libjnidispatch.so';dest.write_bytes(item['path'].read_bytes())
+            replacements[name]={**item,'path':dest}
+        receipts['p1-linux-jna']=sha((ROOT/p1jna.RECEIPT).read_bytes())
     runtime=ROOT/'harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar';baseline=out/'baseline-runtime.jar'
     with baseline.open('xb') as stream:stream.write(runtime.read_bytes())
     canonical=out/'canonical-baseline-runtime.jar'
@@ -165,7 +176,7 @@ def main():
     inventory={v['resource']:v['sha256'] for v in json.loads((ROOT/'docs/testing/M10-native-inventory-50-2026-11-01.json').read_bytes())['binaries']}
     preview=out/'current-source-runtime.jar'
     assembly=assembler.assemble(canonical,preview,replacements,sha(canonical.read_bytes()),inventory,
-        'Unified five-target runtime; optional P1 extra-architecture PTY components; remaining inventoried resources retain original bytes')
+        'Unified five-target runtime; optional P1 extra-architecture PTY/JNA components; remaining inventoried resources retain original bytes')
     final=out/'canonical-source-runtime.jar';canonicalize_runtime(preview,final)
     temporary=runtime.with_suffix('.source-stage.tmp')
     with temporary.open('xb') as stream:stream.write(final.read_bytes())

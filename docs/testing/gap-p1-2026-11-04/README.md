@@ -53,3 +53,11 @@ JNA[第二轮](jna-second-run.json)六侧组件通过，MIPS64EL/s390x真实探�
 19项统一候选首轮41824728486的[Windows原包复核](unified19-first-windows.json)：735项Java与安装过，WebKit turns在第11项检查后发送按钮disabled30秒，整轮拒绝验收。另严格源门禁发现新C探针在Windows被转成CRLF；旧运行保留该不符，不扩大旧门禁的例外，未来通过Git属性固定scripts/probes C/H为LF。诊断专项只运行原失败精确JAR，并给turns增加有界无正文DOM/React长度、任务枚举和事件类型观察；原15项断言及UNKNOWN不重放语义不变，不把同症状当旧Mac根因。
 
 P0/P1嵌套JSON增加原字节保留属性，避免跨平台checkout改变已有摘要；现有JSON语义未变，P0校验仍通过。完整候选验收、所有剩余来源和其他OS/CPE问题均不因诊断或字节策略调整而视为完成。
+
+## 十三组件来源与27项候选
+
+JNA[41830641417](https://github.com/nixaveq141-ai/J-Harness/actions/runs/41830641417)@8ad八侧全部成功，[独立验收](jna-components-acceptance.json)逐一核对1297项固定源与既审源相同、15条实际命令/宿主Git指纹/原始日志、libffi归档与生成输入、ELF/端序/浮点ABI、C探针与回调保护控制、精确缺库拒绝。加上前批五PTY，新增13组件来源已审。[逐任务进展](progress-ledger.json)对照P0的36个稳定任务ID，23项继续OPEN，未取得SDK的不能记为已构建。
+
+[27项真实装配控制](assembly27-control.json)证明实际候选27源码/23原版，其余4511条目保持；严格全来源门禁正确exit2，本机原生成JAR已精确恢复。新增stager拒绝输出/原归档/回执漂移及重复目标，实际八原包控制通过。下一轮完整五目标才验证这套统一候选，不拼接上一轮四侧成功为新候选完成。
+
+原Windows19候选的[单轮精确JAR观察41830641429](turn-observation-acceptance.json)通过原15检查，源码/回执/截图/JAR已独立核验；未复现故障，不作为历史Mac或本轮Windows按钮因果修复。额外CPU只有已说明的C级组件验证，完整JVM/目标Java应用与所有Linux版本兼容性均未认证。
