@@ -1,4 +1,4 @@
-name: P1 fixed FreeBSD x64 PTY source component
+name: P1 FreeBSD 14.4 x64 PTY source and native child component
 on:
   workflow_dispatch:
   push:

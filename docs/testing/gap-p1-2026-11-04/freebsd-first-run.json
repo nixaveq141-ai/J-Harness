@@ -1,0 +1,14 @@
+{
+  "status": "FAILED_BEFORE_SOURCE_BUILD_NOT_ACCEPTED",
+  "runId": "42001243916",
+  "commit": "4ce13937340d4caeb28833876ee1093be44b353f",
+  "jobId": 127156712832,
+  "rawJobLogPath": ".build-cache/p1-job-127156712832.log",
+  "rawJobLogSha256": "e64b82e6abba6b314d9b422acdfc0c4003a5782a67cd2d1b2b2b1e305cc5397f",
+  "failure": "Fresh VM has no .build-cache parent; output mkdir lacked parents=True",
+  "vmBootAndPackageInstall": true,
+  "sourceBuildExecuted": false,
+  "artifactAvailable": false,
+  "fix": "Create private output with parents=True while retaining exist_ok=False; next actual result pending",
+  "paidRequests": 0
+}

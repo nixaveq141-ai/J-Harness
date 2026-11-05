@@ -13,7 +13,7 @@ REVISION='b7554d649f6374183040e6554942b6d5b028b5e5'
 
 def main():
     if platform.system()!='FreeBSD' or platform.machine()!='amd64' or os.environ.get('GITHUB_ACTIONS')!='true':raise ValueError('Isolated FreeBSD amd64 CI required')
-    out=ROOT/'.build-cache/p1-freebsd-pty';out.mkdir(exist_ok=False)
+    out=ROOT/'.build-cache/p1-freebsd-pty';out.mkdir(parents=True,exist_ok=False)
     report=dict(status='INCOMPLETE',runId=os.environ['GITHUB_RUN_ID'],commit=os.environ['GITHUB_SHA'],sourceRevision=REVISION,paidRequests=0,productAccepted=False,commands=[])
     def command(argv,name,cwd=ROOT,timeout=300):
         log=out/(name+'.log');receipt=out/(name+'-command.json')
