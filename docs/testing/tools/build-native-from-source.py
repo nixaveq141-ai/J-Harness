@@ -6,6 +6,7 @@ import os
 from pathlib import Path
 import platform
 import shutil
+import struct
 import subprocess
 import tarfile
 import time
@@ -17,6 +18,23 @@ REVISIONS={'jna':('java-native-access/jna','c366bc4fd0c50a30ac8d2475603ec564f661
 FFI_URL='https://github.com/libffi/libffi/releases/download/v3.4.4/libffi-3.4.4.tar.gz'
 FFI_SHA='d66c56ad259a82cf2a9dfc408b32bf5da52371500b84745f7fb8b645712df676'
 FFI_BYTES=1362394
+
+
+def windows_jna_options(arch):
+    if arch not in {'amd64','x86'}:raise ValueError('Unreviewed Windows JNA target')
+    return ['-DEXTRA_MAKE_OPTS=OS=win32 MINGW_PREFIX=', '-DARCH='+arch,
+            '-Dos.prefix=win32-'+('x86' if arch=='x86' else 'x86-64'), '-DUSE_MSVC=false']
+
+
+def validate_windows_pe(raw,arch):
+    if arch not in {'amd64','x86'}:raise ValueError('Unreviewed Windows PE target')
+    if len(raw)<128 or raw[:2]!=b'MZ':raise ValueError('Complete PE required')
+    offset=struct.unpack_from('<I',raw,60)[0]
+    if offset<64 or offset+26>len(raw) or raw[offset:offset+4]!=b'PE\0\0':raise ValueError('Bounded PE header required')
+    machine=struct.unpack_from('<H',raw,offset+4)[0];magic=struct.unpack_from('<H',raw,offset+24)[0]
+    if (machine,magic)!=((0x14c,0x10b) if arch=='x86' else (0x8664,0x20b)):
+        raise ValueError('PE architecture differs from requested JNA target')
+    return dict(machine=machine,optionalHeaderMagic=magic)
 
 
 def digest(path):return hashlib.sha256(path.read_bytes()).hexdigest()
@@ -147,11 +165,18 @@ def main():
             run([str(msys_make),'--version'],ROOT,30)
             # MSYS uname reports MSYS_NT, which the pinned Makefile does not
             # classify as Windows. Select its existing MinGW branch explicitly.
-            ant_command+=['-Dmake='+str(msys_make),'-DEXTRA_MAKE_OPTS=OS=win32 MINGW_PREFIX=',
-                          '-DARCH=amd64','-DUSE_MSVC=false']
+            windows_arch=os.environ.get('JHARNESS_WINDOWS_JNA_ARCH','amd64')
+            options=windows_jna_options(windows_arch)
+            compiler_log=run(['gcc','-dumpmachine'],ROOT,30)
+            expected='i686-w64-mingw32' if windows_arch=='x86' else 'x86_64-w64-mingw32'
+            if compiler_log.read_text().strip()!=expected:raise ValueError('Target compiler differs from requested JNA architecture')
+            report['windowsJnaTarget']=windows_arch
+            ant_command+=['-Dmake='+str(msys_make),*options]
         run([*ant_command,'native'],jna)
         candidates=[p for p in (jna/'build').rglob('*') if p.is_file() and p.name in ['jnidispatch.dll','libjnidispatch.so','libjnidispatch.jnilib','libjnidispatch.dylib']]
         if not candidates:raise ValueError('No compiled JNA candidate')
+        if os.name=='nt':
+            report['outputPeIdentities']={p.relative_to(ROOT).as_posix():validate_windows_pe(p.read_bytes(),windows_arch) for p in candidates}
         report['outputs']['jna']=[dict(path=p.relative_to(ROOT).as_posix(),sha256=digest(p)) for p in candidates]
         if os.name=='posix':
             pty=out/'pty4j';mac=platform.system()=='Darwin'

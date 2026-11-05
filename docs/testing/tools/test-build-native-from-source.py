@@ -16,6 +16,17 @@ builder=importlib.util.module_from_spec(spec);spec.loader.exec_module(builder)
 
 
 class SourceBuildTest(unittest.TestCase):
+    def test_windows_x86_target_and_pe_cannot_silently_use_x64(self):
+        import struct
+        self.assertIn('-Dos.prefix=win32-x86',builder.windows_jna_options('x86'))
+        self.assertIn('-DARCH=amd64',builder.windows_jna_options('amd64'))
+        raw=bytearray(128);raw[:2]=b'MZ';struct.pack_into('<I',raw,60,64);raw[64:68]=b'PE\0\0'
+        struct.pack_into('<H',raw,68,0x14c);struct.pack_into('<H',raw,88,0x10b)
+        builder.validate_windows_pe(raw,'x86')
+        with self.assertRaises(ValueError):builder.validate_windows_pe(raw,'amd64')
+        with self.assertRaises(ValueError):builder.windows_jna_options('arm64')
+        with self.assertRaises(ValueError):builder.validate_windows_pe(raw[:80],'x86')
+
     def test_linux_arm_output_and_compiler_object_identity_match(self):
         path,command=builder.posix_pty_plan('Linux','aarch64')
         self.assertEqual('os/linux/aarch64/libpty.so',path)

@@ -1,0 +1,43 @@
+name: P1 pinned Windows x86 JNA source candidate
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/m1059-full-validation]
+    paths: [.github/workflows/gap-p1-windows-x86-jna.yml]
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: windows-2022
+    timeout-minutes: 25
+    env:
+      JHARNESS_WINDOWS_JNA_ARCH: x86
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install actual 32-bit compiler and select it first
+        shell: pwsh
+        run: |
+          & 'C:\msys64\usr\bin\bash.exe' -lc 'pacman -S --noconfirm --needed make mingw-w64-i686-gcc'
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          'C:\msys64\mingw32\bin' | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
+          'C:\msys64\usr\bin' | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
+      - run: python docs/testing/tools/test-build-native-from-source.py
+      - run: python docs/testing/tools/build-native-from-source.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: p1-windows-x86-jna-source
+          include-hidden-files: true
+          path: |
+            .build-cache/native-source-build/report.json
+            .build-cache/native-source-build/*.log
+            .build-cache/native-source-build/*-build-source-diff.patch
+            .build-cache/native-source-build/libffi-release-3.4.4.tar.gz
+            .build-cache/native-source-build/jna/build/**/jnidispatch.dll

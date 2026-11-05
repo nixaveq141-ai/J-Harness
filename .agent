@@ -4,6 +4,8 @@
 
 ## 当前接续状态
 
+- 2026-11-05 P1继续：已通过GitHub API逐blob/tree/commit SHA相等快进同步170f/20570ce，恢复输入槽修正远端复验。用户无需AIX环境，保留AIX载荷并继续找上游证明，不擅删。新增Windows x86 JNA固定源专项，显式32位GCC dumpmachine/Ant目标及PE machine+magic门禁，原amd64默认保留；六项离线控制过，实际构建/加载/装配待，不增加27/23候选或14/36正式计数。
+
 - 2026-11-05 P1完整轮41986781377 Linux源verify失败：M6取消阻塞stdin预期UNKNOWN却BUSY，实际发现worker先complete后释放inputSlot，使串行下一写误报BUSY。改为释放槽再发布成功/失败；同一原测试加确定性release闸门，旧码失败/新码通过，仍保留取消UNKNOWN原断言与735用例身份。input-slot-red-green收据留日志摘要；本机M6全7项另1个STOPPED/UNKNOWN失败，未称全套过。修正完整五目标待；13组件已审/27候选/23来源OPEN，P1未完成，无付费。
 
 - 2026-11-05 P1接续：b126e6a27项统一候选已成功快进推送，五目标完整CI41986781377绑定b126e6a83f87ba300e1ccf32d7f24dc69628e8d3运行中，尚未验收。13新增组件来源/ABI/交互已独立验，候选27/23，正式旧5df仍14/36；P1剩23项来源任务OPEN。46成员188165234字节组件/失败原包/27装配JAR/索引及审计器已本地封存逐SHA/CRC过，收据gap-p1-2026-11-04/local-backup-2026-11-05.json。无付费模型/main/Release，实体机器跳过不变。下一入口先核41986781377全部目标及同字节门禁和原包，再推进progress-ledger内23项工具链/来源证明。
