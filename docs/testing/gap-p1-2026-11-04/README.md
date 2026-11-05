@@ -75,3 +75,5 @@ JNA[41830641417](https://github.com/nixaveq141-ai/J-Harness/actions/runs/4183064
 ## Windows x86来源批次
 
 新增固定JNA源的Windows x86构建专项，采用[MSYS2官方32位GCC包](https://packages.msys2.org/packages/mingw-w64-i686-gcc)。先核实际gcc dumpmachine，再指定Ant ARCH=x86/os.prefix=win32-x86；逐输出核PE machine0x14c/PE32魔数，不允许64位副本充数。六项离线控制通过；真实编译、组件加载与统一候选集成仍待，不减少未决数。默认amd64路径保留。用户不需要AIX环境，不改变随包50项范围，AIX两项继续查上游证明而非删除。
+
+Windows x86首轮41990625821构建成功但[独立来源核验未接受](windows-x86-first-build.json)：1297源路径一致，1085字节摘要不同；隔离checkout显式core.eol=lf后重验，未将未解释差异算通过。另新增实际32位C进程核严格DLL路径、六类sizeof、malloc/free、卸载与缺库拒绝；结果仍待。来源计数及整体P1完成状态不因此改变。

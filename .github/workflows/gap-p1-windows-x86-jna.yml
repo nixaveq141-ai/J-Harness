@@ -30,6 +30,7 @@ jobs:
           'C:\msys64\usr\bin' | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
       - run: python docs/testing/tools/test-build-native-from-source.py
       - run: python docs/testing/tools/build-native-from-source.py
+      - run: python scripts/probe-p1-windows-x86-jna.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -41,3 +42,4 @@ jobs:
             .build-cache/native-source-build/*-build-source-diff.patch
             .build-cache/native-source-build/libffi-release-3.4.4.tar.gz
             .build-cache/native-source-build/jna/build/**/jnidispatch.dll
+            .build-cache/p1-win32-probe/

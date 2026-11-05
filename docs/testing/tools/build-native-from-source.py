@@ -142,7 +142,7 @@ def main():
             target=out/name
             run(['git','-c','http.https://github.com/.extraheader=','clone','--no-checkout','--filter=blob:none',
                  'https://github.com/'+repo+'.git',str(target)],ROOT)
-            run(['git','-c','core.autocrlf=false','checkout','--detach',revision],target)
+            run(['git','-c','core.autocrlf=false','-c','core.eol=lf','checkout','--detach',revision],target)
             actual=subprocess.run(['git','rev-parse','HEAD'],cwd=target,env=env,capture_output=True,check=True).stdout.decode().strip()
             if actual!=revision:raise ValueError('Pinned revision mismatch')
             paths=subprocess.run(['git','ls-files','-z'],cwd=target,env=env,capture_output=True,check=True).stdout.split(b'\0')
