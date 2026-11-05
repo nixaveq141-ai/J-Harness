@@ -138,17 +138,21 @@ public final class LocalTerminalSession implements TerminalSession {
                 .name("terminal-input")
                 .start(
                         () -> {
+                            Throwable failure = null;
                             try {
                                 task.process
                                         .getOutputStream()
                                         .write(text.getBytes(StandardCharsets.UTF_8));
                                 task.process.getOutputStream().flush();
-                                sent.complete(null);
                             } catch (IOException | RuntimeException ex) {
-                                sent.completeExceptionally(ex);
+                                failure = ex;
                             } finally {
                                 task.inputSlot.release();
                             }
+                            // Completion admits the caller's next serial write.
+                            // Release its slot before publishing that completion.
+                            if (failure == null) sent.complete(null);
+                            else sent.completeExceptionally(failure);
                         });
         long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(5);
         try {

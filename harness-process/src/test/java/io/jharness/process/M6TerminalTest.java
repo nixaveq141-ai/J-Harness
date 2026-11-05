@@ -306,6 +306,41 @@ class M6TerminalTest {
                                     .get("id");
             java.util.concurrent.atomic.AtomicBoolean cancel =
                     new java.util.concurrent.atomic.AtomicBoolean();
+            // A successful write must not return while its admission slot is still held.
+            var releasing = new java.util.concurrent.CountDownLatch(1);
+            var permitRelease = new java.util.concurrent.CountDownLatch(1);
+            var taskMethod = LocalTerminalSession.class.getDeclaredMethod("task", String.class);
+            taskMethod.setAccessible(true);
+            Object task = taskMethod.invoke(terminal, id);
+            var slot = task.getClass().getDeclaredField("inputSlot");
+            slot.setAccessible(true);
+            slot.set(
+                    task,
+                    new java.util.concurrent.Semaphore(1) {
+                        @Override
+                        public void release() {
+                            releasing.countDown();
+                            try {
+                                if (!permitRelease.await(2, java.util.concurrent.TimeUnit.SECONDS))
+                                    throw new AssertionError(
+                                            "input slot release was not permitted");
+                            } catch (InterruptedException ex) {
+                                Thread.currentThread().interrupt();
+                                throw new AssertionError(ex);
+                            }
+                            super.release();
+                        }
+                    });
+            var firstWrite = executor.submit(() -> terminal.write(id, "x", CancellationToken.NONE));
+            try {
+                assertTrue(releasing.await(2, java.util.concurrent.TimeUnit.SECONDS));
+                assertThrows(
+                        java.util.concurrent.TimeoutException.class,
+                        () -> firstWrite.get(100, java.util.concurrent.TimeUnit.MILLISECONDS));
+            } finally {
+                permitRelease.countDown();
+            }
+            firstWrite.get(2, java.util.concurrent.TimeUnit.SECONDS);
             // A POSIX pipe may accept an entire 64 KiB write. Fill it before testing a blocked
             // write.
             var pending =

@@ -1,4 +1,4 @@
-name: Unified source-native five-target qualification
+name: Unified source-native five-target qualification with input-slot ordering
 on:
   workflow_dispatch:
   push:

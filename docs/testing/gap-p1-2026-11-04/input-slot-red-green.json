@@ -1,0 +1,24 @@
+{
+  "status": "DETERMINISTIC_INPUT_SLOT_ORDER_RED_GREEN",
+  "records": [
+    {
+      "phase": "before",
+      "exitCode": 1,
+      "logSha256": "1e892d3735b9d790fdc219a14b7602a2418287977c420094383d4ed5783312a0",
+      "sourceSha256": "919abce4dba63e7e5b8a43bd7651f30cfc826e830badaf640ed524558b46e7ef"
+    },
+    {
+      "phase": "after",
+      "exitCode": 0,
+      "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sourceSha256": "5017b4e221c7fd4bd1144a8506feef2d109db9d9ad0b8a39c96a6b889e64518e"
+    }
+  ],
+  "ciFailureRun": "41986781377",
+  "ciFailureJob": "127109273661",
+  "ciFailureLogSha256": "f397edc80d0cc975e397a8b042fb9f0981697dd2bc3d44ef2569bab9f37875b0",
+  "scope": "Existing cancellation test adds gated release assertion; case identity/count unchanged",
+  "limits": [
+    "Separate local M6 background stop test observed UNKNOWN instead of STOPPED; whole-suite acceptance not claimed"
+  ]
+}

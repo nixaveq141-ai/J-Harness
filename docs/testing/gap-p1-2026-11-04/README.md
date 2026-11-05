@@ -67,3 +67,7 @@ JNA[41830641417](https://github.com/nixaveq141-ai/J-Harness/actions/runs/4183064
 27项候选b126e6a已成功推送，[完整五目标41986781377](https://github.com/nixaveq141-ai/J-Harness/actions/runs/41986781377)运行中，未完成原包验收前不更新正式覆盖。下一步核全部目标与一致性门禁，再按进展账本推进23项未决来源。
 
 [本地备份收据](local-backup-2026-11-05.json)：46成员188165234字节，包含本轮已保留的失败/成功组件原ZIP、原Windows失败ZIP、27项装配控制JAR、索引和审计器；逐成员SHA/整包SHA与CRC已核。审计脚本绑定各自提交输入快照，不能拿未来源码文件集合冒充原轮输入。只在本地保存；该备份与运行中的CI均不等于P1全部完成。
+
+## 27项候选复验的实际输入槽竞态
+
+41986781377的Linux source-verify失败，M6取消阻塞输入期望UNKNOWN却返回BUSY。生产worker先完成future再释放输入槽，串行下一次write可能被误判忙。修正先释放再发布结果；原取消用例增加可控release闸门，保持原用例身份和取消UNKNOWN断言，[旧码失败/新码通过](input-slot-red-green.json)已实测。本机全部7项M6另有background stop预期STOPPED、实际UNKNOWN的失败，未把整套记通过；完整候选仍待修正轮验收，P1未完成。
