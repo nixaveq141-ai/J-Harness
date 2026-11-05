@@ -64,6 +64,7 @@ jharness text eol=lf
 jharness.cmd text eol=crlf
 scripts/probes/*.c text eol=lf
 scripts/probes/*.h text eol=lf
+scripts/probes/*.cpp text eol=lf
 # Evidence digests refer to original bytes, including intentional CRLF JSON.
 docs/testing/gap-p0-2026-11-04/*.json -text whitespace=cr-at-eol
 docs/testing/gap-p1-2026-11-04/*.json -text whitespace=cr-at-eol

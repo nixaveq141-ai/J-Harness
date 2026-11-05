@@ -38,7 +38,7 @@ def checkout(name,out,run,env):
     repository,revision=PINS[name];target=out/name
     run(['git','-c','http.https://github.com/.extraheader=','clone','--filter=blob:none','--no-checkout',
          'https://github.com/'+repository+'.git',str(target)],ROOT)
-    run(['git','-c','core.autocrlf=false','checkout','--detach',revision],target)
+    run(['git','-c','core.autocrlf=false','-c','core.eol=lf','checkout','--detach',revision],target)
     actual=subprocess.run(['git','rev-parse','HEAD'],cwd=target,env=env,capture_output=True,check=True).stdout.decode().strip()
     if actual!=revision:raise ValueError('Pinned source revision rejected')
     names=subprocess.run(['git','ls-files','-z'],cwd=target,env=env,capture_output=True,check=True).stdout.split(b'\0')
@@ -118,10 +118,14 @@ def main():
     if os.environ.get('GITHUB_ACTIONS')!='true' or os.name!='nt':raise ValueError('Use isolated Windows CI')
     out=ROOT/'.build-cache/windows-pty-source';out.mkdir(parents=True)
     env=build_environment()
+    arch=os.environ.get('JHARNESS_WINDOWS_PTY_ARCH','x64')
+    if arch not in {'x64','x86'} or (args.component=='console' and arch!='x64'):
+        raise ValueError('Reviewed Windows PTY architecture required')
+    mingw='mingw32' if arch=='x86' else 'mingw64'
     env.update(GIT_TERMINAL_PROMPT='0',GCM_INTERACTIVE='Never')
     report=dict(status='INCOMPLETE',runId=os.environ.get('GITHUB_RUN_ID'),commit=os.environ.get('GITHUB_SHA'),
         component=args.component,os=platform.platform(),architecture=platform.machine(),sources={},commands=[],outputs=[],
-        productReplacement=False,originalJetBrainsBuildAttested=False,paidRequests=0)
+        productReplacement=False,originalJetBrainsBuildAttested=False,paidRequests=0,targetArchitecture=arch)
     def run(argv,cwd,timeout=900):
         log=out/(str(len(report['commands'])+1)+'.log')
         record=dict(argv=argv,cwd=Path(cwd).relative_to(ROOT).as_posix(),exitCode=None,log=log.name);report['commands'].append(record)
@@ -142,23 +146,33 @@ def main():
             report['sources']['winpty']['directoryExtension']=extension.apply(target)
             probe=out/'directory-probe'
             run(['cmake','-S',str(ROOT/'docs/testing/native/directory-probe'),'-B',str(probe),
-                 '-G','Visual Studio 17 2022','-A','x64'],ROOT)
+                 '-G','Visual Studio 17 2022','-A','Win32' if arch=='x86' else 'x64'],ROOT)
             run(['cmake','--build',str(probe),'--config','Release'],ROOT)
             first=out/'directory-first';second=out/'directory-second';first.mkdir();second.mkdir()
             run([str(probe/'Release/owned-directory-probe.exe'),str(first),str(second)],ROOT,30)
             # Build only the native Windows DLL/agent targets, not the MSYS adapter.
-            run(['C:/msys64/mingw64/bin/g++.exe','--version'],target,30)
+            run(['C:/msys64/'+mingw+'/bin/g++.exe','--version'],target,30)
+            run(['C:/msys64/'+mingw+'/bin/g++.exe','-dumpmachine'],target,30)
+            machine=(out/report['commands'][-1]['log']).read_text().strip()
+            if machine!=('i686-w64-mingw32' if arch=='x86' else 'x86_64-w64-mingw32'):
+                raise ValueError('Actual compiler architecture differs from target')
             # Upstream configure insists on an MSYS adapter compiler even when
             # no adapter target is requested. Generate its native-only inputs
             # explicitly; do not edit or substitute any upstream C++ source.
             config=target/'config.mk'
             config.write_bytes(('UNIX_CXX=/usr/bin/g++\nUNIX_LDFLAGS_STATIC=\n'
-                'MINGW_CXX=/mingw64/bin/g++\nCOMMIT_HASH='+PINS['winpty'][1]+'\nCOMMIT_HASH_DEP=config.mk\n').encode())
+                'MINGW_CXX=/'+mingw+'/bin/g++\nCOMMIT_HASH='+PINS['winpty'][1]+'\nCOMMIT_HASH_DEP=config.mk\n').encode())
             report['sources']['winpty']['nativeOnlyConfig']=dict(sha256=sha(config),
                 reason='Build only upstream build/winpty.dll and build/winpty-agent.exe; no MSYS adapter')
             run(['C:/msys64/usr/bin/make.exe','-j2','build/winpty.dll','build/winpty-agent.exe'],target)
             report['outputs']+=outputs([target/'build/winpty.dll',target/'build/winpty-agent.exe'],target)
             report['winptyEligibility']=winpty_eligibility((target/'build/winpty.dll').read_bytes())
+            if arch=='x86':
+                spec=importlib.util.spec_from_file_location('native_pe',Path(__file__).with_name('build-native-from-source.py'))
+                pe=importlib.util.module_from_spec(spec);spec.loader.exec_module(pe)
+                report['outputPeIdentities']={p['path']:pe.validate_windows_pe((ROOT/p['path']).read_bytes(),'x86') for p in report['outputs']}
+                report['status']='SOURCE_WINDOWS_PTY_CANDIDATES_BUILT_NOT_PRODUCT_ACCEPTANCE'
+                return
             helper,source=checkout('pty4j',out,run,env);report['sources']['pty4j']=source
             run(['cmake','-S','native/win-helper','-B','native/helper-build','-G','Visual Studio 17 2022',
                  '-A','x64','-DTARGET_X64=ON','-DCMAKE_POLICY_VERSION_MINIMUM=3.5'],helper)
