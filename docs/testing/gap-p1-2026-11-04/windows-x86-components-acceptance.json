@@ -1,0 +1,35 @@
+{
+  "status": "WINDOWS_X86_JNA_SOURCE_AND_C_PRIMITIVE_COMPONENT_INDEPENDENTLY_VERIFIED_NOT_PRODUCT_ACCEPTANCE",
+  "runId": "41992679907",
+  "commit": "e6d3091a56e2551fc864afaefc8b74a3e7e3cf2a",
+  "artifact": {
+    "id": 13398768331,
+    "path": ".build-cache/p1-raw-41989532940/13398768331.zip",
+    "sha256": "ba975bdec79ce3ef2312b86f76be455964e6f8ef1c514ea45f36abdb4d1224a9",
+    "bytes": 2006448
+  },
+  "sourceReportSha256": "724ed662ca84577eeb576a1b4c0d0f96759e1154d3f509a84ffa8cac5ea4c0bb",
+  "probeReportSha256": "ec72d3137459d5edbb628305541ad9e291612a87b12e73de16d3613e9801efc2",
+  "dllSha256": "81d86d8fcc433b709cec0a05d53b7561c7e3a0ad47726328252439cd0c3d7152",
+  "probeSourceSha256": "e730c1be5f3f5ac60679878700418d80faa0b4986ff3f87758519937fa57200d",
+  "probeSha256": "6d84b011d9273be549f25f5b6e7cb123aeceffb1c8ff03a717bfdff424c6f262",
+  "sourceFiles": {
+    "jna": 1297,
+    "pty4j": 134
+  },
+  "libffiReleaseSha256": "d66c56ad259a82cf2a9dfc408b32bf5da52371500b84745f7fb8b645712df676",
+  "buildCommands": 11,
+  "probeCommandReceiptSha256": {
+    "compile": "cf84d73af166d52666fb8e0d10c14e98a2a49fc29204812b04d86b00498730a2",
+    "load": "9a0f636d1a2aa2e2849aaac9fbd27d13c523dda8ce76c534c9725a56eddc6113",
+    "missing": "20c763256fabf5050dcfa41a6cea84013013617db979379d5937ae3c347ad442"
+  },
+  "hostGitInputs": 678,
+  "resource": "com/sun/jna/win32-x86/jnidispatch.dll",
+  "productAccepted": false,
+  "paidRequests": 0,
+  "limits": [
+    "C-level JNI primitives only; no complete JVM or Java application validation",
+    "No uniform candidate replacement yet"
+  ]
+}

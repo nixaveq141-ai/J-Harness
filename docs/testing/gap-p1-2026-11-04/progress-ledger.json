@@ -1,12 +1,12 @@
 {
   "status": "P1_IN_PROGRESS_NOT_COMPLETE",
   "frozenP0Tasks": 36,
-  "independentlyVerifiedNewSourceComponents": 13,
+  "independentlyVerifiedNewSourceComponents": 14,
   "assembledCandidateReviewedCount": 27,
   "assembledCandidateUnresolvedCount": 23,
-  "formalAcceptedRuntimeCommit": "5df2372cbe00047e3233650fd37462290a534127",
-  "formalAcceptedRuntimeReviewedCount": 14,
-  "formalAcceptedRuntimeUnresolvedCount": 36,
+  "formalAcceptedRuntimeCommit": "20570ce147e7a531cedb6170e707e6900d40e693",
+  "formalAcceptedRuntimeReviewedCount": 27,
+  "formalAcceptedRuntimeUnresolvedCount": 23,
   "physicalExtraMachineAcceptance": "SKIPPED_BY_USER_NOT_RUNTIME_CERTIFIED",
   "tasks": [
     {
@@ -76,12 +76,16 @@
       "coordinate": "net.java.dev.jna:jna:5.14.0",
       "os": "linux",
       "cpu": "arm",
-      "status": "COMPONENT_SOURCE_VERIFIED_AND_ASSEMBLED_FULL_PRODUCT_PENDING",
+      "status": "SOURCE_REPLACEMENT_ACCEPTED_IN_FIVE_TARGET_PRODUCT",
       "candidateSha256": "cf97421daabc0372c309a732b5fbdbf77163b9b9ab7d1574349cdb4f5707558c",
       "componentRunId": "41830641417",
       "componentCommit": "8ad5356513e63756298e8eb4d3e697ba72cf303f",
       "componentReceipt": "docs/testing/gap-p1-2026-11-04/jna-components-acceptance.json",
-      "nextAction": "同提交同候选五目标完整功能验收；额外CPU的Java平台支持仍不由组件探针推定"
+      "nextAction": "本资源来源替换及五托管目标产品回归已验；额外CPU完整Java运行与OS/CPE不在本阶段认证范围",
+      "productRunId": "41989532940",
+      "productCommit": "20570ce147e7a531cedb6170e707e6900d40e693",
+      "productReceipt": "docs/testing/M10-unified27-final-equality-2026-11-05.json",
+      "blockers": []
     },
     {
       "taskId": "NATIVE-06",
@@ -90,12 +94,16 @@
       "coordinate": "net.java.dev.jna:jna:5.14.0",
       "os": "linux",
       "cpu": "armel",
-      "status": "COMPONENT_SOURCE_VERIFIED_AND_ASSEMBLED_FULL_PRODUCT_PENDING",
+      "status": "SOURCE_REPLACEMENT_ACCEPTED_IN_FIVE_TARGET_PRODUCT",
       "candidateSha256": "954e1b5d9b5d4dd1823bccc505e58e56e9fabdcfefb96ccbaf0cbeb69ebf35b5",
       "componentRunId": "41830641417",
       "componentCommit": "8ad5356513e63756298e8eb4d3e697ba72cf303f",
       "componentReceipt": "docs/testing/gap-p1-2026-11-04/jna-components-acceptance.json",
-      "nextAction": "同提交同候选五目标完整功能验收；额外CPU的Java平台支持仍不由组件探针推定"
+      "nextAction": "本资源来源替换及五托管目标产品回归已验；额外CPU完整Java运行与OS/CPE不在本阶段认证范围",
+      "productRunId": "41989532940",
+      "productCommit": "20570ce147e7a531cedb6170e707e6900d40e693",
+      "productReceipt": "docs/testing/M10-unified27-final-equality-2026-11-05.json",
+      "blockers": []
     },
     {
       "taskId": "NATIVE-07",
@@ -119,12 +127,16 @@
       "coordinate": "net.java.dev.jna:jna:5.14.0",
       "os": "linux",
       "cpu": "mips64el",
-      "status": "COMPONENT_SOURCE_VERIFIED_AND_ASSEMBLED_FULL_PRODUCT_PENDING",
+      "status": "SOURCE_REPLACEMENT_ACCEPTED_IN_FIVE_TARGET_PRODUCT",
       "candidateSha256": "aa86a21a946f116340a4c6b3ff98836e9de2a89c67cd50a3805ec296dedc8112",
       "componentRunId": "41830641417",
       "componentCommit": "8ad5356513e63756298e8eb4d3e697ba72cf303f",
       "componentReceipt": "docs/testing/gap-p1-2026-11-04/jna-components-acceptance.json",
-      "nextAction": "同提交同候选五目标完整功能验收；额外CPU的Java平台支持仍不由组件探针推定"
+      "nextAction": "本资源来源替换及五托管目标产品回归已验；额外CPU完整Java运行与OS/CPE不在本阶段认证范围",
+      "productRunId": "41989532940",
+      "productCommit": "20570ce147e7a531cedb6170e707e6900d40e693",
+      "productReceipt": "docs/testing/M10-unified27-final-equality-2026-11-05.json",
+      "blockers": []
     },
     {
       "taskId": "NATIVE-09",
@@ -133,12 +145,16 @@
       "coordinate": "net.java.dev.jna:jna:5.14.0",
       "os": "linux",
       "cpu": "ppc",
-      "status": "COMPONENT_SOURCE_VERIFIED_AND_ASSEMBLED_FULL_PRODUCT_PENDING",
+      "status": "SOURCE_REPLACEMENT_ACCEPTED_IN_FIVE_TARGET_PRODUCT",
       "candidateSha256": "f85858b03b58f53b1dac83843c364e51be436decde2b418ae973be379f5e8b6e",
       "componentRunId": "41830641417",
       "componentCommit": "8ad5356513e63756298e8eb4d3e697ba72cf303f",
       "componentReceipt": "docs/testing/gap-p1-2026-11-04/jna-components-acceptance.json",
-      "nextAction": "同提交同候选五目标完整功能验收；额外CPU的Java平台支持仍不由组件探针推定"
+      "nextAction": "本资源来源替换及五托管目标产品回归已验；额外CPU完整Java运行与OS/CPE不在本阶段认证范围",
+      "productRunId": "41989532940",
+      "productCommit": "20570ce147e7a531cedb6170e707e6900d40e693",
+      "productReceipt": "docs/testing/M10-unified27-final-equality-2026-11-05.json",
+      "blockers": []
     },
     {
       "taskId": "NATIVE-10",
@@ -147,12 +163,16 @@
       "coordinate": "net.java.dev.jna:jna:5.14.0",
       "os": "linux",
       "cpu": "ppc64le",
-      "status": "COMPONENT_SOURCE_VERIFIED_AND_ASSEMBLED_FULL_PRODUCT_PENDING",
+      "status": "SOURCE_REPLACEMENT_ACCEPTED_IN_FIVE_TARGET_PRODUCT",
       "candidateSha256": "91927cdce2e5befd4b72679635f9714f3f0aa217e16d0e41c336b3a285b3cbfb",
       "componentRunId": "41830641417",
       "componentCommit": "8ad5356513e63756298e8eb4d3e697ba72cf303f",
       "componentReceipt": "docs/testing/gap-p1-2026-11-04/jna-components-acceptance.json",
-      "nextAction": "同提交同候选五目标完整功能验收；额外CPU的Java平台支持仍不由组件探针推定"
+      "nextAction": "本资源来源替换及五托管目标产品回归已验；额外CPU完整Java运行与OS/CPE不在本阶段认证范围",
+      "productRunId": "41989532940",
+      "productCommit": "20570ce147e7a531cedb6170e707e6900d40e693",
+      "productReceipt": "docs/testing/M10-unified27-final-equality-2026-11-05.json",
+      "blockers": []
     },
     {
       "taskId": "NATIVE-11",
@@ -161,12 +181,16 @@
       "coordinate": "net.java.dev.jna:jna:5.14.0",
       "os": "linux",
       "cpu": "riscv64",
-      "status": "COMPONENT_SOURCE_VERIFIED_AND_ASSEMBLED_FULL_PRODUCT_PENDING",
+      "status": "SOURCE_REPLACEMENT_ACCEPTED_IN_FIVE_TARGET_PRODUCT",
       "candidateSha256": "fe4b909479d304da5911fbf848e458e42b7b9f84a7c06c997cae70e2d2b4e79b",
       "componentRunId": "41830641417",
       "componentCommit": "8ad5356513e63756298e8eb4d3e697ba72cf303f",
       "componentReceipt": "docs/testing/gap-p1-2026-11-04/jna-components-acceptance.json",
-      "nextAction": "同提交同候选五目标完整功能验收；额外CPU的Java平台支持仍不由组件探针推定"
+      "nextAction": "本资源来源替换及五托管目标产品回归已验；额外CPU完整Java运行与OS/CPE不在本阶段认证范围",
+      "productRunId": "41989532940",
+      "productCommit": "20570ce147e7a531cedb6170e707e6900d40e693",
+      "productReceipt": "docs/testing/M10-unified27-final-equality-2026-11-05.json",
+      "blockers": []
     },
     {
       "taskId": "NATIVE-12",
@@ -175,12 +199,16 @@
       "coordinate": "net.java.dev.jna:jna:5.14.0",
       "os": "linux",
       "cpu": "s390x",
-      "status": "COMPONENT_SOURCE_VERIFIED_AND_ASSEMBLED_FULL_PRODUCT_PENDING",
+      "status": "SOURCE_REPLACEMENT_ACCEPTED_IN_FIVE_TARGET_PRODUCT",
       "candidateSha256": "d5872cd82035b0a4080bb6292a4ca0c6e20726a411d823d000866f620089b2d6",
       "componentRunId": "41830641417",
       "componentCommit": "8ad5356513e63756298e8eb4d3e697ba72cf303f",
       "componentReceipt": "docs/testing/gap-p1-2026-11-04/jna-components-acceptance.json",
-      "nextAction": "同提交同候选五目标完整功能验收；额外CPU的Java平台支持仍不由组件探针推定"
+      "nextAction": "本资源来源替换及五托管目标产品回归已验；额外CPU完整Java运行与OS/CPE不在本阶段认证范围",
+      "productRunId": "41989532940",
+      "productCommit": "20570ce147e7a531cedb6170e707e6900d40e693",
+      "productReceipt": "docs/testing/M10-unified27-final-equality-2026-11-05.json",
+      "blockers": []
     },
     {
       "taskId": "NATIVE-13",
@@ -189,12 +217,16 @@
       "coordinate": "net.java.dev.jna:jna:5.14.0",
       "os": "linux",
       "cpu": "x86",
-      "status": "COMPONENT_SOURCE_VERIFIED_AND_ASSEMBLED_FULL_PRODUCT_PENDING",
+      "status": "SOURCE_REPLACEMENT_ACCEPTED_IN_FIVE_TARGET_PRODUCT",
       "candidateSha256": "f311048c77c8cbfaf90c146cd1aadc1cbcdff1490839e0c8e1ea8ff3363d1d36",
       "componentRunId": "41830641417",
       "componentCommit": "8ad5356513e63756298e8eb4d3e697ba72cf303f",
       "componentReceipt": "docs/testing/gap-p1-2026-11-04/jna-components-acceptance.json",
-      "nextAction": "同提交同候选五目标完整功能验收；额外CPU的Java平台支持仍不由组件探针推定"
+      "nextAction": "本资源来源替换及五托管目标产品回归已验；额外CPU完整Java运行与OS/CPE不在本阶段认证范围",
+      "productRunId": "41989532940",
+      "productCommit": "20570ce147e7a531cedb6170e707e6900d40e693",
+      "productReceipt": "docs/testing/M10-unified27-final-equality-2026-11-05.json",
+      "blockers": []
     },
     {
       "taskId": "NATIVE-14",
@@ -308,13 +340,15 @@
       "coordinate": "net.java.dev.jna:jna:5.14.0",
       "os": "win32",
       "cpu": "x86",
-      "status": "OPEN",
+      "status": "COMPONENT_SOURCE_VERIFIED_PRODUCT_INTEGRATION_PENDING",
       "requiredToolchain": "MSVC/Windows SDK x86；构建WinPTY/Console/helper所需依赖",
-      "nextAction": "核上游逐文件构建证明或盘点目标SDK/工具链，再固定源构建和验证",
+      "nextAction": "集成经独立审计的Win32原包并对新统一候选重验",
       "blockers": [
-        "目标工具链/SDK或上游构建证明未确认",
-        "目标运行条件未确认；额外实体机器按用户指令跳过但不计运行通过"
-      ]
+        "尚未统一装配及产品候选重验；C级JNI探针不等于完整32位JVM认证"
+      ],
+      "componentRunId": "41992679907",
+      "componentCommit": "e6d3091a56e2551fc864afaefc8b74a3e7e3cf2a",
+      "componentReceipt": "docs/testing/gap-p1-2026-11-04/windows-x86-components-acceptance.json"
     },
     {
       "taskId": "NATIVE-22",
@@ -353,12 +387,16 @@
       "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
       "os": "linux",
       "cpu": "arm",
-      "status": "COMPONENT_SOURCE_VERIFIED_AND_ASSEMBLED_FULL_PRODUCT_PENDING",
+      "status": "SOURCE_REPLACEMENT_ACCEPTED_IN_FIVE_TARGET_PRODUCT",
       "candidateSha256": "f93032e5631ce7cff263b4ffbaebff48b0d6bf0f9b921234b66acfa440bc77d7",
       "componentRunId": "41823433458",
       "componentCommit": "1c4cc6da5fd62d6f23c0459036cd9b560403b8b7",
       "componentReceipt": "docs/testing/gap-p1-2026-11-04/components-acceptance.json",
-      "nextAction": "同提交同候选五目标完整功能验收；额外CPU的Java平台支持仍不由组件探针推定"
+      "nextAction": "本资源来源替换及五托管目标产品回归已验；额外CPU完整Java运行与OS/CPE不在本阶段认证范围",
+      "productRunId": "41989532940",
+      "productCommit": "20570ce147e7a531cedb6170e707e6900d40e693",
+      "productReceipt": "docs/testing/M10-unified27-final-equality-2026-11-05.json",
+      "blockers": []
     },
     {
       "taskId": "NATIVE-25",
@@ -367,12 +405,16 @@
       "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
       "os": "linux",
       "cpu": "mips64el",
-      "status": "COMPONENT_SOURCE_VERIFIED_AND_ASSEMBLED_FULL_PRODUCT_PENDING",
+      "status": "SOURCE_REPLACEMENT_ACCEPTED_IN_FIVE_TARGET_PRODUCT",
       "candidateSha256": "d97db322f338bd35a58d4e4683df4b08830d048e7269367970a57a56120a80b4",
       "componentRunId": "41823433458",
       "componentCommit": "1c4cc6da5fd62d6f23c0459036cd9b560403b8b7",
       "componentReceipt": "docs/testing/gap-p1-2026-11-04/components-acceptance.json",
-      "nextAction": "同提交同候选五目标完整功能验收；额外CPU的Java平台支持仍不由组件探针推定"
+      "nextAction": "本资源来源替换及五托管目标产品回归已验；额外CPU完整Java运行与OS/CPE不在本阶段认证范围",
+      "productRunId": "41989532940",
+      "productCommit": "20570ce147e7a531cedb6170e707e6900d40e693",
+      "productReceipt": "docs/testing/M10-unified27-final-equality-2026-11-05.json",
+      "blockers": []
     },
     {
       "taskId": "NATIVE-26",
@@ -381,12 +423,16 @@
       "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
       "os": "linux",
       "cpu": "ppc64le",
-      "status": "COMPONENT_SOURCE_VERIFIED_AND_ASSEMBLED_FULL_PRODUCT_PENDING",
+      "status": "SOURCE_REPLACEMENT_ACCEPTED_IN_FIVE_TARGET_PRODUCT",
       "candidateSha256": "c3b8e7e08ca1657d7557baefe479532fd2089a573b0d550799b8dc85f90c0e0b",
       "componentRunId": "41823433458",
       "componentCommit": "1c4cc6da5fd62d6f23c0459036cd9b560403b8b7",
       "componentReceipt": "docs/testing/gap-p1-2026-11-04/components-acceptance.json",
-      "nextAction": "同提交同候选五目标完整功能验收；额外CPU的Java平台支持仍不由组件探针推定"
+      "nextAction": "本资源来源替换及五托管目标产品回归已验；额外CPU完整Java运行与OS/CPE不在本阶段认证范围",
+      "productRunId": "41989532940",
+      "productCommit": "20570ce147e7a531cedb6170e707e6900d40e693",
+      "productReceipt": "docs/testing/M10-unified27-final-equality-2026-11-05.json",
+      "blockers": []
     },
     {
       "taskId": "NATIVE-27",
@@ -395,12 +441,16 @@
       "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
       "os": "linux",
       "cpu": "riscv64",
-      "status": "COMPONENT_SOURCE_VERIFIED_AND_ASSEMBLED_FULL_PRODUCT_PENDING",
+      "status": "SOURCE_REPLACEMENT_ACCEPTED_IN_FIVE_TARGET_PRODUCT",
       "candidateSha256": "40b774439860e413d35bb9f09f6eb24a852373f821493bd5af30a8d525bb29b4",
       "componentRunId": "41823433458",
       "componentCommit": "1c4cc6da5fd62d6f23c0459036cd9b560403b8b7",
       "componentReceipt": "docs/testing/gap-p1-2026-11-04/components-acceptance.json",
-      "nextAction": "同提交同候选五目标完整功能验收；额外CPU的Java平台支持仍不由组件探针推定"
+      "nextAction": "本资源来源替换及五托管目标产品回归已验；额外CPU完整Java运行与OS/CPE不在本阶段认证范围",
+      "productRunId": "41989532940",
+      "productCommit": "20570ce147e7a531cedb6170e707e6900d40e693",
+      "productReceipt": "docs/testing/M10-unified27-final-equality-2026-11-05.json",
+      "blockers": []
     },
     {
       "taskId": "NATIVE-28",
@@ -409,12 +459,16 @@
       "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
       "os": "linux",
       "cpu": "x86",
-      "status": "COMPONENT_SOURCE_VERIFIED_AND_ASSEMBLED_FULL_PRODUCT_PENDING",
+      "status": "SOURCE_REPLACEMENT_ACCEPTED_IN_FIVE_TARGET_PRODUCT",
       "candidateSha256": "5dc002dc2f92683d4e235b4904667b321e3a04a6469d25d83c5c887a4c10ab74",
       "componentRunId": "41823433458",
       "componentCommit": "1c4cc6da5fd62d6f23c0459036cd9b560403b8b7",
       "componentReceipt": "docs/testing/gap-p1-2026-11-04/components-acceptance.json",
-      "nextAction": "同提交同候选五目标完整功能验收；额外CPU的Java平台支持仍不由组件探针推定"
+      "nextAction": "本资源来源替换及五托管目标产品回归已验；额外CPU完整Java运行与OS/CPE不在本阶段认证范围",
+      "productRunId": "41989532940",
+      "productCommit": "20570ce147e7a531cedb6170e707e6900d40e693",
+      "productReceipt": "docs/testing/M10-unified27-final-equality-2026-11-05.json",
+      "blockers": []
     },
     {
       "taskId": "NATIVE-29",
@@ -536,5 +590,7 @@
         "目标运行条件未确认；额外实体机器按用户指令跳过但不计运行通过"
       ]
     }
-  ]
+  ],
+  "formalAcceptedRuntimeRunId": "41989532940",
+  "formalAcceptedRuntimeReceipt": "docs/testing/M10-unified27-final-equality-2026-11-05.json"
 }

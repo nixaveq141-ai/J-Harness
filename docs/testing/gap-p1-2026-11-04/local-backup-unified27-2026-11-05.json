@@ -1,0 +1,25 @@
+{
+  "status": "LOCAL_ALL_MEMBERS_SHA256_AND_CRC_VERIFIED",
+  "path": ".build-cache/local-evidence-backups/2026-11-05/p1-unified27-and-win32.zip",
+  "bytes": 583654594,
+  "sha256": "6cb419da18613a331b777489226f998f6372fbf15ac931f267fd5f6b29f27f99",
+  "members": {
+    ".build-cache/p1-raw-41989532940/13398122975.zip": "586b22c5806d7a693242c16ca904b8b728d9b81a6e3c5338d3741f95ba3e95b6",
+    ".build-cache/p1-raw-41989532940/13398131623.zip": "e2561aa1c250003b6e6d0b3cb7003b55e28f7b68039dd078aad53e3e141fec8c",
+    ".build-cache/p1-raw-41989532940/13398575942.zip": "0ef494d195abaeea632a86a1df7acd921fac41223c45104503c15ee649320b5c",
+    ".build-cache/p1-raw-41989532940/13398665748.zip": "7809cdcd85c83eb172a3972eabeb66c05eab94fb2041472553991e82bf5d40cb",
+    ".build-cache/p1-raw-41989532940/13398708570.zip": "5293cf20cdcafa0485a89ed028db813ebae7581f41648e7df840797620497b21",
+    ".build-cache/p1-raw-41989532940/13398768331.zip": "ba975bdec79ce3ef2312b86f76be455964e6f8ef1c514ea45f36abdb4d1224a9",
+    ".build-cache/p1-raw-41989532940/13399445103.zip": "7c5ce8c245daf5e3c9c1a9cdd2dc580eb3cd9c00dae9d40801f70b1dd554bab6",
+    ".build-cache/audit-unified27-final.py": "3725ea22b567791c9d929dfb7104fe8beafda78ff9cec33645e7c49d5306be6f",
+    ".build-cache/check-unified27-raw-artifacts.py": "925135f789e843f65cc090a6b9e35444282ebf41434794bd73c75c91ec0eb9a6",
+    ".build-cache/audit-p1-win32.py": "5cd9eb315e2d37cf654b7b716b0986c99d4df26761c9f39df3f934b03f473234",
+    "docs/testing/M10-unified27-final-equality-2026-11-05.json": "e55aabec8aadb22d78f0db4d865fb23add5c21972f2579681202d886ce64eedd",
+    "docs/testing/M10-unified27-final-linux-2026-11-05.json": "b39e6086ac33eaf8cfbed26919739d4efce8ccf4494d772ba2463ff71895bc26",
+    "docs/testing/M10-unified27-final-linux-arm64-2026-11-05.json": "cb1b5ade33909aba41d03135b520e23e6f01f486b9cf8979e5c162b3252a545a",
+    "docs/testing/M10-unified27-final-macos-2026-11-05.json": "c7cf44600e3d932b50bf391dee92a2751a3d7f92450eeb5ff745e83360705a9a",
+    "docs/testing/M10-unified27-final-macos-intel-2026-11-05.json": "d42d800b435e9267423b37fe6f27d4e1c07d059570748cf2168c686c8ea3c5f7",
+    "docs/testing/M10-unified27-final-windows-2026-11-05.json": "59226642900fdd8cc5f9b3d1586e55aeba4686c8665dfa854a4ff10a0aa24058",
+    "docs/testing/gap-p1-2026-11-04/windows-x86-components-acceptance.json": "0ac091a02d523a05241d3cce603fea7f14f79b5df613f3b0ba6342805b9f8ddb"
+  }
+}
