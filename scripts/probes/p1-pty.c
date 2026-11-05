@@ -30,7 +30,8 @@ int main(int argc, char **argv) {
         puts("PASS missing exact library refused"); return 0;
     }
     if (!library) { fprintf(stderr, "%s\n", dlerror()); return 5; }
-    if (argc != 5 || argv[3][0] != '/' || argv[4][0] != '/') return 19;
+    const int native_child = argc == 4 && !strcmp(argv[3], "native");
+    if (!native_child && (argc != 5 || argv[3][0] != '/' || argv[4][0] != '/')) return 19;
     int (*get_size)(int, struct winsize *) = (int (*)(int, struct winsize *))dlsym(library, "get_window_size");
     int (*set_size)(int, const struct winsize *) = (int (*)(int, const struct winsize *))dlsym(library, "set_window_size");
     int (*valid_fd)(int) = (int (*)(int))dlsym(library, "is_valid_fd");
@@ -64,9 +65,10 @@ int main(int argc, char **argv) {
         memcmp(buffer, payload, sizeof(payload))) return 17;
     /* Keep the slave open until the child is ready. Otherwise the master can
        report HUP before the emulated child has reopened the slave. */
-    char *child_argv[] = {argv[3], "-L", argv[4], argv[0], "--child", NULL};
+    char *child_argv[] = {argv[3], "-L", native_child ? "/" : argv[4], argv[0], "--child", NULL};
+    char *native_argv[] = {argv[0], "--child", NULL};
     char *child_env[] = {"PATH=/usr/bin:/bin", NULL};
-    pid_t child = spawn(argv[3], child_argv, child_env, "/", name, master, NULL, -1, 0);
+    pid_t child = spawn(native_child ? argv[0] : argv[3], native_child ? native_argv : child_argv, child_env, "/", name, master, NULL, -1, 0);
     if (child <= 0) return 20;
     const char ready[] = "P1-child-ready";
     char child_output[sizeof(ready)] = {0};

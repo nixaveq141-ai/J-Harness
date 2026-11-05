@@ -95,3 +95,7 @@ Windows x86首轮41990625821构建成功但[独立来源核验未接受](windows
 ## WinPTY x86独立验收与30项候选
 
 2026-11-05 P1 WinPTY x86两组件41998518872@7c成功并独立复核：180上游固定源字节与官方归档全等，本地重放目录补丁与报告全等，8构建日志/3探针回执/683宿主Git输入/PE32/实际owned agent生命周期/缺库拒绝过。新增成对stager和DLL/agent/回执漂移、缺agent scope反例，两控制过；实际统一30来源/20原版候选装配，4508其他条目保持，本机JAR恢复。正式27/23不变，28轮41997597256尚待；新30完整五目标待，P1未完成，无付费。 见[组件收据](windows-x86-pty-components-acceptance.json)、[真实装配](assembly30-control.json)。完整32位Java与旧0xC000013A因果均不在本次组件证据范围。
+
+## FreeBSD原生VM来源专项
+
+2026-11-05 P1继续FreeBSD x64 PTY：核固定VM动作c46abac及其release/arch/env接口，新增14.4 amd64 CI VM内固定b7554d6真实源码构建/ELF/原生PTY/缺库拒绝专项；复用PTY探针新增显式native子进程模式，原QEMU五参数模式保留。两ELF控制/脚本编译与错误宿主拒绝过，FreeBSD实际结果待，未增加正式来源数。统一28轮41997597256五侧+同字节门禁成功待原包；30轮42000054331@7e正在运行。实体机器跳过，无付费，P1未完成。 VM动作及输入以[固定源码](https://github.com/vmactions/freebsd-vm/blob/c46abacb49f09938ca4e1702d15d836285d694cc/action.yml)核对。构建记录客户机系统/包清单/编译器和完整Git输入；固定源码删除目标预编译库后强制gmake构建，核前后只有目标载荷变化。C级探针不视为FreeBSD完整Java产品验收或OS/CPE证明。

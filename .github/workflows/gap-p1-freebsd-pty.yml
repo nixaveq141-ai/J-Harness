@@ -1,0 +1,39 @@
+name: P1 fixed FreeBSD x64 PTY source component
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/m1059-full-validation]
+    paths: [.github/workflows/gap-p1-freebsd-pty.yml]
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: vmactions/freebsd-vm@c46abacb49f09938ca4e1702d15d836285d694cc
+        with:
+          release: '14.4'
+          arch: amd64
+          mem: 4096
+          cpu: 2
+          disable-cache: true
+          envs: GITHUB_ACTIONS GITHUB_RUN_ID GITHUB_SHA
+          prepare: pkg install -y python311 git gmake binutils
+          run: |
+            git config --global --add safe.directory "$PWD"
+            python3.11 scripts/build-p1-freebsd-pty.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: p1-freebsd-x64-pty-source
+          include-hidden-files: true
+          retention-days: 90
+          path: |
+            .build-cache/p1-freebsd-pty/report.json
+            .build-cache/p1-freebsd-pty/*.log
+            .build-cache/p1-freebsd-pty/*-command.json
+            .build-cache/p1-freebsd-pty/libpty.so
+            .build-cache/p1-freebsd-pty/original.so
+            .build-cache/p1-freebsd-pty/pty-probe
