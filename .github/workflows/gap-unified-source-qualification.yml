@@ -1,4 +1,4 @@
-name: Unified source-native five-target qualification with Windows x86 JNA
+name: Unified source-native thirty-resource five-target qualification
 on:
   workflow_dispatch:
   push:
@@ -30,6 +30,7 @@ jobs:
       JHARNESS_P1_LINUX_PTY: '1'
       JHARNESS_P1_LINUX_JNA: '1'
       JHARNESS_P1_WINDOWS_X86_JNA: '1'
+      JHARNESS_P1_WINDOWS_X86_PTY: '1'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -107,6 +108,13 @@ jobs:
           github-token: ${{ github.token }}
           path: .build-cache/p1-win32-inputs
       - run: python scripts/test-p1-windows-x86-stage.py
+      - uses: actions/download-artifact@v4
+        with:
+          name: p1-windows-x86-winpty-source
+          run-id: 41998518872
+          github-token: ${{ github.token }}
+          path: .build-cache/p1-win32-pty-inputs
+      - run: python scripts/test-p1-windows-x86-pty-stage.py
       - name: Install browser dependencies on Linux
         if: runner.os == 'Linux'
         run: |

@@ -1,9 +1,9 @@
 {
   "status": "P1_IN_PROGRESS_NOT_COMPLETE",
   "frozenP0Tasks": 36,
-  "independentlyVerifiedNewSourceComponents": 14,
-  "assembledCandidateReviewedCount": 28,
-  "assembledCandidateUnresolvedCount": 22,
+  "independentlyVerifiedNewSourceComponents": 16,
+  "assembledCandidateReviewedCount": 30,
+  "assembledCandidateUnresolvedCount": 20,
   "formalAcceptedRuntimeCommit": "20570ce147e7a531cedb6170e707e6900d40e693",
   "formalAcceptedRuntimeReviewedCount": 27,
   "formalAcceptedRuntimeUnresolvedCount": 23,
@@ -567,13 +567,15 @@
       "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
       "os": "win",
       "cpu": "x86",
-      "status": "OPEN",
+      "status": "COMPONENT_SOURCE_VERIFIED_AND_ASSEMBLED_FULL_PRODUCT_PENDING",
       "requiredToolchain": "MSVC/Windows SDK x86；构建WinPTY/Console/helper所需依赖",
-      "nextAction": "核上游逐文件构建证明或盘点目标SDK/工具链，再固定源构建和验证",
+      "nextAction": "统一30资源候选五目标完整CI及独立原包复验",
       "blockers": [
-        "目标工具链/SDK或上游构建证明未确认",
-        "目标运行条件未确认；额外实体机器按用户指令跳过但不计运行通过"
-      ]
+        "完整统一候选验收待；native探针不等于32位JVM认证"
+      ],
+      "componentRunId": "41998518872",
+      "componentCommit": "7c8c9e78755675cfbcad6bf20d2182f78c13e539",
+      "componentReceipt": "docs/testing/gap-p1-2026-11-04/windows-x86-pty-components-acceptance.json"
     },
     {
       "taskId": "NATIVE-36",
@@ -582,13 +584,15 @@
       "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
       "os": "win",
       "cpu": "x86",
-      "status": "OPEN",
+      "status": "COMPONENT_SOURCE_VERIFIED_AND_ASSEMBLED_FULL_PRODUCT_PENDING",
       "requiredToolchain": "MSVC/Windows SDK x86；构建WinPTY/Console/helper所需依赖",
-      "nextAction": "核上游逐文件构建证明或盘点目标SDK/工具链，再固定源构建和验证",
+      "nextAction": "统一30资源候选五目标完整CI及独立原包复验",
       "blockers": [
-        "目标工具链/SDK或上游构建证明未确认",
-        "目标运行条件未确认；额外实体机器按用户指令跳过但不计运行通过"
-      ]
+        "完整统一候选验收待；native探针不等于32位JVM认证"
+      ],
+      "componentRunId": "41998518872",
+      "componentCommit": "7c8c9e78755675cfbcad6bf20d2182f78c13e539",
+      "componentReceipt": "docs/testing/gap-p1-2026-11-04/windows-x86-pty-components-acceptance.json"
     }
   ],
   "formalAcceptedRuntimeRunId": "41989532940",

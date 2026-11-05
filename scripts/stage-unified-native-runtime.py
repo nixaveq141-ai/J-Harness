@@ -178,6 +178,17 @@ def main():
             dest=target/'jnidispatch.dll';dest.write_bytes(item['path'].read_bytes())
             replacements[name]={**item,'path':dest}
         receipts['p1-windows-x86-jna']=sha((ROOT/p1win.RECEIPT).read_bytes())
+    if os.environ.get('JHARNESS_P1_WINDOWS_X86_PTY')=='1':
+        spec=importlib.util.spec_from_file_location('p1_win32_pty',ROOT/'scripts/stage-p1-windows-x86-pty.py')
+        p1pty=importlib.util.module_from_spec(spec);spec.loader.exec_module(p1pty)
+        extra=p1pty.load_components(ROOT/'.build-cache/p1-win32-pty-inputs')
+        if set(extra)&set(replacements) or len(extra)!=2:
+            raise ValueError('Two disjoint Windows x86 WinPTY replacements required')
+        target=payload/'p1-win32-pty';target.mkdir(parents=True)
+        for name,item in extra.items():
+            dest=target/name.rsplit('/',1)[-1];dest.write_bytes(item['path'].read_bytes())
+            replacements[name]={**item,'path':dest}
+        receipts['p1-windows-x86-pty']=sha((ROOT/p1pty.RECEIPT).read_bytes())
     runtime=ROOT/'harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar';baseline=out/'baseline-runtime.jar'
     with baseline.open('xb') as stream:stream.write(runtime.read_bytes())
     canonical=out/'canonical-baseline-runtime.jar'

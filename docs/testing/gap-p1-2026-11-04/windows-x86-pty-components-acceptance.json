@@ -1,0 +1,34 @@
+{
+  "status": "WINDOWS_X86_WINPTY_TWO_SOURCE_COMPONENTS_INDEPENDENTLY_VERIFIED_NOT_PRODUCT_ACCEPTANCE",
+  "runId": "41998518872",
+  "commit": "7c8c9e78755675cfbcad6bf20d2182f78c13e539",
+  "artifact": {
+    "id": 13401103325,
+    "path": ".build-cache/p1-win32/13401103325.zip",
+    "bytes": 795323,
+    "sha256": "077e288392be56996c4dbc08f2149528a6df8bb31ebc1102c927decb5fb7067b"
+  },
+  "sourceReportSha256": "e12bcafe9a28c962e8086ec5993973be71f57e699f2174f505eb66f2a6fb4faf",
+  "probeReportSha256": "a4f90cb5592ed26d103f42a6cfb310b3a4520c7ccba11ea7941da65db8b95bfd",
+  "sourceFiles": 180,
+  "sourceRevision": "7e59fe2d09adf0fa2aa606492e7ca98efbc5184e",
+  "officialSourceArchiveSha256": "46581b32244574137ddcb05e969cb49399534ed401624808beee088dc196cddc",
+  "buildCommands": 8,
+  "probeCommandReceiptSha256": {
+    "compile": "a311579753e3689af14e27732a3bae6c9adb50efef833dd4680e8fbab4337078",
+    "load": "dd633de8d9d64e3baff25a15f9e65cb4200364402003215b94c2cc1f692f3bff",
+    "missing": "265b8130546c4174df9d455f18ed7aab4c4c79d8a8d0b33f0876f415162309d2"
+  },
+  "hostGitInputs": 683,
+  "outputs": {
+    ".build-cache/windows-pty-source/winpty/build/winpty.dll": "7da4af8ef1914797dbf87fad3199ddf9c4e3a40888adf98ed12eefc2d8b6d7d8",
+    ".build-cache/windows-pty-source/winpty/build/winpty-agent.exe": "07e4cda4231c6e26a69f32dfbc9d52059a138dcf289ecc3f1e074bbe4f34e6fd"
+  },
+  "probeSha256": "19396e1125c6ab85d397a392ed921873c7f3dcb19621856a483488a25c0c4798",
+  "probeSourceSha256": "83953d7c959ee286542fb8e7ff412207131adcdc315824b5ec42d5f746a15222",
+  "productAccepted": false,
+  "paidRequests": 0,
+  "limits": [
+    "Actual C++ x86 DLL and owned agent lifecycle, not complete Java application certification"
+  ]
+}

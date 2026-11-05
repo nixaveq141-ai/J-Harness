@@ -91,3 +91,7 @@ Windows x86首轮41990625821构建成功但[独立来源核验未接受](windows
 ## Windows x86 WinPTY两项源码组件
 
 2026-11-05 P1下一批Windows x86 WinPTY两资源：沿用固定7e59fe2及已审owned-directory补丁，新增显式x86 GCC/machine/PE门禁、Win32目录探针及实际32位C++精确DLL/owned agent/resize/process-list/退出/缺库拒绝专项。旧x64默认保留，x86不构建无对应库存任务的helper；七构建控制与三补丁控制过，远端实际构建/组件待，不增加正式27或候选28。统一28轮41997597256@71b正在运行；P1未完成，无付费模型。 本机没有i686 C++编译器，未冒称本地原生探针已运行。构建与探针通过前保持逐任务OPEN；旧WinPTY 0xC000013A历史因果不随新组件通过而关闭。
+
+## WinPTY x86独立验收与30项候选
+
+2026-11-05 P1 WinPTY x86两组件41998518872@7c成功并独立复核：180上游固定源字节与官方归档全等，本地重放目录补丁与报告全等，8构建日志/3探针回执/683宿主Git输入/PE32/实际owned agent生命周期/缺库拒绝过。新增成对stager和DLL/agent/回执漂移、缺agent scope反例，两控制过；实际统一30来源/20原版候选装配，4508其他条目保持，本机JAR恢复。正式27/23不变，28轮41997597256尚待；新30完整五目标待，P1未完成，无付费。 见[组件收据](windows-x86-pty-components-acceptance.json)、[真实装配](assembly30-control.json)。完整32位Java与旧0xC000013A因果均不在本次组件证据范围。

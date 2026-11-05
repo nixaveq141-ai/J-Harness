@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "scope": "Twenty-seven actual source replacements accepted in20570ce full five-target runtime. One additional Windows x86 JNA source component staged in28-resource candidate; new full qualification pending. Twenty-two other original resources remain unresolved; no full OS/CPE clearance.",
+  "scope": "Twenty-seven actual source replacements accepted in20570ce full runtime; three additional x86 Windows JNA/WinPTY components independently verified and staged in30-resource candidate, full qualification pending. Twenty other resources remain unresolved. No full OS/CPE clearance.",
   "resources": {
     "com/sun/jna/win32-x86-64/jnidispatch.dll": {
       "sha256": "c88e200b240dfa54c5b852a335b28683e64a074d30ceee7c17ffc282058891a2",
@@ -334,6 +334,30 @@
         "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/windows-x86-components-acceptance.json",
         "scope": "Actual 32-bit C JNI primitives; complete x86 JVM/Java not certified"
       }
+    },
+    "resources/com/pty4j/native/win/x86/winpty-agent.exe": {
+      "sha256": "07e4cda4231c6e26a69f32dfbc9d52059a138dcf289ecc3f1e074bbe4f34e6fd",
+      "origin": {
+        "sourceBuildRun": "41998518872",
+        "sourceBuildCommit": "7c8c9e78755675cfbcad6bf20d2182f78c13e539",
+        "sourceRevision": "7e59fe2d09adf0fa2aa606492e7ca98efbc5184e",
+        "componentProbeRun": "41998518872",
+        "componentReportSha256": "e12bcafe9a28c962e8086ec5993973be71f57e699f2174f505eb66f2a6fb4faf",
+        "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/windows-x86-pty-components-acceptance.json",
+        "scope": "Actual x86 WinPTY DLL and owned agent lifecycle; complete x86 JVM/Java not certified"
+      }
+    },
+    "resources/com/pty4j/native/win/x86/winpty.dll": {
+      "sha256": "7da4af8ef1914797dbf87fad3199ddf9c4e3a40888adf98ed12eefc2d8b6d7d8",
+      "origin": {
+        "sourceBuildRun": "41998518872",
+        "sourceBuildCommit": "7c8c9e78755675cfbcad6bf20d2182f78c13e539",
+        "sourceRevision": "7e59fe2d09adf0fa2aa606492e7ca98efbc5184e",
+        "componentProbeRun": "41998518872",
+        "componentReportSha256": "e12bcafe9a28c962e8086ec5993973be71f57e699f2174f505eb66f2a6fb4faf",
+        "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/windows-x86-pty-components-acceptance.json",
+        "scope": "Actual x86 WinPTY DLL and owned agent lifecycle; complete x86 JVM/Java not certified"
+      }
     }
   },
   "fullRuntimeQualification": {
@@ -344,12 +368,13 @@
     "reviewedResourceCount": 27
   },
   "pendingCandidateQualification": {
-    "reviewedResourceCount": 28,
+    "reviewedResourceCount": 30,
     "status": "FULL_PRODUCT_QUALIFICATION_PENDING",
     "componentRunIds": [
       "41823433458",
       "41830641417",
-      "41992679907"
+      "41992679907",
+      "41998518872"
     ]
   }
 }

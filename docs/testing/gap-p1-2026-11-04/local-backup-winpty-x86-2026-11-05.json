@@ -1,0 +1,14 @@
+{
+  "status": "LOCAL_ALL_MEMBERS_SHA256_AND_CRC_VERIFIED",
+  "path": ".build-cache/local-evidence-backups/2026-11-05/p1-winpty-x86-and-candidate30.zip",
+  "bytes": 31781893,
+  "sha256": "03a6c1214f6fc3ede65547f8a40e8cc4e8feca8a941fba935d7b557552204e49",
+  "members": {
+    ".build-cache/p1-win32/13401103325.zip": "077e288392be56996c4dbc08f2149528a6df8bb31ebc1102c927decb5fb7067b",
+    ".build-cache/p1-win32/winpty-7e59fe2.tar.gz": "46581b32244574137ddcb05e969cb49399534ed401624808beee088dc196cddc",
+    ".build-cache/audit-p1-x86-pty.py": "972a9e564b4134191e826e94d70f7498b96d20b7fb72fe3f805f778aca308857",
+    ".build-cache/p1-30-assembly-control/canonical-source-runtime.jar": "d56ddc97c21c853a17146ec6abde328c7b4cbd133768c18e98f9cf3d6c5d501d",
+    "docs/testing/gap-p1-2026-11-04/windows-x86-pty-components-acceptance.json": "066c3b53780671f1657a0b170536db85dde51c7061c013610186a6b818d582dc",
+    "docs/testing/gap-p1-2026-11-04/assembly30-control.json": "e0e209891892d757a1a32d52b8da95cb7ecf54fb256fbb523134195ebc5e5c55"
+  }
+}
