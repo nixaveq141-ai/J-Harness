@@ -101,3 +101,5 @@ Windows x86首轮41990625821构建成功但[独立来源核验未接受](windows
 2026-11-05 P1继续FreeBSD x64 PTY：核固定VM动作c46abac及其release/arch/env接口，新增14.4 amd64 CI VM内固定b7554d6真实源码构建/ELF/原生PTY/缺库拒绝专项；复用PTY探针新增显式native子进程模式，原QEMU五参数模式保留。两ELF控制/脚本编译与错误宿主拒绝过，FreeBSD实际结果待，未增加正式来源数。统一28轮41997597256五侧+同字节门禁成功待原包；30轮42000054331@7e正在运行。实体机器跳过，无付费，P1未完成。 VM动作及输入以[固定源码](https://github.com/vmactions/freebsd-vm/blob/c46abacb49f09938ca4e1702d15d836285d694cc/action.yml)核对。构建记录客户机系统/包清单/编译器和完整Git输入；固定源码删除目标预编译库后强制gmake构建，核前后只有目标载荷变化。C级探针不视为FreeBSD完整Java产品验收或OS/CPE证明。
 
 2026-11-05 FreeBSD首轮42001243916 VM14.4及包安装成功，源码构建前因全新VM无.build-cache父目录而mkdir失败，原始作业日志摘要已保存freebsd-first-run；修为parents=True且保留拒绝复用目录。首轮无组件产物/不验收，修正远端待；P1仍未完成。
+
+2026-11-05 FreeBSD x64 PTY42002054105@ed修正轮成功并独立核原ZIP/134固定源/10命令与日志/687宿主Git输入/ELF/实际原生fork-exec交互exit23/缺库拒绝，组件验收见freebsd-x64-components-acceptance；尚未集成，不增正式27或候选30。扩展同VM的x86编译/ELF/原生运行专项，与x64分别记录，不将宿主amd64冒称32位验收；实际双侧待。P1未完成，无付费。

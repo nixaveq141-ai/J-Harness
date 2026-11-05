@@ -1,0 +1,37 @@
+{
+  "status": "FREEBSD_X64_PTY_SOURCE_COMPONENT_INDEPENDENTLY_VERIFIED_NOT_PRODUCT_ACCEPTANCE",
+  "runId": "42002054105",
+  "commit": "ed2da2b8c3f65ac4b3e03005b80feeb235a69ead",
+  "artifact": {
+    "id": 13402952552,
+    "path": ".build-cache/p1-win32/13402952552.zip",
+    "sha256": "eb40f7f080cccb8809f600cd65d1e1d736adc40a61c81def45c581b80314fd2c",
+    "bytes": 684680
+  },
+  "reportSha256": "3418f9a91a06e850e120fb7c891ffe733898c8db245096250a7bf3f96441c416",
+  "resource": "resources/com/pty4j/native/freebsd/x86-64/libpty.so",
+  "sourceRevision": "b7554d649f6374183040e6554942b6d5b028b5e5",
+  "sourceFiles": 134,
+  "outputSha256": "2bf0fb6af39b5d7433fed100c21f0027ccabb129961cdb90d9ff04f400c41b30",
+  "originalSha256": "6bf2cf3a6ac0929d0f23529b4bfc7f97348219260f86dc84f2a0140ec611dd7c",
+  "probeSha256": "f4c78489942a5b6ea77a1756f6fccbae62c87c584f2b326df0f72b771f23777c",
+  "probeSourceSha256": "285c69a384b197f711a39b6931b3e21bfe32e4cf237b21051540925c1e037b0d",
+  "commandReceiptSha256": {
+    "system": "ba18a8540d1829122947df50c59118a2a13e439916bc423c1531ba1b4604366b",
+    "packages": "adca6f8f26627f01500c9cebd75fa99811af943b2117d707ea1d31edaa4b5aee",
+    "compiler": "b5fce38aaf0cddfd0c3e34fbcd7ca71fb3b9726d01205a7c62c54adca48027cc",
+    "clone": "7d9ad5e6968a59e91e93059b1529a50e80c72dbf0cddbcaa88a690cc42b3ffc8",
+    "checkout": "1213ac8690879544cc36db4e3cc38b4875a924cb67620db398d651a30e79ec9c",
+    "build": "c4c77eba5ad7c87db4227a7cec0cfafc91aa1539e67904160db14e4cde16cf82",
+    "elf-audit": "d767f74c18bcf07f6ca03a044d68917ebc71656126b451bbecc982049c57ee9e",
+    "probe-build": "8cab08d86da27bd53206e8ab7bd85b7508b5c9d0bf3c7e9f44e45bf92b1d2565",
+    "candidate-probe": "173147c73b6c1f41bace4e0f4067a59e4ea1d1cf0e154b926b95a3d5566a8c1d",
+    "missing-probe": "1790952ce049eabc048073acaa3b37c0f8095f3e68f6a736b5ff21243b41cf37"
+  },
+  "hostGitInputs": 687,
+  "paidRequests": 0,
+  "productAccepted": false,
+  "limits": [
+    "FreeBSD VM native component probe only; no complete Java application or OS/CPE certification"
+  ]
+}

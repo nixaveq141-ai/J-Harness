@@ -1,7 +1,7 @@
 {
   "status": "P1_IN_PROGRESS_NOT_COMPLETE",
   "frozenP0Tasks": 36,
-  "independentlyVerifiedNewSourceComponents": 16,
+  "independentlyVerifiedNewSourceComponents": 17,
   "assembledCandidateReviewedCount": 30,
   "assembledCandidateUnresolvedCount": 20,
   "formalAcceptedRuntimeCommit": "20570ce147e7a531cedb6170e707e6900d40e693",
@@ -357,13 +357,15 @@
       "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
       "os": "freebsd",
       "cpu": "x86-64",
-      "status": "OPEN",
+      "status": "COMPONENT_SOURCE_VERIFIED_PRODUCT_INTEGRATION_PENDING",
       "requiredToolchain": "freebsd目标SDK/系统头文件与原生或交叉编译器",
-      "nextAction": "核上游逐文件构建证明或盘点目标SDK/工具链，再固定源构建和验证",
+      "nextAction": "核额外x86组件并集成下一统一候选后完整重验",
       "blockers": [
-        "目标工具链/SDK或上游构建证明未确认",
-        "目标运行条件未确认；额外实体机器按用户指令跳过但不计运行通过"
-      ]
+        "尚未统一候选集成和完整产品重验"
+      ],
+      "componentRunId": "42002054105",
+      "componentCommit": "ed2da2b8c3f65ac4b3e03005b80feeb235a69ead",
+      "componentReceipt": "docs/testing/gap-p1-2026-11-04/freebsd-x64-components-acceptance.json"
     },
     {
       "taskId": "NATIVE-23",

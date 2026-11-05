@@ -1,0 +1,12 @@
+{
+  "status": "LOCAL_ALL_MEMBERS_SHA256_AND_CRC_VERIFIED",
+  "path": ".build-cache/local-evidence-backups/2026-11-05/p1-freebsd-x64.zip",
+  "bytes": 732106,
+  "sha256": "9a2daa019ce6e99d7e7bbac7a38906e7fde1255d5f001e3d1e2e47cdeebc1e9d",
+  "members": {
+    ".build-cache/p1-win32/13402952552.zip": "eb40f7f080cccb8809f600cd65d1e1d736adc40a61c81def45c581b80314fd2c",
+    ".build-cache/audit-p1-freebsd.py": "b18f2e814d70a9e0fafa3d9d278e44ec0eb0350c03ebe366ffcb509a444a8afa",
+    ".build-cache/p1-job-127156712832.log": "e64b82e6abba6b314d9b422acdfc0c4003a5782a67cd2d1b2b2b1e305cc5397f",
+    "docs/testing/gap-p1-2026-11-04/freebsd-x64-components-acceptance.json": "b620c1c1269612a1b3f003ce26c5258650225ebc92f55a9824d8b2345e927fa5"
+  }
+}
