@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "scope": "Twenty-seven actual source replacements accepted in same-byte five-target full runtime 20570ce. Twenty-three retained original resources remain unresolved. Windows x86 additional source component verified separately, not yet integrated. No full native provenance or OS/CPE clearance.",
+  "scope": "Twenty-seven actual source replacements accepted in20570ce full five-target runtime. One additional Windows x86 JNA source component staged in28-resource candidate; new full qualification pending. Twenty-two other original resources remain unresolved; no full OS/CPE clearance.",
   "resources": {
     "com/sun/jna/win32-x86-64/jnidispatch.dll": {
       "sha256": "c88e200b240dfa54c5b852a335b28683e64a074d30ceee7c17ffc282058891a2",
@@ -321,6 +321,19 @@
         "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/jna-components-acceptance.json",
         "scope": "QEMU C-level JNI primitives and real libffi call/closure; complete target JVM/Java not certified"
       }
+    },
+    "com/sun/jna/win32-x86/jnidispatch.dll": {
+      "sha256": "81d86d8fcc433b709cec0a05d53b7561c7e3a0ad47726328252439cd0c3d7152",
+      "origin": {
+        "sourceBuildRun": "41992679907",
+        "sourceBuildCommit": "e6d3091a56e2551fc864afaefc8b74a3e7e3cf2a",
+        "sourceRevision": "c366bc4fd0c50a30ac8d2475603ec564f6611462",
+        "componentProbeRun": "41992679907",
+        "componentReportSha256": "724ed662ca84577eeb576a1b4c0d0f96759e1154d3f509a84ffa8cac5ea4c0bb",
+        "libffiReleaseSha256": "d66c56ad259a82cf2a9dfc408b32bf5da52371500b84745f7fb8b645712df676",
+        "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/windows-x86-components-acceptance.json",
+        "scope": "Actual 32-bit C JNI primitives; complete x86 JVM/Java not certified"
+      }
     }
   },
   "fullRuntimeQualification": {
@@ -329,5 +342,14 @@
     "runtimeJarSha256": "3e2f966a271962ecc52ad10d27b26bec74c8ee3a19cd77e99ae4ece2c76c1b1f",
     "receiptSha256": "e55aabec8aadb22d78f0db4d865fb23add5c21972f2579681202d886ce64eedd",
     "reviewedResourceCount": 27
+  },
+  "pendingCandidateQualification": {
+    "reviewedResourceCount": 28,
+    "status": "FULL_PRODUCT_QUALIFICATION_PENDING",
+    "componentRunIds": [
+      "41823433458",
+      "41830641417",
+      "41992679907"
+    ]
   }
 }

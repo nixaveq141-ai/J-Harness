@@ -167,6 +167,17 @@ def main():
             dest=target/'libjnidispatch.so';dest.write_bytes(item['path'].read_bytes())
             replacements[name]={**item,'path':dest}
         receipts['p1-linux-jna']=sha((ROOT/p1jna.RECEIPT).read_bytes())
+    if os.environ.get('JHARNESS_P1_WINDOWS_X86_JNA')=='1':
+        spec=importlib.util.spec_from_file_location('p1_win32',ROOT/'scripts/stage-p1-windows-x86-jna.py')
+        p1win=importlib.util.module_from_spec(spec);spec.loader.exec_module(p1win)
+        extra=p1win.load_components(ROOT/'.build-cache/p1-win32-inputs')
+        if set(extra)&set(replacements) or set(extra)!={p1win.RESOURCE}:
+            raise ValueError('One disjoint Windows x86 JNA replacement required')
+        for name,item in extra.items():
+            target=payload/'p1-win32';target.mkdir(parents=True)
+            dest=target/'jnidispatch.dll';dest.write_bytes(item['path'].read_bytes())
+            replacements[name]={**item,'path':dest}
+        receipts['p1-windows-x86-jna']=sha((ROOT/p1win.RECEIPT).read_bytes())
     runtime=ROOT/'harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar';baseline=out/'baseline-runtime.jar'
     with baseline.open('xb') as stream:stream.write(runtime.read_bytes())
     canonical=out/'canonical-baseline-runtime.jar'

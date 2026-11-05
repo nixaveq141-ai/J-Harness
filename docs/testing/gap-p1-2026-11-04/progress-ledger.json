@@ -2,8 +2,8 @@
   "status": "P1_IN_PROGRESS_NOT_COMPLETE",
   "frozenP0Tasks": 36,
   "independentlyVerifiedNewSourceComponents": 14,
-  "assembledCandidateReviewedCount": 27,
-  "assembledCandidateUnresolvedCount": 23,
+  "assembledCandidateReviewedCount": 28,
+  "assembledCandidateUnresolvedCount": 22,
   "formalAcceptedRuntimeCommit": "20570ce147e7a531cedb6170e707e6900d40e693",
   "formalAcceptedRuntimeReviewedCount": 27,
   "formalAcceptedRuntimeUnresolvedCount": 23,
@@ -340,11 +340,11 @@
       "coordinate": "net.java.dev.jna:jna:5.14.0",
       "os": "win32",
       "cpu": "x86",
-      "status": "COMPONENT_SOURCE_VERIFIED_PRODUCT_INTEGRATION_PENDING",
+      "status": "COMPONENT_SOURCE_VERIFIED_AND_ASSEMBLED_FULL_PRODUCT_PENDING",
       "requiredToolchain": "MSVC/Windows SDK x86；构建WinPTY/Console/helper所需依赖",
-      "nextAction": "集成经独立审计的Win32原包并对新统一候选重验",
+      "nextAction": "统一28资源候选五目标完整CI及独立原包复验",
       "blockers": [
-        "尚未统一装配及产品候选重验；C级JNI探针不等于完整32位JVM认证"
+        "完整统一候选验收待；C探针不等于32位JVM认证"
       ],
       "componentRunId": "41992679907",
       "componentCommit": "e6d3091a56e2551fc864afaefc8b74a3e7e3cf2a",

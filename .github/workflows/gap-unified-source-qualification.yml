@@ -1,4 +1,4 @@
-name: Unified source-native five-target qualification with input-slot ordering
+name: Unified source-native five-target qualification with Windows x86 JNA
 on:
   workflow_dispatch:
   push:
@@ -29,6 +29,7 @@ jobs:
       JHARNESS_UNIFIED_SOURCE: '1'
       JHARNESS_P1_LINUX_PTY: '1'
       JHARNESS_P1_LINUX_JNA: '1'
+      JHARNESS_P1_WINDOWS_X86_JNA: '1'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -99,6 +100,13 @@ jobs:
           github-token: ${{ github.token }}
           path: .build-cache/p1-jna-inputs
       - run: python scripts/test-p1-jna-stage.py
+      - uses: actions/download-artifact@v4
+        with:
+          name: p1-windows-x86-jna-source
+          run-id: 41992679907
+          github-token: ${{ github.token }}
+          path: .build-cache/p1-win32-inputs
+      - run: python scripts/test-p1-windows-x86-stage.py
       - name: Install browser dependencies on Linux
         if: runner.os == 'Linux'
         run: |
