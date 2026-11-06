@@ -1,7 +1,7 @@
 {
   "status": "P1_IN_PROGRESS_NOT_COMPLETE",
   "frozenP0Tasks": 36,
-  "independentlyVerifiedNewSourceComponents": 25,
+  "independentlyVerifiedNewSourceComponents": 26,
   "assembledCandidateReviewedCount": 39,
   "assembledCandidateUnresolvedCount": 11,
   "formalAcceptedRuntimeCommit": "a5376fca79263f6cd6366cd575b8e9ae25afd6e3",
@@ -246,13 +246,16 @@
       "coordinate": "net.java.dev.jna:jna:5.14.0",
       "os": "openbsd",
       "cpu": "x86-64",
-      "status": "OPEN",
+      "status": "COMPONENT_SOURCE_VERIFIED_NOT_ASSEMBLED_FULL_PRODUCT_PENDING",
       "requiredToolchain": "openbsd目标SDK/系统头文件与原生或交叉编译器",
-      "nextAction": "核上游逐文件构建证明或盘点目标SDK/工具链，再固定源构建和验证",
+      "nextAction": "精确原包集成统一候选并完成五目标完整验收",
       "blockers": [
-        "目标工具链/SDK或上游构建证明未确认",
-        "目标运行条件未确认；额外实体机器按用户指令跳过但不计运行通过"
-      ]
+        "统一装配/完整产品回归待；不认证完整OpenBSD JVM/Java应用"
+      ],
+      "candidateSha256": "9e879fa34478beb86ba05e13b5a819dd137ca44126cd1b10dd0f9ddd30bc181a",
+      "componentRunId": "42227334617",
+      "componentCommit": "f587190ad83fc91435809a26fba594607132e047",
+      "componentReceipt": "docs/testing/gap-p1-2026-11-04/openbsd-jna-components-acceptance.json"
     },
     {
       "taskId": "NATIVE-15",

@@ -221,3 +221,9 @@ ARM64 Console构建使用已审相同7ff11ee terminal与fe1cde6 vcpkg固定源�
 2026-11-06 P1 ARM64 WinPTY两载荷新增原生Windows ARM runner/固定MSYS动作/CLANGARM64入口，固定7e59fe2与已审目录扩展，P4J b7554d6原始ARM库存对照；强制编译器目标与DLL/agent/探针ARM64 PE，实际owned agent/resize/process-list/退出/卸载/缺库拒绝待。新增固定配置1控制与原补丁3控制过；源码编译/运行未验，不增加正式34或候选39。
 
 [MSYS2官方ARM支持](https://www.msys2.org/docs/arm64/)提供原生clangarm64工具链。既有上游Makefile的静态链接、版本生成和DLL/agent目标保持；仅生成明确ARM编译器配置，不构建MSYS适配器。任何源码移植需求须由实际编译错误及运行对照决定，本轮不提前声称原WinPTY支持ARM64。
+
+## OpenBSD x64组件独立验收
+
+2026-11-06 OpenBSD x64 42227334617@f587原包独立核验：1297固定源、16回执/完整Git输入、libffi生成输入、ELF/JNI六sizeof/malloc/free与ffi call41 closure46/缺库拒绝过。mount回执确认既有/usr/local wxallowed、/home不具该选项；自有wxneeded运行探针复制前后SHA等于归档探针，临时目录退出清理，无挂载或产品权限改动。组件已验未装配，正式34/50/候选39不变；x86仍OPEN。ARM64 WinPTY入口ead88a1已推送，实际结果待。
+
+[原包验收](openbsd-jna-components-acceptance.json)仅证明所记录OpenBSD 7.9 x64 VM内的C JNI/libffi组件；需要其他位置/Java宿主时仍受实际W^X配置限制，不把探针执行位置对照宣传成产品权限修复。

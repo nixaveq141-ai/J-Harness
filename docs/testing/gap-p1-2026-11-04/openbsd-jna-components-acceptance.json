@@ -1,0 +1,52 @@
+{
+  "status": "ONE_OPENBSD_JNA_SOURCE_ABI_FFI_COMPONENTS_INDEPENDENTLY_VERIFIED_NOT_PRODUCT_ACCEPTANCE",
+  "runId": "42227334617",
+  "commit": "f587190ad83fc91435809a26fba594607132e047",
+  "sourceRevision": "c366bc4fd0c50a30ac8d2475603ec564f6611462",
+  "platforms": [
+    {
+      "target": "x86-64",
+      "artifactId": "13507090380",
+      "artifactSha256": "05d5305ed20108d090a3bd80cbd9472aa7878fd003303c60568a16075e167719",
+      "reportSha256": "8a215dfcac249b6dd472a4dcef573ee9cd4a98cdfe8ce99389f0f21a9b939a2b",
+      "resource": "com/sun/jna/openbsd-x86-64/libjnidispatch.so",
+      "outputSha256": "9e879fa34478beb86ba05e13b5a819dd137ca44126cd1b10dd0f9ddd30bc181a",
+      "originalSha256": "f15ad5da6b5ab33a9fe51992247fa3fe4da6a6ec0a4678d186611bb1258b4fff",
+      "elf": {
+        "elfClass": 2,
+        "endianness": 1,
+        "machine": 62,
+        "flags": 0
+      },
+      "originalElf": {
+        "elfClass": 2,
+        "endianness": 1,
+        "machine": 62,
+        "flags": 0
+      },
+      "sourceFiles": 1297,
+      "sourceTreeSha256": "a57c7c4ca1cb816f01ba91274922b6f0c0882b8b1a122121ac5d82f67ccce73b",
+      "commandReceipts": 16,
+      "hostInputs": 716,
+      "hostImage": {
+        "ImageOS": null,
+        "ImageVersion": null,
+        "RUNNER_ARCH": null
+      },
+      "probeSha256": "86ebe5f02bd9aab097b411c71f1a33a86a5dde2469f6bda036c3a86aac074a36",
+      "probeSourceSha256": "2cf19ee9a0e28661bbfd4306456b3d078e02b59294bd96ab228d234debe70847",
+      "probeSupportSha256": {
+        "scripts/probes/p1-jna-callback.h": "b98767a0716476d59b8a81af7cd5c5550a348bb8ce9b0b55fff294009bd94887",
+        "scripts/probes/p1-jna-callback-control.c": "5de3b07abad6498268ed2c5f82a12806da31e86d41fffcb0c75c17cd5f638937"
+      },
+      "generatedHelperSha256": "506b98fd979eff158e0a83b534fad0ed1974c65ee9394026becef0410a67f142",
+      "libffiReleaseSha256": "d66c56ad259a82cf2a9dfc408b32bf5da52371500b84745f7fb8b645712df676"
+    }
+  ],
+  "paidRequests": 0,
+  "limits": [
+    "Actual C-level JNI primitives and bundled libffi call/closure, not complete target JVM initIDs or Java application proof",
+    "No product replacement yet",
+    "No full OS/CPE or arbitrary libc compatibility proof"
+  ]
+}

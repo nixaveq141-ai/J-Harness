@@ -1,0 +1,12 @@
+{
+  "status": "LOCAL_ALL_MEMBERS_SHA256_AND_CRC_VERIFIED",
+  "path": ".build-cache/local-evidence-backups/2026-11-06/p1-openbsd-jna-component.zip",
+  "bytes": 2814015,
+  "sha256": "f35ceeb82c647ecf8671cbf6ee2331ac2fedcb1a0f9b206943aa5fd11979e1d0",
+  "members": {
+    ".build-cache/p1-raw-42227334617/13507090380.zip": "05d5305ed20108d090a3bd80cbd9472aa7878fd003303c60568a16075e167719",
+    ".build-cache/audit-p1-openbsd-jna.py": "a37c11a11df13730cde1aedb1cb17c98c7ea639dd742f5466fcea6ea1ca2d857",
+    ".build-cache/p1-openbsd-lock.json": "5277f7bf5fe88acad680c43483bd10b878f6a64ebbea215ea4360f3e9cd02b77",
+    "docs/testing/gap-p1-2026-11-04/openbsd-jna-components-acceptance.json": "43fa66e70faf0e443032c19d9fd41565e87fafeb8c7c3fb1a910fa973906c446"
+  }
+}
