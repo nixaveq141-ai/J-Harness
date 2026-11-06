@@ -115,3 +115,7 @@ Windows x86首轮41990625821构建成功但[独立来源核验未接受](windows
 ## 网络恢复与32项完整回归
 
 2026-11-06原生Git推送已成功，远端专用分支摘要等于b86aaa1；[统一32完整CI](https://github.com/nixaveq141-ai/J-Harness/actions/runs/42150336971)已启动。DNS/HTTPS/Git读取均通过，未修改网络配置；只证明当前连接恢复，未确立此前间歇超时根因。新候选验收待，正式30/50不变。
+
+## FreeBSD JNA双字宽来源专项
+
+2026-11-06 P1继续FreeBSD JNA两项：新增固定c366bc4源码+既审libffi3.4.4生成输入，在14.4 amd64 VM分别cc/cc -m32、gmake/Ant强制构建，核原始库存/双副本/ELF/前后源码，实际JNI六sizeof/malloc/free与ffi call41/closure46、回调字宽保护及缺库拒绝专项。两本地字宽/端序/载荷副本控制过，实际远端结果待；正式30/50、32候选回归仍待，不提前闭合两来源。无付费模型，实体机器跳过。 复用已验证的FreeBSD VM动作和JNI/ffi探针；交叉字宽下不将64位JDK运行误作32位JVM认证。未取得原包独立复核及后续产品集成前，两项保持OPEN。

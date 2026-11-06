@@ -1,0 +1,51 @@
+name: P1 FreeBSD 14.4 x64 and x86 JNA source components
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/m1059-full-validation]
+    paths: [.github/workflows/gap-p1-freebsd-jna.yml]
+permissions:
+  contents: read
+jobs:
+  source:
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [x86-64, x86]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python scripts/test-p1-freebsd-jna.py
+      - uses: vmactions/freebsd-vm@c46abacb49f09938ca4e1702d15d836285d694cc
+        with:
+          release: '14.4'
+          arch: amd64
+          mem: 4096
+          cpu: 2
+          disable-cache: true
+          envs: GITHUB_ACTIONS GITHUB_RUN_ID GITHUB_SHA
+          prepare: pkg install -y python311 git gmake binutils openjdk21 apache-ant
+          run: |
+            git config --global --add safe.directory "$PWD"
+            export JAVA_HOME=/usr/local/openjdk21
+            export PATH="$JAVA_HOME/bin:$PATH"
+            python3.11 scripts/build-p1-freebsd-jna.py ${{ matrix.target }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: p1-freebsd-${{ matrix.target }}-jna-source
+          include-hidden-files: true
+          retention-days: 90
+          path: |
+            .build-cache/p1-freebsd-jna/${{ matrix.target }}/report.json
+            .build-cache/p1-freebsd-jna/${{ matrix.target }}/*.log
+            .build-cache/p1-freebsd-jna/${{ matrix.target }}/*-command.json
+            .build-cache/p1-freebsd-jna/${{ matrix.target }}/libjnidispatch.so
+            .build-cache/p1-freebsd-jna/${{ matrix.target }}/original.so
+            .build-cache/p1-freebsd-jna/${{ matrix.target }}/jni-probe
+            .build-cache/p1-freebsd-jna/${{ matrix.target }}/callback-control
+            .build-cache/p1-freebsd-jna/${{ matrix.target }}/libffi-release-3.4.4.tar.gz
