@@ -1,0 +1,52 @@
+{
+  "status": "LOONGARCH_JNA_SOURCE_ABI_FFI_COMPONENT_INDEPENDENTLY_VERIFIED_NOT_PRODUCT_ACCEPTANCE",
+  "runId": "42155835171",
+  "commit": "521b71f0553ac046ab720aff6e7e36b655bfe0ff",
+  "sourceRevision": "c366bc4fd0c50a30ac8d2475603ec564f6611462",
+  "platforms": [
+    {
+      "target": "loongarch64",
+      "artifactId": "13474233116",
+      "artifactSha256": "6d7f85514b4dd25fa802db6968d34048ad5dbd261535ca4546bc8cb0017befd5",
+      "reportSha256": "a33efa4d7a058566525461585b7184d47e7274d21d9b6fb4842583602fd6bf5a",
+      "resource": "com/sun/jna/linux-loongarch64/libjnidispatch.so",
+      "outputSha256": "50029ad7916911dd091103d485701c409918b47509a0e916f213b27d7ac15052",
+      "originalSha256": "2e91afb910bf56ca578786861fb87845f7bae1dc91b3ec6374540f3a946f170a",
+      "elf": {
+        "elfClass": 2,
+        "endianness": 1,
+        "machine": 258,
+        "flags": 67
+      },
+      "originalElf": {
+        "elfClass": 2,
+        "endianness": 1,
+        "machine": 258,
+        "flags": 67
+      },
+      "sourceFiles": 1297,
+      "sourceTreeSha256": "a57c7c4ca1cb816f01ba91274922b6f0c0882b8b1a122121ac5d82f67ccce73b",
+      "commandReceipts": 15,
+      "hostInputs": 699,
+      "hostImage": {
+        "ImageOS": "ubuntu24",
+        "ImageVersion": "20261101.360.1",
+        "RUNNER_ARCH": "X64"
+      },
+      "probeSha256": "b440e5bbf5e86fa47ed96cfb823e0ab4d3e759879b7a15d9671bee6a350aeccd",
+      "probeSourceSha256": "9e17cb4e0b519249d4af3b5e34a0cbe15258a3caf9fef4be6626e929abcc7d31",
+      "probeSupportSha256": {
+        "scripts/probes/p1-jna-callback.h": "b98767a0716476d59b8a81af7cd5c5550a348bb8ce9b0b55fff294009bd94887",
+        "scripts/probes/p1-jna-callback-control.c": "5de3b07abad6498268ed2c5f82a12806da31e86d41fffcb0c75c17cd5f638937"
+      },
+      "generatedHelperSha256": "506b98fd979eff158e0a83b534fad0ed1974c65ee9394026becef0410a67f142",
+      "libffiReleaseSha256": "d66c56ad259a82cf2a9dfc408b32bf5da52371500b84745f7fb8b645712df676"
+    }
+  ],
+  "paidRequests": 0,
+  "limits": [
+    "Actual C-level JNI primitives and bundled libffi call/closure, not complete target JVM initIDs or Java application proof",
+    "No product replacement yet",
+    "No full OS/CPE or arbitrary libc compatibility proof"
+  ]
+}

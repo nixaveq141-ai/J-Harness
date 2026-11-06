@@ -4,6 +4,8 @@
 
 ## 当前接续状态
 
+- 2026-11-06 P1 LoongArch42155835171@521成功且原包独立核验：1297固定源、15实际回执、完整Git输入、libffi生成输入及ELF/LP64D、JNI六sizeof/malloc/free、ffi call41/closure46和缺库拒绝过。新增精确stager与载荷/归档/scope反例两控制过；真实35来源/15原版候选装配，4503其他条目保持，本机生成JAR未动。正式32/50；35完整验收待。OpenBSD新轮已到源码构建失败，改VM正常copyback后独立host门禁强制原退出码/报告通过，以保留原始失败证据；不冒称解决构建。Windows ARM首轮开发环境路径引用失败，修为独立cmd包装并用含空格真实batch控制通过（共3项），修正远端待。
+
 - 2026-11-06 P1新增Windows ARM64 JNA入口：核标准windows-11-arm及官方镜像工具/JDK21 ARM、固定MSYS动作ec48f7c，使用固定JNA原生MSVC ARM64分支与既审libffi输入；明确保留上游ASMFN_OFF行为。DLL/探针均强制ARM64 PE32+，C JNI精确加载/六sizeof/malloc/free/卸载/缺库拒绝；本地2项PE/截断控制过，实际远端构建待，正式32/50与34候选不变。
 
 - 2026-11-06 P1新目标首轮：LoongArch42155339078@031613c实际GCC14/sysroot安装并进入固定源码构建，libffi3.4.4 tramp.c隐式open_temp_exec_file编译失败；保留原包13474675214/e7697c8。仅LoongArch使用上游支持disable-exec-static-tramp配置，真实ffi call/closure验证仍必须通过。OpenBSD42154858512@1681bbb包查询后未选出Python，未到源码构建；增加完整查询输出并按首字段处理包名。两修正待实测，本地4控制过，正式32/50不变。

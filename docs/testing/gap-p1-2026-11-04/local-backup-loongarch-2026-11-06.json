@@ -1,0 +1,13 @@
+{
+  "status": "LOCAL_ALL_MEMBERS_SHA256_AND_CRC_VERIFIED",
+  "path": ".build-cache/local-evidence-backups/2026-11-06/p1-loongarch-component.zip",
+  "bytes": 2746709,
+  "sha256": "3a8c1f91d44222aedbd92fc6f7171e66d112343e7ac11623000e590983a4b7ad",
+  "members": {
+    ".build-cache/p1-raw-42155835171/13474233116.zip": "6d7f85514b4dd25fa802db6968d34048ad5dbd261535ca4546bc8cb0017befd5",
+    ".build-cache/audit-p1-loongarch.py": "6684bb47cf95df73d882be0ecb0a69a6b387d6289a677c5f8d452b0b1a1ba87e",
+    ".build-cache/p1-loong-lock.json": "da98bd9738df60aaf86d85bb4fea760650f0054edbfc5dc242728a7d005fe9f4",
+    "docs/testing/gap-p1-2026-11-04/loongarch-jna-component-acceptance.json": "4a07182139ac481ddbfb91c4f24e41ba817a12d483d8d849b5d62031e1feb73c",
+    "docs/testing/gap-p1-2026-11-04/assembly35-control.json": "b2ae56d267cafb3764c531bd7560661b7caac001eea13ffe0c56405bd746474d"
+  }
+}

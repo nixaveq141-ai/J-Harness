@@ -131,6 +131,13 @@ jobs:
           github-token: ${{ github.token }}
           path: .build-cache/p1-freebsd-jna-inputs
       - run: python scripts/test-p1-freebsd-jna-stage.py
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: p1-linux-jna-loongarch64
+          run-id: 42155835171
+          github-token: ${{ github.token }}
+          path: .build-cache/p1-loongarch-jna-inputs
+      - run: python scripts/test-p1-loongarch-jna-stage.py
       - name: Install browser dependencies on Linux
         if: runner.os == 'Linux'
         run: |

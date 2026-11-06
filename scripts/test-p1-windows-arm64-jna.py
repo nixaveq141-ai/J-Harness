@@ -1,6 +1,8 @@
 """Ensure emulated x64/x86 and truncated files cannot pass native ARM64 gates."""
 import importlib.util
 from pathlib import Path
+import os
+import tempfile
 import struct
 import unittest
 spec=importlib.util.spec_from_file_location('builder',Path(__file__).with_name('build-p1-windows-arm64-jna.py'))
@@ -12,6 +14,15 @@ class PeIdentityTest(unittest.TestCase):
   self.assertEqual(builder.require_arm64_pe(self.pe())['machine'],0xaa64)
   for raw in [self.pe(0x8664),self.pe(0x14c,0x10b),self.pe(0xa641),self.pe(0xaa64,0x10b)]:
    with self.assertRaises(ValueError):builder.require_arm64_pe(raw)
+ @unittest.skipUnless(os.name=='nt','Windows cmd quoting integration')
+ def test_developer_batch_with_spaces(self):
+  with tempfile.TemporaryDirectory(prefix='p1 arm env ') as folder:
+   root=Path(folder);devcmd=root/'fake developer environment.cmd'
+   devcmd.write_bytes(b'@echo off\r\nset VSCMD_ARG_TGT_ARCH=arm64\r\nset P1_SYNTHETIC_ENV=space path accepted\r\nexit /b 0\r\n')
+   result=builder.msvc_environment(devcmd,root)
+   self.assertEqual('arm64',result['VSCMD_ARG_TGT_ARCH'])
+   self.assertEqual('space path accepted',result['P1_SYNTHETIC_ENV'])
+
  def test_bounds(self):
   for raw in [self.pe()[:90],b'MZ'+bytes(126)]:
    with self.assertRaises(ValueError):builder.require_arm64_pe(raw)

@@ -1,9 +1,9 @@
 {
   "status": "P1_IN_PROGRESS_NOT_COMPLETE",
   "frozenP0Tasks": 36,
-  "independentlyVerifiedNewSourceComponents": 20,
-  "assembledCandidateReviewedCount": 34,
-  "assembledCandidateUnresolvedCount": 16,
+  "independentlyVerifiedNewSourceComponents": 21,
+  "assembledCandidateReviewedCount": 35,
+  "assembledCandidateUnresolvedCount": 15,
   "formalAcceptedRuntimeCommit": "b86aaa1f4a5dc7159a6757cf66c3db6cee83ef4b",
   "formalAcceptedRuntimeReviewedCount": 32,
   "formalAcceptedRuntimeUnresolvedCount": 18,
@@ -116,13 +116,16 @@
       "coordinate": "net.java.dev.jna:jna:5.14.0",
       "os": "linux",
       "cpu": "loongarch64",
-      "status": "OPEN",
+      "status": "COMPONENT_SOURCE_VERIFIED_AND_ASSEMBLED_FULL_PRODUCT_PENDING",
       "requiredToolchain": "Linux loongarch64交叉编译器、sysroot、libc/内核头文件",
-      "nextAction": "运行gap-p1-loongarch-jna.yml：GCC14/sysroot/QEMU实际固定源构建与JNI/ffi探针；原包独立验后才集成",
+      "nextAction": "统一35候选五目标完整CI与原包独立验收",
       "blockers": [
-        "实际LoongArch64构建与加载证据待",
-        "统一候选装配及产品五目标完整验收待"
-      ]
+        "统一候选完整验收待；不认证LoongArch完整JVM/Java或任意libc"
+      ],
+      "candidateSha256": "50029ad7916911dd091103d485701c409918b47509a0e916f213b27d7ac15052",
+      "componentRunId": "42155835171",
+      "componentCommit": "521b71f0553ac046ab720aff6e7e36b655bfe0ff",
+      "componentReceipt": "docs/testing/gap-p1-2026-11-04/loongarch-jna-component-acceptance.json"
     },
     {
       "taskId": "NATIVE-08",

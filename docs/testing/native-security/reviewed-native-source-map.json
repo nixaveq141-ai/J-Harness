@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "scope": "Thirty replacements formally accepted; four FreeBSD PTY/JNA components independently verified and staged in34-resource candidate, full qualification pending. Sixteen original resources unresolved; no full OS/CPE clearance.",
+  "scope": "Thirty-two replacements formally accepted; three additional FreeBSD JNA/LoongArch components independently verified and assembled in35 candidate, full qualification pending. Fifteen original resources unresolved; no full OS/CPE clearance.",
   "resources": {
     "com/sun/jna/win32-x86-64/jnidispatch.dll": {
       "sha256": "c88e200b240dfa54c5b852a335b28683e64a074d30ceee7c17ffc282058891a2",
@@ -407,6 +407,19 @@
         "libffiReleaseSha256": "d66c56ad259a82cf2a9dfc408b32bf5da52371500b84745f7fb8b645712df676",
         "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/freebsd-jna-components-acceptance.json",
         "scope": "FreeBSD VM C-level JNI primitives and real libffi call/closure; complete target JVM/Java not certified"
+      }
+    },
+    "com/sun/jna/linux-loongarch64/libjnidispatch.so": {
+      "sha256": "50029ad7916911dd091103d485701c409918b47509a0e916f213b27d7ac15052",
+      "origin": {
+        "sourceBuildRun": "42155835171",
+        "sourceBuildCommit": "521b71f0553ac046ab720aff6e7e36b655bfe0ff",
+        "sourceRevision": "c366bc4fd0c50a30ac8d2475603ec564f6611462",
+        "componentProbeRun": "42155835171",
+        "componentReportSha256": "a33efa4d7a058566525461585b7184d47e7274d21d9b6fb4842583602fd6bf5a",
+        "libffiReleaseSha256": "d66c56ad259a82cf2a9dfc408b32bf5da52371500b84745f7fb8b645712df676",
+        "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/loongarch-jna-component-acceptance.json",
+        "scope": "QEMU C-level JNI primitives and real libffi call/closure; complete target JVM/Java not certified"
       }
     }
   },

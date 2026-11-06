@@ -153,3 +153,9 @@ libffi选项见[固定3.4.4 configure.ac](https://github.com/libffi/libffi/blob/
 2026-11-06 P1新增Windows ARM64 JNA入口：核标准windows-11-arm及官方镜像工具/JDK21 ARM、固定MSYS动作ec48f7c，使用固定JNA原生MSVC ARM64分支与既审libffi输入；明确保留上游ASMFN_OFF行为。DLL/探针均强制ARM64 PE32+，C JNI精确加载/六sizeof/malloc/free/卸载/缺库拒绝；本地2项PE/截断控制过，实际远端构建待，正式32/50与34候选不变。
 
 工具可用性依据：[GitHub标准ARM私有仓库支持](https://github.blog/changelog/2026-01-29-arm64-standard-runners-are-now-available-in-private-repositories/)、[官方ARM镜像清单](https://github.com/actions/partner-runner-images/blob/main/images/arm-windows-11-image.md)、[MSYS2 ARM支持](https://www.msys2.org/docs/arm64/)。这些资料不是实际构建/加载证据；实际SDK/编译器/宿主版本与输入SHA由本轮回执取得。
+
+## LoongArch组件验收与统一35
+
+2026-11-06 P1 LoongArch42155835171@521成功且原包独立核验：1297固定源、15实际回执、完整Git输入、libffi生成输入及ELF/LP64D、JNI六sizeof/malloc/free、ffi call41/closure46和缺库拒绝过。新增精确stager与载荷/归档/scope反例两控制过；真实35来源/15原版候选装配，4503其他条目保持，本机生成JAR未动。正式32/50；35完整验收待。OpenBSD新轮已到源码构建失败，改VM正常copyback后独立host门禁强制原退出码/报告通过，以保留原始失败证据；不冒称解决构建。Windows ARM首轮开发环境路径引用失败，修为独立cmd包装并用含空格真实batch控制通过（共3项），修正远端待。
+
+[组件验收](loongarch-jna-component-acceptance.json)绑定实际原包13474233116 SHA 6d7f85514b4dd25fa802db6968d34048ad5dbd261535ca4546bc8cb0017befd5；[装配控制](assembly35-control.json)使用已验b86候选的原版canonical baseline，仅证明替换字节及其余条目保持，不代替新源码的五目标产品验收。

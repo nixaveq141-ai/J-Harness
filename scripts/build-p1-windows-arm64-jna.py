@@ -24,6 +24,12 @@ def require_arm64_pe(raw):
  if (machine,magic)!=(0xaa64,0x20b):raise ValueError('Native ARM64 PE32+ required; emulated x64 is not accepted')
  return dict(machine=machine,optionalHeaderMagic=magic)
 
+def msvc_environment(devcmd,out):
+ script=out/'msvc-env.cmd'
+ script.write_bytes(b'@echo off\r\ncall "%~1" -no_logo -arch=arm64 -host_arch=arm64 >nul\r\nif errorlevel 1 exit /b %errorlevel%\r\nset\r\n')
+ raw=subprocess.check_output(['cmd.exe','/d','/c','call',str(script),str(devcmd)]).decode(errors='strict')
+ return dict(row.split('=',1) for row in raw.splitlines() if '=' in row and not row.startswith('='))
+
 def main():
  if os.name!='nt' or platform.machine().lower() not in {'arm64','aarch64'}:raise ValueError('Native Windows ARM64 Python required')
  if os.environ.get('GITHUB_ACTIONS')!='true':raise ValueError('Dedicated CI required')
@@ -40,10 +46,7 @@ def main():
   vs=subprocess.check_output([str(vswhere),'-latest','-products','*','-property','installationPath']).decode().strip()
   devcmd=Path(vs)/'Common7/Tools/VsDevCmd.bat'
   if not devcmd.is_file():raise ValueError('Visual Studio developer environment required')
-  env=subprocess.check_output(['cmd.exe','/d','/s','/c','"'+str(devcmd)+'" -no_logo -arch=arm64 -host_arch=arm64 >nul && set']).decode(errors='strict')
-  for row in env.splitlines():
-   if '=' in row and not row.startswith('='):
-    key,value=row.split('=',1);os.environ[key]=value
+  os.environ.update(msvc_environment(devcmd,out))
   if os.environ.get('VSCMD_ARG_TGT_ARCH')!='arm64':raise ValueError('MSVC target must be ARM64')
   msys=Path(os.environ['JHARNESS_MSYS_ROOT']);make=msys/'usr/bin/make.exe'
   if not make.is_file():raise ValueError('MSYS make required')

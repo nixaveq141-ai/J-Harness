@@ -42,7 +42,27 @@ jobs:
             python_bin=$(pkg_info -L "$python_package" | awk '/^\/usr\/local\/bin\/python3\.[0-9]+$/ {print; exit}')
             test -x "$python_bin"
             "$python_bin" -c 'import sys; assert sys.version_info >= (3, 11)'
+            mkdir -p .build-cache/p1-openbsd-jna/${{ matrix.target }}
+            # Build entry refuses reuse of its own target directory.
+            rmdir .build-cache/p1-openbsd-jna/${{ matrix.target }}
+            set +e
             "$python_bin" scripts/build-p1-openbsd-jna.py ${{ matrix.target }}
+            build_status=$?
+            mkdir -p .build-cache/p1-openbsd-jna/${{ matrix.target }}
+            printf '%s\n' "$build_status" > .build-cache/p1-openbsd-jna/${{ matrix.target }}/vm-exit-code.txt
+            for log in build probe-build candidate-probe; do
+              if [ -f .build-cache/p1-openbsd-jna/${{ matrix.target }}/$log.log ]; then
+                tail -n 60 .build-cache/p1-openbsd-jna/${{ matrix.target }}/$log.log
+              fi
+            done
+            # Return through the action so it copies failure evidence back.
+            # The next host step independently requires exit 0 and a PASS report.
+            exit 0
+      - name: Require actual VM source and component success
+        if: always()
+        run: |
+          python -c "from pathlib import Path; import json; p=Path('.build-cache/p1-openbsd-jna/${{ matrix.target }}'); assert (p/'vm-exit-code.txt').read_text().strip()=='0'; r=json.loads((p/'report.json').read_bytes()); assert r['status']=='SOURCE_JNA_ABI_AND_FFI_PROBE_PASS_NOT_PRODUCT_ACCEPTANCE' and r['runId']=='${{ github.run_id }}' and r['commit']=='${{ github.sha }}' and r['productAccepted'] is False"
+
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -50,6 +70,7 @@ jobs:
           include-hidden-files: true
           retention-days: 90
           path: |
+            .build-cache/p1-openbsd-jna/${{ matrix.target }}/vm-exit-code.txt
             .build-cache/p1-openbsd-jna/${{ matrix.target }}/report.json
             .build-cache/p1-openbsd-jna/${{ matrix.target }}/*.log
             .build-cache/p1-openbsd-jna/${{ matrix.target }}/*-command.json
