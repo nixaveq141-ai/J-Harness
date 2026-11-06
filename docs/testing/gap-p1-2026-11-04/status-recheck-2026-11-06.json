@@ -1,0 +1,116 @@
+{
+  "date": "2026-11-06",
+  "status": "P1_INCOMPLETE_REMOTE_WRITE_APPROVAL_REQUIRED",
+  "formalReviewed": 30,
+  "formalUnresolved": 20,
+  "candidateReviewed": 34,
+  "candidateUnresolved": 16,
+  "runs": [
+    {
+      "runId": "42150336971",
+      "jobs": [
+        {
+          "id": 127671764223,
+          "name": "qualification (macos-15-intel)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 127671764403,
+          "name": "qualification (ubuntu-24.04-arm)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 127671764534,
+          "name": "qualification (ubuntu-24.04)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 127671764561,
+          "name": "qualification (windows-2022)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 127671764615,
+          "name": "qualification (macos-latest)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 127679888595,
+          "name": "identical-runtime",
+          "status": "completed",
+          "conclusion": "success"
+        }
+      ],
+      "independentRawArtifactAcceptance": false
+    },
+    {
+      "runId": "42151580514",
+      "jobs": [
+        {
+          "id": 127675827508,
+          "name": "qualification (ubuntu-24.04-arm)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 127675827780,
+          "name": "qualification (macos-15-intel)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 127675827808,
+          "name": "qualification (ubuntu-24.04)",
+          "status": "completed",
+          "conclusion": "success"
+        },
+        {
+          "id": 127675827828,
+          "name": "qualification (macos-latest)",
+          "status": "in_progress",
+          "conclusion": null
+        },
+        {
+          "id": 127675827863,
+          "name": "qualification (windows-2022)",
+          "status": "in_progress",
+          "conclusion": null
+        }
+      ],
+      "independentRawArtifactAcceptance": false
+    }
+  ],
+  "openbsd": {
+    "failedRun": "42151888519",
+    "fixCommit": "a5d651ad0c715f4b324770588cb7dbb55df086aa",
+    "fixDispatched": false
+  },
+  "localChecks": [
+    {
+      "command": "python scripts/test-p1-openbsd-jna.py",
+      "tests": 2,
+      "result": "PASS"
+    },
+    {
+      "command": "python scripts/test-p1-freebsd-jna-stage.py",
+      "tests": 2,
+      "result": "PASS"
+    },
+    {
+      "command": "python scripts/test-p1-freebsd-stage.py",
+      "tests": 1,
+      "result": "PASS"
+    }
+  ],
+  "remoteWrite": {
+    "attempt": "git push origin HEAD:refs/heads/codex/m1059-full-validation",
+    "result": "AUTO_REVIEW_REJECTED",
+    "reason": "Current user authorization permits local commits but excludes push; no workaround attempted."
+  },
+  "paidModelRequests": 0
+}
