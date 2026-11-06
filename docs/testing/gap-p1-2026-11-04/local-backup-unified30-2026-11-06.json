@@ -1,0 +1,24 @@
+{
+  "status": "LOCAL_ALL_MEMBERS_SHA256_AND_CRC_VERIFIED",
+  "path": ".build-cache/local-evidence-backups/2026-11-06/p1-unified30.zip",
+  "bytes": 593153338,
+  "sha256": "858f46fe51016673bc077b5b071a236ddce4d0198cc67876b3dbcdcbae1497ff",
+  "members": {
+    ".build-cache/p1-raw-42000054331/13401484977.zip": "0a13552ca854e08af79cd1b25cf2fedd1ef9d598dbb6f753ed1ded17070b06a7",
+    ".build-cache/p1-raw-42000054331/13402523429.zip": "b1d4cbb6345f3647c9337b6c8c96c5dd115d591bb29eac9637bcedc96d1e5e79",
+    ".build-cache/p1-raw-42000054331/13403270408.zip": "c8b5c2ec84e852535724c4a3115f8c630a2a1629a2ed9297092cf884fe0be17d",
+    ".build-cache/p1-raw-42000054331/13403446671.zip": "c525d486eb8bc8d55b8be8483288791bc62bf569a07f0cd87d36ef5c371cb311",
+    ".build-cache/p1-raw-42000054331/13403800461.zip": "f667ae645d5869028f6bcb6e1e03f9f5f7d3ca14d4304cb1a14a7524a2cc0949",
+    ".build-cache/p1-raw-42000054331/13403871375.zip": "2828e88516205ac303d0d15285ee0ea5621a2bca966e1b0e5cf3257b0dc960fb",
+    ".build-cache/p1-raw-42000054331/13403875771.zip": "a1ac728d769423d8456937d93aab8d7c94b715cdb1e8194b9a6f5cff924764c5",
+    ".build-cache/p1-raw-42000054331/13404655549.zip": "efc5b9bab3d711ebc5a347cd15d51e078f0ac5451ef41caec1d639a658dde001",
+    "docs/testing/M10-unified30-final-equality-2026-11-06.json": "0c41ab87db4469af3deb77fde3482c86af5e63b7e9ed472f2e80c20c40ea6aeb",
+    "docs/testing/M10-unified30-final-linux-2026-11-06.json": "2d29f669d6e6ce0198afc6f0008a7fd8376fca34a7fadc7928e2ab84044e1318",
+    "docs/testing/M10-unified30-final-linux-arm64-2026-11-06.json": "304690145cb34c8dfea9a465856501851ee175811d0d13d48dedcb65f6e9d9b4",
+    "docs/testing/M10-unified30-final-macos-2026-11-06.json": "ec07aeb65d0c3542ef8526635a6c4cdf0eacbfc6bcad164ce792f7bce1ebb725",
+    "docs/testing/M10-unified30-final-macos-intel-2026-11-06.json": "56a8f3778969567a3a80c15718934c5a8214013ed0fc852ba5a74d252841bb04",
+    "docs/testing/M10-unified30-final-windows-2026-11-06.json": "749cdebe53f760578a1f94a7e86fe7b849aa9354f8ce863fec627cd720ce1bdc",
+    ".build-cache/audit-unified30-final.py": "5a2c8dfe8a87dd81214a576bf1e1cb9d93b3727e28c4c050b1e4d0daf83f1588",
+    ".build-cache/check-unified30-raw-artifacts.py": "cb893cce68819a782d6da3c2009865d5f088379f3454111d0c05996432209f4c"
+  }
+}

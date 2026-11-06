@@ -1,0 +1,37 @@
+{
+  "status": "FREEBSD_X86_PTY_SOURCE_COMPONENT_INDEPENDENTLY_VERIFIED_NOT_PRODUCT_ACCEPTANCE",
+  "runId": "42003119496",
+  "commit": "40610c294c54dd2a53526a0da8c623cdd7c0d562",
+  "artifact": {
+    "id": 13403446671,
+    "path": ".build-cache/p1-raw-42000054331/13403446671.zip",
+    "sha256": "c525d486eb8bc8d55b8be8483288791bc62bf569a07f0cd87d36ef5c371cb311",
+    "bytes": 684432
+  },
+  "reportSha256": "d043bd4b1588a8638fa93dda9e532f40fd721b8c1728b8d6a8ee21d9f8a9dc93",
+  "resource": "resources/com/pty4j/native/freebsd/x86/libpty.so",
+  "sourceRevision": "b7554d649f6374183040e6554942b6d5b028b5e5",
+  "sourceFiles": 134,
+  "outputSha256": "3bcfb40e936480de341bd775c440170973e8f03bd5de5fdf9f7ce3518f9696aa",
+  "originalSha256": "67088c6eb1ac32f4c82c43e0386cb86e9df68f6869ee4900cb68039cb0121598",
+  "probeSha256": "e346d1f4a32ac8835eeec4c0cd957bd07cfa59cb305d4515b1e8e7067d6c3889",
+  "probeSourceSha256": "285c69a384b197f711a39b6931b3e21bfe32e4cf237b21051540925c1e037b0d",
+  "commandReceiptSha256": {
+    "system": "3e6577335f180b51f210c166728de213b0517d97386df65ccf84d2050ce18bf6",
+    "packages": "6e68f26709a4b39033ae67b035dad2886cb0a86a1ba45444760ed787e1b0808c",
+    "compiler": "4948cf94850d31ea2720924371bd0b13a80e711b4821c159837c1ad9448fef97",
+    "clone": "da50ab87a2df68a132a381b803ba5bff6b8c7b6936f3cccc1d70d3b628dd9fa6",
+    "checkout": "e716d02c27930579086f75b00195ca26912158ac5210643439b0ee4ae7e779e2",
+    "build": "dcad1c7a0d7fc4bb72f687438bcfce7a961b764145efc629904d0016f24bcd69",
+    "elf-audit": "45731d4ff273b861f0ea6ba2a1d43712ed885ca3adef606080d74ea16cedc43e",
+    "probe-build": "607a41918f101769892a4dc3d33dc2e50fa652d70d2cad27e1d1df23d5ac79bb",
+    "candidate-probe": "00ddc271e12b44eaee098d819e29d9d31f85ef08fa0b38a3ede06131b0db7733",
+    "missing-probe": "41c405d887c5bbc7902452b90abfb167b7e922fe774854adce533d79955e81b4"
+  },
+  "hostGitInputs": 687,
+  "paidRequests": 0,
+  "productAccepted": false,
+  "limits": [
+    "FreeBSD VM native component probe only; no complete Java application or OS/CPE certification"
+  ]
+}

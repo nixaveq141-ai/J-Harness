@@ -1,0 +1,14 @@
+{
+  "status": "LOCAL_ALL_MEMBERS_SHA256_AND_CRC_VERIFIED",
+  "path": ".build-cache/local-evidence-backups/2026-11-06/p1-freebsd-dual.zip",
+  "bytes": 1381376,
+  "sha256": "ae919e074b0a3ff44e1b095d149220eb7ff6fb73ce625c20c928d922fe85dd05",
+  "members": {
+    ".build-cache/p1-raw-42000054331/13403875771.zip": "a1ac728d769423d8456937d93aab8d7c94b715cdb1e8194b9a6f5cff924764c5",
+    ".build-cache/p1-raw-42000054331/13403446671.zip": "c525d486eb8bc8d55b8be8483288791bc62bf569a07f0cd87d36ef5c371cb311",
+    ".build-cache/audit-p1-freebsd-x64-dual.py": "8f24a28cab9f812725b17a3320ab5439030fd3c50c231126f6189ce45f5613a6",
+    ".build-cache/audit-p1-freebsd-x86-dual.py": "4893fb97124228c939fe51aefa3b1977d3c6ed8abbd852378d2e5527e825cab8",
+    "docs/testing/gap-p1-2026-11-04/freebsd-x64-dual-components-acceptance.json": "51426ff3e59c0d63e7cfc87ca78bfdbfb0a1481c928ae8ffc0d11b466fa5873f",
+    "docs/testing/gap-p1-2026-11-04/freebsd-x86-dual-components-acceptance.json": "0384a61e834deffb2d8effa03e5969cf664dfa2b3253008f04e1d98b2abd2421"
+  }
+}

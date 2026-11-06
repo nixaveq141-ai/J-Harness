@@ -1,12 +1,12 @@
 {
   "status": "P1_IN_PROGRESS_NOT_COMPLETE",
   "frozenP0Tasks": 36,
-  "independentlyVerifiedNewSourceComponents": 17,
+  "independentlyVerifiedNewSourceComponents": 18,
   "assembledCandidateReviewedCount": 30,
   "assembledCandidateUnresolvedCount": 20,
-  "formalAcceptedRuntimeCommit": "20570ce147e7a531cedb6170e707e6900d40e693",
-  "formalAcceptedRuntimeReviewedCount": 27,
-  "formalAcceptedRuntimeUnresolvedCount": 23,
+  "formalAcceptedRuntimeCommit": "7e2978e5a085e2307de8bfcbf2a0b0e4bfed12bd",
+  "formalAcceptedRuntimeReviewedCount": 30,
+  "formalAcceptedRuntimeUnresolvedCount": 20,
   "physicalExtraMachineAcceptance": "SKIPPED_BY_USER_NOT_RUNTIME_CERTIFIED",
   "tasks": [
     {
@@ -340,15 +340,16 @@
       "coordinate": "net.java.dev.jna:jna:5.14.0",
       "os": "win32",
       "cpu": "x86",
-      "status": "COMPONENT_SOURCE_VERIFIED_AND_ASSEMBLED_FULL_PRODUCT_PENDING",
+      "status": "SOURCE_REPLACEMENT_ACCEPTED_IN_FIVE_TARGET_PRODUCT",
       "requiredToolchain": "MSVC/Windows SDK x86；构建WinPTY/Console/helper所需依赖",
-      "nextAction": "统一28资源候选五目标完整CI及独立原包复验",
-      "blockers": [
-        "完整统一候选验收待；C探针不等于32位JVM认证"
-      ],
+      "nextAction": "本资源来源替换及五托管目标产品回归已验；额外CPU完整JVM/Java与OS/CPE不在此认证范围",
+      "blockers": [],
       "componentRunId": "41992679907",
       "componentCommit": "e6d3091a56e2551fc864afaefc8b74a3e7e3cf2a",
-      "componentReceipt": "docs/testing/gap-p1-2026-11-04/windows-x86-components-acceptance.json"
+      "componentReceipt": "docs/testing/gap-p1-2026-11-04/windows-x86-components-acceptance.json",
+      "productRunId": "42000054331",
+      "productCommit": "7e2978e5a085e2307de8bfcbf2a0b0e4bfed12bd",
+      "productReceipt": "docs/testing/M10-unified30-final-equality-2026-11-06.json"
     },
     {
       "taskId": "NATIVE-22",
@@ -359,13 +360,13 @@
       "cpu": "x86-64",
       "status": "COMPONENT_SOURCE_VERIFIED_PRODUCT_INTEGRATION_PENDING",
       "requiredToolchain": "freebsd目标SDK/系统头文件与原生或交叉编译器",
-      "nextAction": "核额外x86组件并集成下一统一候选后完整重验",
+      "nextAction": "将两个固定FreeBSD组件集成下一统一候选并完成适用完整回归",
       "blockers": [
         "尚未统一候选集成和完整产品重验"
       ],
-      "componentRunId": "42002054105",
-      "componentCommit": "ed2da2b8c3f65ac4b3e03005b80feeb235a69ead",
-      "componentReceipt": "docs/testing/gap-p1-2026-11-04/freebsd-x64-components-acceptance.json"
+      "componentRunId": "42003119496",
+      "componentCommit": "40610c294c54dd2a53526a0da8c623cdd7c0d562",
+      "componentReceipt": "docs/testing/gap-p1-2026-11-04/freebsd-x64-dual-components-acceptance.json"
     },
     {
       "taskId": "NATIVE-23",
@@ -374,13 +375,15 @@
       "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
       "os": "freebsd",
       "cpu": "x86",
-      "status": "OPEN",
+      "status": "COMPONENT_SOURCE_VERIFIED_PRODUCT_INTEGRATION_PENDING",
       "requiredToolchain": "freebsd目标SDK/系统头文件与原生或交叉编译器",
-      "nextAction": "核上游逐文件构建证明或盘点目标SDK/工具链，再固定源构建和验证",
+      "nextAction": "将两个固定FreeBSD组件集成下一统一候选并完成适用完整回归",
       "blockers": [
-        "目标工具链/SDK或上游构建证明未确认",
-        "目标运行条件未确认；额外实体机器按用户指令跳过但不计运行通过"
-      ]
+        "尚未统一候选集成和完整产品重验"
+      ],
+      "componentRunId": "42003119496",
+      "componentCommit": "40610c294c54dd2a53526a0da8c623cdd7c0d562",
+      "componentReceipt": "docs/testing/gap-p1-2026-11-04/freebsd-x86-dual-components-acceptance.json"
     },
     {
       "taskId": "NATIVE-24",
@@ -569,15 +572,16 @@
       "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
       "os": "win",
       "cpu": "x86",
-      "status": "COMPONENT_SOURCE_VERIFIED_AND_ASSEMBLED_FULL_PRODUCT_PENDING",
+      "status": "SOURCE_REPLACEMENT_ACCEPTED_IN_FIVE_TARGET_PRODUCT",
       "requiredToolchain": "MSVC/Windows SDK x86；构建WinPTY/Console/helper所需依赖",
-      "nextAction": "统一30资源候选五目标完整CI及独立原包复验",
-      "blockers": [
-        "完整统一候选验收待；native探针不等于32位JVM认证"
-      ],
+      "nextAction": "本资源来源替换及五托管目标产品回归已验；额外CPU完整JVM/Java与OS/CPE不在此认证范围",
+      "blockers": [],
       "componentRunId": "41998518872",
       "componentCommit": "7c8c9e78755675cfbcad6bf20d2182f78c13e539",
-      "componentReceipt": "docs/testing/gap-p1-2026-11-04/windows-x86-pty-components-acceptance.json"
+      "componentReceipt": "docs/testing/gap-p1-2026-11-04/windows-x86-pty-components-acceptance.json",
+      "productRunId": "42000054331",
+      "productCommit": "7e2978e5a085e2307de8bfcbf2a0b0e4bfed12bd",
+      "productReceipt": "docs/testing/M10-unified30-final-equality-2026-11-06.json"
     },
     {
       "taskId": "NATIVE-36",
@@ -586,17 +590,18 @@
       "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
       "os": "win",
       "cpu": "x86",
-      "status": "COMPONENT_SOURCE_VERIFIED_AND_ASSEMBLED_FULL_PRODUCT_PENDING",
+      "status": "SOURCE_REPLACEMENT_ACCEPTED_IN_FIVE_TARGET_PRODUCT",
       "requiredToolchain": "MSVC/Windows SDK x86；构建WinPTY/Console/helper所需依赖",
-      "nextAction": "统一30资源候选五目标完整CI及独立原包复验",
-      "blockers": [
-        "完整统一候选验收待；native探针不等于32位JVM认证"
-      ],
+      "nextAction": "本资源来源替换及五托管目标产品回归已验；额外CPU完整JVM/Java与OS/CPE不在此认证范围",
+      "blockers": [],
       "componentRunId": "41998518872",
       "componentCommit": "7c8c9e78755675cfbcad6bf20d2182f78c13e539",
-      "componentReceipt": "docs/testing/gap-p1-2026-11-04/windows-x86-pty-components-acceptance.json"
+      "componentReceipt": "docs/testing/gap-p1-2026-11-04/windows-x86-pty-components-acceptance.json",
+      "productRunId": "42000054331",
+      "productCommit": "7e2978e5a085e2307de8bfcbf2a0b0e4bfed12bd",
+      "productReceipt": "docs/testing/M10-unified30-final-equality-2026-11-06.json"
     }
   ],
-  "formalAcceptedRuntimeRunId": "41989532940",
-  "formalAcceptedRuntimeReceipt": "docs/testing/M10-unified27-final-equality-2026-11-05.json"
+  "formalAcceptedRuntimeRunId": "42000054331",
+  "formalAcceptedRuntimeReceipt": "docs/testing/M10-unified30-final-equality-2026-11-06.json"
 }
