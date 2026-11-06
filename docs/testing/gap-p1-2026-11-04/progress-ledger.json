@@ -556,10 +556,10 @@
       "cpu": "aarch64",
       "status": "OPEN",
       "requiredToolchain": "MSVC/Windows SDK aarch64；构建WinPTY/Console/helper所需依赖",
-      "nextAction": "核上游逐文件构建证明或盘点目标SDK/工具链，再固定源构建和验证",
+      "nextAction": "运行gap-p1-windows-arm64-winpty.yml固定源/目录补丁/原生clangarm64构建及DLL-agent生命周期验证",
       "blockers": [
-        "目标工具链/SDK或上游构建证明未确认",
-        "目标运行条件未确认；额外实体机器按用户指令跳过但不计运行通过"
+        "实际ARM64源码编译与组件运行待",
+        "统一候选集成及产品完整验收待"
       ]
     },
     {
@@ -571,10 +571,10 @@
       "cpu": "aarch64",
       "status": "OPEN",
       "requiredToolchain": "MSVC/Windows SDK aarch64；构建WinPTY/Console/helper所需依赖",
-      "nextAction": "核上游逐文件构建证明或盘点目标SDK/工具链，再固定源构建和验证",
+      "nextAction": "运行gap-p1-windows-arm64-winpty.yml固定源/目录补丁/原生clangarm64构建及DLL-agent生命周期验证",
       "blockers": [
-        "目标工具链/SDK或上游构建证明未确认",
-        "目标运行条件未确认；额外实体机器按用户指令跳过但不计运行通过"
+        "实际ARM64源码编译与组件运行待",
+        "统一候选集成及产品完整验收待"
       ]
     },
     {

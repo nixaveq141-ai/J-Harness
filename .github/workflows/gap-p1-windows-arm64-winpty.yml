@@ -1,0 +1,45 @@
+name: P1 pinned native ARM64 WinPTY DLL and agent
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/m1059-full-validation]
+    paths: [.github/workflows/gap-p1-windows-arm64-winpty.yml]
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: windows-11-arm
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          architecture: arm64
+      - uses: msys2/setup-msys2@ec48f7c5447b3140e2b088413ae3a55687bccb6e
+        id: msys
+        with:
+          msystem: CLANGARM64
+          install: make mingw-w64-clang-aarch64-clang
+          cache: false
+      - run: python scripts/test-p1-windows-arm64-winpty.py
+      - run: python scripts/test-p1-windows-arm64-jna.py
+      - run: python docs/testing/tools/test-patch-winpty-directory.py
+      - name: Build and probe actual ARM64 DLL and owned agent
+        env:
+          JHARNESS_MSYS_ROOT: ${{ steps.msys.outputs.msys2-location }}
+        run: python scripts/build-p1-windows-arm64-winpty.py
+      - name: Show bounded failure logs
+        if: failure()
+        run: python -c "from pathlib import Path; p=Path('.build-cache/p1-windows-arm64-winpty'); [(print(f.name),print(f.read_text(errors='replace')[-4096:])) for f in [p/'build.log',p/'probe-build.log',p/'candidate-probe.log'] if f.is_file()]"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: p1-windows-arm64-winpty-source
+          include-hidden-files: true
+          retention-days: 90
+          path: |
+            .build-cache/p1-windows-arm64-winpty/*.json
+            .build-cache/p1-windows-arm64-winpty/*.log
+            .build-cache/p1-windows-arm64-winpty/*.dll
+            .build-cache/p1-windows-arm64-winpty/*.exe

@@ -215,3 +215,9 @@ ARM64 Console构建使用已审相同7ff11ee terminal与fe1cde6 vcpkg固定源�
 2026-11-06 OpenBSD42158939107原ZIP实核exit11/空日志，对照固定C探针为closure_alloc返回NULL；先前JNI六sizeof/malloc/free与ffi call41已通过但不计组件验收。根据官方mmap条件，新增mount回执并只将自有wxneeded探针同SHA复制到/usr/local临时目录运行后清理，不改任何挂载或产品权限；补errno诊断，根因及修正待实际对照。两本地ELF/副本控制过，来源计数不变。
 
 [失败收据](openbsd-closure-allocation-failure.json)。[OpenBSD mmap官方文档](https://man.openbsd.org/mmap.2)要求wxneeded与wxallowed同时满足；本轮只验证已有挂载上的执行位置，不重新挂载、不开放Java/产品权限。运行后是否通过由实际同一JNI/ffi探针决定，不因移动文件就宣称已修复。
+
+## ARM64 WinPTY DLL/agent入口
+
+2026-11-06 P1 ARM64 WinPTY两载荷新增原生Windows ARM runner/固定MSYS动作/CLANGARM64入口，固定7e59fe2与已审目录扩展，P4J b7554d6原始ARM库存对照；强制编译器目标与DLL/agent/探针ARM64 PE，实际owned agent/resize/process-list/退出/卸载/缺库拒绝待。新增固定配置1控制与原补丁3控制过；源码编译/运行未验，不增加正式34或候选39。
+
+[MSYS2官方ARM支持](https://www.msys2.org/docs/arm64/)提供原生clangarm64工具链。既有上游Makefile的静态链接、版本生成和DLL/agent目标保持；仅生成明确ARM编译器配置，不构建MSYS适配器。任何源码移植需求须由实际编译错误及运行对照决定，本轮不提前声称原WinPTY支持ARM64。

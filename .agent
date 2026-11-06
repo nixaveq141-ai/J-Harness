@@ -4,6 +4,8 @@
 
 ## 当前接续状态
 
+- 2026-11-06 P1 ARM64 WinPTY两载荷新增原生Windows ARM runner/固定MSYS动作/CLANGARM64入口，固定7e59fe2与已审目录扩展，P4J b7554d6原始ARM库存对照；强制编译器目标与DLL/agent/探针ARM64 PE，实际owned agent/resize/process-list/退出/卸载/缺库拒绝待。新增固定配置1控制与原补丁3控制过；源码编译/运行未验，不增加正式34或候选39。
+
 - 2026-11-06 OpenBSD42158939107原ZIP实核exit11/空日志，对照固定C探针为closure_alloc返回NULL；先前JNI六sizeof/malloc/free与ffi call41已通过但不计组件验收。根据官方mmap条件，新增mount回执并只将自有wxneeded探针同SHA复制到/usr/local临时目录运行后清理，不改任何挂载或产品权限；补errno诊断，根因及修正待实际对照。两本地ELF/副本控制过，来源计数不变。
 
 - 2026-11-06 P1统一39集成：Solaris双JNA与ARM64 JNA/helper四原包精确stager通过，新增四控制覆盖原包与载荷/报告/归档/资源scope漂移拒绝。真实39来源/11原版候选装配，4499其他条目保持，未动本机生成JAR。工作流固定三组件运行下载并要求39替换前置门禁；正式34/50不变，新完整五目标验收待。原包及先前验收备份沿用，新增装配和stager另作本地逐SHA/CRC备份。
