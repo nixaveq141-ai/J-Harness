@@ -165,3 +165,7 @@ libffi选项见[固定3.4.4 configure.ac](https://github.com/libffi/libffi/blob/
 2026-11-06 P1继续SunOS x64/x86：固定Solaris VM动作1c16697及11.4-gcc-14，新增固定JNA/libffi源构建/ELF/真实JNI与ffi回调入口；显式区分原sunos-x86错误64位库存和新32位目标，不将原版当32位通过。VM失败回传后由host独立核退出码与报告，真实SDK/构建/加载待；本地2项ELF/副本控制过。SPARC/AIX来源未闭合，正式32/50不变。
 
 工具链与包入口核对：[VM官方11.4 GCC14镜像](https://github.com/vmactions/solaris-vm)、[Oracle开发工具包名](https://docs.oracle.com/en/operating-systems/solaris/oracle-solaris/11.4/config-app-dev/introduction-setting-up-application-development-environment-oracle-solaris-11.html)。JDK8只用于此固定JNA组件的头文件生成和C JNI头，不声称目标Java21或完整产品验收。新32位库要求machine3/ELF32；原版仍按库存SHA及已发现machine62/ELF64保存，不修改原始证据。
+
+## OpenBSD与Windows ARM构建故障定位
+
+2026-11-06 P1故障继续定位：OpenBSD42157222861@a537已回传原构建日志，固定JNA头生成明确缺ggrep；增加GNU grep包，实际修正待。Windows ARM42157224796@a537已越过MSVC环境初始化/固定源准备，Ant因cmd批处理拆分OS=win32属性误识别win32目标；改直接调用已安装Ant Java launcher，保留精确参数与launcher SHA/版本回执。原构建/加载断言不弱化，本地ARM3/OpenBSD2控制过，来源计数不变。

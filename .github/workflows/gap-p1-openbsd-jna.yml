@@ -33,7 +33,7 @@ jobs:
             pkg_info -Q python | tee /tmp/p1-python-packages.log
             python_package=$(awk '{print $1}' /tmp/p1-python-packages.log | grep -E '^python-3\.1[1-9]\.[0-9]+(p[0-9]+)?$' | tail -n 1)
             test -n "$python_package"
-            pkg_add -I "$python_package" git gmake binutils jdk%21 apache-ant
+            pkg_add -I "$python_package" git gmake ggrep binutils jdk%21 apache-ant
           run: |
             git config --global --add safe.directory "$PWD"
             export JAVA_HOME=/usr/local/jdk-21

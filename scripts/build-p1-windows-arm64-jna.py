@@ -72,7 +72,14 @@ def main():
   if raw.count(anchor)!=2:raise ValueError('Pinned Makefile anchor required')
   makefile.write_bytes(raw.replace(anchor,anchor+b' --disable-docs --disable-maintainer-mode'))
   report['buildConfig']=dict(arch='aarch64',osPrefix='win32-aarch64',useMsvc=True,libffiStatic=True,upstreamAsmFnOff=True)
-  command(['cmd.exe','/d','/c','call','ant','-Dbuild-native=true','-Dmake='+str(make),'-DARCH=aarch64','-Dos.prefix=win32-aarch64','-DUSE_MSVC=true','-DEXTRA_MAKE_OPTS=OS=win32','native'],'build',source)
+  ant_batch=shutil.which('ant.bat')
+  ant_home=Path(os.environ['ANT_HOME']) if os.environ.get('ANT_HOME') else Path(ant_batch).parent.parent
+  launcher=ant_home/'lib/ant-launcher.jar'
+  if not launcher.is_file():raise ValueError('Installed Ant Java launcher required')
+  report['antLauncherSha256']=stream_sha256(launcher)
+  ant=[str(Path(os.environ['JAVA_HOME'])/'bin/java.exe'),'-Dant.home='+str(ant_home),'-cp',str(launcher),'org.apache.tools.ant.launch.Launcher']
+  command([*ant,'-version'],'ant')
+  command([*ant,'-Dbuild-native=true','-Dmake='+str(make),'-DARCH=aarch64','-Dos.prefix=win32-aarch64','-DUSE_MSVC=true','-DEXTRA_MAKE_OPTS=OS=win32','native'],'build',source)
   library=source/'build/native-win32-aarch64/jnidispatch.dll';report['pe']=require_arm64_pe(library.read_bytes())
   expected=stream_sha256(library)
   if library.is_symlink() or any(p.is_symlink() or stream_sha256(p)!=expected for p in (source/'build').rglob('jnidispatch.dll')):raise ValueError('Native/class DLL copies differ')
