@@ -123,3 +123,7 @@ Windows x86首轮41990625821构建成功但[独立来源核验未接受](windows
 ## FreeBSD JNA独立验收及34项候选
 
 2026-11-06 FreeBSD JNA42150888437@ca两侧成功且独立核原包：1297固定源/15回执/完整Git输入/libffi归档/原始库存及ELF/回调字宽保护/JNI与ffi call41 closure46/缺库拒绝过。两stager控制过，真实统一34来源/16原版候选装配，4504其他条目保持，本机JAR恢复；原包及审计器本地逐SHA/CRC备份过。正式仍30/50；32轮和新34完整回归待，P1未完成，无付费模型。
+
+## OpenBSD x64来源工具链实测
+
+2026-11-06 P1继续OpenBSD x64 JNA来源：核VM动作固定f1ca8bc、增加7.9 x64隔离构建入口，固定JNA/libffi与原始库存、ELF和真实JNI/ffi回调探针；仅对自有回调探针指定wxneeded，不改产品权限。两本地ELF/副本反例过，实际工具链/构建/加载待，OpenBSD来源保持OPEN，不宣称x86或完整Java验收。统一34轮42151580514已启动，P1未完成。 VM动作修订来自[上游固定源码](https://github.com/vmactions/openbsd-vm/tree/f1ca8bc8ecc5b6ef7218e5b914836e067e1546d3)，包安装和实际原生构建通过前不计新增来源。
