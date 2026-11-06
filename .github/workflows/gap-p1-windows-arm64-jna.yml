@@ -1,0 +1,50 @@
+name: P1 pinned Windows ARM64 JNA source component
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/m1059-full-validation]
+    paths: [.github/workflows/gap-p1-windows-arm64-jna.yml]
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: windows-11-arm
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          architecture: arm64
+      - uses: msys2/setup-msys2@ec48f7c5447b3140e2b088413ae3a55687bccb6e
+        id: msys
+        with:
+          msystem: MSYS
+          install: make diffutils
+          cache: false
+      - name: Select native JDK21
+        shell: pwsh
+        run: |
+          if (-not (Test-Path -LiteralPath "$env:JAVA_HOME_21_AARCH64/bin/java.exe")) { throw 'Native JDK21 required' }
+          "JAVA_HOME=$env:JAVA_HOME_21_AARCH64" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          "$env:JAVA_HOME_21_AARCH64/bin" | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
+      - run: python scripts/test-p1-windows-arm64-jna.py
+      - name: Build upstream MSVC ARM64 branch and probe actual ARM64 DLL
+        env:
+          JHARNESS_MSYS_ROOT: ${{ steps.msys.outputs.msys2-location }}
+        run: python scripts/build-p1-windows-arm64-jna.py
+      - name: Show bounded failure logs
+        if: failure()
+        run: python -c "from pathlib import Path; p=Path('.build-cache/p1-windows-arm64-jna'); [(print(f.name),print(f.read_text(errors='replace')[-4096:])) for f in [p/'build.log',p/'probe-build.log',p/'candidate-probe.log'] if f.is_file()]"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: p1-windows-arm64-jna-source
+          include-hidden-files: true
+          retention-days: 90
+          path: |
+            .build-cache/p1-windows-arm64-jna/*.json
+            .build-cache/p1-windows-arm64-jna/*.log
+            .build-cache/p1-windows-arm64-jna/*.dll
+            .build-cache/p1-windows-arm64-jna/probe.exe
+            .build-cache/p1-windows-arm64-jna/libffi-release-3.4.4.tar.gz

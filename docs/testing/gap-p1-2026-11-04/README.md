@@ -147,3 +147,9 @@ Ubuntu官方包索引确认[GCC14](https://packages.ubuntu.com/gcc-14-loongarch6
 2026-11-06 P1新目标首轮：LoongArch42155339078@031613c实际GCC14/sysroot安装并进入固定源码构建，libffi3.4.4 tramp.c隐式open_temp_exec_file编译失败；保留原包13474675214/e7697c8。仅LoongArch使用上游支持disable-exec-static-tramp配置，真实ffi call/closure验证仍必须通过。OpenBSD42154858512@1681bbb包查询后未选出Python，未到源码构建；增加完整查询输出并按首字段处理包名。两修正待实测，本地4控制过，正式32/50不变。
 
 libffi选项见[固定3.4.4 configure.ac](https://github.com/libffi/libffi/blob/v3.4.4/configure.ac)；该配置保留动态closure，不禁用回调，不关闭GCC错误。OpenBSD按[pkg_info官方格式](https://man.openbsd.org/pkg_info.1)保存原查询结果并取包名字段；是否解决实际选择问题待新轮日志，不把推测当根因。
+
+## Windows ARM64 JNA入口
+
+2026-11-06 P1新增Windows ARM64 JNA入口：核标准windows-11-arm及官方镜像工具/JDK21 ARM、固定MSYS动作ec48f7c，使用固定JNA原生MSVC ARM64分支与既审libffi输入；明确保留上游ASMFN_OFF行为。DLL/探针均强制ARM64 PE32+，C JNI精确加载/六sizeof/malloc/free/卸载/缺库拒绝；本地2项PE/截断控制过，实际远端构建待，正式32/50与34候选不变。
+
+工具可用性依据：[GitHub标准ARM私有仓库支持](https://github.blog/changelog/2026-01-29-arm64-standard-runners-are-now-available-in-private-repositories/)、[官方ARM镜像清单](https://github.com/actions/partner-runner-images/blob/main/images/arm-windows-11-image.md)、[MSYS2 ARM支持](https://www.msys2.org/docs/arm64/)。这些资料不是实际构建/加载证据；实际SDK/编译器/宿主版本与输入SHA由本轮回执取得。
