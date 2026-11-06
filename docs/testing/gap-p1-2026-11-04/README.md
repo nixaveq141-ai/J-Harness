@@ -203,3 +203,9 @@ ARM64 Console构建使用已审相同7ff11ee terminal与fe1cde6 vcpkg固定源�
 2026-11-06 ARM64 JNA42159389661@3e71原包独立核验通过：1297固定源与基线全等、11回执/712宿主Git输入、固定libffi归档及生成输入、MSVC ARM64选项、DLL/探针ARM64 PE、实际JNI六sizeof/malloc/free/精确加载/卸载与缺库拒绝。上游ASMFN_OFF行为保留，不宣称ffi回调或完整Java验收；组件待集成，正式34/50不变。加Solaris两项/helper共四项已审待装配，下一候选目标39。
 
 证据：[windows-arm64-jna-component-acceptance.json](windows-arm64-jna-component-acceptance.json)。ARM64 C ABI实际通过不能替代尚未执行的统一候选回归；原失败与source gate保持。
+
+## 统一39来源候选
+
+2026-11-06 P1统一39集成：Solaris双JNA与ARM64 JNA/helper四原包精确stager通过，新增四控制覆盖原包与载荷/报告/归档/资源scope漂移拒绝。真实39来源/11原版候选装配，4499其他条目保持，未动本机生成JAR。工作流固定三组件运行下载并要求39替换前置门禁；正式34/50不变，新完整五目标验收待。原包及先前验收备份沿用，新增装配和stager另作本地逐SHA/CRC备份。
+
+[实际装配控制](assembly39-control.json)与四组件逐项来源收据共同限定范围；不将新候选装配当产品验收，也不替代余下11项来源任务。

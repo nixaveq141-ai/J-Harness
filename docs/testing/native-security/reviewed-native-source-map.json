@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "scope": "Thirty-two replacements formally accepted; three additional FreeBSD JNA/LoongArch components independently verified and assembled in35 candidate, full qualification pending. Fifteen original resources unresolved; no full OS/CPE clearance.",
+  "scope": "34 formally accepted; five extra components assembled in39-resource candidate; eleven original sources remain unresolved. Not full OS/CPE clearance.",
   "resources": {
     "com/sun/jna/win32-x86-64/jnidispatch.dll": {
       "sha256": "c88e200b240dfa54c5b852a335b28683e64a074d30ceee7c17ffc282058891a2",
@@ -420,6 +420,54 @@
         "libffiReleaseSha256": "d66c56ad259a82cf2a9dfc408b32bf5da52371500b84745f7fb8b645712df676",
         "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/loongarch-jna-component-acceptance.json",
         "scope": "QEMU C-level JNI primitives and real libffi call/closure; complete target JVM/Java not certified"
+      }
+    },
+    "com/sun/jna/sunos-x86-64/libjnidispatch.so": {
+      "sha256": "7439a4a36ee42c7638d2947b2dcb437e560be832c26e3977252c427f4f6a7330",
+      "origin": {
+        "sourceBuildRun": "42158505948",
+        "sourceBuildCommit": "543e7efcacb5b78e93103f0be8e4828d3dc2f16e",
+        "sourceRevision": "c366bc4fd0c50a30ac8d2475603ec564f6611462",
+        "componentProbeRun": "42158505948",
+        "componentReportSha256": "87ca7ba2cb52217e7769c634faff706d15e15ea53b6485e65597402ce00e670d",
+        "libffiReleaseSha256": "d66c56ad259a82cf2a9dfc408b32bf5da52371500b84745f7fb8b645712df676",
+        "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/sunos-jna-components-acceptance.json",
+        "scope": "Solaris VM C-level JNI primitives and real libffi call/closure; complete target JVM/Java not certified"
+      }
+    },
+    "com/sun/jna/sunos-x86/libjnidispatch.so": {
+      "sha256": "51183dc6c855742aed760b6c152f9ec22206ec99d1be0605bce0ce342bc09d9b",
+      "origin": {
+        "sourceBuildRun": "42158505948",
+        "sourceBuildCommit": "543e7efcacb5b78e93103f0be8e4828d3dc2f16e",
+        "sourceRevision": "c366bc4fd0c50a30ac8d2475603ec564f6611462",
+        "componentProbeRun": "42158505948",
+        "componentReportSha256": "1182428fd96a7c7c57dea88b9044d8550a6a7f3c7e19be8779d533689fa2b66f",
+        "libffiReleaseSha256": "d66c56ad259a82cf2a9dfc408b32bf5da52371500b84745f7fb8b645712df676",
+        "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/sunos-jna-components-acceptance.json",
+        "scope": "Solaris VM C-level JNI primitives and real libffi call/closure; complete target JVM/Java not certified"
+      }
+    },
+    "com/sun/jna/win32-aarch64/jnidispatch.dll": {
+      "sha256": "7f377b196786af9e942a4f8789388c035c753daa7b9e127f80bc3cc1ea52d578",
+      "origin": {
+        "sourceBuildRun": "42159389661",
+        "sourceBuildCommit": "3e71dddc18b47e25a65a57f218a8f8eed6b91f03",
+        "sourceRevision": "c366bc4fd0c50a30ac8d2475603ec564f6611462",
+        "componentReportSha256": "c86d5189b62b0955546c5137caa902d0e08803ff31311e6b6e01b7cadef166ff",
+        "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/windows-arm64-jna-component-acceptance.json",
+        "scope": "Actual native ARM64 owned C component probe; complete Java product on ARM64 not certified"
+      }
+    },
+    "resources/com/pty4j/native/win/aarch64/win-helper.dll": {
+      "sha256": "7111e63bf9b5115ad3861f21b3a0779bd230f573d1a34a14d9f3a422556fb520",
+      "origin": {
+        "sourceBuildRun": "42158936851",
+        "sourceBuildCommit": "b2a18620cc43d0255c5107d9ef0ba0e1ee16477c",
+        "sourceRevision": "b7554d649f6374183040e6554942b6d5b028b5e5",
+        "componentReportSha256": "8d110ddd7bed6bb8ae20c198bae4894d34582d3f8163b34c664cd35e516a1a4c",
+        "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/windows-arm64-helper-component-acceptance.json",
+        "scope": "Actual native ARM64 owned C component probe; complete Java product on ARM64 not certified"
       }
     }
   },

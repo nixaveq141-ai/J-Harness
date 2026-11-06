@@ -216,6 +216,17 @@ def main():
             target=payload/'p1-loongarch-jna';target.mkdir(parents=True)
             dest=target/'libjnidispatch.so';dest.write_bytes(item['path'].read_bytes());replacements[name]={**item,'path':dest}
         receipts['p1-loongarch-jna']=sha((ROOT/module.RECEIPT).read_bytes())
+    if os.environ.get('JHARNESS_P1_EXTRA_FOUR')=='1':
+        for module_name,filename,folder,count in [('sunos','stage-p1-sunos-jna.py','p1-sunos-jna-inputs',2),('arm64','stage-p1-arm64-components.py','p1-arm64-inputs',2)]:
+            spec=importlib.util.spec_from_file_location('extra_'+module_name,ROOT/'scripts'/filename)
+            module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+            extra=module.load_components(ROOT/'.build-cache'/folder)
+            if set(extra)&set(replacements) or len(extra)!=count:raise ValueError('Exact disjoint extra component scopes required')
+            for name,item in extra.items():
+                target=payload/('p1-'+module_name)/name.split('/')[-2];target.mkdir(parents=True,exist_ok=True)
+                dest=target/name.split('/')[-1];dest.write_bytes(item['path'].read_bytes());replacements[name]={**item,'path':dest}
+            paths=module.receipts() if module_name=='arm64' else {'jna':module.RECEIPT}
+            for key,path in paths.items():receipts['p1-'+module_name+'-'+key]=sha((ROOT/path).read_bytes())
     expected_count=os.environ.get('JHARNESS_EXPECTED_NATIVE_COUNT')
     if expected_count is not None and (not expected_count.isdigit() or len(replacements)!=int(expected_count)):
         raise ValueError('Actual native replacement count differs from requested candidate')

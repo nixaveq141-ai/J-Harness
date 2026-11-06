@@ -2,8 +2,8 @@
   "status": "P1_IN_PROGRESS_NOT_COMPLETE",
   "frozenP0Tasks": 36,
   "independentlyVerifiedNewSourceComponents": 25,
-  "assembledCandidateReviewedCount": 35,
-  "assembledCandidateUnresolvedCount": 15,
+  "assembledCandidateReviewedCount": 39,
+  "assembledCandidateUnresolvedCount": 11,
   "formalAcceptedRuntimeCommit": "a5376fca79263f6cd6366cd575b8e9ae25afd6e3",
   "formalAcceptedRuntimeReviewedCount": 34,
   "formalAcceptedRuntimeUnresolvedCount": 16,
@@ -306,11 +306,11 @@
       "coordinate": "net.java.dev.jna:jna:5.14.0",
       "os": "sunos",
       "cpu": "x86-64",
-      "status": "COMPONENT_SOURCE_VERIFIED_NOT_ASSEMBLED_FULL_PRODUCT_PENDING",
+      "status": "COMPONENT_SOURCE_VERIFIED_AND_ASSEMBLED_FULL_PRODUCT_PENDING",
       "requiredToolchain": "sunos目标SDK/系统头文件与原生或交叉编译器",
-      "nextAction": "精确原包集成统一候选并完成五目标产品重验",
+      "nextAction": "统一39候选五目标完整CI与原包独立验收",
       "blockers": [
-        "统一候选装配与完整产品回归待；不认证完整Solaris Java应用"
+        "统一候选完整产品验收待"
       ],
       "candidateSha256": "7439a4a36ee42c7638d2947b2dcb437e560be832c26e3977252c427f4f6a7330",
       "componentRunId": "42158505948",
@@ -324,11 +324,11 @@
       "coordinate": "net.java.dev.jna:jna:5.14.0",
       "os": "sunos",
       "cpu": "x86",
-      "status": "COMPONENT_SOURCE_VERIFIED_NOT_ASSEMBLED_FULL_PRODUCT_PENDING",
+      "status": "COMPONENT_SOURCE_VERIFIED_AND_ASSEMBLED_FULL_PRODUCT_PENDING",
       "requiredToolchain": "sunos目标SDK/系统头文件与原生或交叉编译器",
-      "nextAction": "精确原包集成统一候选并完成五目标产品重验",
+      "nextAction": "统一39候选五目标完整CI与原包独立验收",
       "blockers": [
-        "统一候选装配与完整产品回归待；不认证完整Solaris Java应用"
+        "统一候选完整产品验收待"
       ],
       "candidateSha256": "51183dc6c855742aed760b6c152f9ec22206ec99d1be0605bce0ce342bc09d9b",
       "componentRunId": "42158505948",
@@ -342,11 +342,11 @@
       "coordinate": "net.java.dev.jna:jna:5.14.0",
       "os": "win32",
       "cpu": "aarch64",
-      "status": "COMPONENT_SOURCE_VERIFIED_NOT_ASSEMBLED_FULL_PRODUCT_PENDING",
+      "status": "COMPONENT_SOURCE_VERIFIED_AND_ASSEMBLED_FULL_PRODUCT_PENDING",
       "requiredToolchain": "MSVC/Windows SDK aarch64；构建WinPTY/Console/helper所需依赖",
-      "nextAction": "精确原包集成统一候选并完成五目标产品重验",
+      "nextAction": "统一39候选五目标完整CI与原包独立验收",
       "blockers": [
-        "统一候选装配与完整产品回归待；仅C级JNI primitive，未认证完整Windows ARM Java应用"
+        "统一候选完整产品验收待"
       ],
       "candidateSha256": "7f377b196786af9e942a4f8789388c035c753daa7b9e127f80bc3cc1ea52d578",
       "componentRunId": "42159389661",
@@ -536,15 +536,16 @@
       "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
       "os": "win",
       "cpu": "aarch64",
-      "status": "COMPONENT_SOURCE_VERIFIED_NOT_ASSEMBLED_FULL_PRODUCT_PENDING",
+      "status": "COMPONENT_SOURCE_VERIFIED_AND_ASSEMBLED_FULL_PRODUCT_PENDING",
       "requiredToolchain": "MSVC/Windows SDK aarch64；构建WinPTY/Console/helper所需依赖",
-      "nextAction": "精确原包集成统一候选并完成五目标产品重验",
+      "nextAction": "统一39候选五目标完整CI与原包独立验收",
       "blockers": [
-        "统一候选装配及完整产品验收待"
+        "统一候选完整产品验收待"
       ],
       "componentRunId": "42158936851",
       "componentCommit": "b2a18620cc43d0255c5107d9ef0ba0e1ee16477c",
-      "componentReceipt": "docs/testing/gap-p1-2026-11-04/windows-arm64-helper-component-acceptance.json"
+      "componentReceipt": "docs/testing/gap-p1-2026-11-04/windows-arm64-helper-component-acceptance.json",
+      "candidateSha256": "7111e63bf9b5115ad3861f21b3a0779bd230f573d1a34a14d9f3a422556fb520"
     },
     {
       "taskId": "NATIVE-32",
