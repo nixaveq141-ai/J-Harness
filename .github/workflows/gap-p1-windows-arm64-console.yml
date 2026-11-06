@@ -1,0 +1,51 @@
+name: P1 pinned ARM64 OpenConsole and ConPTY cross-source build
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/m1059-full-validation]
+    paths: [.github/workflows/gap-p1-windows-arm64-console.yml]
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: windows-2022
+    timeout-minutes: 55
+    env:
+      JHARNESS_WINDOWS_PTY_ARCH: arm64
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: microsoft/setup-msbuild@v2
+        with:
+          vs-version: '[17.0,18.0)'
+      - uses: NuGet/setup-nuget@v2
+      - name: Verify required SDK and actual build tools
+        shell: pwsh
+        run: |
+          if (-not (Test-Path -LiteralPath 'C:\Program Files (x86)\Windows Kits\10\Include\10.0.22621.0\um\Windows.h')) { throw 'Pinned Console SDK required' }
+          MSBuild.exe -version
+      - name: Install signed native-host pkgconf
+        shell: pwsh
+        run: |
+          & 'C:\msys64\usr\bin\bash.exe' -lc 'pacman -S --noconfirm --needed mingw-w64-x86_64-pkgconf'
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - run: python docs/testing/tools/test-build-windows-pty-from-source.py
+      - run: python docs/testing/tools/test-console-security-baseline.py
+      - run: python docs/testing/tools/build-windows-pty-from-source.py --component console
+      - name: Show bounded failed-build logs
+        if: failure()
+        run: python -c "from pathlib import Path; p=Path('.build-cache/windows-pty-source'); [(print(f.name),print(f.read_text(errors='replace')[-4096:])) for f in sorted(p.glob('*.log'))[-3:]]"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: p1-windows-arm64-console-source
+          include-hidden-files: true
+          retention-days: 90
+          path: |
+            .build-cache/windows-pty-source/report.json
+            .build-cache/windows-pty-source/*.log
+            .build-cache/windows-pty-source/port-tree-*.tar
+            .build-cache/windows-pty-source/console/bin/**/OpenConsole.exe
+            .build-cache/windows-pty-source/console/bin/**/conpty.dll

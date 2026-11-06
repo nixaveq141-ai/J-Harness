@@ -113,14 +113,19 @@ def prefetch_port_trees(tool,manifest,out,run,manifest_root=None):
     return found
 
 
+def console_platform(arch):
+    if arch not in {'x64','arm64'}:raise ValueError('Reviewed Console target required')
+    return 'ARM64' if arch=='arm64' else 'x64'
+
+
 def main():
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--component',choices=['winpty','console'],required=True);args=parser.parse_args()
     if os.environ.get('GITHUB_ACTIONS')!='true' or os.name!='nt':raise ValueError('Use isolated Windows CI')
     out=ROOT/'.build-cache/windows-pty-source';out.mkdir(parents=True)
     env=build_environment()
     arch=os.environ.get('JHARNESS_WINDOWS_PTY_ARCH','x64')
-    if arch not in {'x64','x86'} or (args.component=='console' and arch!='x64'):
-        raise ValueError('Reviewed Windows PTY architecture required')
+    if args.component=='console':console_platform(arch)
+    elif arch not in {'x64','x86'}:raise ValueError('Reviewed Windows PTY architecture required')
     mingw='mingw32' if arch=='x86' else 'mingw64'
     env.update(GIT_TERMINAL_PROMPT='0',GCM_INTERACTIVE='Never')
     report=dict(status='INCOMPLETE',runId=os.environ.get('GITHUB_RUN_ID'),commit=os.environ.get('GITHUB_SHA'),
@@ -208,8 +213,8 @@ def main():
                 for p in (target/'packages').rglob('*.nupkg') if p.is_file()}
             for project in ['src/host/exe/Host.EXE.vcxproj','src/winconpty/dll/winconptydll.vcxproj']:
                 run(['MSBuild.exe',project,'/m:2','/p:SolutionDir='+target.as_posix()+'/',
-                     '/p:Configuration=Release','/p:Platform=x64','/verbosity:minimal','/nologo'],target,1200)
-            installed=target/'obj/x64/vcpkg'
+                     '/p:Configuration=Release','/p:Platform='+console_platform(arch),'/verbosity:minimal','/nologo'],target,1200)
+            installed=target/'obj'/console_platform(arch)/'vcpkg'
             report['sources']['console']['vcpkgInstalledFiles']={p.relative_to(installed).as_posix():sha(p)
                 for p in installed.rglob('*') if p.is_file() and not p.is_symlink()}
             report['sources']['console']['vcpkgDownloadedInputs']={p.relative_to(out/'vcpkg-downloads').as_posix():sha(p)
@@ -218,6 +223,10 @@ def main():
             found={name:[p for p in target.rglob(name) if p.is_file() and 'Release' in p.parts] for name in ['OpenConsole.exe','conpty.dll']}
             if any(len(values)!=1 for values in found.values()):raise ValueError('Ambiguous or missing compiled console outputs')
             report['outputs']+=outputs([v[0] for v in found.values()],target)
+            if arch=='arm64':
+                spec=importlib.util.spec_from_file_location('arm_pe',ROOT/'scripts/build-p1-windows-arm64-jna.py')
+                pe=importlib.util.module_from_spec(spec);spec.loader.exec_module(pe)
+                report['outputPeIdentities']={v['path']:pe.require_arm64_pe((ROOT/v['path']).read_bytes()) for v in report['outputs']}
         report['status']='SOURCE_WINDOWS_PTY_CANDIDATES_BUILT_NOT_PRODUCT_ACCEPTANCE'
     finally:(out/'report.json').write_bytes((json.dumps(report,indent=2)+'\n').encode())
     print(report['status'])

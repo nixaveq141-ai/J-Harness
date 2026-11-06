@@ -183,3 +183,9 @@ libffi选项见[固定3.4.4 configure.ac](https://github.com/libffi/libffi/blob/
 沿用上游原CMake/C++源码，不将其他架构运行算作ARM证据。自有探针完成后退出，由OS回收该进程资源；不声称修复原helper源码的任意进程兼容性或完整产品功能。
 
 OpenBSD42158136194@e2已越过ggrep头生成，libffi配置中Clang拒绝GCC专用print-multi-os-directory且depfiles初始化失败；下轮显式MAKE=gmake，并关闭dependency-tracking及multi-os-directory，归档config.log。仅全新构建配置，不放宽实际JNI/ffi回调验证。
+
+## ARM64 Console与JNA链接配置
+
+2026-11-06 P1 ARM64 Console两资源新增固定已审terminal/vcpkg源的x64宿主交叉构建，显式MSBuild ARM64并对OpenConsole/conpty输出强制ARM64 PE32+；只构建不冒称ARM加载或产品验收。Console目标与既有WinPTY x64/x86分开约束，原固定安全基线/端口源/禁二进制缓存保持。8构建控制+2安全门禁过，实际远端待。Windows ARM JNA已完成C/libffi编译但MSYS转换/DLL链接选项为路径，现仅该构建禁自动参数转换，修正待。
+
+ARM64 Console构建使用已审相同7ff11ee terminal与fe1cde6 vcpkg固定源，只扩展明确ARM64目标和PE门禁；运行专项后续在Windows ARM托管目标单独做。JNA参数转换依据[MSYS2官方说明](https://www.msys2.org/docs/filesystem-paths/)，避免MSVC /DLL被当Unix路径；保留原始失败42158139003@e2。

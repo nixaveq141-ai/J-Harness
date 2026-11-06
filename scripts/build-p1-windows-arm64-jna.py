@@ -71,7 +71,8 @@ def main():
   makefile=source/'native/Makefile';raw=makefile.read_bytes();anchor=b'FFI_CONFIG=--enable-static --disable-shared --with-pic=yes'
   if raw.count(anchor)!=2:raise ValueError('Pinned Makefile anchor required')
   makefile.write_bytes(raw.replace(anchor,anchor+b' --disable-docs --disable-maintainer-mode'))
-  report['buildConfig']=dict(arch='aarch64',osPrefix='win32-aarch64',useMsvc=True,libffiStatic=True,upstreamAsmFnOff=True)
+  os.environ['MSYS2_ARG_CONV_EXCL']='*'
+  report['buildConfig']=dict(arch='aarch64',osPrefix='win32-aarch64',useMsvc=True,libffiStatic=True,upstreamAsmFnOff=True,msys2ArgConvExcl='*')
   ant_batch=shutil.which('ant.bat')
   ant_home=Path(os.environ['ANT_HOME']) if os.environ.get('ANT_HOME') else Path(ant_batch).parent.parent
   launcher=ant_home/'lib/ant-launcher.jar'

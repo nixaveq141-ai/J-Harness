@@ -14,6 +14,12 @@ builder=importlib.util.module_from_spec(spec);spec.loader.exec_module(builder)
 
 
 class WindowsBuildTest(unittest.TestCase):
+    def test_console_architecture_scope(self):
+        self.assertEqual('x64',builder.console_platform('x64'))
+        self.assertEqual('ARM64',builder.console_platform('arm64'))
+        for arch in ['x86','amd64','ARM64','aarch64']:
+            with self.assertRaises(ValueError):builder.console_platform(arch)
+
     def test_pinned_console_overlay_precedes_registry_and_rejects_version_drift(self):
         with tempfile.TemporaryDirectory() as temp:
             root=Path(temp);tool=root/'tool';tool.mkdir();out=root/'out';out.mkdir();console=root/'console'
