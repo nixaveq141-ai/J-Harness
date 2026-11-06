@@ -127,3 +127,5 @@ Windows x86首轮41990625821构建成功但[独立来源核验未接受](windows
 ## OpenBSD x64来源工具链实测
 
 2026-11-06 P1继续OpenBSD x64 JNA来源：核VM动作固定f1ca8bc、增加7.9 x64隔离构建入口，固定JNA/libffi与原始库存、ELF和真实JNI/ffi回调探针；仅对自有回调探针指定wxneeded，不改产品权限。两本地ELF/副本反例过，实际工具链/构建/加载待，OpenBSD来源保持OPEN，不宣称x86或完整Java验收。统一34轮42151580514已启动，P1未完成。 VM动作修订来自[上游固定源码](https://github.com/vmactions/openbsd-vm/tree/f1ca8bc8ecc5b6ef7218e5b914836e067e1546d3)，包安装和实际原生构建通过前不计新增来源。
+
+2026-11-06 OpenBSD首轮42151888519 VM启动且JDK21安装过，仓库无python%3.12、解释器不存在，源码构建未执行；原作业日志摘要见openbsd-first-run。改为实际pkg_info查询Python>=3.11包及其安装路径，执行前验证版本，修正结果待。统一32和34回归仍待，P1未完成。

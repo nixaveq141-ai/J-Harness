@@ -1,0 +1,11 @@
+{
+  "status": "FAILED_TOOLCHAIN_PREPARATION_NOT_ACCEPTED",
+  "runId": "42151888519",
+  "commit": "573882e845fb7a729ac517b65b04ce99963347dd",
+  "rawLogPath": ".build-cache/p1-job-127676822358.log",
+  "rawLogSha256": "4283d2b2c9cbb8290808d4b38ac2b15e4bb2046737006e6485a1e2654f7181f8",
+  "failure": "OpenBSD 7.9 package repository did not contain python%3.12; interpreter unavailable",
+  "sourceBuildExecuted": false,
+  "fix": "Query available Python>=3.11 package and bind its actual installed interpreter path; next actual result pending",
+  "paidRequests": 0
+}

@@ -28,12 +28,20 @@ jobs:
           cpu: 2
           disable-cache: true
           envs: GITHUB_ACTIONS GITHUB_RUN_ID GITHUB_SHA
-          prepare: pkg_add -I python%3.12 git gmake binutils jdk%21 apache-ant
+          prepare: |
+            set -eu
+            python_package=$(pkg_info -Q python | grep -E '^python-3\.1[1-9]\.[0-9]+(p[0-9]+)?$' | tail -n 1)
+            test -n "$python_package"
+            pkg_add -I "$python_package" git gmake binutils jdk%21 apache-ant
           run: |
             git config --global --add safe.directory "$PWD"
             export JAVA_HOME=/usr/local/jdk-21
             export PATH="$JAVA_HOME/bin:$PATH"
-            python3.12 scripts/build-p1-openbsd-jna.py ${{ matrix.target }}
+            python_package=$(pkg_info -q | grep -E '^python-3\.1[1-9]\.' | tail -n 1)
+            python_bin=$(pkg_info -L "$python_package" | awk '/^\/usr\/local\/bin\/python3\.[0-9]+$/ {print; exit}')
+            test -x "$python_bin"
+            "$python_bin" -c 'import sys; assert sys.version_info >= (3, 11)'
+            "$python_bin" scripts/build-p1-openbsd-jna.py ${{ matrix.target }}
       - uses: actions/upload-artifact@v4
         if: always()
         with:
