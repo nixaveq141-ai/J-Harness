@@ -1,0 +1,66 @@
+name: P1 Solaris x64 and x86 pinned JNA source components
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/m1059-full-validation]
+    paths: [.github/workflows/gap-p1-sunos-jna.yml]
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [x86-64, x86]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python scripts/test-p1-sunos-jna.py
+      - uses: vmactions/solaris-vm@1c166978f5a2c1f87f1c9d4d8dd85ae3d1eff6f7
+        with:
+          release: '11.4-gcc-14'
+          arch: x86_64
+          mem: 4096
+          cpu: 2
+          disable-cache: true
+          envs: GITHUB_ACTIONS GITHUB_RUN_ID GITHUB_SHA
+          prepare: |
+            set -eux
+            pkg install runtime/python-311 developer/build/ant developer/build/gnu-make developer/gnu-binutils developer/java/jdk-8 developer/versioning/git system/header x11/library/libx11 || test "$?" -eq 4
+          run: |
+            set -eu
+            export PATH="/usr/gnu/bin:/usr/gcc/14/bin:/usr/bin:/usr/sbin:$PATH"
+            git config --global --add safe.directory "$PWD"
+            export JAVA_HOME=$(/usr/bin/python3.11 -c 'from pathlib import Path; import shutil; print(Path(shutil.which("javac")).resolve().parents[1])')
+            test -f "$JAVA_HOME/include/jni.h"
+            set +e
+            /usr/bin/python3.11 scripts/build-p1-sunos-jna.py ${{ matrix.target }}
+            build_status=$?
+            mkdir -p .build-cache/p1-sunos-jna/${{ matrix.target }}
+            printf '%s\n' "$build_status" > .build-cache/p1-sunos-jna/${{ matrix.target }}/vm-exit-code.txt
+            for log in build probe-build candidate-probe; do
+              if [ -f .build-cache/p1-sunos-jna/${{ matrix.target }}/$log.log ]; then tail -n 60 .build-cache/p1-sunos-jna/${{ matrix.target }}/$log.log; fi
+            done
+            exit 0
+      - name: Require actual Solaris build and probes success
+        if: always()
+        run: |
+          python -c "from pathlib import Path; import json; p=Path('.build-cache/p1-sunos-jna/${{ matrix.target }}'); assert (p/'vm-exit-code.txt').read_text().strip()=='0'; r=json.loads((p/'report.json').read_bytes()); assert r['status']=='SOURCE_JNA_ABI_AND_FFI_PROBE_PASS_NOT_PRODUCT_ACCEPTANCE' and r['runId']=='${{ github.run_id }}' and r['commit']=='${{ github.sha }}' and r['productAccepted'] is False"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: p1-sunos-${{ matrix.target }}-jna-source
+          include-hidden-files: true
+          retention-days: 90
+          path: |
+            .build-cache/p1-sunos-jna/${{ matrix.target }}/*.json
+            .build-cache/p1-sunos-jna/${{ matrix.target }}/*.log
+            .build-cache/p1-sunos-jna/${{ matrix.target }}/*.txt
+            .build-cache/p1-sunos-jna/${{ matrix.target }}/*.so
+            .build-cache/p1-sunos-jna/${{ matrix.target }}/jni-probe
+            .build-cache/p1-sunos-jna/${{ matrix.target }}/callback-control
+            .build-cache/p1-sunos-jna/${{ matrix.target }}/libffi-release-3.4.4.tar.gz

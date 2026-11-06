@@ -159,3 +159,9 @@ libffi选项见[固定3.4.4 configure.ac](https://github.com/libffi/libffi/blob/
 2026-11-06 P1 LoongArch42155835171@521成功且原包独立核验：1297固定源、15实际回执、完整Git输入、libffi生成输入及ELF/LP64D、JNI六sizeof/malloc/free、ffi call41/closure46和缺库拒绝过。新增精确stager与载荷/归档/scope反例两控制过；真实35来源/15原版候选装配，4503其他条目保持，本机生成JAR未动。正式32/50；35完整验收待。OpenBSD新轮已到源码构建失败，改VM正常copyback后独立host门禁强制原退出码/报告通过，以保留原始失败证据；不冒称解决构建。Windows ARM首轮开发环境路径引用失败，修为独立cmd包装并用含空格真实batch控制通过（共3项），修正远端待。
 
 [组件验收](loongarch-jna-component-acceptance.json)绑定实际原包13474233116 SHA 6d7f85514b4dd25fa802db6968d34048ad5dbd261535ca4546bc8cb0017befd5；[装配控制](assembly35-control.json)使用已验b86候选的原版canonical baseline，仅证明替换字节及其余条目保持，不代替新源码的五目标产品验收。
+
+## SunOS x86两字宽入口
+
+2026-11-06 P1继续SunOS x64/x86：固定Solaris VM动作1c16697及11.4-gcc-14，新增固定JNA/libffi源构建/ELF/真实JNI与ffi回调入口；显式区分原sunos-x86错误64位库存和新32位目标，不将原版当32位通过。VM失败回传后由host独立核退出码与报告，真实SDK/构建/加载待；本地2项ELF/副本控制过。SPARC/AIX来源未闭合，正式32/50不变。
+
+工具链与包入口核对：[VM官方11.4 GCC14镜像](https://github.com/vmactions/solaris-vm)、[Oracle开发工具包名](https://docs.oracle.com/en/operating-systems/solaris/oracle-solaris/11.4/config-app-dev/introduction-setting-up-application-development-environment-oracle-solaris-11.html)。JDK8只用于此固定JNA组件的头文件生成和C JNI头，不声称目标Java21或完整产品验收。新32位库要求machine3/ELF32；原版仍按库存SHA及已发现machine62/ELF64保存，不修改原始证据。
