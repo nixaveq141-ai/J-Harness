@@ -216,6 +216,9 @@ def main():
             target=payload/'p1-loongarch-jna';target.mkdir(parents=True)
             dest=target/'libjnidispatch.so';dest.write_bytes(item['path'].read_bytes());replacements[name]={**item,'path':dest}
         receipts['p1-loongarch-jna']=sha((ROOT/module.RECEIPT).read_bytes())
+    expected_count=os.environ.get('JHARNESS_EXPECTED_NATIVE_COUNT')
+    if expected_count is not None and (not expected_count.isdigit() or len(replacements)!=int(expected_count)):
+        raise ValueError('Actual native replacement count differs from requested candidate')
     runtime=ROOT/'harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar';baseline=out/'baseline-runtime.jar'
     with baseline.open('xb') as stream:stream.write(runtime.read_bytes())
     canonical=out/'canonical-baseline-runtime.jar'
@@ -231,6 +234,7 @@ def main():
     with temporary.open('xb') as stream:stream.write(final.read_bytes())
     temporary.replace(runtime)
     all_items=assembly['manifest']['replacements']
+
     report=dict(status='UNIFIED_STAGED_NOT_FUNCTIONALLY_ACCEPTED',runtimeJarSha256=sha(runtime.read_bytes()),
         baselineJarSha256=sha(baseline.read_bytes()),nativeReplacements={n:all_items[n] for n in active_resources(active)},
         nativeInputPaths={n:v['path'].relative_to(out).as_posix() for n,v in replacements.items()},

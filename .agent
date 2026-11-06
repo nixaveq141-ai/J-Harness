@@ -4,6 +4,8 @@
 
 ## 当前接续状态
 
+- 2026-11-06 恢复P1：42157222835@a537五目标和同字节成功后独立核六原ZIP，实际34资源（LoongArch启用变量漏写，未计35）；705 Git输入/侧、735 Java/124套件/侧、14回执、813浏览器与R4每引擎51均过，正式升34/50、剩16。补工作流LoongArch变量及替换数量前置门禁，真正35轮待；ARM64 Console离线缺工具测试固定自身x64目标避免继承ARM环境，8项在ARM环境过。ARM helper42158936851原包独立核134源/711宿主输入/10回执/ARM64 PE/两目录/无效PID/卸载/缺库拒绝过，未装配；Solaris两侧和ARM JNA已CI成功待原包审计，OpenBSD加载探针失败待。P1未完成。
+
 - 2026-11-06 P1 ARM64 Console两资源新增固定已审terminal/vcpkg源的x64宿主交叉构建，显式MSBuild ARM64并对OpenConsole/conpty输出强制ARM64 PE32+；只构建不冒称ARM加载或产品验收。Console目标与既有WinPTY x64/x86分开约束，原固定安全基线/端口源/禁二进制缓存保持。8构建控制+2安全门禁过，实际远端待。Windows ARM JNA已完成C/libffi编译但MSYS转换/DLL链接选项为路径，现仅该构建禁自动参数转换，修正待。
 
 - 2026-11-06 P1 Windows ARM64目录helper新增固定pty4j b7554d6/MSVC原生Ninja构建入口；DLL和探针强制ARM64 PE32+，仅操作自有进程，核精确DLL路径/两目录读取/无效PID/卸载/缺库拒绝，源码前后全等。共享ARM门禁/空格batch3控制和本机C++语法检查过（语法检查非ARM运行认证），实际远端待；不增加正式32或候选35计数。 OpenBSD42158136194@e2仍libffi配置失败，显式gmake并关闭GCC目录探测/依赖跟踪，保留config.log，修正待。

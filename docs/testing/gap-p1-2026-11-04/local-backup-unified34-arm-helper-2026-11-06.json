@@ -1,0 +1,25 @@
+{
+  "status": "LOCAL_ALL_MEMBERS_SHA256_AND_CRC_VERIFIED",
+  "path": ".build-cache/local-evidence-backups/2026-11-06/p1-unified34-and-arm-helper.zip",
+  "bytes": 593967794,
+  "sha256": "3623fae80b5cbe0eadcbd6a403665291a1ac9d4a3f563c7a46b0cb197b6b98dd",
+  "members": {
+    ".build-cache/p1-raw-42157222835/13474839081.zip": "a14d94e03aaa095cb67d16d3b6f1b396f92900415a36e9b4c51456a802aff781",
+    ".build-cache/p1-raw-42157222835/13475832006.zip": "6346219f51cfa12d8462c89e6d9e1b08e306002f318e16980630db4ca808ad14",
+    ".build-cache/p1-raw-42157222835/13476050686.zip": "bab4bed27422ce3ab0c239f2b65ed1973f25a19ced58ba0a32a2047ea9326379",
+    ".build-cache/p1-raw-42157222835/13476460654.zip": "4d391c9a3ab526b40e4c4383c6b169362d9100378edcf9959ac4d969f6be629b",
+    ".build-cache/p1-raw-42157222835/13476785510.zip": "1fa734827383cf9ab2ff5e1598ec2b906f6b3abe6962e0858bd5bbe976549045",
+    ".build-cache/p1-raw-42157222835/13476835325.zip": "232a44c08e1098bc59e5abf4e196cc0618fc9f7716113410461498ed108d89e9",
+    "docs/testing/M10-unified34-final-equality-2026-11-06.json": "61787bc0cf73d44b57f2a271c26cd745328737baba68ede11f86b4adcca8ebaa",
+    "docs/testing/M10-unified34-final-linux-2026-11-06.json": "f06be8f2b1abe636ce95becb6ccf572cc34737a3eea10263314010ea92ff897a",
+    "docs/testing/M10-unified34-final-linux-arm64-2026-11-06.json": "16dbcc5f5182f27654d2490d0f39c14b1f293a9a62e6e9b91b6456611ed65391",
+    "docs/testing/M10-unified34-final-macos-2026-11-06.json": "3b80795377d2e606d1257d5906d894916d526098ed4848aa6fe5524258dfdf16",
+    "docs/testing/M10-unified34-final-macos-intel-2026-11-06.json": "afa4aceeead08aabdef40ceac2199ff17ffac824fad46e10c99f1e3f53d4a192",
+    "docs/testing/M10-unified34-final-windows-2026-11-06.json": "b67051f94bff1d37ce384ca2a56f556340afb4404b3a1a8d6492bd1cfa190bfb",
+    ".build-cache/audit-p1-unified34.py": "72ecda2b16f2f4767dc6feb032fe8d5fc06e797079c838dad068adfa5bddaf28",
+    ".build-cache/check-unified35-raw-artifacts.py": "6d39f2ee787bd218a10f86fa3b0e7e756e82da882c8fe8bdf98bd63da801dde0",
+    ".build-cache/p1-raw-42158936851/13475219255.zip": "64806238ebaf94b65f7a9e62f7ef9fae165b0648d00e014ed96512665b8ad08b",
+    ".build-cache/audit-p1-arm-helper.py": "747765bddbd57c569afe3828451862a316c4f340c8857087351a1c959b502860",
+    "docs/testing/gap-p1-2026-11-04/windows-arm64-helper-component-acceptance.json": "b317a2010fd08b85679350e7b78030eac7c848bb902be0440e37cd2c97204e30"
+  }
+}

@@ -96,7 +96,7 @@ class WindowsBuildTest(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,'PE output'):builder.outputs([wrong],source)
 
     def test_missing_tool_still_records_incomplete_attempt_and_log_hash(self):
-        with tempfile.TemporaryDirectory() as temp,patch.object(builder,'ROOT',Path(temp)),patch.dict(os.environ,{'GITHUB_ACTIONS':'true'}),patch.object(sys,'argv',['builder','--component','winpty']):
+        with tempfile.TemporaryDirectory() as temp,patch.object(builder,'ROOT',Path(temp)),patch.dict(os.environ,{'GITHUB_ACTIONS':'true','JHARNESS_WINDOWS_PTY_ARCH':'x64'}),patch.object(sys,'argv',['builder','--component','winpty']):
             with patch.object(builder.subprocess,'run',side_effect=FileNotFoundError('controlled missing git')):
                 with self.assertRaises(FileNotFoundError):builder.main()
             report=json.loads((Path(temp)/'.build-cache/windows-pty-source/report.json').read_bytes())

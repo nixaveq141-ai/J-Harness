@@ -1,0 +1,38 @@
+{
+  "status": "ARM64_HELPER_SOURCE_COMPONENT_INDEPENDENTLY_VERIFIED_NOT_PRODUCT_ACCEPTANCE",
+  "runId": "42158936851",
+  "commit": "b2a18620cc43d0255c5107d9ef0ba0e1ee16477c",
+  "artifact": {
+    "id": 13475219255,
+    "path": ".build-cache/p1-raw-42158936851/13475219255.zip",
+    "sha256": "64806238ebaf94b65f7a9e62f7ef9fae165b0648d00e014ed96512665b8ad08b",
+    "bytes": 776948
+  },
+  "reportSha256": "8d110ddd7bed6bb8ae20c198bae4894d34582d3f8163b34c664cd35e516a1a4c",
+  "resource": "resources/com/pty4j/native/win/aarch64/win-helper.dll",
+  "sourceRevision": "b7554d649f6374183040e6554942b6d5b028b5e5",
+  "sourceFiles": 134,
+  "outputSha256": "7111e63bf9b5115ad3861f21b3a0779bd230f573d1a34a14d9f3a422556fb520",
+  "originalSha256": "b4d01792ba6ec8a7c5df2516a1170e19a0a82f0937a506673818a9510052802a",
+  "probeSha256": "0a47c946232a17fc6126c884e461dd213334bff96f0347a9fa430cb2ee4a5834",
+  "probeSourceSha256": "c3bfeee5ec1542302a149d43c7d384e19e718681a8f259cbbcd875bbf9a26397",
+  "commandReceiptSha256": {
+    "cmake": "23663a757c6e85c3b5ec2d13b4cccf1049b726563074a9427eaece76a02abfc4",
+    "ninja": "2008d1d53ac4f9af3037da07fd574c2340c744c2495f6d2823441de9e80769ef",
+    "clone": "3648eaf1c3e43e5db6f226f12305e973c138ee78d4a321e1f49275ebdbc69bdb",
+    "checkout": "593414da7b353012511500b7f9e6e3eef6b3c226bc060c78c8190123640802ff",
+    "configure": "ff9b2787d617defa820489f43ce5324285cd726b9912e7a1177b1de8ec757577",
+    "build": "da0aa9a95dde374c7a50a8cdadbe07bd1e1dbd82a4c40034c347ea59d33c62aa",
+    "pe-audit": "fb19a893cfafe95bdf251b75b9b5fbe63bf2d94a6e15b37a7412352efe16ba96",
+    "probe-build": "f229bf3d10389668223ec75c0a4bdd8dbae593676ae9c7c793b5624b80dada24",
+    "candidate-probe": "c1b33fc99041369f485a81948eaaaab82e1f42eafccb5a71ec29c98d973e77d6",
+    "missing-probe": "79b8ba39d8826e94531d440213bfe105e507bc68a8bc3ac78c11592a2ff42388"
+  },
+  "hostGitInputs": 711,
+  "paidRequests": 0,
+  "productAccepted": false,
+  "limits": [
+    "Owned self process directory ABI only; no unrelated process inspection",
+    "No full Java application or unified replacement acceptance"
+  ]
+}

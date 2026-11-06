@@ -1,12 +1,12 @@
 {
   "status": "P1_IN_PROGRESS_NOT_COMPLETE",
   "frozenP0Tasks": 36,
-  "independentlyVerifiedNewSourceComponents": 21,
+  "independentlyVerifiedNewSourceComponents": 22,
   "assembledCandidateReviewedCount": 35,
   "assembledCandidateUnresolvedCount": 15,
-  "formalAcceptedRuntimeCommit": "b86aaa1f4a5dc7159a6757cf66c3db6cee83ef4b",
-  "formalAcceptedRuntimeReviewedCount": 32,
-  "formalAcceptedRuntimeUnresolvedCount": 18,
+  "formalAcceptedRuntimeCommit": "a5376fca79263f6cd6366cd575b8e9ae25afd6e3",
+  "formalAcceptedRuntimeReviewedCount": 34,
+  "formalAcceptedRuntimeUnresolvedCount": 16,
   "physicalExtraMachineAcceptance": "SKIPPED_BY_USER_NOT_RUNTIME_CERTIFIED",
   "tasks": [
     {
@@ -46,15 +46,17 @@
       "coordinate": "net.java.dev.jna:jna:5.14.0",
       "os": "freebsd",
       "cpu": "x86-64",
-      "status": "COMPONENT_SOURCE_VERIFIED_AND_ASSEMBLED_FULL_PRODUCT_PENDING",
+      "status": "SOURCE_REPLACEMENT_ACCEPTED_IN_FIVE_TARGET_PRODUCT",
       "requiredToolchain": "freebsd目标SDK/系统头文件与原生或交叉编译器",
-      "nextAction": "统一34资源候选五目标完整CI及原包独立复核",
-      "blockers": [
-        "完整候选验收待；FreeBSD完整Java应用未认证"
-      ],
+      "nextAction": "五托管目标来源替换及产品验收已完成；不认证FreeBSD完整Java应用",
+      "blockers": [],
       "componentRunId": "42150888437",
       "componentCommit": "ca7586024dd6200ce27ca30c8e490377f095426f",
-      "componentReceipt": "docs/testing/gap-p1-2026-11-04/freebsd-jna-components-acceptance.json"
+      "componentReceipt": "docs/testing/gap-p1-2026-11-04/freebsd-jna-components-acceptance.json",
+      "candidateSha256": "488ae9c2a7cbcb893864dff58ee9145da7e4a38fc75adf7ff68578cf97010584",
+      "productRunId": "42157222835",
+      "productCommit": "a5376fca79263f6cd6366cd575b8e9ae25afd6e3",
+      "productReceipt": "docs/testing/M10-unified34-final-equality-2026-11-06.json"
     },
     {
       "taskId": "NATIVE-04",
@@ -63,15 +65,17 @@
       "coordinate": "net.java.dev.jna:jna:5.14.0",
       "os": "freebsd",
       "cpu": "x86",
-      "status": "COMPONENT_SOURCE_VERIFIED_AND_ASSEMBLED_FULL_PRODUCT_PENDING",
+      "status": "SOURCE_REPLACEMENT_ACCEPTED_IN_FIVE_TARGET_PRODUCT",
       "requiredToolchain": "freebsd目标SDK/系统头文件与原生或交叉编译器",
-      "nextAction": "统一34资源候选五目标完整CI及原包独立复核",
-      "blockers": [
-        "完整候选验收待；FreeBSD完整Java应用未认证"
-      ],
+      "nextAction": "五托管目标来源替换及产品验收已完成；不认证FreeBSD完整Java应用",
+      "blockers": [],
       "componentRunId": "42150888437",
       "componentCommit": "ca7586024dd6200ce27ca30c8e490377f095426f",
-      "componentReceipt": "docs/testing/gap-p1-2026-11-04/freebsd-jna-components-acceptance.json"
+      "componentReceipt": "docs/testing/gap-p1-2026-11-04/freebsd-jna-components-acceptance.json",
+      "candidateSha256": "9f54cd943022ad61b8feac94ee616fb7e6dc9a371d67dd11629102edb9d96c35",
+      "productRunId": "42157222835",
+      "productCommit": "a5376fca79263f6cd6366cd575b8e9ae25afd6e3",
+      "productReceipt": "docs/testing/M10-unified34-final-equality-2026-11-06.json"
     },
     {
       "taskId": "NATIVE-05",
@@ -523,13 +527,15 @@
       "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
       "os": "win",
       "cpu": "aarch64",
-      "status": "OPEN",
+      "status": "COMPONENT_SOURCE_VERIFIED_NOT_ASSEMBLED_FULL_PRODUCT_PENDING",
       "requiredToolchain": "MSVC/Windows SDK aarch64；构建WinPTY/Console/helper所需依赖",
-      "nextAction": "核上游逐文件构建证明或盘点目标SDK/工具链，再固定源构建和验证",
+      "nextAction": "精确原包集成统一候选并完成五目标产品重验",
       "blockers": [
-        "目标工具链/SDK或上游构建证明未确认",
-        "目标运行条件未确认；额外实体机器按用户指令跳过但不计运行通过"
-      ]
+        "统一候选装配及完整产品验收待"
+      ],
+      "componentRunId": "42158936851",
+      "componentCommit": "b2a18620cc43d0255c5107d9ef0ba0e1ee16477c",
+      "componentReceipt": "docs/testing/gap-p1-2026-11-04/windows-arm64-helper-component-acceptance.json"
     },
     {
       "taskId": "NATIVE-32",
