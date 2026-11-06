@@ -1,0 +1,20 @@
+{
+  "status": "FAILED_COMPONENT_BUILDS_NOT_ACCEPTED",
+  "loongarch": {
+    "runId": "42155339078",
+    "commit": "031613ca8fe24ec55f12fbd46bf9490472774fdf",
+    "artifactId": 13474675214,
+    "artifactSha256": "e7697c80589be95fa0e25f13acf5b989ed4d70636d0947856dc36e298e8952f6",
+    "artifactBytes": 2023649,
+    "error": "libffi src/tramp.c:262 implicit declaration of open_temp_exec_file under GCC14"
+  },
+  "openbsd": {
+    "runId": "42154858512",
+    "commit": "1681bbb26f17dbe4a249a018aacb98b60e64942f",
+    "stage": "prepare pkg_info query/selection",
+    "sourceBuildExecuted": false,
+    "rootCauseConfirmed": false
+  },
+  "formalReviewed": 32,
+  "paidRequests": 0
+}

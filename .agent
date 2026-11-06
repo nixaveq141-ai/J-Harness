@@ -4,6 +4,8 @@
 
 ## 当前接续状态
 
+- 2026-11-06 P1新目标首轮：LoongArch42155339078@031613c实际GCC14/sysroot安装并进入固定源码构建，libffi3.4.4 tramp.c隐式open_temp_exec_file编译失败；保留原包13474675214/e7697c8。仅LoongArch使用上游支持disable-exec-static-tramp配置，真实ffi call/closure验证仍必须通过。OpenBSD42154858512@1681bbb包查询后未选出Python，未到源码构建；增加完整查询输出并按首字段处理包名。两修正待实测，本地4控制过，正式32/50不变。
+
 - 2026-11-06 P1持续完成授权：用户明确授权nixaveq141-ai/J-Harness专用codex/m1059-full-validation分支推送及P1 CI直到验收，撤销此前仅本地限制；不含main/Release/付费模型。1681bbb推送成功，OpenBSD Python修正轮已派发。新增LoongArch64固定源JNA/GCC14交叉构建入口与LP64D/object ABI v1门禁，本地4控制过，实际CI待；正式32/50、候选34/50不变，P1未完成。
 
 - 2026-11-06 P1正式进展：统一32候选42150336971@b86aaa1五托管目标与同字节门禁已完成原包独立验收，正式来源32/50、剩18未完成产品闭合。每侧689项Git输入、735项Java/124套件、14回执、813浏览器及R4各引擎51项；FreeBSD PTY两项正式闭合。34候选42151580514四侧成功、macOS Intel在浏览器矩阵失败，同字节门禁未执行，不验收；原包诊断继续。候选仍34/50、16来源OPEN。OpenBSD修正轮待明确远端写入授权。无付费模型/推送/发布。

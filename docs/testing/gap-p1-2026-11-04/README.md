@@ -141,3 +141,9 @@ Windows x86首轮41990625821构建成功但[独立来源核验未接受](windows
 2026-11-06 P1持续完成授权：用户明确授权nixaveq141-ai/J-Harness专用codex/m1059-full-validation分支推送及P1 CI直到验收，撤销此前仅本地限制；不含main/Release/付费模型。1681bbb推送成功，OpenBSD Python修正轮已派发。新增LoongArch64固定源JNA/GCC14交叉构建入口与LP64D/object ABI v1门禁，本地4控制过，实际CI待；正式32/50、候选34/50不变，P1未完成。
 
 Ubuntu官方包索引确认[GCC14](https://packages.ubuntu.com/gcc-14-loongarch64-linux-gnu)及[sysroot](https://packages.ubuntu.com/search?keywords=libc6-dev&suite=noble-updates)可供Noble amd64使用。ELF门禁依据[LLVM ABI定义](https://llvm.org/doxygen/BinaryFormat_2ELF_8h_source.html)核EM_LOONGARCH=258、ELF64/小端、LP64D及对象ABI v1；原已验JAR中LoongArch载荷flags实核0x43。工具链安装版本由实际CI包清单留证，不将软件包存在当构建通过。独立工作流仅运行此新目标，原八目标配置保留；固定JNA/libffi源与JNI/ffi call/closure/缺库拒绝探针沿用。
+
+## 两新目标的首轮失败与修正
+
+2026-11-06 P1新目标首轮：LoongArch42155339078@031613c实际GCC14/sysroot安装并进入固定源码构建，libffi3.4.4 tramp.c隐式open_temp_exec_file编译失败；保留原包13474675214/e7697c8。仅LoongArch使用上游支持disable-exec-static-tramp配置，真实ffi call/closure验证仍必须通过。OpenBSD42154858512@1681bbb包查询后未选出Python，未到源码构建；增加完整查询输出并按首字段处理包名。两修正待实测，本地4控制过，正式32/50不变。
+
+libffi选项见[固定3.4.4 configure.ac](https://github.com/libffi/libffi/blob/v3.4.4/configure.ac)；该配置保留动态closure，不禁用回调，不关闭GCC错误。OpenBSD按[pkg_info官方格式](https://man.openbsd.org/pkg_info.1)保存原查询结果并取包名字段；是否解决实际选择问题待新轮日志，不把推测当根因。

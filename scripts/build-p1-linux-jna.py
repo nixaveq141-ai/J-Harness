@@ -85,8 +85,10 @@ def main():
   report['libffiBuildInputs']=helper.prepare_libffi(source,out)
   makefile=source/'native/Makefile';raw=makefile.read_bytes();anchor=b'FFI_CONFIG=--enable-static --disable-shared --with-pic=yes'
   if raw.count(anchor)!=2:raise ValueError('Pinned Makefile anchor mismatch')
-  makefile.write_bytes(raw.replace(anchor,anchor+b' --disable-docs --disable-maintainer-mode'))
-  report['buildConfig']={'crossPrefix':prefix,'arch':arch,'osPrefix':'linux-'+target,'libffiStatic':True,'hostX11HeaderFallback':'-idirafter /usr/include','noJawtDisabled':False}
+  ffi_options=b' --disable-docs --disable-maintainer-mode'
+  if target=='loongarch64':ffi_options+=b' --disable-exec-static-tramp'
+  makefile.write_bytes(raw.replace(anchor,anchor+ffi_options))
+  report['buildConfig']={'crossPrefix':prefix,'arch':arch,'osPrefix':'linux-'+target,'libffiStatic':True,'hostX11HeaderFallback':'-idirafter /usr/include','noJawtDisabled':False,'libffiConfigureOptions':ffi_options.decode().split()}
   command(['ant','-Dbuild-native=true','-Dos.prefix=linux-'+target,'-DARCH='+arch,'-DCC='+compiler,
    '-Dcflags_extra.native=-idirafter /usr/include',
    '-DEXTRA_MAKE_OPTS=HOST_CONFIG=--host='+prefix+' STRIP='+prefix+'-strip','native'],'build',source)
