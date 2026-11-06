@@ -198,6 +198,15 @@ def main():
             target=payload/'p1-freebsd'/name.split('/')[-2];target.mkdir(parents=True)
             dest=target/'libpty.so';dest.write_bytes(item['path'].read_bytes());replacements[name]={**item,'path':dest}
         for target,receipt in module.RECEIPTS.items():receipts['p1-freebsd-'+target]=sha((ROOT/receipt).read_bytes())
+    if os.environ.get('JHARNESS_P1_FREEBSD_JNA')=='1':
+        spec=importlib.util.spec_from_file_location('p1_freebsd_jna',ROOT/'scripts/stage-p1-freebsd-jna.py')
+        module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+        extra=module.load_components(ROOT/'.build-cache/p1-freebsd-jna-inputs')
+        if set(extra)&set(replacements) or len(extra)!=2:raise ValueError('Two disjoint FreeBSD JNA replacements required')
+        for name,item in extra.items():
+            target=payload/'p1-freebsd-jna'/name.split('/')[-2];target.mkdir(parents=True)
+            dest=target/'libjnidispatch.so';dest.write_bytes(item['path'].read_bytes());replacements[name]={**item,'path':dest}
+        receipts['p1-freebsd-jna']=sha((ROOT/module.RECEIPT).read_bytes())
     runtime=ROOT/'harness-cli/target/harness-cli-0.1.0-SNAPSHOT.jar';baseline=out/'baseline-runtime.jar'
     with baseline.open('xb') as stream:stream.write(runtime.read_bytes())
     canonical=out/'canonical-baseline-runtime.jar'

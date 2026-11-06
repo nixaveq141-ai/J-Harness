@@ -1,0 +1,13 @@
+{
+  "status": "LOCAL_ALL_MEMBERS_SHA256_AND_CRC_VERIFIED",
+  "path": ".build-cache/local-evidence-backups/2026-11-06/p1-freebsd-jna.zip",
+  "bytes": 5403833,
+  "sha256": "90837d691096e6b222eeccc591453da57a04e5255054b5beeeffe818f45c09ad",
+  "members": {
+    ".build-cache/p1-freebsd-jna-raw/13472397805.zip": "6b2e8bd30710ac4acb690494baf0927c938fc15a6c8a83d93e327da550c5fbff",
+    ".build-cache/p1-freebsd-jna-raw/13472730307.zip": "2a8ebf7ee9684994a8c44cb8057ed3f00d1c93df7a64beadb6ef80eff8373d19",
+    ".build-cache/audit-p1-freebsd-jna.py": "99b1ff5bac68e0289ef300318b613aaae5b2c23c163d4e6f63057f09fbf4bf67",
+    "docs/testing/gap-p1-2026-11-04/freebsd-jna-components-acceptance.json": "bbb0538502488d571d13136acadba66e138a6ac0e2c0e5a3fe838b599ecf91a4",
+    "docs/testing/gap-p1-2026-11-04/assembly34-control.json": "987f8e723263d427956000ff7291d624b1b178efab9bde1e941445b4ecc73011"
+  }
+}

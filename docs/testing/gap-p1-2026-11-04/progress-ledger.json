@@ -1,9 +1,9 @@
 {
   "status": "P1_IN_PROGRESS_NOT_COMPLETE",
   "frozenP0Tasks": 36,
-  "independentlyVerifiedNewSourceComponents": 18,
-  "assembledCandidateReviewedCount": 32,
-  "assembledCandidateUnresolvedCount": 18,
+  "independentlyVerifiedNewSourceComponents": 20,
+  "assembledCandidateReviewedCount": 34,
+  "assembledCandidateUnresolvedCount": 16,
   "formalAcceptedRuntimeCommit": "7e2978e5a085e2307de8bfcbf2a0b0e4bfed12bd",
   "formalAcceptedRuntimeReviewedCount": 30,
   "formalAcceptedRuntimeUnresolvedCount": 20,
@@ -46,13 +46,15 @@
       "coordinate": "net.java.dev.jna:jna:5.14.0",
       "os": "freebsd",
       "cpu": "x86-64",
-      "status": "OPEN",
+      "status": "COMPONENT_SOURCE_VERIFIED_AND_ASSEMBLED_FULL_PRODUCT_PENDING",
       "requiredToolchain": "freebsd目标SDK/系统头文件与原生或交叉编译器",
-      "nextAction": "核上游逐文件构建证明或盘点目标SDK/工具链，再固定源构建和验证",
+      "nextAction": "统一34资源候选五目标完整CI及原包独立复核",
       "blockers": [
-        "目标工具链/SDK或上游构建证明未确认",
-        "目标运行条件未确认；额外实体机器按用户指令跳过但不计运行通过"
-      ]
+        "完整候选验收待；FreeBSD完整Java应用未认证"
+      ],
+      "componentRunId": "42150888437",
+      "componentCommit": "ca7586024dd6200ce27ca30c8e490377f095426f",
+      "componentReceipt": "docs/testing/gap-p1-2026-11-04/freebsd-jna-components-acceptance.json"
     },
     {
       "taskId": "NATIVE-04",
@@ -61,13 +63,15 @@
       "coordinate": "net.java.dev.jna:jna:5.14.0",
       "os": "freebsd",
       "cpu": "x86",
-      "status": "OPEN",
+      "status": "COMPONENT_SOURCE_VERIFIED_AND_ASSEMBLED_FULL_PRODUCT_PENDING",
       "requiredToolchain": "freebsd目标SDK/系统头文件与原生或交叉编译器",
-      "nextAction": "核上游逐文件构建证明或盘点目标SDK/工具链，再固定源构建和验证",
+      "nextAction": "统一34资源候选五目标完整CI及原包独立复核",
       "blockers": [
-        "目标工具链/SDK或上游构建证明未确认",
-        "目标运行条件未确认；额外实体机器按用户指令跳过但不计运行通过"
-      ]
+        "完整候选验收待；FreeBSD完整Java应用未认证"
+      ],
+      "componentRunId": "42150888437",
+      "componentCommit": "ca7586024dd6200ce27ca30c8e490377f095426f",
+      "componentReceipt": "docs/testing/gap-p1-2026-11-04/freebsd-jna-components-acceptance.json"
     },
     {
       "taskId": "NATIVE-05",

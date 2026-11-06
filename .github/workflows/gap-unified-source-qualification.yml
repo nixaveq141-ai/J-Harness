@@ -1,4 +1,4 @@
-name: Unified source-native thirty-two-resource five-target qualification
+name: Unified source-native thirty-four-resource five-target qualification
 on:
   workflow_dispatch:
   push:
@@ -32,6 +32,7 @@ jobs:
       JHARNESS_P1_WINDOWS_X86_JNA: '1'
       JHARNESS_P1_WINDOWS_X86_PTY: '1'
       JHARNESS_P1_FREEBSD_PTY: '1'
+      JHARNESS_P1_FREEBSD_JNA: '1'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -123,6 +124,13 @@ jobs:
           github-token: ${{ github.token }}
           path: .build-cache/p1-freebsd-inputs
       - run: python scripts/test-p1-freebsd-stage.py
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: p1-freebsd-*-jna-source
+          run-id: 42150888437
+          github-token: ${{ github.token }}
+          path: .build-cache/p1-freebsd-jna-inputs
+      - run: python scripts/test-p1-freebsd-jna-stage.py
       - name: Install browser dependencies on Linux
         if: runner.os == 'Linux'
         run: |

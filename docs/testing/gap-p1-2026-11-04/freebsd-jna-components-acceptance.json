@@ -1,0 +1,90 @@
+{
+  "status": "TWO_FREEBSD_JNA_SOURCE_ABI_FFI_COMPONENTS_INDEPENDENTLY_VERIFIED_NOT_PRODUCT_ACCEPTANCE",
+  "runId": "42150888437",
+  "commit": "ca7586024dd6200ce27ca30c8e490377f095426f",
+  "sourceRevision": "c366bc4fd0c50a30ac8d2475603ec564f6611462",
+  "platforms": [
+    {
+      "target": "x86",
+      "artifactId": "13472730307",
+      "artifactSha256": "2a8ebf7ee9684994a8c44cb8057ed3f00d1c93df7a64beadb6ef80eff8373d19",
+      "reportSha256": "a8878b3b9c617e1aca8afd8a6c2378e86905e551e0d6faec771a5886bb5f5abc",
+      "resource": "com/sun/jna/freebsd-x86/libjnidispatch.so",
+      "outputSha256": "9f54cd943022ad61b8feac94ee616fb7e6dc9a371d67dd11629102edb9d96c35",
+      "originalSha256": "c1d200c601baf9f26db1b0ba0d152fb517dd929f01cbbe1ac3320bbe40adb827",
+      "elf": {
+        "elfClass": 1,
+        "endianness": 1,
+        "machine": 3,
+        "flags": 0
+      },
+      "originalElf": {
+        "elfClass": 1,
+        "endianness": 1,
+        "machine": 3,
+        "flags": 0
+      },
+      "sourceFiles": 1297,
+      "sourceTreeSha256": "a57c7c4ca1cb816f01ba91274922b6f0c0882b8b1a122121ac5d82f67ccce73b",
+      "commandReceipts": 15,
+      "hostInputs": 692,
+      "hostImage": {
+        "ImageOS": null,
+        "ImageVersion": null,
+        "RUNNER_ARCH": null
+      },
+      "probeSha256": "87bb4e6065f31d529eb71fe084ff6b3cf8e045864c1c5bd4a9b635b021505c90",
+      "probeSourceSha256": "9e17cb4e0b519249d4af3b5e34a0cbe15258a3caf9fef4be6626e929abcc7d31",
+      "probeSupportSha256": {
+        "scripts/probes/p1-jna-callback.h": "b98767a0716476d59b8a81af7cd5c5550a348bb8ce9b0b55fff294009bd94887",
+        "scripts/probes/p1-jna-callback-control.c": "5de3b07abad6498268ed2c5f82a12806da31e86d41fffcb0c75c17cd5f638937"
+      },
+      "generatedHelperSha256": "506b98fd979eff158e0a83b534fad0ed1974c65ee9394026becef0410a67f142",
+      "libffiReleaseSha256": "d66c56ad259a82cf2a9dfc408b32bf5da52371500b84745f7fb8b645712df676"
+    },
+    {
+      "target": "x86-64",
+      "artifactId": "13472397805",
+      "artifactSha256": "6b2e8bd30710ac4acb690494baf0927c938fc15a6c8a83d93e327da550c5fbff",
+      "reportSha256": "4d443fdd565c484fc8444554705bdcfd9cbe8a6eb168012b073e41e28986d816",
+      "resource": "com/sun/jna/freebsd-x86-64/libjnidispatch.so",
+      "outputSha256": "488ae9c2a7cbcb893864dff58ee9145da7e4a38fc75adf7ff68578cf97010584",
+      "originalSha256": "13281e25bf8614ab1aeb5f93d32ce4af02d986b0ca49f7692d08fce981eb1d5e",
+      "elf": {
+        "elfClass": 2,
+        "endianness": 1,
+        "machine": 62,
+        "flags": 0
+      },
+      "originalElf": {
+        "elfClass": 2,
+        "endianness": 1,
+        "machine": 62,
+        "flags": 0
+      },
+      "sourceFiles": 1297,
+      "sourceTreeSha256": "a57c7c4ca1cb816f01ba91274922b6f0c0882b8b1a122121ac5d82f67ccce73b",
+      "commandReceipts": 15,
+      "hostInputs": 692,
+      "hostImage": {
+        "ImageOS": null,
+        "ImageVersion": null,
+        "RUNNER_ARCH": null
+      },
+      "probeSha256": "1afbf7e9edbe968e35824fbf18e6a462368d0a1570451ad3a60580c91ac6ea1a",
+      "probeSourceSha256": "9e17cb4e0b519249d4af3b5e34a0cbe15258a3caf9fef4be6626e929abcc7d31",
+      "probeSupportSha256": {
+        "scripts/probes/p1-jna-callback.h": "b98767a0716476d59b8a81af7cd5c5550a348bb8ce9b0b55fff294009bd94887",
+        "scripts/probes/p1-jna-callback-control.c": "5de3b07abad6498268ed2c5f82a12806da31e86d41fffcb0c75c17cd5f638937"
+      },
+      "generatedHelperSha256": "506b98fd979eff158e0a83b534fad0ed1974c65ee9394026becef0410a67f142",
+      "libffiReleaseSha256": "d66c56ad259a82cf2a9dfc408b32bf5da52371500b84745f7fb8b645712df676"
+    }
+  ],
+  "paidRequests": 0,
+  "limits": [
+    "Actual C-level JNI primitives and bundled libffi call/closure, not complete target JVM initIDs or Java application proof",
+    "No product replacement yet",
+    "No full OS/CPE or arbitrary libc compatibility proof"
+  ]
+}

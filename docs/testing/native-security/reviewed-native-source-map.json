@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "scope": "Thirty replacements accepted in7e2978e full runtime; two FreeBSD components independently reviewed and staged in32-resource candidate, full qualification pending. Eighteen original resources unresolved; no full OS/CPE clearance.",
+  "scope": "Thirty replacements formally accepted; four FreeBSD PTY/JNA components independently verified and staged in34-resource candidate, full qualification pending. Sixteen original resources unresolved; no full OS/CPE clearance.",
   "resources": {
     "com/sun/jna/win32-x86-64/jnidispatch.dll": {
       "sha256": "c88e200b240dfa54c5b852a335b28683e64a074d30ceee7c17ffc282058891a2",
@@ -382,6 +382,32 @@
         "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/freebsd-x86-dual-components-acceptance.json",
         "scope": "FreeBSD VM native PTY and child exchange; complete FreeBSD Java application not certified"
       }
+    },
+    "com/sun/jna/freebsd-x86/libjnidispatch.so": {
+      "sha256": "9f54cd943022ad61b8feac94ee616fb7e6dc9a371d67dd11629102edb9d96c35",
+      "origin": {
+        "sourceBuildRun": "42150888437",
+        "sourceBuildCommit": "ca7586024dd6200ce27ca30c8e490377f095426f",
+        "sourceRevision": "c366bc4fd0c50a30ac8d2475603ec564f6611462",
+        "componentProbeRun": "42150888437",
+        "componentReportSha256": "a8878b3b9c617e1aca8afd8a6c2378e86905e551e0d6faec771a5886bb5f5abc",
+        "libffiReleaseSha256": "d66c56ad259a82cf2a9dfc408b32bf5da52371500b84745f7fb8b645712df676",
+        "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/freebsd-jna-components-acceptance.json",
+        "scope": "FreeBSD VM C-level JNI primitives and real libffi call/closure; complete target JVM/Java not certified"
+      }
+    },
+    "com/sun/jna/freebsd-x86-64/libjnidispatch.so": {
+      "sha256": "488ae9c2a7cbcb893864dff58ee9145da7e4a38fc75adf7ff68578cf97010584",
+      "origin": {
+        "sourceBuildRun": "42150888437",
+        "sourceBuildCommit": "ca7586024dd6200ce27ca30c8e490377f095426f",
+        "sourceRevision": "c366bc4fd0c50a30ac8d2475603ec564f6611462",
+        "componentProbeRun": "42150888437",
+        "componentReportSha256": "4d443fdd565c484fc8444554705bdcfd9cbe8a6eb168012b073e41e28986d816",
+        "libffiReleaseSha256": "d66c56ad259a82cf2a9dfc408b32bf5da52371500b84745f7fb8b645712df676",
+        "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/freebsd-jna-components-acceptance.json",
+        "scope": "FreeBSD VM C-level JNI primitives and real libffi call/closure; complete target JVM/Java not certified"
+      }
     }
   },
   "fullRuntimeQualification": {
@@ -392,10 +418,11 @@
     "reviewedResourceCount": 30
   },
   "pendingCandidateQualification": {
-    "reviewedResourceCount": 32,
+    "reviewedResourceCount": 34,
     "status": "FULL_PRODUCT_QUALIFICATION_PENDING",
     "componentRunIds": [
-      "42003119496"
+      "42003119496",
+      "42150888437"
     ]
   }
 }
