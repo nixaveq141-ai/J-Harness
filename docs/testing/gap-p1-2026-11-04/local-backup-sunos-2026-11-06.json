@@ -1,0 +1,13 @@
+{
+  "status": "LOCAL_ALL_MEMBERS_SHA256_AND_CRC_VERIFIED",
+  "path": ".build-cache/local-evidence-backups/2026-11-06/p1-sunos-components.zip",
+  "bytes": 5687732,
+  "sha256": "56c32bb40a9db67b23585de6916c96f4c67832fab1cf29fe39ed78c63ea3dc1c",
+  "members": {
+    ".build-cache/p1-raw-42158505948/13475309110.zip": "8f25f55ff6c84bc46b9d642ca06c433f77fb64bd9a2189942d386d4dff63bdaf",
+    ".build-cache/p1-raw-42158505948/13476152324.zip": "c6300476086c13d9f1cac8870506c2a12425b412faed8093696e4abf328cc452",
+    ".build-cache/audit-p1-sunos-jna.py": "7f3881e97997baf6c25db61de3fff71816198dd8bf20f35f87788747fe748cee",
+    ".build-cache/p1-sunos-lock.json": "f97ebfbcb07239de48287a6e4612b82c6f1d04a8a84a13376e97f41a9804bb56",
+    "docs/testing/gap-p1-2026-11-04/sunos-jna-components-acceptance.json": "1207b014e425fb09232fb008562f3efedcfaed45eb5fce6d33fe31e4c176eb2a"
+  }
+}

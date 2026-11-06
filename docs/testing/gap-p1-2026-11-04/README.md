@@ -191,3 +191,9 @@ OpenBSD42158136194@e2已越过ggrep头生成，libffi配置中Clang拒绝GCC专�
 2026-11-06 P1 ARM64 Console两资源新增固定已审terminal/vcpkg源的x64宿主交叉构建，显式MSBuild ARM64并对OpenConsole/conpty输出强制ARM64 PE32+；只构建不冒称ARM加载或产品验收。Console目标与既有WinPTY x64/x86分开约束，原固定安全基线/端口源/禁二进制缓存保持。8构建控制+2安全门禁过，实际远端待。Windows ARM JNA已完成C/libffi编译但MSYS转换/DLL链接选项为路径，现仅该构建禁自动参数转换，修正待。
 
 ARM64 Console构建使用已审相同7ff11ee terminal与fe1cde6 vcpkg固定源，只扩展明确ARM64目标和PE门禁；运行专项后续在Windows ARM托管目标单独做。JNA参数转换依据[MSYS2官方说明](https://www.msys2.org/docs/filesystem-paths/)，避免MSVC /DLL被当Unix路径；保留原始失败42158139003@e2。
+
+## Solaris双字宽组件独立验收
+
+2026-11-06 Solaris42158505948@543两侧原包独立验：1297固定JNA源码/侧与已审基线全等，15回执/侧、完整Git输入、libffi固定归档与生成输入、ELF及真实JNI/ffi call41 closure46/缺库拒绝过。原sunos-x86错误64位库存精确保留；新32位输出严格ELF32/machine3，未改原始证据。组件已验、尚未装配，不增加正式34/50；真正35候选启用修正025c8f9已推送，完整新轮待。持续目标已恢复active。
+
+详见[sunos-jna-components-acceptance.json](sunos-jna-components-acceptance.json)。本阶段关闭这两项的组件构建/ABI证据缺口，正式来源门槛仍需统一候选完整产品验收。

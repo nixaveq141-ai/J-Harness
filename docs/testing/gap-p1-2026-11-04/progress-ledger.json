@@ -1,7 +1,7 @@
 {
   "status": "P1_IN_PROGRESS_NOT_COMPLETE",
   "frozenP0Tasks": 36,
-  "independentlyVerifiedNewSourceComponents": 22,
+  "independentlyVerifiedNewSourceComponents": 24,
   "assembledCandidateReviewedCount": 35,
   "assembledCandidateUnresolvedCount": 15,
   "formalAcceptedRuntimeCommit": "a5376fca79263f6cd6366cd575b8e9ae25afd6e3",
@@ -306,13 +306,16 @@
       "coordinate": "net.java.dev.jna:jna:5.14.0",
       "os": "sunos",
       "cpu": "x86-64",
-      "status": "OPEN",
+      "status": "COMPONENT_SOURCE_VERIFIED_NOT_ASSEMBLED_FULL_PRODUCT_PENDING",
       "requiredToolchain": "sunos目标SDK/系统头文件与原生或交叉编译器",
-      "nextAction": "核上游逐文件构建证明或盘点目标SDK/工具链，再固定源构建和验证",
+      "nextAction": "精确原包集成统一候选并完成五目标产品重验",
       "blockers": [
-        "目标工具链/SDK或上游构建证明未确认",
-        "目标运行条件未确认；额外实体机器按用户指令跳过但不计运行通过"
-      ]
+        "统一候选装配与完整产品回归待；不认证完整Solaris Java应用"
+      ],
+      "candidateSha256": "7439a4a36ee42c7638d2947b2dcb437e560be832c26e3977252c427f4f6a7330",
+      "componentRunId": "42158505948",
+      "componentCommit": "543e7efcacb5b78e93103f0be8e4828d3dc2f16e",
+      "componentReceipt": "docs/testing/gap-p1-2026-11-04/sunos-jna-components-acceptance.json"
     },
     {
       "taskId": "NATIVE-19",
@@ -321,13 +324,16 @@
       "coordinate": "net.java.dev.jna:jna:5.14.0",
       "os": "sunos",
       "cpu": "x86",
-      "status": "OPEN",
+      "status": "COMPONENT_SOURCE_VERIFIED_NOT_ASSEMBLED_FULL_PRODUCT_PENDING",
       "requiredToolchain": "sunos目标SDK/系统头文件与原生或交叉编译器",
-      "nextAction": "核上游逐文件构建证明或盘点目标SDK/工具链，再固定源构建和验证",
+      "nextAction": "精确原包集成统一候选并完成五目标产品重验",
       "blockers": [
-        "目标工具链/SDK或上游构建证明未确认",
-        "目标运行条件未确认；额外实体机器按用户指令跳过但不计运行通过"
-      ]
+        "统一候选装配与完整产品回归待；不认证完整Solaris Java应用"
+      ],
+      "candidateSha256": "51183dc6c855742aed760b6c152f9ec22206ec99d1be0605bce0ce342bc09d9b",
+      "componentRunId": "42158505948",
+      "componentCommit": "543e7efcacb5b78e93103f0be8e4828d3dc2f16e",
+      "componentReceipt": "docs/testing/gap-p1-2026-11-04/sunos-jna-components-acceptance.json"
     },
     {
       "taskId": "NATIVE-20",
