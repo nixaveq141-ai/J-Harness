@@ -7,6 +7,8 @@ import os
 import platform
 from pathlib import Path
 import struct
+import shutil
+import tempfile
 import subprocess
 import zipfile
 from evidence_io import atomic_write_json, stream_sha256
@@ -53,7 +55,7 @@ def main():
   finally:
    if receipt.is_file():report['commands'].append(dict(name=name,sha256=stream_sha256(receipt)))
  try:
-  command(['pkg_info','-a'],'host-packages');command(['uname','-a'],'system')
+  command(['pkg_info','-a'],'host-packages');command(['uname','-a'],'system');command(['mount'],'mounts')
   command(['cc','--version'],'compiler')
   command(['java','-version'],'jdk');command(['ant','-version'],'ant')
   source=out/'jna'
@@ -89,9 +91,15 @@ def main():
   command([str(promotion)],'promotion-control',timeout=30)
   command([*compiler,'-std=c11','-Wall','-Wextra','-Werror','-O2','-I'+str(ffi_headers),'-I'+str(source/'build/headers'),
    '-I'+str(java/'include'),'-I'+str(java/'include/openbsd'),str(ROOT/'scripts/probes/p1-jna.c'),'-Wl,-z,wxneeded','-o',str(probe)],'probe-build')
-  probe_command=[str(probe)]
-  command([*probe_command,str(output),'present'],'candidate-probe',timeout=45)
-  command([*probe_command,str(out/'absent.so'),'missing'],'missing-probe',timeout=45)
+  # The executable's filesystem must already permit wxneeded programs. Do not
+  # change mount options or product permissions; copy only our owned probe.
+  with tempfile.TemporaryDirectory(prefix='jh-p1-'+os.environ['GITHUB_RUN_ID']+'-',dir='/usr/local') as folder:
+   runtime_probe=Path(folder)/'jni-probe';shutil.copyfile(probe,runtime_probe);runtime_probe.chmod(0o700)
+   if stream_sha256(runtime_probe)!=stream_sha256(probe):raise ValueError('Runtime probe copy drift')
+   report['runtimeProbePath']=str(runtime_probe);report['runtimeProbeSha256']=stream_sha256(runtime_probe)
+   command([str(runtime_probe),str(output),'present'],'candidate-probe',timeout=45)
+   command([str(runtime_probe),str(out/'absent.so'),'missing'],'missing-probe',timeout=45)
+   if stream_sha256(runtime_probe)!=report['runtimeProbeSha256']:raise ValueError('Runtime probe changed')
   # Original libffi exports can differ; old bytes are retained and checked by
   # ELF identity, not silently claimed to pass this new static-libffi probe.
   after={n:stream_sha256(source/n) for n in before if (source/n).is_file()}

@@ -1,5 +1,6 @@
 #define _GNU_SOURCE
 #include <dlfcn.h>
+#include <errno.h>
 #include <ffi.h>
 #include "p1-jna-callback.h"
 #include <jni.h>
@@ -43,7 +44,7 @@ int main(int argc, char **argv) {
     if(prep(&cif,FFI_DEFAULT_ABI,2,sint,args)!=FFI_OK) return 9;
     call(&cif,FFI_FN(add),&result,av);if(result!=41) return 10;
     void *code=NULL;ffi_closure *closure=closure_alloc(sizeof(ffi_closure),&code);
-    if(!closure || !code) return 11;
+    if(!closure || !code) { fprintf(stderr,"closure allocation failed errno=%d\n",errno); return 11; }
     if(closure_prep(closure,&cif,p1_callback,&bias,code)!=FFI_OK) return 12;
     result=0;call(&cif,FFI_FN(code),&result,av);closure_free(closure);if(result!=46) return 13;
     if(dlclose(library)) return 14;

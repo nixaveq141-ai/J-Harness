@@ -1,0 +1,10 @@
+{
+  "status": "LOCAL_ALL_MEMBERS_SHA256_AND_CRC_VERIFIED",
+  "path": ".build-cache/local-evidence-backups/2026-11-06/p1-openbsd-closure-failure.zip",
+  "bytes": 2432254,
+  "sha256": "48303aca71b33b1309d7c12d33f6d73bba4836b736b2841ed9bef2c1834bba58",
+  "members": {
+    ".build-cache/p1-raw-42158939107/13476700244.zip": "ae51b6f9b03b60c160afe1cc7d54545c95004a5f8bd42de14ef2aece4497f863",
+    "docs/testing/gap-p1-2026-11-04/openbsd-closure-allocation-failure.json": "6788349bf7c45c3a8b281266b0cb65fc7ff30a1bf3c6378b8ab73d651cea64ab"
+  }
+}

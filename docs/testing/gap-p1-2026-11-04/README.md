@@ -209,3 +209,9 @@ ARM64 Console构建使用已审相同7ff11ee terminal与fe1cde6 vcpkg固定源�
 2026-11-06 P1统一39集成：Solaris双JNA与ARM64 JNA/helper四原包精确stager通过，新增四控制覆盖原包与载荷/报告/归档/资源scope漂移拒绝。真实39来源/11原版候选装配，4499其他条目保持，未动本机生成JAR。工作流固定三组件运行下载并要求39替换前置门禁；正式34/50不变，新完整五目标验收待。原包及先前验收备份沿用，新增装配和stager另作本地逐SHA/CRC备份。
 
 [实际装配控制](assembly39-control.json)与四组件逐项来源收据共同限定范围；不将新候选装配当产品验收，也不替代余下11项来源任务。
+
+## OpenBSD closure分配失败定位
+
+2026-11-06 OpenBSD42158939107原ZIP实核exit11/空日志，对照固定C探针为closure_alloc返回NULL；先前JNI六sizeof/malloc/free与ffi call41已通过但不计组件验收。根据官方mmap条件，新增mount回执并只将自有wxneeded探针同SHA复制到/usr/local临时目录运行后清理，不改任何挂载或产品权限；补errno诊断，根因及修正待实际对照。两本地ELF/副本控制过，来源计数不变。
+
+[失败收据](openbsd-closure-allocation-failure.json)。[OpenBSD mmap官方文档](https://man.openbsd.org/mmap.2)要求wxneeded与wxallowed同时满足；本轮只验证已有挂载上的执行位置，不重新挂载、不开放Java/产品权限。运行后是否通过由实际同一JNI/ffi探针决定，不因移动文件就宣称已修复。

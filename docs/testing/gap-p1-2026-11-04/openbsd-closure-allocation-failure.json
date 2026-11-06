@@ -1,0 +1,17 @@
+{
+  "status": "OPENBSD_CLOSURE_ALLOCATION_FAILED_NOT_ACCEPTED",
+  "runId": "42158939107",
+  "commit": "b2a18620cc43d0255c5107d9ef0ba0e1ee16477c",
+  "artifact": {
+    "id": 13476700244,
+    "path": ".build-cache/p1-raw-42158939107/13476700244.zip",
+    "bytes": 2431049,
+    "sha256": "ae51b6f9b03b60c160afe1cc7d54545c95004a5f8bd42de14ef2aece4497f863"
+  },
+  "exitCode": 11,
+  "commandReceiptSha256": "54ca34a4feee88ea1331fce7234367b4172744cd45537071a684c92420a55ba7",
+  "logSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "interpretation": "Probe code reaches closure_alloc only after JNI primitives and ffi call41 passed; allocation returned NULL. Filesystem W^X hypothesis pending actual mount/location control.",
+  "productAccepted": false,
+  "paidRequests": 0
+}
