@@ -4,9 +4,9 @@
   "independentlyVerifiedNewSourceComponents": 20,
   "assembledCandidateReviewedCount": 34,
   "assembledCandidateUnresolvedCount": 16,
-  "formalAcceptedRuntimeCommit": "7e2978e5a085e2307de8bfcbf2a0b0e4bfed12bd",
-  "formalAcceptedRuntimeReviewedCount": 30,
-  "formalAcceptedRuntimeUnresolvedCount": 20,
+  "formalAcceptedRuntimeCommit": "b86aaa1f4a5dc7159a6757cf66c3db6cee83ef4b",
+  "formalAcceptedRuntimeReviewedCount": 32,
+  "formalAcceptedRuntimeUnresolvedCount": 18,
   "physicalExtraMachineAcceptance": "SKIPPED_BY_USER_NOT_RUNTIME_CERTIFIED",
   "tasks": [
     {
@@ -362,15 +362,17 @@
       "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
       "os": "freebsd",
       "cpu": "x86-64",
-      "status": "COMPONENT_SOURCE_VERIFIED_AND_ASSEMBLED_FULL_PRODUCT_PENDING",
+      "status": "SOURCE_REPLACEMENT_ACCEPTED_IN_FIVE_TARGET_PRODUCT",
       "requiredToolchain": "freebsd目标SDK/系统头文件与原生或交叉编译器",
-      "nextAction": "统一32资源候选五目标完整CI和原包独立复核",
-      "blockers": [
-        "完整候选验收待；FreeBSD完整Java应用未认证"
-      ],
+      "nextAction": "来源替换及五托管目标完整产品回归已验；FreeBSD完整Java应用与OS/CPE未认证",
+      "blockers": [],
       "componentRunId": "42003119496",
       "componentCommit": "40610c294c54dd2a53526a0da8c623cdd7c0d562",
-      "componentReceipt": "docs/testing/gap-p1-2026-11-04/freebsd-x64-dual-components-acceptance.json"
+      "componentReceipt": "docs/testing/gap-p1-2026-11-04/freebsd-x64-dual-components-acceptance.json",
+      "candidateSha256": "2bf0fb6af39b5d7433fed100c21f0027ccabb129961cdb90d9ff04f400c41b30",
+      "productRunId": "42150336971",
+      "productCommit": "b86aaa1f4a5dc7159a6757cf66c3db6cee83ef4b",
+      "productReceipt": "docs/testing/M10-unified32-final-equality-2026-11-06.json"
     },
     {
       "taskId": "NATIVE-23",
@@ -379,15 +381,17 @@
       "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
       "os": "freebsd",
       "cpu": "x86",
-      "status": "COMPONENT_SOURCE_VERIFIED_AND_ASSEMBLED_FULL_PRODUCT_PENDING",
+      "status": "SOURCE_REPLACEMENT_ACCEPTED_IN_FIVE_TARGET_PRODUCT",
       "requiredToolchain": "freebsd目标SDK/系统头文件与原生或交叉编译器",
-      "nextAction": "统一32资源候选五目标完整CI和原包独立复核",
-      "blockers": [
-        "完整候选验收待；FreeBSD完整Java应用未认证"
-      ],
+      "nextAction": "来源替换及五托管目标完整产品回归已验；FreeBSD完整Java应用与OS/CPE未认证",
+      "blockers": [],
       "componentRunId": "42003119496",
       "componentCommit": "40610c294c54dd2a53526a0da8c623cdd7c0d562",
-      "componentReceipt": "docs/testing/gap-p1-2026-11-04/freebsd-x86-dual-components-acceptance.json"
+      "componentReceipt": "docs/testing/gap-p1-2026-11-04/freebsd-x86-dual-components-acceptance.json",
+      "candidateSha256": "3bcfb40e936480de341bd775c440170973e8f03bd5de5fdf9f7ce3518f9696aa",
+      "productRunId": "42150336971",
+      "productCommit": "b86aaa1f4a5dc7159a6757cf66c3db6cee83ef4b",
+      "productReceipt": "docs/testing/M10-unified32-final-equality-2026-11-06.json"
     },
     {
       "taskId": "NATIVE-24",

@@ -1,0 +1,29 @@
+{
+  "status": "FIVE_TARGET_IDENTICAL_RUNTIME_JAR_QUALIFIED_NOT_RELEASE",
+  "commit": "b86aaa1f4a5dc7159a6757cf66c3db6cee83ef4b",
+  "runId": "42150336971",
+  "platforms": {
+    "windows-2022": {
+      "runtimeJarSha256": "c9347d3a0e11e0f2177257476cec38cbb7b2ac6c61212d8e3259ceed726e298b",
+      "candidateZipSha256": "e041d79fa3b047f5063777c6307acf1c48b6219e921910d6def394942c4dcc5e"
+    },
+    "ubuntu-24.04": {
+      "runtimeJarSha256": "c9347d3a0e11e0f2177257476cec38cbb7b2ac6c61212d8e3259ceed726e298b",
+      "candidateZipSha256": "ba2153c2043a8f15627ebd211738e171788d789d91f835152e89218f570bee18"
+    },
+    "macos-latest": {
+      "runtimeJarSha256": "c9347d3a0e11e0f2177257476cec38cbb7b2ac6c61212d8e3259ceed726e298b",
+      "candidateZipSha256": "2306c855fe32bde0526735def790e9e7f9362955d76d9be57cb1df32f0ebba66"
+    },
+    "ubuntu-24.04-arm": {
+      "runtimeJarSha256": "c9347d3a0e11e0f2177257476cec38cbb7b2ac6c61212d8e3259ceed726e298b",
+      "candidateZipSha256": "242caeb7a0428f2ab0e22b7f78116e3a302724cf35fc3c80e0c7c2782cb7886c"
+    },
+    "macos-15-intel": {
+      "runtimeJarSha256": "c9347d3a0e11e0f2177257476cec38cbb7b2ac6c61212d8e3259ceed726e298b",
+      "candidateZipSha256": "1e27a34b4902e06968652ffd41ae582e1d401429e6f39a21a413e8f40bdd55c4"
+    }
+  },
+  "releaseApproved": false,
+  "scope": "Byte-identical runtime only; outer candidate ZIPs include platform-specific evidence. Not full native provenance or OS/CPE certification."
+}

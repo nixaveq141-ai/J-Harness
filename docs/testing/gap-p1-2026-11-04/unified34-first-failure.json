@@ -1,0 +1,199 @@
+{
+  "status": "UNIFIED34_REJECTED_MAC_INTEL_BROWSER_FAILURE_ROOT_CAUSE_OPEN",
+  "runId": "42151580514",
+  "commit": "1456942df98ebf41f35d3559435a5713794e819d",
+  "artifact": {
+    "id": 13473987077,
+    "path": ".build-cache/p1-raw-42151580514/13473987077.zip",
+    "bytes": 119720457,
+    "sha256": "331f137be3a92bb8fb8751f5acabb47239a5956854630bbe49ef5572bf3d35ba"
+  },
+  "failedEngine": "webkit",
+  "failedFixture": "development",
+  "failedAssertion": "no browser runtime exception",
+  "diagnostic": {
+    "checksCompleted": 13,
+    "pageErrorCount": 1,
+    "pageErrors": [
+      {
+        "phase": "refresh",
+        "length": 172,
+        "sha256": "35bddc2aacee6f3eb1bf930163203beebec464b715a308e0b67755defd316659",
+        "controlledRead": true,
+        "navigationCollecting": true,
+        "navigationCommitted": false,
+        "accessControl": true,
+        "currentOrigin": true,
+        "route": "/v1/tasks/:id/turns"
+      }
+    ],
+    "modelRequests": 12,
+    "hostExited": false,
+    "approvalClicks": 9,
+    "inputTrace": [],
+    "backend": {
+      "phase": "FINISHED",
+      "status": "COMPLETED",
+      "approvalCount": 0
+    },
+    "failureFacts": {
+      "errorCode": "OTHER",
+      "events": [
+        {
+          "type": "tool.completed",
+          "call": "development-1",
+          "status": "SUCCESS",
+          "code": "OTHER",
+          "reason": "OTHER",
+          "cleanupStatus": "OTHER",
+          "observedClean": null,
+          "residualPidCount": null,
+          "trackedPidCount": null,
+          "exitCode": null
+        },
+        {
+          "type": "tool.completed",
+          "call": "development-2",
+          "status": "SUCCESS",
+          "code": "OTHER",
+          "reason": "OTHER",
+          "cleanupStatus": "OTHER",
+          "observedClean": null,
+          "residualPidCount": null,
+          "trackedPidCount": null,
+          "exitCode": null
+        },
+        {
+          "type": "tool.completed",
+          "call": "development-3",
+          "status": "SUCCESS",
+          "code": "OTHER",
+          "reason": "OTHER",
+          "cleanupStatus": "OTHER",
+          "observedClean": null,
+          "residualPidCount": null,
+          "trackedPidCount": null,
+          "exitCode": null
+        },
+        {
+          "type": "tool.completed",
+          "call": "development-4",
+          "status": "FAILED",
+          "code": "SHELL_REQUIRED",
+          "reason": "OTHER",
+          "cleanupStatus": "not_started",
+          "observedClean": null,
+          "residualPidCount": 0,
+          "trackedPidCount": null,
+          "exitCode": -1
+        },
+        {
+          "type": "tool.completed",
+          "call": "development-5",
+          "status": "FAILED",
+          "code": "NONZERO_EXIT",
+          "reason": "EXIT",
+          "cleanupStatus": "partial",
+          "observedClean": true,
+          "residualPidCount": 0,
+          "trackedPidCount": 1,
+          "exitCode": 1
+        },
+        {
+          "type": "tool.completed",
+          "call": "development-6",
+          "status": "SUCCESS",
+          "code": "OTHER",
+          "reason": "OTHER",
+          "cleanupStatus": "OTHER",
+          "observedClean": null,
+          "residualPidCount": null,
+          "trackedPidCount": null,
+          "exitCode": null
+        },
+        {
+          "type": "tool.completed",
+          "call": "development-7",
+          "status": "SUCCESS",
+          "code": "OTHER",
+          "reason": "EXIT",
+          "cleanupStatus": "partial",
+          "observedClean": true,
+          "residualPidCount": 0,
+          "trackedPidCount": 1,
+          "exitCode": 0
+        },
+        {
+          "type": "tool.completed",
+          "call": "development-8",
+          "status": "FAILED",
+          "code": "NONZERO_EXIT",
+          "reason": "EXIT",
+          "cleanupStatus": "partial",
+          "observedClean": true,
+          "residualPidCount": 0,
+          "trackedPidCount": 1,
+          "exitCode": 1
+        },
+        {
+          "type": "tool.completed",
+          "call": "development-9",
+          "status": "SUCCESS",
+          "code": "OTHER",
+          "reason": "OTHER",
+          "cleanupStatus": "OTHER",
+          "observedClean": null,
+          "residualPidCount": null,
+          "trackedPidCount": null,
+          "exitCode": null
+        },
+        {
+          "type": "tool.completed",
+          "call": "development-10",
+          "status": "SUCCESS",
+          "code": "OTHER",
+          "reason": "EXIT",
+          "cleanupStatus": "partial",
+          "observedClean": true,
+          "residualPidCount": 0,
+          "trackedPidCount": 1,
+          "exitCode": 0
+        },
+        {
+          "type": "tool.completed",
+          "call": "development-11",
+          "status": "SUCCESS",
+          "code": "OTHER",
+          "reason": "EXIT",
+          "cleanupStatus": "partial",
+          "observedClean": true,
+          "residualPidCount": 0,
+          "trackedPidCount": 1,
+          "exitCode": 0
+        },
+        {
+          "type": "turn.ended",
+          "call": "OTHER",
+          "status": "COMPLETED",
+          "code": "OTHER",
+          "reason": "OTHER",
+          "cleanupStatus": "OTHER",
+          "observedClean": null,
+          "residualPidCount": null,
+          "trackedPidCount": null,
+          "exitCode": null
+        }
+      ]
+    },
+    "approvalButtons": 0
+  },
+  "logSha256": {
+    ".build-cache/M10.5.9/browser/webkit/development-M10.5.9-development-diagnostic-failure.txt": "815132d05bce184134ef9e3a376d723ae87f6cbb4b8e8717d2088e776d299700",
+    ".build-cache/M10.5.9/browser/webkit/development.log": "f01f3e7794fb90a67d62510a6ad40e2295d3e454e4b7239a5a92332064dfdcc4",
+    ".build-cache/source-qualification/packaged-matrix.log": "387175080f5514d1f2ff1c73199630e6b55a4962e19dbf812015fd5db486a29f"
+  },
+  "fullProductAccepted": false,
+  "assertionsRelaxed": false,
+  "paidRequests": 0,
+  "nextAction": "Investigate refresh request lifecycle with original assertion retained; remote fix validation requires explicit branch push/CI authorization. No root cause conclusion from classification alone."
+}
