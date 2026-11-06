@@ -118,10 +118,10 @@
       "cpu": "loongarch64",
       "status": "OPEN",
       "requiredToolchain": "Linux loongarch64交叉编译器、sysroot、libc/内核头文件",
-      "nextAction": "核上游逐文件构建证明或盘点目标SDK/工具链，再固定源构建和验证",
+      "nextAction": "运行gap-p1-loongarch-jna.yml：GCC14/sysroot/QEMU实际固定源构建与JNI/ffi探针；原包独立验后才集成",
       "blockers": [
-        "目标工具链/SDK或上游构建证明未确认",
-        "目标运行条件未确认；额外实体机器按用户指令跳过但不计运行通过"
+        "实际LoongArch64构建与加载证据待",
+        "统一候选装配及产品五目标完整验收待"
       ]
     },
     {

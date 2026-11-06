@@ -14,6 +14,7 @@ from evidence_run import run
 ROOT=Path(__file__).resolve().parents[1]
 REVISION='c366bc4fd0c50a30ac8d2475603ec564f6611462'
 TARGETS={
+ 'loongarch64':('loongarch64-linux-gnu','loongarch64',2,1,258,'loongarch64'),
  'x86':('i686-linux-gnu','i386',1,1,3,'i386'),
  'arm':('arm-linux-gnueabihf','arm',1,1,40,'arm'),
  'armel':('arm-linux-gnueabi','arm',1,1,40,'armel'),
@@ -33,6 +34,7 @@ def require_elf(raw,target):
  flags=struct.unpack_from(order+'I',raw,36 if width==1 else 48)[0]
  if (kind,actual)!=(3,machine):raise ValueError('ELF machine mismatch')
  if target in ['arm','armel'] and flags&0x600 != (0x400 if target=='arm' else 0x200):raise ValueError('ARM float ABI mismatch')
+ if target=='loongarch64' and (flags&7!=3 or flags&0xc0!=0x40):raise ValueError('LoongArch LP64D object ABI v1 required')
  if target=='ppc64le' and flags&3!=2:raise ValueError('PPC ELFv2 required')
  return dict(elfClass=width,endianness=endian,machine=actual,flags=flags)
 
@@ -50,6 +52,7 @@ def main():
  parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('target',choices=TARGETS);a=parser.parse_args()
  if os.environ.get('GITHUB_ACTIONS')!='true' or not os.environ.get('GITHUB_RUN_ID','').isdigit():raise ValueError('Dedicated CI required')
  target=a.target;prefix,emulator,_,_,_,arch=TARGETS[target]
+ compiler=prefix+('-gcc-14' if target=='loongarch64' else '-gcc')
  out=ROOT/'.build-cache/p1-linux-jna'/target;out.mkdir(parents=True,exist_ok=False)
  rid='p1-jna-'+os.environ['GITHUB_RUN_ID']+'-'+target
  report=dict(status='INCOMPLETE',target=target,runId=os.environ['GITHUB_RUN_ID'],
@@ -62,7 +65,7 @@ def main():
    if receipt.is_file():report['commands'].append(dict(name=name,sha256=stream_sha256(receipt)))
  try:
   command(['dpkg-query','-W','-f=${binary:Package}\t${Version}\t${Architecture}\n'],'host-packages')
-  command([prefix+'-gcc','--version'],'compiler');command(['qemu-'+emulator,'--version'],'emulator')
+  command([compiler,'--version'],'compiler');command(['qemu-'+emulator,'--version'],'emulator')
   command(['java','-version'],'jdk');command(['ant','-version'],'ant')
   source=out/'jna'
   command(['git','-c','http.https://github.com/.extraheader=','clone','--no-checkout','--filter=blob:none','https://github.com/java-native-access/jna.git',str(source)],'clone')
@@ -84,17 +87,17 @@ def main():
   if raw.count(anchor)!=2:raise ValueError('Pinned Makefile anchor mismatch')
   makefile.write_bytes(raw.replace(anchor,anchor+b' --disable-docs --disable-maintainer-mode'))
   report['buildConfig']={'crossPrefix':prefix,'arch':arch,'osPrefix':'linux-'+target,'libffiStatic':True,'hostX11HeaderFallback':'-idirafter /usr/include','noJawtDisabled':False}
-  command(['ant','-Dbuild-native=true','-Dos.prefix=linux-'+target,'-DARCH='+arch,'-DCC='+prefix+'-gcc',
+  command(['ant','-Dbuild-native=true','-Dos.prefix=linux-'+target,'-DARCH='+arch,'-DCC='+compiler,
    '-Dcflags_extra.native=-idirafter /usr/include',
    '-DEXTRA_MAKE_OPTS=HOST_CONFIG=--host='+prefix+' STRIP='+prefix+'-strip','native'],'build',source)
   library=compiled_library(source,target);identity=require_elf(library.read_bytes(),target);output=out/'libjnidispatch.so';output.write_bytes(library.read_bytes())
   command([prefix+'-readelf','-h','-d','-V','-Ws',str(output)],'elf-audit')
   ffi_headers=library.parent/'libffi/include';probe=out/'jni-probe';java=Path(os.environ['JAVA_HOME'])
   promotion=out/'callback-control'
-  command([prefix+'-gcc','-std=c11','-Wall','-Wextra','-Werror','-I'+str(ffi_headers),
+  command([compiler,'-std=c11','-Wall','-Wextra','-Werror','-I'+str(ffi_headers),
    str(ROOT/'scripts/probes/p1-jna-callback-control.c'),'-o',str(promotion)],'promotion-build')
   command(['qemu-'+emulator,'-L','/usr/'+prefix,str(promotion)],'promotion-control',timeout=30)
-  command([prefix+'-gcc','-std=c11','-Wall','-Wextra','-Werror','-O2','-I'+str(ffi_headers),'-I'+str(source/'build/headers'),
+  command([compiler,'-std=c11','-Wall','-Wextra','-Werror','-O2','-I'+str(ffi_headers),'-I'+str(source/'build/headers'),
    '-I'+str(java/'include'),'-I'+str(java/'include/linux'),str(ROOT/'scripts/probes/p1-jna.c'),'-ldl','-o',str(probe)],'probe-build')
   qemu=['qemu-'+emulator,'-L','/usr/'+prefix,str(probe)]
   command([*qemu,str(output),'present'],'candidate-probe',timeout=45)

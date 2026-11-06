@@ -30,6 +30,11 @@ class TargetIdentityTest(unittest.TestCase):
         for raw,target in [(self.raw(2,1,22),'s390x'),(self.raw(2,2,20),'ppc'),(self.raw(2,1,62),'mips64el')]:
             with self.assertRaises(ValueError):builder.require_elf(raw,target)
 
+    def test_loongarch_lp64d_and_object_abi(self):
+        builder.require_elf(self.raw(2,1,258,0x43),'loongarch64')
+        for raw in [self.raw(2,1,258,0x41),self.raw(2,1,258,3),self.raw(1,1,258,0x43),self.raw(2,2,258,0x43),self.raw(2,1,62,0x43)]:
+            with self.assertRaises(ValueError):builder.require_elf(raw,'loongarch64')
+
     def test_arm_hard_and_soft_float_cannot_mix(self):
         hard=self.raw(1,1,40,0x5000400);soft=self.raw(1,1,40,0x5000200)
         builder.require_elf(hard,'arm');builder.require_elf(soft,'armel')
