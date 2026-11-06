@@ -4,6 +4,8 @@
 
 ## 当前接续状态
 
+- 2026-11-06 P1 Windows ARM64目录helper新增固定pty4j b7554d6/MSVC原生Ninja构建入口；DLL和探针强制ARM64 PE32+，仅操作自有进程，核精确DLL路径/两目录读取/无效PID/卸载/缺库拒绝，源码前后全等。共享ARM门禁/空格batch3控制和本机C++语法检查过（语法检查非ARM运行认证），实际远端待；不增加正式32或候选35计数。 OpenBSD42158136194@e2仍libffi配置失败，显式gmake并关闭GCC目录探测/依赖跟踪，保留config.log，修正待。
+
 - 2026-11-06 SunOS首轮42157697276@959两侧VM/包安装/固定源libffi配置已运行，依赖跟踪片段初始化失败，未验收；选择configure提示的disable-dependency-tracking用于全新隔离构建并归档config.log。两本地控制通过，真实修正待。OpenBSD与Windows ARM的e2b9ee3修正轮已派发；35候选完整轮42157222835运行中。
 
 - 2026-11-06 P1故障继续定位：OpenBSD42157222861@a537已回传原构建日志，固定JNA头生成明确缺ggrep；增加GNU grep包，实际修正待。Windows ARM42157224796@a537已越过MSVC环境初始化/固定源准备，Ant因cmd批处理拆分OS=win32属性误识别win32目标；改直接调用已安装Ant Java launcher，保留精确参数与launcher SHA/版本回执。原构建/加载断言不弱化，本地ARM3/OpenBSD2控制过，来源计数不变。

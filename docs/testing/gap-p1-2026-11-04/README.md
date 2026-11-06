@@ -175,3 +175,11 @@ libffi选项见[固定3.4.4 configure.ac](https://github.com/libffi/libffi/blob/
 2026-11-06 SunOS首轮42157697276@959两侧VM/包安装/固定源libffi配置已运行，依赖跟踪片段初始化失败，未验收；选择configure提示的disable-dependency-tracking用于全新隔离构建并归档config.log。两本地控制通过，真实修正待。OpenBSD与Windows ARM的e2b9ee3修正轮已派发；35候选完整轮42157222835运行中。
 
 原包与原断言保持；关闭自动依赖跟踪不关闭任何功能或运行验证，只用于每次全新的源码构建。已保存七份失败作业的连接器解码日志到本地忽略缓存（LF规范化，非原始字节声明），以便核对各次失败阶段。
+
+## Windows ARM64目录helper入口
+
+2026-11-06 P1 Windows ARM64目录helper新增固定pty4j b7554d6/MSVC原生Ninja构建入口；DLL和探针强制ARM64 PE32+，仅操作自有进程，核精确DLL路径/两目录读取/无效PID/卸载/缺库拒绝，源码前后全等。共享ARM门禁/空格batch3控制和本机C++语法检查过（语法检查非ARM运行认证），实际远端待；不增加正式32或候选35计数。
+
+沿用上游原CMake/C++源码，不将其他架构运行算作ARM证据。自有探针完成后退出，由OS回收该进程资源；不声称修复原helper源码的任意进程兼容性或完整产品功能。
+
+OpenBSD42158136194@e2已越过ggrep头生成，libffi配置中Clang拒绝GCC专用print-multi-os-directory且depfiles初始化失败；下轮显式MAKE=gmake，并关闭dependency-tracking及multi-os-directory，归档config.log。仅全新构建配置，不放宽实际JNI/ffi回调验证。

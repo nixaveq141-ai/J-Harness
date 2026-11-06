@@ -74,10 +74,11 @@ def main():
   report['libffiBuildInputs']=helper.prepare_libffi(source,out)
   makefile=source/'native/Makefile';raw=makefile.read_bytes();anchor=b'FFI_CONFIG=--enable-static --disable-shared --with-pic=yes'
   if raw.count(anchor)!=2:raise ValueError('Pinned Makefile anchor mismatch')
-  makefile.write_bytes(raw.replace(anchor,anchor+b' --disable-docs --disable-maintainer-mode'))
-  report['buildConfig']={'arch':arch,'osPrefix':'openbsd-'+target,'compiler':compiler,'libffiStatic':True}
+  makefile.write_bytes(raw.replace(anchor,anchor+b' --disable-docs --disable-maintainer-mode --disable-dependency-tracking --disable-multi-os-directory'))
+  report['buildConfig']={'arch':arch,'osPrefix':'openbsd-'+target,'compiler':compiler,'libffiStatic':True,'configureMake':'gmake','libffiConfigureOptions':['--disable-docs','--disable-maintainer-mode','--disable-dependency-tracking','--disable-multi-os-directory']}
   options=['-Dmake=gmake','-Dos.prefix=openbsd-'+target,'-DARCH='+arch,'-DCC='+' '.join(compiler),'-Dcflags_extra.native=-I/usr/local/include']
   if target=='x86':options+=['-DEXTRA_MAKE_OPTS=HOST_CONFIG=--host=i386-unknown-openbsd']
+  os.environ['MAKE']='gmake'
   command(['ant','-Dbuild-native=true',*options,'native'],'build',source)
   library=compiled_library(source,target);identity=require_elf(library.read_bytes(),target);output=out/'libjnidispatch.so';output.write_bytes(library.read_bytes())
   command(['readelf','-h','-d','-Ws',str(output)],'elf-audit')
@@ -104,7 +105,10 @@ def main():
    limits=['C-level JNI primitives and real bundled ffi/closure only; no complete JVM loading/initIDs proof','No product replacement or full OS/CPE clearance','No claim of arbitrary OpenBSD release compatibility'])
  except Exception as error:
   report['failureType']=type(error).__name__;raise
- finally:atomic_write_json(out/'report.json',report)
+ finally:
+  config=out/'jna/build'/('native-openbsd-'+target)/'libffi/config.log'
+  if config.is_file():(out/'libffi-config.log').write_bytes(config.read_bytes());report['libffiConfigLogSha256']=stream_sha256(out/'libffi-config.log')
+  atomic_write_json(out/'report.json',report)
  print(report['status'])
 
 

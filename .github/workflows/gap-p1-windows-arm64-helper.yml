@@ -1,0 +1,34 @@
+name: P1 pinned Windows ARM64 pty4j directory helper
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/m1059-full-validation]
+    paths: [.github/workflows/gap-p1-windows-arm64-helper.yml]
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: windows-11-arm
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+          architecture: arm64
+      - run: python scripts/test-p1-windows-arm64-jna.py
+      - run: python scripts/build-p1-windows-arm64-helper.py
+      - name: Show bounded source or component failure
+        if: failure()
+        run: python -c "from pathlib import Path; p=Path('.build-cache/p1-windows-arm64-helper'); [(print(f.name),print(f.read_text(errors='replace')[-4096:])) for f in [p/'configure.log',p/'build.log',p/'probe-build.log',p/'candidate-probe.log'] if f.is_file()]"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: p1-windows-arm64-helper-source
+          include-hidden-files: true
+          retention-days: 90
+          path: |
+            .build-cache/p1-windows-arm64-helper/*.json
+            .build-cache/p1-windows-arm64-helper/*.log
+            .build-cache/p1-windows-arm64-helper/*.dll
+            .build-cache/p1-windows-arm64-helper/probe.exe
