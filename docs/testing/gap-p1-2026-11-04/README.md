@@ -169,3 +169,9 @@ libffi选项见[固定3.4.4 configure.ac](https://github.com/libffi/libffi/blob/
 ## OpenBSD与Windows ARM构建故障定位
 
 2026-11-06 P1故障继续定位：OpenBSD42157222861@a537已回传原构建日志，固定JNA头生成明确缺ggrep；增加GNU grep包，实际修正待。Windows ARM42157224796@a537已越过MSVC环境初始化/固定源准备，Ant因cmd批处理拆分OS=win32属性误识别win32目标；改直接调用已安装Ant Java launcher，保留精确参数与launcher SHA/版本回执。原构建/加载断言不弱化，本地ARM3/OpenBSD2控制过，来源计数不变。
+
+## Solaris首轮与构建配置修正
+
+2026-11-06 SunOS首轮42157697276@959两侧VM/包安装/固定源libffi配置已运行，依赖跟踪片段初始化失败，未验收；选择configure提示的disable-dependency-tracking用于全新隔离构建并归档config.log。两本地控制通过，真实修正待。OpenBSD与Windows ARM的e2b9ee3修正轮已派发；35候选完整轮42157222835运行中。
+
+原包与原断言保持；关闭自动依赖跟踪不关闭任何功能或运行验证，只用于每次全新的源码构建。已保存七份失败作业的连接器解码日志到本地忽略缓存（LF规范化，非原始字节声明），以便核对各次失败阶段。

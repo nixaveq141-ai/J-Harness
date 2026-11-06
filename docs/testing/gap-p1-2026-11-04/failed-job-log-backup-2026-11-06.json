@@ -1,0 +1,17 @@
+{
+  "status": "LOCAL_DECODED_LOGS_SHA256_CRC_VERIFIED_NOT_RAW_BYTES",
+  "normalization": "Connector-decoded job logs, CRLF normalized to LF by patch transport",
+  "path": ".build-cache/local-evidence-backups/2026-11-06/p1-failed-job-logs-normalized.zip",
+  "bytes": 315909,
+  "sha256": "db6f29d86375bada599e0108ba4dca32fe9757c79546e6c9d7e1e6b473aa93a5",
+  "members": {
+    ".build-cache/p1-original-job-logs/loongarch-42155339078.log": "2cb3ef4e1c35e45209c5fe2fd4f3ca92aa2fe0970bdcc7221d914dd0545a5513",
+    ".build-cache/p1-original-job-logs/openbsd-42154858512.log": "25ca8509d4dbb2b5545bbd19dc3318700284561e5c135d640b604e9680541e9f",
+    ".build-cache/p1-original-job-logs/openbsd-42155833996.log": "3617c05619401171952772266293493d7ea49c05cc59407cafcb50dcdb29d1a8",
+    ".build-cache/p1-original-job-logs/openbsd-42157222861.log": "7ef239ee9f8afee51ad2a7eca21e6c202db911c8602c882aff3374448a5881ee",
+    ".build-cache/p1-original-job-logs/sunos-x64-42157697276.log": "bc64813c6937831b3e56b6d4a579e57ef63468983fdbf87db0c4dbc0dc158152",
+    ".build-cache/p1-original-job-logs/winarm-42156312342.log": "f657799fc1230bf24688b0f68e4fa005066718a389af0724ea8338810add165d",
+    ".build-cache/p1-original-job-logs/winarm-42157224796.log": "c17a2be00b4a91717b5dde4ae429708c5e56a9e41c227b70d0e3b39188ee612e"
+  },
+  "paidRequests": 0
+}

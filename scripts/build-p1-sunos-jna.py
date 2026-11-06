@@ -74,8 +74,8 @@ def main():
   report['libffiBuildInputs']=helper.prepare_libffi(source,out)
   makefile=source/'native/Makefile';raw=makefile.read_bytes();anchor=b'FFI_CONFIG=--enable-static --disable-shared --with-pic=yes'
   if raw.count(anchor)!=2:raise ValueError('Pinned Makefile anchor mismatch')
-  makefile.write_bytes(raw.replace(anchor,anchor+b' --disable-docs --disable-maintainer-mode'))
-  report['buildConfig']={'arch':arch,'osPrefix':'sunos-'+target,'compiler':compiler,'libffiStatic':True}
+  makefile.write_bytes(raw.replace(anchor,anchor+b' --disable-docs --disable-maintainer-mode --disable-dependency-tracking'))
+  report['buildConfig']={'arch':arch,'osPrefix':'sunos-'+target,'compiler':compiler,'libffiStatic':True,'libffiConfigureOptions':['--disable-docs','--disable-maintainer-mode','--disable-dependency-tracking']}
   options=['-Dmake=/usr/gnu/bin/make','-Dos.prefix=sunos-'+target,'-DARCH='+arch,'-DCC='+' '.join(compiler),'-Dcflags_extra.native=-I/usr/include']
   options+=['-DEXTRA_MAKE_OPTS=OS=solaris HOST_CONFIG=--host='+('i386' if target=='x86' else 'x86_64')+'-pc-solaris2.11']
   command(['ant','-Dbuild-native=true',*options,'native'],'build',source)
@@ -104,7 +104,10 @@ def main():
    limits=['C-level JNI primitives and real bundled ffi/closure only; no complete JVM loading/initIDs proof','No product replacement or full OS/CPE clearance','No claim of arbitrary Solaris release compatibility'])
  except Exception as error:
   report['failureType']=type(error).__name__;raise
- finally:atomic_write_json(out/'report.json',report)
+ finally:
+  config=out/'jna/build'/('native-sunos-'+target)/'libffi/config.log'
+  if config.is_file():(out/'libffi-config.log').write_bytes(config.read_bytes());report['libffiConfigLogSha256']=stream_sha256(out/'libffi-config.log')
+  atomic_write_json(out/'report.json',report)
  print(report['status'])
 
 
