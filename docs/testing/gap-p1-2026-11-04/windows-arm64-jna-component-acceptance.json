@@ -1,0 +1,50 @@
+{
+  "status": "ARM64_JNA_SOURCE_COMPONENT_INDEPENDENTLY_VERIFIED_NOT_PRODUCT_ACCEPTANCE",
+  "runId": "42159389661",
+  "commit": "3e71dddc18b47e25a65a57f218a8f8eed6b91f03",
+  "artifact": {
+    "id": 13476915114,
+    "path": ".build-cache/p1-raw-42159389661/13476915114.zip",
+    "sha256": "db4f5a49634481c35575c4b0d1c9a3107d8ee5901b2ce3c2baf810697a10c03d",
+    "bytes": 2725748
+  },
+  "reportSha256": "c86d5189b62b0955546c5137caa902d0e08803ff31311e6b6e01b7cadef166ff",
+  "resource": "com/sun/jna/win32-aarch64/jnidispatch.dll",
+  "sourceRevision": "c366bc4fd0c50a30ac8d2475603ec564f6611462",
+  "sourceFiles": 1297,
+  "outputSha256": "7f377b196786af9e942a4f8789388c035c753daa7b9e127f80bc3cc1ea52d578",
+  "originalSha256": "b9d1479b9619b7ece4a36b6ae31365ffaf15a1355d4f6da02f8b5f09df2fa82f",
+  "probeSha256": "bc5cd600ff1097511b137a64011887e957556cc86f207e38e249f8316d6c1bf7",
+  "probeSourceSha256": "e52c56c0c7b95c6c729dd40531e28e1000103d267e3080c470e7386c53286cc0",
+  "commandReceiptSha256": {
+    "make": "d75efe4fb00bba6cf3ad46f5b06346352ca11bfc7d468303a2ac1fc758fa6665",
+    "jdk": "b782f4303a5e2c7687823716d4dffd21d4f8868a3e1a6b125521dd490c2dfb38",
+    "clone": "8d7303278b7e3fb5072525f0c93e1893defb12eb79a3781f0b3dc24bb576d7c8",
+    "checkout": "623f9a93001fbfc1514dd89f1bf81a306f61a3bfdf1814511222b55c9de7af02",
+    "ant": "d1d2dd932171f3f0952ac6cd7f03bba0c36517af606256d8da25f935e5c89c74",
+    "build": "e975e7642acc48dd68bdbb6c4c72d688e9a113ba6a674deae6e399c24831c104",
+    "pe-audit": "833b157e00fefa0b1282c80768e28bc622a10526c36cc78f9653657a2f76e323",
+    "probe-build": "8f114c0ed202cb1f8957ab172e965a318f0c020d9f1ef5ec1f8e6ab41e313d03",
+    "candidate-probe": "cb78417b7e47a32aee846bd534c2cdcc22d5b3a23f2f2e2e8be76071bb2650e4",
+    "missing-probe": "5798ec6a73a407002331e9231554ab21f1fe23d31e25ba029618a544a640045a",
+    "source-diff": "e7d530a527798c89b4272cac905bf3491e3dc5af82461b248f4e77c7e75ea3b3"
+  },
+  "hostGitInputs": 712,
+  "paidRequests": 0,
+  "productAccepted": false,
+  "libffiReleaseSha256": "d66c56ad259a82cf2a9dfc408b32bf5da52371500b84745f7fb8b645712df676",
+  "generatedHelperSha256": "506b98fd979eff158e0a83b534fad0ed1974c65ee9394026becef0410a67f142",
+  "pe": {
+    "machine": 43620,
+    "optionalHeaderMagic": 523
+  },
+  "probePe": {
+    "machine": 43620,
+    "optionalHeaderMagic": 523
+  },
+  "limits": [
+    "C JNI primitive validation only; no full Java application acceptance",
+    "Upstream Windows ARM64 ASMFN_OFF behavior retained",
+    "Not yet assembled into unified candidate"
+  ]
+}

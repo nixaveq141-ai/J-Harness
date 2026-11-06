@@ -1,7 +1,7 @@
 {
   "status": "P1_IN_PROGRESS_NOT_COMPLETE",
   "frozenP0Tasks": 36,
-  "independentlyVerifiedNewSourceComponents": 24,
+  "independentlyVerifiedNewSourceComponents": 25,
   "assembledCandidateReviewedCount": 35,
   "assembledCandidateUnresolvedCount": 15,
   "formalAcceptedRuntimeCommit": "a5376fca79263f6cd6366cd575b8e9ae25afd6e3",
@@ -342,13 +342,16 @@
       "coordinate": "net.java.dev.jna:jna:5.14.0",
       "os": "win32",
       "cpu": "aarch64",
-      "status": "OPEN",
+      "status": "COMPONENT_SOURCE_VERIFIED_NOT_ASSEMBLED_FULL_PRODUCT_PENDING",
       "requiredToolchain": "MSVC/Windows SDK aarch64；构建WinPTY/Console/helper所需依赖",
-      "nextAction": "核上游逐文件构建证明或盘点目标SDK/工具链，再固定源构建和验证",
+      "nextAction": "精确原包集成统一候选并完成五目标产品重验",
       "blockers": [
-        "目标工具链/SDK或上游构建证明未确认",
-        "目标运行条件未确认；额外实体机器按用户指令跳过但不计运行通过"
-      ]
+        "统一候选装配与完整产品回归待；仅C级JNI primitive，未认证完整Windows ARM Java应用"
+      ],
+      "candidateSha256": "7f377b196786af9e942a4f8789388c035c753daa7b9e127f80bc3cc1ea52d578",
+      "componentRunId": "42159389661",
+      "componentCommit": "3e71dddc18b47e25a65a57f218a8f8eed6b91f03",
+      "componentReceipt": "docs/testing/gap-p1-2026-11-04/windows-arm64-jna-component-acceptance.json"
     },
     {
       "taskId": "NATIVE-21",

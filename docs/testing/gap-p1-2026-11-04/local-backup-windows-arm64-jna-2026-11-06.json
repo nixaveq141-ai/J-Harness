@@ -1,0 +1,11 @@
+{
+  "status": "LOCAL_ALL_MEMBERS_SHA256_AND_CRC_VERIFIED",
+  "path": ".build-cache/local-evidence-backups/2026-11-06/p1-windows-arm64-jna.zip",
+  "bytes": 2734314,
+  "sha256": "521cef1f7db0836e7b7011736091f8cc4bbb410a837e57c3ca31b0e6cc29e224",
+  "members": {
+    ".build-cache/p1-raw-42159389661/13476915114.zip": "db4f5a49634481c35575c4b0d1c9a3107d8ee5901b2ce3c2baf810697a10c03d",
+    ".build-cache/audit-p1-arm-jna.py": "7c6e351609edefedbbd12efd2d05fbf197410890d4107cee3f188250a5c6976f",
+    "docs/testing/gap-p1-2026-11-04/windows-arm64-jna-component-acceptance.json": "1f86343b8c5a73afeaecfe7447fa7b71cb8ca65a9d8a7ca15fffed0d1851fcc8"
+  }
+}

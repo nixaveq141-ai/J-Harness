@@ -197,3 +197,9 @@ ARM64 Console构建使用已审相同7ff11ee terminal与fe1cde6 vcpkg固定源�
 2026-11-06 Solaris42158505948@543两侧原包独立验：1297固定JNA源码/侧与已审基线全等，15回执/侧、完整Git输入、libffi固定归档与生成输入、ELF及真实JNI/ffi call41 closure46/缺库拒绝过。原sunos-x86错误64位库存精确保留；新32位输出严格ELF32/machine3，未改原始证据。组件已验、尚未装配，不增加正式34/50；真正35候选启用修正025c8f9已推送，完整新轮待。持续目标已恢复active。
 
 详见[sunos-jna-components-acceptance.json](sunos-jna-components-acceptance.json)。本阶段关闭这两项的组件构建/ABI证据缺口，正式来源门槛仍需统一候选完整产品验收。
+
+## ARM64 JNA组件独立验收
+
+2026-11-06 ARM64 JNA42159389661@3e71原包独立核验通过：1297固定源与基线全等、11回执/712宿主Git输入、固定libffi归档及生成输入、MSVC ARM64选项、DLL/探针ARM64 PE、实际JNI六sizeof/malloc/free/精确加载/卸载与缺库拒绝。上游ASMFN_OFF行为保留，不宣称ffi回调或完整Java验收；组件待集成，正式34/50不变。加Solaris两项/helper共四项已审待装配，下一候选目标39。
+
+证据：[windows-arm64-jna-component-acceptance.json](windows-arm64-jna-component-acceptance.json)。ARM64 C ABI实际通过不能替代尚未执行的统一候选回归；原失败与source gate保持。
