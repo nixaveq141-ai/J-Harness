@@ -2,8 +2,8 @@
   "status": "P1_IN_PROGRESS_NOT_COMPLETE",
   "frozenP0Tasks": 36,
   "independentlyVerifiedNewSourceComponents": 18,
-  "assembledCandidateReviewedCount": 30,
-  "assembledCandidateUnresolvedCount": 20,
+  "assembledCandidateReviewedCount": 32,
+  "assembledCandidateUnresolvedCount": 18,
   "formalAcceptedRuntimeCommit": "7e2978e5a085e2307de8bfcbf2a0b0e4bfed12bd",
   "formalAcceptedRuntimeReviewedCount": 30,
   "formalAcceptedRuntimeUnresolvedCount": 20,
@@ -358,11 +358,11 @@
       "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
       "os": "freebsd",
       "cpu": "x86-64",
-      "status": "COMPONENT_SOURCE_VERIFIED_PRODUCT_INTEGRATION_PENDING",
+      "status": "COMPONENT_SOURCE_VERIFIED_AND_ASSEMBLED_FULL_PRODUCT_PENDING",
       "requiredToolchain": "freebsd目标SDK/系统头文件与原生或交叉编译器",
-      "nextAction": "将两个固定FreeBSD组件集成下一统一候选并完成适用完整回归",
+      "nextAction": "统一32资源候选五目标完整CI和原包独立复核",
       "blockers": [
-        "尚未统一候选集成和完整产品重验"
+        "完整候选验收待；FreeBSD完整Java应用未认证"
       ],
       "componentRunId": "42003119496",
       "componentCommit": "40610c294c54dd2a53526a0da8c623cdd7c0d562",
@@ -375,11 +375,11 @@
       "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
       "os": "freebsd",
       "cpu": "x86",
-      "status": "COMPONENT_SOURCE_VERIFIED_PRODUCT_INTEGRATION_PENDING",
+      "status": "COMPONENT_SOURCE_VERIFIED_AND_ASSEMBLED_FULL_PRODUCT_PENDING",
       "requiredToolchain": "freebsd目标SDK/系统头文件与原生或交叉编译器",
-      "nextAction": "将两个固定FreeBSD组件集成下一统一候选并完成适用完整回归",
+      "nextAction": "统一32资源候选五目标完整CI和原包独立复核",
       "blockers": [
-        "尚未统一候选集成和完整产品重验"
+        "完整候选验收待；FreeBSD完整Java应用未认证"
       ],
       "componentRunId": "42003119496",
       "componentCommit": "40610c294c54dd2a53526a0da8c623cdd7c0d562",

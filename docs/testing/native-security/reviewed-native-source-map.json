@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "scope": "Thirty source replacements independently accepted in identical-runtime five-target full qualification. Twenty original resources remain unresolved. Two FreeBSD PTY components verified separately, not integrated. No full OS/CPE clearance.",
+  "scope": "Thirty replacements accepted in7e2978e full runtime; two FreeBSD components independently reviewed and staged in32-resource candidate, full qualification pending. Eighteen original resources unresolved; no full OS/CPE clearance.",
   "resources": {
     "com/sun/jna/win32-x86-64/jnidispatch.dll": {
       "sha256": "c88e200b240dfa54c5b852a335b28683e64a074d30ceee7c17ffc282058891a2",
@@ -358,6 +358,30 @@
         "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/windows-x86-pty-components-acceptance.json",
         "scope": "Actual x86 WinPTY DLL and owned agent lifecycle; complete x86 JVM/Java not certified"
       }
+    },
+    "resources/com/pty4j/native/freebsd/x86-64/libpty.so": {
+      "sha256": "2bf0fb6af39b5d7433fed100c21f0027ccabb129961cdb90d9ff04f400c41b30",
+      "origin": {
+        "sourceBuildRun": "42003119496",
+        "sourceBuildCommit": "40610c294c54dd2a53526a0da8c623cdd7c0d562",
+        "sourceRevision": "b7554d649f6374183040e6554942b6d5b028b5e5",
+        "componentProbeRun": "42003119496",
+        "componentReportSha256": "6be56d29825fe25de7986fa57c67712590b56bbe12a1e02354d54748d1653868",
+        "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/freebsd-x64-dual-components-acceptance.json",
+        "scope": "FreeBSD VM native PTY and child exchange; complete FreeBSD Java application not certified"
+      }
+    },
+    "resources/com/pty4j/native/freebsd/x86/libpty.so": {
+      "sha256": "3bcfb40e936480de341bd775c440170973e8f03bd5de5fdf9f7ce3518f9696aa",
+      "origin": {
+        "sourceBuildRun": "42003119496",
+        "sourceBuildCommit": "40610c294c54dd2a53526a0da8c623cdd7c0d562",
+        "sourceRevision": "b7554d649f6374183040e6554942b6d5b028b5e5",
+        "componentProbeRun": "42003119496",
+        "componentReportSha256": "d043bd4b1588a8638fa93dda9e532f40fd721b8c1728b8d6a8ee21d9f8a9dc93",
+        "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/freebsd-x86-dual-components-acceptance.json",
+        "scope": "FreeBSD VM native PTY and child exchange; complete FreeBSD Java application not certified"
+      }
     }
   },
   "fullRuntimeQualification": {
@@ -366,5 +390,12 @@
     "runtimeJarSha256": "06f0c2362ee87533688013d2c07c78073f3dc670ae7727e14d3ae2fe40c3fb2f",
     "receiptSha256": "0c41ab87db4469af3deb77fde3482c86af5e63b7e9ed472f2e80c20c40ea6aeb",
     "reviewedResourceCount": 30
+  },
+  "pendingCandidateQualification": {
+    "reviewedResourceCount": 32,
+    "status": "FULL_PRODUCT_QUALIFICATION_PENDING",
+    "componentRunIds": [
+      "42003119496"
+    ]
   }
 }

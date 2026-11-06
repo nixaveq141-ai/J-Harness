@@ -1,0 +1,424 @@
+{
+  "runtimeJarSha256": "fb5f5bbe9d7e8582566d3fb05c6e302e7dda27b012f672462e54c8905c976871",
+  "baselineJarSha256": "b167c832240aa39ba44cda69123f43038f15e832fd50234096657810faf4213e",
+  "preservedEntries": 4506,
+  "allNativeReplacements": {
+    "com/sun/jna/win32-x86-64/jnidispatch.dll": {
+      "sha256": "c88e200b240dfa54c5b852a335b28683e64a074d30ceee7c17ffc282058891a2",
+      "origin": {
+        "qualificationRun": "41266807712",
+        "qualificationCommit": "f32a2e6cc88ed0b583876cb073962d5d50a87f05",
+        "acceptedRuntimeJarSha256": "fe32f9eaa19f7944782110157d9aa2663c62f21b3278c61494338b17bfdf72cd",
+        "source": {
+          "runId": "40998915552"
+        }
+      }
+    },
+    "resources/com/pty4j/native/win/x86-64/OpenConsole.exe": {
+      "sha256": "6c065dc55dce7cff61f2cfb157df5668d4421996451fdb6ae7277cd2c42b3fad",
+      "origin": {
+        "qualificationRun": "41266807712",
+        "qualificationCommit": "f32a2e6cc88ed0b583876cb073962d5d50a87f05",
+        "acceptedRuntimeJarSha256": "fe32f9eaa19f7944782110157d9aa2663c62f21b3278c61494338b17bfdf72cd",
+        "source": {
+          "runId": "41179155433"
+        }
+      }
+    },
+    "resources/com/pty4j/native/win/x86-64/conpty.dll": {
+      "sha256": "2f013656ebdc935e184f9b50cfb09875becbfd9425bb1169a66fd031367ef135",
+      "origin": {
+        "qualificationRun": "41266807712",
+        "qualificationCommit": "f32a2e6cc88ed0b583876cb073962d5d50a87f05",
+        "acceptedRuntimeJarSha256": "fe32f9eaa19f7944782110157d9aa2663c62f21b3278c61494338b17bfdf72cd",
+        "source": {
+          "runId": "41179155433"
+        }
+      }
+    },
+    "resources/com/pty4j/native/win/x86-64/win-helper.dll": {
+      "sha256": "edc8a0aa728126f875bed4b02bdf0de2c76d99b25ff3e0b7ac6d1d42512e617f",
+      "origin": {
+        "qualificationRun": "41266807712",
+        "qualificationCommit": "f32a2e6cc88ed0b583876cb073962d5d50a87f05",
+        "acceptedRuntimeJarSha256": "fe32f9eaa19f7944782110157d9aa2663c62f21b3278c61494338b17bfdf72cd",
+        "source": {
+          "runId": "41030432860"
+        }
+      }
+    },
+    "resources/com/pty4j/native/win/x86-64/winpty-agent.exe": {
+      "sha256": "aebed1cca9030bcb6771ce2b40cbbfa4a1de9ad96acb4dd4ca4ca6da24a02c1c",
+      "origin": {
+        "qualificationRun": "41266807712",
+        "qualificationCommit": "f32a2e6cc88ed0b583876cb073962d5d50a87f05",
+        "acceptedRuntimeJarSha256": "fe32f9eaa19f7944782110157d9aa2663c62f21b3278c61494338b17bfdf72cd",
+        "source": {
+          "runId": "41030432860"
+        }
+      }
+    },
+    "resources/com/pty4j/native/win/x86-64/winpty.dll": {
+      "sha256": "013db340ce5e3417b6821a81336965367f88bfd197ddbb7eb4f6e3302fdbb69c",
+      "origin": {
+        "qualificationRun": "41266807712",
+        "qualificationCommit": "f32a2e6cc88ed0b583876cb073962d5d50a87f05",
+        "acceptedRuntimeJarSha256": "fe32f9eaa19f7944782110157d9aa2663c62f21b3278c61494338b17bfdf72cd",
+        "source": {
+          "runId": "41030432860"
+        }
+      }
+    },
+    "com/sun/jna/linux-x86-64/libjnidispatch.so": {
+      "sha256": "c41be9a02e2648c7ee6bf67a0e44575d97862db362f7294cd20a26c4b43c8cec",
+      "origin": {
+        "qualificationRun": "41268207915",
+        "qualificationCommit": "99ad72f376be21536d36ee929dbe4d61cbcf0a9e",
+        "acceptedRuntimeJarSha256": "38f5eb58c6c6b7d2bd1e6097252afc96f6498c124c8e3954064c1973736f84c4",
+        "source": {
+          "commit": "a2dc791bae10addc3b53b3d951b94db897ccc265",
+          "runId": "40995618881"
+        }
+      }
+    },
+    "resources/com/pty4j/native/linux/x86-64/libpty.so": {
+      "sha256": "42127d2ce30c1bd38f3b6f4f71634c7656c6cce7eb2b2d0ed8a478a16a577b5d",
+      "origin": {
+        "qualificationRun": "41268207915",
+        "qualificationCommit": "99ad72f376be21536d36ee929dbe4d61cbcf0a9e",
+        "acceptedRuntimeJarSha256": "38f5eb58c6c6b7d2bd1e6097252afc96f6498c124c8e3954064c1973736f84c4",
+        "source": {
+          "commit": "a2dc791bae10addc3b53b3d951b94db897ccc265",
+          "runId": "40995618881"
+        }
+      }
+    },
+    "com/sun/jna/darwin-aarch64/libjnidispatch.jnilib": {
+      "sha256": "ebd9fd7c720728ddd3c515f5f96ba6c3a7ce06f20c1d0e4a8eaf63e54341f357",
+      "origin": {
+        "qualificationRun": "41268207915",
+        "qualificationCommit": "99ad72f376be21536d36ee929dbe4d61cbcf0a9e",
+        "acceptedRuntimeJarSha256": "88b11e7ff3e19bfe09313072d5d082eba7d2a4b976b7b0c93e5e14df904f897d",
+        "source": {
+          "commit": "3571d2269895644e9888963fbf54a4cf101c9597",
+          "runId": "40998915552"
+        }
+      }
+    },
+    "resources/com/pty4j/native/darwin/libpty.dylib": {
+      "sha256": "db26759cc11b61585dc7fabbf32e4074f7c511f94051a9cb10160b8700b75766",
+      "origin": {
+        "qualificationRun": "41268207915",
+        "qualificationCommit": "99ad72f376be21536d36ee929dbe4d61cbcf0a9e",
+        "acceptedRuntimeJarSha256": "88b11e7ff3e19bfe09313072d5d082eba7d2a4b976b7b0c93e5e14df904f897d",
+        "source": {
+          "commit": "3571d2269895644e9888963fbf54a4cf101c9597",
+          "runId": "40998915552"
+        }
+      }
+    },
+    "resources/com/pty4j/native/darwin/pty4j-unix-spawn-helper": {
+      "sha256": "99dc2da73d03f94efef5d7988f0705551805f2c4e25d7cf4f11ee3e4c80f2e10",
+      "origin": {
+        "qualificationRun": "41268207915",
+        "qualificationCommit": "99ad72f376be21536d36ee929dbe4d61cbcf0a9e",
+        "acceptedRuntimeJarSha256": "88b11e7ff3e19bfe09313072d5d082eba7d2a4b976b7b0c93e5e14df904f897d",
+        "source": {
+          "commit": "3571d2269895644e9888963fbf54a4cf101c9597",
+          "runId": "40998915552"
+        }
+      }
+    },
+    "resources/com/pty4j/native/linux/aarch64/libpty.so": {
+      "sha256": "21a536f3802aa8bb3f003d99103c15850bf25cbce500746f97743c99b6b0f950",
+      "origin": {
+        "sourceBuildRun": "41285899341",
+        "sourceBuildCommit": "130c8aba478d189d435fa385b576d6c3f893dc5f",
+        "componentLoadRun": "41286273580",
+        "componentLoadCommit": "c5d461d1639f6fa13903695ecab060b912e893d6",
+        "sourceReportSha256": "296f832f8b97fefc80a55aafb0bda875e11fd829068f1237bfa69d12c31cc8bc"
+      }
+    },
+    "com/sun/jna/linux-aarch64/libjnidispatch.so": {
+      "sha256": "e76ac388ef77c25290a1dc57be1929c67be692a5114bed11ab5cd13a9746ffbb",
+      "origin": {
+        "sourceBuildRun": "41285899341",
+        "sourceBuildCommit": "130c8aba478d189d435fa385b576d6c3f893dc5f",
+        "componentLoadRun": "41286273580",
+        "componentLoadCommit": "c5d461d1639f6fa13903695ecab060b912e893d6",
+        "sourceReportSha256": "296f832f8b97fefc80a55aafb0bda875e11fd829068f1237bfa69d12c31cc8bc"
+      }
+    },
+    "com/sun/jna/darwin-x86-64/libjnidispatch.jnilib": {
+      "sha256": "651ae8ae99736877ce0f6248a8768509c44746aecb344da232518654dc8de276",
+      "origin": {
+        "sourceBuildRun": "41285899341",
+        "sourceBuildCommit": "130c8aba478d189d435fa385b576d6c3f893dc5f",
+        "componentLoadRun": "41286273580",
+        "componentLoadCommit": "c5d461d1639f6fa13903695ecab060b912e893d6",
+        "sourceReportSha256": "84b281cf4d8e39d71f0faa47034a306d3dbbd6c86876674270e40708a3932cea"
+      }
+    },
+    "resources/com/pty4j/native/linux/ppc64le/libpty.so": {
+      "sha256": "c3b8e7e08ca1657d7557baefe479532fd2089a573b0d550799b8dc85f90c0e0b",
+      "origin": {
+        "sourceBuildRun": "41823433458",
+        "sourceBuildCommit": "1c4cc6da5fd62d6f23c0459036cd9b560403b8b7",
+        "sourceRevision": "b7554d649f6374183040e6554942b6d5b028b5e5",
+        "componentProbeRun": "41823433458",
+        "componentReportSha256": "3844b845b8dad22599af11980c4b8f693834a62de1efd9335da1d88175963538",
+        "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/components-acceptance.json",
+        "scope": "QEMU native component ABI/interaction; target Java product not certified"
+      }
+    },
+    "resources/com/pty4j/native/linux/riscv64/libpty.so": {
+      "sha256": "40b774439860e413d35bb9f09f6eb24a852373f821493bd5af30a8d525bb29b4",
+      "origin": {
+        "sourceBuildRun": "41823433458",
+        "sourceBuildCommit": "1c4cc6da5fd62d6f23c0459036cd9b560403b8b7",
+        "sourceRevision": "b7554d649f6374183040e6554942b6d5b028b5e5",
+        "componentProbeRun": "41823433458",
+        "componentReportSha256": "974a07484c12b0deca1abe5b11e17e7587ff21a6d283b47873777359db19bc65",
+        "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/components-acceptance.json",
+        "scope": "QEMU native component ABI/interaction; target Java product not certified"
+      }
+    },
+    "resources/com/pty4j/native/linux/arm/libpty.so": {
+      "sha256": "f93032e5631ce7cff263b4ffbaebff48b0d6bf0f9b921234b66acfa440bc77d7",
+      "origin": {
+        "sourceBuildRun": "41823433458",
+        "sourceBuildCommit": "1c4cc6da5fd62d6f23c0459036cd9b560403b8b7",
+        "sourceRevision": "b7554d649f6374183040e6554942b6d5b028b5e5",
+        "componentProbeRun": "41823433458",
+        "componentReportSha256": "2d439fe0642b0dab8f492c89865df2994ab450984be4f060ec08800b7395ec7d",
+        "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/components-acceptance.json",
+        "scope": "QEMU native component ABI/interaction; target Java product not certified"
+      }
+    },
+    "resources/com/pty4j/native/linux/mips64el/libpty.so": {
+      "sha256": "d97db322f338bd35a58d4e4683df4b08830d048e7269367970a57a56120a80b4",
+      "origin": {
+        "sourceBuildRun": "41823433458",
+        "sourceBuildCommit": "1c4cc6da5fd62d6f23c0459036cd9b560403b8b7",
+        "sourceRevision": "b7554d649f6374183040e6554942b6d5b028b5e5",
+        "componentProbeRun": "41823433458",
+        "componentReportSha256": "62b70c94665eea88a2db47a6f3f40f1027fd74ef91f1867b840f0ee4da9dc9f3",
+        "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/components-acceptance.json",
+        "scope": "QEMU native component ABI/interaction; target Java product not certified"
+      }
+    },
+    "resources/com/pty4j/native/linux/x86/libpty.so": {
+      "sha256": "5dc002dc2f92683d4e235b4904667b321e3a04a6469d25d83c5c887a4c10ab74",
+      "origin": {
+        "sourceBuildRun": "41823433458",
+        "sourceBuildCommit": "1c4cc6da5fd62d6f23c0459036cd9b560403b8b7",
+        "sourceRevision": "b7554d649f6374183040e6554942b6d5b028b5e5",
+        "componentProbeRun": "41823433458",
+        "componentReportSha256": "f9ec453a760cf43220f2897273593d471b429c56700a4d658d716001b95387e7",
+        "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/components-acceptance.json",
+        "scope": "QEMU native component ABI/interaction; target Java product not certified"
+      }
+    },
+    "com/sun/jna/linux-arm/libjnidispatch.so": {
+      "sha256": "cf97421daabc0372c309a732b5fbdbf77163b9b9ab7d1574349cdb4f5707558c",
+      "origin": {
+        "sourceBuildRun": "41830641417",
+        "sourceBuildCommit": "8ad5356513e63756298e8eb4d3e697ba72cf303f",
+        "sourceRevision": "c366bc4fd0c50a30ac8d2475603ec564f6611462",
+        "componentProbeRun": "41830641417",
+        "componentReportSha256": "71c95faa6890c11ee0acdf2e9d1c8637227aa0b3e56c1eec6e8743e6f8f86e0d",
+        "libffiReleaseSha256": "d66c56ad259a82cf2a9dfc408b32bf5da52371500b84745f7fb8b645712df676",
+        "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/jna-components-acceptance.json",
+        "scope": "QEMU C-level JNI primitives and real libffi call/closure; complete target JVM/Java not certified"
+      }
+    },
+    "com/sun/jna/linux-ppc64le/libjnidispatch.so": {
+      "sha256": "91927cdce2e5befd4b72679635f9714f3f0aa217e16d0e41c336b3a285b3cbfb",
+      "origin": {
+        "sourceBuildRun": "41830641417",
+        "sourceBuildCommit": "8ad5356513e63756298e8eb4d3e697ba72cf303f",
+        "sourceRevision": "c366bc4fd0c50a30ac8d2475603ec564f6611462",
+        "componentProbeRun": "41830641417",
+        "componentReportSha256": "5217aa059dfb60318f02cea6922aedcdf40a1320aee2243ad68003698743c217",
+        "libffiReleaseSha256": "d66c56ad259a82cf2a9dfc408b32bf5da52371500b84745f7fb8b645712df676",
+        "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/jna-components-acceptance.json",
+        "scope": "QEMU C-level JNI primitives and real libffi call/closure; complete target JVM/Java not certified"
+      }
+    },
+    "com/sun/jna/linux-ppc/libjnidispatch.so": {
+      "sha256": "f85858b03b58f53b1dac83843c364e51be436decde2b418ae973be379f5e8b6e",
+      "origin": {
+        "sourceBuildRun": "41830641417",
+        "sourceBuildCommit": "8ad5356513e63756298e8eb4d3e697ba72cf303f",
+        "sourceRevision": "c366bc4fd0c50a30ac8d2475603ec564f6611462",
+        "componentProbeRun": "41830641417",
+        "componentReportSha256": "9d3ea3e72a10e0c015723cc48b701209eb3de6b5fa10fb53ebd9583194be8722",
+        "libffiReleaseSha256": "d66c56ad259a82cf2a9dfc408b32bf5da52371500b84745f7fb8b645712df676",
+        "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/jna-components-acceptance.json",
+        "scope": "QEMU C-level JNI primitives and real libffi call/closure; complete target JVM/Java not certified"
+      }
+    },
+    "com/sun/jna/linux-riscv64/libjnidispatch.so": {
+      "sha256": "fe4b909479d304da5911fbf848e458e42b7b9f84a7c06c997cae70e2d2b4e79b",
+      "origin": {
+        "sourceBuildRun": "41830641417",
+        "sourceBuildCommit": "8ad5356513e63756298e8eb4d3e697ba72cf303f",
+        "sourceRevision": "c366bc4fd0c50a30ac8d2475603ec564f6611462",
+        "componentProbeRun": "41830641417",
+        "componentReportSha256": "ad410d9db14028bb032d9c323d9b19c38f7dda9bdb4952fd5f2b488b8a55d8e9",
+        "libffiReleaseSha256": "d66c56ad259a82cf2a9dfc408b32bf5da52371500b84745f7fb8b645712df676",
+        "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/jna-components-acceptance.json",
+        "scope": "QEMU C-level JNI primitives and real libffi call/closure; complete target JVM/Java not certified"
+      }
+    },
+    "com/sun/jna/linux-x86/libjnidispatch.so": {
+      "sha256": "f311048c77c8cbfaf90c146cd1aadc1cbcdff1490839e0c8e1ea8ff3363d1d36",
+      "origin": {
+        "sourceBuildRun": "41830641417",
+        "sourceBuildCommit": "8ad5356513e63756298e8eb4d3e697ba72cf303f",
+        "sourceRevision": "c366bc4fd0c50a30ac8d2475603ec564f6611462",
+        "componentProbeRun": "41830641417",
+        "componentReportSha256": "60b996b74d1d53afc62c4e2ac6ce3ed9796ec244dbd90be1f07032f599af48f3",
+        "libffiReleaseSha256": "d66c56ad259a82cf2a9dfc408b32bf5da52371500b84745f7fb8b645712df676",
+        "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/jna-components-acceptance.json",
+        "scope": "QEMU C-level JNI primitives and real libffi call/closure; complete target JVM/Java not certified"
+      }
+    },
+    "com/sun/jna/linux-mips64el/libjnidispatch.so": {
+      "sha256": "aa86a21a946f116340a4c6b3ff98836e9de2a89c67cd50a3805ec296dedc8112",
+      "origin": {
+        "sourceBuildRun": "41830641417",
+        "sourceBuildCommit": "8ad5356513e63756298e8eb4d3e697ba72cf303f",
+        "sourceRevision": "c366bc4fd0c50a30ac8d2475603ec564f6611462",
+        "componentProbeRun": "41830641417",
+        "componentReportSha256": "1805d0248c07af88648f980d3eafcc89cc7fe5556a665d963927e8fcff99c0fb",
+        "libffiReleaseSha256": "d66c56ad259a82cf2a9dfc408b32bf5da52371500b84745f7fb8b645712df676",
+        "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/jna-components-acceptance.json",
+        "scope": "QEMU C-level JNI primitives and real libffi call/closure; complete target JVM/Java not certified"
+      }
+    },
+    "com/sun/jna/linux-armel/libjnidispatch.so": {
+      "sha256": "954e1b5d9b5d4dd1823bccc505e58e56e9fabdcfefb96ccbaf0cbeb69ebf35b5",
+      "origin": {
+        "sourceBuildRun": "41830641417",
+        "sourceBuildCommit": "8ad5356513e63756298e8eb4d3e697ba72cf303f",
+        "sourceRevision": "c366bc4fd0c50a30ac8d2475603ec564f6611462",
+        "componentProbeRun": "41830641417",
+        "componentReportSha256": "66c5b27b6d7aaf3ef4619864ec52fa285a9bb85b2283688911c08eb5148ae2fc",
+        "libffiReleaseSha256": "d66c56ad259a82cf2a9dfc408b32bf5da52371500b84745f7fb8b645712df676",
+        "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/jna-components-acceptance.json",
+        "scope": "QEMU C-level JNI primitives and real libffi call/closure; complete target JVM/Java not certified"
+      }
+    },
+    "com/sun/jna/linux-s390x/libjnidispatch.so": {
+      "sha256": "d5872cd82035b0a4080bb6292a4ca0c6e20726a411d823d000866f620089b2d6",
+      "origin": {
+        "sourceBuildRun": "41830641417",
+        "sourceBuildCommit": "8ad5356513e63756298e8eb4d3e697ba72cf303f",
+        "sourceRevision": "c366bc4fd0c50a30ac8d2475603ec564f6611462",
+        "componentProbeRun": "41830641417",
+        "componentReportSha256": "db001b3085d8181c52690e6cd711c7538ca0d1ce479c1c907989b6a76ecc5cf4",
+        "libffiReleaseSha256": "d66c56ad259a82cf2a9dfc408b32bf5da52371500b84745f7fb8b645712df676",
+        "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/jna-components-acceptance.json",
+        "scope": "QEMU C-level JNI primitives and real libffi call/closure; complete target JVM/Java not certified"
+      }
+    },
+    "com/sun/jna/win32-x86/jnidispatch.dll": {
+      "sha256": "81d86d8fcc433b709cec0a05d53b7561c7e3a0ad47726328252439cd0c3d7152",
+      "origin": {
+        "sourceBuildRun": "41992679907",
+        "sourceBuildCommit": "e6d3091a56e2551fc864afaefc8b74a3e7e3cf2a",
+        "sourceRevision": "c366bc4fd0c50a30ac8d2475603ec564f6611462",
+        "componentProbeRun": "41992679907",
+        "componentReportSha256": "724ed662ca84577eeb576a1b4c0d0f96759e1154d3f509a84ffa8cac5ea4c0bb",
+        "libffiReleaseSha256": "d66c56ad259a82cf2a9dfc408b32bf5da52371500b84745f7fb8b645712df676",
+        "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/windows-x86-components-acceptance.json",
+        "scope": "Actual 32-bit C JNI primitives; complete x86 JVM/Java not certified"
+      }
+    },
+    "resources/com/pty4j/native/win/x86/winpty-agent.exe": {
+      "sha256": "07e4cda4231c6e26a69f32dfbc9d52059a138dcf289ecc3f1e074bbe4f34e6fd",
+      "origin": {
+        "sourceBuildRun": "41998518872",
+        "sourceBuildCommit": "7c8c9e78755675cfbcad6bf20d2182f78c13e539",
+        "sourceRevision": "7e59fe2d09adf0fa2aa606492e7ca98efbc5184e",
+        "componentProbeRun": "41998518872",
+        "componentReportSha256": "e12bcafe9a28c962e8086ec5993973be71f57e699f2174f505eb66f2a6fb4faf",
+        "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/windows-x86-pty-components-acceptance.json",
+        "scope": "Actual x86 WinPTY DLL and owned agent lifecycle; complete x86 JVM/Java not certified"
+      }
+    },
+    "resources/com/pty4j/native/win/x86/winpty.dll": {
+      "sha256": "7da4af8ef1914797dbf87fad3199ddf9c4e3a40888adf98ed12eefc2d8b6d7d8",
+      "origin": {
+        "sourceBuildRun": "41998518872",
+        "sourceBuildCommit": "7c8c9e78755675cfbcad6bf20d2182f78c13e539",
+        "sourceRevision": "7e59fe2d09adf0fa2aa606492e7ca98efbc5184e",
+        "componentProbeRun": "41998518872",
+        "componentReportSha256": "e12bcafe9a28c962e8086ec5993973be71f57e699f2174f505eb66f2a6fb4faf",
+        "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/windows-x86-pty-components-acceptance.json",
+        "scope": "Actual x86 WinPTY DLL and owned agent lifecycle; complete x86 JVM/Java not certified"
+      }
+    },
+    "resources/com/pty4j/native/freebsd/x86-64/libpty.so": {
+      "sha256": "2bf0fb6af39b5d7433fed100c21f0027ccabb129961cdb90d9ff04f400c41b30",
+      "origin": {
+        "sourceBuildRun": "42003119496",
+        "sourceBuildCommit": "40610c294c54dd2a53526a0da8c623cdd7c0d562",
+        "sourceRevision": "b7554d649f6374183040e6554942b6d5b028b5e5",
+        "componentProbeRun": "42003119496",
+        "componentReportSha256": "6be56d29825fe25de7986fa57c67712590b56bbe12a1e02354d54748d1653868",
+        "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/freebsd-x64-dual-components-acceptance.json",
+        "scope": "FreeBSD VM native PTY and child exchange; complete FreeBSD Java application not certified"
+      }
+    },
+    "resources/com/pty4j/native/freebsd/x86/libpty.so": {
+      "sha256": "3bcfb40e936480de341bd775c440170973e8f03bd5de5fdf9f7ce3518f9696aa",
+      "origin": {
+        "sourceBuildRun": "42003119496",
+        "sourceBuildCommit": "40610c294c54dd2a53526a0da8c623cdd7c0d562",
+        "sourceRevision": "b7554d649f6374183040e6554942b6d5b028b5e5",
+        "componentProbeRun": "42003119496",
+        "componentReportSha256": "d043bd4b1588a8638fa93dda9e532f40fd721b8c1728b8d6a8ee21d9f8a9dc93",
+        "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/freebsd-x86-dual-components-acceptance.json",
+        "scope": "FreeBSD VM native PTY and child exchange; complete FreeBSD Java application not certified"
+      }
+    }
+  },
+  "retainedOriginalNativeResources": [
+    "com/sun/jna/aix-ppc/libjnidispatch.a",
+    "com/sun/jna/aix-ppc64/libjnidispatch.a",
+    "com/sun/jna/freebsd-x86-64/libjnidispatch.so",
+    "com/sun/jna/freebsd-x86/libjnidispatch.so",
+    "com/sun/jna/linux-loongarch64/libjnidispatch.so",
+    "com/sun/jna/openbsd-x86-64/libjnidispatch.so",
+    "com/sun/jna/openbsd-x86/libjnidispatch.so",
+    "com/sun/jna/sunos-sparc/libjnidispatch.so",
+    "com/sun/jna/sunos-sparcv9/libjnidispatch.so",
+    "com/sun/jna/sunos-x86-64/libjnidispatch.so",
+    "com/sun/jna/sunos-x86/libjnidispatch.so",
+    "com/sun/jna/win32-aarch64/jnidispatch.dll",
+    "resources/com/pty4j/native/win/aarch64/OpenConsole.exe",
+    "resources/com/pty4j/native/win/aarch64/conpty.dll",
+    "resources/com/pty4j/native/win/aarch64/win-helper.dll",
+    "resources/com/pty4j/native/win/aarch64/winpty-agent.exe",
+    "resources/com/pty4j/native/win/aarch64/winpty.dll",
+    "resources/com/pty4j/native/win/x86-64/cyglaunch.exe"
+  ],
+  "acceptedReceiptSha256": {
+    "windows": "cd7ee7ec5b678ceafa305060d139c24636799dd0de43546bc821a098cd91300e",
+    "linux": "9a761f821eda0b433555e30cf6efae534cb55f332f4abbf5eef42f664b68e2cc",
+    "macos": "9fafdbe4a8fc6d84eced527e18aa8936717e4a7644c2a0f75cf771f66c23ba27",
+    "linux-arm64": "43030127d064222237513862f35a227c705aa15a27ac2d881355c05ff46feb9f",
+    "macos-intel": "43030127d064222237513862f35a227c705aa15a27ac2d881355c05ff46feb9f",
+    "p1-linux-pty": "71429d7efc2a18c90e2a2b59bf6730576760d5edb8c60621ca8c936f4c83853c",
+    "p1-linux-jna": "da3cef3477188f5f55649d48215f678470996970f87dcaf750158c96e88f2204",
+    "p1-windows-x86-jna": "0ac091a02d523a05241d3cce603fea7f14f79b5df613f3b0ba6342805b9f8ddb",
+    "p1-windows-x86-pty": "066c3b53780671f1657a0b170536db85dde51c7061c013610186a6b818d582dc",
+    "p1-freebsd-x86-64": "51426ff3e59c0d63e7cfc87ca78bfdbfb0a1481c928ae8ffc0d11b466fa5873f",
+    "p1-freebsd-x86": "0384a61e834deffb2d8effa03e5969cf664dfa2b3253008f04e1d98b2abd2421"
+  },
+  "status": "REAL_UNIFIED32_ASSEMBLY_VERIFIED_NOT_PRODUCT_ACCEPTANCE",
+  "localRuntimeRestoredSha256": "8407dc5d6e9e2879993467e3ddf0c7524b1c75ce110567ca60056cb0d41d99e1",
+  "paidRequests": 0
+}
