@@ -1,0 +1,17 @@
+{
+  "status": "INSTALL_SETS_VERIFIED_BUILDINFO_MISSING_NOT_COMPONENT_ACCEPTANCE",
+  "runId": "42376031485",
+  "commit": "13e1c5506dd1f7ce21f61c3e46832f1560aee414",
+  "artifact": {
+    "id": 13575802377,
+    "bytes": 219980,
+    "sha256": "d8e44c09432a517248155eccf25572db58e6e72c32ee432b192346aacb4e0911"
+  },
+  "failure": "Selected base/comp/man/xbase/xshare sets verified; installer required BUILDINFO and received HTTP404",
+  "fix": "Serve official BUILDINFO through the existing signed-manifest digest verification input loop",
+  "officialBuildInfoSha256": "ddc2410f6964fb3a5b7156870cee3c85010ad03cb5afb024ea4ac3cda3ece8f8",
+  "localControls": 5,
+  "runtimeFixVerified": false,
+  "productAccepted": false,
+  "paidRequests": 0
+}

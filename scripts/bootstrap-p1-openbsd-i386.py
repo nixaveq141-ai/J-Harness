@@ -6,7 +6,7 @@ from evidence_run import run
 ROOT=Path(__file__).resolve().parents[1]
 BASE='https://cdn.openbsd.org/pub/OpenBSD/7.9/i386/'
 PUBLIC_KEY='untrusted comment: openbsd 7.9 base public key\nRWTSdNN9A3yvWNn7mUjXwv9DOCOUnyfuV+mq1iGPIfD+NhN8EYnEQ1at\n'
-FILES=['pxeboot','bsd.rd','bsd','bsd.mp','base79.tgz','comp79.tgz','man79.tgz','xbase79.tgz','xshare79.tgz']
+FILES=['BUILDINFO','pxeboot','bsd.rd','bsd','bsd.mp','base79.tgz','comp79.tgz','man79.tgz','xbase79.tgz','xshare79.tgz']
 INPUT_LIMITS={'base79.tgz':320*1024*1024}
 SET_SELECTION='-game* -xfont* -xserv*'
 

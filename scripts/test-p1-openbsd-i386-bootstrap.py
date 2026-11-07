@@ -7,6 +7,7 @@ s=importlib.util.spec_from_file_location('bootstrap',ROOT/'scripts/bootstrap-p1-
 
 class BootstrapScope(unittest.TestCase):
     def test_installer_default_sets_are_explicitly_unselected_when_not_served(self):
+        self.assertIn('BUILDINFO',m.FILES)
         selected={'bsd','bsd.mp','bsd.rd','base79.tgz','comp79.tgz','man79.tgz','game79.tgz','xbase79.tgz','xshare79.tgz','xfont79.tgz','xserv79.tgz'}
         for option in m.SET_SELECTION.split():
             self.assertTrue(option.startswith('-'))
