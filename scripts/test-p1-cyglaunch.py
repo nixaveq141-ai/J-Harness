@@ -1,5 +1,5 @@
 """Reject unpinned setup bytes and any attempt to install outside isolated CI."""
-import importlib.util,os,unittest
+import importlib.util,os,struct,unittest
 from pathlib import Path
 from unittest.mock import patch
 ROOT=Path(__file__).resolve().parents[1]
@@ -7,6 +7,14 @@ s=importlib.util.spec_from_file_location('builder',ROOT/'scripts/build-p1-cyglau
 builder=importlib.util.module_from_spec(s);s.loader.exec_module(builder)
 
 class Boundaries(unittest.TestCase):
+    def test_actual_caller_accepts_x64_and_rejects_x86_or_truncated_pe(self):
+        raw=bytearray(128);raw[:2]=b'MZ';struct.pack_into('<I',raw,60,64);raw[64:68]=b'PE\0\0'
+        struct.pack_into('<H',raw,68,0x8664);struct.pack_into('<H',raw,88,0x20b)
+        self.assertEqual(0x8664,builder.require_x64_pe(bytes(raw))['machine'])
+        struct.pack_into('<H',raw,68,0x14c);struct.pack_into('<H',raw,88,0x10b)
+        with self.assertRaises(ValueError):builder.require_x64_pe(bytes(raw))
+        with self.assertRaises(ValueError):builder.require_x64_pe(bytes(raw[:70]))
+
     def test_unreviewed_source_cannot_receive_portability_patch(self):
         with self.assertRaisesRegex(ValueError,'Exact fixed exec_pty source'):
             builder.guard_linux_syscall_header(b'#include <sys/syscall.h>\nUnreviewed code\n')

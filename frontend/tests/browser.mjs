@@ -130,8 +130,14 @@ try {
   const expiredId = await newTask('write', '等待审批过期')
   await page.getByRole('button', { name: '批准本次操作', exact: true }).waitFor()
   const exp = (await api(`/v1/tasks/${expiredId}/approvals`)).body.approvals[0]
+  // A response started before expiry can arrive after the task becomes terminal.
+  // Keep that old read visible to the client; the real task and decision API
+  // still expire normally and must reject the late decision below.
+  const staleApprovalRead = async route => route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ approvals: [exp] }) })
+  await page.route(`**/v1/tasks/${expiredId}/approvals`, staleApprovalRead)
   await ended(expiredId)
   await until(async () => await page.getByRole('button', { name: '批准本次操作', exact: true }).count() === 0)
+  await page.unroute(`**/v1/tasks/${expiredId}/approvals`, staleApprovalRead)
   check('expired approval removed and cannot execute', (await api(`/v1/tasks/${expiredId}/approvals/${exp.approvalId}`, { approved: true, reason: 'late', callId: exp.callId })).status === 409)
   const diffId = await newTask('diff', '展示已有仓库差异')
   await ended(diffId)

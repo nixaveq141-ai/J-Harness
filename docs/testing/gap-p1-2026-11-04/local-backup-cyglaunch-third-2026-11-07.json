@@ -1,0 +1,15 @@
+{
+  "status": "LOCAL_BACKUP_ALL_MEMBERS_SHA_AND_CRC_VERIFIED",
+  "path": ".build-cache/local-evidence-backups/2026-11-07/cyglaunch-failed-source-and-pe-caller.zip",
+  "bytes": 319122355,
+  "sha256": "af2290e60aa94e9a2bd6fdfc79197c8578b9bf37ac33c65dfe5bbddcbca0e0f7",
+  "members": {
+    ".build-cache/p1-raw-42324794762/13554632799.zip": "df25705983e1daf6b35eb694dd4db1b00de3559ad86d117386a7700042946ef8",
+    ".build-cache/p1-raw-42325582665/13554263789.zip": "37177a39c55a80e77adce3710b8a9a8d77399a9257a3c6b0961bac40689af69e",
+    "docs/testing/gap-p1-2026-11-04/cyglaunch-second-run.json": "3e92e45026bc85e09a6be92412a358a788d9c58d548d6c8c284973f72333f852",
+    "docs/testing/gap-p1-2026-11-04/cyglaunch-third-run.json": "d719b7c67f83369783416110bc83668b580cbc4b0817938542f4f1804ea0f0ad",
+    "scripts/build-p1-cyglaunch.py": "4f7ef3c1cf397a7ec229ae345e7c9ad986f9315eac5678eece6f9b60219a3f67",
+    "scripts/test-p1-cyglaunch.py": "0c4d459837e193253b0b172689f166c28d48d686a3eb764a5bec4162f5f47a47"
+  },
+  "offsite": false
+}

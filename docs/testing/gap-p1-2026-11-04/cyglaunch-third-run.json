@@ -1,0 +1,21 @@
+{
+  "status": "CYGWIN_BUILD_SUCCEEDED_PE_CALLER_LABEL_REJECTED_NOT_COMPONENT_ACCEPTANCE",
+  "runId": "42325582665",
+  "commit": "e82af281736e85ca4fda2d90d4a62ce24c7e0273",
+  "artifact": {
+    "id": 13554263789,
+    "bytes": 159569986,
+    "sha256": "37177a39c55a80e77adce3710b8a9a8d77399a9257a3c6b0961bac40689af69e"
+  },
+  "compiledOutputSha256": "4d076abe3d131343b850380d010740aef6a6adde79ad56ecbdfc1750093264a7",
+  "compiledPe": {
+    "machine": 34404,
+    "optionalHeaderMagic": 523
+  },
+  "failure": "Caller passed unsupported x64 string; shared PE validator expects amd64",
+  "fix": "Use existing amd64 target through tested common caller",
+  "localControls": 5,
+  "nativePtyProbeVerified": false,
+  "productAccepted": false,
+  "paidRequests": 0
+}

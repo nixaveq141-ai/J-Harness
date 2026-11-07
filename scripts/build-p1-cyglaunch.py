@@ -22,6 +22,11 @@ def guard_linux_syscall_header(raw):
         raise ValueError('Exact fixed exec_pty source required for Linux header guard')
     return raw.replace(b'#include <sys/syscall.h>',b'#if defined(__linux__)\n#include <sys/syscall.h>\n#endif')
 
+def require_x64_pe(raw):
+    spec=importlib.util.spec_from_file_location('cyg_pe',ROOT/'docs/testing/tools/build-native-from-source.py')
+    pe=importlib.util.module_from_spec(spec);spec.loader.exec_module(pe)
+    return pe.validate_windows_pe(raw,'amd64')
+
 def main():
     if os.name!='nt' or platform.machine().lower() not in {'amd64','x86_64'} or os.environ.get('GITHUB_ACTIONS')!='true':raise ValueError('Dedicated x64 Windows CI required')
     out=ROOT/'.build-cache/p1-cyglaunch';out.mkdir(parents=True,exist_ok=False);rid='p1-cyglaunch-'+os.environ['GITHUB_RUN_ID']
@@ -55,11 +60,10 @@ def main():
         build=out/'native-build';command(configure_command(str(cmake),posix(source/'native/cyglaunch'),posix(build),posix(gcc),posix(bin/'g++.exe'),posix(bin/'make.exe')),'configure')
         command([str(cmake),'--build',posix(build),'--parallel','2'],'build')
         output=out/'cyglaunch.exe';shutil.copyfile(build/'cyglaunch.exe',output)
-        spec=importlib.util.spec_from_file_location('pe',ROOT/'docs/testing/tools/build-native-from-source.py');pe=importlib.util.module_from_spec(spec);spec.loader.exec_module(pe)
-        report['pe']=pe.validate_windows_pe(output.read_bytes(),'x64');report['outputSha256']=stream_sha256(output)
+        report['pe']=require_x64_pe(output.read_bytes());report['outputSha256']=stream_sha256(output)
         child=out/'owned-child.exe';probe=out/'probe.exe'
         for stem,target in [('p1-cyglaunch-child',child),('p1-cyglaunch',probe)]:command([str(gcc),'-std=c11','-Wall','-Wextra','-Werror','-O2',posix(ROOT/('scripts/probes/'+stem+'.c')),'-o',posix(target)],stem+'-build')
-        report['childSha256']=stream_sha256(child);report['probeSha256']=stream_sha256(probe);report['probePe']=pe.validate_windows_pe(probe.read_bytes(),'x64')
+        report['childSha256']=stream_sha256(child);report['probeSha256']=stream_sha256(probe);report['probePe']=require_x64_pe(probe.read_bytes())
         report['probeSources']={n:stream_sha256(ROOT/n) for n in ['scripts/probes/p1-cyglaunch.c','scripts/probes/p1-cyglaunch-child.c']}
         work=out/'owned-work';work.mkdir();(work/'jh-owned-marker').write_bytes(b'owned-directory\n')
         command([str(probe),str(output),str(child),'present'],'candidate-probe',work,90)

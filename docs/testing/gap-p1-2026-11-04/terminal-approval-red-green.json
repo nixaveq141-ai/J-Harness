@@ -1,0 +1,25 @@
+{
+  "status": "TERMINAL_APPROVAL_STALE_READ_RACE_RED_GREEN_VERIFIED_NOT_MAC_CAUSAL_PROOF",
+  "before": {
+    "jarSha256": "8407dc5d6e9e2879993467e3ddf0c7524b1c75ce110567ca60056cb0d41d99e1",
+    "redExit": 1,
+    "originalDeadlineMs": 15000,
+    "check": "Original expiry button removal, under stale pre-expiry approval response"
+  },
+  "after": {
+    "jarSha256": "a2f2bb5d8857689d96181b0f11a8a4b05fa347070f4cee2e252043380c57239b",
+    "browserChecks": 28,
+    "browserVersion": "157.0.8103.38",
+    "paidRequests": 0
+  },
+  "clientTests": 42,
+  "evidenceControls": 26,
+  "uiBuild": "PASS",
+  "mavenPackage": "PASS -DskipTests; no full Java suite claimed",
+  "predicateDeadlineMs": 15000,
+  "originalLateDecisionStatus": 409,
+  "limits": [
+    "Original macOS40/42 failures lacked frozen browser failure detail; identical visible symptom is not historical causation proof",
+    "New full44 five-target qualification still required"
+  ]
+}

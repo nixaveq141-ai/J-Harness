@@ -210,7 +210,8 @@ export function App() {
   }, [api, selected, historyKey, updateTask])
   // Approvals have shorter lifetimes than the finite SSE connection, so refresh independently.
   useEffect(() => {
-    if (!api || !selected || active && isTerminal(active)) return
+    if (!api || !selected) return
+    if (active && isTerminal(active)) { setApprovals([]); return }
     const abort = new AbortController()
     void (async () => { while (!abort.signal.aborted) {
       try { const epoch=mutationEpoch.current,apiVersion=api.stateVersion,a = await api.approvals(selected, abort.signal); if (!abort.signal.aborted && epoch===mutationEpoch.current && apiVersion===api.stateVersion && !actionLock.current) setApprovals(a) } catch { /* main read lifecycle reports connection failures */ }
@@ -322,7 +323,7 @@ export function App() {
               {api && active && <Questions key={"questions-"+active.taskId} api={api} id={active.taskId} onGuard={setQuestionGuard} onWaiting={setQuestionWaiting} />}
               <div ref={listEnd} />
             </section>}
-          {approvals.length > 0 && <section className="approval-region" aria-label="待处理审批">{approvals.map(a => <div className="approval-card" key={a.approvalId}>
+          {active && !isTerminal(active) && approvals.length > 0 && <section className="approval-region" aria-label="待处理审批">{approvals.map(a => <div className="approval-card" key={a.approvalId}>
             <div className="approval-title"><Tag tone="warning">需要你的决定</Tag><strong>{a.tool}</strong><span>{a.sideEffectLevel}</span></div>
             <p>将按以下参数执行一次操作。批准仅对本次调用有效。</p><pre>{pretty(a.arguments)}</pre><details><summary>审批关联</summary><code>{a.approvalId}<br />{a.callId}</code></details>
             <div className="approval-actions"><Button variant="outline" disabled={!!busy} onClick={() => void decide(a, false)}>拒绝</Button><Button variant="primary" disabled={!!busy} onClick={() => void decide(a, true)}>{busy === a.approvalId ? '正在处理…' : '批准本次操作'}</Button></div></div>)}</section>}
