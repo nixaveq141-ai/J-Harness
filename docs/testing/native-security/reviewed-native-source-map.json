@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "scope": "39 formally accepted sources;42 independently reviewed sources assembled;8 original sources unresolved. Candidate42 full qualification pending. Not full OS/CPE clearance.",
+  "scope": "39 formally accepted;44 independently reviewed sources assembled;6 original sources unresolved. Candidate44 full qualification pending. Not full OS/CPE clearance.",
   "resources": {
     "com/sun/jna/win32-x86-64/jnidispatch.dll": {
       "sha256": "c88e200b240dfa54c5b852a335b28683e64a074d30ceee7c17ffc282058891a2",
@@ -506,6 +506,36 @@
         "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/windows-arm64-winpty-components-acceptance.json",
         "scope": "Native ARM64 C++ exact DLL and owned agent lifecycle; full target Java application not certified"
       }
+    },
+    "resources/com/pty4j/native/win/aarch64/OpenConsole.exe": {
+      "sha256": "b0b5c764e2b2960b816f538858f054bee4dabf67b191b3a0e5dad92e32cb556d",
+      "origin": {
+        "sourceBuildRun": "42322393412",
+        "sourceBuildCommit": "ebd89895c41b3570cd5acfe173931894cfc081ef",
+        "sourceRevision": "7ff11ee107c984e236960ec948b450ccbc10187b",
+        "vcpkgRevision": "fe1cde61e971d53c9687cf9a46308f8f55da19fa",
+        "componentProbeRun": "42323927902",
+        "componentProbeCommit": "2a283294e5497f99b013ce636cde497a7af1f5e3",
+        "sourceReportSha256": "73ae8d1c0d7f151df04d93acb9ed8d23dea44716ee632129e060d99cafbaf37a",
+        "componentReportSha256": "eba344221e388bb7869c737239c278c09ca89cbdd0058a7881b8520994113774",
+        "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/windows-arm64-console-components-acceptance.json",
+        "scope": "Actual ARM64 JVM ConPTY source-component cwd/process-list/resize/exit and missing-library controls; full application on ARM64 not certified"
+      }
+    },
+    "resources/com/pty4j/native/win/aarch64/conpty.dll": {
+      "sha256": "2aff71f03b604ce4afad2b51dac1b81f3dc7f82aa63d6d618d9410009d64268c",
+      "origin": {
+        "sourceBuildRun": "42322393412",
+        "sourceBuildCommit": "ebd89895c41b3570cd5acfe173931894cfc081ef",
+        "sourceRevision": "7ff11ee107c984e236960ec948b450ccbc10187b",
+        "vcpkgRevision": "fe1cde61e971d53c9687cf9a46308f8f55da19fa",
+        "componentProbeRun": "42323927902",
+        "componentProbeCommit": "2a283294e5497f99b013ce636cde497a7af1f5e3",
+        "sourceReportSha256": "73ae8d1c0d7f151df04d93acb9ed8d23dea44716ee632129e060d99cafbaf37a",
+        "componentReportSha256": "eba344221e388bb7869c737239c278c09ca89cbdd0058a7881b8520994113774",
+        "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/windows-arm64-console-components-acceptance.json",
+        "scope": "Actual ARM64 JVM ConPTY source-component cwd/process-list/resize/exit and missing-library controls; full application on ARM64 not certified"
+      }
     }
   },
   "fullRuntimeQualification": {
@@ -516,11 +546,13 @@
     "reviewedResourceCount": 39
   },
   "pendingCandidateQualification": {
-    "reviewedResourceCount": 42,
+    "reviewedResourceCount": 44,
     "status": "FULL_PRODUCT_QUALIFICATION_PENDING",
     "componentRunIds": [
       "42227334617",
-      "42228145670"
+      "42228145670",
+      "42322393412",
+      "42323927902"
     ]
   }
 }

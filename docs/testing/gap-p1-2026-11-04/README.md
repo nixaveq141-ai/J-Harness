@@ -1,5 +1,7 @@
 # P1：原生来源补齐执行记录
 
+- 2026-11-07 Console ARM64两项独立原包验收：42322393412@ebd的3629 Console/11570 vcpkg固定源与既审原包逐字节全等，五组静态端口每成员/源码归档/NuGet/bootstrap全等，20构建日志与ARM64 PE过；42323927902@2a的6回执/728宿主输入/3严格重编译类/固定JNA-helper/原生ARM64 JVM cwd/process-list/resize/exit及缺JNI/缺bundled拒绝过。2stager漂移/scope+3统一控制过，实际44替换/6原版候选、4494其他条目保持，本机JAR未动；正式39/50不变，新完整44五目标待。Cygwin修正42324794762再次失败，原日志待定位。
+
 - 2026-11-07 Cygwin42324410029@827首轮实际安装/固定源checkout过，但CMake自动选宿主MinGW CXX及Strawberry make，Cygwin路径无法被宿主编译器读取，配置失败不验收。显式安装Cygwin gcc-g++并固定C/CXX/make绝对POSIX路径；3本地边界/宿主工具污染控制过。首轮原包13554806720/4e258db6保留，修正待CI；正式39/50、候选42不变。
 
 - 2026-11-07 P1 cyglaunch x64新增固定b7554d6源码/Cygwin 2.941官方SHA512与签名包索引默认验证的隔离CI入口（仅runner安装、不在本机安装）；记录实际包/编译器/运行库与缓存全部输入，原库存SHA保持。新增三命名管道原生探针检查PTY三流/独立stderr/自有cwd/双向输入/exit23与缺launcher拒绝，使用owned job退出清理。两边界控制与本机MinGW严格编译/真实缺文件拒绝过；Cygwin源码编译/PTY真实运行待，不增加正式39或候选42。Console ARM64专项42323927902已成功，独立原包审计待。

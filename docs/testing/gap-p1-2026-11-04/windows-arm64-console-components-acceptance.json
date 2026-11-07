@@ -1,0 +1,150 @@
+{
+  "status": "ARM64_CONSOLE_TWO_SOURCE_JVM_COMPONENTS_INDEPENDENTLY_VERIFIED_NOT_PRODUCT_ACCEPTANCE",
+  "buildRunId": "42322393412",
+  "buildCommit": "ebd89895c41b3570cd5acfe173931894cfc081ef",
+  "probeRunId": "42323927902",
+  "probeCommit": "2a283294e5497f99b013ce636cde497a7af1f5e3",
+  "buildArtifact": {
+    "id": 13553941914,
+    "path": ".build-cache/p1-raw-42322393412/13553941914.zip",
+    "bytes": 1307117,
+    "sha256": "041943f552bf0e7a8bc4987b94d49d163b9d02fbe1591fbdd20ac1ece4c6be89"
+  },
+  "probeArtifact": {
+    "id": 13554092198,
+    "path": ".build-cache/p1-raw-42323927902/13554092198.zip",
+    "bytes": 2457686,
+    "sha256": "e3a41c07a116d3108a88adb1b5fc3bbf14d444157a6c9595548199e3e5bd373c"
+  },
+  "buildReportSha256": "73ae8d1c0d7f151df04d93acb9ed8d23dea44716ee632129e060d99cafbaf37a",
+  "probeReportSha256": "eba344221e388bb7869c737239c278c09ca89cbdd0058a7881b8520994113774",
+  "outputs": {
+    "resources/com/pty4j/native/win/aarch64/OpenConsole.exe": {
+      "sha256": "b0b5c764e2b2960b816f538858f054bee4dabf67b191b3a0e5dad92e32cb556d",
+      "pe": {
+        "machine": 43620,
+        "optionalHeaderMagic": 523
+      }
+    },
+    "resources/com/pty4j/native/win/aarch64/conpty.dll": {
+      "sha256": "2aff71f03b604ce4afad2b51dac1b81f3dc7f82aa63d6d618d9410009d64268c",
+      "pe": {
+        "machine": 43620,
+        "optionalHeaderMagic": 523
+      }
+    }
+  },
+  "sourceFiles": 3629,
+  "vcpkgSourceFiles": 11570,
+  "sourceRevision": "7ff11ee107c984e236960ec948b450ccbc10187b",
+  "vcpkgRevision": "fe1cde61e971d53c9687cf9a46308f8f55da19fa",
+  "staticPortFileSha256": {
+    "fmt": {
+      "dep/vcpkg-overlay-ports/fmt/fix-write-batch.patch": "5658d7b2362cddca318c21de795877c17cffbe62603860507291dccc40d537f3",
+      "dep/vcpkg-overlay-ports/fmt/portfile.cmake": "1501fea215112f89c40aa925c60c0d9712b4a84dd40dfc6c9624b29f9b19f459",
+      "dep/vcpkg-overlay-ports/fmt/usage": "ece096518c58df58cfc60f5ad8120d248a86383482455f539d91b8ca6eac14a7",
+      "dep/vcpkg-overlay-ports/fmt/vcpkg.json": "ba385b6792cdb256faa2e18871f94fd78510c73f74947d167f31a7e939394a1f"
+    },
+    "ms-gsl": {
+      "CONTROL": "81c05a7ea06499d7cc6fb0031191289f4b8706a450e9cbfe797474abe5466843",
+      "portfile.cmake": "05e43583027235b50933fb3b271322e73c7457da8729a68450e8b7c1508bee41"
+    },
+    "jsoncpp": {
+      "portfile.cmake": "c5fb99c11bcc4ff9c496a523cb701c1c9ab169d766779ca3b02a52611a0ef904",
+      "vcpkg.json": "22a9112c85e2deae1467fe9c911709ed73177e79f35108d872fd4bb999ecb539"
+    },
+    "cli11": {
+      "portfile.cmake": "c8182cb5edf4b243243a30e9525287fd4d51e821b80bd79a85f7128a61032e25",
+      "revert-1012-pkgconfig.diff": "b3c80dbb6b14541a9ce022990670d775e6f40a20eb4c7453570805947f1876e4",
+      "vcpkg.json": "1c5400c6b6363ee7fdcd0fece81a271b866073eafefd27265db2a2e66f43a84f"
+    },
+    "cmark": {
+      "add-feature-tools.patch": "a879c14c72081a279877684d249d438ce560fcf6160e4d0641bc5fc6b395be56",
+      "portfile.cmake": "0bd984cfd5c38f2da369ddfe9c21c0cc3003ca9a80ea8a3dc00ce2074ab0fda9",
+      "vcpkg.json": "a305d302834971c3f45d4a44444657194e9c3dec4027ecb11244b938712c077f"
+    }
+  },
+  "staticSourceDownloads": {
+    "CLIUtils-CLI11-v2.4.2.tar.gz": "f2d893a65c3b1324c50d4e682c0cdc021dd0477ae2c048544f39eed6654b699a",
+    "commonmark-cmark-0.30.3.tar.gz": "85e9fb515531cc2c9ae176d693f9871774830cf1f323a6758fb187a5148d7b16",
+    "fmtlib-fmt-11.1.4.tar.gz": "ac366b7b4c2e9f0dde63a59b3feb5ee59b67974b14ee5dc9ea8ad78aa2c1ee1e",
+    "Microsoft-GSL-0f6dbc9e2915ef5c16830f3fa3565738de2a9230.tar.gz": "c6dc53a876c2f079b711e33be5ff7809525872c3f6a086af91d061dae5665686",
+    "open-source-parsers-jsoncpp-1.9.5.tar.gz": "f409856e5920c18d0c2fb85276e24ee607d2a09b5e7d5f0a371368903c275da2"
+  },
+  "nugetPackageSha256": {
+    "packages/Appium.WebDriver.3.0.0.2/Appium.WebDriver.3.0.0.2.nupkg": "c67adece6bd5730036812af29614a7e5699f048b8e0d261841f47d2007358702",
+    "packages/Castle.Core.4.1.1/Castle.Core.4.1.1.nupkg": "c3f130d751103ec89a4ec24ec4f3c8bfa02c4d7ca70a865b68c79eddae5dea45",
+    "packages/clang-format.win-x86.15.0.7/clang-format.win-x86.15.0.7.nupkg": "40b49c833629e94ca917f07c5e788547fb76d21083eb5a098d6b79b0ef100115",
+    "packages/Microsoft.Debugging.Tools.PdbStr.20220617.1556.0/Microsoft.Debugging.Tools.PdbStr.20220617.1556.0.nupkg": "b47504ad3b53db727540e4fe201d996d5300b4a6212d0e15a6ad4b96b413f928",
+    "packages/Microsoft.Debugging.Tools.SrcTool.20220617.1556.0/Microsoft.Debugging.Tools.SrcTool.20220617.1556.0.nupkg": "e7efbac19621f708d66d878b19ce25fa41ce9123283b60929d2d79dd24e0864c",
+    "packages/Microsoft.Internal.PGO-Helpers.Cpp.0.2.34/Microsoft.Internal.PGO-Helpers.Cpp.0.2.34.nupkg": "92aca6465e2cbe04b312d8255d15d7af2e5cfceee59fc91194c1228283bfc453",
+    "packages/Microsoft.Internal.Windows.Terminal.ThemeHelpers.0.8.250811004/Microsoft.Internal.Windows.Terminal.ThemeHelpers.0.8.250811004.nupkg": "c70c34c5ed0b937a23285402396c3f23523496dca59ede2aaddc2914f6ea339d",
+    "packages/Microsoft.MSBuildCache.AzurePipelines.0.1.283-preview/Microsoft.MSBuildCache.AzurePipelines.0.1.283-preview.nupkg": "9a5a7815a175000b8c608d94727758f0c22a8e6d5f318515169cf9d003b36f82",
+    "packages/Microsoft.MSBuildCache.Local.0.1.283-preview/Microsoft.MSBuildCache.Local.0.1.283-preview.nupkg": "732767cf82dc8d4e83790d9421c4c7bdbb7b5bbc6e9ca3bb2d3e79cb92dbed79",
+    "packages/Microsoft.MSBuildCache.SharedCompilation.0.1.283-preview/Microsoft.MSBuildCache.SharedCompilation.0.1.283-preview.nupkg": "40d947d33e2b31341870831b320de4db2926026e2e0dbdcb71099fae1a876f34",
+    "packages/Microsoft.Taef.10.93.240607003/Microsoft.Taef.10.93.240607003.nupkg": "2feb5d39898d5d8bd734f5a51be689b16273189f3c02353b6cb58fe6f638d942",
+    "packages/Microsoft.UI.Xaml.2.8.4/Microsoft.UI.Xaml.2.8.4.nupkg": "486dbe1f271b31057ec01ecb7ce4df3eedad11efdc26569170fb128ee4a4e964",
+    "packages/Microsoft.VisualStudio.Setup.Configuration.Native.2.3.2262/Microsoft.VisualStudio.Setup.Configuration.Native.2.3.2262.nupkg": "43c2d1c5694a846d04d5f1cb3c3a8269ebad3b0432954da2948e53b33c5ed5fb",
+    "packages/Microsoft.Web.WebView2.1.0.1661.34/Microsoft.Web.WebView2.1.0.1661.34.nupkg": "bad4c011c20ab68526c4c1448da05a6297586806123019ac89387fc62f46c3ce",
+    "packages/Microsoft.Windows.CppWinRT.2.0.250303.1/Microsoft.Windows.CppWinRT.2.0.250303.1.nupkg": "955e3051b35db1c00177ed14ab6b7b995c3b32a53fdb6c184ea53b1dba66e439",
+    "packages/Microsoft.Windows.ImplementationLibrary.1.0.240122.1/Microsoft.Windows.ImplementationLibrary.1.0.240122.1.nupkg": "2762643e7865c42ac60d809fe951a813ae10960141e56bb74ad28843f2d6b5c1",
+    "packages/Microsoft.WindowsPackageManager.ComInterop.1.8.1911/Microsoft.WindowsPackageManager.ComInterop.1.8.1911.nupkg": "9b8a8a5186a554e56fcb7997b6ea48f3432813c0945a2d9ba60930d1241cfe2b",
+    "packages/Newtonsoft.Json.13.0.1/Newtonsoft.Json.13.0.1.nupkg": "2b6b52556e27e1b7913f33eedeb95568110c746bd64afff74357f1683878323a",
+    "packages/Selenium.Support.3.5.0/Selenium.Support.3.5.0.nupkg": "0716656ae84c72cc31595ee2f06bf1f59311b96f813f9ada3d31d7f7f72ffb82",
+    "packages/Selenium.WebDriver.3.5.0/Selenium.WebDriver.3.5.0.nupkg": "79c41eb770a8728a15ddf27c7ac41ca433597983ac37e4db7746a52e16cec876",
+    "packages/vswhere.2.6.7/vswhere.2.6.7.nupkg": "933307f5335ec44c464aeb645c7216a7275782395b77e2fe1fc39c6b522c9340",
+    "packages/appium.webdriver/3.0.0.2/appium.webdriver.3.0.0.2.nupkg": "c67adece6bd5730036812af29614a7e5699f048b8e0d261841f47d2007358702",
+    "packages/castle.core/4.1.1/castle.core.4.1.1.nupkg": "c3f130d751103ec89a4ec24ec4f3c8bfa02c4d7ca70a865b68c79eddae5dea45",
+    "packages/clang-format.win-x86/15.0.7/clang-format.win-x86.15.0.7.nupkg": "40b49c833629e94ca917f07c5e788547fb76d21083eb5a098d6b79b0ef100115",
+    "packages/microsoft.debugging.tools.pdbstr/20220617.1556.0/microsoft.debugging.tools.pdbstr.20220617.1556.0.nupkg": "b47504ad3b53db727540e4fe201d996d5300b4a6212d0e15a6ad4b96b413f928",
+    "packages/microsoft.debugging.tools.srctool/20220617.1556.0/microsoft.debugging.tools.srctool.20220617.1556.0.nupkg": "e7efbac19621f708d66d878b19ce25fa41ce9123283b60929d2d79dd24e0864c",
+    "packages/microsoft.internal.pgo-helpers.cpp/0.2.34/microsoft.internal.pgo-helpers.cpp.0.2.34.nupkg": "92aca6465e2cbe04b312d8255d15d7af2e5cfceee59fc91194c1228283bfc453",
+    "packages/microsoft.internal.windows.terminal.themehelpers/0.8.250811004/microsoft.internal.windows.terminal.themehelpers.0.8.250811004.nupkg": "c70c34c5ed0b937a23285402396c3f23523496dca59ede2aaddc2914f6ea339d",
+    "packages/microsoft.msbuildcache.azurepipelines/0.1.283-preview/microsoft.msbuildcache.azurepipelines.0.1.283-preview.nupkg": "9a5a7815a175000b8c608d94727758f0c22a8e6d5f318515169cf9d003b36f82",
+    "packages/microsoft.msbuildcache.local/0.1.283-preview/microsoft.msbuildcache.local.0.1.283-preview.nupkg": "732767cf82dc8d4e83790d9421c4c7bdbb7b5bbc6e9ca3bb2d3e79cb92dbed79",
+    "packages/microsoft.msbuildcache.sharedcompilation/0.1.283-preview/microsoft.msbuildcache.sharedcompilation.0.1.283-preview.nupkg": "40d947d33e2b31341870831b320de4db2926026e2e0dbdcb71099fae1a876f34",
+    "packages/microsoft.taef/10.93.240607003/microsoft.taef.10.93.240607003.nupkg": "2feb5d39898d5d8bd734f5a51be689b16273189f3c02353b6cb58fe6f638d942",
+    "packages/microsoft.ui.xaml/2.8.4/microsoft.ui.xaml.2.8.4.nupkg": "486dbe1f271b31057ec01ecb7ce4df3eedad11efdc26569170fb128ee4a4e964",
+    "packages/microsoft.visualstudio.setup.configuration.native/2.3.2262/microsoft.visualstudio.setup.configuration.native.2.3.2262.nupkg": "43c2d1c5694a846d04d5f1cb3c3a8269ebad3b0432954da2948e53b33c5ed5fb",
+    "packages/microsoft.web.webview2/1.0.1661.34/microsoft.web.webview2.1.0.1661.34.nupkg": "bad4c011c20ab68526c4c1448da05a6297586806123019ac89387fc62f46c3ce",
+    "packages/microsoft.windows.cppwinrt/2.0.250303.1/microsoft.windows.cppwinrt.2.0.250303.1.nupkg": "955e3051b35db1c00177ed14ab6b7b995c3b32a53fdb6c184ea53b1dba66e439",
+    "packages/microsoft.windows.implementationlibrary/1.0.240122.1/microsoft.windows.implementationlibrary.1.0.240122.1.nupkg": "2762643e7865c42ac60d809fe951a813ae10960141e56bb74ad28843f2d6b5c1",
+    "packages/microsoft.windowspackagemanager.cominterop/1.8.1911/microsoft.windowspackagemanager.cominterop.1.8.1911.nupkg": "9b8a8a5186a554e56fcb7997b6ea48f3432813c0945a2d9ba60930d1241cfe2b",
+    "packages/newtonsoft.json/13.0.1/newtonsoft.json.13.0.1.nupkg": "2b6b52556e27e1b7913f33eedeb95568110c746bd64afff74357f1683878323a",
+    "packages/selenium.support/3.5.0/selenium.support.3.5.0.nupkg": "0716656ae84c72cc31595ee2f06bf1f59311b96f813f9ada3d31d7f7f72ffb82",
+    "packages/selenium.webdriver/3.5.0/selenium.webdriver.3.5.0.nupkg": "79c41eb770a8728a15ddf27c7ac41ca433597983ac37e4db7746a52e16cec876",
+    "packages/stylecop.analyzers/1.1.118/stylecop.analyzers.1.1.118.nupkg": "0a30b57f9cf4b0fd7917a15e5ea2033ad64b1ea8239904f3a6c22b464c574442",
+    "packages/vswhere/2.6.7/vswhere.2.6.7.nupkg": "933307f5335ec44c464aeb645c7216a7275782395b77e2fe1fc39c6b522c9340"
+  },
+  "probeSources": {
+    "docs/testing/tools/WinPtySourceProbe.java": "0fefd102c36d6430d6954fc7e5a5150cd10d274b2ceb837d0abf02820ccb476a",
+    "scripts/probes/Arm64ConPtySourceProbe.java": "6556f08f3ed5d66dd41d378d57480012cd15999e7845860ace30647419b9825a"
+  },
+  "nativeInputs": {
+    "jni/jnidispatch.dll": "7f377b196786af9e942a4f8789388c035c753daa7b9e127f80bc3cc1ea52d578",
+    "pty/win/aarch64/win-helper.dll": "7111e63bf9b5115ad3861f21b3a0779bd230f573d1a34a14d9f3a422556fb520",
+    "pty/win/aarch64/OpenConsole.exe": "b0b5c764e2b2960b816f538858f054bee4dabf67b191b3a0e5dad92e32cb556d",
+    "pty/win/aarch64/conpty.dll": "2aff71f03b604ce4afad2b51dac1b81f3dc7f82aa63d6d618d9410009d64268c"
+  },
+  "classSha256": {
+    "classes/Arm64ConPtySourceProbe.class": "bd32051ac82ac86e97358bab8287d0afd25ab6b808920e077c4a315afe23e4d5",
+    "classes/WinPtySourceProbe.class": "8f6240fdddf83c2cd8b6d2addf4c3b5ba790a0cd185b138c3af2fba1900d021b",
+    "classes/WinPtySourceProbe$DirectoryApi.class": "278073c266184dff8ad14aafbdf2b2e7ad8ab5497a8cac2b975b59d830788d96"
+  },
+  "commandReceiptSha256": {
+    "java": "0176a877f288c50b649373558b1b833929eb26108487b3327d30915135be4065",
+    "jar-build": "2a86065806fa02e052923f53e0e5625cc5b2852ca8f7008b95ceaa8b7ae12e8b",
+    "compile": "644146730b89aea5cd8399e70e02ab5f1da5d2af8091eedf19caf408313cd1ed",
+    "present-probe": "9eea87f79cddae58e1b6ffe09cf93bab3ee81e58d9cb1a52ed3953697635bda5",
+    "missing-jni-probe": "cb8e4f65dd3d7a9ef7fb49362cfc31d7f6abb68fb0e74853b54cec38e036d97e",
+    "missing-conpty-probe": "b6cdc87f80b94624f365e4740a699233d958561a95495df08ae55636e9fe516e"
+  },
+  "hostGitInputs": 728,
+  "paidRequests": 0,
+  "productAccepted": false,
+  "limits": [
+    "Actual native ARM64 JVM ConPTY component using existing owned cwd/process-list/resize/exit assertions; complete application five-target acceptance pending",
+    "Exact static source ports/downloads/NuGet/bootstrap match prior accepted baseline; tar metadata differs but every member byte independently matches",
+    "No full OS/CPE or arbitrary Windows release certification"
+  ]
+}

@@ -1,9 +1,9 @@
 {
   "status": "P1_IN_PROGRESS_NOT_COMPLETE",
   "frozenP0Tasks": 36,
-  "independentlyVerifiedNewSourceComponents": 28,
-  "assembledCandidateReviewedCount": 42,
-  "assembledCandidateUnresolvedCount": 8,
+  "independentlyVerifiedNewSourceComponents": 30,
+  "assembledCandidateReviewedCount": 44,
+  "assembledCandidateUnresolvedCount": 6,
   "formalAcceptedRuntimeCommit": "904d2f3af194ba25ee8d9b542f61fd12a4c88291",
   "formalAcceptedRuntimeReviewedCount": 39,
   "formalAcceptedRuntimeUnresolvedCount": 11,
@@ -514,13 +514,17 @@
       "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
       "os": "win",
       "cpu": "aarch64",
-      "status": "OPEN",
+      "status": "COMPONENT_SOURCE_VERIFIED_ASSEMBLED_FULL_PRODUCT_PENDING",
       "requiredToolchain": "MSVC/Windows SDK aarch64；构建WinPTY/Console/helper所需依赖",
-      "nextAction": "核上游逐文件构建证明或盘点目标SDK/工具链，再固定源构建和验证",
+      "nextAction": "44来源统一候选五目标产品回归与独立原包验收待",
       "blockers": [
-        "目标工具链/SDK或上游构建证明未确认",
-        "目标运行条件未确认；额外实体机器按用户指令跳过但不计运行通过"
-      ]
+        "统一候选全量产品回归未验收"
+      ],
+      "candidateSha256": "b0b5c764e2b2960b816f538858f054bee4dabf67b191b3a0e5dad92e32cb556d",
+      "componentRunId": "42323927902",
+      "componentCommit": "2a283294e5497f99b013ce636cde497a7af1f5e3",
+      "componentReceipt": "docs/testing/gap-p1-2026-11-04/windows-arm64-console-components-acceptance.json",
+      "sourceBuildRunId": "42322393412"
     },
     {
       "taskId": "NATIVE-30",
@@ -529,13 +533,17 @@
       "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
       "os": "win",
       "cpu": "aarch64",
-      "status": "OPEN",
+      "status": "COMPONENT_SOURCE_VERIFIED_ASSEMBLED_FULL_PRODUCT_PENDING",
       "requiredToolchain": "MSVC/Windows SDK aarch64；构建WinPTY/Console/helper所需依赖",
-      "nextAction": "核上游逐文件构建证明或盘点目标SDK/工具链，再固定源构建和验证",
+      "nextAction": "44来源统一候选五目标产品回归与独立原包验收待",
       "blockers": [
-        "目标工具链/SDK或上游构建证明未确认",
-        "目标运行条件未确认；额外实体机器按用户指令跳过但不计运行通过"
-      ]
+        "统一候选全量产品回归未验收"
+      ],
+      "candidateSha256": "2aff71f03b604ce4afad2b51dac1b81f3dc7f82aa63d6d618d9410009d64268c",
+      "componentRunId": "42323927902",
+      "componentCommit": "2a283294e5497f99b013ce636cde497a7af1f5e3",
+      "componentReceipt": "docs/testing/gap-p1-2026-11-04/windows-arm64-console-components-acceptance.json",
+      "sourceBuildRunId": "42322393412"
     },
     {
       "taskId": "NATIVE-31",

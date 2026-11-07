@@ -1,4 +1,4 @@
-name: Unified source-native forty-two-resource five-target qualification
+name: Unified source-native forty-four-resource five-target qualification
 on:
   workflow_dispatch:
   push:
@@ -37,7 +37,8 @@ jobs:
       JHARNESS_P1_EXTRA_FOUR: '1'
       JHARNESS_P1_OPENBSD_JNA: '1'
       JHARNESS_P1_ARM64_WINPTY: '1'
-      JHARNESS_EXPECTED_NATIVE_COUNT: '42'
+      JHARNESS_P1_ARM64_CONSOLE: '1'
+      JHARNESS_EXPECTED_NATIVE_COUNT: '44'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -173,6 +174,19 @@ jobs:
           run-id: 42228145670
           github-token: ${{ github.token }}
           path: .build-cache/p1-arm64-winpty-inputs/p1-windows-arm64-winpty-source
+      - uses: actions/download-artifact@v4
+        with:
+          name: p1-windows-arm64-console-source
+          run-id: 42322393412
+          github-token: ${{ github.token }}
+          path: .build-cache/p1-arm64-console-inputs/source
+      - uses: actions/download-artifact@v4
+        with:
+          name: p1-arm64-console-native-jvm-probe
+          run-id: 42323927902
+          github-token: ${{ github.token }}
+          path: .build-cache/p1-arm64-console-inputs/probe
+      - run: python scripts/test-p1-arm64-console-stage.py
       - run: python scripts/test-p1-arm64-winpty-stage.py
       - run: python scripts/test-p1-openbsd-jna-stage.py
       - run: python scripts/test-p1-sunos-jna-stage.py

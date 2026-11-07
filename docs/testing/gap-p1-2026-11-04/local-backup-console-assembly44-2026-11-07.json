@@ -1,0 +1,20 @@
+{
+  "status": "LOCAL_BACKUP_ALL_MEMBERS_SHA_AND_CRC_VERIFIED",
+  "path": ".build-cache/local-evidence-backups/2026-11-07/arm64-console-and-assembly44-cygfail.zip",
+  "bytes": 169959240,
+  "sha256": "25977e90657d7713c2883df1288c75e82bd8bff5eca6f7a31e6035e0e6d2d174",
+  "members": {
+    ".build-cache/p1-raw-42322393412/13553941914.zip": "041943f552bf0e7a8bc4987b94d49d163b9d02fbe1591fbdd20ac1ece4c6be89",
+    ".build-cache/p1-raw-42323927902/13554092198.zip": "e3a41c07a116d3108a88adb1b5fc3bbf14d444157a6c9595548199e3e5bd373c",
+    ".build-cache/p1-raw-42324410029/13554806720.zip": "4e258db61579cd324c6b352b0e36d3e9efac418f54a0c5ac34533664057f1e52",
+    ".build-cache/audit-p1-arm-console.py": "01e9b8393f9055523420ebc9b715e10ea39c98d3d0934fac5e55761e36b2a143",
+    ".build-cache/p1-assembly44/candidate.jar": "276850fc75d2b3d1b6129008c12772c7a62a88aaa56025c4c76ee6e193aa8e0a",
+    "docs/testing/gap-p1-2026-11-04/assembly44-control.json": "540e822badc77df023b719aa4367c32346cfa25f29e6796ae92a5c6f67fe890f",
+    "docs/testing/gap-p1-2026-11-04/windows-arm64-console-components-acceptance.json": "72f0b0b4aadac2789dcae87f183609eae65087683d46097fe9d05a98e6154543",
+    "scripts/stage-p1-arm64-console.py": "347eb4486a98fab716674b7758254cbbaecbab85343441c682f32490ea4734df",
+    "scripts/test-p1-arm64-console-stage.py": "8583c59b91ffb48441eac0fb91459c34e87ca722c656c86cc83d43ea4aa339ad",
+    "scripts/stage-unified-native-runtime.py": "a2bc6489822171484f684ceb8860e09f7603ff30cc5bceb52593ee2174f3e8bd",
+    ".github/workflows/gap-unified-source-qualification.yml": "3403f2380be5e05c8022faeb02e8a49084dbda79c179862f7c7337495bd01ca4"
+  },
+  "offsite": false
+}
