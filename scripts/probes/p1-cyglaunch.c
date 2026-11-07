@@ -54,7 +54,7 @@ int main(int argc,char **argv) {
     if (strcmp(argv[3],"present")) return 2;
     char names[3][128];HANDLE pipes[3];
     for (int i=0;i<3;i++) {
-        snprintf(names[i],sizeof(names[i]),"\\\\.\\pipe\\jh-p1-cyg-%lu-%d",GetCurrentProcessId(),i);
+        snprintf(names[i],sizeof(names[i]),"\\\\.\\pipe\\jh-p1-cyg-%lu-%d",(unsigned long)GetCurrentProcessId(),i);
         pipes[i]=CreateNamedPipeA(names[i],(i?PIPE_ACCESS_INBOUND:PIPE_ACCESS_OUTBOUND)|FILE_FLAG_OVERLAPPED,PIPE_TYPE_BYTE|PIPE_WAIT,1,4096,4096,0,NULL);
         if (pipes[i]==INVALID_HANDLE_VALUE) return 5;
     }

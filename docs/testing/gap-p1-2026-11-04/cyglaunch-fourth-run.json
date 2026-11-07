@@ -1,0 +1,17 @@
+{
+  "status": "CYGWIN_FOURTH_RUN_PROBE_FORMAT_TYPE_MISMATCH_NOT_ACCEPTED",
+  "runId": "42326565432",
+  "commit": "de8220eb74267ce37a05d1dd31c4dde54be7bd76",
+  "artifact": {
+    "id": 13555805715,
+    "bytes": 159731538,
+    "sha256": "5e93e9004319ed280df9ee3f5ac00ea842e218a80e8d1a866858c0aa93d8f971"
+  },
+  "failure": "Cygwin DWORD is unsigned int; snprintf %lu expected unsigned long",
+  "fix": "Cast GetCurrentProcessId to unsigned long; existing format and identity semantics preserved",
+  "localControls": 5,
+  "localStrictProbeCompile": "PASS MinGW x64",
+  "nativePtyVerified": false,
+  "productAccepted": false,
+  "paidRequests": 0
+}

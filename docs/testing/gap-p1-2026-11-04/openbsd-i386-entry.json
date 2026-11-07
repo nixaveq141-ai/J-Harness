@@ -1,0 +1,17 @@
+{
+  "status": "OPENBSD_I386_NATIVE_VM_ENTRY_NOT_COMPONENT_ACCEPTANCE",
+  "officialPackages": "https://cdn.openbsd.org/pub/OpenBSD/7.9/packages/i386/",
+  "observedPackages": [
+    "jdk-21.0.10.7.1p1v0.tgz",
+    "python-3.13.13.tgz"
+  ],
+  "officialInstallInputs": "https://cdn.openbsd.org/pub/OpenBSD/7.9/i386/",
+  "officialBasePublicKey": "https://cdn.openbsd.org/pub/OpenBSD/7.9/openbsd-79-base.pub",
+  "localControls": {
+    "bootstrap": 2,
+    "existingElfAndMirror": 2
+  },
+  "runtimeVerified": false,
+  "productAccepted": false,
+  "paidRequests": 0
+}

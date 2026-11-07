@@ -28,6 +28,9 @@ class TargetIdentityTest(unittest.TestCase):
         builder.require_elf(self.raw(2,1,62),'x86-64')
         for raw in [self.raw(1,1,3),self.raw(2,2,62),self.raw(2,1,183)]:
             with self.assertRaises(ValueError):builder.require_elf(raw,'x86-64')
+        builder.require_elf(self.raw(1,1,3),'x86')
+        for raw in [self.raw(2,1,62),self.raw(1,2,3),self.raw(1,1,40)]:
+            with self.assertRaises(ValueError):builder.require_elf(raw,'x86')
 
 
 if __name__=='__main__':unittest.main()

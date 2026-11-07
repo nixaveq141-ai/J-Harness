@@ -265,12 +265,12 @@
       "coordinate": "net.java.dev.jna:jna:5.14.0",
       "os": "openbsd",
       "cpu": "x86",
-      "status": "OPEN",
+      "status": "NATIVE_VM_BUILD_ENTRY_IMPLEMENTED_NOT_VERIFIED",
       "requiredToolchain": "openbsd目标SDK/系统头文件与原生或交叉编译器",
-      "nextAction": "核上游逐文件构建证明或盘点目标SDK/工具链，再固定源构建和验证",
+      "nextAction": "先实核签名i386 PXE全系统启动与原生工具链，实际JNI/ffi通过并独立验原包后才可集成",
       "blockers": [
-        "目标工具链/SDK或上游构建证明未确认",
-        "目标运行条件未确认；额外实体机器按用户指令跳过但不计运行通过"
+        "独立i386 VM启动/原生构建/探针未验证",
+        "统一候选产品回归待"
       ]
     },
     {

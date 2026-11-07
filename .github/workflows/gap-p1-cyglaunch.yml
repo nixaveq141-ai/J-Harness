@@ -19,7 +19,7 @@ jobs:
       - run: python scripts/build-p1-cyglaunch.py
       - name: Show bounded build or probe failure
         if: failure()
-        run: python -c "from pathlib import Path; p=Path('.build-cache/p1-cyglaunch'); [(print(f.name),print(f.read_text(errors='replace')[-4096:])) for f in [p/'install.log',p/'configure.log',p/'build.log',p/'candidate-probe.log'] if f.is_file()]"
+        run: python -c "from pathlib import Path; p=Path('.build-cache/p1-cyglaunch'); [(print(f.name),print(f.read_text(errors='replace')[-4096:])) for f in [p/'configure.log',p/'build.log',p/'p1-cyglaunch-child-build.log',p/'p1-cyglaunch-build.log',p/'candidate-probe.log'] if f.is_file()]"
       - uses: actions/upload-artifact@v4
         if: always()
         with:

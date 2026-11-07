@@ -1,0 +1,29 @@
+{
+  "status": "LOCAL_BACKUP_ALL_MEMBERS_SHA_AND_CRC_VERIFIED",
+  "path": ".build-cache/local-evidence-backups/2026-11-07/openbsd-i386-entry-cygwin-fourth.zip",
+  "bytes": 159762159,
+  "sha256": "05d6753a0ce4f31c5a10aec4d7adcf4646d16fa5ea3f9fc02e9d646fc4210703",
+  "members": {
+    ".build-cache/p1-raw-42326565432/13555805715.zip": "5e93e9004319ed280df9ee3f5ac00ea842e218a80e8d1a866858c0aa93d8f971",
+    "scripts/bootstrap-p1-openbsd-i386.py": "74610768df0fa7aa9bb82881b32ff76d8dd268c1bc9b8e0def4b90247f49125e",
+    "scripts/test-p1-openbsd-i386-bootstrap.py": "baf7373669bb707b9ce870e4157e98ec16ab13be4424c8161438143419206d9d",
+    "scripts/build-p1-openbsd-jna.py": "7cb7e3146459dfa3ec0f6de49dedb55588b641cdab168d8b44015ed6c57c179a",
+    "scripts/test-p1-openbsd-jna.py": "dc66e4633d0ce96da4575884a0bcd3cac24ab7a7a4a4beab708744a7d2751f29",
+    ".github/workflows/gap-p1-openbsd-i386-jna.yml": "b34ed27fb2ab8a4fe4a968febc42e4a8c21e7949d0371870782004750a0007c9",
+    ".github/workflows/gap-p1-cyglaunch.yml": "e55406c1eb130c313ed224bbce9ec5f06e83295d8ac81eb861b2c93d4954b95f",
+    "scripts/probes/p1-cyglaunch.c": "0aff62e1db509f23794726c34f9887fe838fafcdcaed45d77ef6376deb973188",
+    "docs/testing/gap-p1-2026-11-04/openbsd-i386-entry.json": "be081f28323d5fbe8748e8a697317ac6fe4556279ea0198615f91108df1caeb7",
+    "docs/testing/gap-p1-2026-11-04/cyglaunch-fourth-run.json": "f1d2ccebceb17bb414b18f0b0777121a097b1ef8f0dec0d4799caab08b4f09eb"
+  },
+  "offsite": false,
+  "preflightSupplement": {
+    "path": ".build-cache/local-evidence-backups/2026-11-07/openbsd-i386-preflight-v2.zip",
+    "sha256": "f52b63244bd4b90bcf9d459319e79237de5317c26cd474ba4ab0e28266f63cc0",
+    "bytes": 12381,
+    "members": {
+      "scripts/bootstrap-p1-openbsd-i386.py": "4c7e6bd1d4c5a6c7dc6c022d3cecd7958e297d9fa6115b7b57418bbab1cfb1a2",
+      "scripts/test-p1-openbsd-i386-bootstrap.py": "baf7373669bb707b9ce870e4157e98ec16ab13be4424c8161438143419206d9d",
+      ".github/workflows/gap-p1-openbsd-i386-jna.yml": "b34ed27fb2ab8a4fe4a968febc42e4a8c21e7949d0371870782004750a0007c9"
+    }
+  }
+}

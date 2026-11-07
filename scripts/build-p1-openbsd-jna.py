@@ -16,7 +16,7 @@ from evidence_run import run
 
 ROOT=Path(__file__).resolve().parents[1]
 REVISION='c366bc4fd0c50a30ac8d2475603ec564f6611462'
-TARGETS={'x86-64':(2,1,62,'amd64')}
+TARGETS={'x86-64':(2,1,62,'amd64'),'x86':(1,1,3,'i386')}
 
 
 def require_elf(raw,target):
@@ -40,10 +40,10 @@ def compiled_library(source,target):
 
 def main():
  parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('target',choices=TARGETS);a=parser.parse_args()
- if platform.system()!='OpenBSD' or platform.machine()!='amd64':raise ValueError('OpenBSD amd64 VM required')
+ if platform.system()!='OpenBSD' or platform.machine()!=TARGETS[a.target][3]:raise ValueError('Native OpenBSD target VM required')
  if os.environ.get('GITHUB_ACTIONS')!='true' or not os.environ.get('GITHUB_RUN_ID','').isdigit():raise ValueError('Dedicated CI required')
  target=a.target;_,_,_,arch=TARGETS[target]
- compiler=['cc']+(['-m32'] if target=='x86' else [])
+ compiler=['cc']
  out=ROOT/'.build-cache/p1-openbsd-jna'/target;out.mkdir(parents=True,exist_ok=False)
  rid='p1-jna-'+os.environ['GITHUB_RUN_ID']+'-'+target
  report=dict(status='INCOMPLETE',target=target,runId=os.environ['GITHUB_RUN_ID'],
