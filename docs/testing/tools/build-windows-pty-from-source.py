@@ -8,9 +8,11 @@ from pathlib import Path
 import platform
 import re
 import subprocess
+import sys
 import time
 
 ROOT=Path(__file__).resolve().parents[3]
+sys.path.insert(0,str(ROOT/'scripts'))
 PINS={
     'winpty':('rprichard/winpty','7e59fe2d09adf0fa2aa606492e7ca98efbc5184e'),
     'pty4j':('JetBrains/pty4j','b7554d649f6374183040e6554942b6d5b028b5e5'),

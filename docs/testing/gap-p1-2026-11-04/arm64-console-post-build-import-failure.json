@@ -1,0 +1,18 @@
+{
+  "status": "CI_POST_BUILD_ARM64_PE_VALIDATOR_IMPORT_FAILED_NOT_ACCEPTED",
+  "runId": "42227339528",
+  "commit": "f587190ad83fc91435809a26fba594607132e047",
+  "jobId": 127924070849,
+  "artifactId": 13507190565,
+  "artifactSha256": "87ad5435152b7a16fed29afa8575cdeaead1c2029751723a5257c96d836a5766",
+  "failure": "ModuleNotFoundError: evidence_io during dynamic ARM64 PE validator import after Console MSBuild",
+  "fix": "Add repository scripts directory to docs build tool import path",
+  "localVerification": {
+    "buildControls": 8,
+    "securityControls": 2,
+    "isolatedPythonImport": "PASS"
+  },
+  "productAccepted": false,
+  "remoteFixVerified": false,
+  "paidRequests": 0
+}
