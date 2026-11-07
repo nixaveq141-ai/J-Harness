@@ -1,0 +1,30 @@
+{
+  "status": "FIXED_PUBLIC_SPARC_APPLIANCE_FEASIBILITY_PREPARED_NOT_COMPONENT_ACCEPTANCE",
+  "image": "ghcr.io/ryancnelson/sparc64-qemu-openindiana-20g@sha256:b92b4014f49d2adcac709d68902257c65076ccdcbf23b4e446e4a82ed899bd40",
+  "compressedLayerBytes": 1763560889,
+  "reviewedSourceCommit": "d06825a67fae09534dde9543002cd4c0dda52304",
+  "sourceRepository": "https://github.com/ryancnelson/qemu-sun4v-illumos",
+  "sources": [
+    "https://www.tribblix.org/install-sparc.html",
+    "https://www.qemu.org/docs/master/system/target-sparc64.html",
+    "https://github.com/ryancnelson/qemu-sun4v-illumos/blob/d06825a67fae09534dde9543002cd4c0dda52304/appliances/sparc64-qemu-illumos-docker-guest/README.md",
+    "https://github.com/ryancnelson/qemu-sun4v-illumos/blob/d06825a67fae09534dde9543002cd4c0dda52304/THIRD_PARTY.md"
+  ],
+  "scope": "Disposable CI compiler/SDK feasibility only; no image or guest file enters product",
+  "isolation": {
+    "network": "none",
+    "extraCapabilities": [],
+    "hostDevices": [],
+    "hostMounts": [],
+    "ownedVolume": true
+  },
+  "localControls": 2,
+  "missingEvidence": [
+    "Actual CI boot and native tool inventory",
+    "Exact source/compiler/SDK/static input build and applicable ABI checks for both SPARC resources",
+    "Unified candidate integration and product acceptance"
+  ],
+  "acceptedCountIncrease": 0,
+  "productAccepted": false,
+  "paidRequests": 0
+}

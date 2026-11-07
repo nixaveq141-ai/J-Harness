@@ -1,0 +1,25 @@
+name: P1 bounded SPARC guest toolchain feasibility
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  feasibility:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python scripts/test-p1-sparc-toolchain.py
+      - run: python scripts/probe-p1-sparc-toolchain.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: p1-sparc-toolchain-feasibility
+          include-hidden-files: true
+          retention-days: 90
+          path: |
+            .build-cache/p1-sparc-toolchain/*.json
+            .build-cache/p1-sparc-toolchain/*.log

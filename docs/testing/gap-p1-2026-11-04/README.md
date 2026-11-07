@@ -1,5 +1,7 @@
 # P1：原生来源补齐执行记录
 
+- 2026-11-07 SPARC新增可行性入口：核公开OpenIndiana/illumos Niagara镜像amd64 OCI摘要b92b4014，压缩层约1.76GB，阅读固定d06825a源入口/来源说明；仅无网络、无额外cap/device的owned容器探测真实启动/系统及工具清单，不当组件验收。2控制覆盖旧资源拒绝、guest与容器清理失败仍回收自有卷并留报告。OpenBSD42376661936同一专项仍运行，正式44/50、本地45候选不变。
+
 - 2026-11-07 OpenBSD重跑前衔接审查：源码archive不带.git而共享builder要求真实HEAD，改无凭据拉取公开仓库的精确GITHUB_SHA并核HEAD；回传目录改为真实.build-cache/p1-openbsd-jna/x86，打包失败保留非零退出。两个远程shell语法检查及5bootstrap/2JNA控制通过；仅本地检查，真实guest checkout/构建待。与BUILDINFO修复合并一次专项重跑，未重跑完整矩阵。
 
 - 2026-11-07 OpenBSD i38642376031485原包219980字节SHA/CRC实核：五个选定安装集均Get/Verify通过，随后BUILDINFO缺失404，失败检测数秒内停止而未空等。补官方BUILDINFO进入现有签名清单/逐文件SHA输入循环；官方摘要ddc2410f与清单一致，5专项控制通过。未启动完整矩阵；正式44/50、本地45候选保持，真实安装/源码验证待。
