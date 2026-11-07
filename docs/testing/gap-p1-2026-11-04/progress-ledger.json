@@ -599,12 +599,12 @@
       "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
       "os": "win",
       "cpu": "x86-64",
-      "status": "OPEN",
+      "status": "BUILD_AND_NATIVE_PTY_PROBE_ENTRY_IMPLEMENTED_NOT_VERIFIED",
       "requiredToolchain": "MSVC/Windows SDK x86-64；构建WinPTY/Console/helper所需依赖",
-      "nextAction": "核上游逐文件构建证明或盘点目标SDK/工具链，再固定源构建和验证",
+      "nextAction": "执行固定Cygwin签名工具链源码编译/三管道PTY专项，独立验原包后方可集成",
       "blockers": [
-        "目标工具链/SDK或上游构建证明未确认",
-        "目标运行条件未确认；额外实体机器按用户指令跳过但不计运行通过"
+        "实际源码构建与PTY组件运行尚未验证",
+        "统一候选产品回归待"
       ]
     },
     {

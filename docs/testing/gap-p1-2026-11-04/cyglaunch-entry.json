@@ -1,0 +1,17 @@
+{
+  "status": "CYGWIN_BUILD_AND_PTY_PROBE_ENTRY_NOT_COMPONENT_ACCEPTANCE",
+  "sourceRevision": "b7554d649f6374183040e6554942b6d5b028b5e5",
+  "officialInstaller": "https://cygwin.com/setup/setup-2.941.x86_64.exe",
+  "officialChecksums": "https://cygwin.com/setup/sha512.sum",
+  "installerSha512": "9bbbd4de497842446af58af875590ace5d8fa3c557cd7e27328569dfa68e58213da1cc1a6fb7102d4f0f01be38e0b92c6fa74f61b6eb7351a0481ca4bd9e8781",
+  "installerCliDocumentation": "https://cygwin.com/faq/faq.html",
+  "localVerification": {
+    "boundaryControls": 2,
+    "probeStrictWindowsCompile": "PASS MinGW x64 gcc -std=c11 -Wall -Wextra -Werror",
+    "realMissingLauncherControl": "PASS"
+  },
+  "localCygwinInstalled": false,
+  "remoteVerified": false,
+  "productAccepted": false,
+  "paidRequests": 0
+}

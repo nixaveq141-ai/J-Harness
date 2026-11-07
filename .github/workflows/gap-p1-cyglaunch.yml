@@ -1,0 +1,34 @@
+name: P1 fixed Cygwin x64 launcher source and three-pipe PTY component
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/m1059-full-validation]
+    paths: [.github/workflows/gap-p1-cyglaunch.yml]
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: windows-2022
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python scripts/test-p1-cyglaunch.py
+      - run: python scripts/build-p1-cyglaunch.py
+      - name: Show bounded build or probe failure
+        if: failure()
+        run: python -c "from pathlib import Path; p=Path('.build-cache/p1-cyglaunch'); [(print(f.name),print(f.read_text(errors='replace')[-4096:])) for f in [p/'install.log',p/'configure.log',p/'build.log',p/'candidate-probe.log'] if f.is_file()]"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: p1-cygwin-x64-launcher-source
+          include-hidden-files: true
+          retention-days: 90
+          path: |
+            .build-cache/p1-cyglaunch/*.json
+            .build-cache/p1-cyglaunch/*.log
+            .build-cache/p1-cyglaunch/*.exe
+            .build-cache/p1-cyglaunch/package-cache/**
+            .build-cache/p1-cyglaunch/cygwin/etc/setup/installed.db
