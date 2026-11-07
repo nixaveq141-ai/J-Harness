@@ -1,0 +1,17 @@
+{
+  "status": "CYGWIN_FIRST_RUN_HOST_TOOLCHAIN_CONTAMINATION_REJECTED",
+  "runId": "42324410029",
+  "commit": "8273f455c6a365f6f3deaaf3735f6e3bd5456517",
+  "jobId": 128256256193,
+  "artifact": {
+    "id": 13554806720,
+    "bytes": 136313905,
+    "sha256": "4e258db61579cd324c6b352b0e36d3e9efac418f54a0c5ac34533664057f1e52"
+  },
+  "failure": "Cygwin CMake selected host /cygdrive/c/mingw64/bin/c++.exe and /cygdrive/c/Strawberry/c/bin/gmake.exe; host compiler rejected POSIX source path",
+  "fix": "Install native Cygwin C++ and explicitly set CMake C/CXX/make paths",
+  "localControls": 3,
+  "remoteFixVerified": false,
+  "productAccepted": false,
+  "paidRequests": 0
+}

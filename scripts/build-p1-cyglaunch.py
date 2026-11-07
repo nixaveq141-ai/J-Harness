@@ -12,6 +12,10 @@ SETUP_SHA512='9bbbd4de497842446af58af875590ace5d8fa3c557cd7e27328569dfa68e58213d
 def verify_setup(raw):
     if hashlib.sha512(raw).hexdigest()!=SETUP_SHA512:raise ValueError('Pinned official Cygwin setup SHA512 required')
 
+def configure_command(cmake,source,build,gcc,cxx,make):
+    return [cmake,'-S',source,'-B',build,'-G','Unix Makefiles','-DCMAKE_POLICY_VERSION_MINIMUM=3.5',
+            '-DCMAKE_C_COMPILER='+gcc,'-DCMAKE_CXX_COMPILER='+cxx,'-DCMAKE_MAKE_PROGRAM='+make]
+
 def main():
     if os.name!='nt' or platform.machine().lower() not in {'amd64','x86_64'} or os.environ.get('GITHUB_ACTIONS')!='true':raise ValueError('Dedicated x64 Windows CI required')
     out=ROOT/'.build-cache/p1-cyglaunch';out.mkdir(parents=True,exist_ok=False);rid='p1-cyglaunch-'+os.environ['GITHUB_RUN_ID']
@@ -26,11 +30,11 @@ def main():
         with urllib.request.urlopen(SETUP_URL,timeout=60) as response:raw=response.read(8*1024*1024)
         verify_setup(raw);setup.write_bytes(raw);report['installer']=dict(url=SETUP_URL,sha512=SETUP_SHA512,checksumSource='https://cygwin.com/setup/sha512.sum')
         cygroot=out/'cygwin';cache=out/'package-cache'
-        command([str(setup),'--quiet-mode','--no-admin','--no-shortcuts','--no-version-check','--only-site','--root',str(cygroot),'--local-package-dir',str(cache),'--site','https://mirrors.kernel.org/sourceware/cygwin/','--packages','gcc-core,cmake,make'],'install',timeout=1200)
+        command([str(setup),'--quiet-mode','--no-admin','--no-shortcuts','--no-version-check','--only-site','--root',str(cygroot),'--local-package-dir',str(cache),'--site','https://mirrors.kernel.org/sourceware/cygwin/','--packages','gcc-core,gcc-g++,cmake,make'],'install',timeout=1200)
         bin=cygroot/'bin';gcc=bin/'gcc.exe';cmake=bin/'cmake.exe';os.environ['PATH']=str(bin)+';'+os.environ['PATH']
         command([str(bin/'cygcheck.exe'),'-c'],'packages');command([str(gcc),'--version'],'compiler');command([str(gcc),'-dumpmachine'],'target')
         if (out/'target.log').read_text().strip()!='x86_64-pc-cygwin':raise ValueError('Actual Cygwin x64 target required')
-        report['toolchain']={p.name:stream_sha256(p) for p in [gcc,cmake,bin/'make.exe',bin/'cygwin1.dll']}
+        report['toolchain']={p.name:stream_sha256(p) for p in [gcc,bin/'g++.exe',cmake,bin/'make.exe',bin/'cygwin1.dll']}
         report['installedDbSha256']=stream_sha256(cygroot/'etc/setup/installed.db')
         report['packageInputs']={p.relative_to(cache).as_posix():stream_sha256(p) for p in cache.rglob('*') if p.is_file() and not p.is_symlink()}
         source=out/'pty4j';command(['git','-c','http.https://github.com/.extraheader=','clone','--no-checkout','--filter=blob:none','https://github.com/JetBrains/pty4j.git',str(source)],'clone');command(['git','-c','core.autocrlf=false','-c','core.eol=lf','checkout','--detach',REVISION],'checkout',source)
@@ -40,7 +44,7 @@ def main():
         if stream_sha256(original)!=expected:raise ValueError('Original inventory byte identity required')
         shutil.copyfile(original,out/'original.exe');report['originalSha256']=expected
         def posix(p):return subprocess.check_output([str(bin/'cygpath.exe'),'-u',str(p)]).decode().strip()
-        build=out/'native-build';command([str(cmake),'-S',posix(source/'native/cyglaunch'),'-B',posix(build),'-G','Unix Makefiles','-DCMAKE_POLICY_VERSION_MINIMUM=3.5'],'configure')
+        build=out/'native-build';command(configure_command(str(cmake),posix(source/'native/cyglaunch'),posix(build),posix(gcc),posix(bin/'g++.exe'),posix(bin/'make.exe')),'configure')
         command([str(cmake),'--build',posix(build),'--parallel','2'],'build')
         output=out/'cyglaunch.exe';shutil.copyfile(build/'cyglaunch.exe',output)
         spec=importlib.util.spec_from_file_location('pe',ROOT/'docs/testing/tools/build-native-from-source.py');pe=importlib.util.module_from_spec(spec);spec.loader.exec_module(pe)
