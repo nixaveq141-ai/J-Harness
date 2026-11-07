@@ -1,21 +1,33 @@
 """Guard signed input scope and native i386 VM isolation before real CI boot."""
-import importlib.util,io,unittest
+import importlib.util,io,unittest,fnmatch
 from unittest.mock import patch
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 s=importlib.util.spec_from_file_location('bootstrap',ROOT/'scripts/bootstrap-p1-openbsd-i386.py');m=importlib.util.module_from_spec(s);s.loader.exec_module(m)
 
 class BootstrapScope(unittest.TestCase):
+    def test_installer_default_sets_are_explicitly_unselected_when_not_served(self):
+        selected={'bsd','bsd.mp','bsd.rd','base79.tgz','comp79.tgz','man79.tgz','game79.tgz','xbase79.tgz','xshare79.tgz','xfont79.tgz','xserv79.tgz'}
+        for option in m.SET_SELECTION.split():
+            self.assertTrue(option.startswith('-'))
+            selected={n for n in selected if not fnmatch.fnmatchcase(n,option[1:])}
+        self.assertTrue(selected<=set(m.FILES))
+        self.assertTrue({'base79.tgz','comp79.tgz','xbase79.tgz','xshare79.tgz'}<=selected)
+
     def test_installer_wait_distinguishes_terminal_from_stalled_live_vm(self):
         class Vm:
             def __init__(self,status):self.status=status
             def poll(self):return self.status
         class Serial:
-            def stat(self):return type('Stat',(),{'st_size':0})()
+            def __init__(self,data=b''):self.data=data
+            def stat(self):return type('Stat',(),{'st_size':len(self.data)})()
+            def open(self,mode):return io.BytesIO(self.data)
         self.assertEqual(0,m.wait_installation(Vm(0),Serial()))
         self.assertEqual(9,m.wait_installation(Vm(9),Serial()))
         with patch.object(m.time,'monotonic',side_effect=[0,181]),self.assertRaisesRegex(ValueError,'no progress'):
             m.wait_installation(Vm(None),Serial())
+        with self.assertRaisesRegex(ValueError,'reported failure'):
+            m.wait_installation(Vm(None),Serial(b'failed; check /tmp/ai/ai.log'))
 
     def test_official_base_size_fits_and_stream_budget_stays_enforced(self):
         self.assertGreaterEqual(m.INPUT_LIMITS['base79.tgz'],282575165)

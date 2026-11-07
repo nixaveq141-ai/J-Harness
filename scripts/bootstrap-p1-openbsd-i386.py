@@ -8,6 +8,7 @@ BASE='https://cdn.openbsd.org/pub/OpenBSD/7.9/i386/'
 PUBLIC_KEY='untrusted comment: openbsd 7.9 base public key\nRWTSdNN9A3yvWNn7mUjXwv9DOCOUnyfuV+mq1iGPIfD+NhN8EYnEQ1at\n'
 FILES=['pxeboot','bsd.rd','bsd','bsd.mp','base79.tgz','comp79.tgz','man79.tgz','xbase79.tgz','xshare79.tgz']
 INPUT_LIMITS={'base79.tgz':320*1024*1024}
+SET_SELECTION='-game* -xfont* -xserv*'
 
 def copy_bounded(response,stream,limit):
     size=0
@@ -38,6 +39,9 @@ def wait_installation(vm,serial_path,timeout=1500,idle_timeout=180):
         if current!=size:
             size=current;last_progress=now
             print('Owned i386 installer serial progress:',size,'bytes',flush=True)
+        with serial_path.open('rb') as stream:
+            stream.seek(max(0,current-8192));tail=stream.read(8192)
+        if b'failed; check /tmp/ai/ai.log' in tail:raise ValueError('Owned i386 installer reported failure')
         if now-started>=timeout:raise ValueError('Owned i386 installer total time budget exceeded')
         if now-last_progress>=idle_timeout:raise ValueError('Owned i386 installer serial made no progress within idle budget')
         time.sleep(3)
@@ -75,7 +79,7 @@ def main():
             'Start sshd(8) by default = yes','Do you expect to run the X Window System = no','Change the default console to com0 = yes',
             'Which speed should com0 use = 115200','Setup a user = no','Allow root ssh login = prohibit-password','What timezone are you in = UTC',
             'Which disk is the root disk = sd0','Use (W)hole disk = whole','Use (A)uto layout = A','Location of sets = http',
-            'HTTP Server = 10.0.2.2','Server directory = 7.9/i386','Set name(s) = bsd bsd.mp bsd.rd base79.tgz comp79.tgz man79.tgz xbase79.tgz xshare79.tgz',
+            'HTTP Server = 10.0.2.2','Server directory = 7.9/i386','Set name(s) = '+SET_SELECTION,
             'Location of sets = done'])+'\n'
         (web/'install.conf').write_bytes(config.encode());report['responseSha256']=stream_sha256(web/'install.conf')
         http_log=(out/'http.log').open('wb');handles.append(http_log)

@@ -1,0 +1,16 @@
+{
+  "status": "NATIVE_I386_INSTALL_STARTED_SET_SELECTION_FAILED_NOT_COMPONENT_ACCEPTANCE",
+  "runId": "42373750406",
+  "commit": "1b6f79cbb114d0dac1a99c2e92270e458cee2b91",
+  "artifact": {
+    "id": 13575677006,
+    "bytes": 219297,
+    "sha256": "2b42a4fc9f8a39f1c3ea537caa214db06e18bb1c4d75486555079911ee94d9a8"
+  },
+  "failure": "Default game79 set remained selected; HTTP404; installer returned to interactive prompt",
+  "fix": "Explicit -game* -xfont* -xserv* negative selectors; no required base/compiler/X library removal",
+  "localControls": 5,
+  "runtimeFixVerified": false,
+  "productAccepted": false,
+  "paidRequests": 0
+}

@@ -1,0 +1,11 @@
+{
+  "status": "LOCAL_BACKUP_ALL_MEMBERS_SHA_AND_CRC_VERIFIED",
+  "path": ".build-cache/local-evidence-backups/2026-11-07/openbsd-i386-install-selection.zip",
+  "sha256": "28dd1d64f6320c01bc631a4802b03a6e9a3055776191fadba9f1a7caa5e10009",
+  "members": {
+    ".build-cache/p1-raw-42373750406/13575677006.zip": "2b42a4fc9f8a39f1c3ea537caa214db06e18bb1c4d75486555079911ee94d9a8",
+    "scripts/bootstrap-p1-openbsd-i386.py": "30a4cad337742701f11a0a5b6fa1ad815e1c25e6ac168a2f38c77eded8a4cd21",
+    "scripts/test-p1-openbsd-i386-bootstrap.py": "b98141bdc5a1c2869e61155f0317c0709698df537821a9595bf7d1bdcf853f5b",
+    "docs/testing/gap-p1-2026-11-04/openbsd-i386-install-selection-failure.json": "bc8f5038ce9b24ef93e7d6b0acd801be78f425f7f67aa06339c35c68c08a4290"
+  }
+}
