@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "scope": "39 formally accepted;44 independently reviewed sources assembled;6 original sources unresolved. Candidate44 full qualification pending. Not full OS/CPE clearance.",
+  "scope": "44 sources formally accepted in five-target byte-identical product qualification;6 original source chains remain unresolved. Not full OS/CPE clearance.",
   "resources": {
     "com/sun/jna/win32-x86-64/jnidispatch.dll": {
       "sha256": "c88e200b240dfa54c5b852a335b28683e64a074d30ceee7c17ffc282058891a2",
@@ -539,20 +539,10 @@
     }
   },
   "fullRuntimeQualification": {
-    "runId": "42226835895",
-    "commit": "904d2f3af194ba25ee8d9b542f61fd12a4c88291",
-    "runtimeJarSha256": "9bfda993df332555ea532fe0a178ff29bd90b9ab4b2b26878a56413cd638f742",
-    "receiptSha256": "1832e7f3a1b7235fe438282fbc2638f2ab606ff2a0a46c8603a9c6117bbba0aa",
-    "reviewedResourceCount": 39
-  },
-  "pendingCandidateQualification": {
-    "reviewedResourceCount": 44,
-    "status": "FULL_PRODUCT_QUALIFICATION_PENDING",
-    "componentRunIds": [
-      "42227334617",
-      "42228145670",
-      "42322393412",
-      "42323927902"
-    ]
+    "runId": "42326568858",
+    "commit": "de8220eb74267ce37a05d1dd31c4dde54be7bd76",
+    "runtimeJarSha256": "7e518201e3adbfdfc8b704b3a37efdd1e13bcc3b0c72f4a5ad8395c7dafd64df",
+    "receiptSha256": "cb618f819ebb0cafa5f3c1eccd2826c331b2a598b56124421c6db7fa7a34583d",
+    "reviewedResourceCount": 44
   }
 }

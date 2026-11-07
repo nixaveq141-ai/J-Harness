@@ -4,9 +4,9 @@
   "independentlyVerifiedNewSourceComponents": 30,
   "assembledCandidateReviewedCount": 44,
   "assembledCandidateUnresolvedCount": 6,
-  "formalAcceptedRuntimeCommit": "904d2f3af194ba25ee8d9b542f61fd12a4c88291",
-  "formalAcceptedRuntimeReviewedCount": 39,
-  "formalAcceptedRuntimeUnresolvedCount": 11,
+  "formalAcceptedRuntimeCommit": "de8220eb74267ce37a05d1dd31c4dde54be7bd76",
+  "formalAcceptedRuntimeReviewedCount": 44,
+  "formalAcceptedRuntimeUnresolvedCount": 6,
   "physicalExtraMachineAcceptance": "SKIPPED_BY_USER_NOT_RUNTIME_CERTIFIED",
   "tasks": [
     {
@@ -48,15 +48,15 @@
       "cpu": "x86-64",
       "status": "SOURCE_REPLACEMENT_ACCEPTED_IN_FIVE_TARGET_PRODUCT",
       "requiredToolchain": "freebsd目标SDK/系统头文件与原生或交叉编译器",
-      "nextAction": "本资源固定来源替换与五托管目标产品回归已验；额外目标完整JVM/Java与OS/CPE不在此认证范围",
+      "nextAction": "本来源替换及五托管目标产品回归已验；不扩大额外平台完整Java或OS/CPE认证",
       "blockers": [],
       "componentRunId": "42150888437",
       "componentCommit": "ca7586024dd6200ce27ca30c8e490377f095426f",
       "componentReceipt": "docs/testing/gap-p1-2026-11-04/freebsd-jna-components-acceptance.json",
       "candidateSha256": "488ae9c2a7cbcb893864dff58ee9145da7e4a38fc75adf7ff68578cf97010584",
-      "productRunId": "42226835895",
-      "productCommit": "904d2f3af194ba25ee8d9b542f61fd12a4c88291",
-      "productReceipt": "docs/testing/M10-unified39-final-equality-2026-11-06.json"
+      "productRunId": "42326568858",
+      "productCommit": "de8220eb74267ce37a05d1dd31c4dde54be7bd76",
+      "productReceipt": "docs/testing/M10-unified44-final-equality-2026-11-06.json"
     },
     {
       "taskId": "NATIVE-04",
@@ -67,15 +67,15 @@
       "cpu": "x86",
       "status": "SOURCE_REPLACEMENT_ACCEPTED_IN_FIVE_TARGET_PRODUCT",
       "requiredToolchain": "freebsd目标SDK/系统头文件与原生或交叉编译器",
-      "nextAction": "本资源固定来源替换与五托管目标产品回归已验；额外目标完整JVM/Java与OS/CPE不在此认证范围",
+      "nextAction": "本来源替换及五托管目标产品回归已验；不扩大额外平台完整Java或OS/CPE认证",
       "blockers": [],
       "componentRunId": "42150888437",
       "componentCommit": "ca7586024dd6200ce27ca30c8e490377f095426f",
       "componentReceipt": "docs/testing/gap-p1-2026-11-04/freebsd-jna-components-acceptance.json",
       "candidateSha256": "9f54cd943022ad61b8feac94ee616fb7e6dc9a371d67dd11629102edb9d96c35",
-      "productRunId": "42226835895",
-      "productCommit": "904d2f3af194ba25ee8d9b542f61fd12a4c88291",
-      "productReceipt": "docs/testing/M10-unified39-final-equality-2026-11-06.json"
+      "productRunId": "42326568858",
+      "productCommit": "de8220eb74267ce37a05d1dd31c4dde54be7bd76",
+      "productReceipt": "docs/testing/M10-unified44-final-equality-2026-11-06.json"
     },
     {
       "taskId": "NATIVE-05",
@@ -89,10 +89,10 @@
       "componentRunId": "41830641417",
       "componentCommit": "8ad5356513e63756298e8eb4d3e697ba72cf303f",
       "componentReceipt": "docs/testing/gap-p1-2026-11-04/jna-components-acceptance.json",
-      "nextAction": "本资源固定来源替换与五托管目标产品回归已验；额外目标完整JVM/Java与OS/CPE不在此认证范围",
-      "productRunId": "42226835895",
-      "productCommit": "904d2f3af194ba25ee8d9b542f61fd12a4c88291",
-      "productReceipt": "docs/testing/M10-unified39-final-equality-2026-11-06.json",
+      "nextAction": "本来源替换及五托管目标产品回归已验；不扩大额外平台完整Java或OS/CPE认证",
+      "productRunId": "42326568858",
+      "productCommit": "de8220eb74267ce37a05d1dd31c4dde54be7bd76",
+      "productReceipt": "docs/testing/M10-unified44-final-equality-2026-11-06.json",
       "blockers": []
     },
     {
@@ -107,10 +107,10 @@
       "componentRunId": "41830641417",
       "componentCommit": "8ad5356513e63756298e8eb4d3e697ba72cf303f",
       "componentReceipt": "docs/testing/gap-p1-2026-11-04/jna-components-acceptance.json",
-      "nextAction": "本资源固定来源替换与五托管目标产品回归已验；额外目标完整JVM/Java与OS/CPE不在此认证范围",
-      "productRunId": "42226835895",
-      "productCommit": "904d2f3af194ba25ee8d9b542f61fd12a4c88291",
-      "productReceipt": "docs/testing/M10-unified39-final-equality-2026-11-06.json",
+      "nextAction": "本来源替换及五托管目标产品回归已验；不扩大额外平台完整Java或OS/CPE认证",
+      "productRunId": "42326568858",
+      "productCommit": "de8220eb74267ce37a05d1dd31c4dde54be7bd76",
+      "productReceipt": "docs/testing/M10-unified44-final-equality-2026-11-06.json",
       "blockers": []
     },
     {
@@ -122,15 +122,15 @@
       "cpu": "loongarch64",
       "status": "SOURCE_REPLACEMENT_ACCEPTED_IN_FIVE_TARGET_PRODUCT",
       "requiredToolchain": "Linux loongarch64交叉编译器、sysroot、libc/内核头文件",
-      "nextAction": "本资源固定来源替换与五托管目标产品回归已验；额外目标完整JVM/Java与OS/CPE不在此认证范围",
+      "nextAction": "本来源替换及五托管目标产品回归已验；不扩大额外平台完整Java或OS/CPE认证",
       "blockers": [],
       "candidateSha256": "50029ad7916911dd091103d485701c409918b47509a0e916f213b27d7ac15052",
       "componentRunId": "42155835171",
       "componentCommit": "521b71f0553ac046ab720aff6e7e36b655bfe0ff",
       "componentReceipt": "docs/testing/gap-p1-2026-11-04/loongarch-jna-component-acceptance.json",
-      "productRunId": "42226835895",
-      "productCommit": "904d2f3af194ba25ee8d9b542f61fd12a4c88291",
-      "productReceipt": "docs/testing/M10-unified39-final-equality-2026-11-06.json"
+      "productRunId": "42326568858",
+      "productCommit": "de8220eb74267ce37a05d1dd31c4dde54be7bd76",
+      "productReceipt": "docs/testing/M10-unified44-final-equality-2026-11-06.json"
     },
     {
       "taskId": "NATIVE-08",
@@ -144,10 +144,10 @@
       "componentRunId": "41830641417",
       "componentCommit": "8ad5356513e63756298e8eb4d3e697ba72cf303f",
       "componentReceipt": "docs/testing/gap-p1-2026-11-04/jna-components-acceptance.json",
-      "nextAction": "本资源固定来源替换与五托管目标产品回归已验；额外目标完整JVM/Java与OS/CPE不在此认证范围",
-      "productRunId": "42226835895",
-      "productCommit": "904d2f3af194ba25ee8d9b542f61fd12a4c88291",
-      "productReceipt": "docs/testing/M10-unified39-final-equality-2026-11-06.json",
+      "nextAction": "本来源替换及五托管目标产品回归已验；不扩大额外平台完整Java或OS/CPE认证",
+      "productRunId": "42326568858",
+      "productCommit": "de8220eb74267ce37a05d1dd31c4dde54be7bd76",
+      "productReceipt": "docs/testing/M10-unified44-final-equality-2026-11-06.json",
       "blockers": []
     },
     {
@@ -162,10 +162,10 @@
       "componentRunId": "41830641417",
       "componentCommit": "8ad5356513e63756298e8eb4d3e697ba72cf303f",
       "componentReceipt": "docs/testing/gap-p1-2026-11-04/jna-components-acceptance.json",
-      "nextAction": "本资源固定来源替换与五托管目标产品回归已验；额外目标完整JVM/Java与OS/CPE不在此认证范围",
-      "productRunId": "42226835895",
-      "productCommit": "904d2f3af194ba25ee8d9b542f61fd12a4c88291",
-      "productReceipt": "docs/testing/M10-unified39-final-equality-2026-11-06.json",
+      "nextAction": "本来源替换及五托管目标产品回归已验；不扩大额外平台完整Java或OS/CPE认证",
+      "productRunId": "42326568858",
+      "productCommit": "de8220eb74267ce37a05d1dd31c4dde54be7bd76",
+      "productReceipt": "docs/testing/M10-unified44-final-equality-2026-11-06.json",
       "blockers": []
     },
     {
@@ -180,10 +180,10 @@
       "componentRunId": "41830641417",
       "componentCommit": "8ad5356513e63756298e8eb4d3e697ba72cf303f",
       "componentReceipt": "docs/testing/gap-p1-2026-11-04/jna-components-acceptance.json",
-      "nextAction": "本资源固定来源替换与五托管目标产品回归已验；额外目标完整JVM/Java与OS/CPE不在此认证范围",
-      "productRunId": "42226835895",
-      "productCommit": "904d2f3af194ba25ee8d9b542f61fd12a4c88291",
-      "productReceipt": "docs/testing/M10-unified39-final-equality-2026-11-06.json",
+      "nextAction": "本来源替换及五托管目标产品回归已验；不扩大额外平台完整Java或OS/CPE认证",
+      "productRunId": "42326568858",
+      "productCommit": "de8220eb74267ce37a05d1dd31c4dde54be7bd76",
+      "productReceipt": "docs/testing/M10-unified44-final-equality-2026-11-06.json",
       "blockers": []
     },
     {
@@ -198,10 +198,10 @@
       "componentRunId": "41830641417",
       "componentCommit": "8ad5356513e63756298e8eb4d3e697ba72cf303f",
       "componentReceipt": "docs/testing/gap-p1-2026-11-04/jna-components-acceptance.json",
-      "nextAction": "本资源固定来源替换与五托管目标产品回归已验；额外目标完整JVM/Java与OS/CPE不在此认证范围",
-      "productRunId": "42226835895",
-      "productCommit": "904d2f3af194ba25ee8d9b542f61fd12a4c88291",
-      "productReceipt": "docs/testing/M10-unified39-final-equality-2026-11-06.json",
+      "nextAction": "本来源替换及五托管目标产品回归已验；不扩大额外平台完整Java或OS/CPE认证",
+      "productRunId": "42326568858",
+      "productCommit": "de8220eb74267ce37a05d1dd31c4dde54be7bd76",
+      "productReceipt": "docs/testing/M10-unified44-final-equality-2026-11-06.json",
       "blockers": []
     },
     {
@@ -216,10 +216,10 @@
       "componentRunId": "41830641417",
       "componentCommit": "8ad5356513e63756298e8eb4d3e697ba72cf303f",
       "componentReceipt": "docs/testing/gap-p1-2026-11-04/jna-components-acceptance.json",
-      "nextAction": "本资源固定来源替换与五托管目标产品回归已验；额外目标完整JVM/Java与OS/CPE不在此认证范围",
-      "productRunId": "42226835895",
-      "productCommit": "904d2f3af194ba25ee8d9b542f61fd12a4c88291",
-      "productReceipt": "docs/testing/M10-unified39-final-equality-2026-11-06.json",
+      "nextAction": "本来源替换及五托管目标产品回归已验；不扩大额外平台完整Java或OS/CPE认证",
+      "productRunId": "42326568858",
+      "productCommit": "de8220eb74267ce37a05d1dd31c4dde54be7bd76",
+      "productReceipt": "docs/testing/M10-unified44-final-equality-2026-11-06.json",
       "blockers": []
     },
     {
@@ -234,10 +234,10 @@
       "componentRunId": "41830641417",
       "componentCommit": "8ad5356513e63756298e8eb4d3e697ba72cf303f",
       "componentReceipt": "docs/testing/gap-p1-2026-11-04/jna-components-acceptance.json",
-      "nextAction": "本资源固定来源替换与五托管目标产品回归已验；额外目标完整JVM/Java与OS/CPE不在此认证范围",
-      "productRunId": "42226835895",
-      "productCommit": "904d2f3af194ba25ee8d9b542f61fd12a4c88291",
-      "productReceipt": "docs/testing/M10-unified39-final-equality-2026-11-06.json",
+      "nextAction": "本来源替换及五托管目标产品回归已验；不扩大额外平台完整Java或OS/CPE认证",
+      "productRunId": "42326568858",
+      "productCommit": "de8220eb74267ce37a05d1dd31c4dde54be7bd76",
+      "productReceipt": "docs/testing/M10-unified44-final-equality-2026-11-06.json",
       "blockers": []
     },
     {
@@ -247,16 +247,17 @@
       "coordinate": "net.java.dev.jna:jna:5.14.0",
       "os": "openbsd",
       "cpu": "x86-64",
-      "status": "COMPONENT_SOURCE_VERIFIED_ASSEMBLED_FULL_PRODUCT_PENDING",
+      "status": "SOURCE_REPLACEMENT_ACCEPTED_IN_FIVE_TARGET_PRODUCT",
       "requiredToolchain": "openbsd目标SDK/系统头文件与原生或交叉编译器",
-      "nextAction": "40来源统一候选五目标产品回归与独立原包验收待",
-      "blockers": [
-        "统一候选全量产品回归未验收"
-      ],
+      "nextAction": "本来源替换及五托管目标产品回归已验；不扩大额外平台完整Java或OS/CPE认证",
+      "blockers": [],
       "candidateSha256": "9e879fa34478beb86ba05e13b5a819dd137ca44126cd1b10dd0f9ddd30bc181a",
       "componentRunId": "42227334617",
       "componentCommit": "f587190ad83fc91435809a26fba594607132e047",
-      "componentReceipt": "docs/testing/gap-p1-2026-11-04/openbsd-jna-components-acceptance.json"
+      "componentReceipt": "docs/testing/gap-p1-2026-11-04/openbsd-jna-components-acceptance.json",
+      "productRunId": "42326568858",
+      "productCommit": "de8220eb74267ce37a05d1dd31c4dde54be7bd76",
+      "productReceipt": "docs/testing/M10-unified44-final-equality-2026-11-06.json"
     },
     {
       "taskId": "NATIVE-15",
@@ -312,15 +313,15 @@
       "cpu": "x86-64",
       "status": "SOURCE_REPLACEMENT_ACCEPTED_IN_FIVE_TARGET_PRODUCT",
       "requiredToolchain": "sunos目标SDK/系统头文件与原生或交叉编译器",
-      "nextAction": "本资源固定来源替换与五托管目标产品回归已验；额外目标完整JVM/Java与OS/CPE不在此认证范围",
+      "nextAction": "本来源替换及五托管目标产品回归已验；不扩大额外平台完整Java或OS/CPE认证",
       "blockers": [],
       "candidateSha256": "7439a4a36ee42c7638d2947b2dcb437e560be832c26e3977252c427f4f6a7330",
       "componentRunId": "42158505948",
       "componentCommit": "543e7efcacb5b78e93103f0be8e4828d3dc2f16e",
       "componentReceipt": "docs/testing/gap-p1-2026-11-04/sunos-jna-components-acceptance.json",
-      "productRunId": "42226835895",
-      "productCommit": "904d2f3af194ba25ee8d9b542f61fd12a4c88291",
-      "productReceipt": "docs/testing/M10-unified39-final-equality-2026-11-06.json"
+      "productRunId": "42326568858",
+      "productCommit": "de8220eb74267ce37a05d1dd31c4dde54be7bd76",
+      "productReceipt": "docs/testing/M10-unified44-final-equality-2026-11-06.json"
     },
     {
       "taskId": "NATIVE-19",
@@ -331,15 +332,15 @@
       "cpu": "x86",
       "status": "SOURCE_REPLACEMENT_ACCEPTED_IN_FIVE_TARGET_PRODUCT",
       "requiredToolchain": "sunos目标SDK/系统头文件与原生或交叉编译器",
-      "nextAction": "本资源固定来源替换与五托管目标产品回归已验；额外目标完整JVM/Java与OS/CPE不在此认证范围",
+      "nextAction": "本来源替换及五托管目标产品回归已验；不扩大额外平台完整Java或OS/CPE认证",
       "blockers": [],
       "candidateSha256": "51183dc6c855742aed760b6c152f9ec22206ec99d1be0605bce0ce342bc09d9b",
       "componentRunId": "42158505948",
       "componentCommit": "543e7efcacb5b78e93103f0be8e4828d3dc2f16e",
       "componentReceipt": "docs/testing/gap-p1-2026-11-04/sunos-jna-components-acceptance.json",
-      "productRunId": "42226835895",
-      "productCommit": "904d2f3af194ba25ee8d9b542f61fd12a4c88291",
-      "productReceipt": "docs/testing/M10-unified39-final-equality-2026-11-06.json"
+      "productRunId": "42326568858",
+      "productCommit": "de8220eb74267ce37a05d1dd31c4dde54be7bd76",
+      "productReceipt": "docs/testing/M10-unified44-final-equality-2026-11-06.json"
     },
     {
       "taskId": "NATIVE-20",
@@ -350,15 +351,15 @@
       "cpu": "aarch64",
       "status": "SOURCE_REPLACEMENT_ACCEPTED_IN_FIVE_TARGET_PRODUCT",
       "requiredToolchain": "MSVC/Windows SDK aarch64；构建WinPTY/Console/helper所需依赖",
-      "nextAction": "本资源固定来源替换与五托管目标产品回归已验；额外目标完整JVM/Java与OS/CPE不在此认证范围",
+      "nextAction": "本来源替换及五托管目标产品回归已验；不扩大额外平台完整Java或OS/CPE认证",
       "blockers": [],
       "candidateSha256": "7f377b196786af9e942a4f8789388c035c753daa7b9e127f80bc3cc1ea52d578",
       "componentRunId": "42159389661",
       "componentCommit": "3e71dddc18b47e25a65a57f218a8f8eed6b91f03",
       "componentReceipt": "docs/testing/gap-p1-2026-11-04/windows-arm64-jna-component-acceptance.json",
-      "productRunId": "42226835895",
-      "productCommit": "904d2f3af194ba25ee8d9b542f61fd12a4c88291",
-      "productReceipt": "docs/testing/M10-unified39-final-equality-2026-11-06.json"
+      "productRunId": "42326568858",
+      "productCommit": "de8220eb74267ce37a05d1dd31c4dde54be7bd76",
+      "productReceipt": "docs/testing/M10-unified44-final-equality-2026-11-06.json"
     },
     {
       "taskId": "NATIVE-21",
@@ -369,14 +370,14 @@
       "cpu": "x86",
       "status": "SOURCE_REPLACEMENT_ACCEPTED_IN_FIVE_TARGET_PRODUCT",
       "requiredToolchain": "MSVC/Windows SDK x86；构建WinPTY/Console/helper所需依赖",
-      "nextAction": "本资源固定来源替换与五托管目标产品回归已验；额外目标完整JVM/Java与OS/CPE不在此认证范围",
+      "nextAction": "本来源替换及五托管目标产品回归已验；不扩大额外平台完整Java或OS/CPE认证",
       "blockers": [],
       "componentRunId": "41992679907",
       "componentCommit": "e6d3091a56e2551fc864afaefc8b74a3e7e3cf2a",
       "componentReceipt": "docs/testing/gap-p1-2026-11-04/windows-x86-components-acceptance.json",
-      "productRunId": "42226835895",
-      "productCommit": "904d2f3af194ba25ee8d9b542f61fd12a4c88291",
-      "productReceipt": "docs/testing/M10-unified39-final-equality-2026-11-06.json",
+      "productRunId": "42326568858",
+      "productCommit": "de8220eb74267ce37a05d1dd31c4dde54be7bd76",
+      "productReceipt": "docs/testing/M10-unified44-final-equality-2026-11-06.json",
       "candidateSha256": "81d86d8fcc433b709cec0a05d53b7561c7e3a0ad47726328252439cd0c3d7152"
     },
     {
@@ -388,15 +389,15 @@
       "cpu": "x86-64",
       "status": "SOURCE_REPLACEMENT_ACCEPTED_IN_FIVE_TARGET_PRODUCT",
       "requiredToolchain": "freebsd目标SDK/系统头文件与原生或交叉编译器",
-      "nextAction": "本资源固定来源替换与五托管目标产品回归已验；额外目标完整JVM/Java与OS/CPE不在此认证范围",
+      "nextAction": "本来源替换及五托管目标产品回归已验；不扩大额外平台完整Java或OS/CPE认证",
       "blockers": [],
       "componentRunId": "42003119496",
       "componentCommit": "40610c294c54dd2a53526a0da8c623cdd7c0d562",
       "componentReceipt": "docs/testing/gap-p1-2026-11-04/freebsd-x64-dual-components-acceptance.json",
       "candidateSha256": "2bf0fb6af39b5d7433fed100c21f0027ccabb129961cdb90d9ff04f400c41b30",
-      "productRunId": "42226835895",
-      "productCommit": "904d2f3af194ba25ee8d9b542f61fd12a4c88291",
-      "productReceipt": "docs/testing/M10-unified39-final-equality-2026-11-06.json"
+      "productRunId": "42326568858",
+      "productCommit": "de8220eb74267ce37a05d1dd31c4dde54be7bd76",
+      "productReceipt": "docs/testing/M10-unified44-final-equality-2026-11-06.json"
     },
     {
       "taskId": "NATIVE-23",
@@ -407,15 +408,15 @@
       "cpu": "x86",
       "status": "SOURCE_REPLACEMENT_ACCEPTED_IN_FIVE_TARGET_PRODUCT",
       "requiredToolchain": "freebsd目标SDK/系统头文件与原生或交叉编译器",
-      "nextAction": "本资源固定来源替换与五托管目标产品回归已验；额外目标完整JVM/Java与OS/CPE不在此认证范围",
+      "nextAction": "本来源替换及五托管目标产品回归已验；不扩大额外平台完整Java或OS/CPE认证",
       "blockers": [],
       "componentRunId": "42003119496",
       "componentCommit": "40610c294c54dd2a53526a0da8c623cdd7c0d562",
       "componentReceipt": "docs/testing/gap-p1-2026-11-04/freebsd-x86-dual-components-acceptance.json",
       "candidateSha256": "3bcfb40e936480de341bd775c440170973e8f03bd5de5fdf9f7ce3518f9696aa",
-      "productRunId": "42226835895",
-      "productCommit": "904d2f3af194ba25ee8d9b542f61fd12a4c88291",
-      "productReceipt": "docs/testing/M10-unified39-final-equality-2026-11-06.json"
+      "productRunId": "42326568858",
+      "productCommit": "de8220eb74267ce37a05d1dd31c4dde54be7bd76",
+      "productReceipt": "docs/testing/M10-unified44-final-equality-2026-11-06.json"
     },
     {
       "taskId": "NATIVE-24",
@@ -429,10 +430,10 @@
       "componentRunId": "41823433458",
       "componentCommit": "1c4cc6da5fd62d6f23c0459036cd9b560403b8b7",
       "componentReceipt": "docs/testing/gap-p1-2026-11-04/components-acceptance.json",
-      "nextAction": "本资源固定来源替换与五托管目标产品回归已验；额外目标完整JVM/Java与OS/CPE不在此认证范围",
-      "productRunId": "42226835895",
-      "productCommit": "904d2f3af194ba25ee8d9b542f61fd12a4c88291",
-      "productReceipt": "docs/testing/M10-unified39-final-equality-2026-11-06.json",
+      "nextAction": "本来源替换及五托管目标产品回归已验；不扩大额外平台完整Java或OS/CPE认证",
+      "productRunId": "42326568858",
+      "productCommit": "de8220eb74267ce37a05d1dd31c4dde54be7bd76",
+      "productReceipt": "docs/testing/M10-unified44-final-equality-2026-11-06.json",
       "blockers": []
     },
     {
@@ -447,10 +448,10 @@
       "componentRunId": "41823433458",
       "componentCommit": "1c4cc6da5fd62d6f23c0459036cd9b560403b8b7",
       "componentReceipt": "docs/testing/gap-p1-2026-11-04/components-acceptance.json",
-      "nextAction": "本资源固定来源替换与五托管目标产品回归已验；额外目标完整JVM/Java与OS/CPE不在此认证范围",
-      "productRunId": "42226835895",
-      "productCommit": "904d2f3af194ba25ee8d9b542f61fd12a4c88291",
-      "productReceipt": "docs/testing/M10-unified39-final-equality-2026-11-06.json",
+      "nextAction": "本来源替换及五托管目标产品回归已验；不扩大额外平台完整Java或OS/CPE认证",
+      "productRunId": "42326568858",
+      "productCommit": "de8220eb74267ce37a05d1dd31c4dde54be7bd76",
+      "productReceipt": "docs/testing/M10-unified44-final-equality-2026-11-06.json",
       "blockers": []
     },
     {
@@ -465,10 +466,10 @@
       "componentRunId": "41823433458",
       "componentCommit": "1c4cc6da5fd62d6f23c0459036cd9b560403b8b7",
       "componentReceipt": "docs/testing/gap-p1-2026-11-04/components-acceptance.json",
-      "nextAction": "本资源固定来源替换与五托管目标产品回归已验；额外目标完整JVM/Java与OS/CPE不在此认证范围",
-      "productRunId": "42226835895",
-      "productCommit": "904d2f3af194ba25ee8d9b542f61fd12a4c88291",
-      "productReceipt": "docs/testing/M10-unified39-final-equality-2026-11-06.json",
+      "nextAction": "本来源替换及五托管目标产品回归已验；不扩大额外平台完整Java或OS/CPE认证",
+      "productRunId": "42326568858",
+      "productCommit": "de8220eb74267ce37a05d1dd31c4dde54be7bd76",
+      "productReceipt": "docs/testing/M10-unified44-final-equality-2026-11-06.json",
       "blockers": []
     },
     {
@@ -483,10 +484,10 @@
       "componentRunId": "41823433458",
       "componentCommit": "1c4cc6da5fd62d6f23c0459036cd9b560403b8b7",
       "componentReceipt": "docs/testing/gap-p1-2026-11-04/components-acceptance.json",
-      "nextAction": "本资源固定来源替换与五托管目标产品回归已验；额外目标完整JVM/Java与OS/CPE不在此认证范围",
-      "productRunId": "42226835895",
-      "productCommit": "904d2f3af194ba25ee8d9b542f61fd12a4c88291",
-      "productReceipt": "docs/testing/M10-unified39-final-equality-2026-11-06.json",
+      "nextAction": "本来源替换及五托管目标产品回归已验；不扩大额外平台完整Java或OS/CPE认证",
+      "productRunId": "42326568858",
+      "productCommit": "de8220eb74267ce37a05d1dd31c4dde54be7bd76",
+      "productReceipt": "docs/testing/M10-unified44-final-equality-2026-11-06.json",
       "blockers": []
     },
     {
@@ -501,10 +502,10 @@
       "componentRunId": "41823433458",
       "componentCommit": "1c4cc6da5fd62d6f23c0459036cd9b560403b8b7",
       "componentReceipt": "docs/testing/gap-p1-2026-11-04/components-acceptance.json",
-      "nextAction": "本资源固定来源替换与五托管目标产品回归已验；额外目标完整JVM/Java与OS/CPE不在此认证范围",
-      "productRunId": "42226835895",
-      "productCommit": "904d2f3af194ba25ee8d9b542f61fd12a4c88291",
-      "productReceipt": "docs/testing/M10-unified39-final-equality-2026-11-06.json",
+      "nextAction": "本来源替换及五托管目标产品回归已验；不扩大额外平台完整Java或OS/CPE认证",
+      "productRunId": "42326568858",
+      "productCommit": "de8220eb74267ce37a05d1dd31c4dde54be7bd76",
+      "productReceipt": "docs/testing/M10-unified44-final-equality-2026-11-06.json",
       "blockers": []
     },
     {
@@ -514,17 +515,18 @@
       "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
       "os": "win",
       "cpu": "aarch64",
-      "status": "COMPONENT_SOURCE_VERIFIED_ASSEMBLED_FULL_PRODUCT_PENDING",
+      "status": "SOURCE_REPLACEMENT_ACCEPTED_IN_FIVE_TARGET_PRODUCT",
       "requiredToolchain": "MSVC/Windows SDK aarch64；构建WinPTY/Console/helper所需依赖",
-      "nextAction": "44来源统一候选五目标产品回归与独立原包验收待",
-      "blockers": [
-        "统一候选全量产品回归未验收"
-      ],
+      "nextAction": "本来源替换及五托管目标产品回归已验；不扩大额外平台完整Java或OS/CPE认证",
+      "blockers": [],
       "candidateSha256": "b0b5c764e2b2960b816f538858f054bee4dabf67b191b3a0e5dad92e32cb556d",
       "componentRunId": "42323927902",
       "componentCommit": "2a283294e5497f99b013ce636cde497a7af1f5e3",
       "componentReceipt": "docs/testing/gap-p1-2026-11-04/windows-arm64-console-components-acceptance.json",
-      "sourceBuildRunId": "42322393412"
+      "sourceBuildRunId": "42322393412",
+      "productRunId": "42326568858",
+      "productCommit": "de8220eb74267ce37a05d1dd31c4dde54be7bd76",
+      "productReceipt": "docs/testing/M10-unified44-final-equality-2026-11-06.json"
     },
     {
       "taskId": "NATIVE-30",
@@ -533,17 +535,18 @@
       "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
       "os": "win",
       "cpu": "aarch64",
-      "status": "COMPONENT_SOURCE_VERIFIED_ASSEMBLED_FULL_PRODUCT_PENDING",
+      "status": "SOURCE_REPLACEMENT_ACCEPTED_IN_FIVE_TARGET_PRODUCT",
       "requiredToolchain": "MSVC/Windows SDK aarch64；构建WinPTY/Console/helper所需依赖",
-      "nextAction": "44来源统一候选五目标产品回归与独立原包验收待",
-      "blockers": [
-        "统一候选全量产品回归未验收"
-      ],
+      "nextAction": "本来源替换及五托管目标产品回归已验；不扩大额外平台完整Java或OS/CPE认证",
+      "blockers": [],
       "candidateSha256": "2aff71f03b604ce4afad2b51dac1b81f3dc7f82aa63d6d618d9410009d64268c",
       "componentRunId": "42323927902",
       "componentCommit": "2a283294e5497f99b013ce636cde497a7af1f5e3",
       "componentReceipt": "docs/testing/gap-p1-2026-11-04/windows-arm64-console-components-acceptance.json",
-      "sourceBuildRunId": "42322393412"
+      "sourceBuildRunId": "42322393412",
+      "productRunId": "42326568858",
+      "productCommit": "de8220eb74267ce37a05d1dd31c4dde54be7bd76",
+      "productReceipt": "docs/testing/M10-unified44-final-equality-2026-11-06.json"
     },
     {
       "taskId": "NATIVE-31",
@@ -554,15 +557,15 @@
       "cpu": "aarch64",
       "status": "SOURCE_REPLACEMENT_ACCEPTED_IN_FIVE_TARGET_PRODUCT",
       "requiredToolchain": "MSVC/Windows SDK aarch64；构建WinPTY/Console/helper所需依赖",
-      "nextAction": "本资源固定来源替换与五托管目标产品回归已验；额外目标完整JVM/Java与OS/CPE不在此认证范围",
+      "nextAction": "本来源替换及五托管目标产品回归已验；不扩大额外平台完整Java或OS/CPE认证",
       "blockers": [],
       "componentRunId": "42158936851",
       "componentCommit": "b2a18620cc43d0255c5107d9ef0ba0e1ee16477c",
       "componentReceipt": "docs/testing/gap-p1-2026-11-04/windows-arm64-helper-component-acceptance.json",
       "candidateSha256": "7111e63bf9b5115ad3861f21b3a0779bd230f573d1a34a14d9f3a422556fb520",
-      "productRunId": "42226835895",
-      "productCommit": "904d2f3af194ba25ee8d9b542f61fd12a4c88291",
-      "productReceipt": "docs/testing/M10-unified39-final-equality-2026-11-06.json"
+      "productRunId": "42326568858",
+      "productCommit": "de8220eb74267ce37a05d1dd31c4dde54be7bd76",
+      "productReceipt": "docs/testing/M10-unified44-final-equality-2026-11-06.json"
     },
     {
       "taskId": "NATIVE-32",
@@ -571,16 +574,17 @@
       "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
       "os": "win",
       "cpu": "aarch64",
-      "status": "COMPONENT_SOURCE_VERIFIED_ASSEMBLED_FULL_PRODUCT_PENDING",
+      "status": "SOURCE_REPLACEMENT_ACCEPTED_IN_FIVE_TARGET_PRODUCT",
       "requiredToolchain": "MSVC/Windows SDK aarch64；构建WinPTY/Console/helper所需依赖",
-      "nextAction": "42来源统一候选五目标产品回归与独立原包验收待",
-      "blockers": [
-        "统一候选全量产品回归未验收"
-      ],
+      "nextAction": "本来源替换及五托管目标产品回归已验；不扩大额外平台完整Java或OS/CPE认证",
+      "blockers": [],
       "candidateSha256": "a6e3b9d0d90b3fad268a34f3bd1241e95026a9c6593a93bb7ded8c944a931461",
       "componentRunId": "42228145670",
       "componentCommit": "ead88a173d1d787a11f2bdadc6a0f831be164684",
-      "componentReceipt": "docs/testing/gap-p1-2026-11-04/windows-arm64-winpty-components-acceptance.json"
+      "componentReceipt": "docs/testing/gap-p1-2026-11-04/windows-arm64-winpty-components-acceptance.json",
+      "productRunId": "42326568858",
+      "productCommit": "de8220eb74267ce37a05d1dd31c4dde54be7bd76",
+      "productReceipt": "docs/testing/M10-unified44-final-equality-2026-11-06.json"
     },
     {
       "taskId": "NATIVE-33",
@@ -589,16 +593,17 @@
       "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
       "os": "win",
       "cpu": "aarch64",
-      "status": "COMPONENT_SOURCE_VERIFIED_ASSEMBLED_FULL_PRODUCT_PENDING",
+      "status": "SOURCE_REPLACEMENT_ACCEPTED_IN_FIVE_TARGET_PRODUCT",
       "requiredToolchain": "MSVC/Windows SDK aarch64；构建WinPTY/Console/helper所需依赖",
-      "nextAction": "42来源统一候选五目标产品回归与独立原包验收待",
-      "blockers": [
-        "统一候选全量产品回归未验收"
-      ],
+      "nextAction": "本来源替换及五托管目标产品回归已验；不扩大额外平台完整Java或OS/CPE认证",
+      "blockers": [],
       "candidateSha256": "e1d265a6b7e7d103b68198538836e3f5e79035b829c4b5e76c246bfed3a81f08",
       "componentRunId": "42228145670",
       "componentCommit": "ead88a173d1d787a11f2bdadc6a0f831be164684",
-      "componentReceipt": "docs/testing/gap-p1-2026-11-04/windows-arm64-winpty-components-acceptance.json"
+      "componentReceipt": "docs/testing/gap-p1-2026-11-04/windows-arm64-winpty-components-acceptance.json",
+      "productRunId": "42326568858",
+      "productCommit": "de8220eb74267ce37a05d1dd31c4dde54be7bd76",
+      "productReceipt": "docs/testing/M10-unified44-final-equality-2026-11-06.json"
     },
     {
       "taskId": "NATIVE-34",
@@ -624,14 +629,14 @@
       "cpu": "x86",
       "status": "SOURCE_REPLACEMENT_ACCEPTED_IN_FIVE_TARGET_PRODUCT",
       "requiredToolchain": "MSVC/Windows SDK x86；构建WinPTY/Console/helper所需依赖",
-      "nextAction": "本资源固定来源替换与五托管目标产品回归已验；额外目标完整JVM/Java与OS/CPE不在此认证范围",
+      "nextAction": "本来源替换及五托管目标产品回归已验；不扩大额外平台完整Java或OS/CPE认证",
       "blockers": [],
       "componentRunId": "41998518872",
       "componentCommit": "7c8c9e78755675cfbcad6bf20d2182f78c13e539",
       "componentReceipt": "docs/testing/gap-p1-2026-11-04/windows-x86-pty-components-acceptance.json",
-      "productRunId": "42226835895",
-      "productCommit": "904d2f3af194ba25ee8d9b542f61fd12a4c88291",
-      "productReceipt": "docs/testing/M10-unified39-final-equality-2026-11-06.json",
+      "productRunId": "42326568858",
+      "productCommit": "de8220eb74267ce37a05d1dd31c4dde54be7bd76",
+      "productReceipt": "docs/testing/M10-unified44-final-equality-2026-11-06.json",
       "candidateSha256": "07e4cda4231c6e26a69f32dfbc9d52059a138dcf289ecc3f1e074bbe4f34e6fd"
     },
     {
@@ -643,17 +648,17 @@
       "cpu": "x86",
       "status": "SOURCE_REPLACEMENT_ACCEPTED_IN_FIVE_TARGET_PRODUCT",
       "requiredToolchain": "MSVC/Windows SDK x86；构建WinPTY/Console/helper所需依赖",
-      "nextAction": "本资源固定来源替换与五托管目标产品回归已验；额外目标完整JVM/Java与OS/CPE不在此认证范围",
+      "nextAction": "本来源替换及五托管目标产品回归已验；不扩大额外平台完整Java或OS/CPE认证",
       "blockers": [],
       "componentRunId": "41998518872",
       "componentCommit": "7c8c9e78755675cfbcad6bf20d2182f78c13e539",
       "componentReceipt": "docs/testing/gap-p1-2026-11-04/windows-x86-pty-components-acceptance.json",
-      "productRunId": "42226835895",
-      "productCommit": "904d2f3af194ba25ee8d9b542f61fd12a4c88291",
-      "productReceipt": "docs/testing/M10-unified39-final-equality-2026-11-06.json",
+      "productRunId": "42326568858",
+      "productCommit": "de8220eb74267ce37a05d1dd31c4dde54be7bd76",
+      "productReceipt": "docs/testing/M10-unified44-final-equality-2026-11-06.json",
       "candidateSha256": "7da4af8ef1914797dbf87fad3199ddf9c4e3a40888adf98ed12eefc2d8b6d7d8"
     }
   ],
-  "formalAcceptedRuntimeRunId": "42226835895",
-  "formalAcceptedRuntimeReceipt": "docs/testing/M10-unified39-final-equality-2026-11-06.json"
+  "formalAcceptedRuntimeRunId": "42326568858",
+  "formalAcceptedRuntimeReceipt": "docs/testing/M10-unified44-final-equality-2026-11-06.json"
 }

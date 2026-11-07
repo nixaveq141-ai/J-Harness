@@ -1,0 +1,25 @@
+{
+  "status": "LOCAL_BACKUP_ALL_MEMBERS_SHA_AND_CRC_VERIFIED",
+  "path": ".build-cache/local-evidence-backups/2026-11-07/unified44-originals-final.zip",
+  "bytes": 605846299,
+  "sha256": "275bb2fd7fd3290b366116593b215913be93998bc3653da8147b5311483e9bbf",
+  "members": {
+    ".build-cache/p1-raw-42326568858/13555908157.zip": "7ca6944b862f97f5a5c0bc05c9d8610ab56b57eb2eb9760179db440ca4c50708",
+    ".build-cache/p1-raw-42326568858/13556068274.zip": "30a68693ab55f020bcdf06e33d8dfd55415451c7fe1ebe6ae82fbf7680421a2c",
+    ".build-cache/p1-raw-42326568858/13556152769.zip": "d9f92bcffa3f2d3694049c11cffce5ec279f4c2c24f703377bb3554d8bb11250",
+    ".build-cache/p1-raw-42326568858/13556183625.zip": "43fb98ffb89313dbd5cb46bc6a3ad399bd8a58e3623f9199565d3dae5f884c19",
+    ".build-cache/p1-raw-42326568858/13556219099.zip": "64e301bce596823486aa7abd07d342ba436becdc78254159d44ee44b8db4035f",
+    ".build-cache/p1-raw-42326568858/13557082514.zip": "a02435723c49308396fe4a833c9193ae654f6ff343d2c213a8133f3dd69859d8",
+    "docs/testing/M10-unified44-final-equality-2026-11-06.json": "cb618f819ebb0cafa5f3c1eccd2826c331b2a598b56124421c6db7fa7a34583d",
+    "docs/testing/M10-unified44-final-linux-2026-11-06.json": "057537008298072e2bbf0d986c6ebc78d0f420eea6f5e6e4f7f3c2d95fc35bf7",
+    "docs/testing/M10-unified44-final-linux-arm64-2026-11-06.json": "3fd1525163eb2571c1922d0d2eb931064ffc428e28d2e7c769d634b4625a4191",
+    "docs/testing/M10-unified44-final-macos-2026-11-06.json": "c21755bf0c260b952961f133731d280382249a1f4301f0ce0ef5df3bc7625ce4",
+    "docs/testing/M10-unified44-final-macos-intel-2026-11-06.json": "f06615a4b26fc43ad59926e16315d3920629f860ea48f0aafe982d8fe61ce9db",
+    "docs/testing/M10-unified44-final-windows-2026-11-06.json": "ca27b62e4341802e615d75058ec328ad8821eae9fc609f3d5f3f2854f7e957b2",
+    ".build-cache/audit-p1-unified44.py": "038a0a8b3732708b8969535f2dff9a240b9f2ce48173f496d49b54a5fdf1a6a4",
+    ".build-cache/check-unified44-raw-artifacts.py": "2714294b5dec7c66ea90cb252d4166b43c32dff79e9c14a359fe50b13c714064",
+    "docs/testing/gap-p1-2026-11-04/progress-ledger.json": "17819d0e77f9b3dcaa81c1ba9c2dc098c0fc14367ba5443cd0e347c9c77179de",
+    "docs/testing/native-security/reviewed-native-source-map.json": "86a6a33f7bfaaab5535d29170860e0783cf18a73552698c5257f3f2dab6a0925"
+  },
+  "offsite": false
+}
