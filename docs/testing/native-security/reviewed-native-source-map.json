@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "scope": "34 formally accepted; five extra components assembled in39-resource candidate; eleven original sources remain unresolved. Not full OS/CPE clearance.",
+  "scope": "39 formally accepted sources; OpenBSD x64 independently reviewed and assembled as candidate40;10 original sources unresolved. Candidate40 full qualification pending. Not full OS/CPE clearance.",
   "resources": {
     "com/sun/jna/win32-x86-64/jnidispatch.dll": {
       "sha256": "c88e200b240dfa54c5b852a335b28683e64a074d30ceee7c17ffc282058891a2",
@@ -469,21 +469,33 @@
         "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/windows-arm64-helper-component-acceptance.json",
         "scope": "Actual native ARM64 owned C component probe; complete Java product on ARM64 not certified"
       }
+    },
+    "com/sun/jna/openbsd-x86-64/libjnidispatch.so": {
+      "sha256": "9e879fa34478beb86ba05e13b5a819dd137ca44126cd1b10dd0f9ddd30bc181a",
+      "origin": {
+        "sourceBuildRun": "42227334617",
+        "sourceBuildCommit": "f587190ad83fc91435809a26fba594607132e047",
+        "sourceRevision": "c366bc4fd0c50a30ac8d2475603ec564f6611462",
+        "componentProbeRun": "42227334617",
+        "componentReportSha256": "8a215dfcac249b6dd472a4dcef573ee9cd4a98cdfe8ce99389f0f21a9b939a2b",
+        "libffiReleaseSha256": "d66c56ad259a82cf2a9dfc408b32bf5da52371500b84745f7fb8b645712df676",
+        "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/openbsd-jna-components-acceptance.json",
+        "scope": "OpenBSD VM C-level JNI primitives and real libffi call/closure; complete target JVM/Java not certified"
+      }
     }
   },
   "fullRuntimeQualification": {
-    "runId": "42000054331",
-    "commit": "7e2978e5a085e2307de8bfcbf2a0b0e4bfed12bd",
-    "runtimeJarSha256": "06f0c2362ee87533688013d2c07c78073f3dc670ae7727e14d3ae2fe40c3fb2f",
-    "receiptSha256": "0c41ab87db4469af3deb77fde3482c86af5e63b7e9ed472f2e80c20c40ea6aeb",
-    "reviewedResourceCount": 30
+    "runId": "42226835895",
+    "commit": "904d2f3af194ba25ee8d9b542f61fd12a4c88291",
+    "runtimeJarSha256": "9bfda993df332555ea532fe0a178ff29bd90b9ab4b2b26878a56413cd638f742",
+    "receiptSha256": "1832e7f3a1b7235fe438282fbc2638f2ab606ff2a0a46c8603a9c6117bbba0aa",
+    "reviewedResourceCount": 39
   },
   "pendingCandidateQualification": {
-    "reviewedResourceCount": 34,
+    "reviewedResourceCount": 40,
     "status": "FULL_PRODUCT_QUALIFICATION_PENDING",
     "componentRunIds": [
-      "42003119496",
-      "42150888437"
+      "42227334617"
     ]
   }
 }

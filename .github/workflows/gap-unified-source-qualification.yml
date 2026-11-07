@@ -1,4 +1,4 @@
-name: Unified source-native thirty-nine-resource five-target qualification
+name: Unified source-native forty-resource five-target qualification
 on:
   workflow_dispatch:
   push:
@@ -35,7 +35,8 @@ jobs:
       JHARNESS_P1_FREEBSD_JNA: '1'
       JHARNESS_P1_LOONGARCH_JNA: '1'
       JHARNESS_P1_EXTRA_FOUR: '1'
-      JHARNESS_EXPECTED_NATIVE_COUNT: '39'
+      JHARNESS_P1_OPENBSD_JNA: '1'
+      JHARNESS_EXPECTED_NATIVE_COUNT: '40'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -159,6 +160,13 @@ jobs:
           run-id: 42158936851
           github-token: ${{ github.token }}
           path: .build-cache/p1-arm64-inputs
+      - uses: actions/download-artifact@v4
+        with:
+          name: p1-openbsd-x86-64-jna-source
+          run-id: 42227334617
+          github-token: ${{ github.token }}
+          path: .build-cache/p1-openbsd-jna-inputs/p1-openbsd-x86-64-jna-source
+      - run: python scripts/test-p1-openbsd-jna-stage.py
       - run: python scripts/test-p1-sunos-jna-stage.py
       - run: python scripts/test-p1-arm64-component-stage.py
       - name: Install browser dependencies on Linux

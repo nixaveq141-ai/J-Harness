@@ -1,0 +1,15 @@
+{
+  "status": "LOCAL_BACKUP_ALL_MEMBERS_SHA_AND_CRC_VERIFIED",
+  "path": ".build-cache/local-evidence-backups/2026-11-07/assembly40-openbsd.zip",
+  "bytes": 30659275,
+  "sha256": "d9819019a00dbc2a8a5190d1dc8f9c622a2e2f92d80f40a1425cde27f18df52c",
+  "members": {
+    ".build-cache/p1-assembly40/candidate.jar": "4824c5a60274aab2f0f2c761597befd17f2344b31650a1c222f72ee6be26202b",
+    "docs/testing/gap-p1-2026-11-04/assembly40-control.json": "b0b722262eef1ab60a3b83c46e8b437b895f2b3bddeae6617aa832e048572706",
+    "scripts/stage-p1-openbsd-jna.py": "9bf7d0a70635a61602392e3213ad28c34226cc73959ad85bf44e0600e165195c",
+    "scripts/test-p1-openbsd-jna-stage.py": "1f6aa1dfd58e8f9af22efc206afb7d1da539b1dfadd9be6a345acfd34c4f4302",
+    "scripts/stage-unified-native-runtime.py": "fc8e90d13143f842981aa13ca114f09ffb2152d37631601601246fbda109d39b",
+    ".github/workflows/gap-unified-source-qualification.yml": "3ea42f24f434e4f896bd6c2104203a5a5cc8a957d74012a5779e463609371c31"
+  },
+  "offsite": false
+}

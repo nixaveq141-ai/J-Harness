@@ -227,6 +227,15 @@ def main():
                 dest=target/name.split('/')[-1];dest.write_bytes(item['path'].read_bytes());replacements[name]={**item,'path':dest}
             paths=module.receipts() if module_name=='arm64' else {'jna':module.RECEIPT}
             for key,path in paths.items():receipts['p1-'+module_name+'-'+key]=sha((ROOT/path).read_bytes())
+    if os.environ.get('JHARNESS_P1_OPENBSD_JNA')=='1':
+        spec=importlib.util.spec_from_file_location('p1_openbsd_jna',ROOT/'scripts/stage-p1-openbsd-jna.py')
+        module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+        extra=module.load_components(ROOT/'.build-cache/p1-openbsd-jna-inputs')
+        if set(extra)&set(replacements) or len(extra)!=1:raise ValueError('One disjoint OpenBSD JNA replacement required')
+        for name,item in extra.items():
+            target=payload/'p1-openbsd-jna';target.mkdir(parents=True)
+            dest=target/'libjnidispatch.so';dest.write_bytes(item['path'].read_bytes());replacements[name]={**item,'path':dest}
+        receipts['p1-openbsd-jna']=sha((ROOT/module.RECEIPT).read_bytes())
     expected_count=os.environ.get('JHARNESS_EXPECTED_NATIVE_COUNT')
     if expected_count is not None and (not expected_count.isdigit() or len(replacements)!=int(expected_count)):
         raise ValueError('Actual native replacement count differs from requested candidate')

@@ -1,0 +1,31 @@
+{
+  "status": "LOCAL_BACKUP_ALL_MEMBERS_SHA_AND_CRC_VERIFIED",
+  "path": ".build-cache/local-evidence-backups/2026-11-07/unified39-originals-and-assembly40.zip",
+  "bytes": 627859172,
+  "sha256": "5983de4ff82546253d03c896592b113f454ac6dfeef5a7ed3020a667ae027df5",
+  "members": {
+    ".build-cache/p1-raw-42226835895/13506484141.zip": "acd47bb00ca51fc4268d43f37ee21b10be789e9b9e20b8d1c2aaa8a2d20eef6f",
+    ".build-cache/p1-raw-42226835895/13507136713.zip": "0240b4939bf3694338b09270ba12018fb5589603aa173f368e7093e7ffdf9cc6",
+    ".build-cache/p1-raw-42226835895/13507445439.zip": "2348c9f33169951acabb04220ce4216954f2ce22357bb3edb6259f791e09b218",
+    ".build-cache/p1-raw-42226835895/13507680703.zip": "dc133620a757c0c1e9fe2f6cdf2e6ae70163b50280d286289190ff435d3c5d08",
+    ".build-cache/p1-raw-42226835895/13509076740.zip": "37e7f4740b5b5b642a05d552ffe31beec8611d252a99b884ce31f685682b260c",
+    ".build-cache/p1-raw-42226835895/13510710326.zip": "9aa5ea25c95df5d0fef2e9a46ddce5ed9424c09ad53149da432cfb9d42e9a2c2",
+    "docs/testing/M10-unified39-final-equality-2026-11-06.json": "1832e7f3a1b7235fe438282fbc2638f2ab606ff2a0a46c8603a9c6117bbba0aa",
+    "docs/testing/M10-unified39-final-linux-2026-11-06.json": "a901d02ffeff43fc9a1014ee178ce34296482d7322e8a1af851fd7517b5284b4",
+    "docs/testing/M10-unified39-final-linux-arm64-2026-11-06.json": "a1251db68a8343220dab35742fe3e3f65f5ba5d369e84c5d6bd5b98f2e33501c",
+    "docs/testing/M10-unified39-final-macos-2026-11-06.json": "fcbc088a58f7b1fd3be5031ad5be1d22092ea4ccafa404fa928ccec933a46fd5",
+    "docs/testing/M10-unified39-final-macos-intel-2026-11-06.json": "99dec79c8c4c6b2e67f85fc479bc08f41710274f1fb21c9e709aaf30a3680bd8",
+    "docs/testing/M10-unified39-final-windows-2026-11-06.json": "c70157e1c8d021792f5003279fd157e29f313e3863b103812f0e3a8020ec947b",
+    ".build-cache/audit-p1-unified39.py": "db9a2422a979d1f8509684f90193612d5b46452fcbfb9d48f86e7b5caaa768cc",
+    ".build-cache/check-unified39-raw-artifacts.py": "0abd723eae3a5d73edb1d334a87585d0c531e1880d326f2ec85bdc367bd98f50",
+    "docs/testing/native-security/reviewed-native-source-map.json": "703ad3b1ab9a8593913ef4ea41d577ba10da42c39dd8a80b03cca202eb81a454",
+    "docs/testing/gap-p1-2026-11-04/progress-ledger.json": "220069e8fc959e433a1f4fc4c0e54500dabc85d4010970466d562b78a5051456",
+    "docs/testing/gap-p1-2026-11-04/assembly40-control.json": "0ef2bb1a90186190befa1a22935c7379b6aab72999051d2e309f0485ca410890",
+    ".build-cache/p1-assembly40/candidate.jar": "4824c5a60274aab2f0f2c761597befd17f2344b31650a1c222f72ee6be26202b",
+    "scripts/stage-p1-openbsd-jna.py": "e6d8db3f64185977a96cd29156293cd5af7362b94b75aacdb95cd4df0e7d2ea7",
+    "scripts/test-p1-openbsd-jna-stage.py": "d80d31760f4b9d804db8b2ac6be55ef233b9c689c0c65eac114a474469d90cd4",
+    "scripts/stage-unified-native-runtime.py": "fc8e90d13143f842981aa13ca114f09ffb2152d37631601601246fbda109d39b",
+    ".github/workflows/gap-unified-source-qualification.yml": "3ea42f24f434e4f896bd6c2104203a5a5cc8a957d74012a5779e463609371c31"
+  },
+  "offsite": false
+}
