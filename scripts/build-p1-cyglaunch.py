@@ -8,6 +8,7 @@ REVISION='b7554d649f6374183040e6554942b6d5b028b5e5'
 RESOURCE='resources/com/pty4j/native/win/x86-64/cyglaunch.exe'
 SETUP_URL='https://cygwin.com/setup/setup-2.941.x86_64.exe'
 SETUP_SHA512='9bbbd4de497842446af58af875590ace5d8fa3c557cd7e27328569dfa68e58213da1cc1a6fb7102d4f0f01be38e0b92c6fa74f61b6eb7351a0481ca4bd9e8781'
+EXEC_PTY_SHA256='93cd28367fdf2c39495f2ed112a076edf45eacc28489e4a0c6bc1833511e4443'
 
 def verify_setup(raw):
     if hashlib.sha512(raw).hexdigest()!=SETUP_SHA512:raise ValueError('Pinned official Cygwin setup SHA512 required')
@@ -15,6 +16,11 @@ def verify_setup(raw):
 def configure_command(cmake,source,build,gcc,cxx,make):
     return [cmake,'-S',source,'-B',build,'-G','Unix Makefiles','-DCMAKE_POLICY_VERSION_MINIMUM=3.5',
             '-DCMAKE_C_COMPILER='+gcc,'-DCMAKE_CXX_COMPILER='+cxx,'-DCMAKE_MAKE_PROGRAM='+make]
+
+def guard_linux_syscall_header(raw):
+    if hashlib.sha256(raw).hexdigest()!=EXEC_PTY_SHA256 or raw.count(b'#include <sys/syscall.h>')!=1:
+        raise ValueError('Exact fixed exec_pty source required for Linux header guard')
+    return raw.replace(b'#include <sys/syscall.h>',b'#if defined(__linux__)\n#include <sys/syscall.h>\n#endif')
 
 def main():
     if os.name!='nt' or platform.machine().lower() not in {'amd64','x86_64'} or os.environ.get('GITHUB_ACTIONS')!='true':raise ValueError('Dedicated x64 Windows CI required')
@@ -43,6 +49,8 @@ def main():
         original=source/'os/win/x86-64/cyglaunch.exe';inventory=json.loads((ROOT/'docs/testing/M10-native-inventory-50-2026-11-01.json').read_bytes())['binaries'];expected=next(i['sha256'] for i in inventory if i['resource']==RESOURCE)
         if stream_sha256(original)!=expected:raise ValueError('Original inventory byte identity required')
         shutil.copyfile(original,out/'original.exe');report['originalSha256']=expected
+        exec_pty=source/'native/exec_pty.c';exec_pty.write_bytes(guard_linux_syscall_header(exec_pty.read_bytes()))
+        report['portabilityPatch']=dict(path='native/exec_pty.c',beforeSha256=EXEC_PTY_SHA256,afterSha256=stream_sha256(exec_pty),reason='sys/syscall.h is Linux-only here; its close_range use is already guarded by __linux__ in fixed upstream source')
         def posix(p):return subprocess.check_output([str(bin/'cygpath.exe'),'-u',str(p)]).decode().strip()
         build=out/'native-build';command(configure_command(str(cmake),posix(source/'native/cyglaunch'),posix(build),posix(gcc),posix(bin/'g++.exe'),posix(bin/'make.exe')),'configure')
         command([str(cmake),'--build',posix(build),'--parallel','2'],'build')
@@ -57,8 +65,8 @@ def main():
         command([str(probe),str(output),str(child),'present'],'candidate-probe',work,90)
         command([str(probe),str(out/'absent.exe'),str(child),'missing'],'missing-probe',work,45)
         after={n:stream_sha256(source/n) for n in before};report['sourceTrackedFilesAfter']=after
-        if before!=after:raise ValueError('Tracked upstream source drift')
-        command(['git','diff','--exit-code'],'source-diff',source)
+        if {n for n in before if before[n]!=after[n]}!={'native/exec_pty.c'} or after['native/exec_pty.c']!=report['portabilityPatch']['afterSha256']:raise ValueError('Tracked upstream source drift')
+        command(['git','diff','--binary'],'source-diff',source)
         report.update(status='CYGWIN_X64_SOURCE_PTY_COMPONENT_PASS_NOT_PRODUCT_ACCEPTANCE',hostImage={k:os.environ.get(k) for k in ['ImageOS','ImageVersion','RUNNER_ARCH']},limits=['External signed Cygwin runtime required; no arbitrary existing Cygwin version compatibility claim','Actual native three-pipe PTY component; complete target Java and product qualification pending'])
     finally:atomic_write_json(out/'report.json',report)
 

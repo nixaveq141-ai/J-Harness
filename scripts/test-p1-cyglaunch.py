@@ -7,6 +7,10 @@ s=importlib.util.spec_from_file_location('builder',ROOT/'scripts/build-p1-cyglau
 builder=importlib.util.module_from_spec(s);s.loader.exec_module(builder)
 
 class Boundaries(unittest.TestCase):
+    def test_unreviewed_source_cannot_receive_portability_patch(self):
+        with self.assertRaisesRegex(ValueError,'Exact fixed exec_pty source'):
+            builder.guard_linux_syscall_header(b'#include <sys/syscall.h>\nUnreviewed code\n')
+
     def test_explicit_cygwin_tools_prevent_host_mingw_and_strawberry_selection(self):
         command=builder.configure_command('cyg-cmake','source','build','/usr/bin/gcc.exe','/usr/bin/g++.exe','/usr/bin/make.exe')
         for option in ['-DCMAKE_C_COMPILER=/usr/bin/gcc.exe','-DCMAKE_CXX_COMPILER=/usr/bin/g++.exe','-DCMAKE_MAKE_PROGRAM=/usr/bin/make.exe']:

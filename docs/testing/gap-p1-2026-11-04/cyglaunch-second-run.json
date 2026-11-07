@@ -1,0 +1,19 @@
+{
+  "status": "CYGWIN_FIXED_SOURCE_LINUX_ONLY_HEADER_INCLUDE_REJECTED",
+  "runId": "42324794762",
+  "commit": "40502118dd8f0934ecc7dde634adb208fe3fa3d4",
+  "jobId": 128257475639,
+  "artifactId": 13554632799,
+  "failure": "native/exec_pty.c:24 sys/syscall.h missing on Cygwin after actual target tools configured successfully",
+  "patch": {
+    "path": "native/exec_pty.c",
+    "beforeSha256": "93cd28367fdf2c39495f2ed112a076edf45eacc28489e4a0c6bc1833511e4443",
+    "afterSha256": "c662d5944bf7d26b04df21b83629c997b020f7af66832b25d2ce9985a343c8f8",
+    "scope": "Guard Linux-only include; existing Linux close_range conditional and all runtime code unchanged"
+  },
+  "localControls": 4,
+  "exactPinnedSourceReplay": "PASS",
+  "remoteFixVerified": false,
+  "productAccepted": false,
+  "paidRequests": 0
+}
