@@ -1,0 +1,16 @@
+{
+  "status": "LOCAL_BACKUP_ALL_MEMBERS_SHA_AND_CRC_VERIFIED",
+  "path": ".build-cache/local-evidence-backups/2026-11-07/cygwin-accepted-source-and-local45.zip",
+  "bytes": 189938081,
+  "sha256": "826e399a5a911701dfdb88463a28d21fd51986c6ecaefe2bc572ca18a9ddc770",
+  "members": {
+    ".build-cache/p1-raw-42375096503/13575492220.zip": "f829bb3e5f1856402b4a36e0d0f9f3c31eaa0cde84044f37569979985fd2ffd9",
+    ".build-cache/p1-raw-42375096503/13575552069.zip": "b7b9d2b6fe323dd0f373424aab42a4ede103f49bfcbc4270af25f8bfe6a0218b",
+    ".build-cache/audit-p1-cyg-pass.py": "e4dd89a8d9673b9467782162ed83294b3f815d43850acead63e27df1de4a6f8b",
+    ".build-cache/p1-assembly45/candidate.jar": "b3ae9bf87c126ce699e4c4f23420c15b04977d0d33c55cb268bd59722416ffd3",
+    "docs/testing/gap-p1-2026-11-04/cyglaunch-component-acceptance.json": "ace2900fbd00d3f39ea93ac71a1264612c918d1370e40909bce5ab68f2a73e31",
+    "docs/testing/gap-p1-2026-11-04/assembly45-control.json": "2b9278b344e726d28bcc34111e0c24b83a010dea454f0748d76cd732aa7c7a05",
+    "scripts/stage-p1-cyglaunch.py": "363fe9c676c8a7c60acb3f10a19a12aeaa169f7e0fc2aa6a0fe1371b6364fb44",
+    "scripts/test-p1-cyglaunch-stage.py": "d81dd20ed151ab8b398801e802f69d603f3ad1cac66348808f100b4ec50fe3ed"
+  }
+}

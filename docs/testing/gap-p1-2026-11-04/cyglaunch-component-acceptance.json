@@ -1,0 +1,72 @@
+{
+  "status": "CYGWIN_X64_SOURCE_AND_TWO_MODE_PTY_COMPONENT_INDEPENDENTLY_VERIFIED_NOT_PRODUCT_ACCEPTANCE",
+  "runId": "42375096503",
+  "commit": "d10e7bc7b5f9c917b84760ba6a12e04339b2dd89",
+  "resource": "resources/com/pty4j/native/win/x86-64/cyglaunch.exe",
+  "sourceRevision": "b7554d649f6374183040e6554942b6d5b028b5e5",
+  "sourceFiles": 134,
+  "sourceReportSha256": "156c3a453189c65f5f4acb4a55f10adeefdbdf25acebb77824732ed6bc7ee628",
+  "outputSha256": "07f6952a100e25fd733a936f71e331d9d3a87fcc557fc0f7b04ba1ba0f309590",
+  "originalSha256": "5d2d8da1066eb931bf86aa0895bb5cec3d7320faf258b7b20d722f16136cb3ca",
+  "pe": {
+    "machine": 34404,
+    "optionalHeaderMagic": 523
+  },
+  "probeSha256": "c3b15e372845dbe4d772c0ad0f14fff44699eae71d8e6e1e83b737bf5a36e892",
+  "childSha256": "f7043310567acb71c49a3e035ad2f0eb388708abe3c34d2015a2863da80ffb64",
+  "probeSources": {
+    "scripts/probes/p1-cyglaunch.c": "f5d182b50de1008231733ae117535db84961c77de8536e1cb26795ff421b9de5",
+    "scripts/probes/p1-cyglaunch-child.c": "82beb7c82ac809b1223cb924868d3b8cfe65f153c3006275d15ea8792334f00d"
+  },
+  "portabilityPatch": {
+    "path": "native/exec_pty.c",
+    "beforeSha256": "93cd28367fdf2c39495f2ed112a076edf45eacc28489e4a0c6bc1833511e4443",
+    "afterSha256": "c662d5944bf7d26b04df21b83629c997b020f7af66832b25d2ce9985a343c8f8",
+    "reason": "sys/syscall.h is Linux-only here; its close_range use is already guarded by __linux__ in fixed upstream source"
+  },
+  "toolchain": {
+    "gcc.exe": "da7f5cee1bea2903bb76512312fda5d025dc2259e7fba3b9dbac82118e868600",
+    "g++.exe": "86bec0e6bef5057ab9065082633d430db5bc443a74489452798818cb0e0c0bd3",
+    "cmake.exe": "9ce809e1b3881304a34645fb46f3391b778a7f5c9fdb00f18be2c3e17b067228",
+    "make.exe": "c3458b0ba07afd8f0ce44f6f722d8386a50304df1df36cda4f1bd06662906c0b",
+    "cygwin1.dll": "ed9d5379061e5de79c3375cc62246c2142ea1c97d94f4d16bfbea6fb1b7fc889"
+  },
+  "packageInputsVerified": 126,
+  "commandReceiptSha256": {
+    "install": "85f17915f08f3f1837054d485a44bf2c7e000caa857195c47f923c5078712dd2",
+    "packages": "2203b5ffa4339e5c08036eb4166dadb42e61cb41cb1a482ac673ffc2fdcff428",
+    "compiler": "9abde7fe8df6556da09e529143aa304b6b5a4c1aad8f3cdc9fa387b3c01a10ce",
+    "target": "9130ceaca491f9f0c5fb1dd3ed2fa9d313a42325c9b28bbf1559cf8f40514ce4",
+    "clone": "1beecaa5c5b49e002fb8de918d562a1c6439678643c00ac2b2e5808e67422888",
+    "checkout": "44ab1015b226f0e072a9bf4168b5714651d4009354bf79184519d819985066b0",
+    "configure": "3382df36a6d025669d387ae38da4f9a89866ca098b59d2ed1aa023fd3e3c4b28",
+    "build": "34d5da6cfd0d73efa93b463d6dd8dd1a6c7c5b48da62fdd17705c7f7d308607b",
+    "p1-cyglaunch-child-build": "c8eded735bb3fd88a0a0b5a992f17f36cecdc4a08f11e5b4d6fc35a283fa2675",
+    "p1-cyglaunch-build": "a4b704b343670b8ce7275885fcdebcceee4d9e0137da2a0c0e99ecd36b412015",
+    "candidate-probe": "065062430b19f7bb00b941685d75acf1b445b6a46088a4dc18383e77b85d9ddb",
+    "candidate-no-log-probe": "5ab5b2cda83fea24d2cc5ce7a64f7c98d191a2352b54d1dbb9fa023c6a1e2db5",
+    "missing-probe": "7b360b5ea42cabe96a9e4ae0da0792751831e235b34650121aad30cbe8c3f2ff",
+    "source-diff": "37356b769153fd8671a11aed004e6c8b50ece37b20394e77fcf4e18b01111bf1"
+  },
+  "hostGitInputs": 738,
+  "artifacts": [
+    {
+      "id": 13575492220,
+      "path": ".build-cache/p1-raw-42375096503/13575492220.zip",
+      "sha256": "f829bb3e5f1856402b4a36e0d0f9f3c31eaa0cde84044f37569979985fd2ffd9",
+      "bytes": 2663089
+    },
+    {
+      "id": 13575552069,
+      "path": ".build-cache/p1-raw-42375096503/13575552069.zip",
+      "sha256": "b7b9d2b6fe323dd0f373424aab42a4ede103f49bfcbc4270af25f8bfe6a0218b",
+      "bytes": 157373837
+    }
+  ],
+  "productAccepted": false,
+  "paidRequests": 0,
+  "limits": [
+    "External signed Cygwin runtime required; no arbitrary existing Cygwin version compatibility claim",
+    "Actual native three-pipe PTY component; complete target Java and product qualification pending"
+  ]
+}

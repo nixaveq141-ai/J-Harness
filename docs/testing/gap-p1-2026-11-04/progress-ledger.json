@@ -1,9 +1,9 @@
 {
   "status": "P1_IN_PROGRESS_NOT_COMPLETE",
   "frozenP0Tasks": 36,
-  "independentlyVerifiedNewSourceComponents": 30,
-  "assembledCandidateReviewedCount": 44,
-  "assembledCandidateUnresolvedCount": 6,
+  "independentlyVerifiedNewSourceComponents": 31,
+  "assembledCandidateReviewedCount": 45,
+  "assembledCandidateUnresolvedCount": 5,
   "formalAcceptedRuntimeCommit": "de8220eb74267ce37a05d1dd31c4dde54be7bd76",
   "formalAcceptedRuntimeReviewedCount": 44,
   "formalAcceptedRuntimeUnresolvedCount": 6,
@@ -612,13 +612,16 @@
       "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
       "os": "win",
       "cpu": "x86-64",
-      "status": "BUILD_AND_NATIVE_PTY_PROBE_ENTRY_IMPLEMENTED_NOT_VERIFIED",
+      "status": "COMPONENT_SOURCE_VERIFIED_ASSEMBLED_FULL_PRODUCT_PENDING",
       "requiredToolchain": "MSVC/Windows SDK x86-64；构建WinPTY/Console/helper所需依赖",
-      "nextAction": "执行固定Cygwin签名工具链源码编译/三管道PTY专项，独立验原包后方可集成",
+      "nextAction": "本地45已装配；与下一批集中启用统一工作流后完整验收",
       "blockers": [
-        "实际源码构建与PTY组件运行尚未验证",
         "统一候选产品回归待"
-      ]
+      ],
+      "candidateSha256": "07f6952a100e25fd733a936f71e331d9d3a87fcc557fc0f7b04ba1ba0f309590",
+      "componentRunId": "42375096503",
+      "componentCommit": "d10e7bc7b5f9c917b84760ba6a12e04339b2dd89",
+      "componentReceipt": "docs/testing/gap-p1-2026-11-04/cyglaunch-component-acceptance.json"
     },
     {
       "taskId": "NATIVE-35",
