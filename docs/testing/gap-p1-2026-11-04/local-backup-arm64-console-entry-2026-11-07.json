@@ -1,0 +1,14 @@
+{
+  "status": "LOCAL_BACKUP_ALL_MEMBERS_SHA_AND_CRC_VERIFIED",
+  "path": ".build-cache/local-evidence-backups/2026-11-07/arm64-console-build-and-probe-entry.zip",
+  "bytes": 1319012,
+  "sha256": "cc41f146797c17d85366a6134d4d97ae6e0918a58860238af7de05fefbc7f8a4",
+  "members": {
+    ".build-cache/p1-raw-42322393412/13553941914.zip": "041943f552bf0e7a8bc4987b94d49d163b9d02fbe1591fbdd20ac1ece4c6be89",
+    "scripts/probe-p1-windows-arm64-console.py": "4bdfabbc4f546e22afd7a6eb0a866289b613517dda2f0da8533baac0aa802444",
+    "scripts/test-p1-arm64-console-probe.py": "3e7bc4c82071ac587165833c1d8d85d590a3bf8bed4fc23c5ae83ecdead0f4c5",
+    "scripts/probes/Arm64ConPtySourceProbe.java": "6556f08f3ed5d66dd41d378d57480012cd15999e7845860ace30647419b9825a",
+    ".github/workflows/gap-p1-windows-arm64-console-probe.yml": "0c3425c470e68d4d36ea4d4c0818f79fb29a9d86b2a75997e27481fe7216ee6c"
+  },
+  "offsite": false
+}
