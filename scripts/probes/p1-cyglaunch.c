@@ -32,7 +32,10 @@ static int expect(HANDLE pipe,const char *marker) {
     char data[8192]={0};DWORD at=0;
     while (at<sizeof(data)-1) {
         DWORD count=0;
-        if (!transfer(pipe,data+at,(DWORD)sizeof(data)-1-at,0,&count) || !count) return 0;
+        if (!transfer(pipe,data+at,(DWORD)sizeof(data)-1-at,0,&count) || !count) {
+            fprintf(stderr,"Owned pipe marker %s missing: error=%lu bytes=%lu data=%s\n",marker,(unsigned long)GetLastError(),(unsigned long)at,data);
+            return 0;
+        }
         at+=count;data[at]=0;
         if (strstr(data,marker)) return 1;
     }
@@ -61,13 +64,20 @@ int main(int argc,char **argv) {
     HANDLE job=CreateJobObjectA(NULL,NULL);JOBOBJECT_EXTENDED_LIMIT_INFORMATION limits={0};
     limits.BasicLimitInformation.LimitFlags=JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE;
     if (!job || !SetInformationJobObject(job,JobObjectExtendedLimitInformation,&limits,sizeof(limits))) return 6;
-    int size=snprintf(command,sizeof(command),"\"%s\" null 1 %s %s %s \"%s\"",argv[1],names[0],names[1],names[2],argv[2]);
+    char cwd[1024],logfile[1200];
+    if (!GetCurrentDirectoryA(sizeof(cwd),cwd)) return 7;
+    if (snprintf(logfile,sizeof(logfile),"%s\\cyglaunch-owned.log",cwd)>=(int)sizeof(logfile)) return 7;
+    int size=snprintf(command,sizeof(command),"\"%s\" \"%s\" 1 %s %s %s \"%s\"",argv[1],logfile,names[0],names[1],names[2],argv[2]);
     if (size<0 || size>=(int)sizeof(command)) return 7;
     if (!CreateProcessA(argv[1],command,NULL,NULL,FALSE,CREATE_NO_WINDOW|CREATE_SUSPENDED,NULL,NULL,&startup,&process)) return 8;
     if (!AssignProcessToJobObject(job,process.hProcess)) { TerminateProcess(process.hProcess,1);return 9; }
     ResumeThread(process.hThread);CloseHandle(process.hThread);
     for (int i=0;i<3;i++) if (!connect_pipe(pipes[i])) return 10;
-    if (!expect(pipes[1],"CYG_CHILD_READY") || !expect(pipes[2],"CYG_CHILD_ERROR")) return 11;
+    if (!expect(pipes[1],"CYG_CHILD_READY") || !expect(pipes[2],"CYG_CHILD_ERROR")) {
+        DWORD exit_code=0;GetExitCodeProcess(process.hProcess,&exit_code);
+        fprintf(stderr,"Owned launcher status before handshake rejection: %lu\n",(unsigned long)exit_code);
+        return 11;
+    }
     char input[]="HELLO\n";DWORD count=0;
     if (!transfer(pipes[0],input,6,1,&count) || count!=6 || !expect(pipes[1],"CYG_CHILD_ACK")) return 12;
     if (WaitForSingleObject(process.hProcess,20000)!=WAIT_OBJECT_0) return 13;

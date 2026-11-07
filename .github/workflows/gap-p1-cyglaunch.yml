@@ -19,7 +19,7 @@ jobs:
       - run: python scripts/build-p1-cyglaunch.py
       - name: Show bounded build or probe failure
         if: failure()
-        run: python -c "from pathlib import Path; p=Path('.build-cache/p1-cyglaunch'); [(print(f.name),print(f.read_text(errors='replace')[-4096:])) for f in [p/'configure.log',p/'build.log',p/'p1-cyglaunch-child-build.log',p/'p1-cyglaunch-build.log',p/'candidate-probe.log'] if f.is_file()]"
+        run: python -c "from pathlib import Path; p=Path('.build-cache/p1-cyglaunch'); [(print(f.name),print(f.read_text(errors='replace')[-4096:])) for f in [p/'configure.log',p/'build.log',p/'p1-cyglaunch-child-build.log',p/'p1-cyglaunch-build.log',p/'candidate-probe.log',p/'owned-work/cyglaunch-owned.log'] if f.is_file()]"
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -30,5 +30,12 @@ jobs:
             .build-cache/p1-cyglaunch/*.json
             .build-cache/p1-cyglaunch/*.log
             .build-cache/p1-cyglaunch/*.exe
-            .build-cache/p1-cyglaunch/package-cache/**
+            .build-cache/p1-cyglaunch/owned-work/*.log
             .build-cache/p1-cyglaunch/cygwin/etc/setup/installed.db
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: p1-cygwin-x64-verified-toolchain-cache
+          include-hidden-files: true
+          retention-days: 90
+          path: .build-cache/p1-cyglaunch/package-cache/**

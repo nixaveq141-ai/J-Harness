@@ -1,0 +1,13 @@
+{
+  "status": "CYGWIN_FIFTH_RUN_HANDSHAKE_EXIT11_NOT_ACCEPTED",
+  "runId": "42327556071",
+  "commit": "0d746024b9e6b6d3288afb6da75adf29e6c5b2f0",
+  "artifactId": 13556340754,
+  "diagnosticRead": "HTTP ZIP ranges; selected member CRC checked; not full archive verification",
+  "exitCode": 11,
+  "rootCause": "NOT_YET_PROVEN",
+  "controls": 5,
+  "originalAssertionsUnchanged": true,
+  "productAccepted": false,
+  "paidRequests": 0
+}
