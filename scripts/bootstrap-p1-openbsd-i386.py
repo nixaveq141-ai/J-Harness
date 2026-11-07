@@ -104,10 +104,13 @@ def main():
         else:raise ValueError('Owned i386 VM did not become ready')
         command([*ssh,'test "$(uname -m)" = i386 && test "$(getconf LONG_BIT)" = 32 && uname -a && mount'],'native-target')
         command([*ssh,'export PKG_PATH=https://cdn.openbsd.org/pub/OpenBSD/7.9/packages/i386/; pkg_add -I python%3.13 git gmake ggrep binutils jdk%21 apache-ant'],'native-tools',1200)
-        command(['git','archive','--format=tar','--output='+str(out/'checkout.tar'),'HEAD'],'checkout-archive')
+        # Preserve real Git identity for the shared builder; git archive drops
+        # .git and cannot satisfy its exact host-commit evidence check.
+        commit=os.environ['GITHUB_SHA']
+        checkout='set -eu; mkdir /root/jharness; cd /root/jharness; git init; git config core.autocrlf false; git fetch --depth=1 https://github.com/nixaveq141-ai/J-Harness.git '+commit+'; git checkout --detach FETCH_HEAD; test "$(git rev-parse HEAD)" = '+commit
+        command([*ssh,checkout],'guest-checkout')
         scp=['scp','-i',str(out/'vmkey'),'-P','2222','-o','IdentitiesOnly=yes','-o','BatchMode=yes','-o','StrictHostKeyChecking=accept-new','-o','UserKnownHostsFile='+str(out/'known-hosts')]
-        command([*scp,str(out/'checkout.tar'),'root@127.0.0.1:/root/checkout.tar'],'copy-input')
-        shell='set -eu; mkdir /root/jharness; tar -xf /root/checkout.tar -C /root/jharness; cd /root/jharness; export JAVA_HOME=/usr/local/jdk-21 PATH=/usr/local/jdk-21/bin:$PATH GITHUB_ACTIONS=true GITHUB_RUN_ID='+os.environ['GITHUB_RUN_ID']+' GITHUB_SHA='+os.environ['GITHUB_SHA']+'; set +e; /usr/local/bin/python3.13 scripts/build-p1-openbsd-jna.py x86; result=$?; tar -czf /root/component.tgz --exclude=jna -C .build-cache/p1-openbsd-x86 .; exit $result'
+        shell='set -eu; cd /root/jharness; export JAVA_HOME=/usr/local/jdk-21 PATH=/usr/local/jdk-21/bin:$PATH GITHUB_ACTIONS=true GITHUB_RUN_ID='+os.environ['GITHUB_RUN_ID']+' GITHUB_SHA='+commit+'; set +e; /usr/local/bin/python3.13 scripts/build-p1-openbsd-jna.py x86; result=$?; tar -czf /root/component.tgz --exclude=jna -C .build-cache/p1-openbsd-jna/x86 .; archive=$?; test "$archive" = 0 || exit "$archive"; exit $result'
         try:command([*ssh,shell],'source-component',1500)
         finally:command([*scp,'root@127.0.0.1:/root/component.tgz',str(out/'component.tgz')],'copy-result')
         report.update(status='NATIVE_I386_OPENBSD_SOURCE_COMPONENT_RETURNED_NOT_INDEPENDENT_ACCEPTANCE',componentArchiveSha256=stream_sha256(out/'component.tgz'))
