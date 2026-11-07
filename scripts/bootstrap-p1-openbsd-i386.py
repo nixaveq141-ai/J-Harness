@@ -7,6 +7,15 @@ ROOT=Path(__file__).resolve().parents[1]
 BASE='https://cdn.openbsd.org/pub/OpenBSD/7.9/i386/'
 PUBLIC_KEY='untrusted comment: openbsd 7.9 base public key\nRWTSdNN9A3yvWNn7mUjXwv9DOCOUnyfuV+mq1iGPIfD+NhN8EYnEQ1at\n'
 FILES=['pxeboot','bsd.rd','bsd','bsd.mp','base79.tgz','comp79.tgz','man79.tgz','xbase79.tgz','xshare79.tgz']
+INPUT_LIMITS={'base79.tgz':320*1024*1024}
+
+def copy_bounded(response,stream,limit):
+    size=0
+    while chunk:=response.read(65536):
+        size+=len(chunk)
+        if size>limit:raise ValueError('Bounded official VM input required')
+        stream.write(chunk)
+    return size
 
 def manifest_digest(manifest,name):
     matches=re.findall(r'^SHA256 \('+re.escape(name)+r'\) = ([a-f0-9]{64})$',manifest,re.M)
@@ -32,12 +41,9 @@ def main():
         finally:
             if receipt.is_file():report['commands'].append(dict(name=name,sha256=stream_sha256(receipt)))
     def fetch(name,target):
+        report['fetchingInput']=name
         with urllib.request.urlopen(BASE+name,timeout=60) as response,target.open('xb') as stream:
-            size=0
-            while chunk:=response.read(65536):
-                size+=len(chunk)
-                if size>256*1024*1024:raise ValueError('Bounded official VM input required')
-                stream.write(chunk)
+            copy_bounded(response,stream,INPUT_LIMITS.get(name,256*1024*1024))
     try:
         web=out/'web';sets=web/'7.9/i386';sets.mkdir(parents=True);tftp=out/'tftp';(tftp/'etc').mkdir(parents=True)
         (out/'openbsd-79-base.pub').write_bytes(PUBLIC_KEY.encode());fetch('SHA256.sig',sets/'SHA256.sig')
