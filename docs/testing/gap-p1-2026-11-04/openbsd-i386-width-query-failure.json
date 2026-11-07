@@ -1,0 +1,17 @@
+{
+  "status": "INSTALL_AND_SSH_REACHED_GETCONF_QUERY_UNSUPPORTED_NOT_COMPONENT_ACCEPTANCE",
+  "runId": "42376661936",
+  "commit": "27dcfd2ff027473986b9aae45a5026f5f1c9ad06",
+  "artifact": {
+    "id": 13575219397,
+    "bytes": 294166,
+    "sha256": "4041533cc7b9e2f064a84747faf21b17dbbd8b9669dab46877b1af6ccd8ad57d"
+  },
+  "installExitCode": 0,
+  "failure": "getconf: LONG_BIT: unknown variable",
+  "fix": "Compile and execute native C pointer-and-long width probe; retain uname i386 assertion",
+  "localWin64ProbeExitCode": 1,
+  "runtimeI386FixVerified": false,
+  "productAccepted": false,
+  "paidRequests": 0
+}

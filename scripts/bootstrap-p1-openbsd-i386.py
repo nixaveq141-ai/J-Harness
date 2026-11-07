@@ -9,6 +9,7 @@ PUBLIC_KEY='untrusted comment: openbsd 7.9 base public key\nRWTSdNN9A3yvWNn7mUjX
 FILES=['BUILDINFO','pxeboot','bsd.rd','bsd','bsd.mp','base79.tgz','comp79.tgz','man79.tgz','xbase79.tgz','xshare79.tgz']
 INPUT_LIMITS={'base79.tgz':320*1024*1024}
 SET_SELECTION='-game* -xfont* -xserv*'
+WIDTH_PROBE='int main(void) { return sizeof(void *) != 4 || sizeof(long) != 4; }'
 
 def copy_bounded(response,stream,limit):
     size=0
@@ -102,7 +103,10 @@ def main():
             if subprocess.run([*ssh,'true'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL).returncode==0:break
             time.sleep(3)
         else:raise ValueError('Owned i386 VM did not become ready')
-        command([*ssh,'test "$(uname -m)" = i386 && test "$(getconf LONG_BIT)" = 32 && uname -a && mount'],'native-target')
+        # OpenBSD getconf does not implement LONG_BIT. Execute an owned native
+        # C ABI probe rather than treating an unavailable query as architecture.
+        native='set -eu; uname -a; test "$(uname -m)" = i386; printf \'%s\\n\' \''+WIDTH_PROBE+'\' | cc -x c - -o /root/jh-p1-width; /root/jh-p1-width; echo NATIVE_POINTER_AND_LONG_BITS=32; mount'
+        command([*ssh,native],'native-target')
         command([*ssh,'export PKG_PATH=https://cdn.openbsd.org/pub/OpenBSD/7.9/packages/i386/; pkg_add -I python%3.13 git gmake ggrep binutils jdk%21 apache-ant'],'native-tools',1200)
         # Preserve real Git identity for the shared builder; git archive drops
         # .git and cannot satisfy its exact host-commit evidence check.

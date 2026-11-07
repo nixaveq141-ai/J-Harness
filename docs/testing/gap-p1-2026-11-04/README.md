@@ -1,5 +1,7 @@
 # P1：原生来源补齐执行记录
 
+- 2026-11-07 OpenBSD42376661936原包294166字节SHA/CRC实核：安装exit0、磁盘内核启动与SSH均已达；native-target因OpenBSD getconf不提供LONG_BIT失败，非ABI不符。改原生cc编译/执行自有C检查sizeof指针与long均4字节，uname i386门禁保留；相同探针在本机Win64实际返回1拒绝。5bootstrap/2JNA控制通过，真实i386探针/源码构建待。SPARC42377224992已启动固定镜像可行性专项，正式44/50、本地45候选保持。
+
 - 2026-11-07 SPARC新增可行性入口：核公开OpenIndiana/illumos Niagara镜像amd64 OCI摘要b92b4014，压缩层约1.76GB，阅读固定d06825a源入口/来源说明；仅无网络、无额外cap/device的owned容器探测真实启动/系统及工具清单，不当组件验收。2控制覆盖旧资源拒绝、guest与容器清理失败仍回收自有卷并留报告。OpenBSD42376661936同一专项仍运行，正式44/50、本地45候选不变。
 
 - 2026-11-07 OpenBSD重跑前衔接审查：源码archive不带.git而共享builder要求真实HEAD，改无凭据拉取公开仓库的精确GITHUB_SHA并核HEAD；回传目录改为真实.build-cache/p1-openbsd-jna/x86，打包失败保留非零退出。两个远程shell语法检查及5bootstrap/2JNA控制通过；仅本地检查，真实guest checkout/构建待。与BUILDINFO修复合并一次专项重跑，未重跑完整矩阵。
