@@ -29,6 +29,19 @@ def qemu_arguments(out,install):
             '-drive','file='+(out/'disk.qcow2').as_posix()+',format=qcow2,if=virtio','-netdev',net,'-device','e1000,netdev=net0',
             '-boot','n' if install else 'c','-no-reboot']
 
+def wait_installation(vm,serial_path,timeout=1500,idle_timeout=180):
+    started=last_progress=time.monotonic();size=0
+    while True:
+        status=vm.poll()
+        if status is not None:return status
+        now=time.monotonic();current=serial_path.stat().st_size
+        if current!=size:
+            size=current;last_progress=now
+            print('Owned i386 installer serial progress:',size,'bytes',flush=True)
+        if now-started>=timeout:raise ValueError('Owned i386 installer total time budget exceeded')
+        if now-last_progress>=idle_timeout:raise ValueError('Owned i386 installer serial made no progress within idle budget')
+        time.sleep(3)
+
 def main():
     if platform.system()!='Linux' or os.environ.get('GITHUB_ACTIONS')!='true':raise ValueError('Dedicated Linux CI required')
     if not os.environ.get('GITHUB_RUN_ID','').isdigit() or not re.fullmatch('[a-f0-9]{40}',os.environ.get('GITHUB_SHA','')):raise ValueError('Exact CI identity required')
@@ -73,7 +86,7 @@ def main():
         serial=(out/'install-serial.log').open('wb');handles.append(serial)
         install_args=qemu_arguments(out,True);report['installCommand']=install_args
         vm=subprocess.Popen(install_args,stdin=subprocess.DEVNULL,stdout=serial,stderr=subprocess.STDOUT,start_new_session=True);processes.append(vm)
-        status=vm.wait(timeout=1500);report['installExitCode']=status
+        status=wait_installation(vm,out/'install-serial.log');report['installExitCode']=status
         if status!=0:raise ValueError('Native i386 installer failed')
         serial2=(out/'boot-serial.log').open('wb');handles.append(serial2)
         boot_args=qemu_arguments(out,False);report['bootCommand']=boot_args

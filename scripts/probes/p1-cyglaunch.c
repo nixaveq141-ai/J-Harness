@@ -70,7 +70,16 @@ int main(int argc,char **argv) {
     if (snprintf(logfile,sizeof(logfile),"%s\\cyglaunch-owned.log",cwd)>=(int)sizeof(logfile)) return 7;
     int size=snprintf(command,sizeof(command),"\"%s\" \"%s\" 1 %s %s %s \"%s\"",argv[1],no_log?"null":logfile,names[0],names[1],names[2],argv[2]);
     if (size<0 || size>=(int)sizeof(command)) return 7;
-    if (!CreateProcessA(argv[1],command,NULL,NULL,FALSE,CREATE_NO_WINDOW|CREATE_SUSPENDED,NULL,NULL,&startup,&process)) return 8;
+    // Match ProcessBuilder's valid standard descriptors. The launcher uses
+    // named pipes for PTY data; its own stdio must not start as closed fds.
+    SECURITY_ATTRIBUTES inherit={sizeof(inherit),NULL,TRUE};
+    HANDLE null_stdio=CreateFileA("NUL",GENERIC_READ|GENERIC_WRITE,FILE_SHARE_READ|FILE_SHARE_WRITE,&inherit,OPEN_EXISTING,0,NULL);
+    if (null_stdio==INVALID_HANDLE_VALUE) return 8;
+    startup.dwFlags|=STARTF_USESTDHANDLES;
+    startup.hStdInput=null_stdio;startup.hStdOutput=null_stdio;startup.hStdError=null_stdio;
+    BOOL created=CreateProcessA(argv[1],command,NULL,NULL,TRUE,CREATE_NO_WINDOW|CREATE_SUSPENDED,NULL,NULL,&startup,&process);
+    CloseHandle(null_stdio);
+    if (!created) return 8;
     if (!AssignProcessToJobObject(job,process.hProcess)) { TerminateProcess(process.hProcess,1);return 9; }
     ResumeThread(process.hThread);CloseHandle(process.hThread);
     for (int i=0;i<3;i++) if (!connect_pipe(pipes[i])) return 10;

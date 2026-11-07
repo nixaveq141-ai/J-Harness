@@ -1,10 +1,22 @@
 """Guard signed input scope and native i386 VM isolation before real CI boot."""
 import importlib.util,io,unittest
+from unittest.mock import patch
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 s=importlib.util.spec_from_file_location('bootstrap',ROOT/'scripts/bootstrap-p1-openbsd-i386.py');m=importlib.util.module_from_spec(s);s.loader.exec_module(m)
 
 class BootstrapScope(unittest.TestCase):
+    def test_installer_wait_distinguishes_terminal_from_stalled_live_vm(self):
+        class Vm:
+            def __init__(self,status):self.status=status
+            def poll(self):return self.status
+        class Serial:
+            def stat(self):return type('Stat',(),{'st_size':0})()
+        self.assertEqual(0,m.wait_installation(Vm(0),Serial()))
+        self.assertEqual(9,m.wait_installation(Vm(9),Serial()))
+        with patch.object(m.time,'monotonic',side_effect=[0,181]),self.assertRaisesRegex(ValueError,'no progress'):
+            m.wait_installation(Vm(None),Serial())
+
     def test_official_base_size_fits_and_stream_budget_stays_enforced(self):
         self.assertGreaterEqual(m.INPUT_LIMITS['base79.tgz'],282575165)
         out=io.BytesIO();self.assertEqual(4,m.copy_bounded(io.BytesIO(b'1234'),out,4))

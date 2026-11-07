@@ -1,0 +1,21 @@
+{
+  "status": "CYGWIN_LOGGED_PASS_DEFAULT_NO_LOG_FAILED_NOT_ACCEPTED",
+  "runId": "42374668507",
+  "commit": "ea29879c9a88f98c0d4f70ae1c4449f1cd005ff9",
+  "artifact": {
+    "id": 13575266806,
+    "bytes": 2522104,
+    "sha256": "a271570a2bf3da734830f4fac036cf4c7fe43ce61be670acfc04ca41a786b8d0"
+  },
+  "loggedMode": "PASS",
+  "defaultMode": {
+    "exitCode": 11,
+    "pipeError": 109,
+    "launcherExitCode": 259
+  },
+  "hypothesis": "Harness child standard descriptors closed unlike Java ProcessBuilder",
+  "fix": "Explicit owned inheritable NUL stdio handles for launcher; PTY descriptors still must be real terminals",
+  "runtimeFixVerified": false,
+  "assertionsUnchanged": true,
+  "paidRequests": 0
+}
