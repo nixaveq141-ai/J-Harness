@@ -1,9 +1,9 @@
 {
   "status": "P1_IN_PROGRESS_NOT_COMPLETE",
   "frozenP0Tasks": 36,
-  "independentlyVerifiedNewSourceComponents": 26,
-  "assembledCandidateReviewedCount": 40,
-  "assembledCandidateUnresolvedCount": 10,
+  "independentlyVerifiedNewSourceComponents": 28,
+  "assembledCandidateReviewedCount": 42,
+  "assembledCandidateUnresolvedCount": 8,
   "formalAcceptedRuntimeCommit": "904d2f3af194ba25ee8d9b542f61fd12a4c88291",
   "formalAcceptedRuntimeReviewedCount": 39,
   "formalAcceptedRuntimeUnresolvedCount": 11,
@@ -563,13 +563,16 @@
       "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
       "os": "win",
       "cpu": "aarch64",
-      "status": "OPEN",
+      "status": "COMPONENT_SOURCE_VERIFIED_ASSEMBLED_FULL_PRODUCT_PENDING",
       "requiredToolchain": "MSVC/Windows SDK aarch64；构建WinPTY/Console/helper所需依赖",
-      "nextAction": "运行gap-p1-windows-arm64-winpty.yml固定源/目录补丁/原生clangarm64构建及DLL-agent生命周期验证",
+      "nextAction": "42来源统一候选五目标产品回归与独立原包验收待",
       "blockers": [
-        "实际ARM64源码编译与组件运行待",
-        "统一候选集成及产品完整验收待"
-      ]
+        "统一候选全量产品回归未验收"
+      ],
+      "candidateSha256": "a6e3b9d0d90b3fad268a34f3bd1241e95026a9c6593a93bb7ded8c944a931461",
+      "componentRunId": "42228145670",
+      "componentCommit": "ead88a173d1d787a11f2bdadc6a0f831be164684",
+      "componentReceipt": "docs/testing/gap-p1-2026-11-04/windows-arm64-winpty-components-acceptance.json"
     },
     {
       "taskId": "NATIVE-33",
@@ -578,13 +581,16 @@
       "coordinate": "org.jetbrains.pty4j:pty4j:0.13.12",
       "os": "win",
       "cpu": "aarch64",
-      "status": "OPEN",
+      "status": "COMPONENT_SOURCE_VERIFIED_ASSEMBLED_FULL_PRODUCT_PENDING",
       "requiredToolchain": "MSVC/Windows SDK aarch64；构建WinPTY/Console/helper所需依赖",
-      "nextAction": "运行gap-p1-windows-arm64-winpty.yml固定源/目录补丁/原生clangarm64构建及DLL-agent生命周期验证",
+      "nextAction": "42来源统一候选五目标产品回归与独立原包验收待",
       "blockers": [
-        "实际ARM64源码编译与组件运行待",
-        "统一候选集成及产品完整验收待"
-      ]
+        "统一候选全量产品回归未验收"
+      ],
+      "candidateSha256": "e1d265a6b7e7d103b68198538836e3f5e79035b829c4b5e76c246bfed3a81f08",
+      "componentRunId": "42228145670",
+      "componentCommit": "ead88a173d1d787a11f2bdadc6a0f831be164684",
+      "componentReceipt": "docs/testing/gap-p1-2026-11-04/windows-arm64-winpty-components-acceptance.json"
     },
     {
       "taskId": "NATIVE-34",

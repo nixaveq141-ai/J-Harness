@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "scope": "39 formally accepted sources; OpenBSD x64 independently reviewed and assembled as candidate40;10 original sources unresolved. Candidate40 full qualification pending. Not full OS/CPE clearance.",
+  "scope": "39 formally accepted sources;42 independently reviewed sources assembled;8 original sources unresolved. Candidate42 full qualification pending. Not full OS/CPE clearance.",
   "resources": {
     "com/sun/jna/win32-x86-64/jnidispatch.dll": {
       "sha256": "c88e200b240dfa54c5b852a335b28683e64a074d30ceee7c17ffc282058891a2",
@@ -482,6 +482,30 @@
         "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/openbsd-jna-components-acceptance.json",
         "scope": "OpenBSD VM C-level JNI primitives and real libffi call/closure; complete target JVM/Java not certified"
       }
+    },
+    "resources/com/pty4j/native/win/aarch64/winpty-agent.exe": {
+      "sha256": "a6e3b9d0d90b3fad268a34f3bd1241e95026a9c6593a93bb7ded8c944a931461",
+      "origin": {
+        "sourceBuildRun": "42228145670",
+        "sourceBuildCommit": "ead88a173d1d787a11f2bdadc6a0f831be164684",
+        "sourceRevision": "7e59fe2d09adf0fa2aa606492e7ca98efbc5184e",
+        "componentReportSha256": "2353363a58fae98fe2fb4c0994f97944ad89489123f1678cc0462d39a881bd8c",
+        "componentProbeRun": "42228145670",
+        "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/windows-arm64-winpty-components-acceptance.json",
+        "scope": "Native ARM64 C++ exact DLL and owned agent lifecycle; full target Java application not certified"
+      }
+    },
+    "resources/com/pty4j/native/win/aarch64/winpty.dll": {
+      "sha256": "e1d265a6b7e7d103b68198538836e3f5e79035b829c4b5e76c246bfed3a81f08",
+      "origin": {
+        "sourceBuildRun": "42228145670",
+        "sourceBuildCommit": "ead88a173d1d787a11f2bdadc6a0f831be164684",
+        "sourceRevision": "7e59fe2d09adf0fa2aa606492e7ca98efbc5184e",
+        "componentReportSha256": "2353363a58fae98fe2fb4c0994f97944ad89489123f1678cc0462d39a881bd8c",
+        "componentProbeRun": "42228145670",
+        "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/windows-arm64-winpty-components-acceptance.json",
+        "scope": "Native ARM64 C++ exact DLL and owned agent lifecycle; full target Java application not certified"
+      }
     }
   },
   "fullRuntimeQualification": {
@@ -492,10 +516,11 @@
     "reviewedResourceCount": 39
   },
   "pendingCandidateQualification": {
-    "reviewedResourceCount": 40,
+    "reviewedResourceCount": 42,
     "status": "FULL_PRODUCT_QUALIFICATION_PENDING",
     "componentRunIds": [
-      "42227334617"
+      "42227334617",
+      "42228145670"
     ]
   }
 }

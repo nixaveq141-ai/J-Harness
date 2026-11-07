@@ -1,0 +1,57 @@
+{
+  "status": "ARM64_WINPTY_TWO_SOURCE_COMPONENTS_INDEPENDENTLY_VERIFIED_NOT_PRODUCT_ACCEPTANCE",
+  "runId": "42228145670",
+  "commit": "ead88a173d1d787a11f2bdadc6a0f831be164684",
+  "artifact": {
+    "id": 13506936787,
+    "path": ".build-cache/p1-raw-42228145670/13506936787.zip",
+    "bytes": 1754648,
+    "sha256": "2fdc295a3c9209e9f0fa8d804f99000bef91e1c08325bac154d60634ec88e2b1"
+  },
+  "reportSha256": "2353363a58fae98fe2fb4c0994f97944ad89489123f1678cc0462d39a881bd8c",
+  "sourceFiles": 180,
+  "sourceRevision": "7e59fe2d09adf0fa2aa606492e7ca98efbc5184e",
+  "officialSourceArchiveSha256": "46581b32244574137ddcb05e969cb49399534ed401624808beee088dc196cddc",
+  "referenceSourceFiles": 134,
+  "commandReceiptSha256": {
+    "packages": "c05f964216324aa74cfb85ced81998f6ea964e048d442a183e2efb6f48a5a83c",
+    "compiler": "c21c6e912134407d7553d668bd204c8e0714d320e3ad0178c5ec16b1edd67471",
+    "target": "e1314f0a821ea5ccd5214b2685f92be51fcb795c882807bf0ed4833c282d4464",
+    "winpty-clone": "f20e09f334083f55b1e463fdc33a4c2a0cbf44e95092e4d0b035171446db4d31",
+    "winpty-checkout": "5cfff5c5be77a9acc75ecca32f941d40d50f9f42ed2f4deefa555b20d779f048",
+    "pty4j-clone": "69f352492fe523cb76799a2565a7877db770e94b5ee7f4a05a804474322d265e",
+    "pty4j-checkout": "3efc1299a6705a5422eebc399938b5f47f1cd0f95dbee05acf3e24f28ebd8182",
+    "build": "0261de89eb500bb1716ee54407a5dba912acf55fb59741fcdbb954de7d48342f",
+    "probe-build": "89c72243035f0ac2951239365424b9c3c5fcc359cfb23fcd70264e258b7cb695",
+    "candidate-probe": "af7d4cb72d7d960952782f640adc790e91559a204c7a8a7ea7add7f261bfc98f",
+    "missing-probe": "a9804c4c6e764686e609161cf48d1fa4ed6284782c61a6702d9149b23e6d9774",
+    "source-diff": "d7fdf7e37a4c48f66f210d94238c2155f92f53d18d61ffb251e59ff33b8f9f39"
+  },
+  "hostGitInputs": 720,
+  "outputs": {
+    "resources/com/pty4j/native/win/aarch64/winpty.dll": {
+      "sha256": "e1d265a6b7e7d103b68198538836e3f5e79035b829c4b5e76c246bfed3a81f08",
+      "pe": {
+        "machine": 43620,
+        "optionalHeaderMagic": 523
+      },
+      "originalSha256": "99c8aa61319c2a83278e4da60cdc584fe29a6818e24edc362399314d3a3e5808"
+    },
+    "resources/com/pty4j/native/win/aarch64/winpty-agent.exe": {
+      "sha256": "a6e3b9d0d90b3fad268a34f3bd1241e95026a9c6593a93bb7ded8c944a931461",
+      "pe": {
+        "machine": 43620,
+        "optionalHeaderMagic": 523
+      },
+      "originalSha256": "055ab03294342b665d666f2e7fce2ec1fe182e3bd97af6b95219d046af9bf36b"
+    }
+  },
+  "probeSha256": "083a60678759d7614e7a2d8f3bbac9e4dd4f73c40f8080be04371207d2396030",
+  "probeSourceSha256": "83939917b19428e190d9d6a2fc4666b20b205902b377a4189a762c9c715ac1fc",
+  "productAccepted": false,
+  "paidRequests": 0,
+  "limits": [
+    "Native C++ DLL and owned agent lifecycle, not full Java application acceptance",
+    "Upstream source with existing bounded owned-directory patch; no new source port certified until runtime passes"
+  ]
+}

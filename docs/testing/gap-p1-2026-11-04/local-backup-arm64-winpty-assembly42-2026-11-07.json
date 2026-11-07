@@ -1,0 +1,18 @@
+{
+  "status": "LOCAL_BACKUP_ALL_MEMBERS_SHA_AND_CRC_VERIFIED",
+  "path": ".build-cache/local-evidence-backups/2026-11-07/arm64-winpty-and-assembly42.zip",
+  "bytes": 31629605,
+  "sha256": "d7b2182784fb3e33457612ba13cff2d9c9cd03431c7e71b9f83c1eef0bebaa41",
+  "members": {
+    ".build-cache/p1-raw-42228145670/13506936787.zip": "2fdc295a3c9209e9f0fa8d804f99000bef91e1c08325bac154d60634ec88e2b1",
+    ".build-cache/audit-p1-arm-winpty.py": "7e5ccee3f1637be75959530296bc78613bb851558d7a727fbd77de50355d7d26",
+    ".build-cache/p1-assembly42/candidate.jar": "06f40bb3d9b2dfc9ba9e4d547b7c2aac2ce9c7a421f573dcafcbbc837e2c9c7e",
+    "docs/testing/gap-p1-2026-11-04/assembly42-control.json": "9a2bd0de2845b29950dbbea6fe830734817545f0a86009319351721b3651b34d",
+    "docs/testing/gap-p1-2026-11-04/windows-arm64-winpty-components-acceptance.json": "2166154b871260ef0f96b6097a1027e991cb5d4d3fa58d5b0a82f7c838401a66",
+    "scripts/stage-p1-arm64-winpty.py": "7467a1d047441754520ba6dd4904e551041e4c4676256a398326a14de86f53fa",
+    "scripts/test-p1-arm64-winpty-stage.py": "510d20a21b5a691de6ca44d6752d051dd71269260ba3c082b99428a7ac1fab87",
+    "scripts/stage-unified-native-runtime.py": "f388337ff8199b44ced951837f4a7c6e8e4d044c362818571124d91392937543",
+    ".github/workflows/gap-unified-source-qualification.yml": "c04417f4d05796417e9010c5eb919b90c7ee633de3f30382ee7684596f1062ad"
+  },
+  "offsite": false
+}
