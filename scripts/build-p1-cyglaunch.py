@@ -67,6 +67,7 @@ def main():
         report['probeSources']={n:stream_sha256(ROOT/n) for n in ['scripts/probes/p1-cyglaunch.c','scripts/probes/p1-cyglaunch-child.c']}
         work=out/'owned-work';work.mkdir();(work/'jh-owned-marker').write_bytes(b'owned-directory\n')
         command([str(probe),str(output),str(child),'present'],'candidate-probe',work,90)
+        command([str(probe),str(output),str(child),'present-no-log'],'candidate-no-log-probe',work,90)
         command([str(probe),str(out/'absent.exe'),str(child),'missing'],'missing-probe',work,45)
         after={n:stream_sha256(source/n) for n in before};report['sourceTrackedFilesAfter']=after
         if {n for n in before if before[n]!=after[n]}!={'native/exec_pty.c'} or after['native/exec_pty.c']!=report['portabilityPatch']['afterSha256']:raise ValueError('Tracked upstream source drift')

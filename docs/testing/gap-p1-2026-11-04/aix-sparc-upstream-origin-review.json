@@ -1,0 +1,47 @@
+{
+  "status": "FOUR_ORIGINAL_BYTES_BOUND_TO_UPSTREAM_REBUILD_COMMIT_NOT_EXACT_BUILD_ATTESTATION",
+  "upstreamCommit": "767662a90b269892776a48d1472dd2ab3fc614af",
+  "upstreamCommitDate": "2023-02-22T19:53:02Z",
+  "sourceParents": [
+    "111795a622346d034477c38eb2498cdba6edf102"
+  ],
+  "resources": [
+    {
+      "resource": "com/sun/jna/aix-ppc/libjnidispatch.a",
+      "inventorySha256": "993d6799faa5e2c6363e99050c65ef6efea10059b3a07b80d3854d6d3142ca1a",
+      "upstreamJarPath": "lib/native/aix-ppc.jar",
+      "upstreamJarGitBlob": "3ed86972e68098a2a0252d8e44a63d9a8be416d8",
+      "upstreamJarSha256": "84586da6b163ff27cce2d5cf3a48814fed6e90ea9732337948ebaf806eb7a018"
+    },
+    {
+      "resource": "com/sun/jna/aix-ppc64/libjnidispatch.a",
+      "inventorySha256": "66a4b348b959d26a143ce54277330d767ae01f90e36308df09d5d110696445df",
+      "upstreamJarPath": "lib/native/aix-ppc64.jar",
+      "upstreamJarGitBlob": "2d6c6137492d0cd7b3c9ebdcd08618cb74e8018f",
+      "upstreamJarSha256": "3a6330b98afad05af7b3d76717639634b93ad6cd5b466bf1bf8d778d3ecf95bc"
+    },
+    {
+      "resource": "com/sun/jna/sunos-sparc/libjnidispatch.so",
+      "inventorySha256": "58e637222be67679df8f2473967555b9697908e65ca2ddf32719d1d5e35769db",
+      "upstreamJarPath": "lib/native/sunos-sparc.jar",
+      "upstreamJarGitBlob": "99dd04f243e151eda7ef2b7993ecb92ef6a49d7c",
+      "upstreamJarSha256": "783c0585528558d08545094e819e9dadbc640858838d38dadc0c4179b427b5b3"
+    },
+    {
+      "resource": "com/sun/jna/sunos-sparcv9/libjnidispatch.so",
+      "inventorySha256": "58e637222be67679df8f2473967555b9697908e65ca2ddf32719d1d5e35769db",
+      "upstreamJarPath": "lib/native/sunos-sparcv9.jar",
+      "upstreamJarGitBlob": "1bfef61f886f0944dfabbe1a974ee7ca536c8067",
+      "upstreamJarSha256": "8639f20908237a9556b7423286ac45c4cecbb8d3250d26dae7dc9c9b56afc6b5"
+    }
+  ],
+  "missingEvidence": [
+    "Per-file actual build commands and compiler/SDK identity",
+    "Binding of generated/static inputs to exact binary build",
+    "Applicable native component verification or explicitly skipped physical-machine boundary"
+  ],
+  "acceptedCountIncrease": 0,
+  "paidRequests": 0,
+  "upstreamCommitUrl": "https://github.com/java-native-access/jna/commit/767662a90b269892776a48d1472dd2ab3fc614af",
+  "olderAixDiscussion": "https://github.com/java-native-access/jna/pull/1403#issuecomment-1005940860"
+}

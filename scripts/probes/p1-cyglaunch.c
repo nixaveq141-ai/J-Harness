@@ -54,7 +54,8 @@ int main(int argc,char **argv) {
         if (GetLastError()!=ERROR_FILE_NOT_FOUND && GetLastError()!=ERROR_PATH_NOT_FOUND) return 4;
         puts("PASS missing exact Cygwin launcher refused");return 0;
     }
-    if (strcmp(argv[3],"present")) return 2;
+    const int no_log=!strcmp(argv[3],"present-no-log");
+    if (strcmp(argv[3],"present") && !no_log) return 2;
     char names[3][128];HANDLE pipes[3];
     for (int i=0;i<3;i++) {
         snprintf(names[i],sizeof(names[i]),"\\\\.\\pipe\\jh-p1-cyg-%lu-%d",(unsigned long)GetCurrentProcessId(),i);
@@ -67,7 +68,7 @@ int main(int argc,char **argv) {
     char cwd[1024],logfile[1200];
     if (!GetCurrentDirectoryA(sizeof(cwd),cwd)) return 7;
     if (snprintf(logfile,sizeof(logfile),"%s\\cyglaunch-owned.log",cwd)>=(int)sizeof(logfile)) return 7;
-    int size=snprintf(command,sizeof(command),"\"%s\" \"%s\" 1 %s %s %s \"%s\"",argv[1],logfile,names[0],names[1],names[2],argv[2]);
+    int size=snprintf(command,sizeof(command),"\"%s\" \"%s\" 1 %s %s %s \"%s\"",argv[1],no_log?"null":logfile,names[0],names[1],names[2],argv[2]);
     if (size<0 || size>=(int)sizeof(command)) return 7;
     if (!CreateProcessA(argv[1],command,NULL,NULL,FALSE,CREATE_NO_WINDOW|CREATE_SUSPENDED,NULL,NULL,&startup,&process)) return 8;
     if (!AssignProcessToJobObject(job,process.hProcess)) { TerminateProcess(process.hProcess,1);return 9; }

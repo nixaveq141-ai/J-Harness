@@ -1,0 +1,12 @@
+{
+  "status": "LOCAL_BACKUP_ALL_MEMBERS_SHA_AND_CRC_VERIFIED",
+  "path": ".build-cache/local-evidence-backups/2026-11-07/aix-sparc-upstream-exact-origin.zip",
+  "sha256": "9ca720a92b2674d06a7be8e228dbd75684617267975662d3278b08ae102e64d8",
+  "members": {
+    ".build-cache/p1-remaining-upstream/aix-ppc.jar": "84586da6b163ff27cce2d5cf3a48814fed6e90ea9732337948ebaf806eb7a018",
+    ".build-cache/p1-remaining-upstream/aix-ppc64.jar": "3a6330b98afad05af7b3d76717639634b93ad6cd5b466bf1bf8d778d3ecf95bc",
+    ".build-cache/p1-remaining-upstream/sunos-sparc.jar": "783c0585528558d08545094e819e9dadbc640858838d38dadc0c4179b427b5b3",
+    ".build-cache/p1-remaining-upstream/sunos-sparcv9.jar": "8639f20908237a9556b7423286ac45c4cecbb8d3250d26dae7dc9c9b56afc6b5",
+    "docs/testing/gap-p1-2026-11-04/aix-sparc-upstream-origin-review.json": "93b6d9e9cdd367db8888f246677113e89982798217725752eccd125fb10587df"
+  }
+}
