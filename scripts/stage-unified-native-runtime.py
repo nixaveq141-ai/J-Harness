@@ -254,6 +254,15 @@ def main():
             target=payload/'p1-arm64-console';target.mkdir(parents=True,exist_ok=True)
             dest=target/name.rsplit('/',1)[-1];dest.write_bytes(item['path'].read_bytes());replacements[name]={**item,'path':dest}
         receipts['p1-arm64-console']=sha((ROOT/module.RECEIPT).read_bytes())
+    if os.environ.get('JHARNESS_P1_CYGLAUNCH')=='1':
+        spec=importlib.util.spec_from_file_location('p1_cyglaunch',ROOT/'scripts/stage-p1-cyglaunch.py')
+        module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+        extra=module.load_components(ROOT/'.build-cache/p1-cyg-inputs')
+        if set(extra)&set(replacements) or len(extra)!=1:raise ValueError('One disjoint Cygwin launcher replacement required')
+        for name,item in extra.items():
+            target=payload/'p1-cyglaunch';target.mkdir(parents=True)
+            dest=target/'cyglaunch.exe';dest.write_bytes(item['path'].read_bytes());replacements[name]={**item,'path':dest}
+        receipts['p1-cyglaunch']=sha((ROOT/module.RECEIPT).read_bytes())
     expected_count=os.environ.get('JHARNESS_EXPECTED_NATIVE_COUNT')
     if expected_count is not None and (not expected_count.isdigit() or len(replacements)!=int(expected_count)):
         raise ValueError('Actual native replacement count differs from requested candidate')
