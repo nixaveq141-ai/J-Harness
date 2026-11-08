@@ -62,7 +62,7 @@ def main():
             def guest(shell,label,timeout):
                 command(['docker','exec',name,'/usr/local/bin/appliance-guest-command','--socket','/state/console.sock',
                          '--timeout',str(timeout),'--command',shell],label,timeout+30)
-            guest('set -eu; /usr/sbin/devfsadm -i sppp -i sppptun; export NIAG_CHAN_DEV=/dev/rdsk/c1d0s2; nohup /opt/niag/bin/guest-chand 0 /tmp/niag0 </dev/null >/tmp/p1-chand.log 2>&1 & nohup /usr/bin/perl /opt/niag/bin/guest-ppp-chan.pl 0 10.0.5.15:10.0.5.1 </dev/null >/tmp/p1-ppp.log 2>&1 & printf "nameserver 10.0.5.1\\n" > /etc/resolv.conf; echo P1_PPP_REQUESTED','guest-network',600)
+            guest('set -eu; /usr/sbin/devfsadm -i sppp -i sppptun; export NIAG_CHAN_DEV=/dev/rdsk/c1d0s2; nohup /opt/niag/bin/guest-chand 0 /tmp/niag0 </dev/null >/tmp/p1-chand.log 2>&1 & i=0; until test -S /tmp/niag0; do i=$((i+1)); if test "$i" -ge 120; then cat /tmp/p1-chand.log; exit 1; fi; sleep 1; done; nohup /usr/bin/perl /opt/niag/bin/guest-ppp-chan.pl 0 10.0.5.15:10.0.5.1 </dev/null >/tmp/p1-ppp.log 2>&1 & printf "nameserver 10.0.5.1\\n" > /etc/resolv.conf; echo P1_PPP_REQUESTED','guest-network',600)
             command(['docker','exec',name,'bash','-c','for ((i=0;i<180;i++)); do if grep -qx phase=ready /state/network/status.env 2>/dev/null; then cat /state/network/status.env; exit 0; fi; sleep 2; done; exit 1'],'ppp-ready',390)
             prefix='set -eu; export http_proxy=http://10.0.5.1:8888 https_proxy=http://10.0.5.1:8888; '
             guest(prefix+'pkg set-publisher -G "*" -g https://pkg.openindiana.aurora-opencloud.org/oi-sparc/ openindiana.org','guest-publisher',1200)
@@ -73,6 +73,9 @@ def main():
             report['status']='SPARC_BUILD_TOOLS_PROVISIONED_NOT_NATIVE_COMPONENT_ACCEPTANCE'
     finally:
         cleanup=[]
+        if created_container and provision:
+            cleanup.append((['docker','exec',name,'bash','-c','for f in /state/network-helper.log /state/network/*.log /state/network/status.env; do if test -f "$f"; then echo "$f"; tail -c 16384 "$f"; fi; done'],'network-diagnostics',30))
+            cleanup.append((['docker','exec',name,'/usr/local/bin/appliance-guest-command','--socket','/state/console.sock','--timeout','45','--command','for f in /tmp/p1-chand.log /tmp/p1-ppp.log; do if test -f "$f"; then echo "$f"; tail -c 16384 "$f"; fi; done; true'],'guest-network-diagnostics',60))
         if created_container:
             cleanup.extend([(['docker','logs','--tail','160',name],'container-log',30),
                             (['docker','rm','--force',name],'owned-container-cleanup',60)])

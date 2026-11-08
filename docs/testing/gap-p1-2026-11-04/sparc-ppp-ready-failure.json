@@ -1,0 +1,17 @@
+{
+  "status": "SPARC_PPP_READY_FAILED_BEFORE_PACKAGE_DOWNLOAD",
+  "runId": "42454910095",
+  "commit": "aad076e2909dbe783cd3e655189cabcda8854bf2",
+  "artifact": {
+    "id": 13607108477,
+    "bytes": 925731,
+    "sha256": "5b9d58e2066860ada341653286014e41f0ce949b89ad64fc4e5b745108ebd28f"
+  },
+  "failedCommand": "ppp-ready",
+  "rootCause": "Not established; original lacks guest and host PPP worker logs",
+  "change": "Wait for guest channel socket before PPP launch; collect bounded worker logs before owned resource cleanup",
+  "localControls": 3,
+  "runtimeFixVerified": false,
+  "acceptedCountIncrease": 0,
+  "paidRequests": 0
+}

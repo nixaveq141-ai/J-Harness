@@ -1,5 +1,7 @@
 # P1：原生来源补齐执行记录
 
+- 2026-11-08 SPARC42454910095原包925731字节SHA/CRC核过：宿主PPP模块/容器/真实guest启动与启动请求通过，但ppp-ready等待失败，未到包下载。现有原包只留请求/容器入口日志，不能断言具体PPP根因；补guest socket就绪等待与两侧owned有界网络日志，清理失败仍回收自有资源，3控制过。原生组件计数不变；OpenBSD42453883100同轮继续。
+
 - 2026-11-08 SPARC共享源码入口准备：固定c366 JNA原Solaris配置扩展sparc ELF32/大端/machine2与sparcv9 ELF64/大端/machine43，强制sun4u/sun4v/sparc原生宿主家族，x86家族隔离保留；gcc分别-m32/-m64，原两SPARC库存都按实际ELF64留证，不把错误32标签当通过。3控制含字宽/字节序/机器号/宿主替代拒绝通过；实际SDK准备42454910095与OpenBSD42453883100继续，未构建/未增加来源计数。
 
 - 2026-11-08 SPARC工具准备：官方oi-sparc HTTPS versions及p5i实核提供gcc7/10/13、JDK17、Ant、Git、GNU make/binutils/系统头/链接器（gcc14包名404）；选择gcc10。新增显式provision模式，仅CI自有容器NET_ADMIN+/dev/ppp与容器内转发，PPP ready门禁后访问官方HTTPS仓库，安装并记录完整包/manifest/工具版本；无镜像或guest文件进入产品。3默认隔离/故障清理/显式权限控制过；真实PPP/工具安装待，未增加44正式或45候选。
