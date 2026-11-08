@@ -4,6 +4,8 @@
 
 ## 当前接续状态
 
+- 2026-11-08 SPARC共享源码入口准备：固定c366 JNA原Solaris配置扩展sparc ELF32/大端/machine2与sparcv9 ELF64/大端/machine43，强制sun4u/sun4v/sparc原生宿主家族，x86家族隔离保留；gcc分别-m32/-m64，原两SPARC库存都按实际ELF64留证，不把错误32标签当通过。3控制含字宽/字节序/机器号/宿主替代拒绝通过；实际SDK准备42454910095与OpenBSD42453883100继续，未构建/未增加来源计数。
+
 - 2026-11-08 SPARC工具准备：官方oi-sparc HTTPS versions及p5i实核提供gcc7/10/13、JDK17、Ant、Git、GNU make/binutils/系统头/链接器（gcc14包名404）；选择gcc10。新增显式provision模式，仅CI自有容器NET_ADMIN+/dev/ppp与容器内转发，PPP ready门禁后访问官方HTTPS仓库，安装并记录完整包/manifest/工具版本；无镜像或guest文件进入产品。3默认隔离/故障清理/显式权限控制过；真实PPP/工具安装待，未增加44正式或45候选。
 
 - 2026-11-08 SPARC42453885869原包712870字节SHA/CRC及10命令/日志回执、精确宿主Git输入核过：固定b92b镜像自动启动与root登录成功，真实SunOS5.11/illumos-31d3d510d0/sun4v/sparcv9，Python3.14路径存在、默认3.9.25；检查路径未找到gcc/JDK/Ant/Git/GNU make。owned容器/卷清理通过。下一步配齐精确编译工具/SDK再构建，不计原生来源闭合；正式44/50、本地45候选保持。OpenBSD42453883100原专项继续。

@@ -14,7 +14,13 @@ from evidence_run import run
 
 ROOT=Path(__file__).resolve().parents[1]
 REVISION='c366bc4fd0c50a30ac8d2475603ec564f6611462'
-TARGETS={'x86':(1,1,3,'i386'),'x86-64':(2,1,62,'amd64')}
+TARGETS={'x86':(1,1,3,'i386'),'x86-64':(2,1,62,'amd64'),
+         'sparc':(1,2,2,'sparc'),'sparcv9':(2,2,43,'sparcv9')}
+
+
+def require_host(target,system,machine):
+ hosts={'sun4u','sun4v','sparc'} if target in {'sparc','sparcv9'} else {'i86pc','i386','amd64'}
+ if system!='SunOS' or machine not in hosts:raise ValueError('Native Solaris target-family VM required')
 
 
 def require_elf(raw,target):
@@ -38,10 +44,10 @@ def compiled_library(source,target):
 
 def main():
  parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('target',choices=TARGETS);a=parser.parse_args()
- if platform.system()!='SunOS' or platform.machine() not in {'i86pc','i386','amd64'}:raise ValueError('Solaris amd64 VM required')
+ require_host(a.target,platform.system(),platform.machine())
  if os.environ.get('GITHUB_ACTIONS')!='true' or not os.environ.get('GITHUB_RUN_ID','').isdigit():raise ValueError('Dedicated CI required')
  target=a.target;_,_,_,arch=TARGETS[target]
- compiler=['gcc','-m32' if target=='x86' else '-m64']
+ compiler=['gcc','-m32' if target in {'x86','sparc'} else '-m64']
  out=ROOT/'.build-cache/p1-sunos-jna'/target;out.mkdir(parents=True,exist_ok=False)
  rid='p1-jna-'+os.environ['GITHUB_RUN_ID']+'-'+target
  report=dict(status='INCOMPLETE',target=target,runId=os.environ['GITHUB_RUN_ID'],
@@ -67,7 +73,8 @@ def main():
   native_jar='lib/native/sunos-'+target+'.jar'
   with zipfile.ZipFile(source/native_jar) as z:original=z.read('libjnidispatch.so')
   if hashlib.sha256(original).hexdigest()!=item['sha256']:raise ValueError('Original source binary not inventory exact')
-  (out/'original.so').write_bytes(original);report['originalSha256']=item['sha256'];report['originalElf']=require_elf(original,'x86-64');report['originalLabelMismatch']=(target=='x86')
+  original_target='sparcv9' if target in {'sparc','sparcv9'} else 'x86-64'
+  (out/'original.so').write_bytes(original);report['originalSha256']=item['sha256'];report['originalElf']=require_elf(original,original_target);report['originalLabelMismatch']=(target in {'x86','sparc'})
   helper_path=ROOT/'docs/testing/tools/build-native-from-source.py'
   spec=importlib.util.spec_from_file_location('generated_inputs',helper_path);helper=importlib.util.module_from_spec(spec);spec.loader.exec_module(helper)
   report['generatedHelperSha256']=stream_sha256(helper_path)
@@ -77,7 +84,8 @@ def main():
   makefile.write_bytes(raw.replace(anchor,anchor+b' --disable-docs --disable-maintainer-mode --disable-dependency-tracking'))
   report['buildConfig']={'arch':arch,'osPrefix':'sunos-'+target,'compiler':compiler,'libffiStatic':True,'libffiConfigureOptions':['--disable-docs','--disable-maintainer-mode','--disable-dependency-tracking']}
   options=['-Dmake=/usr/gnu/bin/make','-Dos.prefix=sunos-'+target,'-DARCH='+arch,'-DCC='+' '.join(compiler),'-Dcflags_extra.native=-I/usr/include']
-  options+=['-DEXTRA_MAKE_OPTS=OS=solaris HOST_CONFIG=--host='+('i386' if target=='x86' else 'x86_64')+'-pc-solaris2.11']
+  host='sparc-sun-solaris2.11' if target in {'sparc','sparcv9'} else ('i386' if target=='x86' else 'x86_64')+'-pc-solaris2.11'
+  options+=['-DEXTRA_MAKE_OPTS=OS=solaris HOST_CONFIG=--host='+host]
   command(['ant','-Dbuild-native=true',*options,'native'],'build',source)
   library=compiled_library(source,target);identity=require_elf(library.read_bytes(),target);output=out/'libjnidispatch.so';output.write_bytes(library.read_bytes())
   command(['readelf','-h','-d','-Ws',str(output)],'elf-audit')

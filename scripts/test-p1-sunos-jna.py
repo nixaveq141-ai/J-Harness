@@ -10,6 +10,13 @@ builder=importlib.util.module_from_spec(spec);spec.loader.exec_module(builder)
 
 
 class TargetIdentityTest(unittest.TestCase):
+    def test_native_target_family_is_not_substituted(self):
+        for target in builder.TARGETS:
+            sparc=target in {'sparc','sparcv9'}
+            builder.require_host(target,'SunOS','sun4v' if sparc else 'i86pc')
+            for system,machine in [('Linux','sun4v'),('SunOS','i86pc' if sparc else 'sun4v')]:
+                with self.assertRaises(ValueError):builder.require_host(target,system,machine)
+
     def test_exact_compiled_path_and_ant_class_mirror(self):
         with tempfile.TemporaryDirectory() as folder:
             root=Path(folder);native=root/'build/native-sunos-x86/libjnidispatch.so'
@@ -27,7 +34,11 @@ class TargetIdentityTest(unittest.TestCase):
     def test_target_width_endian_and_machine(self):
         builder.require_elf(self.raw(1,1,3),'x86')
         builder.require_elf(self.raw(2,1,62),'x86-64')
-        for raw,target in [(self.raw(2,1,62),'x86'),(self.raw(1,1,3),'x86-64'),(self.raw(2,2,62),'x86-64')]:
+        builder.require_elf(self.raw(1,2,2),'sparc')
+        builder.require_elf(self.raw(2,2,43),'sparcv9')
+        for raw,target in [(self.raw(2,1,62),'x86'),(self.raw(1,1,3),'x86-64'),(self.raw(2,2,62),'x86-64'),
+                           (self.raw(2,2,43),'sparc'),(self.raw(1,2,2),'sparcv9'),(self.raw(2,1,43),'sparcv9'),
+                           (self.raw(2,2,62),'sparcv9')]:
             with self.assertRaises(ValueError):builder.require_elf(raw,target)
 
 
