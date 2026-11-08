@@ -1,5 +1,7 @@
 # P1：原生来源补齐执行记录
 
+- 2026-11-08 SPARC42457560092原包1069905字节SHA/CRC核过：通道已连接、guest真实sppp0发送10次LCP ConfReq但无收包，内部日志明确LCP超时exit10；未到工具安装。宿主ppp.log为空，不能再用guest日志推断宿主具体原因；加载ppp_async依赖，并在自有容器用owned包装让原pppd的logfd2进宿主采集（PPP字节仍走stdin/stdout），不改产品/guest协议。3隔离/清理控制及shell语法过，修正与宿主根因待，正式44/50保持。
+
 - 2026-11-08 两原专项终态原包SHA/CRC核过：OpenBSD42453883100源码SSH1500秒/回传600秒超时，native-tools明确Cannot find python%3.13（pkg_add仍exit0）；改复用已验x64动态Python包查询/安装/真实>=3.11执行前置，SSH保活与逐命令进展，超时完整原因仍未证。SPARC42456290633通道socket已连而PPP exit10，宿主waiting_for_ppp；上游脚本内部日志写/tmp/gppp*，补准确日志/运行脚本采集，不猜协商根因。11相关控制及动态安装shell语法过；44正式/45候选不变，真实修正待。
 
 - 2026-11-08 SPARC42454910095原包925731字节SHA/CRC核过：宿主PPP模块/容器/真实guest启动与启动请求通过，但ppp-ready等待失败，未到包下载。现有原包只留请求/容器入口日志，不能断言具体PPP根因；补guest socket就绪等待与两侧owned有界网络日志，清理失败仍回收自有资源，3控制过。原生组件计数不变；OpenBSD42453883100同轮继续。

@@ -40,15 +40,19 @@ def main():
         command(['docker','image','inspect',IMAGE],'image-identity')
         if provision:
             command(['sudo','modprobe','ppp_generic'],'ppp-host-module')
+            command(['sudo','modprobe','ppp_async'],'ppp-host-async-module')
             if not Path('/dev/ppp').is_char_device():raise ValueError('CI PPP device required')
         command(['docker','volume','create',volume],'owned-volume');created_volume=True
-        network=['--network','none'] if not provision else ['--cap-add','NET_ADMIN','--device','/dev/ppp','--sysctl','net.ipv4.ip_forward=1']
+        network=['--network','none'] if not provision else ['--cap-add','NET_ADMIN','--device','/dev/ppp','--sysctl','net.ipv4.ip_forward=1','-e','PPPD=/tmp/jh-p1-pppd']
         command(['docker','create','--name',name,*network,'--memory','6g','--cpus','2',
                  '--tmpfs','/run/unit100:rw,size=1200m,mode=0700',
                  '--mount','type=volume,src='+volume+',dst=/var/lib/illumos-appliance',
                  '-e','NIAGARA_NETWORK='+('required' if provision else 'off'),'-e','CONSOLE_MODE=socket',IMAGE],'owned-container')
         created_container=True
         command(['docker','start',name],'guest-start')
+        if provision:
+            # PPP payload stays on stdin/stdout; diagnostics use stderr only.
+            command(['docker','exec',name,'sh','-c','printf \'#!/bin/sh\\nexec /usr/sbin/pppd logfd 2 "$@"\\n\' > /tmp/jh-p1-pppd; chmod 0700 /tmp/jh-p1-pppd'],'ppp-log-wrapper')
         command(['docker','exec','-e','AUTO_BOOT_REQUIRED=1','-e','LOGIN_TIMEOUT_SECONDS=1200',
                  '-e','CONSOLE_SOCKET=/state/console.sock','-e','EVIDENCE_PATH=/state/p1-login.log',
                  name,'/usr/local/bin/appliance-smoke-login'],'native-login',1250)

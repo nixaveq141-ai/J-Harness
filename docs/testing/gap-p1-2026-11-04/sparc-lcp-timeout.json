@@ -1,0 +1,22 @@
+{
+  "status": "SPARC_GUEST_LCP_TIMEOUT_HOST_PPP_DIAGNOSIS_PENDING",
+  "runId": "42457560092",
+  "commit": "33178058d0995286217f01c47e332195ebf99ce5",
+  "artifact": {
+    "id": 13608850838,
+    "bytes": 1069905,
+    "sha256": "4942abb815a736646d3eee2e9f1c6041918bc730b5d714852a814d42e77e4b81"
+  },
+  "observations": [
+    "guest channel connected immediately",
+    "sppp0 sends ten LCP Configure-Requests without logged receives",
+    "guest pppd LCP timeout and exit 10",
+    "host PPP capture empty; host cause not established"
+  ],
+  "change": "Load host ppp_async and route original host pppd diagnostics to stderr through owned container wrapper",
+  "localControls": 3,
+  "runtimeFixVerified": false,
+  "rootCauseEstablished": false,
+  "acceptedCountIncrease": 0,
+  "paidRequests": 0
+}
