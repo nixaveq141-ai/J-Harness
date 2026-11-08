@@ -1,5 +1,7 @@
 # P1：原生来源补齐执行记录
 
+- 2026-11-08 OpenBSD42457557429原包582041字节SHA/CRC核过：原生32位标记与动态Python前置已达，实际源码build失败且报告/归档明确Errno28磁盘不足，未验组件。将新VM源码工作区/组件归档从/root移到/home，checkout前记录df并要求home至少2GiB空闲，不改已有用户目录；8相关控制与三个远程命令shell语法过，真实修正待。Cygwin默认关闭装配准备87ed同步保留，正式44/50、本地45候选不变。
+
 - 2026-11-08 已验Cygwin统一装配接线准备：新增默认关闭JHARNESS_P1_CYGLAUNCH入口，复用精确双模式组件stager、1项不相交资源与验收收据绑定。2原包stager/3既有统一装配控制过；完整入口执行留待下一批，未开启workflow、未改44来源map/数量、未动本机JAR或重跑45矩阵，正式44/50/本地45候选保持。OpenBSD42457557429与SPARC42459097659同轮继续。
 
 - 2026-11-08 SPARC42457560092原包1069905字节SHA/CRC核过：通道已连接、guest真实sppp0发送10次LCP ConfReq但无收包，内部日志明确LCP超时exit10；未到工具安装。宿主ppp.log为空，不能再用guest日志推断宿主具体原因；加载ppp_async依赖，并在自有容器用owned包装让原pppd的logfd2进宿主采集（PPP字节仍走stdin/stdout），不改产品/guest协议。3隔离/清理控制及shell语法过，修正与宿主根因待，正式44/50保持。

@@ -119,13 +119,13 @@ def main():
         # Preserve real Git identity for the shared builder; git archive drops
         # .git and cannot satisfy its exact host-commit evidence check.
         commit=os.environ['GITHUB_SHA']
-        checkout='set -eu; mkdir /root/jharness; cd /root/jharness; git init; git config core.autocrlf false; git fetch --depth=1 https://github.com/nixaveq141-ai/J-Harness.git '+commit+'; git checkout --detach FETCH_HEAD; test "$(git rev-parse HEAD)" = '+commit
+        checkout='set -eu; df -Pk / /home /usr/local; test "$(df -Pk /home | awk \'NR==2 {print $4}\')" -ge 2097152; mkdir /home/jharness; cd /home/jharness; git init; git config core.autocrlf false; git fetch --depth=1 https://github.com/nixaveq141-ai/J-Harness.git '+commit+'; git checkout --detach FETCH_HEAD; test "$(git rev-parse HEAD)" = '+commit
         command([*ssh,checkout],'guest-checkout')
         scp=['scp','-i',str(out/'vmkey'),'-P','2222','-o','IdentitiesOnly=yes','-o','BatchMode=yes','-o','ServerAliveInterval=5','-o','ServerAliveCountMax=3','-o','StrictHostKeyChecking=accept-new','-o','UserKnownHostsFile='+str(out/'known-hosts')]
-        archive='"$python_bin" -c '+shlex.quote(ARCHIVE_CODE)+' .build-cache/p1-openbsd-jna/x86 /root/component.tgz'
-        shell='set -eu; cd /root/jharness; python_bin=$(cat /root/jh-p1-python); test -x "$python_bin"; export JAVA_HOME=/usr/local/jdk-21 PATH=/usr/local/jdk-21/bin:$PATH GITHUB_ACTIONS=true GITHUB_RUN_ID='+os.environ['GITHUB_RUN_ID']+' GITHUB_SHA='+commit+'; set +e; "$python_bin" scripts/build-p1-openbsd-jna.py x86; result=$?; '+archive+'; archive=$?; test "$archive" = 0 || exit "$archive"; exit $result'
+        archive='"$python_bin" -c '+shlex.quote(ARCHIVE_CODE)+' .build-cache/p1-openbsd-jna/x86 /home/component.tgz'
+        shell='set -eu; cd /home/jharness; python_bin=$(cat /root/jh-p1-python); test -x "$python_bin"; export JAVA_HOME=/usr/local/jdk-21 PATH=/usr/local/jdk-21/bin:$PATH GITHUB_ACTIONS=true GITHUB_RUN_ID='+os.environ['GITHUB_RUN_ID']+' GITHUB_SHA='+commit+'; set +e; "$python_bin" scripts/build-p1-openbsd-jna.py x86; result=$?; '+archive+'; archive=$?; test "$archive" = 0 || exit "$archive"; exit $result'
         try:command([*ssh,shell],'source-component',1500)
-        finally:command([*scp,'root@127.0.0.1:/root/component.tgz',str(out/'component.tgz')],'copy-result')
+        finally:command([*scp,'root@127.0.0.1:/home/component.tgz',str(out/'component.tgz')],'copy-result')
         report.update(status='NATIVE_I386_OPENBSD_SOURCE_COMPONENT_RETURNED_NOT_INDEPENDENT_ACCEPTANCE',componentArchiveSha256=stream_sha256(out/'component.tgz'))
     finally:
         for process in reversed(processes):

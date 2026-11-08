@@ -1,0 +1,20 @@
+{
+  "status": "OPENBSD_NATIVE_BUILD_DISK_FULL_NOT_COMPONENT_ACCEPTANCE",
+  "runId": "42457557429",
+  "commit": "33178058d0995286217f01c47e332195ebf99ce5",
+  "artifact": {
+    "id": 13609390152,
+    "bytes": 582041,
+    "sha256": "e22e3d5e1a5f5357ff39060c2efb0b35a2516b5943001231bd050e8b74015a37"
+  },
+  "verified": [
+    "Native pointer and long bits 32 marker",
+    "Python setup and source checkout passed",
+    "Actual build reached, then Errno28 prevents report and archive writes"
+  ],
+  "change": "Use /home/jharness and /home/component.tgz in fresh owned VM; require 2 GiB free and log partition space before checkout",
+  "localControls": 8,
+  "runtimeFixVerified": false,
+  "acceptedCountIncrease": 0,
+  "paidRequests": 0
+}
