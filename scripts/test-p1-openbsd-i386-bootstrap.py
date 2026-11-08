@@ -1,11 +1,21 @@
 """Guard signed input scope and native i386 VM isolation before real CI boot."""
-import importlib.util,io,unittest,fnmatch
+import importlib.util,io,unittest,fnmatch,tempfile,tarfile,subprocess,sys
 from unittest.mock import patch
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 s=importlib.util.spec_from_file_location('bootstrap',ROOT/'scripts/bootstrap-p1-openbsd-i386.py');m=importlib.util.module_from_spec(s);s.loader.exec_module(m)
 
 class BootstrapScope(unittest.TestCase):
+    def test_archive_keeps_evidence_and_omits_checkout_without_gnu_tar(self):
+        with tempfile.TemporaryDirectory() as folder:
+            base=Path(folder)/'component';base.mkdir();(base/'report.json').write_bytes(b'{}')
+            (base/'jna').mkdir();(base/'jna/large-source').write_bytes(b'not evidence')
+            out=Path(folder)/'component.tgz'
+            subprocess.run([sys.executable,'-c',m.ARCHIVE_CODE,str(base),str(out)],check=True)
+            with tarfile.open(out) as archive:
+                self.assertEqual(['report.json'],archive.getnames())
+                self.assertEqual(b'{}',archive.extractfile('report.json').read())
+
     def test_installer_default_sets_are_explicitly_unselected_when_not_served(self):
         self.assertIn('BUILDINFO',m.FILES)
         selected={'bsd','bsd.mp','bsd.rd','base79.tgz','comp79.tgz','man79.tgz','game79.tgz','xbase79.tgz','xshare79.tgz','xfont79.tgz','xserv79.tgz'}

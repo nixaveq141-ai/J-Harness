@@ -1,5 +1,5 @@
 """Bootstrap an owned native i386 VM from signed official OpenBSD netboot inputs."""
-import os,platform,re,shutil,subprocess,time,urllib.request
+import os,platform,re,shutil,shlex,subprocess,time,urllib.request
 from pathlib import Path
 from evidence_io import atomic_write_json,stream_sha256
 from evidence_run import run
@@ -10,6 +10,13 @@ FILES=['BUILDINFO','pxeboot','bsd.rd','bsd','bsd.mp','base79.tgz','comp79.tgz','
 INPUT_LIMITS={'base79.tgz':320*1024*1024}
 SET_SELECTION='-game* -xfont* -xserv*'
 WIDTH_PROBE='int main(void) { return sizeof(void *) != 4 || sizeof(long) != 4; }'
+ARCHIVE_CODE="""import sys,tarfile
+from pathlib import Path
+base=Path(sys.argv[1])
+with tarfile.open(sys.argv[2],'w:gz') as archive:
+    for path in sorted(base.iterdir()):
+        if path.name!='jna':archive.add(path,arcname=path.name)
+"""
 
 def copy_bounded(response,stream,limit):
     size=0
@@ -114,7 +121,8 @@ def main():
         checkout='set -eu; mkdir /root/jharness; cd /root/jharness; git init; git config core.autocrlf false; git fetch --depth=1 https://github.com/nixaveq141-ai/J-Harness.git '+commit+'; git checkout --detach FETCH_HEAD; test "$(git rev-parse HEAD)" = '+commit
         command([*ssh,checkout],'guest-checkout')
         scp=['scp','-i',str(out/'vmkey'),'-P','2222','-o','IdentitiesOnly=yes','-o','BatchMode=yes','-o','StrictHostKeyChecking=accept-new','-o','UserKnownHostsFile='+str(out/'known-hosts')]
-        shell='set -eu; cd /root/jharness; export JAVA_HOME=/usr/local/jdk-21 PATH=/usr/local/jdk-21/bin:$PATH GITHUB_ACTIONS=true GITHUB_RUN_ID='+os.environ['GITHUB_RUN_ID']+' GITHUB_SHA='+commit+'; set +e; /usr/local/bin/python3.13 scripts/build-p1-openbsd-jna.py x86; result=$?; tar -czf /root/component.tgz --exclude=jna -C .build-cache/p1-openbsd-jna/x86 .; archive=$?; test "$archive" = 0 || exit "$archive"; exit $result'
+        archive='/usr/local/bin/python3.13 -c '+shlex.quote(ARCHIVE_CODE)+' .build-cache/p1-openbsd-jna/x86 /root/component.tgz'
+        shell='set -eu; cd /root/jharness; export JAVA_HOME=/usr/local/jdk-21 PATH=/usr/local/jdk-21/bin:$PATH GITHUB_ACTIONS=true GITHUB_RUN_ID='+os.environ['GITHUB_RUN_ID']+' GITHUB_SHA='+commit+'; set +e; /usr/local/bin/python3.13 scripts/build-p1-openbsd-jna.py x86; result=$?; '+archive+'; archive=$?; test "$archive" = 0 || exit "$archive"; exit $result'
         try:command([*ssh,shell],'source-component',1500)
         finally:command([*scp,'root@127.0.0.1:/root/component.tgz',str(out/'component.tgz')],'copy-result')
         report.update(status='NATIVE_I386_OPENBSD_SOURCE_COMPONENT_RETURNED_NOT_INDEPENDENT_ACCEPTANCE',componentArchiveSha256=stream_sha256(out/'component.tgz'))

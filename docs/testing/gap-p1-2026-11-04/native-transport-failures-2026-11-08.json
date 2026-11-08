@@ -1,0 +1,28 @@
+{
+  "status": "TWO_SOURCE_TRANSPORT_OR_TOOL_INVENTORY_FAILURES_NOT_COMPONENT_ACCEPTANCE",
+  "openbsd": {
+    "runId": "42377603545",
+    "artifactId": 13577116473,
+    "bytes": 579696,
+    "sha256": "9712de2d6c15ee712a9f1d988603cc4cf325c3eb7557f68b3926274100935f2b",
+    "observation": "Native source/JNI/ffi success marker, then BSD tar rejected GNU --exclude; no component archive returned",
+    "fix": "Python tarfile archive, omit jna checkout; preserve build and archive exit codes"
+  },
+  "sparc": {
+    "runId": "42377224992",
+    "artifactId": 13576307416,
+    "bytes": 713057,
+    "sha256": "87841e25a4937ad104ee2466b9e98ca9440c2fdbaefa638114e79f7f2500c580",
+    "observation": "Auto boot and root login passed; sun4v/sparcv9 observed; tool command timed out after pkg publisher invocation",
+    "fix": "Direct executable-path inventory, no cold IPS startup"
+  },
+  "localControls": {
+    "openbsdBootstrap": 6,
+    "openbsdJna": 2,
+    "sparcIsolation": 2
+  },
+  "runtimeFixVerified": false,
+  "acceptedCountIncrease": 0,
+  "productAccepted": false,
+  "paidRequests": 0
+}

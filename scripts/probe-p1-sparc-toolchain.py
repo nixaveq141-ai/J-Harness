@@ -45,7 +45,9 @@ def main():
         command(['docker','exec','-e','AUTO_BOOT_REQUIRED=1','-e','LOGIN_TIMEOUT_SECONDS=1200',
                  '-e','CONSOLE_SOCKET=/state/console.sock','-e','EVIDENCE_PATH=/state/p1-login.log',
                  name,'/usr/local/bin/appliance-smoke-login'],'native-login',1250)
-        probe='uname -a; isainfo -kv; for t in cc gcc gmake make python3 python3.13 python3.12 git java ant pkg; do command -v "$t" || :; done; /usr/bin/pkg publisher; df -h /; true'
+        # pkg publisher invokes the IPS Python stack on a cold emulated guest;
+        # inventory executable paths directly before attempting package setup.
+        probe='uname -a; isainfo -kv; for t in cc gcc gmake make python3 python3.13 python3.12 git java ant pkg; do command -v "$t" || :; done; for p in /usr/gcc/*/bin/gcc /usr/jdk/*/bin/java /usr/bin/python* /usr/gnu/bin/make /usr/bin/git /usr/bin/ant; do if test -x "$p"; then echo "EXECUTABLE=$p"; fi; done; /usr/bin/python3 -V; echo P1_TOOL_PATH_INVENTORY_DONE'
         command(['docker','exec',name,'/usr/local/bin/appliance-guest-command','--socket','/state/console.sock',
                  '--timeout','90','--command',probe],'guest-tools',120)
         report['status']='SPARC_GUEST_TOOL_INVENTORY_RETURNED_NOT_BUILD_OR_COMPONENT_ACCEPTANCE'
