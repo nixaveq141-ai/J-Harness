@@ -17,6 +17,9 @@ def main():
         raise ValueError('Dedicated Linux CI required')
     identity=[os.environ.get(k,'') for k in ['GITHUB_RUN_ID','GITHUB_RUN_ATTEMPT']]
     if not all(re.fullmatch('[0-9]+',v) for v in identity):raise ValueError('Exact CI identity required')
+    provision=os.environ.get('JHARNESS_SPARC_PROVISION','0')
+    if provision not in {'0','1'}:raise ValueError('Explicit provisioning mode required')
+    provision=provision=='1'
     out=ROOT/'.build-cache/p1-sparc-toolchain';out.mkdir(parents=True,exist_ok=False)
     name='jh-p1-sparc-'+'-'.join(identity);volume=name+'-disk'
     report=dict(status='INCOMPLETE',image=IMAGE,runId=identity[0],attempt=identity[1],
@@ -35,11 +38,15 @@ def main():
                 raise ValueError('Fresh owned Docker resource required')
         command(['docker','pull',IMAGE],'image-pull',600)
         command(['docker','image','inspect',IMAGE],'image-identity')
+        if provision:
+            command(['sudo','modprobe','ppp_generic'],'ppp-host-module')
+            if not Path('/dev/ppp').is_char_device():raise ValueError('CI PPP device required')
         command(['docker','volume','create',volume],'owned-volume');created_volume=True
-        command(['docker','create','--name',name,'--network','none','--memory','6g','--cpus','2',
+        network=['--network','none'] if not provision else ['--cap-add','NET_ADMIN','--device','/dev/ppp','--sysctl','net.ipv4.ip_forward=1']
+        command(['docker','create','--name',name,*network,'--memory','6g','--cpus','2',
                  '--tmpfs','/run/unit100:rw,size=1200m,mode=0700',
                  '--mount','type=volume,src='+volume+',dst=/var/lib/illumos-appliance',
-                 '-e','NIAGARA_NETWORK=off','-e','CONSOLE_MODE=socket',IMAGE],'owned-container')
+                 '-e','NIAGARA_NETWORK='+('required' if provision else 'off'),'-e','CONSOLE_MODE=socket',IMAGE],'owned-container')
         created_container=True
         command(['docker','start',name],'guest-start')
         command(['docker','exec','-e','AUTO_BOOT_REQUIRED=1','-e','LOGIN_TIMEOUT_SECONDS=1200',
@@ -51,6 +58,19 @@ def main():
         command(['docker','exec',name,'/usr/local/bin/appliance-guest-command','--socket','/state/console.sock',
                  '--timeout','90','--command',probe],'guest-tools',120)
         report['status']='SPARC_GUEST_TOOL_INVENTORY_RETURNED_NOT_BUILD_OR_COMPONENT_ACCEPTANCE'
+        if provision:
+            def guest(shell,label,timeout):
+                command(['docker','exec',name,'/usr/local/bin/appliance-guest-command','--socket','/state/console.sock',
+                         '--timeout',str(timeout),'--command',shell],label,timeout+30)
+            guest('set -eu; /usr/sbin/devfsadm -i sppp -i sppptun; export NIAG_CHAN_DEV=/dev/rdsk/c1d0s2; nohup /opt/niag/bin/guest-chand 0 /tmp/niag0 </dev/null >/tmp/p1-chand.log 2>&1 & nohup /usr/bin/perl /opt/niag/bin/guest-ppp-chan.pl 0 10.0.5.15:10.0.5.1 </dev/null >/tmp/p1-ppp.log 2>&1 & printf "nameserver 10.0.5.1\\n" > /etc/resolv.conf; echo P1_PPP_REQUESTED','guest-network',600)
+            command(['docker','exec',name,'bash','-c','for ((i=0;i<180;i++)); do if grep -qx phase=ready /state/network/status.env 2>/dev/null; then cat /state/network/status.env; exit 0; fi; sleep 2; done; exit 1'],'ppp-ready',390)
+            prefix='set -eu; export http_proxy=http://10.0.5.1:8888 https_proxy=http://10.0.5.1:8888; '
+            guest(prefix+'pkg set-publisher -G "*" -g https://pkg.openindiana.aurora-opencloud.org/oi-sparc/ openindiana.org','guest-publisher',1200)
+            packages='developer/gcc-10 runtime/java/openjdk17 developer/build/ant developer/versioning/git developer/build/gnu-make developer/gnu-binutils system/header developer/linker'
+            guest(prefix+'pkg install --accept '+packages,'guest-install-tools',2400)
+            guest('set -eu; pkg list -Hv; pkg contents -m '+packages,'guest-tool-inputs',600)
+            guest('set -eu; /usr/gcc/10/bin/gcc --version; java -version; ant -version; /usr/gnu/bin/make --version; git --version; /usr/bin/python3.14 -V','guest-tool-versions',300)
+            report['status']='SPARC_BUILD_TOOLS_PROVISIONED_NOT_NATIVE_COMPONENT_ACCEPTANCE'
     finally:
         cleanup=[]
         if created_container:

@@ -1,5 +1,7 @@
 # P1：原生来源补齐执行记录
 
+- 2026-11-08 SPARC工具准备：官方oi-sparc HTTPS versions及p5i实核提供gcc7/10/13、JDK17、Ant、Git、GNU make/binutils/系统头/链接器（gcc14包名404）；选择gcc10。新增显式provision模式，仅CI自有容器NET_ADMIN+/dev/ppp与容器内转发，PPP ready门禁后访问官方HTTPS仓库，安装并记录完整包/manifest/工具版本；无镜像或guest文件进入产品。3默认隔离/故障清理/显式权限控制过；真实PPP/工具安装待，未增加44正式或45候选。
+
 - 2026-11-08 SPARC42453885869原包712870字节SHA/CRC及10命令/日志回执、精确宿主Git输入核过：固定b92b镜像自动启动与root登录成功，真实SunOS5.11/illumos-31d3d510d0/sun4v/sparcv9，Python3.14路径存在、默认3.9.25；检查路径未找到gcc/JDK/Ant/Git/GNU make。owned容器/卷清理通过。下一步配齐精确编译工具/SDK再构建，不计原生来源闭合；正式44/50、本地45候选保持。OpenBSD42453883100原专项继续。
 
 - 2026-11-08 恢复P1核两原包SHA/CRC：OpenBSD42377603545实际打印SOURCE_JNA_ABI_AND_FFI_PROBE_PASS，但BSD tar不支持--exclude，未取回组件原包，不能独立验收；改Python tarfile保留证据排除jna，6bootstrap/2JNA控制过。SPARC42377224992自动启动/登录成功，sun4v/sparcv9与make/python3/pkg路径已读，工具探测在pkg publisher后超时；改直接查可执行路径，2隔离控制过。两修正真实结果待，正式44/50、本地45候选保持。

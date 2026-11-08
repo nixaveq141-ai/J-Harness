@@ -26,5 +26,22 @@
   ],
   "acceptedCountIncrease": 0,
   "productAccepted": false,
-  "paidRequests": 0
+  "paidRequests": 0,
+  "provisioningPrepared": {
+    "repository": "https://pkg.openindiana.aurora-opencloud.org/oi-sparc/",
+    "confirmedPackageNames": [
+      "developer/gcc-10",
+      "runtime/java/openjdk17",
+      "developer/build/ant",
+      "developer/versioning/git",
+      "developer/build/gnu-make",
+      "developer/gnu-binutils",
+      "system/header",
+      "developer/linker"
+    ],
+    "notFoundPackage": "developer/gcc-14",
+    "mode": "Explicit CI-only PPP networking in owned container; default offline mode preserved",
+    "localControls": 3,
+    "actualToolsInstalled": false
+  }
 }
