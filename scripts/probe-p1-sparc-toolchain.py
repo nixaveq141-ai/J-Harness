@@ -75,7 +75,7 @@ def main():
         cleanup=[]
         if created_container and provision:
             cleanup.append((['docker','exec',name,'bash','-c','for f in /state/network-helper.log /state/network/*.log /state/network/status.env; do if test -f "$f"; then echo "$f"; tail -c 16384 "$f"; fi; done'],'network-diagnostics',30))
-            cleanup.append((['docker','exec',name,'/usr/local/bin/appliance-guest-command','--socket','/state/console.sock','--timeout','45','--command','for f in /tmp/p1-chand.log /tmp/p1-ppp.log; do if test -f "$f"; then echo "$f"; tail -c 16384 "$f"; fi; done; true'],'guest-network-diagnostics',60))
+            cleanup.append((['docker','exec',name,'/usr/local/bin/appliance-guest-command','--socket','/state/console.sock','--timeout','45','--command','for f in /tmp/p1-chand.log /tmp/p1-ppp.log /tmp/gppp-chan0.log /tmp/gpppd-chan0.log /tmp/gppp-chan0.wait /var/adm/messages /opt/niag/bin/guest-ppp-chan.pl; do if test -f "$f"; then echo "$f"; tail -c 16384 "$f"; fi; done; true'],'guest-network-diagnostics',60))
         if created_container:
             cleanup.extend([(['docker','logs','--tail','160',name],'container-log',30),
                             (['docker','rm','--force',name],'owned-container-cleanup',60)])

@@ -50,6 +50,7 @@ def main():
   commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT).decode().strip(),sourceRevision=REVISION,
   paidRequests=0,productAccepted=False,commands=[],hostImage={k:os.environ.get(k) for k in ['ImageOS','ImageVersion','RUNNER_ARCH']})
  def command(argv,name,cwd=ROOT,timeout=600):
+  print('OpenBSD component command:',name,flush=True)
   receipt=out/(name+'-command.json')
   try:run(argv,name=name,log=out/(name+'.log'),receipt=receipt,run_id=rid,cwd=cwd,timeout=timeout)
   finally:

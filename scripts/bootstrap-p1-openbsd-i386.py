@@ -103,7 +103,7 @@ def main():
         serial2=(out/'boot-serial.log').open('wb');handles.append(serial2)
         boot_args=qemu_arguments(out,False);report['bootCommand']=boot_args
         vm=subprocess.Popen(boot_args,stdin=subprocess.DEVNULL,stdout=serial2,stderr=subprocess.STDOUT,start_new_session=True);processes.append(vm)
-        ssh=['ssh','-i',str(out/'vmkey'),'-p','2222','-o','IdentitiesOnly=yes','-o','BatchMode=yes','-o','ConnectTimeout=5','-o','StrictHostKeyChecking=accept-new','-o','UserKnownHostsFile='+str(out/'known-hosts'),'root@127.0.0.1']
+        ssh=['ssh','-i',str(out/'vmkey'),'-p','2222','-o','IdentitiesOnly=yes','-o','BatchMode=yes','-o','ConnectTimeout=5','-o','ServerAliveInterval=5','-o','ServerAliveCountMax=3','-o','StrictHostKeyChecking=accept-new','-o','UserKnownHostsFile='+str(out/'known-hosts'),'root@127.0.0.1']
         deadline=time.monotonic()+600
         while time.monotonic()<deadline:
             if vm.poll() is not None:raise ValueError('Owned i386 VM exited before SSH ready')
@@ -114,15 +114,16 @@ def main():
         # C ABI probe rather than treating an unavailable query as architecture.
         native='set -eu; uname -a; test "$(uname -m)" = i386; printf \'%s\\n\' \''+WIDTH_PROBE+'\' | cc -x c - -o /root/jh-p1-width; /root/jh-p1-width; echo NATIVE_POINTER_AND_LONG_BITS=32; mount'
         command([*ssh,native],'native-target')
-        command([*ssh,'export PKG_PATH=https://cdn.openbsd.org/pub/OpenBSD/7.9/packages/i386/; pkg_add -I python%3.13 git gmake ggrep binutils jdk%21 apache-ant'],'native-tools',1200)
+        tools=r'''set -eu; export PKG_PATH=https://cdn.openbsd.org/pub/OpenBSD/7.9/packages/i386/; pkg_info -Q python | tee /root/jh-p1-python-packages; python_package=$(awk '{print $1}' /root/jh-p1-python-packages | grep -E '^python-3\.1[1-9]\.[0-9]+(p[0-9]+)?$' | tail -n 1); test -n "$python_package"; pkg_add -I "$python_package" git gmake ggrep binutils jdk%21 apache-ant; python_bin=$(pkg_info -L "$python_package" | awk '/^\/usr\/local\/bin\/python3\.[0-9]+$/ {print; exit}'); test -x "$python_bin"; "$python_bin" -c 'import sys; assert sys.version_info >= (3,11)'; printf '%s\n' "$python_bin" > /root/jh-p1-python; cat /root/jh-p1-python'''
+        command([*ssh,tools],'native-tools',1200)
         # Preserve real Git identity for the shared builder; git archive drops
         # .git and cannot satisfy its exact host-commit evidence check.
         commit=os.environ['GITHUB_SHA']
         checkout='set -eu; mkdir /root/jharness; cd /root/jharness; git init; git config core.autocrlf false; git fetch --depth=1 https://github.com/nixaveq141-ai/J-Harness.git '+commit+'; git checkout --detach FETCH_HEAD; test "$(git rev-parse HEAD)" = '+commit
         command([*ssh,checkout],'guest-checkout')
-        scp=['scp','-i',str(out/'vmkey'),'-P','2222','-o','IdentitiesOnly=yes','-o','BatchMode=yes','-o','StrictHostKeyChecking=accept-new','-o','UserKnownHostsFile='+str(out/'known-hosts')]
-        archive='/usr/local/bin/python3.13 -c '+shlex.quote(ARCHIVE_CODE)+' .build-cache/p1-openbsd-jna/x86 /root/component.tgz'
-        shell='set -eu; cd /root/jharness; export JAVA_HOME=/usr/local/jdk-21 PATH=/usr/local/jdk-21/bin:$PATH GITHUB_ACTIONS=true GITHUB_RUN_ID='+os.environ['GITHUB_RUN_ID']+' GITHUB_SHA='+commit+'; set +e; /usr/local/bin/python3.13 scripts/build-p1-openbsd-jna.py x86; result=$?; '+archive+'; archive=$?; test "$archive" = 0 || exit "$archive"; exit $result'
+        scp=['scp','-i',str(out/'vmkey'),'-P','2222','-o','IdentitiesOnly=yes','-o','BatchMode=yes','-o','ServerAliveInterval=5','-o','ServerAliveCountMax=3','-o','StrictHostKeyChecking=accept-new','-o','UserKnownHostsFile='+str(out/'known-hosts')]
+        archive='"$python_bin" -c '+shlex.quote(ARCHIVE_CODE)+' .build-cache/p1-openbsd-jna/x86 /root/component.tgz'
+        shell='set -eu; cd /root/jharness; python_bin=$(cat /root/jh-p1-python); test -x "$python_bin"; export JAVA_HOME=/usr/local/jdk-21 PATH=/usr/local/jdk-21/bin:$PATH GITHUB_ACTIONS=true GITHUB_RUN_ID='+os.environ['GITHUB_RUN_ID']+' GITHUB_SHA='+commit+'; set +e; "$python_bin" scripts/build-p1-openbsd-jna.py x86; result=$?; '+archive+'; archive=$?; test "$archive" = 0 || exit "$archive"; exit $result'
         try:command([*ssh,shell],'source-component',1500)
         finally:command([*scp,'root@127.0.0.1:/root/component.tgz',str(out/'component.tgz')],'copy-result')
         report.update(status='NATIVE_I386_OPENBSD_SOURCE_COMPONENT_RETURNED_NOT_INDEPENDENT_ACCEPTANCE',componentArchiveSha256=stream_sha256(out/'component.tgz'))

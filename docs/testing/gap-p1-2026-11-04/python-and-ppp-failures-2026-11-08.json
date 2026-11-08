@@ -1,0 +1,31 @@
+{
+  "status": "TWO_NATIVE_ENVIRONMENT_FAILURES_NOT_COMPONENT_ACCEPTANCE",
+  "openbsd": {
+    "runId": "42453883100",
+    "artifactId": 13608325922,
+    "bytes": 510625,
+    "sha256": "c2f28b5d84fec104d5b8c39b0400b5e7b70c1411b3166f35fa5c72f9602f872c",
+    "observations": [
+      "pkg_add reports missing python%3.13 but native-tools exits zero",
+      "Source SSH command and subsequent SCP time out; source log empty"
+    ],
+    "change": "Discover actual Python package and executable, execute >=3.11 assertion before build; SSH keepalive and per-command progress",
+    "timeoutRootCauseEstablished": false
+  },
+  "sparc": {
+    "runId": "42456290633",
+    "artifactId": 13608182131,
+    "bytes": 1068202,
+    "sha256": "a278d256108a5cb82ac2a9f2c8cee813ba3ad10d32890ead7057da1e01def4b1",
+    "observations": [
+      "Guest channel connects; PPP exits 10",
+      "Host stays waiting_for_ppp; actual internal PPP logs not in original capture"
+    ],
+    "change": "Capture internal /tmp/gppp* logs, syslog, and actual runtime PPP wrapper before teardown",
+    "rootCauseEstablished": false
+  },
+  "localControls": 11,
+  "runtimeFixVerified": false,
+  "acceptedCountIncrease": 0,
+  "paidRequests": 0
+}
