@@ -4,6 +4,8 @@
 
 ## 当前接续状态
 
+- 2026-11-08 SPARC42453885869原包712870字节SHA/CRC及10命令/日志回执、精确宿主Git输入核过：固定b92b镜像自动启动与root登录成功，真实SunOS5.11/illumos-31d3d510d0/sun4v/sparcv9，Python3.14路径存在、默认3.9.25；检查路径未找到gcc/JDK/Ant/Git/GNU make。owned容器/卷清理通过。下一步配齐精确编译工具/SDK再构建，不计原生来源闭合；正式44/50、本地45候选保持。OpenBSD42453883100原专项继续。
+
 - 2026-11-08 恢复P1核两原包SHA/CRC：OpenBSD42377603545实际打印SOURCE_JNA_ABI_AND_FFI_PROBE_PASS，但BSD tar不支持--exclude，未取回组件原包，不能独立验收；改Python tarfile保留证据排除jna，6bootstrap/2JNA控制过。SPARC42377224992自动启动/登录成功，sun4v/sparcv9与make/python3/pkg路径已读，工具探测在pkg publisher后超时；改直接查可执行路径，2隔离控制过。两修正真实结果待，正式44/50、本地45候选保持。
 
 - 2026-11-07 OpenBSD42376661936原包294166字节SHA/CRC实核：安装exit0、磁盘内核启动与SSH均已达；native-target因OpenBSD getconf不提供LONG_BIT失败，非ABI不符。改原生cc编译/执行自有C检查sizeof指针与long均4字节，uname i386门禁保留；相同探针在本机Win64实际返回1拒绝。5bootstrap/2JNA控制通过，真实i386探针/源码构建待。SPARC42377224992已启动固定镜像可行性专项，正式44/50、本地45候选保持。

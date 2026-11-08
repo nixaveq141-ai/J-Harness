@@ -1,0 +1,33 @@
+{
+  "status": "SPARC_EMULATED_BOOT_AND_TOOL_PATH_INVENTORY_VERIFIED_NOT_NATIVE_COMPONENT_ACCEPTANCE",
+  "runId": "42453885869",
+  "commit": "0869686af35a53fc3bfb9a91a47b8f4f944d02f4",
+  "artifact": {
+    "id": 13606897864,
+    "bytes": 712870,
+    "sha256": "2df348c45522b793961cc6775ce5d6b48f2537d4a8f8df0e03e11752e5664fcc"
+  },
+  "reportSha256": "a6768c6ac4466eac37ef5202ebdf6758031e5439f989ffb719e0878d7dd76483",
+  "image": "ghcr.io/ryancnelson/sparc64-qemu-openindiana-20g@sha256:b92b4014f49d2adcac709d68902257c65076ccdcbf23b4e446e4a82ed899bd40",
+  "verifiedCommandReceipts": 10,
+  "hostInputs": 743,
+  "system": "SunOS 5.11 illumos-31d3d510d0 sun4v sparc",
+  "kernelAbi": "64-bit sparcv9",
+  "pythonPaths": [
+    "/usr/bin/python3.14",
+    "/usr/bin/python3.9"
+  ],
+  "defaultPythonVersion": "3.9.25",
+  "missingFromInspectedExecutablePaths": [
+    "gcc",
+    "jdk",
+    "ant",
+    "git",
+    "GNU make"
+  ],
+  "ownedContainerAndVolumeCleanup": "PASS",
+  "remaining": "Provision exact compiler/JDK/build tools and record SDK/packages; build both SPARC resource targets and run applicable ABI probes",
+  "acceptedCountIncrease": 0,
+  "productAccepted": false,
+  "paidRequests": 0
+}

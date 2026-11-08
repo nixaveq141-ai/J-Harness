@@ -283,11 +283,12 @@
       "cpu": "sparc",
       "status": "OPEN",
       "requiredToolchain": "sunos目标SDK/系统头文件与原生或交叉编译器",
-      "nextAction": "核上游逐文件构建证明或盘点目标SDK/工具链，再固定源构建和验证",
+      "nextAction": "已确认受控模拟VM启动；补齐精确gcc/JDK/Ant/Git及SDK后固定源构建/ABI验证",
       "blockers": [
-        "目标工具链/SDK或上游构建证明未确认",
-        "目标运行条件未确认；额外实体机器按用户指令跳过但不计运行通过"
-      ]
+        "精确编译工具/SDK及其输入尚未配齐",
+        "模拟环境启动已核；实际组件构建/加载仍待验证，额外实体机器按用户指令跳过"
+      ],
+      "toolchainFeasibilityReceipt": "docs/testing/gap-p1-2026-11-04/sparc-boot-inventory-2026-11-08.json"
     },
     {
       "taskId": "NATIVE-17",
@@ -298,11 +299,12 @@
       "cpu": "sparcv9",
       "status": "OPEN",
       "requiredToolchain": "sunos目标SDK/系统头文件与原生或交叉编译器",
-      "nextAction": "核上游逐文件构建证明或盘点目标SDK/工具链，再固定源构建和验证",
+      "nextAction": "已确认受控模拟VM启动；补齐精确gcc/JDK/Ant/Git及SDK后固定源构建/ABI验证",
       "blockers": [
-        "目标工具链/SDK或上游构建证明未确认",
-        "目标运行条件未确认；额外实体机器按用户指令跳过但不计运行通过"
-      ]
+        "精确编译工具/SDK及其输入尚未配齐",
+        "模拟环境启动已核；实际组件构建/加载仍待验证，额外实体机器按用户指令跳过"
+      ],
+      "toolchainFeasibilityReceipt": "docs/testing/gap-p1-2026-11-04/sparc-boot-inventory-2026-11-08.json"
     },
     {
       "taskId": "NATIVE-18",
