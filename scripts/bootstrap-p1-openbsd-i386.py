@@ -16,6 +16,9 @@ base=Path(sys.argv[1])
 with tarfile.open(sys.argv[2],'w:gz') as archive:
     for path in sorted(base.iterdir()):
         if path.name!='jna':archive.add(path,arcname=path.name)
+    config=base/'jna/build/native-openbsd-x86/libffi/config.log'
+    if config.is_file() and not (base/'libffi-config.log').exists():
+        archive.add(config,arcname='libffi-config.log')
 """
 
 def copy_bounded(response,stream,limit):
@@ -31,10 +34,19 @@ def manifest_digest(manifest,name):
     if len(matches)!=1:raise ValueError('Unique signed input digest required')
     return matches[0]
 
-def qemu_arguments(out,install):
+def select_accelerator():
+    # The guest remains an actual i386 OpenBSD kernel/userland. KVM only
+    # accelerates its CPU execution on compatible owned Linux CI hosts.
+    device=Path('/dev/kvm')
+    return 'kvm' if platform.machine().lower() in {'x86_64','amd64'} and device.is_char_device() and os.access(device,os.R_OK|os.W_OK) else 'tcg'
+
+
+def qemu_arguments(out,install,accelerator='tcg'):
+    if accelerator not in {'kvm','tcg'}:raise ValueError('Explicit supported VM accelerator required')
     net='user,id=net0,hostfwd=tcp:127.0.0.1:2222-:22'
     if install:net+=',tftp='+(out/'tftp').as_posix()+',bootfile=auto_install'
-    return ['qemu-system-i386','-accel','tcg','-m','2048','-smp','2','-display','none','-monitor','none','-serial','stdio',
+    cpu=['-cpu','host'] if accelerator=='kvm' else []
+    return ['qemu-system-i386','-accel',accelerator,*cpu,'-m','2048','-smp','2','-display','none','-monitor','none','-serial','stdio',
             '-drive','file='+(out/'disk.qcow2').as_posix()+',format=qcow2,if=virtio','-netdev',net,'-device','e1000,netdev=net0',
             '-boot','n' if install else 'c','-no-reboot']
 
@@ -96,12 +108,14 @@ def main():
         if http.poll() is not None:raise ValueError('Owned loopback installation server failed')
         command(['qemu-img','create','-f','qcow2',str(out/'disk.qcow2'),'20G'],'owned-disk')
         serial=(out/'install-serial.log').open('wb');handles.append(serial)
-        install_args=qemu_arguments(out,True);report['installCommand']=install_args
+        accelerator=select_accelerator();report['accelerator']=accelerator
+        print('Owned i386 VM accelerator:',accelerator,flush=True)
+        install_args=qemu_arguments(out,True,accelerator);report['installCommand']=install_args
         vm=subprocess.Popen(install_args,stdin=subprocess.DEVNULL,stdout=serial,stderr=subprocess.STDOUT,start_new_session=True);processes.append(vm)
         status=wait_installation(vm,out/'install-serial.log');report['installExitCode']=status
         if status!=0:raise ValueError('Native i386 installer failed')
         serial2=(out/'boot-serial.log').open('wb');handles.append(serial2)
-        boot_args=qemu_arguments(out,False);report['bootCommand']=boot_args
+        boot_args=qemu_arguments(out,False,accelerator);report['bootCommand']=boot_args
         vm=subprocess.Popen(boot_args,stdin=subprocess.DEVNULL,stdout=serial2,stderr=subprocess.STDOUT,start_new_session=True);processes.append(vm)
         ssh=['ssh','-i',str(out/'vmkey'),'-p','2222','-o','IdentitiesOnly=yes','-o','BatchMode=yes','-o','ConnectTimeout=5','-o','ServerAliveInterval=5','-o','ServerAliveCountMax=3','-o','StrictHostKeyChecking=accept-new','-o','UserKnownHostsFile='+str(out/'known-hosts'),'root@127.0.0.1']
         deadline=time.monotonic()+600
@@ -124,8 +138,23 @@ def main():
         scp=['scp','-i',str(out/'vmkey'),'-P','2222','-o','IdentitiesOnly=yes','-o','BatchMode=yes','-o','ServerAliveInterval=5','-o','ServerAliveCountMax=3','-o','StrictHostKeyChecking=accept-new','-o','UserKnownHostsFile='+str(out/'known-hosts')]
         archive='"$python_bin" -c '+shlex.quote(ARCHIVE_CODE)+' .build-cache/p1-openbsd-jna/x86 /home/component.tgz'
         shell='set -eu; cd /home/jharness; python_bin=$(cat /root/jh-p1-python); test -x "$python_bin"; export JAVA_HOME=/usr/local/jdk-21 PATH=/usr/local/jdk-21/bin:$PATH GITHUB_ACTIONS=true GITHUB_RUN_ID='+os.environ['GITHUB_RUN_ID']+' GITHUB_SHA='+commit+'; set +e; "$python_bin" scripts/build-p1-openbsd-jna.py x86; result=$?; '+archive+'; archive=$?; test "$archive" = 0 || exit "$archive"; exit $result'
+        source_error=None
         try:command([*ssh,shell],'source-component',1500)
-        finally:command([*scp,'root@127.0.0.1:/home/component.tgz',str(out/'component.tgz')],'copy-result')
+        except Exception as error:
+            source_error=error
+            # A killed SSH wrapper may never reach its trailing archive step.
+            # Snapshot only owned component evidence, not the whole checkout.
+            # A partial snapshot never promotes this failed source execution.
+            rescue='set -eu; cd /home/jharness; python_bin=$(cat /root/jh-p1-python); '+archive
+            try:command([*ssh,rescue],'collect-partial',180)
+            except Exception as diagnostic:report.setdefault('diagnosticFailures',[]).append(dict(name='collect-partial',failureType=type(diagnostic).__name__))
+        try:command([*scp,'root@127.0.0.1:/home/component.tgz',str(out/'component.tgz')],'copy-result')
+        except Exception as error:
+            if source_error is None:raise
+            report.setdefault('diagnosticFailures',[]).append(dict(name='copy-result',failureType=type(error).__name__))
+        if source_error is not None:
+            if (out/'component.tgz').is_file():report['partialComponentArchiveSha256']=stream_sha256(out/'component.tgz')
+            raise source_error
         report.update(status='NATIVE_I386_OPENBSD_SOURCE_COMPONENT_RETURNED_NOT_INDEPENDENT_ACCEPTANCE',componentArchiveSha256=stream_sha256(out/'component.tgz'))
     finally:
         for process in reversed(processes):

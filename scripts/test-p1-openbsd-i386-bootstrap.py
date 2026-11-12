@@ -16,6 +16,28 @@ class BootstrapScope(unittest.TestCase):
                 self.assertEqual(['report.json'],archive.getnames())
                 self.assertEqual(b'{}',archive.extractfile('report.json').read())
 
+    def test_partial_archive_keeps_real_build_log_and_config_without_source_tree(self):
+        with tempfile.TemporaryDirectory() as folder:
+            base=Path(folder)/'component';base.mkdir();(base/'build.log').write_bytes(b'compiler progress')
+            config=base/'jna/build/native-openbsd-x86/libffi/config.log'
+            config.parent.mkdir(parents=True);config.write_bytes(b'configure diagnostic')
+            out=Path(folder)/'partial.tgz'
+            subprocess.run([sys.executable,'-c',m.ARCHIVE_CODE,str(base),str(out)],check=True)
+            with tarfile.open(out) as archive:
+                self.assertEqual(['build.log','libffi-config.log'],archive.getnames())
+                self.assertEqual(b'configure diagnostic',archive.extractfile('libffi-config.log').read())
+
+    def test_acceleration_requires_x86_host_and_accessible_real_kvm_device(self):
+        with patch.object(m.platform,'machine',return_value='x86_64'),patch.object(Path,'is_char_device',return_value=True),patch.object(m.os,'access',return_value=True):
+            self.assertEqual('kvm',m.select_accelerator())
+            with patch.object(m.os,'access',return_value=False):self.assertEqual('tcg',m.select_accelerator())
+            with patch.object(Path,'is_char_device',return_value=False):self.assertEqual('tcg',m.select_accelerator())
+            with patch.object(m.platform,'machine',return_value='aarch64'):self.assertEqual('tcg',m.select_accelerator())
+        args=m.qemu_arguments(Path('/owned/ci-work'),False,'kvm')
+        self.assertEqual('kvm',args[args.index('-accel')+1])
+        self.assertEqual('host',args[args.index('-cpu')+1])
+        with self.assertRaises(ValueError):m.qemu_arguments(Path('/owned/ci-work'),False,'auto')
+
     def test_installer_default_sets_are_explicitly_unselected_when_not_served(self):
         self.assertIn('BUILDINFO',m.FILES)
         selected={'bsd','bsd.mp','bsd.rd','base79.tgz','comp79.tgz','man79.tgz','game79.tgz','xbase79.tgz','xshare79.tgz','xfont79.tgz','xserv79.tgz'}

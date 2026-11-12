@@ -1,0 +1,42 @@
+{
+  "status": "OPENBSD_SOURCE_TOTAL_BUDGET_EXPIRED_NO_COMPONENT_ARCHIVE",
+  "runId": 43181269997,
+  "commit": "567bf897eb2e5ed656c9bbb972305225e47104f1",
+  "artifact": {
+    "id": 13929485386,
+    "bytes": 546276,
+    "sha256": "c2f974d2778b7b5901d4752de50e4bd98e3dbaad0d63fdc2255ce971e96ecc3b",
+    "crcVerified": true
+  },
+  "sourceCommand": {
+    "status": "INCOMPLETE",
+    "startedAt": "2026-11-12T08:27:38.245196+00:00",
+    "finishedAt": "2026-11-12T08:52:38.382543+00:00",
+    "timedOut": true,
+    "exitCode": null
+  },
+  "sourceLog": {
+    "bytes": 1785,
+    "sha256": "17abdefdb52339f0a48bd9e069c38c84bc5e25ee9f9820213620cbee56c57aae",
+    "sampledFrames": [
+      "subprocess._wait during checkout",
+      "subprocess._wait during native build"
+    ],
+    "boundary": "Samples do not prove every delay. No bounded_path/lstat frame in this small transcript does not establish complete elimination of IO cost."
+  },
+  "componentArchiveReturned": false,
+  "copyResultExitCode": 255,
+  "nextChanges": [
+    "Prefer KVM only on x86 host with accessible real /dev/kvm, record selected accelerator; retain explicit TCG fallback when unavailable",
+    "Grant only current CI runner user a device ACL when KVM exists",
+    "After source failure attempt separate bounded owned partial evidence archive; retain primary failure even if diagnostic collection fails"
+  ],
+  "officialKvmReference": "https://github.blog/changelog/2024-04-02-github-actions-hardware-accelerated-android-virtualization-now-available/",
+  "localBootstrapControls": 8,
+  "actualKvmExecution": "pending CI",
+  "sourceBudgetSeconds": 1500,
+  "budgetChanged": false,
+  "acceptedCountIncrease": 0,
+  "formalAccepted": 44,
+  "paidRequests": 0
+}

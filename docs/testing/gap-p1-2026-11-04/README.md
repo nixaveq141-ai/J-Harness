@@ -1,5 +1,7 @@
 # P1：原生来源补齐执行记录
 
+- 2026-11-12 OpenBSD43181269997原包546276字节SHA/CRC核过：源码08:27:38至08:52:38触1500秒总预算，采样为checkout/build subprocess wait，未回传组件，不能判通过。新增仅x86且可读写真实/dev/kvm时选KVM并记录，CI仅当前runner ACL；不可用仍TCG，预算/原生i386 ABI不变。失败后另起180秒owned局部日志/config归档，保留原失败与部分包摘要，防止取包失败覆盖主因。8bootstrap控制过，真实KVM/组件待；SPARC43185951645继续，44正式不变。
+
 - 2026-11-12 SPARC独立交叉工具链入口：固定GNU GCC13.4官方SHA512/Binutils2.40发布SHA256及已核真实sysroot，Linux owned目录构建Solaris目标C编译器/libgcc并分别-m32/-m64链接实际探针；不解除IPS锁、不用Linux sysroot替代。sysroot先全量拒绝越界/重复/链接祖先，再把目标绝对链接迁到owned根；4项拒绝/ELF控制通过，Windows真实symlink留Linux CI执行。本机首轮sandbox临时目录权限失败，改workspace owned临时目录后通过；实际交叉构建/guest执行仍待，44正式保持。
 
 - 2026-11-12 SPARC43179892414原包1360571字节SHA/CRC核过，实际pkg install返回1：最新userland要求2026.0.0.21764的header/linker/osnet，而官方catalog三项仅有2025.0.0.21764，确认仓库约束冲突，不再盲重跑或解除锁。官方SPARC目录另发现与guest内核31d3d510d0对应的19333056字节sysroot及独立GCC说明，原包SHA753ca4b2已核、10461成员只读检查，crt1/libc实际为大端ELF32/machine18(SPARC32PLUS)及ELF64/machine43；初始预期machine2失败已留账，完整来源/ABI/构建适用性仍待，未新增组件通过。证据sparc-repository-conflict-2026-11-12.json，正式44/50保持。

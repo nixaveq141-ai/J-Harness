@@ -20,7 +20,15 @@ jobs:
       - run: python scripts/test-p1-openbsd-i386-bootstrap.py
       - run: python scripts/test-p1-openbsd-jna.py
       - name: Install native VM and signature verification tools
-        run: sudo apt-get update && sudo apt-get install -y qemu-system-x86 qemu-utils signify-openbsd
+        run: sudo apt-get update && sudo apt-get install -y qemu-system-x86 qemu-utils signify-openbsd acl
+      - name: Grant this runner access to KVM when available
+        run: |
+          if test -c /dev/kvm; then
+            sudo setfacl -m "u:$(id -u):rw" /dev/kvm
+            ls -l /dev/kvm
+          else
+            echo 'KVM unavailable; the owned VM will use TCG'
+          fi
       - run: python scripts/bootstrap-p1-openbsd-i386.py
       - name: Show bounded VM evidence on failure
         if: failure()
