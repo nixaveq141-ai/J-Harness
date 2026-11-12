@@ -1,0 +1,30 @@
+{
+  "status": "DUAL_SPARC_SOURCE_AND_NATIVE_GUEST_PIPELINE_PREPARED_NOT_ACCEPTED",
+  "toolchain": {
+    "runId": 43185951645,
+    "artifactId": 13928488048,
+    "archiveSha256": "62f1e00ea0b992c5e4b382ac9304dfcf565154b39936c3f6d5fe1402c448008b",
+    "policy": "Reuse exact independently checked compiler; never rebuild just to run another component check"
+  },
+  "sourceRevision": "c366bc4fd0c50a30ac8d2475603ec564f6611462",
+  "headers": "Real fixed Solaris sysroot; exact JDK Unix JNI/JAWT and owned copied X11 declarations, target-compiled. No entire Linux libc include fallback, NO_JAWT or synthetic target definitions. Host package and header hashes recorded.",
+  "sourceControls": "Original inventory SHA, all tracked files before/after, exact allowed Makefile/native-jar mutations, fixed libffi release/generated helper, actual ELF identities and library-copy equality",
+  "guestControls": "Fresh exact-image owned container/volume and PPP. HTTP binds only the container PPP endpoint and serves only the owned bundle. Guest checks <=8 MiB archive SHA, complete flat regular-file set and same run/commit, then member digests and actual SunOS SPARC before execution. No SDK package install or version-lock changes.",
+  "expectedGuestChecksPerWidth": [
+    "actual smoke pointer width",
+    "complete ffi_arg and adjacent guards",
+    "JNI six sizeof, malloc/free, actual ffi call41/closure46",
+    "missing exact library refused"
+  ],
+  "localControls": {
+    "guestIsolation": 3,
+    "crossAbiAndGuestInputBounds": 4
+  },
+  "limits": [
+    "Preparation only; actual builds and guest commands pending",
+    "Primitive/ffi component validation does not claim full target JVM initialization, AWT functionality, arbitrary Solaris compatibility or OS/CPE clearance",
+    "No product replacement or full matrix started"
+  ],
+  "acceptedCountIncrease": 0,
+  "paidRequests": 0
+}

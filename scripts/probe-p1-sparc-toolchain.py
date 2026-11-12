@@ -1,7 +1,9 @@
 """Probe an exact public SPARC appliance; this is not component acceptance."""
 import os
+import json
 import platform
 import re
+import shlex
 import shutil
 import subprocess
 import sys
@@ -11,6 +13,31 @@ from evidence_run import run
 
 ROOT=Path(__file__).resolve().parents[1]
 IMAGE='ghcr.io/ryancnelson/sparc64-qemu-openindiana-20g@sha256:b92b4014f49d2adcac709d68902257c65076ccdcbf23b4e446e4a82ed899bd40'
+
+
+def component_download_code(run_id,commit,digest):
+    if not (run_id.isdigit() and re.fullmatch('[a-f0-9]{40}',commit) and re.fullmatch('[a-f0-9]{64}',digest)):
+        raise ValueError('Exact owned bundle identity required')
+    return '''import hashlib,io,json,subprocess,sys,tarfile,urllib.request
+from pathlib import Path
+base=Path('/var/tmp/jh-p1-'''+run_id+'''')
+opener=urllib.request.build_opener(urllib.request.ProxyHandler({}))
+with opener.open('http://10.0.5.1:8000/guest-bundle.tgz',timeout=60) as response:
+    data=response.read(8*1024*1024+1)
+assert len(data)<=8*1024*1024 and hashlib.sha256(data).hexdigest()=='''+repr(digest)+'''
+with tarfile.open(fileobj=io.BytesIO(data)) as archive:
+    members=archive.getmembers()
+    expected={'manifest.json','guest-run.py','smoke-32','smoke-64'}
+    expected.update(str(bits)+'-'+name for bits in [32,64] for name in ['libjnidispatch.so','jni-probe','callback-control'])
+    assert len(members)==len(expected) and {m.name for m in members}==expected
+    assert all(m.isfile() and m.size<=4*1024*1024 for m in members)
+    base.mkdir(mode=0o700)
+    for member in members:
+        with (base/member.name).open('xb') as out:out.write(archive.extractfile(member).read())
+manifest=json.loads((base/'manifest.json').read_bytes())
+assert manifest['runId']=='''+repr(run_id)+''' and manifest['commit']=='''+repr(commit)+'''
+subprocess.run([sys.executable,str(base/'guest-run.py')],check=True,timeout=1100)
+'''
 
 def isolated_guest_shell(shell):
     # Keep the interactive console alive so its driver can report a real
@@ -25,6 +52,11 @@ def main():
     provision=os.environ.get('JHARNESS_SPARC_PROVISION','0')
     if provision not in {'0','1'}:raise ValueError('Explicit provisioning mode required')
     provision=provision=='1'
+    components=os.environ.get('JHARNESS_SPARC_COMPONENTS','0')
+    if components not in {'0','1'} or (components=='1' and not provision):raise ValueError('Components require explicit owned guest networking')
+    components=components=='1'
+    bundle=ROOT/'.build-cache/p1-sparc-jna-cross/guest-bundle.tgz'
+    if components and not bundle.is_file():raise ValueError('Fresh cross-built component bundle required')
     out=ROOT/'.build-cache/p1-sparc-toolchain';out.mkdir(parents=True,exist_ok=False)
     name='jh-p1-sparc-'+'-'.join(identity);volume=name+'-disk'
     report=dict(status='INCOMPLETE',image=IMAGE,runId=identity[0],attempt=identity[1],
@@ -73,6 +105,31 @@ def main():
                          '--timeout',str(timeout),'--command',isolated_guest_shell(shell)],label,timeout+30)
             guest('set -eu; /usr/sbin/devfsadm -i sppp -i sppptun; export NIAG_CHAN_DEV=/dev/rdsk/c1d0s2; nohup /opt/niag/bin/guest-chand 0 /tmp/niag0 </dev/null >/tmp/p1-chand.log 2>&1 & i=0; until test -S /tmp/niag0; do i=$((i+1)); if test "$i" -ge 120; then cat /tmp/p1-chand.log; exit 1; fi; sleep 1; done; nohup /usr/bin/perl /opt/niag/bin/guest-ppp-chan.pl 0 10.0.5.15:10.0.5.1 </dev/null >/tmp/p1-ppp.log 2>&1 & printf "nameserver 10.0.5.1\\n" > /etc/resolv.conf; echo P1_PPP_REQUESTED','guest-network',600)
             command(['docker','exec',name,'bash','-c','for ((i=0;i<180;i++)); do if grep -qx phase=ready /state/network/status.env 2>/dev/null; then cat /state/network/status.env; exit 0; fi; sleep 2; done; exit 1'],'ppp-ready',390)
+            if components:
+                build_report=ROOT/'.build-cache/p1-sparc-jna-cross/report.json'
+                built=json.loads(build_report.read_bytes())
+                digest=stream_sha256(bundle)
+                if (built['status']!='SOURCE_COMPONENTS_CROSS_BUILT_NOT_EXECUTED' or built['bundleSha256']!=digest
+                        or built['runId']!=identity[0] or built['commit']!=os.environ['GITHUB_SHA']):
+                    raise ValueError('Same-run cross-built bundle required')
+                command(['docker','exec',name,'mkdir','/tmp/jh-p1-http'],'owned-component-http-root')
+                command(['docker','cp',str(bundle),name+':/tmp/jh-p1-http/guest-bundle.tgz'],'copy-component-bundle')
+                command(['docker','exec','-d',name,'python3','-m','http.server','8000','--bind','10.0.5.1','--directory','/tmp/jh-p1-http'],'owned-component-http')
+                code=component_download_code(identity[0],os.environ['GITHUB_SHA'],digest)
+                guest('set -eu; /usr/bin/python3.14 -c '+shlex.quote(code),'guest-cross-components',1200)
+                results=[]
+                for line in (out/'guest-cross-components.log').read_text(errors='replace').splitlines():
+                    if line.startswith('P1_COMPONENT_RESULTS_JSON='):
+                        results.append(json.loads(line.split('=',1)[1]))
+                if (len(results)!=1 or results[0]['status']!='BOTH_SPARC_COMPONENTS_NATIVE_PRIMITIVES_FFI_CLOSURE_AND_MISSING_PASS'
+                        or results[0]['runId']!=identity[0] or results[0]['commit']!=os.environ['GITHUB_SHA']
+                        or len(results[0]['commands'])!=8 or any(c['exitCode']!=0 for c in results[0]['commands'])):
+                    raise ValueError('Exact guest component results required')
+                atomic_write_json(out/'guest-component-results.json',results[0])
+                report.update(status='SPARC_CROSS_BUILT_COMPONENTS_EXECUTED_NOT_INDEPENDENT_ACCEPTANCE',
+                              componentBundleSha256=digest,crossBuildReportSha256=stream_sha256(build_report),
+                              guestResultsSha256=stream_sha256(out/'guest-component-results.json'))
+                return
             prefix='set -eu; export http_proxy=http://10.0.5.1:8888 https_proxy=http://10.0.5.1:8888; '
             guest(prefix+'pkg set-publisher -G "*" -g https://pkg.openindiana.aurora-opencloud.org/oi-sparc/ openindiana.org','guest-publisher',1200)
             packages='developer/gcc-10 runtime/java/openjdk17 developer/build/ant developer/versioning/git developer/build/gnu-make developer/gnu-binutils system/header developer/linker'

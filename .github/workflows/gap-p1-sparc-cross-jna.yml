@@ -1,0 +1,52 @@
+name: P1 cross-built SPARC JNA with native guest probes
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/m1059-full-validation]
+    paths: [.github/workflows/gap-p1-sparc-cross-jna.yml]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  source:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - run: python scripts/test-p1-sparc-toolchain.py
+      - run: python scripts/test-p1-sparc-cross-jna.py
+      - name: Install host build tools and portable X11 declarations
+        run: sudo apt-get update && sudo apt-get install -y build-essential ant git libx11-dev
+      - uses: actions/download-artifact@v4
+        with:
+          artifact-ids: '13928488048'
+          run-id: '43185951645'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          merge-multiple: true
+          path: .build-cache/p1-sparc-cross-toolchain
+      - run: python scripts/build-p1-sparc-cross-jna.py
+      - run: python scripts/probe-p1-sparc-toolchain.py
+        env:
+          JHARNESS_SPARC_PROVISION: '1'
+          JHARNESS_SPARC_COMPONENTS: '1'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: p1-sparc-jna-cross-source-and-native-probes
+          include-hidden-files: true
+          retention-days: 90
+          path: |
+            .build-cache/p1-sparc-jna-cross/*.json
+            .build-cache/p1-sparc-jna-cross/*.log
+            .build-cache/p1-sparc-jna-cross/*-original.so
+            .build-cache/p1-sparc-jna-cross/libffi-release-3.4.4.tar.gz
+            .build-cache/p1-sparc-jna-cross/guest-bundle.tgz
+            .build-cache/p1-sparc-toolchain/*.json
+            .build-cache/p1-sparc-toolchain/*.log
