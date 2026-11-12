@@ -1,5 +1,9 @@
 # P1：原生来源补齐执行记录
 
+- 2026-11-12 SPARC独立交叉工具链入口：固定GNU GCC13.4官方SHA512/Binutils2.40发布SHA256及已核真实sysroot，Linux owned目录构建Solaris目标C编译器/libgcc并分别-m32/-m64链接实际探针；不解除IPS锁、不用Linux sysroot替代。sysroot先全量拒绝越界/重复/链接祖先，再把目标绝对链接迁到owned根；4项拒绝/ELF控制通过，Windows真实symlink留Linux CI执行。本机首轮sandbox临时目录权限失败，改workspace owned临时目录后通过；实际交叉构建/guest执行仍待，44正式保持。
+
+- 2026-11-12 SPARC43179892414原包1360571字节SHA/CRC核过，实际pkg install返回1：最新userland要求2026.0.0.21764的header/linker/osnet，而官方catalog三项仅有2025.0.0.21764，确认仓库约束冲突，不再盲重跑或解除锁。官方SPARC目录另发现与guest内核31d3d510d0对应的19333056字节sysroot及独立GCC说明，原包SHA753ca4b2已核、10461成员只读检查，crt1/libc实际为大端ELF32/machine18(SPARC32PLUS)及ELF64/machine43；初始预期machine2失败已留账，完整来源/ABI/构建适用性仍待，未新增组件通过。证据sparc-repository-conflict-2026-11-12.json，正式44/50保持。
+
 - 2026-11-12 输入路径批量检查优化：稳定owned源码树每个前缀lstat一次，仍拒绝非法路径/缺失/链接/reparse，逐文件哈希不变。确切f81快照743输入新旧哈希全等，本机单轮Path.lstat4008→993、1.3241→0.2727秒（非OpenBSD/SLA证明）。16IO/11命令证据/3来源/2OpenBSD控制过；POSIX实际symlink拒绝加入host CI，Windows为受控syscall结果验证。新native实效待；不提升44正式。
 
 - 2026-11-12 OpenBSD43175405211栈诊断原包546327字节SHA/CRC核过：已过宿主包/编译器/JDK/clone并进入build；120秒采样明确出现evidence_run.inputs→bounded_path→lstat和实际构建subprocess wait，原源码命令总预算到期、未回传组件。源码快照743输入仅5679179字节，下一步在稳定owned树内批量校验共享路径前缀，保持逐文件哈希/拒绝链接与越界，未断言全部超时原因。正式44/50保持；SPARC43179892414原运行继续。

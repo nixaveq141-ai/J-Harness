@@ -1,0 +1,26 @@
+{
+  "status": "PREPARED_NOT_COMPILER_OR_COMPONENT_ACCEPTED",
+  "rationale": "Native IPS solver rejected the available 2025 SDK under a 2026 incorporation. Build a distinct Solaris-target compiler with the real official sysroot; preserve installed guest constraints.",
+  "references": [
+    "https://gcc.gnu.org/install/specific.html",
+    "https://gcc.gnu.org/pub/gcc/releases/gcc-13.4.0/sha512.sum",
+    "https://sourceware.org/pipermail/binutils/2023-January/125671.html",
+    "https://dlc.openindiana.aurora-opencloud.org/SPARC/README.gcc-compilers"
+  ],
+  "localControls": {
+    "passed": 4,
+    "scope": "archive traversal/link/duplicate rejection, target link relocation, reuse refusal, ELF class/endian/machine/kind rejection",
+    "realPosixLinkExecution": "pending Linux CI",
+    "initialAttempt": "Sandbox default temporary directory PermissionError; original test output retained in tool transcript; same 4 tests passed with owned workspace temporary root."
+  },
+  "stages": [
+    "Build exact GCC/Binutils and Solaris multilib libgcc on Linux",
+    "Compile and link real 32/64-bit programs; inspect actual ELF",
+    "Execute exact outputs in owned SPARC guest",
+    "Build fixed JNA/libffi, execute primitive/ffi/closure/missing-library probes",
+    "Independent original-artifact audit, product staging and batch five-target regression"
+  ],
+  "nativeBuilderGateUnchanged": true,
+  "componentsAccepted": 0,
+  "paidRequests": 0
+}

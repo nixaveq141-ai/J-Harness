@@ -1,0 +1,55 @@
+{
+  "status": "SPARC_REPOSITORY_CONSTRAINT_CONFLICT_CONFIRMED_NO_COMPONENT_ACCEPTANCE",
+  "runId": 43179892414,
+  "commit": "75329862c50f78b092f955faf0574819f750ce78",
+  "artifact": {
+    "id": 13926747960,
+    "bytes": 1360571,
+    "sha256": "fcb8deebee514fbe5466ae5cef273df4d1d40eb59976416d7c98ba56e37b7c1a",
+    "crcVerified": true
+  },
+  "installLog": {
+    "member": "guest-install-tools.log",
+    "bytes": 21227,
+    "sha256": "5265f5f6f67c05bc5020ed751df5c8487b66d02fc91d3f2f00fa7d68ad3e92ff",
+    "actualExitCode": 1
+  },
+  "catalog": {
+    "url": "https://pkg.openindiana.aurora-opencloud.org/oi-sparc/catalog/1/catalog.dependency.C",
+    "bytes": 4399340,
+    "sha256": "d3b5d97e05927e7e8b6a2785694e4962d585e2cab8cea3824f76059144796ab0",
+    "incorporationVersion": "0.5.11,5.11-2026.0.0.35436:20261111T093515Z",
+    "conflicts": {
+      "system/header": {
+        "availableVersions": [
+          "0.5.11,5.11-2025.0.0.21764:20251226T171336Z"
+        ],
+        "proposedIncorporationAction": "depend facet.version-lock.system/header=true fmri=system/header@0.5.11-2026.0.0.21764 type=incorporate"
+      },
+      "developer/linker": {
+        "availableVersions": [
+          "0.5.11,5.11-2025.0.0.21764:20251226T164350Z"
+        ],
+        "proposedIncorporationAction": "depend facet.version-lock.developer/linker=true fmri=developer/linker@0.5.11-2026.0.0.21764 type=incorporate"
+      },
+      "consolidation/osnet/osnet-incorporation": {
+        "availableVersions": [
+          "0.5.11,5.11-2025.0.0.21764:20251226T164202Z"
+        ],
+        "proposedIncorporationAction": "depend facet.version-lock.consolidation/osnet/osnet-incorporation=true fmri=consolidation/osnet/osnet-incorporation@0.5.11-2026.0.0.21764 type=incorporate"
+      }
+    }
+  },
+  "interpretation": "Current catalog offers only 2025 SDK packages while current incorporation requires 2026 branches. This explains the observed solver rejection; no constraints were relaxed.",
+  "nextInvestigation": {
+    "officialDirectory": "https://dlc.openindiana.aurora-opencloud.org/SPARC/",
+    "sysroot": "illumos-sysroot-sparc-20260117-31d3d510d0-v1.tar.gz",
+    "announcedBytes": 19333056,
+    "compilerInstructions": "https://dlc.openindiana.aurora-opencloud.org/SPARC/README.gcc-compilers",
+    "boundary": "Directory listing and instructions only. Toolchain contents, ABI compatibility, build and execution not yet verified."
+  },
+  "formalAccepted": 44,
+  "totalResources": 50,
+  "acceptedCountIncrease": 0,
+  "paidRequests": 0
+}

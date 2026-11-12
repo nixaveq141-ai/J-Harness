@@ -1,0 +1,46 @@
+{
+  "status": "OFFICIAL_SYSROOT_ARCHIVE_INSPECTED_NOT_BUILD_OR_ABI_ACCEPTED",
+  "url": "https://dlc.openindiana.aurora-opencloud.org/SPARC/illumos-sysroot-sparc-20260117-31d3d510d0-v1.tar.gz",
+  "bytes": 19333056,
+  "sha256": "753ca4b2e24a2a2c3d3ac5de3a590c6b1a106f8fe5cbd89f78f70f80431cb027",
+  "members": 10461,
+  "headersPresent": true,
+  "selectedElfMembers": [
+    {
+      "path": "sysroot/usr/lib/crt1.o",
+      "bytes": 1516,
+      "sha256": "bc722b586de55ac536fedda58babbb7cbb3683f0011be8f26371c6d1689626eb",
+      "elfBits": 32,
+      "endian": "big",
+      "machine": 18
+    },
+    {
+      "path": "sysroot/usr/lib/sparcv9/crt1.o",
+      "bytes": 2272,
+      "sha256": "6680d16cdb1233105e5931ba48d123fffe600696be40efb0d5321603d34a308f",
+      "elfBits": 64,
+      "endian": "big",
+      "machine": 43
+    },
+    {
+      "path": "sysroot/lib/libc.so.1",
+      "bytes": 1772960,
+      "sha256": "56689c88ccba185d975a12ac7e302b374df714354d9c0bb76f67d11cae5790f2",
+      "elfBits": 32,
+      "endian": "big",
+      "machine": 18
+    },
+    {
+      "path": "sysroot/lib/sparcv9/libc.so.1",
+      "bytes": 1873488,
+      "sha256": "51de643ed05dd9af1491781b52ddd49fd4a7ea2d2c5e6ff8b6e3d4da50515d0f",
+      "elfBits": 64,
+      "endian": "big",
+      "machine": 43
+    }
+  ],
+  "scope": "Read-only tar member inspection; nothing extracted or installed. Filename matches guest kernel revision; compatibility and provenance completeness require verification.",
+  "initialCheck": "An initial expected ELF32 machine=2 assertion failed; actual member machine=18 (SPARC32PLUS), retained here explicitly. No native builder gate changed.",
+  "next": "Evaluate a fixed Solaris-target cross compiler and linker against this real sysroot, then execute exact outputs in existing owned SPARC guest. Native compiler archives are another option; guest tooling dependencies remain unresolved.",
+  "acceptedCountIncrease": 0
+}
