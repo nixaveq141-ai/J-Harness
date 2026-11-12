@@ -77,7 +77,8 @@ def main():
             guest(prefix+'pkg set-publisher -G "*" -g https://pkg.openindiana.aurora-opencloud.org/oi-sparc/ openindiana.org','guest-publisher',1200)
             packages='developer/gcc-10 runtime/java/openjdk17 developer/build/ant developer/versioning/git developer/build/gnu-make developer/gnu-binutils system/header developer/linker'
             request='consolidation/userland/userland-incorporation@latest '+packages
-            guest(prefix+'pkg install -nv --accept '+request,'guest-tools-plan',600)
+            # The real install performs and records the same solver plan;
+            # avoid solving the whole emulated image twice.
             guest(prefix+'pkg install --accept '+request,'guest-install-tools',2400)
             guest('set -eu; pkg list -Hv; pkg contents -m '+packages,'guest-tool-inputs',600)
             guest('set -eu; /usr/gcc/10/bin/gcc --version; java -version; ant -version; /usr/gnu/bin/make --version; git --version; /usr/bin/python3.14 -V','guest-tool-versions',300)

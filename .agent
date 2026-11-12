@@ -4,6 +4,8 @@
 
 ## 当前接续状态
 
+- 2026-11-12 SPARC43175410363原包1357527字节SHA/CRC核过：协调预览只有Solver setup进度，guest driver于600秒返回timeout/result，未形成新冲突或成功计划。移除重复dry-run，让一次正式pkg install自身求解/输出计划/执行，保留incorporation及全部版本约束，2400秒既有安装预算不变；3隔离/清理控制过。真实安装仍待，OpenBSD43175405211原运行继续，44正式保持。
+
 - 2026-11-12 SPARC协调安装准备：依据IPS官方incorporation约束说明，将userland-incorporation@latest与工具包交给同一求解器，先-nv预览后安装，不解除版本锁。guest命令用set+e外层/严格子shell隔离，真实false控制证明保留退出1及外层采集标记，避免失败登出后空等；3隔离控制过。仅本地准备，真实协调安装待；P1 CI另构只含P1文件的提交以保留本地UX链，44正式不变。
 
 - 2026-11-12 恢复P1核旧两原包SHA/CRC：SPARC42459097659已PPP ready且官方HTTPS catalog刷新成功；安装器明确旧userland-incorporation排除新binutils/Git/JDK17/Ant版本，需协调包版本，不再按网络故障处理。OpenBSD42459464777已/home可用2624976KiB并完成checkout，但第一host-packages附近停滞；加120秒重复Python栈快照定位具体调用，不延长预算，2控制过。工作区已有UX-A～F用户提交，保留并避免随P1远端推送；正式44/50保持。

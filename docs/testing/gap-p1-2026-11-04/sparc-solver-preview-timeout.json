@@ -1,0 +1,17 @@
+{
+  "status": "SPARC_DUPLICATE_SOLVER_PREVIEW_TIMED_OUT_NOT_COMPONENT_ACCEPTANCE",
+  "runId": "43175410363",
+  "commit": "f81fabc4bda5f6ee5a33a3e24cf93fab82ccd2ed",
+  "artifact": {
+    "id": 13926070735,
+    "bytes": 1357527,
+    "sha256": "67c9536103c66bd3fc8ace1d6759f5c46f01f82bbaeffe14a901854bc9f9d228"
+  },
+  "observation": "Solver setup progress then guest driver timeout; no new dependency conclusion",
+  "change": "One coordinated pkg install retains its solver/plan output and version constraints; omit duplicate dry run",
+  "installBudgetSeconds": 2400,
+  "localControls": 3,
+  "runtimeFixVerified": false,
+  "acceptedCountIncrease": 0,
+  "paidRequests": 0
+}
