@@ -35,8 +35,15 @@ class BootstrapScope(unittest.TestCase):
             with patch.object(m.platform,'machine',return_value='aarch64'):self.assertEqual('tcg',m.select_accelerator())
         args=m.qemu_arguments(Path('/owned/ci-work'),False,'kvm')
         self.assertEqual('kvm',args[args.index('-accel')+1])
-        self.assertEqual('host',args[args.index('-cpu')+1])
+        self.assertEqual('qemu32',args[args.index('-cpu')+1])
         with self.assertRaises(ValueError):m.qemu_arguments(Path('/owned/ci-work'),False,'auto')
+
+    def test_zero_exit_without_actual_installation_completion_is_rejected(self):
+        marker=b'CONGRATULATIONS! Your OpenBSD install has been successfully completed!'
+        m.require_installation_complete(0,marker)
+        for status,serial in [(0,b'OpenBSD RAMDISK entry'),(1,marker),(0,b'')]:
+            with self.assertRaisesRegex(ValueError,'completion not proven'):
+                m.require_installation_complete(status,serial)
 
     def test_installer_default_sets_are_explicitly_unselected_when_not_served(self):
         self.assertIn('BUILDINFO',m.FILES)

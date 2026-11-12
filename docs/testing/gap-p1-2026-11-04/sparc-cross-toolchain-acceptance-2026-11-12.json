@@ -1,0 +1,64 @@
+{
+  "status": "SOLARIS_SPARC_CROSS_TOOLCHAIN_ORIGINAL_INDEPENDENTLY_VERIFIED_NOT_TARGET_RUNTIME_ACCEPTANCE",
+  "runId": "43185951645",
+  "commit": "13b64dcc02ed5564670e4c49999b62a87e53f472",
+  "artifact": {
+    "id": 13928488048,
+    "bytes": 390545388,
+    "sha256": "b0fffe5d74d00e0259e55aa9fcf6b5cc19ff69c69babfb055211ff9af06e70b2",
+    "crcVerified": true
+  },
+  "commandReceipts": 14,
+  "exactGitInputs": 746,
+  "inputs": {
+    "gcc-13.4.0.tar.xz": {
+      "url": "https://gcc.gnu.org/pub/gcc/releases/gcc-13.4.0/gcc-13.4.0.tar.xz",
+      "bytes": 88530720,
+      "algorithm": "sha512",
+      "digest": "9b4b83ecf51ef355b868608b8d257b2fa435c06d2719cb86657a7c2c2a0828ff4ce04e9bac1055bbcad8ed5b4da524cafaef654785e23a50233d95d89201e35f",
+      "sha256": "9c4ce6dbb040568fdc545588ac03c5cbc95a8dbf0c7aa490170843afb59ca8f5"
+    },
+    "binutils-2.40.tar.xz": {
+      "url": "https://ftp.gnu.org/gnu/binutils/binutils-2.40.tar.xz",
+      "bytes": 25241484,
+      "algorithm": "sha256",
+      "digest": "0f8a4c272d7f17f369ded10a4aca28b8e304828e95526da482b0ccc4dfc9d8e1",
+      "sha256": "0f8a4c272d7f17f369ded10a4aca28b8e304828e95526da482b0ccc4dfc9d8e1"
+    },
+    "illumos-sysroot-sparc-20260117-31d3d510d0-v1.tar.gz": {
+      "url": "https://dlc.openindiana.aurora-opencloud.org/SPARC/illumos-sysroot-sparc-20260117-31d3d510d0-v1.tar.gz",
+      "bytes": 19333056,
+      "algorithm": "sha256",
+      "digest": "753ca4b2e24a2a2c3d3ac5de3a590c6b1a106f8fe5cbd89f78f70f80431cb027",
+      "sha256": "753ca4b2e24a2a2c3d3ac5de3a590c6b1a106f8fe5cbd89f78f70f80431cb027"
+    }
+  },
+  "sysrootManifestSha256": "6172ea95635049e3af7091bab5dc4d29cfb0df243342c25d40decbca42fdf61d",
+  "sysrootManifestEntries": 10248,
+  "archiveSha256": "62f1e00ea0b992c5e4b382ac9304dfcf565154b39936c3f6d5fe1402c448008b",
+  "archiveMembers": 11199,
+  "hostTools": "Actual gcc/as/ld are Linux x86_64 ELF64 executables; target is Solaris SPARC",
+  "linkedPrograms": [
+    {
+      "bits": 32,
+      "endian": "big",
+      "machine": 18,
+      "kind": 2,
+      "sha256": "87f976b03588491ec90502cc723a867e789f68e9898c2c54288a7510fa7eb1a4"
+    },
+    {
+      "bits": 64,
+      "endian": "big",
+      "machine": 43,
+      "kind": 2,
+      "sha256": "d0791f72a71cbb5a794037e3f7e75ac0cc3c1b1248cea155325f4946ea6fedea"
+    }
+  ],
+  "limits": [
+    "Linked programs have not yet been executed in the SPARC guest",
+    "No JNA component build, JNI/ffi/closure proof or product replacement yet",
+    "Exact official sysroot input does not by itself prove its complete source construction or OS/CPE clearance"
+  ],
+  "acceptedCountIncrease": 0,
+  "paidRequests": 0
+}

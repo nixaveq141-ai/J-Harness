@@ -45,7 +45,8 @@ def qemu_arguments(out,install,accelerator='tcg'):
     if accelerator not in {'kvm','tcg'}:raise ValueError('Explicit supported VM accelerator required')
     net='user,id=net0,hostfwd=tcp:127.0.0.1:2222-:22'
     if install:net+=',tftp='+(out/'tftp').as_posix()+',bootfile=auto_install'
-    cpu=['-cpu','host'] if accelerator=='kvm' else []
+    # Retain an explicit 32-bit CPU profile instead of exposing every host feature.
+    cpu=['-cpu','qemu32'] if accelerator=='kvm' else []
     return ['qemu-system-i386','-accel',accelerator,*cpu,'-m','2048','-smp','2','-display','none','-monitor','none','-serial','stdio',
             '-drive','file='+(out/'disk.qcow2').as_posix()+',format=qcow2,if=virtio','-netdev',net,'-device','e1000,netdev=net0',
             '-boot','n' if install else 'c','-no-reboot']
@@ -65,6 +66,11 @@ def wait_installation(vm,serial_path,timeout=1500,idle_timeout=180):
         if now-started>=timeout:raise ValueError('Owned i386 installer total time budget exceeded')
         if now-last_progress>=idle_timeout:raise ValueError('Owned i386 installer serial made no progress within idle budget')
         time.sleep(3)
+
+def require_installation_complete(status,serial):
+    if status!=0 or b'CONGRATULATIONS! Your OpenBSD install has been successfully completed!' not in serial:
+        raise ValueError('Native i386 installer completion not proven')
+
 
 def main():
     if platform.system()!='Linux' or os.environ.get('GITHUB_ACTIONS')!='true':raise ValueError('Dedicated Linux CI required')
@@ -113,7 +119,7 @@ def main():
         install_args=qemu_arguments(out,True,accelerator);report['installCommand']=install_args
         vm=subprocess.Popen(install_args,stdin=subprocess.DEVNULL,stdout=serial,stderr=subprocess.STDOUT,start_new_session=True);processes.append(vm)
         status=wait_installation(vm,out/'install-serial.log');report['installExitCode']=status
-        if status!=0:raise ValueError('Native i386 installer failed')
+        require_installation_complete(status,(out/'install-serial.log').read_bytes());report['installCompleted']=True
         serial2=(out/'boot-serial.log').open('wb');handles.append(serial2)
         boot_args=qemu_arguments(out,False,accelerator);report['bootCommand']=boot_args
         vm=subprocess.Popen(boot_args,stdin=subprocess.DEVNULL,stdout=serial2,stderr=subprocess.STDOUT,start_new_session=True);processes.append(vm)

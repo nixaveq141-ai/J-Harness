@@ -1,0 +1,27 @@
+{
+  "status": "KVM_EARLY_GUEST_EXIT_NOT_INSTALLATION_SUCCESS",
+  "runId": 43187469630,
+  "commit": "5c15634bb2f37cf02142e1feb97b62db39b59bc7",
+  "artifact": {
+    "id": 13929132731,
+    "bytes": 217434,
+    "sha256": "9ceb06691123fe5b0b04119a2072fdb1005dc7fcacf0b6586c465293a07afba4",
+    "crcVerified": true
+  },
+  "installExitCode": 0,
+  "installationCompletionMarkerPresent": false,
+  "serialSha256": "47e5bdd9c7424ee78d4ae068795fcf2323bca59fb1c0a455e8e0b211b6d58943",
+  "bootLogSha256": "4b7ef313e3739dfe92ab87f1cff29209c0c364a2082d54e360895820e708a102",
+  "observed": "Installer guest exited during early RAMDISK boot. Subsequent boot could not access KVM. No installation, toolchain or source acceptance.",
+  "unknown": "Reason for early guest exit and disappearance of effective device ACL not proved.",
+  "changes": [
+    "Require actual successful-installation text AND exit 0 before disk boot",
+    "Use explicit qemu32 CPU profile, avoiding host feature exposure",
+    "Use official runner KVM group approach and sg for effective supplementary group, replacing transient device ACL"
+  ],
+  "localControls": 9,
+  "actualFixVerified": false,
+  "formalAccepted": 44,
+  "acceptedCountIncrease": 0,
+  "paidRequests": 0
+}

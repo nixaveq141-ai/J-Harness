@@ -1,5 +1,7 @@
 # P1：原生来源补齐执行记录
 
+- 2026-11-12 OpenBSD KVM43187469630原包217434字节SHA/CRC核过：RAMDISK早期退出0但无安装完成标记，后次KVM报Permission denied，未安装成功/未进源码。新增exit0+官方完成文本双门禁，9控制过；改qemu32显式CPU及官方kvm组+sg有效组方式替代临时ACL，早退与ACL丢失具体根因仍未证，真实修正待。SPARC交叉工具链43185951645已CI成功并链接32/64探针，390545388字节原包SHA/CRC、746精确Git输入/14回执/11199归档成员及32/64实际ELF已独立核过，工具链可复用但guest执行/JNA组件仍待，不计组件通过；正式44保持。
+
 - 2026-11-12 OpenBSD43181269997原包546276字节SHA/CRC核过：源码08:27:38至08:52:38触1500秒总预算，采样为checkout/build subprocess wait，未回传组件，不能判通过。新增仅x86且可读写真实/dev/kvm时选KVM并记录，CI仅当前runner ACL；不可用仍TCG，预算/原生i386 ABI不变。失败后另起180秒owned局部日志/config归档，保留原失败与部分包摘要，防止取包失败覆盖主因。8bootstrap控制过，真实KVM/组件待；SPARC43185951645继续，44正式不变。
 
 - 2026-11-12 SPARC独立交叉工具链入口：固定GNU GCC13.4官方SHA512/Binutils2.40发布SHA256及已核真实sysroot，Linux owned目录构建Solaris目标C编译器/libgcc并分别-m32/-m64链接实际探针；不解除IPS锁、不用Linux sysroot替代。sysroot先全量拒绝越界/重复/链接祖先，再把目标绝对链接迁到owned根；4项拒绝/ELF控制通过，Windows真实symlink留Linux CI执行。本机首轮sandbox临时目录权限失败，改workspace owned临时目录后通过；实际交叉构建/guest执行仍待，44正式保持。
