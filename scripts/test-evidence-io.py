@@ -2,12 +2,15 @@
 import hashlib
 import importlib.util
 import json
+import os
+import stat
+from types import SimpleNamespace
 from pathlib import Path
 import tempfile
 import unittest
 from unittest.mock import patch
 
-from evidence_io import (atomic_write_json, bounded_path, publish_archive,
+from evidence_io import (atomic_write_json, bounded_path, bounded_paths, publish_archive,
                          read_json_snapshot, strict_json_loads)
 
 spec = importlib.util.spec_from_file_location('archive_local', Path(__file__).with_name('archive-m1059-local.py'))
@@ -33,6 +36,46 @@ class EvidenceIoTest(unittest.TestCase):
                      'a/..', 'a.', 'NUL', 'a/COM1.txt'):
             with self.subTest(path=path), self.assertRaisesRegex(ValueError, 'path'):
                 bounded_path(self.root, path, must_exist=False)
+            with self.subTest(batch=path), self.assertRaisesRegex(ValueError, 'path'):
+                bounded_paths(self.root, [path])
+
+    def test_batch_matches_single_paths_and_checks_shared_prefix_once(self):
+        base = self.root / 'shared' / 'nested'
+        base.mkdir(parents=True)
+        for name in ('one', 'two'):
+            (base / name).write_bytes(name.encode())
+        names = ['shared/nested/one', 'shared/nested/two', 'shared/nested/one']
+        expected = [bounded_path(self.root, n) for n in names]
+        original = Path.lstat
+        calls = []
+        def observe(path, *args, **kwargs):
+            calls.append(path)
+            return original(path, *args, **kwargs)
+        with patch.object(Path, 'lstat', observe):
+            self.assertEqual(expected, bounded_paths(self.root, names))
+        self.assertEqual(1, calls.count(base))
+        self.assertEqual(1, calls.count(base / 'one'))
+        with self.assertRaises(FileNotFoundError):
+            bounded_paths(self.root, ['shared/nested/one', 'shared/nested/missing'])
+
+    def test_batch_rejects_link_and_reparse_syscall_results(self):
+        original = Path.lstat
+        for info, message in [(SimpleNamespace(st_mode=stat.S_IFLNK, st_file_attributes=0), 'Linked'),
+                              (SimpleNamespace(st_mode=stat.S_IFDIR, st_file_attributes=0x400), 'Reparse')]:
+            def substituted(path, *args, **kwargs):
+                if path == self.root / 'linked':
+                    return info
+                return original(path, *args, **kwargs)
+            with patch.object(Path, 'lstat', substituted), self.assertRaisesRegex(ValueError, message):
+                bounded_paths(self.root, ['linked/file'])
+        if os.name != 'nt':
+            target = self.root / 'real-target'
+            target.mkdir()
+            (target / 'file').write_bytes(b'data')
+            (self.root / 'actual-link').symlink_to(target, target_is_directory=True)
+            for check in (bounded_path, lambda r, n: bounded_paths(r, [n])):
+                with self.assertRaisesRegex(ValueError, 'Linked'):
+                    check(self.root, 'actual-link/file')
 
     def test_link_is_rejected_even_when_it_points_inside(self):
         # This assertion covers symlink rejection; junction/reparse have separate regressions.

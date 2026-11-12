@@ -1,0 +1,22 @@
+{
+  "single": {
+    "seconds": 1.3241,
+    "pathLstatCalls": 4008,
+    "inputs": 743
+  },
+  "batch": {
+    "seconds": 0.2727,
+    "pathLstatCalls": 993,
+    "inputs": 743
+  },
+  "status": "LOCAL_EQUIVALENT_INPUT_HASHES_FEWER_REPEATED_PATH_CHECKS",
+  "sourceCommit": "f81fabc4bda5f6ee5a33a3e24cf93fab82ccd2ed",
+  "inputHashesIdentical": true,
+  "localControls": 32,
+  "limits": [
+    "Stable owned source tree required; no stronger concurrent replacement claim",
+    "Windows single measurement; actual OpenBSD benefit pending",
+    "POSIX real symlink control pending CI"
+  ],
+  "acceptedCountIncrease": 0
+}

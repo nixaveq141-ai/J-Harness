@@ -1,5 +1,9 @@
 # P1：原生来源补齐执行记录
 
+- 2026-11-12 输入路径批量检查优化：稳定owned源码树每个前缀lstat一次，仍拒绝非法路径/缺失/链接/reparse，逐文件哈希不变。确切f81快照743输入新旧哈希全等，本机单轮Path.lstat4008→993、1.3241→0.2727秒（非OpenBSD/SLA证明）。16IO/11命令证据/3来源/2OpenBSD控制过；POSIX实际symlink拒绝加入host CI，Windows为受控syscall结果验证。新native实效待；不提升44正式。
+
+- 2026-11-12 OpenBSD43175405211栈诊断原包546327字节SHA/CRC核过：已过宿主包/编译器/JDK/clone并进入build；120秒采样明确出现evidence_run.inputs→bounded_path→lstat和实际构建subprocess wait，原源码命令总预算到期、未回传组件。源码快照743输入仅5679179字节，下一步在稳定owned树内批量校验共享路径前缀，保持逐文件哈希/拒绝链接与越界，未断言全部超时原因。正式44/50保持；SPARC43179892414原运行继续。
+
 - 2026-11-12 SPARC43175410363原包1357527字节SHA/CRC核过：协调预览只有Solver setup进度，guest driver于600秒返回timeout/result，未形成新冲突或成功计划。移除重复dry-run，让一次正式pkg install自身求解/输出计划/执行，保留incorporation及全部版本约束，2400秒既有安装预算不变；3隔离/清理控制过。真实安装仍待，OpenBSD43175405211原运行继续，44正式保持。
 
 - 2026-11-12 SPARC协调安装准备：依据IPS官方incorporation约束说明，将userland-incorporation@latest与工具包交给同一求解器，先-nv预览后安装，不解除版本锁。guest命令用set+e外层/严格子shell隔离，真实false控制证明保留退出1及外层采集标记，避免失败登出后空等；3隔离控制过。仅本地准备，真实协调安装待；P1 CI另构只含P1文件的提交以保留本地UX链，44正式不变。

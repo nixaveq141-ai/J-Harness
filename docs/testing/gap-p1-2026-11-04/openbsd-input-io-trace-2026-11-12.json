@@ -1,0 +1,22 @@
+{
+  "status": "OPENBSD_INPUT_PATH_IO_AND_BUILD_WAIT_SAMPLED_NOT_COMPONENT_ACCEPTANCE",
+  "runId": "43175405211",
+  "commit": "f81fabc4bda5f6ee5a33a3e24cf93fab82ccd2ed",
+  "artifact": {
+    "id": 13925249147,
+    "bytes": 546327,
+    "sha256": "47dcfaf4ab034dd714301a5277d2c1ed1e96310ad6896736a5d6a7421df16d89"
+  },
+  "observations": [
+    "Reached actual build",
+    "Trace sample in inputs/bounded_path/lstat",
+    "Trace samples waiting for build subprocess",
+    "Outer source command budget expired; no returned component"
+  ],
+  "sourceInputs": 743,
+  "sourceInputBytes": 5679179,
+  "nextAction": "Test equivalent batched path validation for stable owned source directories; preserve per-file hashes and link/escape rejection",
+  "completeRootCauseEstablished": false,
+  "acceptedCountIncrease": 0,
+  "paidRequests": 0
+}

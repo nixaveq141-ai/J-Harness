@@ -12,7 +12,7 @@ import shutil
 import signal
 import subprocess
 import time
-from evidence_io import bounded_path, atomic_write_json as atomic_json, stream_sha256
+from evidence_io import bounded_path, bounded_paths, atomic_write_json as atomic_json, stream_sha256
 
 ROOT = Path(__file__).resolve().parents[1]
 IS_WINDOWS = os.name == 'nt'
@@ -45,8 +45,7 @@ def inputs(root=ROOT):
         paths.update(p for p in (module / 'src').rglob('*') if p.is_file())
     if not paths:
         raise ValueError('Empty build input snapshot')
-    for p in paths:
-        bounded_path(root, p.relative_to(root).as_posix())
+    bounded_paths(root, [p.relative_to(root).as_posix() for p in paths])
     return {p.relative_to(root).as_posix(): digest(p.read_bytes()) for p in sorted(paths)}
 
 

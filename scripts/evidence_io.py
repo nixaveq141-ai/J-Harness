@@ -54,8 +54,7 @@ def strict_json_loads(raw):
     return json.loads(raw, object_pairs_hook=pairs, parse_constant=constant, parse_float=number)
 
 
-def bounded_path(root, relative, *, must_exist=True):
-    root = Path(root).resolve(strict=True)
+def _relative_parts(relative):
     if not isinstance(relative, str) or not relative or '\x00' in relative:
         raise ValueError('Evidence path must be a nonempty relative string')
     win = PureWindowsPath(relative)
@@ -65,6 +64,12 @@ def bounded_path(root, relative, *, must_exist=True):
                 re.fullmatch(r'(?i:con|prn|aux|nul|com[1-9]|lpt[1-9])(?:\..*)?', p)
                 for p in parts)):
         raise ValueError('Unsafe evidence path: ' + relative)
+    return parts
+
+
+def bounded_path(root, relative, *, must_exist=True):
+    root = Path(root).resolve(strict=True)
+    parts = _relative_parts(relative)
     current = root
     for part in parts:
         current = current / part
@@ -77,6 +82,32 @@ def bounded_path(root, relative, *, must_exist=True):
     if not resolved.is_relative_to(root):
         raise ValueError('Evidence path escapes root: ' + relative)
     return resolved
+
+
+def bounded_paths(root, relatives):
+    """Validate existing inputs in one stable owned tree, reusing prefix checks.
+
+    As with bounded_path, callers must prevent concurrent ancestor replacement.
+    Every component is checked with lstat; no links or Windows reparse points
+    are followed. All leaves must exist. Hashing remains the caller's job.
+    """
+    root = Path(root).resolve(strict=True)
+    checked = set()
+    result = []
+    for relative in relatives:
+        current = root
+        for part in _relative_parts(relative):
+            current = current / part
+            if current in checked:
+                continue
+            info = current.lstat()
+            if stat.S_ISLNK(info.st_mode):
+                raise ValueError('Linked evidence path: ' + relative)
+            if getattr(info, 'st_file_attributes', 0) & 0x400:
+                raise ValueError('Reparse evidence path: ' + relative)
+            checked.add(current)
+        result.append(current)
+    return result
 
 
 @dataclass(frozen=True)
