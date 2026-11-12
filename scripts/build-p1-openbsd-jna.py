@@ -1,5 +1,6 @@
 """Build fixed OpenBSD JNA components in a native CI VM."""
 import argparse
+import faulthandler
 import hashlib
 import importlib.util
 import json
@@ -42,6 +43,7 @@ def main():
  parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('target',choices=TARGETS);a=parser.parse_args()
  if platform.system()!='OpenBSD' or platform.machine()!=TARGETS[a.target][3]:raise ValueError('Native OpenBSD target VM required')
  if os.environ.get('GITHUB_ACTIONS')!='true' or not os.environ.get('GITHUB_RUN_ID','').isdigit():raise ValueError('Dedicated CI required')
+ faulthandler.dump_traceback_later(120,repeat=True)
  target=a.target;_,_,_,arch=TARGETS[target]
  compiler=['cc']
  out=ROOT/'.build-cache/p1-openbsd-jna'/target;out.mkdir(parents=True,exist_ok=False)
@@ -115,6 +117,7 @@ def main():
  except Exception as error:
   report['failureType']=type(error).__name__;raise
  finally:
+  faulthandler.cancel_dump_traceback_later()
   config=out/'jna/build'/('native-openbsd-'+target)/'libffi/config.log'
   if config.is_file():(out/'libffi-config.log').write_bytes(config.read_bytes());report['libffiConfigLogSha256']=stream_sha256(out/'libffi-config.log')
   atomic_write_json(out/'report.json',report)

@@ -1,5 +1,11 @@
 # P1：原生来源补齐执行记录
 
+- 2026-11-12 SPARC协调安装准备：依据IPS官方incorporation约束说明，将userland-incorporation@latest与工具包交给同一求解器，先-nv预览后安装，不解除版本锁。guest命令用set+e外层/严格子shell隔离，真实false控制证明保留退出1及外层采集标记，避免失败登出后空等；3隔离控制过。仅本地准备，真实协调安装待；P1 CI另构只含P1文件的提交以保留本地UX链，44正式不变。
+
+- 2026-11-12 恢复P1核旧两原包SHA/CRC：SPARC42459097659已PPP ready且官方HTTPS catalog刷新成功；安装器明确旧userland-incorporation排除新binutils/Git/JDK17/Ant版本，需协调包版本，不再按网络故障处理。OpenBSD42459464777已/home可用2624976KiB并完成checkout，但第一host-packages附近停滞；加120秒重复Python栈快照定位具体调用，不延长预算，2控制过。工作区已有UX-A～F用户提交，保留并避免随P1远端推送；正式44/50保持。
+
+- 2026-11-08 AIX原载荷构建线索细化：两原SHA复核并逐字节偏移定位GCC8.3.0/AIX7.1目标运行库及include-fixed路径、实际ppc/ppc64-7.0.0/libffi构建目录。上游BuildingNativeLibraries文档于2024新增并描述7.0.2在cfarm111的流程，不能倒推2023原7.0.0构建证明。新增可复核字节收据，精确命令/SDK/生成静态输入仍缺，两AIX仍OPEN，44正式/45候选保持；两原专项继续。
+
 - 2026-11-08 OpenBSD42457557429原包582041字节SHA/CRC核过：原生32位标记与动态Python前置已达，实际源码build失败且报告/归档明确Errno28磁盘不足，未验组件。将新VM源码工作区/组件归档从/root移到/home，checkout前记录df并要求home至少2GiB空闲，不改已有用户目录；8相关控制与三个远程命令shell语法过，真实修正待。Cygwin默认关闭装配准备87ed同步保留，正式44/50、本地45候选不变。
 
 - 2026-11-08 已验Cygwin统一装配接线准备：新增默认关闭JHARNESS_P1_CYGLAUNCH入口，复用精确双模式组件stager、1项不相交资源与验收收据绑定。2原包stager/3既有统一装配控制过；完整入口执行留待下一批，未开启workflow、未改44来源map/数量、未动本机JAR或重跑45矩阵，正式44/50/本地45候选保持。OpenBSD42457557429与SPARC42459097659同轮继续。

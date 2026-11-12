@@ -1,0 +1,26 @@
+{
+  "status": "RESUMED_TWO_ORIGINALS_VERIFIED_NOT_COMPONENT_ACCEPTANCE",
+  "openbsd": {
+    "runId": "42459464777",
+    "artifactId": 13610370747,
+    "bytes": 545892,
+    "sha256": "1ef1c0a5cbab7924991c5be6d74738e7d7ec8daf1acd54ea11f8d6699ec26a26",
+    "homeAvailableKiB": 2624976,
+    "lastProgress": "host-packages",
+    "diagnostic": "Repeat Python traceback after 120 seconds; no deadline increase"
+  },
+  "sparc": {
+    "runId": "42459097659",
+    "artifactId": 13609758852,
+    "bytes": 1360295,
+    "sha256": "15d9273255dec223e5945d81395c193c13c9a75c8cc453bf10e5d00f1b27176e",
+    "networkPhase": "ready",
+    "publisherRefresh": "PASS",
+    "installationFailure": "Installed userland-incorporation excludes current binutils/git/openjdk17/ant package versions",
+    "nextAction": "Resolve coordinated package versions under the distribution solver"
+  },
+  "runtimeFixVerified": false,
+  "localOpenbsdControls": 2,
+  "acceptedCountIncrease": 0,
+  "paidRequests": 0
+}

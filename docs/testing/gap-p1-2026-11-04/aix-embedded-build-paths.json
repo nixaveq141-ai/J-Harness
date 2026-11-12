@@ -1,0 +1,62 @@
+{
+  "status": "AIX_EMBEDDED_BUILD_PATHS_VERIFIED_NOT_EXACT_BUILD_ATTESTATION",
+  "resources": [
+    {
+      "resource": "com/sun/jna/aix-ppc/libjnidispatch.a",
+      "originalSha256": "993d6799faa5e2c6363e99050c65ef6efea10059b3a07b80d3854d6d3142ca1a",
+      "embeddedByteEvidence": [
+        {
+          "text": "/opt/freeware/lib/gcc/powerpc-ibm-aix7.1.0.0/8.3.0",
+          "byteOffset": 153816,
+          "sha256": "e778ff517ac9a381710aabbbd4bbd47f199adea0ec1fc57015fb7a69fdaca68b"
+        },
+        {
+          "text": "/opt/freeware/src/packages/BUILD/gcc-build-8.3.0/gcc/include-fixed/stdlib.h",
+          "byteOffset": 613214,
+          "sha256": "017de163a13c12caca26cac7af4ae277d444496852e59afdb0e76b94e88522a9"
+        },
+        {
+          "text": "/home/matthiasblaesing/build-package-aix-ppc-7.0.0/native/libffi/src/prep_cif.c",
+          "byteOffset": 608876,
+          "sha256": "4d4fced618a2506d2d7d8257d5afb5893c00af8e63d3c4b5d89f464a3d4218f7"
+        }
+      ]
+    },
+    {
+      "resource": "com/sun/jna/aix-ppc64/libjnidispatch.a",
+      "originalSha256": "66a4b348b959d26a143ce54277330d767ae01f90e36308df09d5d110696445df",
+      "embeddedByteEvidence": [
+        {
+          "text": "/opt/freeware/lib/gcc/powerpc-ibm-aix7.1.0.0/8.3.0",
+          "byteOffset": 162040,
+          "sha256": "e778ff517ac9a381710aabbbd4bbd47f199adea0ec1fc57015fb7a69fdaca68b"
+        },
+        {
+          "text": "/opt/freeware/src/packages/BUILD/gcc-build-8.3.0/gcc/include-fixed/stdlib.h",
+          "byteOffset": 656567,
+          "sha256": "017de163a13c12caca26cac7af4ae277d444496852e59afdb0e76b94e88522a9"
+        },
+        {
+          "text": "/home/matthiasblaesing/build-package-aix-ppc64-7.0.0/native/libffi/src/prep_cif.c",
+          "byteOffset": 652139,
+          "sha256": "9ada08b857c2456e441931d2ea5d104cb3f3636f673b470320c07761b28fe9be"
+        }
+      ]
+    }
+  ],
+  "proceduralLead": {
+    "url": "https://github.com/java-native-access/jna/blob/c012e677e2e27df659595f1426c5e7751405bd00/www/BuildingNativeLibraries.md",
+    "documentationAddedCommit": "16e036a09e4b06b1c441058928bf3f00f0764115",
+    "documentationAddedDate": "2024-03-07",
+    "documentedBuildHost": "cfarm111.cfarm.net",
+    "documentedPackageVersion": "7.0.2",
+    "limit": "Later documentation; does not attest original 7.0.0 build commands, source/static inputs or SDK"
+  },
+  "inference": "Embedded GCC runtime/include paths narrow toolchain investigation to GCC 8.3.0/AIX 7.1 target; not proof of actual compiler invocation or complete SDK version",
+  "remaining": [
+    "Exact original build command and generated/static input binding",
+    "SDK/header/toolchain identity or a fresh reviewed-source build with applicable evidence"
+  ],
+  "acceptedCountIncrease": 0,
+  "paidRequests": 0
+}

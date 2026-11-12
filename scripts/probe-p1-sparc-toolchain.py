@@ -12,6 +12,11 @@ from evidence_run import run
 ROOT=Path(__file__).resolve().parents[1]
 IMAGE='ghcr.io/ryancnelson/sparc64-qemu-openindiana-20g@sha256:b92b4014f49d2adcac709d68902257c65076ccdcbf23b4e446e4a82ed899bd40'
 
+def isolated_guest_shell(shell):
+    # Keep the interactive console alive so its driver can report a real
+    # failure exit code instead of waiting for a marker after logout.
+    return 'set +e; ( '+shell+' )'
+
 def main():
     if platform.system()!='Linux' or os.environ.get('GITHUB_ACTIONS')!='true':
         raise ValueError('Dedicated Linux CI required')
@@ -65,13 +70,15 @@ def main():
         if provision:
             def guest(shell,label,timeout):
                 command(['docker','exec',name,'/usr/local/bin/appliance-guest-command','--socket','/state/console.sock',
-                         '--timeout',str(timeout),'--command',shell],label,timeout+30)
+                         '--timeout',str(timeout),'--command',isolated_guest_shell(shell)],label,timeout+30)
             guest('set -eu; /usr/sbin/devfsadm -i sppp -i sppptun; export NIAG_CHAN_DEV=/dev/rdsk/c1d0s2; nohup /opt/niag/bin/guest-chand 0 /tmp/niag0 </dev/null >/tmp/p1-chand.log 2>&1 & i=0; until test -S /tmp/niag0; do i=$((i+1)); if test "$i" -ge 120; then cat /tmp/p1-chand.log; exit 1; fi; sleep 1; done; nohup /usr/bin/perl /opt/niag/bin/guest-ppp-chan.pl 0 10.0.5.15:10.0.5.1 </dev/null >/tmp/p1-ppp.log 2>&1 & printf "nameserver 10.0.5.1\\n" > /etc/resolv.conf; echo P1_PPP_REQUESTED','guest-network',600)
             command(['docker','exec',name,'bash','-c','for ((i=0;i<180;i++)); do if grep -qx phase=ready /state/network/status.env 2>/dev/null; then cat /state/network/status.env; exit 0; fi; sleep 2; done; exit 1'],'ppp-ready',390)
             prefix='set -eu; export http_proxy=http://10.0.5.1:8888 https_proxy=http://10.0.5.1:8888; '
             guest(prefix+'pkg set-publisher -G "*" -g https://pkg.openindiana.aurora-opencloud.org/oi-sparc/ openindiana.org','guest-publisher',1200)
             packages='developer/gcc-10 runtime/java/openjdk17 developer/build/ant developer/versioning/git developer/build/gnu-make developer/gnu-binutils system/header developer/linker'
-            guest(prefix+'pkg install --accept '+packages,'guest-install-tools',2400)
+            request='consolidation/userland/userland-incorporation@latest '+packages
+            guest(prefix+'pkg install -nv --accept '+request,'guest-tools-plan',600)
+            guest(prefix+'pkg install --accept '+request,'guest-install-tools',2400)
             guest('set -eu; pkg list -Hv; pkg contents -m '+packages,'guest-tool-inputs',600)
             guest('set -eu; /usr/gcc/10/bin/gcc --version; java -version; ant -version; /usr/gnu/bin/make --version; git --version; /usr/bin/python3.14 -V','guest-tool-versions',300)
             report['status']='SPARC_BUILD_TOOLS_PROVISIONED_NOT_NATIVE_COMPONENT_ACCEPTANCE'

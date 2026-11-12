@@ -1,0 +1,13 @@
+{
+  "status": "SPARC_COORDINATED_INCORPORATION_INSTALL_PREPARED_NOT_VERIFIED",
+  "change": [
+    "Preview and install current incorporation and tools as one solver request",
+    "Keep strict guest commands in a subshell; preserve outer driver for actual failure marker"
+  ],
+  "officialReference": "https://docs.oracle.com/cd/E36784_01/html/E36802/tspkginstall.html",
+  "localIsolationControls": 3,
+  "actualShellFailureControl": "DRIVER_DONE:1; unreachable command not executed",
+  "runtimeFixVerified": false,
+  "acceptedCountIncrease": 0,
+  "paidRequests": 0
+}
