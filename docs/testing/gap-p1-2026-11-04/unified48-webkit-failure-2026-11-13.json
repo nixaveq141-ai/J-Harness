@@ -1,0 +1,51 @@
+{
+  "status": "FOUR_TARGETS_PASSED_ONE_WEBKIT_FIXTURE_FAILED_NOT_FULL_PRODUCT_ACCEPTANCE",
+  "runId": "43357020572",
+  "commit": "892b7d8314088a9fcf4c9f4bac3ee290f3fc9966",
+  "failedArtifact": {
+    "id": "14006868729",
+    "bytes": 122005291,
+    "sha256": "f34d291926f027ac7a1c94c1e852497f624c1e6c1245beea425aab55a6973bc4",
+    "crcVerified": true
+  },
+  "matrixSha256": "a782e26c3b05fe0efd97f4f7d6ebe8a51dc6fa23ae6f2f4d81565750c470488b",
+  "passedFixtures": 32,
+  "failedFixture": {
+    "engine": "webkit",
+    "fixture": "browser",
+    "command": {
+      "exitCode": 1,
+      "signal": null,
+      "timedOut": false,
+      "overflow": false,
+      "cleanup": {
+        "attempted": false
+      }
+    },
+    "error": "Fixture command failed, timed out or exceeded output limit",
+    "diagnostics": [
+      {
+        "path": ".build-cache/M10.5.9/browser/webkit/browser-M10-browser-failure.txt",
+        "sha256": "4d32ec885d4cd0b61c6f2abb81100215c38c5df47eb265bb55ef3e97832b7464"
+      },
+      {
+        "path": ".build-cache/M10.5.9/browser/webkit/browser-M10-failure.png",
+        "sha256": "bdcce6f00ab1e4db3ba619609edb9937c637dc66ef4b6dd3ab25c940f9beb7dd"
+      }
+    ],
+    "diagnosticCaptureIncomplete": false,
+    "log": ".build-cache/M10.5.9/browser/webkit/browser.log"
+  },
+  "observedFailure": "Backend large-task completion was followed by a detail-toggle click; the omission text timed out after 30 seconds. The frozen failure text shows the selected large conversation with the details toggle collapsed. Exact cause of the missed expansion is not established.",
+  "fixtureChange": "Wait for selected large conversation text and fully synchronized browser records before clicking; assert aria-expanded true. Keep the original omission visibility assertion and timeouts.",
+  "localValidation": {
+    "status": "PASS",
+    "browser": "157.0.8103.38",
+    "checks": 34,
+    "jarSha256": "5a70c514ac82e22d62dd362e1d0d1257e613ac92c97ebc0bccb4e4ba051388f8",
+    "recordSha256": "fef4f9dfb67b68bf8337f6f54dda90e73c5b7cb86d256b7118c10b84432c7c9c",
+    "scope": "Current local UX worktree and product JAR, Chrome only; not proof of remote WebKit fix or full48 acceptance"
+  },
+  "formalAcceptedCount": 44,
+  "paidRequests": 0
+}

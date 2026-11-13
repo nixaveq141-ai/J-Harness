@@ -43,5 +43,54 @@
   "acceptedCountIncrease": 0,
   "paidRequests": 0,
   "upstreamCommitUrl": "https://github.com/java-native-access/jna/commit/767662a90b269892776a48d1472dd2ab3fc614af",
-  "olderAixDiscussion": "https://github.com/java-native-access/jna/pull/1403#issuecomment-1005940860"
+  "olderAixDiscussion": "https://github.com/java-native-access/jna/pull/1403#issuecomment-1005940860",
+  "publicReview2026-11-13": {
+    "status": "EXACT_REBUILD_PR_LINK_FOUND_NO_PER_FILE_BUILD_ATTESTATION",
+    "upstreamCommit": "767662a90b269892776a48d1472dd2ab3fc614af",
+    "associatedPullRequest": "https://github.com/java-native-access/jna/pull/1504",
+    "associationApi": "https://api.github.com/repos/java-native-access/jna/commits/767662a90b269892776a48d1472dd2ab3fc614af/pulls",
+    "maintainerComments": [
+      {
+        "id": 1436040272,
+        "url": "https://github.com/java-native-access/jna/pull/1504#issuecomment-1436040272",
+        "createdAt": "2023-02-19T17:06:35Z",
+        "bodySha256": "ae5454d33a74435b94d6e6ed2cf439b4fdb0183235576de1a10e88716dbd4de3"
+      },
+      {
+        "id": 1440650136,
+        "url": "https://github.com/java-native-access/jna/pull/1504#issuecomment-1440650136",
+        "createdAt": "2023-02-22T19:09:07Z",
+        "bodySha256": "659d15961db235505714166798cec6efa0775e7ed6b5119f78d3424ec8e1e673"
+      },
+      {
+        "id": 1442336452,
+        "url": "https://github.com/java-native-access/jna/pull/1504#issuecomment-1442336452",
+        "createdAt": "2023-02-23T19:46:41Z",
+        "bodySha256": "b8bad817e70f5ec9b95cfd994f94ba9f3594dcd4b1b21e6517ba6c012e54812c"
+      },
+      {
+        "id": 1442371827,
+        "url": "https://github.com/java-native-access/jna/pull/1504#issuecomment-1442371827",
+        "createdAt": "2023-02-23T20:13:13Z",
+        "bodySha256": "ada7e5f0ba46d63a76981282e42bc4bedb2cb6c160588717f3c36fd23682a8f9"
+      }
+    ],
+    "finding": "The associated PR contains maintainer plans to rebuild the native libraries, a notice that the updated libraries will be pushed through this PR, and a later build-complete statement. These identify the rebuild context but contain no exact AIX compiler/SDK identity, actual command transcript, or generated-input-to-output attestation.",
+    "currentApiAvailability": {
+      "checkRunsEndpoint": "https://api.github.com/repos/java-native-access/jna/commits/767662a90b269892776a48d1472dd2ab3fc614af/check-runs",
+      "returnedCheckRunCount": 0,
+      "actionsRunsEndpoint": "https://api.github.com/repos/java-native-access/jna/actions/runs?head_sha=767662a90b269892776a48d1472dd2ab3fc614af&per_page=100",
+      "returnedActionsRunCount": 0,
+      "interpretation": "No records currently returned by these endpoints; this does not prove that no historical CI execution occurred."
+    },
+    "externalBuildOption": {
+      "documentation": "https://github.com/java-native-access/jna/blob/master/www/BuildingNativeLibraries.md",
+      "provider": "https://portal.cfarm.net/",
+      "access": "Provider requires an approved account; no account application or external message authorized or submitted. Current JNA instructions cannot retroactively attest the 2023 bytes."
+    },
+    "userHasAixSdkOrBuildEnvironment": false,
+    "userDirection": "Continue checking public material; preserve all 50 resources and original acceptance standards.",
+    "acceptedCountIncrease": 0,
+    "paidRequests": 0
+  }
 }

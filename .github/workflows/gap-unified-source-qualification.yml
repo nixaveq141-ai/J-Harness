@@ -1,4 +1,5 @@
 name: Unified source-native forty-eight-resource five-target qualification
+# Browser fixtures wait for selected conversation synchronization before detail expansion.
 on:
   workflow_dispatch:
   push:

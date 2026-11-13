@@ -205,7 +205,11 @@ try {
   check('configured secret is redacted from browser event text', !(await page.locator('body').innerText()).includes('fixture-secret-do-not-display'))
   const largeId = await newTask('large', '大正文省略边界')
   await ended(largeId)
+  // Backend completion precedes the selected conversation's final browser render.
+  await page.getByText('大正文省略边界', { exact: true }).waitFor()
+  await page.getByText('已同步全部记录', { exact: true }).waitFor()
   await page.getByRole('button', { name: /^展开执行细节/ }).click()
+  assert.equal(await page.getByRole('button', { name: /^收起执行细节/ }).getAttribute('aria-expanded'), 'true')
   await page.getByText('大事件正文已省略，仅保留摘要和哈希。', { exact: true }).first().waitFor()
   check('large payload omission is visible')
   const stored = await page.evaluate(() => JSON.stringify({ local: { ...localStorage }, session: { ...sessionStorage } }))
