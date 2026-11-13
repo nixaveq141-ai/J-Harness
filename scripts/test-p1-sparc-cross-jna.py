@@ -24,6 +24,15 @@ guest=module('guest_components',ROOT/'scripts/probes/p1-sparc-guest-components.p
 
 
 class ComponentBounds(unittest.TestCase):
+    def test_uninstalled_gcc_shared_runtime_is_rejected_before_guest_boot(self):
+        libc=' 0x00000001 (NEEDED) Shared library: [libc.so.1]\n'
+        self.assertEqual(['libc.so.1'],builder.require_runtime_dependencies(libc))
+        with self.assertRaisesRegex(ValueError,'Solaris libc'):
+            builder.require_runtime_dependencies('no parsed dependencies')
+        for dependency in ['libgcc_s.so.1','libgcc_s.so']:
+            with self.assertRaisesRegex(ValueError,'uninstalled GCC'):
+                builder.require_runtime_dependencies(libc+' (NEEDED) Shared library: ['+dependency+']\n')
+
     def test_shared_library_requires_target_abi_and_shared_kind(self):
         for bits,machine in [(32,2),(32,18),(64,43)]:
             raw=bytearray(64)

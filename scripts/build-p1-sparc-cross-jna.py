@@ -5,6 +5,7 @@ import json
 import os
 from pathlib import Path
 import platform
+import re
 import shutil
 import struct
 import subprocess
@@ -29,6 +30,15 @@ def require_elf(raw, bits, *, shared=False):
     if kind not in ({3} if shared else {2, 3}) or machine not in ({2, 18} if bits == 32 else {43}):
         raise ValueError('SPARC object kind/machine mismatch')
     return dict(bits=bits, endian='big', machine=machine, kind=kind)
+
+
+def require_runtime_dependencies(text):
+    needed=re.findall(r'\(NEEDED\).*?\[([^\]]+)\]',text)
+    if 'libc.so.1' not in needed:
+        raise ValueError('Explicit Solaris libc dynamic dependency required')
+    if any(name.startswith('libgcc_s.so') for name in needed):
+        raise ValueError('Guest files must not require an uninstalled GCC shared runtime')
+    return needed
 
 
 def main():
@@ -139,8 +149,17 @@ def main():
             command([*compiler, '-std=c11', '-Wall', '-Wextra', '-Werror', '-static-libgcc', '-O2', '-I' + str(ffi_headers),
                      '-I' + str(source / 'build/headers'), '-I' + str(java / 'include'), '-I' + str(java / 'include/linux'),
                      str(ROOT / 'scripts/probes/p1-jna.c'), '-ldl', '-o', str(probe)], target + '-probe-build')
+            smoke=guest/('smoke-'+str(bits))
+            command([*compiler,'-std=c11','-Wall','-Wextra','-Werror','-static-libgcc',
+                     str(ROOT/'scripts/probes/p1-sparc-width.c'),'-o',str(smoke)],target+'-smoke-build')
             require_elf(promotion.read_bytes(), bits)
             require_elf(probe.read_bytes(), bits)
+            require_elf(smoke.read_bytes(),bits)
+            dependencies={}
+            for binary in [output,promotion,probe,smoke]:
+                label=target+'-dependencies-'+binary.name
+                command([str(prefix/'bin'/(TRIPLE+'-readelf')),'-d',str(binary)],label)
+                dependencies[binary.name]=require_runtime_dependencies((out/(label+'.log')).read_text())
             after = {n: stream_sha256(source / n) for n in before if (source / n).is_file()}
             changed = sorted(n for n in before if before[n] != after.get(n))
             if set(before) != set(after) or set(changed) != {'native/Makefile', native_jar}:
@@ -149,10 +168,8 @@ def main():
             report['targets'][target] = dict(bits=bits, resource=resource, elf=identity, sourceTrackedFiles=before,
                                            sourceTrackedFilesAfter=after, sourceChangedPaths=changed,
                                            originalSha256=original_item['sha256'], originalLabelMismatch=(bits == 32),
-                                           libffiBuildInputs=ffi, outputSha256=stream_sha256(output))
+                                           libffiBuildInputs=ffi, outputSha256=stream_sha256(output),runtimeDependencies=dependencies)
         shutil.copyfile(ROOT / 'scripts/probes/p1-sparc-guest-components.py', guest / 'guest-run.py')
-        for bits in [32, 64]:
-            shutil.copyfile(tool / ('smoke-' + str(bits)), guest / ('smoke-' + str(bits)))
         manifest = dict(runId=report['runId'], commit=report['commit'],
                         members={p.name: stream_sha256(p) for p in guest.iterdir()})
         atomic_write_json(guest / 'manifest.json', manifest)
@@ -162,7 +179,8 @@ def main():
                 packed.add(path, arcname=path.name)
         report.update(status='SOURCE_COMPONENTS_CROSS_BUILT_NOT_EXECUTED', bundleSha256=stream_sha256(bundle),
                       bundleManifest=manifest, probeSourceSha256={n: stream_sha256(ROOT / n) for n in
-                      ['scripts/probes/p1-jna.c', 'scripts/probes/p1-jna-callback.h', 'scripts/probes/p1-jna-callback-control.c']})
+                      ['scripts/probes/p1-jna.c', 'scripts/probes/p1-jna-callback.h', 'scripts/probes/p1-jna-callback-control.c',
+                       'scripts/probes/p1-sparc-width.c']})
     except Exception as error:
         report['failureType'] = type(error).__name__
         raise

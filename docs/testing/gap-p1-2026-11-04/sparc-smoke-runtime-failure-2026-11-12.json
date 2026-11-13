@@ -1,0 +1,46 @@
+{
+  "status": "SOURCE_BUILDS_VERIFIED_GUEST_SMOKE_MISSING_GCC_RUNTIME_NOT_COMPONENT_ACCEPTANCE",
+  "runId": 43190289462,
+  "commit": "3b925bc98a250ab0981c65fd8fab655e829fa2a5",
+  "artifact": {
+    "id": 13930488240,
+    "bytes": 4894799,
+    "sha256": "a0aa3d27ad08979bd0fd09405124aa8ecc193a610408e6a83bda4f9f55f79016",
+    "crcVerified": true
+  },
+  "hostSourceInputs": 750,
+  "successfulBuildReceipts": 18,
+  "guestLogSha256": "54d486b354d1ea554a8e953ae9e5a22faa96b3fd98f19e267ab9d4bb0ed6a68c",
+  "actualGuestResult": {
+    "status": "INCOMPLETE",
+    "runId": "43190289462",
+    "commit": "3b925bc98a250ab0981c65fd8fab655e829fa2a5",
+    "system": {
+      "system": "SunOS",
+      "node": "oi-basecamp",
+      "release": "5.11",
+      "version": "illumos-31d3d510d0",
+      "machine": "sun4v",
+      "processor": "sparc"
+    },
+    "commands": [
+      {
+        "argv": [
+          "/var/tmp/jh-p1-43190289462/smoke-32"
+        ],
+        "exitCode": -9,
+        "stdout": "",
+        "stderr": "ld.so.1: smoke-32: fatal: libgcc_s.so.1: open failed: No such file or directory\n"
+      }
+    ],
+    "productAccepted": false,
+    "paidRequests": 0
+  },
+  "interpretation": "Bundle transfer, digest validation and native SunOS guest driver ran. First 32-bit smoke loader could not find libgcc_s.so.1. JNI/ffi component checks were not reached.",
+  "change": "Compile the small smoke from owned C source with -static-libgcc, as already used for other probes. Before guest boot record readelf dynamic dependencies for each library/probe/smoke and reject absent Solaris libc or uninstalled GCC shared runtime. Compiler toolchain itself is reused.",
+  "localControls": 5,
+  "actualFixVerified": false,
+  "acceptedCountIncrease": 0,
+  "formalAccepted": 44,
+  "paidRequests": 0
+}
