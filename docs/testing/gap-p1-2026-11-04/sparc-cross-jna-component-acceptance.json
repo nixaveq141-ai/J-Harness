@@ -1,0 +1,71 @@
+{
+  "status": "TWO_SPARC_JNA_SOURCE_ABI_FFI_COMPONENTS_INDEPENDENTLY_VERIFIED_NOT_PRODUCT_ACCEPTANCE",
+  "runId": "43348439700",
+  "commit": "392872a97434b548de3e40043ec26629513c68e4",
+  "artifact": {
+    "id": 14003640994,
+    "bytes": 5616563,
+    "sha256": "2b80fd66e32b372795b1525ddac89ce792b8ad3ef211d8d65d05fd3b37bd8107"
+  },
+  "buildReportSha256": "ede166fc64eddf085901d4d7166f8ac416da4d90a99bc046e6f5cdf62f32df22",
+  "hostReportSha256": "e0348e4355b2ba7d1cc1968e288facb7bdd46b0f6f271a8cd66361d0cd4fc72d",
+  "guestResultsSha256": "59b805e37cc70418bffd798d506a2a36b4d0081d5c6da581880b76e3c83b7500",
+  "bundleSha256": "d3d64a1e6cfdcb473a1839a8f6a48322cd7cabb6c747ec11714f2699ef92bb04",
+  "sourceRevision": "c366bc4fd0c50a30ac8d2475603ec564f6611462",
+  "toolchainArchiveSha256": "62f1e00ea0b992c5e4b382ac9304dfcf565154b39936c3f6d5fe1402c448008b",
+  "hostGitInputs": 751,
+  "buildCommandReceipts": 28,
+  "guestHostCommandReceipts": 21,
+  "actualGuestCommands": 8,
+  "platforms": [
+    {
+      "target": "sparc",
+      "bits": 32,
+      "resource": "com/sun/jna/sunos-sparc/libjnidispatch.so",
+      "outputSha256": "363da04735c1ed3b9563ef77753a6246e4458fc09fa92f9b6502154f3d3c5f6f",
+      "elf": {
+        "bits": 32,
+        "endian": "big",
+        "machine": 18,
+        "kind": 3
+      },
+      "originalSha256": "58e637222be67679df8f2473967555b9697908e65ca2ddf32719d1d5e35769db",
+      "originalLabelMismatch": true,
+      "probeSha256": "027639cba22059f8bbe9ccbf06761820c2df5dbaf311a1bd5b52033d9927f2b4",
+      "sourceFiles": 1297,
+      "sourceTreeSha256": "a57c7c4ca1cb816f01ba91274922b6f0c0882b8b1a122121ac5d82f67ccce73b",
+      "libffiReleaseSha256": "d66c56ad259a82cf2a9dfc408b32bf5da52371500b84745f7fb8b645712df676"
+    },
+    {
+      "target": "sparcv9",
+      "bits": 64,
+      "resource": "com/sun/jna/sunos-sparcv9/libjnidispatch.so",
+      "outputSha256": "9cd74ce3bdeb087e51b8a163490be1914f045ba364cd7bcf3aaff1473d94979d",
+      "elf": {
+        "bits": 64,
+        "endian": "big",
+        "machine": 43,
+        "kind": 3
+      },
+      "originalSha256": "58e637222be67679df8f2473967555b9697908e65ca2ddf32719d1d5e35769db",
+      "originalLabelMismatch": false,
+      "probeSha256": "a3b5403a738c175e295155dd8b3fba4f1bdde56fc59473de911ea6b37bfe7a57",
+      "sourceFiles": 1297,
+      "sourceTreeSha256": "a57c7c4ca1cb816f01ba91274922b6f0c0882b8b1a122121ac5d82f67ccce73b",
+      "libffiReleaseSha256": "d66c56ad259a82cf2a9dfc408b32bf5da52371500b84745f7fb8b645712df676"
+    }
+  ],
+  "probeSourceSha256": {
+    "scripts/probes/p1-jna.c": "2cf19ee9a0e28661bbfd4306456b3d078e02b59294bd96ab228d234debe70847",
+    "scripts/probes/p1-jna-callback.h": "b98767a0716476d59b8a81af7cd5c5550a348bb8ce9b0b55fff294009bd94887",
+    "scripts/probes/p1-jna-callback-control.c": "5de3b07abad6498268ed2c5f82a12806da31e86d41fffcb0c75c17cd5f638937",
+    "scripts/probes/p1-sparc-width.c": "c20d63d9fabb61ebc22296ee2bb6f3751f4f2fcac11488d989602351df076e9b"
+  },
+  "generatedHelperSha256": "506b98fd979eff158e0a83b534fad0ed1974c65ee9394026becef0410a67f142",
+  "paidRequests": 0,
+  "limits": [
+    "C-level JNI primitives and actual libffi call/closure only; no complete target JVM initialization or AWT functionality proof",
+    "No product replacement or full OS/CPE clearance",
+    "No arbitrary Solaris release or physical-machine compatibility certification"
+  ]
+}

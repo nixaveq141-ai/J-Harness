@@ -1,9 +1,9 @@
 {
   "status": "P1_IN_PROGRESS_NOT_COMPLETE",
   "frozenP0Tasks": 36,
-  "independentlyVerifiedNewSourceComponents": 31,
-  "assembledCandidateReviewedCount": 45,
-  "assembledCandidateUnresolvedCount": 5,
+  "independentlyVerifiedNewSourceComponents": 33,
+  "assembledCandidateReviewedCount": 47,
+  "assembledCandidateUnresolvedCount": 3,
   "formalAcceptedRuntimeCommit": "de8220eb74267ce37a05d1dd31c4dde54be7bd76",
   "formalAcceptedRuntimeReviewedCount": 44,
   "formalAcceptedRuntimeUnresolvedCount": 6,
@@ -281,14 +281,18 @@
       "coordinate": "net.java.dev.jna:jna:5.14.0",
       "os": "sunos",
       "cpu": "sparc",
-      "status": "OPEN",
-      "requiredToolchain": "sunos目标SDK/系统头文件与原生或交叉编译器",
-      "nextAction": "已确认受控模拟VM启动；补齐精确gcc/JDK/Ant/Git及SDK后固定源构建/ABI验证",
+      "status": "COMPONENT_SOURCE_VERIFIED_ASSEMBLED_FULL_PRODUCT_PENDING",
+      "requiredToolchain": "Fixed GCC13.4/Binutils2.40 Solaris SPARC cross toolchain and official 31d3d510d0 sysroot; actual SunOS sun4v guest execution",
+      "nextAction": "Local47 assembled; batch unified five-target product regression remains pending",
       "blockers": [
-        "精确编译工具/SDK及其输入尚未配齐",
-        "模拟环境启动已核；实际组件构建/加载仍待验证，额外实体机器按用户指令跳过"
+        "Unified assembly and full product regression pending"
       ],
-      "toolchainFeasibilityReceipt": "docs/testing/gap-p1-2026-11-04/sparc-boot-inventory-2026-11-08.json"
+      "toolchainFeasibilityReceipt": "docs/testing/gap-p1-2026-11-04/sparc-boot-inventory-2026-11-08.json",
+      "candidateSha256": "363da04735c1ed3b9563ef77753a6246e4458fc09fa92f9b6502154f3d3c5f6f",
+      "componentRunId": "43348439700",
+      "componentCommit": "392872a97434b548de3e40043ec26629513c68e4",
+      "componentReceipt": "docs/testing/gap-p1-2026-11-04/sparc-cross-jna-component-acceptance.json",
+      "assemblyReceipt": "docs/testing/gap-p1-2026-11-04/assembly47-control-2026-11-13.json"
     },
     {
       "taskId": "NATIVE-17",
@@ -297,14 +301,18 @@
       "coordinate": "net.java.dev.jna:jna:5.14.0",
       "os": "sunos",
       "cpu": "sparcv9",
-      "status": "OPEN",
-      "requiredToolchain": "sunos目标SDK/系统头文件与原生或交叉编译器",
-      "nextAction": "已确认受控模拟VM启动；补齐精确gcc/JDK/Ant/Git及SDK后固定源构建/ABI验证",
+      "status": "COMPONENT_SOURCE_VERIFIED_ASSEMBLED_FULL_PRODUCT_PENDING",
+      "requiredToolchain": "Fixed GCC13.4/Binutils2.40 Solaris SPARC cross toolchain and official 31d3d510d0 sysroot; actual SunOS sun4v guest execution",
+      "nextAction": "Local47 assembled; batch unified five-target product regression remains pending",
       "blockers": [
-        "精确编译工具/SDK及其输入尚未配齐",
-        "模拟环境启动已核；实际组件构建/加载仍待验证，额外实体机器按用户指令跳过"
+        "Unified assembly and full product regression pending"
       ],
-      "toolchainFeasibilityReceipt": "docs/testing/gap-p1-2026-11-04/sparc-boot-inventory-2026-11-08.json"
+      "toolchainFeasibilityReceipt": "docs/testing/gap-p1-2026-11-04/sparc-boot-inventory-2026-11-08.json",
+      "candidateSha256": "9cd74ce3bdeb087e51b8a163490be1914f045ba364cd7bcf3aaff1473d94979d",
+      "componentRunId": "43348439700",
+      "componentCommit": "392872a97434b548de3e40043ec26629513c68e4",
+      "componentReceipt": "docs/testing/gap-p1-2026-11-04/sparc-cross-jna-component-acceptance.json",
+      "assemblyReceipt": "docs/testing/gap-p1-2026-11-04/assembly47-control-2026-11-13.json"
     },
     {
       "taskId": "NATIVE-18",

@@ -10,6 +10,12 @@ builder=importlib.util.module_from_spec(spec);spec.loader.exec_module(builder)
 
 
 class TargetIdentityTest(unittest.TestCase):
+    def test_interpreted_ant_is_scoped_to_i386_and_retains_native_target(self):
+        options=['-Dos.prefix=openbsd-x86','-DARCH=i386']
+        self.assertEqual(['env','ANT_OPTS=-Xint','ant','-Dbuild-native=true',*options,'native'],builder.ant_command('x86',options))
+        self.assertEqual(['ant','-Dbuild-native=true',*options,'native'],builder.ant_command('x86-64',options))
+        with self.assertRaises(ValueError):builder.ant_command('other',options)
+
     def test_exact_compiled_path_and_ant_class_mirror(self):
         with tempfile.TemporaryDirectory() as folder:
             root=Path(folder);native=root/'build/native-openbsd-x86-64/libjnidispatch.so'

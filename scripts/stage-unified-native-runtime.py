@@ -263,6 +263,15 @@ def main():
             target=payload/'p1-cyglaunch';target.mkdir(parents=True)
             dest=target/'cyglaunch.exe';dest.write_bytes(item['path'].read_bytes());replacements[name]={**item,'path':dest}
         receipts['p1-cyglaunch']=sha((ROOT/module.RECEIPT).read_bytes())
+    if os.environ.get('JHARNESS_P1_SPARC_JNA')=='1':
+        spec=importlib.util.spec_from_file_location('p1_sparc_jna',ROOT/'scripts/stage-p1-sparc-jna.py')
+        module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+        extra=module.load_components(ROOT/'.build-cache/p1-sparc-jna-inputs')
+        if set(extra)&set(replacements) or len(extra)!=2:raise ValueError('Two disjoint SPARC JNA replacements required')
+        for name,item in extra.items():
+            target=payload/'p1-sparc'/name.split('/')[-2];target.mkdir(parents=True)
+            dest=target/'libjnidispatch.so';dest.write_bytes(item['path'].read_bytes());replacements[name]={**item,'path':dest}
+        receipts['p1-sparc-jna']=sha((ROOT/module.RECEIPT).read_bytes())
     expected_count=os.environ.get('JHARNESS_EXPECTED_NATIVE_COUNT')
     if expected_count is not None and (not expected_count.isdigit() or len(replacements)!=int(expected_count)):
         raise ValueError('Actual native replacement count differs from requested candidate')

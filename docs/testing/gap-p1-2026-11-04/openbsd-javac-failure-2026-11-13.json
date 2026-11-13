@@ -1,0 +1,23 @@
+{
+  "status": "EXACT_SOURCE_JAVAC_SYNTAX_FAILURE_INTERPRETER_COMPARISON_PENDING",
+  "runId": 43348644902,
+  "commit": "c1db165f2947b37d668344a88a30f7cba382e183",
+  "artifact": {
+    "id": 14004031747,
+    "bytes": 2792769,
+    "sha256": "922e44571546500d387d60ad54558497d319d1ef167432443ccb30681b1030f0",
+    "crcVerified": true
+  },
+  "sourceFilesMatchingIndependentBaseline": 1297,
+  "structureJavaSha256": "0cdbe77da1e1c3355158c7006ba51645172d5ff8fda8bea937477b674fad5ab5",
+  "buildLogSha256": "c12441ae7717af500c118714b12d37007fa588dda933e9dd6d5a98d0f37f31c7",
+  "buildExitCode": 1,
+  "timedOut": false,
+  "observed": "Native OpenBSD i386 JDK21 compiler reports illegal start of expression for void.class in exact fixed Structure.java. Source changes are excluded by baseline fingerprints; JVM/JIT/emulation cause not proved.",
+  "change": "Run i386 Ant through explicit env ANT_OPTS=-Xint; record java -Xint -version and require interpreted mode. x64 unchanged; no source patch, budget extension or native probe weakening.",
+  "officialAntEnvironmentReference": "https://ant.apache.org/manual/running.html",
+  "controlsPassed": 3,
+  "actualFixVerified": false,
+  "formalAccepted": 44,
+  "paidRequests": 0
+}

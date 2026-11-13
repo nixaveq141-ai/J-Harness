@@ -39,6 +39,11 @@ def compiled_library(source,target):
  return library
 
 
+def ant_command(target,options):
+ if target not in TARGETS:raise ValueError('Reviewed OpenBSD target required')
+ return (['env','ANT_OPTS=-Xint'] if target=='x86' else [])+['ant','-Dbuild-native=true',*options,'native']
+
+
 def main():
  parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('target',choices=TARGETS);a=parser.parse_args()
  if platform.system()!='OpenBSD' or platform.machine()!=TARGETS[a.target][3]:raise ValueError('Native OpenBSD target VM required')
@@ -84,7 +89,11 @@ def main():
   options=['-Dmake=gmake','-Dos.prefix=openbsd-'+target,'-DARCH='+arch,'-DCC='+' '.join(compiler),'-Dcflags_extra.native=-I/usr/local/include']
   if target=='x86':options+=['-DEXTRA_MAKE_OPTS=HOST_CONFIG=--host=i386-unknown-openbsd']
   os.environ['MAKE']='gmake'
-  command(['ant','-Dbuild-native=true',*options,'native'],'build',source)
+  if target=='x86':
+   command(['java','-Xint','-version'],'build-jvm-mode')
+   if 'interpreted mode' not in (out/'build-jvm-mode.log').read_text():raise ValueError('Interpreted build JVM required')
+   report['buildConfig']['antJvmOptions']=['-Xint']
+  command(ant_command(target,options),'build',source)
   library=compiled_library(source,target);identity=require_elf(library.read_bytes(),target);output=out/'libjnidispatch.so';output.write_bytes(library.read_bytes())
   command(['readelf','-h','-d','-Ws',str(output)],'elf-audit')
   ffi_headers=library.parent/'libffi/include';probe=out/'jni-probe';java=Path(os.environ['JAVA_HOME'])
