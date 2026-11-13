@@ -1,9 +1,9 @@
 {
   "status": "P1_IN_PROGRESS_NOT_COMPLETE",
   "frozenP0Tasks": 36,
-  "independentlyVerifiedNewSourceComponents": 33,
-  "assembledCandidateReviewedCount": 47,
-  "assembledCandidateUnresolvedCount": 3,
+  "independentlyVerifiedNewSourceComponents": 34,
+  "assembledCandidateReviewedCount": 48,
+  "assembledCandidateUnresolvedCount": 2,
   "formalAcceptedRuntimeCommit": "de8220eb74267ce37a05d1dd31c4dde54be7bd76",
   "formalAcceptedRuntimeReviewedCount": 44,
   "formalAcceptedRuntimeUnresolvedCount": 6,
@@ -266,13 +266,17 @@
       "coordinate": "net.java.dev.jna:jna:5.14.0",
       "os": "openbsd",
       "cpu": "x86",
-      "status": "NATIVE_VM_BUILD_ENTRY_IMPLEMENTED_NOT_VERIFIED",
-      "requiredToolchain": "openbsd目标SDK/系统头文件与原生或交叉编译器",
-      "nextAction": "先实核签名i386 PXE全系统启动与原生工具链，实际JNI/ffi通过并独立验原包后才可集成",
+      "status": "COMPONENT_SOURCE_VERIFIED_ASSEMBLED_FULL_PRODUCT_PENDING",
+      "requiredToolchain": "Signed OpenBSD7.9 i386 native VM, cc and JDK21 interpreted Ant",
+      "nextAction": "Local48 assembled; one consolidated five-target product qualification pending",
       "blockers": [
-        "独立i386 VM启动/原生构建/探针未验证",
-        "统一候选产品回归待"
-      ]
+        "Five-target unified product qualification pending"
+      ],
+      "candidateSha256": "66e5d3d6da5f644af0379241419649f21df680f18be9c62f6cce70df9ba8b550",
+      "componentRunId": "43351632149",
+      "componentCommit": "5791e864417f40fe77e0085bc036712bd39aa014",
+      "componentReceipt": "docs/testing/gap-p1-2026-11-04/openbsd-i386-jna-component-acceptance.json",
+      "assemblyReceipt": "docs/testing/gap-p1-2026-11-04/assembly48-control-2026-11-13.json"
     },
     {
       "taskId": "NATIVE-16",

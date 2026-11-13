@@ -9,7 +9,8 @@ import unittest
 ROOT=Path(__file__).resolve().parents[1]
 s=importlib.util.spec_from_file_location('stage',ROOT/'scripts/stage-p1-sparc-jna.py')
 m=importlib.util.module_from_spec(s);s.loader.exec_module(m)
-ORIGINAL=ROOT/'.build-cache/p1-raw-43348439700'
+ORIGINAL=ROOT/'.build-cache/p1-sparc-jna-inputs'
+if not (ORIGINAL/'14003640994.zip').exists():ORIGINAL=ROOT/'.build-cache/p1-raw-43348439700'
 
 
 class AcceptedComponents(unittest.TestCase):

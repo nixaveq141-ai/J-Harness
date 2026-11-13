@@ -1,0 +1,26 @@
+{
+  "status": "LOCAL48_ASSEMBLED_NOT_PRODUCT_ACCEPTANCE",
+  "parentJarSha256": "7b565ae3f5a25cf1eb423cd681902bf5bda229ababca564a414b75dcd00ae68d",
+  "candidateJarSha256": "f03f01ab0989c7d75e29b6a58ac1281533da4f6bab4a0430e13bf7d0c7154789",
+  "reviewed": 48,
+  "retainedOriginal": 2,
+  "retainedResources": [
+    "com/sun/jna/aix-ppc/libjnidispatch.a",
+    "com/sun/jna/aix-ppc64/libjnidispatch.a"
+  ],
+  "actualChangedFromParent": [
+    "META-INF/jharness/source-native-preview.json",
+    "com/sun/jna/openbsd-x86/libjnidispatch.so"
+  ],
+  "preservedParentEntries": 4537,
+  "preservedNonNativeEntries": 4488,
+  "sameEntrySet": true,
+  "allReviewedBytesVerified": true,
+  "original47Unchanged": true,
+  "localProductJarUnchanged": true,
+  "globalSourceMapChanged": false,
+  "fullMatrixStarted": false,
+  "formalAccepted": 44,
+  "paidRequests": 0,
+  "componentReceipt": "docs/testing/gap-p1-2026-11-04/openbsd-i386-jna-component-acceptance.json"
+}

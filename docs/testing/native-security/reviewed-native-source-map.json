@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "scope": "44 sources formally accepted in five-target byte-identical product qualification;6 original source chains remain unresolved. Not full OS/CPE clearance.",
+  "scope": "48 independently source-verified components in candidate; five-target product qualification pending. Prior formal product coverage44; two AIX original source chains unresolved. Not full OS/CPE clearance.",
   "resources": {
     "com/sun/jna/win32-x86-64/jnidispatch.dll": {
       "sha256": "c88e200b240dfa54c5b852a335b28683e64a074d30ceee7c17ffc282058891a2",
@@ -536,6 +536,67 @@
         "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/windows-arm64-console-components-acceptance.json",
         "scope": "Actual ARM64 JVM ConPTY source-component cwd/process-list/resize/exit and missing-library controls; full application on ARM64 not certified"
       }
+    },
+    "com/sun/jna/openbsd-x86/libjnidispatch.so": {
+      "origin": {
+        "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/openbsd-i386-jna-component-acceptance.json",
+        "componentProbeRun": "43351632149",
+        "componentReportSha256": "51ecd0e08e99069100961462a2f5452b53fbcb9caa3ef77e6ae22c49c1eb9700",
+        "libffiReleaseSha256": "d66c56ad259a82cf2a9dfc408b32bf5da52371500b84745f7fb8b645712df676",
+        "scope": "Native OpenBSD i386 C JNI primitives and real ffi/closure; full Java product qualification pending",
+        "sourceBuildCommit": "5791e864417f40fe77e0085bc036712bd39aa014",
+        "sourceBuildRun": "43351632149",
+        "sourceRevision": "c366bc4fd0c50a30ac8d2475603ec564f6611462"
+      },
+      "sha256": "66e5d3d6da5f644af0379241419649f21df680f18be9c62f6cce70df9ba8b550"
+    },
+    "com/sun/jna/sunos-sparc/libjnidispatch.so": {
+      "origin": {
+        "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/sparc-cross-jna-component-acceptance.json",
+        "componentProbeRun": "43348439700",
+        "componentReportSha256": "ede166fc64eddf085901d4d7166f8ac416da4d90a99bc046e6f5cdf62f32df22",
+        "guestResultsSha256": "59b805e37cc70418bffd798d506a2a36b4d0081d5c6da581880b76e3c83b7500",
+        "libffiReleaseSha256": "d66c56ad259a82cf2a9dfc408b32bf5da52371500b84745f7fb8b645712df676",
+        "scope": "Actual SunOS guest C JNI primitives and ffi/closure; complete JVM/AWT not certified",
+        "sourceBuildCommit": "392872a97434b548de3e40043ec26629513c68e4",
+        "sourceBuildRun": "43348439700",
+        "sourceRevision": "c366bc4fd0c50a30ac8d2475603ec564f6611462",
+        "toolchainArchiveSha256": "62f1e00ea0b992c5e4b382ac9304dfcf565154b39936c3f6d5fe1402c448008b"
+      },
+      "sha256": "363da04735c1ed3b9563ef77753a6246e4458fc09fa92f9b6502154f3d3c5f6f"
+    },
+    "com/sun/jna/sunos-sparcv9/libjnidispatch.so": {
+      "origin": {
+        "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/sparc-cross-jna-component-acceptance.json",
+        "componentProbeRun": "43348439700",
+        "componentReportSha256": "ede166fc64eddf085901d4d7166f8ac416da4d90a99bc046e6f5cdf62f32df22",
+        "guestResultsSha256": "59b805e37cc70418bffd798d506a2a36b4d0081d5c6da581880b76e3c83b7500",
+        "libffiReleaseSha256": "d66c56ad259a82cf2a9dfc408b32bf5da52371500b84745f7fb8b645712df676",
+        "scope": "Actual SunOS guest C JNI primitives and ffi/closure; complete JVM/AWT not certified",
+        "sourceBuildCommit": "392872a97434b548de3e40043ec26629513c68e4",
+        "sourceBuildRun": "43348439700",
+        "sourceRevision": "c366bc4fd0c50a30ac8d2475603ec564f6611462",
+        "toolchainArchiveSha256": "62f1e00ea0b992c5e4b382ac9304dfcf565154b39936c3f6d5fe1402c448008b"
+      },
+      "sha256": "9cd74ce3bdeb087e51b8a163490be1914f045ba364cd7bcf3aaff1473d94979d"
+    },
+    "resources/com/pty4j/native/win/x86-64/cyglaunch.exe": {
+      "origin": {
+        "acceptanceReceipt": "docs/testing/gap-p1-2026-11-04/cyglaunch-component-acceptance.json",
+        "componentProbeRun": "42375096503",
+        "componentReportSha256": "156c3a453189c65f5f4acb4a55f10adeefdbdf25acebb77824732ed6bc7ee628",
+        "portabilityPatch": {
+          "afterSha256": "c662d5944bf7d26b04df21b83629c997b020f7af66832b25d2ce9985a343c8f8",
+          "beforeSha256": "93cd28367fdf2c39495f2ed112a076edf45eacc28489e4a0c6bc1833511e4443",
+          "path": "native/exec_pty.c",
+          "reason": "sys/syscall.h is Linux-only here; its close_range use is already guarded by __linux__ in fixed upstream source"
+        },
+        "scope": "Cygwin native PTY three pipes/cwd/input/exit in logged and default no-log modes; full Java product qualification pending",
+        "sourceBuildCommit": "d10e7bc7b5f9c917b84760ba6a12e04339b2dd89",
+        "sourceBuildRun": "42375096503",
+        "sourceRevision": "b7554d649f6374183040e6554942b6d5b028b5e5"
+      },
+      "sha256": "07f6952a100e25fd733a936f71e331d9d3a87fcc557fc0f7b04ba1ba0f309590"
     }
   },
   "fullRuntimeQualification": {

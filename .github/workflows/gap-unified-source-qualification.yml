@@ -1,4 +1,4 @@
-name: Unified source-native forty-four-resource five-target qualification
+name: Unified source-native forty-eight-resource five-target qualification
 on:
   workflow_dispatch:
   push:
@@ -38,7 +38,10 @@ jobs:
       JHARNESS_P1_OPENBSD_JNA: '1'
       JHARNESS_P1_ARM64_WINPTY: '1'
       JHARNESS_P1_ARM64_CONSOLE: '1'
-      JHARNESS_EXPECTED_NATIVE_COUNT: '44'
+      JHARNESS_P1_CYGLAUNCH: '1'
+      JHARNESS_P1_SPARC_JNA: '1'
+      JHARNESS_P1_OPENBSD_I386_JNA: '1'
+      JHARNESS_EXPECTED_NATIVE_COUNT: '48'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
@@ -191,6 +194,23 @@ jobs:
       - run: python scripts/test-p1-openbsd-jna-stage.py
       - run: python scripts/test-p1-sunos-jna-stage.py
       - run: python scripts/test-p1-arm64-component-stage.py
+      - uses: actions/download-artifact@v4
+        with:
+          artifact-ids: '13575492220'
+          run-id: '42375096503'
+          github-token: ${{ github.token }}
+          merge-multiple: true
+          path: .build-cache/p1-cyg-inputs/p1-cygwin-x64-launcher-source
+      - name: Fetch exact reviewed SPARC and OpenBSD original archives
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python scripts/fetch-p1-sparc-artifact.py sparc
+          python scripts/fetch-p1-sparc-artifact.py openbsd-i386
+      - run: python scripts/test-p1-cyglaunch-stage.py
+      - run: python scripts/test-p1-sparc-artifact-input.py
+      - run: python scripts/test-p1-sparc-jna-stage.py
+      - run: python scripts/test-p1-openbsd-i386-stage.py
       - name: Install browser dependencies on Linux
         if: runner.os == 'Linux'
         run: |
