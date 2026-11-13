@@ -142,16 +142,20 @@ def verify_packaged_matrix(base,run_id,source,digest,windows,commit):
         validate(receipt,name=name,log=bounded_path(base,'.build-cache/M10.5.9/'+name+'.log'),run_id=run_id,source=source,cwd='.')
 
 
-def check(directory,commit,run,attempt='1',extended=False):
+def check(directory,commit,run,attempt='1',extended=False,attempts=None):
     results={}
     contract=read_json_snapshot(ROOT,'scripts/contracts/m1059-java-cases.json').data
     labels=['windows-2022','ubuntu-24.04','macos-latest']+(['ubuntu-24.04-arm','macos-15-intel'] if extended else [])
+    if attempts is not None and (set(attempts)!=set(labels)
+            or any(not isinstance(v,str) or not re.fullmatch(r'[1-9][0-9]*',v) for v in attempts.values())):
+        raise ValueError('Exact per-target attempt identities required')
     for label in labels:
         base=directory/label
         r=read_json_snapshot(base,'.build-cache/source-qualification/result.json').data
         expected_platform={'windows-2022':'WINDOWS','ubuntu-24.04':'LINUX','macos-latest':'DARWIN',
                            'ubuntu-24.04-arm':'LINUX','macos-15-intel':'DARWIN'}[label]
-        if (r['commit']!=commit or r['runId']!='unified-source-'+run+'-'+attempt+'-'+label+'-'+commit
+        target_attempt=attempt if attempts is None else attempts[label]
+        if (r['commit']!=commit or r['runId']!='unified-source-'+run+'-'+target_attempt+'-'+label+'-'+commit
                 or r['status']!=expected_platform+'_SOURCE_JAVA_VERIFY_AND_CANDIDATE_INSTALL_PASS_NOT_RELEASE'
                 or r['javaTests']!=735 or len(r['javaSuites'])!=124 or r['paidRequests']!=0):
             raise ValueError('Successful same-commit same-run full qualification required')

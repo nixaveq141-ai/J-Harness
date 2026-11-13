@@ -1,0 +1,26 @@
+{
+  "status": "STRICT_TARGETED_RETRY_GATE_PREPARED_NOT_CI_ACCEPTED",
+  "qualificationRunId": "43360569439",
+  "qualificationCommit": "f03a214ba1df3a23cbcc501730e4e9a3286ea6df",
+  "purpose": "Reuse four successful same-commit target originals and retry only failed Windows, avoiding another five-target execution.",
+  "invariants": [
+    "All five target latest attempts must be successful according to freshly read GitHub API metadata; no earlier success may override a later failure.",
+    "Each receipt retains its actual run/attempt/target identity. All targets must belong to the fixed same qualification run and commit.",
+    "Full source Git inputs, 735 Java cases and actual XML, every command receipt/log, browser/R4 cases, candidate install and identical runtime checks remain required.",
+    "The qualified source is separately checked out at its original exact commit. Qualification helper rules/contracts must remain byte-identical.",
+    "48 reviewed native resources and both original AIX resources remain in the actual 50-item inventory.",
+    "Fresh before/after server snapshots must select identical latest jobs and artifact IDs/digests. Artifact creation must bind to the selected job interval.",
+    "Default uniform-attempt gate behavior remains unchanged. Separate independent proof workflow handles explicit server-bound per-target attempts."
+  ],
+  "validation": {
+    "existingEqualityTests": 5,
+    "newRetryIdentityTests": 3,
+    "actualCurrentFourSuccessesAndWindowsFailureRejected": true,
+    "testFixtureCorrection": "Initial missing-target control removed only historical Windows attempt while retaining latest Windows; corrected to remove an entire target. No acceptance rule weakened."
+  },
+  "retryApproval": "Automatic approval rejected remote failed-artifact deletion. No retry script mutation executed. Explicit approval is still required before removing artifact14008369227 to free its immutable upload name.",
+  "preservedFailureReceipt": "docs/testing/gap-p1-2026-11-04/unified48-sync-windows-failure-2026-11-13.json",
+  "formalAcceptedCount": 44,
+  "fullP1Complete": false,
+  "paidRequests": 0
+}

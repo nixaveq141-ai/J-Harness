@@ -1,0 +1,51 @@
+{
+  "status": "FOUR_TARGET_ORIGINALS_VERIFIED_WINDOWS_WEBKIT_CLICK_FAILED_NOT_PRODUCT_ACCEPTANCE",
+  "runId": "43360569439",
+  "commit": "f03a214ba1df3a23cbcc501730e4e9a3286ea6df",
+  "failedArtifact": {
+    "id": "14008369227",
+    "bytes": 115294457,
+    "sha256": "3f9845c87507843ce3244b3229880750312482adb6528431ae2c3a4ed9b139e0",
+    "crcVerified": true,
+    "localOriginal": ".build-cache/p1-raw-43360569439/14008369227.zip"
+  },
+  "matrixSha256": "056c2f16e1922d465e5a24451658166635ad49e5a352533b1c81816702ed28e7",
+  "passedFixtures": 32,
+  "failedFixture": {
+    "engine": "webkit",
+    "fixture": "browser",
+    "command": {
+      "exitCode": 1,
+      "signal": null,
+      "timedOut": false,
+      "overflow": false,
+      "cleanup": {
+        "attempted": false
+      }
+    },
+    "error": "Fixture command failed, timed out or exceeded output limit",
+    "diagnostics": [
+      {
+        "path": ".build-cache/M10.5.9/browser/webkit/browser-M10-browser-failure.txt",
+        "sha256": "c1836608434d023fd06788ca15e894181b93ebb7b02cf90e5988b6d63c5d582d"
+      },
+      {
+        "path": ".build-cache/M10.5.9/browser/webkit/browser-M10-failure.png",
+        "sha256": "449c3d49735bcddbad440303ea5a743c0aa64357c326f75df9a0aca62d006420"
+      }
+    ],
+    "diagnosticCaptureIncomplete": false,
+    "log": ".build-cache/M10.5.9/browser/webkit/browser.log"
+  },
+  "observedFailure": "WebKit new-task click after UNKNOWN timed out waiting for visible/enabled/stable. Snapshot shows the button present without disabled attribute. Root cause remains unproven.",
+  "localValidation": {
+    "browser": "26.5",
+    "checks": 34,
+    "recordSha256": "8526cfe0a834b9e2969f26cb7453a52f410c5b8ebdb65e620427fad13d6874f9",
+    "jarSha256": "5a70c514ac82e22d62dd362e1d0d1257e613ac92c97ebc0bccb4e4ba051388f8",
+    "scope": "Current UX worktree WebKit, not a substitute for CI qualification"
+  },
+  "nextAction": "Preserve exact failed original and retry only the failed same-commit Windows job; independently verify authoritative latest job attempts plus full unchanged five-target checks and identical runtime bytes.",
+  "formalAcceptedCount": 44,
+  "paidRequests": 0
+}

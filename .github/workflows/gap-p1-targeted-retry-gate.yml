@@ -1,0 +1,70 @@
+name: P1 fixed-run latest-attempts strict equality gate
+on:
+  workflow_dispatch:
+  push:
+    branches: [codex/m1059-full-validation]
+    paths: [.github/workflows/gap-p1-targeted-retry-gate.yml]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  strict-equality:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          ref: f03a214ba1df3a23cbcc501730e4e9a3286ea6df
+          path: .build-cache/p1-retry-qualified-source
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Check retry identity refusal controls
+        run: |
+          python scripts/test-unified-equality.py
+          python scripts/test-p1-targeted-retry.py
+      - name: Bind each target latest successful job from GitHub
+        run: python scripts/check-p1-targeted-retry.py prepare
+      - uses: actions/download-artifact@v4
+        with:
+          name: source-native-unified-windows-2022
+          run-id: 43360569439
+          github-token: ${{ github.token }}
+          path: .build-cache/p1-retry-check/windows-2022
+      - uses: actions/download-artifact@v4
+        with:
+          name: source-native-unified-ubuntu-24.04
+          run-id: 43360569439
+          github-token: ${{ github.token }}
+          path: .build-cache/p1-retry-check/ubuntu-24.04
+      - uses: actions/download-artifact@v4
+        with:
+          name: source-native-unified-macos-latest
+          run-id: 43360569439
+          github-token: ${{ github.token }}
+          path: .build-cache/p1-retry-check/macos-latest
+      - uses: actions/download-artifact@v4
+        with:
+          name: source-native-unified-ubuntu-24.04-arm
+          run-id: 43360569439
+          github-token: ${{ github.token }}
+          path: .build-cache/p1-retry-check/ubuntu-24.04-arm
+      - uses: actions/download-artifact@v4
+        with:
+          name: source-native-unified-macos-15-intel
+          run-id: 43360569439
+          github-token: ${{ github.token }}
+          path: .build-cache/p1-retry-check/macos-15-intel
+      - name: Recheck latest identities and full original qualification evidence
+        run: python scripts/check-p1-targeted-retry.py verify
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: p1-latest-attempts-strict-equality
+          path: .build-cache/p1-retry-proof/
+          include-hidden-files: true
+          retention-days: 90
