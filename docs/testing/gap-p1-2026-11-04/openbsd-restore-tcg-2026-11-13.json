@@ -1,0 +1,19 @@
+{
+  "status": "KVM_INSTALLATION_TOTAL_TIMEOUT_RESTORE_KNOWN_TCG_DEFAULT",
+  "runId": 43188737576,
+  "commit": "435c8f34343c36ea859dba51faccea7505649e84",
+  "artifact": {
+    "id": 13930224947,
+    "bytes": 229673,
+    "sha256": "f3aa1e581e930bd06a692cef63146c2d12e7cf84e3f406501f2cf09769237801",
+    "crcVerified": true
+  },
+  "observed": "Installer still unpacking base79.tgz at the 1500-second total timeout; no completion marker and no source build. Earlier TCG 43181269997 did complete installation and reached source build.",
+  "interpretation": "KVM did not accelerate this observed guest/configuration. Underlying cause of slower execution is not proved.",
+  "change": "Restore default TCG, retain explicit KVM opt-in for future separately justified work; remove CI group modifications and retain installation completion gate, signed inputs, native ABI probes and partial evidence collection. No timeout extension.",
+  "controlsPassed": 9,
+  "runtimeFixVerified": false,
+  "formalAccepted": 44,
+  "acceptedCountIncrease": 0,
+  "paidRequests": 0
+}

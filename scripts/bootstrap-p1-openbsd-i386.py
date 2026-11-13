@@ -37,6 +37,7 @@ def manifest_digest(manifest,name):
 def select_accelerator():
     # The guest remains an actual i386 OpenBSD kernel/userland. KVM only
     # accelerates its CPU execution on compatible owned Linux CI hosts.
+    if os.environ.get('JHARNESS_P1_OPENBSD_KVM','0')!='1':return 'tcg'
     device=Path('/dev/kvm')
     return 'kvm' if platform.machine().lower() in {'x86_64','amd64'} and device.is_char_device() and os.access(device,os.R_OK|os.W_OK) else 'tcg'
 

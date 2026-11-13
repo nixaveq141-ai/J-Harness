@@ -28,8 +28,9 @@ class BootstrapScope(unittest.TestCase):
                 self.assertEqual(b'configure diagnostic',archive.extractfile('libffi-config.log').read())
 
     def test_acceleration_requires_x86_host_and_accessible_real_kvm_device(self):
-        with patch.object(m.platform,'machine',return_value='x86_64'),patch.object(Path,'is_char_device',return_value=True),patch.object(m.os,'access',return_value=True):
+        with patch.object(m.platform,'machine',return_value='x86_64'),patch.object(Path,'is_char_device',return_value=True),patch.object(m.os,'access',return_value=True),patch.dict(m.os.environ,{'JHARNESS_P1_OPENBSD_KVM':'1'}):
             self.assertEqual('kvm',m.select_accelerator())
+            with patch.dict(m.os.environ,{'JHARNESS_P1_OPENBSD_KVM':'0'}):self.assertEqual('tcg',m.select_accelerator())
             with patch.object(m.os,'access',return_value=False):self.assertEqual('tcg',m.select_accelerator())
             with patch.object(Path,'is_char_device',return_value=False):self.assertEqual('tcg',m.select_accelerator())
             with patch.object(m.platform,'machine',return_value='aarch64'):self.assertEqual('tcg',m.select_accelerator())

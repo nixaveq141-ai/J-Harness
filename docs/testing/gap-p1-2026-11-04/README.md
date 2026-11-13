@@ -1,5 +1,7 @@
 # P1：原生来源补齐执行记录
 
+- 2026-11-13 加速恢复：OpenBSD43188737576原包229673字节SHA/CRC核过，KVM在1500秒安装期限仍解包base、无完成标记、未进源码，不能算加速或通过。恢复已完成过安装的TCG默认，KVM仅显式opt-in，移除CI组权限步骤；签名/完成文本/i386 ABI/原预算/局部证据回收保留，9控制过。SPARC小探针静态libgcc修正已提交5d6b4a2并派发组件复验，编译器复用；正式44/50保持。
+
 - 2026-11-12 SPARC43190289462原包4894799字节SHA/CRC及750精确Git输入/18构建回执过；两JNA已构建，包已在真实SunOS校验展开，但首个32位smoke因缺libgcc_s.so.1退出-9，尚未执行JNI/ffi，不计组件通过。只将小smoke改自有C源码-static-libgcc，并为每侧全部library/probe/smoke新增实际readelf依赖前置，要求Solaris libc且拒绝未安装GCC动态库；5控制过，真实修正待。已验编译器继续复用，OpenBSD43188737576原运行继续；正式44保持。
 
 - 2026-11-12 SPARC双JNA交叉组件入口准备：固定已独立验工具链artifact13928488048与内部归档SHA62f1e00e，不重复编译；c366固定JNA/既验libffi生成输入，两侧保留JAWT，真实Solaris sysroot且仅显式JDK Unix/X11声明头。分别构建ELF32(2/18)/ELF64(43)与原JNI/ffi/closure/缺库探针，owned PPP HTTP只传同轮SHA绑定的平面小包到真实SunOS guest执行8命令，默认旧IPS探测不变。3隔离+4新ABI/归档/身份拒绝控制过；实际构建/guest执行/组件独立验收仍待，44正式保持。
